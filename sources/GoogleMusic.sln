@@ -1,0 +1,85 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Windows", "Windows", "{5D40FD42-8B69-4106-BE2C-6DE0F8350594}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WindowsPhone", "WindowsPhone", "{445811C6-E66A-413B-ACA2-34664383E35A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GoogleMusic", "Windows\GoogleMusic\GoogleMusic.csproj", "{5B564360-AB9C-4F79-A7FA-B5324F57AE3E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A72150F6-1ED9-491A-B002-68F1E7A0871A}"
+	ProjectSection(SolutionItems) = preProject
+		Settings.StyleCop = Settings.StyleCop
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GoogleMusic.Core", "GoogleMusic.Core\GoogleMusic.Core.csproj", "{66BCCB59-90BD-4334-9BD4-919B760F76C6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Suites", "Suites", "{85A9DCB7-98B0-457B-B076-9D3E7D8DCF09}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GoogleMusic.Core.Suites", "GoogleMusic.Core.Suites\GoogleMusic.Core.Suites.csproj", "{08509033-5236-4B28-9AA9-55FA946E83BC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|ARM = Debug|ARM
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|ARM = Release|ARM
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5B564360-AB9C-4F79-A7FA-B5324F57AE3E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5B564360-AB9C-4F79-A7FA-B5324F57AE3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5B564360-AB9C-4F79-A7FA-B5324F57AE3E}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{5B564360-AB9C-4F79-A7FA-B5324F57AE3E}.Debug|ARM.ActiveCfg = Debug|ARM
+		{5B564360-AB9C-4F79-A7FA-B5324F57AE3E}.Debug|ARM.Build.0 = Debug|ARM
+		{5B564360-AB9C-4F79-A7FA-B5324F57AE3E}.Debug|ARM.Deploy.0 = Debug|ARM
+		{5B564360-AB9C-4F79-A7FA-B5324F57AE3E}.Debug|x64.ActiveCfg = Debug|x64
+		{5B564360-AB9C-4F79-A7FA-B5324F57AE3E}.Debug|x64.Build.0 = Debug|x64
+		{5B564360-AB9C-4F79-A7FA-B5324F57AE3E}.Debug|x64.Deploy.0 = Debug|x64
+		{5B564360-AB9C-4F79-A7FA-B5324F57AE3E}.Debug|x86.ActiveCfg = Debug|x86
+		{5B564360-AB9C-4F79-A7FA-B5324F57AE3E}.Debug|x86.Build.0 = Debug|x86
+		{5B564360-AB9C-4F79-A7FA-B5324F57AE3E}.Debug|x86.Deploy.0 = Debug|x86
+		{5B564360-AB9C-4F79-A7FA-B5324F57AE3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5B564360-AB9C-4F79-A7FA-B5324F57AE3E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5B564360-AB9C-4F79-A7FA-B5324F57AE3E}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{5B564360-AB9C-4F79-A7FA-B5324F57AE3E}.Release|ARM.ActiveCfg = Release|ARM
+		{5B564360-AB9C-4F79-A7FA-B5324F57AE3E}.Release|ARM.Build.0 = Release|ARM
+		{5B564360-AB9C-4F79-A7FA-B5324F57AE3E}.Release|ARM.Deploy.0 = Release|ARM
+		{5B564360-AB9C-4F79-A7FA-B5324F57AE3E}.Release|x64.ActiveCfg = Release|x64
+		{5B564360-AB9C-4F79-A7FA-B5324F57AE3E}.Release|x64.Build.0 = Release|x64
+		{5B564360-AB9C-4F79-A7FA-B5324F57AE3E}.Release|x64.Deploy.0 = Release|x64
+		{5B564360-AB9C-4F79-A7FA-B5324F57AE3E}.Release|x86.ActiveCfg = Release|x86
+		{5B564360-AB9C-4F79-A7FA-B5324F57AE3E}.Release|x86.Build.0 = Release|x86
+		{5B564360-AB9C-4F79-A7FA-B5324F57AE3E}.Release|x86.Deploy.0 = Release|x86
+		{66BCCB59-90BD-4334-9BD4-919B760F76C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{66BCCB59-90BD-4334-9BD4-919B760F76C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{66BCCB59-90BD-4334-9BD4-919B760F76C6}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{66BCCB59-90BD-4334-9BD4-919B760F76C6}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{66BCCB59-90BD-4334-9BD4-919B760F76C6}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{66BCCB59-90BD-4334-9BD4-919B760F76C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{66BCCB59-90BD-4334-9BD4-919B760F76C6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{66BCCB59-90BD-4334-9BD4-919B760F76C6}.Release|ARM.ActiveCfg = Release|Any CPU
+		{66BCCB59-90BD-4334-9BD4-919B760F76C6}.Release|x64.ActiveCfg = Release|Any CPU
+		{66BCCB59-90BD-4334-9BD4-919B760F76C6}.Release|x86.ActiveCfg = Release|Any CPU
+		{08509033-5236-4B28-9AA9-55FA946E83BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{08509033-5236-4B28-9AA9-55FA946E83BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{08509033-5236-4B28-9AA9-55FA946E83BC}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{08509033-5236-4B28-9AA9-55FA946E83BC}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{08509033-5236-4B28-9AA9-55FA946E83BC}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{08509033-5236-4B28-9AA9-55FA946E83BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{08509033-5236-4B28-9AA9-55FA946E83BC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{08509033-5236-4B28-9AA9-55FA946E83BC}.Release|ARM.ActiveCfg = Release|Any CPU
+		{08509033-5236-4B28-9AA9-55FA946E83BC}.Release|x64.ActiveCfg = Release|Any CPU
+		{08509033-5236-4B28-9AA9-55FA946E83BC}.Release|x86.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{5B564360-AB9C-4F79-A7FA-B5324F57AE3E} = {5D40FD42-8B69-4106-BE2C-6DE0F8350594}
+		{08509033-5236-4B28-9AA9-55FA946E83BC} = {85A9DCB7-98B0-457B-B076-9D3E7D8DCF09}
+	EndGlobalSection
+EndGlobal
