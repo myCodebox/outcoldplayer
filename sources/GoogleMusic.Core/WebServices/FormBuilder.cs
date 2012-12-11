@@ -61,6 +61,7 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
 
         public void AddField(string key, string value)
         {
+            this.writer.Write("\r\n--" + this.boundary + "\r\n");
             this.writer.Write(string.Format("Content-Disposition: form-data; name=\"{0}\";\r\n\r\n{1}", key, value));
         }
 
@@ -71,6 +72,7 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
 
         public byte[] GetBytes()
         {
+            this.writer.Flush();
             return this.ms.ToArray();
         }
 
