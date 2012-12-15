@@ -11,7 +11,7 @@ namespace OutcoldSolutions.GoogleMusic.Suites.WebServices
 
     using Moq;
 
-    using OutcoldSolutions.GoogleMusic.Services;
+    
     using OutcoldSolutions.GoogleMusic.WebServices;
     using OutcoldSolutions.GoogleMusic.WebServices.Models;
 
@@ -24,28 +24,28 @@ namespace OutcoldSolutions.GoogleMusic.Suites.WebServices
         [Fact(Skip = "Web Service")]
         public async Task Authorize_SetCredentials_CookiesLoaded()
         {
-            var authorizationDataService = new Mock<IUserAuthorizationDataService>();
-                authorizationDataService.Setup(s => s.GetUserSecurityDataAsync()).Returns(
-                    () => Task.Factory.StartNew(() => new UserInfo() { Email = "outcoldman.test@gmail.com", Password = "Qw12er34" }));
+            //var authorizationDataService = new Mock<IUserAuthorizationDataService>();
+            //    authorizationDataService.Setup(s => s.GetUserSecurityDataAsync()).Returns(
+            //        () => Task.Factory.StartNew(() => new UserInfo() { Email = "outcoldman.test@gmail.com", Password = "Qw12er34" }));
 
-            var cookieManager = new Mock<ICookieManager>();
-            cookieManager.Setup(m => m.GetCookies()).Returns(() => null);
+            //var cookieManager = new Mock<ICookieManager>();
+            //cookieManager.Setup(m => m.GetCookies()).Returns(() => null);
 
-            using (var registration = this.Container.Registration())
-            {
-                registration.Register<IUserAuthorizationDataService>()
-                    .AsSingleton(authorizationDataService.Object);
+            //using (var registration = this.Container.Registration())
+            //{
+            //    registration.Register<IUserAuthorizationDataService>()
+            //        .AsSingleton(authorizationDataService.Object);
 
-                registration.Register<IClientLoginService>().As<ClientLoginService>();
-                registration.Register<IGoogleWebService>().As<GoogleWebService>();
+            //    registration.Register<IClientLoginService>().As<ClientLoginService>();
+            //    registration.Register<IGoogleWebService>().As<GoogleWebService>();
 
-                registration.Register<ICookieManager>().AsSingleton(cookieManager.Object);
-            }
+            //    registration.Register<ICookieManager>().AsSingleton(cookieManager.Object);
+            //}
 
-            var service = this.Container.Resolve<AuthorizationService>();
-            await service.AuthorizeAsync();
+            //var service = this.Container.Resolve<AuthorizationService>();
+            //await service.AuthorizeAsync();
 
-            cookieManager.Verify(x => x.SaveCookies(It.IsAny<Uri>(), It.IsAny<CookieCollection>()), Times.Once());
+            //cookieManager.Verify(x => x.SaveCookies(It.IsAny<Uri>(), It.IsAny<CookieCollection>()), Times.Once());
         }
 
         [Fact(Skip = "Web Service")]

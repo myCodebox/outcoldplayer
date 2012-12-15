@@ -9,7 +9,7 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
 
     public interface IClientLoginService
     {
-        Task<GoogleWebResponse> LoginAsync(string email, string password);
+        Task<GoogleLoginResponse> LoginAsync(string email, string password);
 
         Task<GoogleWebResponse> GetCookieAsync(string auth);
     }

@@ -39,9 +39,6 @@
     <Compile Include="Diagnostics\LoggerEx.cs" />
     <Compile Include="Diagnostics\LogManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\AuthorizationService.cs" />
-    <Compile Include="Services\IUserAuthorizationDataService.cs" />
-    <Compile Include="Services\UserInfo.cs" />
     <Compile Include="WebServices\API.cs" />
     <Compile Include="WebServices\ClientLoginService.cs" />
     <Compile Include="WebServices\GoogleWebService.cs" />

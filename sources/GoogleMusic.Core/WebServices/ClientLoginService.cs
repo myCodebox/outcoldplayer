@@ -25,7 +25,7 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
             this.logger = logManager.CreateLogger("ClientLoginService");
         }
 
-        public async Task<GoogleWebResponse> LoginAsync(string email, string password)
+        public async Task<GoogleLoginResponse> LoginAsync(string email, string password)
         {
             // Check for details: https://developers.google.com/accounts/docs/AuthForInstalledApps
             var requestParameters = new Dictionary<string, string>
@@ -36,7 +36,7 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
                                             { "service", "sj" }
                                         };
 
-            return await this.googleWebService.PostAsync(ClientLoginUrl, arguments: requestParameters);
+            return new GoogleLoginResponse(await this.googleWebService.PostAsync(ClientLoginUrl, arguments: requestParameters));
         }
 
         public async Task<GoogleWebResponse> GetCookieAsync(string auth)

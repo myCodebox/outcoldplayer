@@ -14,13 +14,11 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
     public class GoogleWebService : IGoogleWebService
     {
         private readonly IDependencyResolverContainer container;
-        private readonly ICookieManager cookieManager;
         private readonly ILogger logger;
 
-        public GoogleWebService(IDependencyResolverContainer container, ILogManager logManager, ICookieManager cookieManager)
+        public GoogleWebService(IDependencyResolverContainer container, ILogManager logManager)
         {
             this.container = container;
-            this.cookieManager = cookieManager;
             this.logger = logManager.CreateLogger("ClientLoginService");
         }
 
@@ -65,11 +63,11 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
                             }
                         }
 
-                        var cookieContainer = this.cookieManager.GetCookies();
-                        if (cookieContainer != null)
-                        {
-                            httpWebRequest.CookieContainer = cookieContainer;
-                        }
+                        //var cookieContainer = this.cookieManager.GetCookies();
+                        //if (cookieContainer != null)
+                        //{
+                        //    httpWebRequest.CookieContainer = cookieContainer;
+                        //}
 
                         httpWebRequest.BeginGetRequestStream(
                             (asyncResult) =>

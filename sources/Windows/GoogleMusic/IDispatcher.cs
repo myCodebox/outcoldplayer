@@ -1,12 +1,12 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // Outcold Solutions (http://outcoldman.com)
 // --------------------------------------------------------------------------------------------------------------------
-namespace OutcoldSolutions.GoogleMusic.Services
+namespace OutcoldSolutions.GoogleMusic
 {
-    using System.Threading.Tasks;
+    using System;
 
-    public interface IUserAuthorizationDataService
+    public interface IDispatcher
     {
-        Task<UserInfo> GetUserSecurityDataAsync();
+        void Invoke(Action action);
     }
 }
