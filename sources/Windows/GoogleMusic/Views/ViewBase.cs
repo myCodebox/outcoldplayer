@@ -18,7 +18,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
         protected void InitializePresenter<TPresenter>() where TPresenter : PresenterBase
         {
-            this.DataContext = container.Resolve<TPresenter>(new object[] { this });
+            this.DataContext = this.container.Resolve<TPresenter>(new object[] { this });
         }
 
         protected TPresenter Presenter<TPresenter>()

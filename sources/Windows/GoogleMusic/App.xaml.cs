@@ -58,7 +58,6 @@ namespace OutcoldSolutions.GoogleMusic
 
                     // Services
                     registration.Register<IClientLoginService>().As<ClientLoginService>();
-                    // registration.Register<ICookieManager>().As<CookieManager>();
                     registration.Register<IGoogleWebService>().As<GoogleWebService>();
                     registration.Register<IUserDataStorage>().As<UserDataStorage>();
                 }

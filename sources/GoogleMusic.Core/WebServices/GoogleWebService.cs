@@ -9,16 +9,22 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.Diagnostics;
+    using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.WebServices.Models;
 
     public class GoogleWebService : IGoogleWebService
     {
         private readonly IDependencyResolverContainer container;
+        private readonly IUserDataStorage userDataStorage;
         private readonly ILogger logger;
 
-        public GoogleWebService(IDependencyResolverContainer container, ILogManager logManager)
+        public GoogleWebService(
+            IDependencyResolverContainer container, 
+            ILogManager logManager,
+            IUserDataStorage userDataStorage)
         {
             this.container = container;
+            this.userDataStorage = userDataStorage;
             this.logger = logManager.CreateLogger("ClientLoginService");
         }
 
@@ -63,11 +69,16 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
                             }
                         }
 
-                        //var cookieContainer = this.cookieManager.GetCookies();
-                        //if (cookieContainer != null)
-                        //{
-                        //    httpWebRequest.CookieContainer = cookieContainer;
-                        //}
+                        var cookieContainer = this.userDataStorage.GetCookieContainer();
+                        if (cookieContainer != null)
+                        {
+                            this.logger.Debug("Use stored cookie container.");
+                            httpWebRequest.CookieContainer = cookieContainer;
+                        }
+                        else
+                        {
+                            this.logger.Debug("Don not have cookie container.");
+                        }
 
                         httpWebRequest.BeginGetRequestStream(
                             (asyncResult) =>
