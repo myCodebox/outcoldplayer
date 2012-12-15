@@ -33,8 +33,21 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Diagnostics\ILogger.cs" />
+    <Compile Include="Diagnostics\ILogManager.cs" />
+    <Compile Include="Diagnostics\Logger.cs" />
+    <Compile Include="Diagnostics\LoggerEx.cs" />
+    <Compile Include="Diagnostics\LogManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WebServices\API.cs" />
+    <Compile Include="WebServices\ClientLoginService.cs" />
+    <Compile Include="WebServices\GoogleWebService.cs" />
+    <Compile Include="WebServices\IClientLoginService.cs" />
+    <Compile Include="WebServices\ICookieManager.cs" />
+    <Compile Include="WebServices\IGoogleWebService.cs" />
+    <Compile Include="WebServices\Models\GoogleLoginResponse.cs" />
+    <Compile Include="WebServices\Models\GoogleWebResponse.cs" />
+    <Compile Include="WebServices\RequestBodyWriter.cs" />
     <Compile Include="WebServices\FormBuilder.cs" />
     <Compile Include="WebServices\GoogleHTTP.cs" />
     <Compile Include="WebServices\Models\AddPlaylistResp.cs" />
@@ -43,10 +56,14 @@
     <Compile Include="WebServices\Models\GoogleMusicPlaylists.cs" />
     <Compile Include="WebServices\Models\GoogleMusicSong.cs" />
     <Compile Include="WebServices\Models\GoogleMusicSongUrl.cs" />
+    <Compile Include="WebServices\PlainLinesBodyReader.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.4.5.11\lib\portable-net40+sl4+wp7+win8\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="OutcoldSolutions.Framework">
+      <HintPath>..\GoogleMusic.Core.Suites\bin\Debug\OutcoldSolutions.Framework.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

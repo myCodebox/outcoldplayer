@@ -32,6 +32,8 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
 
         public HttpWebRequest UploadDataAsync(Uri address, FormBuilder form, RequestCompletedEventHandler complete)
         {
+            
+
             return UploadDataAsync(address, form.ContentType, form.GetBytes(), complete);
         }
 
@@ -41,7 +43,7 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
 
             if (!String.IsNullOrEmpty(contentType))
                 request.ContentType = contentType;
-
+            
             request.Method = "POST";
             RequestState state = new RequestState(request, data, completedCallback);
             IAsyncResult result = request.BeginGetRequestStream(OpenWrite, state);

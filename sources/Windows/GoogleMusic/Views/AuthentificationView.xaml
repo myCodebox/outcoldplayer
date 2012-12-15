@@ -1,0 +1,57 @@
+﻿<views:ViewBase 
+    x:Class="OutcoldSolutions.GoogleMusic.Views.AuthentificationView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:views="using:OutcoldSolutions.GoogleMusic.Views"
+    mc:Ignorable="d"
+    d:DesignHeight="480"
+    d:DesignWidth="600">
+
+    <Border Padding="10"  Width="600" Height="480" Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
+        <Grid  HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <TextBlock Style="{StaticResource HeaderTextStyle}">Sign in</TextBlock>
+
+            <TextBlock Grid.Row="1" Margin="0, 20, 0, 0" TextWrapping="Wrap" Style="{StaticResource SmallTextStyle}">
+                To use GMusic player you need to provide your Google Account's email and password. 
+                If you do not have one, you need to create one. 
+                Please make sure that you have subscribed to Google Music service. For more details go to the Google Music site.
+            </TextBlock>
+
+            <TextBlock Grid.Row="1" Margin="0, 80, 0, 0" TextWrapping="Wrap" Foreground="Red" Visibility="Collapsed"
+                       x:Name="ErrorMessageTextBlock" Style="{StaticResource SmallTextStyle}">
+                Error Message
+            </TextBlock>
+
+            <StackPanel Width="400" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" DataContext="{Binding Path=BindingModel, Mode=OneTime}">
+                <TextBlock Style="{StaticResource BasicTextStyle}">Email:</TextBlock>
+                <TextBox Text="{Binding Path=Email, Mode=TwoWay}" InputScope="EmailSmtpAddress" />
+
+                <TextBlock Margin="0, 20, 0, 0"  Style="{StaticResource BasicTextStyle}">Password:</TextBlock>
+                <PasswordBox Password="{Binding Path=Password, Mode=TwoWay}"/>
+                
+                <CheckBox HorizontalAlignment="Right" Margin="0, 7 ,0 ,0" IsChecked="{Binding Path=RememberAccount, Mode=TwoWay}">Remember account</CheckBox>
+            </StackPanel>
+
+            <TextBlock Grid.Row="2" Margin="0, -100, 0, 0" TextWrapping="Wrap" Width="400" TextAlignment="Right"
+                       Style="{StaticResource SmallTextStyle}">
+                Password will be stored in encrypted Windows Storage.
+            </TextBlock>
+            
+            <HyperlinkButton Grid.Row="2" HorizontalAlignment="Left">Go to Google Music</HyperlinkButton>
+            <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Width="80" 
+                        Click="SignInClick">
+                    Sign in
+                </Button>
+            </StackPanel>
+        </Grid>
+    </Border>
+</views:ViewBase>

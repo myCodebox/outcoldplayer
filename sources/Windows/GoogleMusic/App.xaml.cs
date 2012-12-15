@@ -6,6 +6,12 @@ namespace OutcoldSolutions.GoogleMusic
 {
     using System;
 
+    using OutcoldSolutions.GoogleMusic.Diagnostics;
+    using OutcoldSolutions.GoogleMusic.Presenters;
+    using OutcoldSolutions.GoogleMusic.Services;
+    using OutcoldSolutions.GoogleMusic.Views;
+    using OutcoldSolutions.GoogleMusic.WebServices;
+
     using Windows.ApplicationModel;
     using Windows.ApplicationModel.Activation;
     using Windows.UI.Xaml;
@@ -13,6 +19,8 @@ namespace OutcoldSolutions.GoogleMusic
 
     public sealed partial class App : Application
     {
+        public static IDependencyResolverContainer Container { get; private set; }
+
         public App()
         {
             this.InitializeComponent();
@@ -27,14 +35,36 @@ namespace OutcoldSolutions.GoogleMusic
         /// <param name="args">Details about the launch request and process.</param>
         protected override void OnLaunched(LaunchActivatedEventArgs args)
         {
-            Frame rootFrame = Window.Current.Content as Frame;
+            MainPage mainPage = Window.Current.Content as MainPage;
 
             // Do not repeat app initialization when the Window already has content,
             // just ensure that the window is active
-            if (rootFrame == null)
+            if (mainPage == null)
             {
+                Container = new DependencyResolverContainer();
+
+                using (var registration = Container.Registration())
+                {
+                    registration.Register<ILogManager>()
+                        .As<LogManager>();
+
+                    registration.Register<IAuthentificationView>()
+                        .And<AuthentificationView>()
+                        .As<AuthentificationView>();
+
+                    registration.Register<AuthentificationPresenter>();
+
+                    registration.Register<MainPage>();
+
+                    // Services
+                    registration.Register<IClientLoginService>().As<ClientLoginService>();
+                    // registration.Register<ICookieManager>().As<CookieManager>();
+                    registration.Register<IGoogleWebService>().As<GoogleWebService>();
+                    registration.Register<IUserDataStorage>().As<UserDataStorage>();
+                }
+
                 // Create a Frame to act as the navigation context and navigate to the first page
-                rootFrame = new Frame();
+                mainPage = Container.Resolve<MainPage>();
 
                 if (args.PreviousExecutionState == ApplicationExecutionState.Terminated)
                 {
@@ -42,18 +72,7 @@ namespace OutcoldSolutions.GoogleMusic
                 }
 
                 // Place the frame in the current Window
-                Window.Current.Content = rootFrame;
-            }
-
-            if (rootFrame.Content == null)
-            {
-                // When the navigation stack isn't restored navigate to the first page,
-                // configuring the new page by passing required information as a navigation
-                // parameter
-                if (!rootFrame.Navigate(typeof(MainPage), args.Arguments))
-                {
-                    throw new Exception("Failed to create initial page");
-                }
+                Window.Current.Content = mainPage;
             }
 
             // Ensure the current window is active

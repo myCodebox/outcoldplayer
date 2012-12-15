@@ -9,10 +9,23 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
     using System.IO;
     using System.Text;
 
-    public class FormBuilder
+    public class FormBuilder : IDisposable
     {
         private readonly string boundary = "----------" + DateTime.Now.Ticks.ToString("x");
-        private MemoryStream ms;
+
+        private readonly MemoryStream ms;
+        private readonly StreamWriter writer;
+
+        public FormBuilder()
+        {
+            this.ms = new MemoryStream();
+            this.writer = new StreamWriter(this.ms, Encoding.UTF8);
+        }
+
+        ~FormBuilder()
+        {
+            this.Dispose(disposing: false);
+        }
 
         public static FormBuilder Empty
         {
@@ -28,67 +41,53 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
         {
             get
             {
-                return "multipart/form-data; boundary=" + boundary;
+                return "multipart/form-data; boundary=" + this.boundary;
             }
         }
 
-        public FormBuilder()
+        public void Dispose()
         {
-            ms = new MemoryStream();
+            this.Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
 
-        public void AddFields(Dictionary<String, String> fields)
+        public void AddFields(Dictionary<string, string> fields)
         {
-            foreach (KeyValuePair<String, String> key in fields)
+            foreach (KeyValuePair<string, string> key in fields)
+            {
                 this.AddField(key.Key, key.Value);
+            }
         }
 
-        public void AddField(String key, String value)
+        public void AddField(string key, string value)
         {
-            StringBuilder sb = new StringBuilder();
-
-            sb.AppendFormat("\r\n--{0}\r\n", boundary);
-            sb.AppendFormat("Content-Disposition: form-data; name=\"{0}\";\r\n\r\n{1}", key, value);
-
-            byte[] sbData = Encoding.UTF8.GetBytes(sb.ToString());
-
-            ms.Write(sbData, 0, sbData.Length);
-        }
-
-        public void AddFile(String name, String fileName, byte[] file)
-        {
-            StringBuilder sb = new StringBuilder();
-
-            sb.AppendFormat("\r\n--{0}\r\n", boundary);
-            sb.AppendFormat("Content-Disposition: form-data; name=\"{0}\"; filename=\"{1}\"\r\n", name, fileName);
-
-            sb.AppendFormat("Content-Type: {0}\r\n\r\n", "application/octet-stream");
-
-            byte[] sbData = Encoding.UTF8.GetBytes(sb.ToString());
-            ms.Write(sbData, 0, sbData.Length);
-
-            ms.Write(file, 0, file.Length);
+            this.writer.Write("\r\n--" + this.boundary + "\r\n");
+            this.writer.Write(string.Format("Content-Disposition: form-data; name=\"{0}\";\r\n\r\n{1}", key, value));
         }
 
         public void Close()
         {
-            StringBuilder sb = new StringBuilder();
-
-            sb.AppendLine("\r\n--" + boundary + "--\r\n");
-
-            byte[] sbData = Encoding.UTF8.GetBytes(sb.ToString());
-            ms.Write(sbData, 0, sbData.Length);
+            this.WriteBoundary();
         }
 
         public byte[] GetBytes()
         {
-            return ms.ToArray();
+            this.writer.Flush();
+            return this.ms.ToArray();
         }
 
-        public string GetString()
+        private void WriteBoundary()
         {
-            byte[] bytes = GetBytes();
-            return Encoding.UTF8.GetString(bytes, 0, bytes.Length);
+            this.writer.Write("\r\n--" + this.boundary + "--\r\n");
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                this.writer.Dispose();
+                this.ms.Dispose();
+            }
         }
     }
 }
