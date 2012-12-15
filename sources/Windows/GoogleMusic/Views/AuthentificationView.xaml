@@ -19,15 +19,20 @@
 
             <TextBlock Style="{StaticResource HeaderTextStyle}">Sign in</TextBlock>
 
-            <TextBlock Grid.Row="1" Margin="0, 20, 0, 0" TextWrapping="Wrap">
+            <TextBlock Grid.Row="1" Margin="0, 20, 0, 0" TextWrapping="Wrap" Style="{StaticResource SmallTextStyle}">
                 To use GMusic player you need to provide your Google Account's email and password. 
                 If you do not have one, you need to create one. 
                 Please make sure that you have subscribed to Google Music service. For more details go to the Google Music site.
             </TextBlock>
-            
+
+            <TextBlock Grid.Row="1" Margin="0, 80, 0, 0" TextWrapping="Wrap" Foreground="Red" Visibility="Collapsed"
+                       x:Name="ErrorMessageTextBlock" Style="{StaticResource SmallTextStyle}">
+                Error Message
+            </TextBlock>
+
             <StackPanel Width="400" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" DataContext="{Binding Path=BindingModel, Mode=OneTime}">
                 <TextBlock Style="{StaticResource BasicTextStyle}">Email:</TextBlock>
-                <TextBox Text="{Binding Path=Email, Mode=TwoWay}" />
+                <TextBox Text="{Binding Path=Email, Mode=TwoWay}" InputScope="EmailSmtpAddress" />
 
                 <TextBlock Margin="0, 20, 0, 0"  Style="{StaticResource BasicTextStyle}">Password:</TextBlock>
                 <PasswordBox Password="{Binding Path=Password, Mode=TwoWay}"/>
@@ -35,20 +40,16 @@
                 <CheckBox HorizontalAlignment="Right" Margin="0, 7 ,0 ,0" IsChecked="{Binding Path=RememberAccount, Mode=TwoWay}">Remember account</CheckBox>
             </StackPanel>
 
-            <TextBlock Grid.Row="2" Margin="0, -100, 0, 0" TextWrapping="Wrap" Width="400" TextAlignment="Right">
+            <TextBlock Grid.Row="2" Margin="0, -100, 0, 0" TextWrapping="Wrap" Width="400" TextAlignment="Right"
+                       Style="{StaticResource SmallTextStyle}">
                 Password will be stored in encrypted Windows Storage.
             </TextBlock>
-
+            
             <HyperlinkButton Grid.Row="2" HorizontalAlignment="Left">Go to Google Music</HyperlinkButton>
             <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
                 <Button Width="80" 
                         Click="SignInClick">
                     Sign in
-                </Button>
-                <Button Width="80" 
-                        Margin="20, 0, 0, 0"
-                        Click="CancelClick">
-                    Cancel
                 </Button>
             </StackPanel>
         </Grid>

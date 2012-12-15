@@ -18,6 +18,8 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
         public void ShowError(string errorMessage)
         {
+            this.ErrorMessageTextBlock.Text = errorMessage;
+            this.ErrorMessageTextBlock.Visibility = Visibility.Visible;
         }
 
         public void ShowCaptcha(string captchaUrl)
@@ -26,12 +28,8 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
         private void SignInClick(object sender, RoutedEventArgs e)
         {
+            this.ErrorMessageTextBlock.Visibility = Visibility.Collapsed;
             this.Presenter<AuthentificationPresenter>().SignIn();
-        }
-
-        private void CancelClick(object sender, RoutedEventArgs e)
-        {
-            
         }
     }
 }
