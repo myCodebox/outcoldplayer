@@ -12,25 +12,59 @@
     <Grid DataContext="{Binding Path=BindingModel, Mode=OneWay}">
         <Grid.RowDefinitions>
             <RowDefinition Height="100" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
-        </Grid.ColumnDefinitions>
-        
         <TextBlock Style="{StaticResource HeaderTextStyle}" Text="{Binding Path=Title, Mode=OneWay}" VerticalAlignment="Bottom" />
 
-        <ListView Grid.Row="1"
-                  Margin="0, 20, 0, 0" 
+        <Grid Grid.Row="1" Margin="5, 20, 20, 20" HorizontalAlignment="Stretch" >
+            <Grid.ColumnDefinitions >
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="80" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="60" />
+                <ColumnDefinition Width="60" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="name" TextTrimming="WordEllipsis" Style="{StaticResource TitleTextStyle}" />
+            <TextBlock Grid.Column="1" Margin="20, 0, 0, 0" Text="time" HorizontalAlignment="Right" Style="{StaticResource TitleTextStyle}"/>
+            <TextBlock Grid.Column="2" Margin="20, 0, 0, 0" Text="artist" TextTrimming="WordEllipsis" Style="{StaticResource TitleTextStyle}"/>
+            <TextBlock Grid.Column="3" Margin="20, 0, 0, 0" Text="album" TextTrimming="WordEllipsis" Style="{StaticResource TitleTextStyle}"/>
+            <TextBlock Grid.Column="4" Margin="20, 0, 0, 0" Text="plays" HorizontalAlignment="Right" Style="{StaticResource TitleTextStyle}"/>
+            <TextBlock Grid.Column="5" Margin="20, 0, 0, 0" Text="rating" HorizontalAlignment="Right" Style="{StaticResource TitleTextStyle}"/>
+        </Grid>
+
+        <ListView Grid.Row="2"
                   ItemsSource="{Binding Path=Songs, Mode=OneTime}"
                   SelectionMode="None"
+                  HorizontalAlignment="Stretch"
+                  HorizontalContentAlignment="Stretch"
                   IsTapEnabled="False">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalAlignment" Value="Stretch" />
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                </Style>
+            </ListView.ItemContainerStyle>
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel>
-                        <TextBlock Text="{Binding Path=Title, Mode=OneTime}" />
-                    </StackPanel>
+                    <Grid>
+                        <Grid.ColumnDefinitions >
+                            <ColumnDefinition Width="2*" />
+                            <ColumnDefinition Width="80" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="60" />
+                            <ColumnDefinition Width="60" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="{Binding Path=Title, Mode=OneTime}" TextTrimming="WordEllipsis" />
+                        <TextBlock Grid.Column="1" Margin="20, 0, 0, 0" Text="{Binding Path=Time, Mode=OneTime}" HorizontalAlignment="Right"/>
+                        <TextBlock Grid.Column="2" Margin="20, 0, 0, 0" Text="{Binding Path=Artist, Mode=OneTime}" TextTrimming="WordEllipsis" />
+                        <TextBlock Grid.Column="3" Margin="20, 0, 0, 0" Text="{Binding Path=Album, Mode=OneTime}" TextTrimming="WordEllipsis" />
+                        <TextBlock Grid.Column="4" Margin="20, 0, 0, 0" Text="{Binding Path=Plays, Mode=OneTime}" HorizontalAlignment="Right" />
+                        <TextBlock Grid.Column="5" Margin="20, 0, 0, 0" Text="{Binding Path=Raiting, Mode=OneTime}" HorizontalAlignment="Right" />
+                    </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>

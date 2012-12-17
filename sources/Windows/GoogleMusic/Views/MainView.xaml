@@ -14,7 +14,7 @@
             HorizontalAlignment="Left"
             IsEnabled="{Binding Path=CanGoBack, Mode=OneWay}"
             Click="GoBackClick" Margin="36, 52, 36, 0"/>
-        
+
         <Grid x:Name="Content" Margin="120, 0, 120, 0"  />
 
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">

@@ -35,7 +35,7 @@
                     <TextBox Text="{Binding Path=Email, Mode=TwoWay}" InputScope="EmailSmtpAddress" x:Name="EmailTextBox"/>
 
                     <TextBlock Margin="0, 20, 0, 0"  Style="{StaticResource BasicTextStyle}">Password:</TextBlock>
-                    <PasswordBox Password="{Binding Path=Password, Mode=TwoWay}"  x:Name="PasswordTextBox"/>
+                    <PasswordBox Password="{Binding Path=Password, Mode=TwoWay}"  x:Name="PasswordTextBox" IsPasswordRevealButtonEnabled="True"/>
 
                     <CheckBox HorizontalAlignment="Right" Margin="0, 7 ,0 ,0" IsChecked="{Binding Path=RememberAccount, Mode=TwoWay}" x:Name="RememberCheckBox">Remember account</CheckBox>
                 </StackPanel>
