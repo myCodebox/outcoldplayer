@@ -6,13 +6,15 @@ namespace OutcoldSolutions.GoogleMusic.Views
 {
     using Windows.UI.Xaml.Controls;
 
-    public sealed partial class MainPage : Page
+    public interface IStartView : IView
     {
-        public MainPage(IDependencyResolverContainer container)
+    }
+
+    public sealed partial class StartView : UserControl, IStartView
+    {
+        public StartView()
         {
             this.InitializeComponent();
-
-            this.Content.Children.Add(container.Resolve<AuthentificationView>());
         }
     }
 }

@@ -107,6 +107,10 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
                                                 var webResponse = httpWebRequest.EndGetResponse(responceAsyncResult);
                                                 taskCompletionSource.SetResult(this.ParseResponse(webResponse));
                                             }
+                                            catch (WebException exception)
+                                            {
+                                                taskCompletionSource.SetResult(this.ParseResponse(exception.Response));
+                                            }
                                             catch (Exception exception)
                                             {
                                                 logger.LogException(exception);

@@ -3,8 +3,12 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Views
 {
+    using System;
+    using System.Threading.Tasks;
+
     using OutcoldSolutions.GoogleMusic.Presenters;
 
+    using Windows.System;
     using Windows.UI.Xaml;
 
     public sealed partial class AuthentificationView : ViewBase, IAuthentificationView
@@ -16,11 +20,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
             this.InitializePresenter<AuthentificationPresenter>();
         }
 
-        public void ShowError(string errorMessage)
-        {
-            this.ErrorMessageTextBlock.Text = errorMessage;
-            this.ErrorMessageTextBlock.Visibility = Visibility.Visible;
-        }
+        public event EventHandler Succeed;
 
         public void ShowCaptcha(string captchaUrl)
         {
@@ -28,8 +28,47 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
         private void SignInClick(object sender, RoutedEventArgs e)
         {
-            this.ErrorMessageTextBlock.Visibility = Visibility.Collapsed;
-            this.Presenter<AuthentificationPresenter>().SignIn();
+            if (this.SignInButton.IsEnabled)
+            {
+                this.SetLoginLayoutIsEnabled(isEnabled: false);
+                this.ProgressRing.IsActive = true;
+                this.Presenter<AuthentificationPresenter>().LogInAsync().ContinueWith(
+                    t =>
+                        {
+                            if (!t.Result)
+                            {
+                                this.ProgressRing.IsActive = false;
+                                this.SetLoginLayoutIsEnabled(isEnabled: true);
+                            }
+                            else
+                            {
+                                this.RaiseSucceed();
+                            }
+                        },
+                    TaskScheduler.FromCurrentSynchronizationContext());
+            }
+        }
+
+        private void SetLoginLayoutIsEnabled(bool isEnabled)
+        {
+            this.SignInButton.IsEnabled = isEnabled;
+            this.EmailTextBox.IsEnabled = isEnabled;
+            this.PasswordTextBox.IsEnabled = isEnabled;
+            this.RememberCheckBox.IsEnabled = isEnabled;
+        }
+
+        private void GotoGoogleMusic(object sender, RoutedEventArgs e)
+        {
+            Launcher.LaunchUriAsync(new Uri("https://play.google.com/music"));
+        }
+
+        private void RaiseSucceed()
+        {
+            var handler = this.Succeed;
+            if (handler != null)
+            {
+                handler(this, EventArgs.Empty);
+            }
         }
     }
 }

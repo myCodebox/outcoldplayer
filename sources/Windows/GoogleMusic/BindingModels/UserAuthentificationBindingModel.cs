@@ -10,6 +10,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         private string email;
         private string password;
         private bool rememberAccount;
+        private string errorMessage;
 
         public string Email
         {
@@ -57,6 +58,23 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
                 if (this.rememberAccount != value)
                 {
                     this.rememberAccount = value;
+                    this.RaiseCurrenntPropertyChanged();
+                }
+            }
+        }
+
+        public string ErrorMessage
+        {
+            get
+            {
+                return this.errorMessage;
+            }
+
+            set
+            {
+                if (!string.Equals(this.errorMessage, value, StringComparison.CurrentCulture))
+                {
+                    this.errorMessage = value;
                     this.RaiseCurrenntPropertyChanged();
                 }
             }

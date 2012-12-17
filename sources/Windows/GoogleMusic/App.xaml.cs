@@ -4,8 +4,6 @@
 
 namespace OutcoldSolutions.GoogleMusic
 {
-    using System;
-
     using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Presenters;
     using OutcoldSolutions.GoogleMusic.Services;
@@ -15,17 +13,16 @@ namespace OutcoldSolutions.GoogleMusic
     using Windows.ApplicationModel;
     using Windows.ApplicationModel.Activation;
     using Windows.UI.Xaml;
-    using Windows.UI.Xaml.Controls;
 
     public sealed partial class App : Application
     {
-        public static IDependencyResolverContainer Container { get; private set; }
-
         public App()
         {
             this.InitializeComponent();
             this.Suspending += this.OnSuspending;
         }
+
+        public static IDependencyResolverContainer Container { get; private set; }
 
         /// <summary>
         /// Invoked when the application is launched normally by the end user.  Other entry points
@@ -35,35 +32,35 @@ namespace OutcoldSolutions.GoogleMusic
         /// <param name="args">Details about the launch request and process.</param>
         protected override void OnLaunched(LaunchActivatedEventArgs args)
         {
-            MainPage mainPage = Window.Current.Content as MainPage;
+            MainView mainView = Window.Current.Content as MainView;
 
             // Do not repeat app initialization when the Window already has content,
             // just ensure that the window is active
-            if (mainPage == null)
+            if (mainView == null)
             {
                 Container = new DependencyResolverContainer();
 
                 using (var registration = Container.Registration())
                 {
-                    registration.Register<ILogManager>()
-                        .As<LogManager>();
+                    registration.Register<ILogManager>().As<LogManager>();
 
-                    registration.Register<IAuthentificationView>()
-                        .And<AuthentificationView>()
-                        .As<AuthentificationView>();
-
+                    registration.Register<IAuthentificationView>().As<AuthentificationView>();
                     registration.Register<AuthentificationPresenter>();
 
-                    registration.Register<MainPage>();
+                    registration.Register<IMainView>().As<MainView>();
+                    registration.Register<MainViewPresenter>();
+
+                    registration.Register<IStartView>().As<StartView>();
 
                     // Services
                     registration.Register<IClientLoginService>().As<ClientLoginService>();
                     registration.Register<IGoogleWebService>().As<GoogleWebService>();
                     registration.Register<IUserDataStorage>().As<UserDataStorage>();
+                    registration.Register<IAuthentificationService>().As<AuthentificationService>();
                 }
 
                 // Create a Frame to act as the navigation context and navigate to the first page
-                mainPage = Container.Resolve<MainPage>();
+                mainView = (MainView)Container.Resolve<IMainView>();
 
                 if (args.PreviousExecutionState == ApplicationExecutionState.Terminated)
                 {
@@ -71,7 +68,7 @@ namespace OutcoldSolutions.GoogleMusic
                 }
 
                 // Place the frame in the current Window
-                Window.Current.Content = mainPage;
+                Window.Current.Content = mainView;
             }
 
             // Ensure the current window is active

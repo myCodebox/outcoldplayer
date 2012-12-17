@@ -5,8 +5,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
 {
     using System;
     using System.Net;
-    using System.Runtime.InteropServices;
 
+    using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Models;
 
     using Windows.Security.Credentials;
@@ -15,8 +15,15 @@ namespace OutcoldSolutions.GoogleMusic.Services
     {
         private const string GoogleAccountsResource = "OutcoldSolutions.GoogleMusic";
 
+        private readonly ILogger logger;
+
         private CookieCollection storedCookieCollection;
         private Uri storedUrl;
+
+        public UserDataStorage(ILogManager logManager)
+        {
+            this.logger = logManager.CreateLogger("UserDataStorage");
+        }
 
         public void SaveUserInfo(UserInfo userInfo)
         {
@@ -32,8 +39,9 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     vault.Remove(credential);
                 }
             }
-            catch (Exception)
+            catch (Exception exception)
             {
+                this.logger.LogException(exception);
             }
             
             vault.Add(passwordCredential);
@@ -52,8 +60,9 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     return new UserInfo(list[0].UserName, list[0].Password);
                 }
             }
-            catch (Exception)
+            catch (Exception exception)
             {
+                this.logger.LogException(exception);
             }
 
             return null;
@@ -67,8 +76,16 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         public CookieContainer GetCookieContainer()
         {
+            var url = this.storedUrl;
+            var cookieCollection = this.storedCookieCollection;
+
+            if (url == null || cookieCollection == null)
+            {
+                return null;
+            }
+
             var cookieContainer = new CookieContainer();
-            cookieContainer.Add(this.storedUrl, this.storedCookieCollection);
+            cookieContainer.Add(url, cookieCollection);
             return cookieContainer;
         }
     }

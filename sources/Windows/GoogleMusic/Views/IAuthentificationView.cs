@@ -3,9 +3,11 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Views
 {
+    using System;
+
     public interface IAuthentificationView : IView
     {
-        void ShowError(string errorMessage);
+        event EventHandler Succeed;
 
         void ShowCaptcha(string captchaUrl);
     }
