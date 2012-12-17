@@ -5,15 +5,9 @@
     xmlns:local="using:OutcoldSolutions.GoogleMusic.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:converters="using:OutcoldSolutions.GoogleMusic.Converters"
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400">
-    
-    <local:ViewBase.Resources>
-        <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-        <converters:BooleanToVisibilityConverter x:Key="BooleanToInvisibilityConverter" Invert="True" />
-    </local:ViewBase.Resources>
     
     <Grid DataContext="{Binding Path=BindingModel, Mode=OneTime}" >
 
@@ -46,8 +40,11 @@
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        
-                        <Border Width="60" Height="60" Background="SandyBrown" />
+
+                        <Border Width="60" Height="60" Background="Silver">
+                            <Image Width="60" Height="60" Source="{Binding Path=PreviewImage, Mode=OneWay}" />
+                        </Border>
+
                         <TextBlock Grid.Column="1" Margin="10, 0, 0, 0" 
                                    Text="{Binding Path=Title, Mode=OneTime}" 
                                    TextWrapping="Wrap"
