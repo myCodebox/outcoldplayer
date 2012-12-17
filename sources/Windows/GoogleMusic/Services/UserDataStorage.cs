@@ -17,8 +17,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         private readonly ILogger logger;
 
-        private CookieCollection storedCookieCollection;
-        private Uri storedUrl;
+        private UserSession userSession;
 
         public UserDataStorage(ILogManager logManager)
         {
@@ -68,25 +67,14 @@ namespace OutcoldSolutions.GoogleMusic.Services
             return null;
         }
 
-        public void SaveCookies(Uri url, CookieCollection cookieCollection)
+        public void SetUserSession(UserSession session)
         {
-            this.storedUrl = url;
-            this.storedCookieCollection = cookieCollection;
+            this.userSession = session;
         }
 
-        public CookieContainer GetCookieContainer()
+        public UserSession GetUserSession()
         {
-            var url = this.storedUrl;
-            var cookieCollection = this.storedCookieCollection;
-
-            if (url == null || cookieCollection == null)
-            {
-                return null;
-            }
-
-            var cookieContainer = new CookieContainer();
-            cookieContainer.Add(url, cookieCollection);
-            return cookieContainer;
+            return this.userSession;
         }
     }
 }

@@ -4,8 +4,6 @@
 namespace OutcoldSolutions.GoogleMusic.WebServices
 {
     using System.Collections.Generic;
-    using System.Globalization;
-    using System.Net;
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.Diagnostics;
@@ -14,7 +12,7 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
     public class ClientLoginService : IClientLoginService
     {
         private const string ClientLoginUrl = "https://www.google.com/accounts/ClientLogin";
-        private const string GetAuthCookie = "https://play.google.com/music/listen?hl=en&u=0";
+        private const string GetAuthCookie = "https://play.google.com/music/listen?hl=en";
 
         private readonly ILogger logger;
         private readonly IGoogleWebService googleWebService;
@@ -41,12 +39,7 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
 
         public async Task<GoogleWebResponse> GetCookieAsync(string auth)
         {
-            var requestParameters = new Dictionary<HttpRequestHeader, string>
-                                        {
-                                            { HttpRequestHeader.Authorization, string.Format(CultureInfo.InvariantCulture, "GoogleLogin auth={0}", auth) }
-                                        };
-
-            return await this.googleWebService.PostAsync(GetAuthCookie, requestParameters);
+            return await this.googleWebService.PostAsync(GetAuthCookie);
         }
     }
 }

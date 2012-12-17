@@ -5,6 +5,7 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Net;
     using System.Threading.Tasks;
 
@@ -57,6 +58,24 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
                 {
                     try
                     {
+                        var userSession = this.userDataStorage.GetUserSession();
+                        if (userSession != null)
+                        {
+                            if (userSession.Cookies != null && userSession.Cookies.Count > 0)
+                            {
+                                if (url.IndexOf("?", StringComparison.OrdinalIgnoreCase) < 0)
+                                {
+                                    url += "?";
+                                }
+                                else
+                                {
+                                    url += "&";
+                                }
+
+                                url += string.Format("u=0&{0}", userSession.Cookies["xt"]);
+                            }
+                        }
+
                         var httpWebRequest = WebRequest.CreateHttp(url);
                         httpWebRequest.ContentType = "application/x-www-form-urlencoded";
                         httpWebRequest.Method = method;
@@ -69,15 +88,11 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
                             }
                         }
 
-                        var cookieContainer = this.userDataStorage.GetCookieContainer();
-                        if (cookieContainer != null)
+                        if (userSession != null)
                         {
-                            this.logger.Debug("Use stored cookie container.");
-                            httpWebRequest.CookieContainer = cookieContainer;
-                        }
-                        else
-                        {
-                            this.logger.Debug("Don not have cookie container.");
+                            httpWebRequest.CookieContainer = userSession.CookieContainer;
+                            httpWebRequest.Headers[HttpRequestHeader.Authorization] =
+                                string.Format(CultureInfo.InvariantCulture, "GoogleLogin auth={0}", userSession.Auth);
                         }
 
                         httpWebRequest.BeginGetRequestStream(

@@ -17,9 +17,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
     public sealed partial class MainView : ViewBase, IMainView
     {
-        public MainView(
-            IDependencyResolverContainer container)
-            : base(container)
+        public MainView()
         {
             this.InitializePresenter<MainViewPresenter>();
             this.InitializeComponent();

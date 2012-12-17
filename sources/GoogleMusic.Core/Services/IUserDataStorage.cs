@@ -3,9 +3,6 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Services
 {
-    using System;
-    using System.Net;
-
     using OutcoldSolutions.GoogleMusic.Models;
 
     public interface IUserDataStorage
@@ -14,8 +11,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         UserInfo GetUserInfo();
 
-        void SaveCookies(Uri url, CookieCollection cookieCollection);
+        void SetUserSession(UserSession session);
 
-        CookieContainer GetCookieContainer();
+        UserSession GetUserSession();
     }
 }

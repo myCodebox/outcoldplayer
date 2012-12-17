@@ -45,14 +45,13 @@ namespace OutcoldSolutions.GoogleMusic.Services
             if (loginResponse.IsOk)
             {
                 string auth = loginResponse.GetAuth();
+                var userSession = new UserSession(auth, new CookieContainer());
+                this.userDataStorage.SetUserSession(userSession);
+
                 GoogleWebResponse cookieResponse = await this.clientLoginService.GetCookieAsync(auth);
-                                
                 if (cookieResponse.HttpWebResponse.StatusCode == HttpStatusCode.OK)
                 {
-                    this.userDataStorage.SaveCookies(
-                        cookieResponse.HttpWebResponse.ResponseUri,
-                        cookieResponse.HttpWebResponse.Cookies);
-
+                    userSession.Cookies = cookieResponse.HttpWebResponse.Cookies;
                     return AuthentificationResult.SucceedResult();
                 }
                 else

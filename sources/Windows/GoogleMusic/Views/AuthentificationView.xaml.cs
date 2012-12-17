@@ -13,8 +13,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
     public sealed partial class AuthentificationView : ViewBase, IAuthentificationView
     {
-        public AuthentificationView(IDependencyResolverContainer container)
-            : base(container)
+        public AuthentificationView()
         {
             this.InitializeComponent();
             this.InitializePresenter<AuthentificationPresenter>();

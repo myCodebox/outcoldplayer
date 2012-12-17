@@ -4,16 +4,17 @@
 
 namespace OutcoldSolutions.GoogleMusic.Views
 {
-    using Windows.UI.Xaml.Controls;
+    using OutcoldSolutions.GoogleMusic.Presenters;
 
     public interface IStartView : IView
     {
     }
 
-    public sealed partial class StartView : UserControl, IStartView
+    public sealed partial class StartView : ViewBase, IStartView
     {
         public StartView()
         {
+            this.InitializePresenter<StartViewPresenter>();
             this.InitializeComponent();
         }
     }

@@ -11,9 +11,9 @@ namespace OutcoldSolutions.GoogleMusic.Views
     {
         private readonly IDependencyResolverContainer container;
 
-        public ViewBase(IDependencyResolverContainer container)
+        public ViewBase()
         {
-            this.container = container;
+            this.container = App.Container;
         }
 
         protected void InitializePresenter<TPresenter>() where TPresenter : PresenterBase
