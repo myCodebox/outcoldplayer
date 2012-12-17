@@ -4,6 +4,7 @@
 namespace OutcoldSolutions.GoogleMusic.BindingModels
 {
     using System;
+    using System.Linq;
 
     using OutcoldSolutions.GoogleMusic.WebServices.Models;
 
@@ -35,10 +36,15 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             {
                 if (this.playlist.Playlist != null && this.playlist.Playlist.Count > 0)
                 {
-                    var index = random.Next(0, this.playlist.Playlist.Count - 1);
-                    if (this.playlist.Playlist[index].AlbumArtUrl != null)
+                    var songsWithArt = this.playlist.Playlist.Where(x => x.AlbumArtUrl != null).ToList();
+
+                    if (songsWithArt.Count > 0)
                     {
-                        return new BitmapImage(new Uri("https:" + this.playlist.Playlist[index].AlbumArtUrl));
+                        var index = random.Next(0, songsWithArt.Count - 1);
+                        if (this.playlist.Playlist[index].AlbumArtUrl != null)
+                        {
+                            return new BitmapImage(new Uri("https:" + songsWithArt[index].AlbumArtUrl));
+                        }
                     }
                 }
 
