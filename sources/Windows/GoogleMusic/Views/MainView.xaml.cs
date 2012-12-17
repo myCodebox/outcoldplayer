@@ -32,5 +32,14 @@ namespace OutcoldSolutions.GoogleMusic.Views
         {
             this.Content.Children.Clear();
         }
+
+        private void GoBackClick(object sender, RoutedEventArgs e)
+        {
+            var mainViewPresenter = this.Presenter<MainViewPresenter>();
+            if (mainViewPresenter.CanGoBack())
+            {
+                mainViewPresenter.GoBack();
+            }
+        }
     }
 }

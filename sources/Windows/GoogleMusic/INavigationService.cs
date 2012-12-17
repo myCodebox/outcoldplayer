@@ -1,17 +1,16 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // Outcold Solutions (http://outcoldman.com)
 // --------------------------------------------------------------------------------------------------------------------
-namespace OutcoldSolutions.GoogleMusic.Presenters
+namespace OutcoldSolutions.GoogleMusic
 {
     using OutcoldSolutions.GoogleMusic.Views;
 
-    public class StartViewPresenter : ViewPresenterBase<IStartView>
+    public interface INavigationService
     {
-        public StartViewPresenter(
-            IDependencyResolverContainer container, 
-            IStartView view)
-            : base(container, view)
-        {
-        }
+        void NavigateTo<TView>(object parameter = null) where TView : IView;
+
+        void GoBack();
+
+        bool CanGoBack();
     }
 }

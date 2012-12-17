@@ -29,6 +29,7 @@
 
     <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     <converters:BooleanToVisibilityConverter x:Key="BooleanToInvisibilityConverter" Invert="True" />
+    <converters:InvertBooleanConverter x:Key="InvertBooleanConverter" />
 
     <x:String x:Key="ChevronGlyph">&#xE26B;</x:String>
 

@@ -12,14 +12,17 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     public class PlaylistsViewPresenter : ViewPresenterBase<IPlaylistsView>
     {
         private readonly IPlaylistsWebService playlistsWebService;
+        private readonly INavigationService navigationService;
 
         public PlaylistsViewPresenter(
             IDependencyResolverContainer container,
             IPlaylistsView view,
-            IPlaylistsWebService playlistsWebService)
+            IPlaylistsWebService playlistsWebService,
+            INavigationService navigationService)
             : base(container, view)
         {
             this.playlistsWebService = playlistsWebService;
+            this.navigationService = navigationService;
             this.BindingModel = new PlaylistsViewBindingModel();
 
             this.playlistsWebService.GetAllPlaylistsAsync()
@@ -49,5 +52,13 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         }
 
         public PlaylistsViewBindingModel BindingModel { get; private set; }
+
+        public void ItemClick(PlaylistBindingModel playlistBindingModel)
+        {
+            if (playlistBindingModel != null)
+            {
+                this.navigationService.NavigateTo<IPlaylistView>(playlistBindingModel.GetPlaylist());
+            }
+        }
     }
 }

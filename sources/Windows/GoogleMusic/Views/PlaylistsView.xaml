@@ -25,9 +25,10 @@
                   Margin="0, 10, 0, 0" 
                   ItemsSource="{Binding Path=Playlists, Mode=OneTime}"
                   SelectionMode="None"
-                  IsTapEnabled="False"
                   ScrollViewer.IsVerticalRailEnabled="False"
-                  ScrollViewer.IsHorizontalRailEnabled="False" >
+                  ScrollViewer.IsHorizontalRailEnabled="False"
+                  ItemClick="PlaylistItemClick"
+                  IsItemClickEnabled="True">
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <WrapGrid Orientation="Vertical" />

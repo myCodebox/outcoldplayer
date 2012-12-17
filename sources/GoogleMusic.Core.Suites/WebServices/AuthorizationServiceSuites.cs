@@ -19,7 +19,7 @@ namespace OutcoldSolutions.GoogleMusic.Suites.WebServices
 
     public class AuthorizationServiceSuites : SuitesBase
     {
-        private API api = new API();
+        
 
         [Fact(Skip = "Web Service")]
         public async Task Authorize_SetCredentials_CookiesLoaded()
@@ -46,38 +46,6 @@ namespace OutcoldSolutions.GoogleMusic.Suites.WebServices
             //await service.AuthorizeAsync();
 
             //cookieManager.Verify(x => x.SaveCookies(It.IsAny<Uri>(), It.IsAny<CookieCollection>()), Times.Once());
-        }
-
-        [Fact(Skip = "Web Service")]
-        public async Task Login_DefaultCredentials_Init()
-        {
-            object a = null;
-
-            var service = this.Container.Resolve<ClientLoginService>();
-            var webResponse = await service.LoginAsync("outcoldman.test@gmail.com", "Qw12er34");
-
-            
-
-            //var webResponse = httpWebRequest.GetResponse();
-            
-
-            GoogleMusicPlaylists playlists = null;
-
-            api.Login("outcoldman.test@gmail.com", "Qw12er34");
-
-            api.OnLoginComplete += (sender, args) => this.api.GetPlaylist();
-
-            api.OnGetPlaylistsComplete += pls =>
-                { 
-                    playlists = pls;
-                };
-
-            while (playlists == null && a == null)
-            {
-                Thread.Sleep(100);
-            }
-
-            Assert.NotEmpty(playlists.Playlists);
         }
     }
 }

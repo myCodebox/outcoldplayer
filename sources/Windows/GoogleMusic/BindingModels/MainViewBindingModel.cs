@@ -8,8 +8,8 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
     public class MainViewBindingModel : BindingModelBase
     {
         private string message;
-
         private bool isProgressRingActive = true;
+        private bool canGoBack = false;
 
         public string Message
         {
@@ -40,6 +40,23 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
                 if (this.isProgressRingActive != value)
                 {
                     this.isProgressRingActive = value;
+                    this.RaiseCurrenntPropertyChanged();
+                }
+            }
+        }
+
+        public bool CanGoBack
+        {
+            get
+            {
+                return this.canGoBack;
+            }
+
+            set
+            {
+                if (this.canGoBack != value)
+                {
+                    this.canGoBack = value;
                     this.RaiseCurrenntPropertyChanged();
                 }
             }

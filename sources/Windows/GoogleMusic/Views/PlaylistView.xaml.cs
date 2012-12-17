@@ -3,8 +3,18 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Views
 {
-    public interface IView
+    using OutcoldSolutions.GoogleMusic.Presenters;
+
+    public interface IPlaylistView : IView
     {
-        void OnNavigatedTo(object parameter);
+    }
+
+    public sealed partial class PlaylistView : ViewBase, IPlaylistView
+    {
+        public PlaylistView()
+        {
+            this.InitializePresenter<PlaylistViewPresenter>();
+            this.InitializeComponent();
+        }
     }
 }

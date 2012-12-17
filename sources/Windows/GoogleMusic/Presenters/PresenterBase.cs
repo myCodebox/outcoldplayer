@@ -3,9 +3,10 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Presenters
 {
+    using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Diagnostics;
 
-    public class PresenterBase
+    public class PresenterBase : BindingModelBase
     {
         private readonly IDependencyResolverContainer container;
 
@@ -16,5 +17,10 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         }
 
         protected ILogger Logger { get; private set; }
+
+        public virtual void OnNavigatedTo(object parameter)
+        {
+            
+        }
     }
 }

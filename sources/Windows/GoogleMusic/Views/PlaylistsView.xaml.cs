@@ -4,7 +4,10 @@
 
 namespace OutcoldSolutions.GoogleMusic.Views
 {
+    using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Presenters;
+
+    using Windows.UI.Xaml.Controls;
 
     public interface IPlaylistsView : IView
     {
@@ -16,6 +19,11 @@ namespace OutcoldSolutions.GoogleMusic.Views
         {
             this.InitializePresenter<PlaylistsViewPresenter>();
             this.InitializeComponent();
+        }
+
+        private void PlaylistItemClick(object sender, ItemClickEventArgs e)
+        {
+            this.Presenter<PlaylistsViewPresenter>().ItemClick(e.ClickedItem as PlaylistBindingModel);
         }
     }
 }

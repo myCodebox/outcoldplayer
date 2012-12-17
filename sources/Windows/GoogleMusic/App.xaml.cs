@@ -44,17 +44,20 @@ namespace OutcoldSolutions.GoogleMusic
                 {
                     registration.Register<ILogManager>().As<LogManager>();
 
+                    registration.Register<IMainView>().As<MainView>();
+                    registration.Register<INavigationService>().And<MainViewPresenter>().AsSingleton<MainViewPresenter>();
+
                     registration.Register<IAuthentificationView>().As<AuthentificationView>();
                     registration.Register<AuthentificationPresenter>();
-
-                    registration.Register<IMainView>().As<MainView>();
-                    registration.Register<MainViewPresenter>();
 
                     registration.Register<IStartView>().As<StartView>();
                     registration.Register<StartViewPresenter>();
 
                     registration.Register<IPlaylistsView>().As<PlaylistsView>();
                     registration.Register<PlaylistsViewPresenter>();
+
+                    registration.Register<IPlaylistView>().As<PlaylistView>();
+                    registration.Register<PlaylistViewPresenter>();
 
                     // Services
                     registration.Register<IClientLoginService>().As<ClientLoginService>();

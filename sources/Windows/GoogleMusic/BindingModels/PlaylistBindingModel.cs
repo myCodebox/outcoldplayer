@@ -36,11 +36,19 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
                 if (this.playlist.Playlist != null && this.playlist.Playlist.Count > 0)
                 {
                     var index = random.Next(0, this.playlist.Playlist.Count - 1);
-                    return new BitmapImage(new Uri("https:" + this.playlist.Playlist[index].AlbumArtUrl));
+                    if (this.playlist.Playlist[index].AlbumArtUrl != null)
+                    {
+                        return new BitmapImage(new Uri("https:" + this.playlist.Playlist[index].AlbumArtUrl));
+                    }
                 }
 
                 return null;
             }
+        }
+
+        public GoogleMusicPlaylist GetPlaylist()
+        {
+            return this.playlist;
         }
     }
 }

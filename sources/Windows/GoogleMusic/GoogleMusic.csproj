@@ -107,13 +107,18 @@
     <Compile Include="BindingModels\MainViewBindingModel.cs" />
     <Compile Include="BindingModels\PlaylistBindingModel.cs" />
     <Compile Include="BindingModels\PlaylistsViewBindingModel.cs" />
+    <Compile Include="BindingModels\SongBindingModel.cs" />
     <Compile Include="BindingModels\StartViewBindingModel.cs" />
     <Compile Include="BindingModels\UserAuthentificationBindingModel.cs" />
     <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
+    <Compile Include="Converters\InvertBooleanConverter.cs" />
     <Compile Include="IDispatcher.cs" />
+    <Compile Include="INavigationService.cs" />
     <Compile Include="Presenters\AuthentificationPresenter.cs" />
     <Compile Include="Presenters\MainViewPresenter.cs" />
     <Compile Include="Presenters\PlaylistsViewPresenter.cs" />
+    <Compile Include="BindingModels\PlaylistViewBindingModel.cs" />
+    <Compile Include="Presenters\PlaylistViewPresenter.cs" />
     <Compile Include="Presenters\PresenterBase.cs" />
     <Compile Include="Presenters\StartViewPresenter.cs" />
     <Compile Include="Presenters\ViewPresenterBase.cs" />
@@ -129,6 +134,9 @@
     </Compile>
     <Compile Include="Views\PlaylistsView.xaml.cs">
       <DependentUpon>PlaylistsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PlaylistView.xaml.cs">
+      <DependentUpon>PlaylistView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\StartView.xaml.cs">
       <DependentUpon>StartView.xaml</DependentUpon>
@@ -166,6 +174,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\PlaylistsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PlaylistView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

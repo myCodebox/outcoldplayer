@@ -49,7 +49,6 @@
     <Compile Include="Services\AuthentificationService.cs" />
     <Compile Include="Services\IAuthentificationService.cs" />
     <Compile Include="Services\IUserDataStorage.cs" />
-    <Compile Include="WebServices\API.cs" />
     <Compile Include="WebServices\ClientLoginService.cs" />
     <Compile Include="WebServices\GoogleWebService.cs" />
     <Compile Include="WebServices\IClientLoginService.cs" />
@@ -59,8 +58,6 @@
     <Compile Include="WebServices\Models\GoogleWebResponse.cs" />
     <Compile Include="WebServices\PlaylistsWebService.cs" />
     <Compile Include="WebServices\RequestBodyWriter.cs" />
-    <Compile Include="WebServices\FormBuilder.cs" />
-    <Compile Include="WebServices\GoogleHTTP.cs" />
     <Compile Include="WebServices\Models\AddPlaylistResp.cs" />
     <Compile Include="WebServices\Models\DeletePlaylistResp.cs" />
     <Compile Include="WebServices\Models\GoogleMusicPlaylist.cs" />

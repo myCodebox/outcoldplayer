@@ -43,7 +43,7 @@ namespace OutcoldSolutions.GoogleMusic.WebServices.Models
             }
         }
 
-        public TType GetAsJsonObject<TType>() where TType: class 
+        public TType GetAsJsonObject<TType>() where TType : class
         {
             using (var responseStream = HttpWebResponse.GetResponseStream())
             {
