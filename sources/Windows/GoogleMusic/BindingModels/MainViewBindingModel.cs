@@ -23,7 +23,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
                 if (!string.Equals(this.message, value, StringComparison.CurrentCultureIgnoreCase))
                 {
                     this.message = value;
-                    this.RaiseCurrenntPropertyChanged();
+                    this.RaiseCurrentPropertyChanged();
                 }
             }
         }
@@ -40,7 +40,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
                 if (this.isProgressRingActive != value)
                 {
                     this.isProgressRingActive = value;
-                    this.RaiseCurrenntPropertyChanged();
+                    this.RaiseCurrentPropertyChanged();
                 }
             }
         }
@@ -57,7 +57,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
                 if (this.canGoBack != value)
                 {
                     this.canGoBack = value;
-                    this.RaiseCurrenntPropertyChanged();
+                    this.RaiseCurrentPropertyChanged();
                 }
             }
         }

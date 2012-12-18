@@ -38,6 +38,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                        if (task.Result.Succeed)
                        {
                            this.NavigateTo<IStartView>();
+                           this.View.ShowPlayer();
                        }
                        else
                        {
@@ -101,6 +102,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             ((IAuthentificationView)sender).Succeed -= this.AuthentificationViewOnSucceed;
 
             this.NavigateTo<IStartView>();
+            this.View.ShowPlayer();
         }
 
         private TView ShowView<TView>() where TView : IView

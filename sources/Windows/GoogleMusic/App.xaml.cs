@@ -59,12 +59,16 @@ namespace OutcoldSolutions.GoogleMusic
                     registration.Register<IPlaylistView>().As<PlaylistView>();
                     registration.Register<PlaylistViewPresenter>();
 
+                    registration.Register<IPlayerView>().AsSingleton<PlayerView>();
+                    registration.Register<ICurrentPlaylistService>().And<PlayerViewPresenter>().AsSingleton<PlayerViewPresenter>();
+
                     // Services
                     registration.Register<IClientLoginService>().As<ClientLoginService>();
                     registration.Register<IGoogleWebService>().AsSingleton<GoogleWebService>();
                     registration.Register<IUserDataStorage>().AsSingleton<UserDataStorage>();
                     registration.Register<IAuthentificationService>().As<AuthentificationService>();
                     registration.Register<IPlaylistsWebService>().As<PlaylistsWebService>();
+                    registration.Register<ISongWebService>().As<SongWebService>();
                 }
 
                 // Create a Frame to act as the navigation context and navigate to the first page

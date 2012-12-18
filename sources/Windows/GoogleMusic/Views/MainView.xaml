@@ -21,6 +21,8 @@
             <ProgressRing IsActive="{Binding Path=IsProgressRingActive, Mode=OneWay}" />
             <TextBlock Style="{StaticResource BasicTextStyle}" Text="{Binding Path=Message, Mode=OneWay}">Loading...</TextBlock>
         </StackPanel>
+        
+        <views:PlayerView x:Name="PlayerView" Visibility="Collapsed" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0, 20, 20, 0" />
     </Grid>
     
 </views:ViewBase>

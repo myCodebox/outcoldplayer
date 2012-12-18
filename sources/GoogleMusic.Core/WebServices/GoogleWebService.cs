@@ -29,24 +29,7 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
             this.logger = logManager.CreateLogger("ClientLoginService");
         }
 
-        public async Task<GoogleWebResponse> GetAsync(
-            string url, 
-            IEnumerable<KeyValuePair<HttpRequestHeader, string>> headers = null, 
-            IEnumerable<KeyValuePair<string, string>> arguments = null)
-        {
-            return await this.RequestAsync("GET", url, headers, arguments);
-        }
-
-        public async Task<GoogleWebResponse> PostAsync(
-            string url, 
-            IEnumerable<KeyValuePair<HttpRequestHeader, string>> headers = null, 
-            IEnumerable<KeyValuePair<string, string>> arguments = null)
-        {
-            return await this.RequestAsync("POST", url, headers, arguments);
-        }
-
-        private Task<GoogleWebResponse> RequestAsync(
-            string method, 
+        public Task<GoogleWebResponse> GetAsync(
             string url, 
             IEnumerable<KeyValuePair<HttpRequestHeader, string>> headers = null, 
             IEnumerable<KeyValuePair<string, string>> arguments = null)
@@ -58,42 +41,42 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
                 {
                     try
                     {
-                        var userSession = this.userDataStorage.GetUserSession();
-                        if (userSession != null)
+                        var httpWebRequest = this.SetupRequest(url, "GET", headers);
+
+                        try
                         {
-                            if (userSession.Cookies != null && userSession.Cookies.Count > 0)
-                            {
-                                if (url.IndexOf("?", StringComparison.OrdinalIgnoreCase) < 0)
-                                {
-                                    url += "?";
-                                }
-                                else
-                                {
-                                    url += "&";
-                                }
-
-                                url += string.Format("u=0&{0}", userSession.Cookies["xt"]);
-                            }
+                            this.HandleGetResponse(httpWebRequest, taskCompletionSource);
                         }
-
-                        var httpWebRequest = WebRequest.CreateHttp(url);
-                        httpWebRequest.ContentType = "application/x-www-form-urlencoded";
-                        httpWebRequest.Method = method;
-
-                        if (headers != null)
+                        catch (Exception exception)
                         {
-                            foreach (var header in headers)
-                            {
-                                httpWebRequest.Headers[header.Key] = header.Value;
-                            }
-                        }
+                            logger.LogException(exception);
 
-                        if (userSession != null)
-                        {
-                            httpWebRequest.CookieContainer = userSession.CookieContainer;
-                            httpWebRequest.Headers[HttpRequestHeader.Authorization] =
-                                string.Format(CultureInfo.InvariantCulture, "GoogleLogin auth={0}", userSession.Auth);
+                            this.HandleRequestException(exception, taskCompletionSource);
                         }
+                    }
+                    catch (Exception exception)
+                    {
+                        logger.LogException(exception);
+                        taskCompletionSource.SetException(exception);
+                    }
+                });
+
+            return taskCompletionSource.Task;
+        }
+
+        public Task<GoogleWebResponse> PostAsync(
+            string url, 
+            IEnumerable<KeyValuePair<HttpRequestHeader, string>> headers = null, 
+            IEnumerable<KeyValuePair<string, string>> arguments = null)
+        {
+            var taskCompletionSource = new TaskCompletionSource<GoogleWebResponse>();
+
+            Task.Factory.StartNew(
+                () =>
+                {
+                    try
+                    {
+                        var httpWebRequest = this.SetupRequest(url, "POST", headers);
 
                         httpWebRequest.BeginGetRequestStream(
                             (asyncResult) =>
@@ -114,40 +97,13 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
                                         }
                                     }
 
-                                    httpWebRequest.BeginGetResponse(
-                                        (responceAsyncResult) =>
-                                        {
-                                            try
-                                            {
-                                                var webResponse = httpWebRequest.EndGetResponse(responceAsyncResult);
-                                                taskCompletionSource.SetResult(this.ParseResponse(webResponse));
-                                            }
-                                            catch (WebException exception)
-                                            {
-                                                taskCompletionSource.SetResult(this.ParseResponse(exception.Response));
-                                            }
-                                            catch (Exception exception)
-                                            {
-                                                logger.LogException(exception);
-                                                taskCompletionSource.SetException(exception);
-                                            }
-                                        },
-                                        null);
+                                    this.HandleGetResponse(httpWebRequest, taskCompletionSource);
                                 }
                                 catch (Exception exception)
                                 {
                                     logger.LogException(exception);
 
-                                    var webException = exception as WebException;
-                                    if (webException != null)
-                                    {
-                                        var webResponse = webException.Response;
-                                        taskCompletionSource.SetResult(this.ParseResponse(webResponse));
-                                    }
-                                    else
-                                    {
-                                        taskCompletionSource.SetException(exception);
-                                    }
+                                    this.HandleRequestException(exception, taskCompletionSource);
                                 }
                             },
                             null);
@@ -160,6 +116,85 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
                 });
 
             return taskCompletionSource.Task;
+        }
+
+        private HttpWebRequest SetupRequest(string url, string method, IEnumerable<KeyValuePair<HttpRequestHeader, string>> headers = null)
+        {
+            var userSession = this.userDataStorage.GetUserSession();
+            if (userSession != null)
+            {
+                if (userSession.Cookies != null && userSession.Cookies.Count > 0)
+                {
+                    if (url.IndexOf("?", StringComparison.OrdinalIgnoreCase) < 0)
+                    {
+                        url += "?";
+                    }
+                    else
+                    {
+                        url += "&";
+                    }
+
+                    url += string.Format("u=0&{0}", userSession.Cookies["xt"]);
+                }
+            }
+
+            var httpWebRequest = WebRequest.CreateHttp(url);
+            httpWebRequest.ContentType = "application/x-www-form-urlencoded";
+            httpWebRequest.Method = method;
+
+            if (headers != null)
+            {
+                foreach (var header in headers)
+                {
+                    httpWebRequest.Headers[header.Key] = header.Value;
+                }
+            }
+
+            if (userSession != null)
+            {
+                httpWebRequest.CookieContainer = userSession.CookieContainer;
+                httpWebRequest.Headers[HttpRequestHeader.Authorization] =
+                    string.Format(CultureInfo.InvariantCulture, "GoogleLogin auth={0}", userSession.Auth);
+            }
+
+            return httpWebRequest;
+        }
+
+        private void HandleGetResponse(HttpWebRequest httpWebRequest, TaskCompletionSource<GoogleWebResponse> taskCompletionSource)
+        {
+            httpWebRequest.BeginGetResponse(
+                (responceAsyncResult) =>
+                    {
+                        try
+                        {
+                            var webResponse = httpWebRequest.EndGetResponse(responceAsyncResult);
+                            taskCompletionSource.SetResult(this.ParseResponse(webResponse));
+                        }
+                        catch (WebException exception)
+                        {
+                            taskCompletionSource.SetResult(this.ParseResponse(exception.Response));
+                        }
+                        catch (Exception exception)
+                        {
+                            this.logger.LogException(exception);
+                            taskCompletionSource.SetException(exception);
+                        }
+                    },
+                null);
+        }
+
+        private void HandleRequestException(Exception exception, TaskCompletionSource<GoogleWebResponse> taskCompletionSource)
+        {
+            var webException = exception as WebException;
+            if (webException != null)
+            {
+                var webResponse = webException.Response;
+                taskCompletionSource.SetResult(this.ParseResponse(webResponse));
+            }
+            else
+            {
+                taskCompletionSource.SetException(exception);
+            }
         }
 
         private GoogleWebResponse ParseResponse(WebResponse webResponse)

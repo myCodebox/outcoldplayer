@@ -29,7 +29,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
                 if (this.isLoading != value)
                 {
                     this.isLoading = value;
-                    this.RaiseCurrenntPropertyChanged();
+                    this.RaiseCurrentPropertyChanged();
                 }
             }
         }

@@ -4,18 +4,23 @@
 namespace OutcoldSolutions.GoogleMusic.Presenters
 {
     using OutcoldSolutions.GoogleMusic.BindingModels;
+    using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
     using OutcoldSolutions.GoogleMusic.WebServices.Models;
 
     public class PlaylistViewPresenter : ViewPresenterBase<IPlaylistView>
     {
+        private readonly ICurrentPlaylistService currentPlaylistService;
+
         private PlaylistViewBindingModel bindingModel;
 
         public PlaylistViewPresenter(
             IDependencyResolverContainer container, 
-            IPlaylistView view)
+            IPlaylistView view,
+            ICurrentPlaylistService currentPlaylistService)
             : base(container, view)
         {
+            this.currentPlaylistService = currentPlaylistService;
         }
 
         public PlaylistViewBindingModel BindingModel
@@ -30,7 +35,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 if (this.bindingModel != value)
                 {
                     this.bindingModel = value;
-                    this.RaiseCurrenntPropertyChanged();
+                    this.RaiseCurrentPropertyChanged();
                 }
             }
         }
@@ -43,6 +48,12 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             if (playlist != null && playlist.Playlist != null)
             {
                 this.BindingModel = new PlaylistViewBindingModel(playlist);
+
+                // TODO: Temporary solution
+                if (playlist.Playlist != null)
+                {
+                    this.currentPlaylistService.PlaySongs(playlist.Playlist);
+                }
             }
             else
             {

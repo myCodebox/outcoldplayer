@@ -10,18 +10,19 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected void RaiseCurrenntPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            this.RaisePropertyChanged(propertyName);
-        }
-
-        private void RaisePropertyChanged(string propertyName)
+        // TODO: Implement expressions
+        public void RaisePropertyChanged(string propertyName)
         {
             var handler = this.PropertyChanged;
             if (handler != null)
             {
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
+        }
+
+        protected void RaiseCurrentPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.RaisePropertyChanged(propertyName);
         }
     }
 }

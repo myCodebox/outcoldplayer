@@ -24,7 +24,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
                 if (!string.Equals(this.email, value, StringComparison.CurrentCulture))
                 {
                     this.email = value;
-                    this.RaiseCurrenntPropertyChanged();
+                    this.RaiseCurrentPropertyChanged();
                 }
             }
         }
@@ -41,7 +41,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
                 if (!string.Equals(this.password, value, StringComparison.CurrentCulture))
                 {
                     this.password = value;
-                    this.RaiseCurrenntPropertyChanged();
+                    this.RaiseCurrentPropertyChanged();
                 }
             }
         }
@@ -58,7 +58,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
                 if (this.rememberAccount != value)
                 {
                     this.rememberAccount = value;
-                    this.RaiseCurrenntPropertyChanged();
+                    this.RaiseCurrentPropertyChanged();
                 }
             }
         }
@@ -75,7 +75,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
                 if (!string.Equals(this.errorMessage, value, StringComparison.CurrentCulture))
                 {
                     this.errorMessage = value;
-                    this.RaiseCurrenntPropertyChanged();
+                    this.RaiseCurrentPropertyChanged();
                 }
             }
         }

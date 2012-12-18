@@ -13,6 +13,10 @@ namespace OutcoldSolutions.GoogleMusic.Views
         void ShowView(IView view);
 
         void HideView();
+
+        void ShowPlayer();
+
+        void HidePlayer();
     }
 
     public sealed partial class MainView : ViewBase, IMainView
@@ -31,6 +35,16 @@ namespace OutcoldSolutions.GoogleMusic.Views
         public void HideView()
         {
             this.Content.Children.Clear();
+        }
+
+        public void ShowPlayer()
+        {
+            this.PlayerView.Visibility = Visibility.Visible;
+        }
+
+        public void HidePlayer()
+        {
+            this.PlayerView.Visibility = Visibility.Collapsed;
         }
 
         private void GoBackClick(object sender, RoutedEventArgs e)

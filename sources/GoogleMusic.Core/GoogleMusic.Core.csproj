@@ -54,6 +54,7 @@
     <Compile Include="WebServices\IClientLoginService.cs" />
     <Compile Include="WebServices\ICookieManager.cs" />
     <Compile Include="WebServices\IGoogleWebService.cs" />
+    <Compile Include="WebServices\ISongWebService.cs" />
     <Compile Include="WebServices\Models\GoogleLoginResponse.cs" />
     <Compile Include="WebServices\Models\GoogleWebResponse.cs" />
     <Compile Include="WebServices\PlaylistsWebService.cs" />
@@ -65,6 +66,7 @@
     <Compile Include="WebServices\Models\GoogleMusicSong.cs" />
     <Compile Include="WebServices\Models\GoogleMusicSongUrl.cs" />
     <Compile Include="WebServices\PlainLinesBodyReader.cs" />
+    <Compile Include="WebServices\SongWebService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">

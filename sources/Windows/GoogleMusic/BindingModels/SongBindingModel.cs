@@ -64,5 +64,10 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
                 return this.song.Rating;
             }
         }
+
+        public GoogleMusicSong GetSong()
+        {
+            return this.song;
+        }
     }
 }
