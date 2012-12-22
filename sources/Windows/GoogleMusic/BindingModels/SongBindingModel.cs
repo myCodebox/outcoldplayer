@@ -7,6 +7,9 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
     using OutcoldSolutions.GoogleMusic.WebServices.Models;
 
+    using Windows.UI.Xaml.Media;
+    using Windows.UI.Xaml.Media.Imaging;
+
     public class SongBindingModel
     {
         private readonly GoogleMusicSong song;
@@ -62,6 +65,21 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             get
             {
                 return this.song.Rating;
+            }
+        }
+
+        public ImageSource AlbumArt
+        {
+            get
+            {
+                if (this.song.AlbumArtUrl != null)
+                {
+                    // TODO: Load only 40x40 image
+                    return new BitmapImage(new Uri("https:" + this.song.AlbumArtUrl));
+                }
+
+                // TODO: Some default image
+                return null;
             }
         }
 

@@ -262,11 +262,12 @@
         <Setter Property="FontFamily" Value="Segoe UI Symbol"/>
         <Setter Property="FontWeight" Value="Normal"/>
         <Setter Property="FontSize" Value="20"/>
+        <Setter Property="Width" Value="100" />
         <Setter Property="AutomationProperties.ItemType" Value="App Bar Button"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ButtonBase">
-                    <Grid x:Name="RootGrid" Width="100" Background="Transparent">
+                    <Grid x:Name="RootGrid" Width="{TemplateBinding Width}" Background="Transparent">
                         <StackPanel VerticalAlignment="Top" Margin="0,12,0,11">
                             <Grid Width="40" Height="40" Margin="0,0,0,5" HorizontalAlignment="Center">
                                 <TextBlock x:Name="BackgroundGlyph" Text="&#xE0A8;" FontFamily="Segoe UI Symbol" FontSize="53.333" Margin="-4,-19,0,0" Foreground="{StaticResource AppBarItemBackgroundThemeBrush}"/>
@@ -409,6 +410,30 @@
         </Setter>
     </Style>
 
+    <Style x:Key="SkipBackAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
+        <Setter Property="AutomationProperties.AutomationId" Value="SkipBackAppBarButton"/>
+        <Setter Property="AutomationProperties.Name" Value="Skip Back"/>
+        <Setter Property="Content" Value="&#xE100;"/>
+    </Style>
+    
+    <Style x:Key="SkipAheadAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
+        <Setter Property="AutomationProperties.AutomationId" Value="SkipAheadAppBarButton"/>
+        <Setter Property="AutomationProperties.Name" Value="Skip Ahead"/>
+        <Setter Property="Content" Value="&#xE101;"/>
+    </Style>
+    
+    <Style x:Key="PlayAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
+        <Setter Property="AutomationProperties.AutomationId" Value="PlayAppBarButton"/>
+        <Setter Property="AutomationProperties.Name" Value="Play"/>
+        <Setter Property="Content" Value="&#xE102;"/>
+    </Style>
+
+    <Style x:Key="PauseAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
+        <Setter Property="AutomationProperties.AutomationId" Value="PauseAppBarButton"/>
+        <Setter Property="AutomationProperties.Name" Value="Pause"/>
+        <Setter Property="Content" Value="&#xE103;"/>
+    </Style>
+
     <!-- 
         Standard AppBarButton Styles for use with Button and ToggleButton
     
@@ -418,21 +443,8 @@
 
     <!--
     
-    <Style x:Key="SkipBackAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
-        <Setter Property="AutomationProperties.AutomationId" Value="SkipBackAppBarButton"/>
-        <Setter Property="AutomationProperties.Name" Value="Skip Back"/>
-        <Setter Property="Content" Value="&#xE100;"/>
-    </Style>
-    <Style x:Key="SkipAheadAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
-        <Setter Property="AutomationProperties.AutomationId" Value="SkipAheadAppBarButton"/>
-        <Setter Property="AutomationProperties.Name" Value="Skip Ahead"/>
-        <Setter Property="Content" Value="&#xE101;"/>
-    </Style>
-    <Style x:Key="PlayAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
-        <Setter Property="AutomationProperties.AutomationId" Value="PlayAppBarButton"/>
-        <Setter Property="AutomationProperties.Name" Value="Play"/>
-        <Setter Property="Content" Value="&#xE102;"/>
-    </Style>
+    
+    
     <Style x:Key="PauseAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
         <Setter Property="AutomationProperties.AutomationId" Value="PauseAppBarButton"/>
         <Setter Property="AutomationProperties.Name" Value="Pause"/>

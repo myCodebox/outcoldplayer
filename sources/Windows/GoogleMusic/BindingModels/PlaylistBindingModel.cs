@@ -43,6 +43,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
                         var index = random.Next(0, songsWithArt.Count - 1);
                         if (this.playlist.Playlist[index].AlbumArtUrl != null)
                         {
+                            // TODO: Load only 40x40 image
                             return new BitmapImage(new Uri("https:" + songsWithArt[index].AlbumArtUrl));
                         }
                     }

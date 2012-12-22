@@ -9,12 +9,57 @@
     d:DesignHeight="100"
     d:DesignWidth="320">
 
-    <Grid Height="100" Width="320" Background="Salmon">
+    <Grid Height="100" Width="320" Background="Salmon" DataContext="{Binding Path=BindingModel, Mode=OneTime}">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        
         <MediaElement 
-            x:Name="MediaElement"
-            IsLooping="False"
-            AutoPlay="True"
-            AudioCategory="BackgroundCapableMedia"
-            MediaEnded="MediaEnded" />
+                x:Name="MediaElement"
+                IsLooping="False"
+                AutoPlay="True"
+                AudioCategory="BackgroundCapableMedia"
+                MediaEnded="MediaEnded" />
+        
+        <Image Height="100" Width="100" 
+               Source="{Binding Path=CurrentSong.AlbumArt, Mode=OneWay}" 
+               Grid.RowSpan="2"/>
+
+        <TextBlock Grid.Column="1" Grid.Row="1" Style="{StaticResource ItemTextStyle}"
+               Text="{Binding Path=CurrentSong.Title, Mode=OneWay}" />
+
+        <StackPanel Orientation="Horizontal" Grid.Column="1">
+            
+            <Button Style="{StaticResource SkipBackAppBarButtonStyle}" 
+                    AutomationProperties.Name="" 
+                    Command="{Binding Path=SkipBackCommand, Mode=OneTime}"
+                    Margin="10, 0, 0, 0"
+                    VerticalAlignment="Top"
+                    Width="70" Height="65"/>
+            <Button Style="{StaticResource PlayAppBarButtonStyle}"  
+                    Visibility="{Binding Path=IsPlaying, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}" 
+                    AutomationProperties.Name=""  
+                    Command="{Binding Path=PlayCommand, Mode=OneTime}"
+                    VerticalAlignment="Top"
+                    Width="70" Height="65"/>
+            <Button Style="{StaticResource PauseAppBarButtonStyle}" 
+                    Visibility="{Binding Path=IsPlaying, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" 
+                    AutomationProperties.Name="" 
+                    Command="{Binding Path=PauseCommand, Mode=OneTime}"
+                    VerticalAlignment="Top"
+                    Width="70" Height="65"/>
+            <Button Style="{StaticResource SkipAheadAppBarButtonStyle}"  
+                    AutomationProperties.Name="" 
+                    Command="{Binding Path=SkipAheadCommand, Mode=OneTime}"
+                    Width="70" Height="65"/>
+        </StackPanel>
+        
     </Grid>
 </views:ViewBase>

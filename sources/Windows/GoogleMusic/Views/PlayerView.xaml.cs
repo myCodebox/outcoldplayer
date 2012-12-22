@@ -36,6 +36,11 @@ namespace OutcoldSolutions.GoogleMusic.Views
                 CoreDispatcherPriority.High,
                 () =>
                     {
+                        if (this.MediaElement.Source != null)
+                        {
+                            this.MediaElement.Stop();
+                        }
+
                         this.MediaElement.Source = songUri;
                         this.MediaElement.Play();
                     });

@@ -5,6 +5,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 {
     using System;
     using System.Collections.Generic;
+    using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Services;
@@ -17,8 +18,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     public class PlayerViewPresenter : ViewPresenterBase<IPlayerView>, ICurrentPlaylistService, IDisposable
     {
         private readonly ISongWebService songWebService;
-
-        private bool isPaused = false;
+        
 
         public PlayerViewPresenter(
             IDependencyResolverContainer container, 
@@ -33,6 +33,13 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             MediaControl.PlayPressed += this.MediaControlPlayPressed;
             MediaControl.PausePressed += this.MediaControlPausePressed;
             MediaControl.StopPressed += this.MediaControlStopPressed;
+
+            this.BindingModel.SkipBackCommand = new DelegateCommand(this.PreviousSong, () => this.BindingModel.CurrentSongIndex > 0);
+            this.BindingModel.PlayCommand = new DelegateCommand(this.Play, () => !this.BindingModel.IsPlaying && this.BindingModel.Songs.Count > 0);
+            this.BindingModel.PauseCommand = new DelegateCommand(this.Pause, () => this.BindingModel.IsPlaying);
+            this.BindingModel.SkipAheadCommand = new DelegateCommand(this.NextSong, () => this.BindingModel.CurrentSongIndex < (this.BindingModel.Songs.Count - 1));
+
+            this.BindingModel.UpdateCommands();
         }
 
         ~PlayerViewPresenter()
@@ -86,11 +93,60 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         public void OnMediaEnded()
         {
+            this.BindingModel.State = PlayState.Stop;
             this.NextSong();
+        }
+
+        public void NextSong()
+        {
+            this.BindingModel.CurrentSongIndex++;
+            this.PlayCurrentSong();
+
+            this.BindingModel.UpdateCommands();
+        }
+
+        public void PreviousSong()
+        {
+            this.BindingModel.CurrentSongIndex--;
+            this.PlayCurrentSong();
+
+            this.BindingModel.UpdateCommands();
+        }
+
+        public void Play()
+        {
+            if (this.BindingModel.State == PlayState.Stop)
+            {
+                this.PlayCurrentSong();
+            }
+            else
+            {
+                this.View.Play();
+                this.BindingModel.State = PlayState.Play;
+            }
+
+            this.BindingModel.UpdateCommands();
+        }
+
+        public void Pause()
+        {
+            this.View.Pause();
+            this.BindingModel.State = PlayState.Pause;
+
+            this.BindingModel.UpdateCommands();
+        }
+
+        public void Stop()
+        {
+            this.View.Stop();
+            this.BindingModel.State = PlayState.Stop;
+
+            this.BindingModel.UpdateCommands();
         }
 
         private void PlayCurrentSong()
         {
+            this.BindingModel.UpdateCommands();
             var songBindingModel = this.BindingModel.CurrentSong;
             if (songBindingModel != null)
             {
@@ -100,8 +156,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                         {
                             if (t.Result != null)
                             {
-                                this.isPaused = false;
-
                                 MediaControl.NextTrackPressed -= this.MediaControlOnNextTrackPressed;
                                 MediaControl.NextTrackPressed -= this.MediaControlOnPreviousTrackPressed;
 
@@ -115,64 +169,63 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
                                 this.View.PlaySong(new Uri(t.Result.Url));
 
-                                if (this.BindingModel.CurrentSongIndex < (this.BindingModel.Songs.Count - 1))
+                                if (this.BindingModel.SkipAheadCommand.CanExecute())
                                 {
-                                    MediaControl.NextTrackPressed += MediaControlOnNextTrackPressed;
+                                    MediaControl.NextTrackPressed += this.MediaControlOnNextTrackPressed;
                                 }
 
-                                if (this.BindingModel.CurrentSongIndex != 0)
+                                if (this.BindingModel.SkipBackCommand.CanExecute())
                                 {
-                                    MediaControl.PreviousTrackPressed += MediaControlOnPreviousTrackPressed;
+                                    MediaControl.PreviousTrackPressed += this.MediaControlOnPreviousTrackPressed;
                                 }
+
+                                this.BindingModel.State = PlayState.Play;
+                                this.BindingModel.UpdateCommands();
                             }
                             else
                             {
                                 // TODO: Show error
                             }
-                        });
+                        }, 
+                        TaskScheduler.FromCurrentSynchronizationContext());
+            }
+        }
+        
+        private void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                MediaControl.PlayPauseTogglePressed -= this.MediaControlPlayPauseTogglePressed;
+                MediaControl.PlayPressed -= this.MediaControlPlayPressed;
+                MediaControl.PausePressed -= this.MediaControlPausePressed;
+                MediaControl.StopPressed -= this.MediaControlStopPressed;
             }
         }
 
         private void MediaControlPausePressed(object sender, object e)
         {
-            this.View.Pause();
-            this.isPaused = true;
-            // this.View.Stop();
+            this.Pause();
         }
 
         private void MediaControlPlayPressed(object sender, object e)
         {
-            if (this.isPaused)
-            {
-                this.View.Play();
-                this.isPaused = false;
-            }
-            else
-            {
-                this.PlayCurrentSong();
-            }
-            // this.PlayCurrentSong();
+            this.Play();
         }
 
         private void MediaControlStopPressed(object sender, object e)
         {
-            this.View.Stop();
-            this.isPaused = false;
+            this.Stop();
         }
 
         private void MediaControlPlayPauseTogglePressed(object sender, object e)
         {
-            if (this.isPaused)
+            if (this.BindingModel.State == PlayState.Play)
             {
-                this.View.Play();
-                // this.PlayCurrentSong();
-                this.isPaused = false;
+                this.Pause();
             }
             else
             {
-                //this.View.Stop();
-                this.View.Pause();
-                this.isPaused = true;
+                this.Play();
             }
         }
 
@@ -184,29 +237,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private void MediaControlOnPreviousTrackPressed(object sender, object o)
         {
             this.PreviousSong();
-        }
-
-        private void NextSong()
-        {
-            this.BindingModel.CurrentSongIndex++;
-            this.PlayCurrentSong();
-        }
-
-        private void PreviousSong()
-        {
-            this.BindingModel.CurrentSongIndex--;
-            this.PlayCurrentSong();
-        }
-
-        private void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                MediaControl.PlayPauseTogglePressed -= this.MediaControlPlayPauseTogglePressed;
-                MediaControl.PlayPressed -= this.MediaControlPlayPressed;
-                MediaControl.PausePressed -= this.MediaControlPausePressed;
-                MediaControl.StopPressed -= this.MediaControlStopPressed;
-            }
         }
     }
 }

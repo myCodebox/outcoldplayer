@@ -113,6 +113,7 @@
     <Compile Include="BindingModels\UserAuthentificationBindingModel.cs" />
     <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\InvertBooleanConverter.cs" />
+    <Compile Include="DelegateCommand.cs" />
     <Compile Include="IDispatcher.cs" />
     <Compile Include="INavigationService.cs" />
     <Compile Include="Presenters\AuthentificationPresenter.cs" />
