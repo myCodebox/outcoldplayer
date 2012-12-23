@@ -8,6 +8,11 @@
     mc:Ignorable="d">
 
     <Grid Background="{StaticResource ApplicationPageBackgroundThemeBrush}" DataContext="{Binding Path=BindingModel, Mode=OneTime}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="320"/>
+        </Grid.ColumnDefinitions>
+        
         <Button 
             Style="{StaticResource BackButtonStyle}" 
             VerticalAlignment="Top" 
@@ -15,14 +20,14 @@
             IsEnabled="{Binding Path=CanGoBack, Mode=OneWay}"
             Click="GoBackClick" Margin="36, 52, 36, 0"/>
 
-        <Grid x:Name="Content" Margin="120, 0, 120, 0"  />
+        <Grid x:Name="Content" Margin="120, 0, 20, 0"  />
 
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
             <ProgressRing IsActive="{Binding Path=IsProgressRingActive, Mode=OneWay}" />
             <TextBlock Style="{StaticResource BasicTextStyle}" Text="{Binding Path=Message, Mode=OneWay}">Loading...</TextBlock>
         </StackPanel>
         
-        <views:PlayerView x:Name="PlayerView" Visibility="Collapsed" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0, 20, 20, 0" />
+        <views:PlayerView Grid.Column="1" x:Name="PlayerView" Visibility="Collapsed" HorizontalAlignment="Right" VerticalAlignment="Top" />
     </Grid>
     
 </views:ViewBase>

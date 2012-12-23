@@ -6,20 +6,10 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:views="using:OutcoldSolutions.GoogleMusic.Views"
     mc:Ignorable="d"
-    d:DesignHeight="100"
+    d:DesignHeight="768"
     d:DesignWidth="320">
 
-    <Grid Height="100" Width="320" Background="Salmon" DataContext="{Binding Path=BindingModel, Mode=OneTime}">
-
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-        
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
+    <StackPanel Width="320" DataContext="{Binding Path=BindingModel, Mode=OneTime}">
         
         <MediaElement 
                 x:Name="MediaElement"
@@ -27,15 +17,16 @@
                 AutoPlay="True"
                 AudioCategory="BackgroundCapableMedia"
                 MediaEnded="MediaEnded" />
-        
-        <Image Height="100" Width="100" 
-               Source="{Binding Path=CurrentSong.AlbumArt, Mode=OneWay}" 
-               Grid.RowSpan="2"/>
 
-        <TextBlock Grid.Column="1" Grid.Row="1" Style="{StaticResource ItemTextStyle}"
-               Text="{Binding Path=CurrentSong.Title, Mode=OneWay}" />
+        <Image Height="256" Width="256" Margin="32, 32, 32, 0"
+               Source="{Binding Path=CurrentSong.AlbumArt, Mode=OneWay}" />
 
-        <StackPanel Orientation="Horizontal" Grid.Column="1">
+        <StackPanel Margin="20" >
+            <TextBlock Style="{StaticResource GroupHeaderTextStyle}" Text="{Binding Path=CurrentSong.Artist, Mode=OneWay}" />
+            <TextBlock Style="{StaticResource SubtitleTextStyle}" Text="{Binding Path=CurrentSong.Title, Mode=OneWay}" />
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
             
             <Button Style="{StaticResource SkipBackAppBarButtonStyle}" 
                     AutomationProperties.Name="" 
@@ -58,8 +49,14 @@
             <Button Style="{StaticResource SkipAheadAppBarButtonStyle}"  
                     AutomationProperties.Name="" 
                     Command="{Binding Path=SkipAheadCommand, Mode=OneTime}"
+                    VerticalAlignment="Top"
                     Width="70" Height="65"/>
+            
         </StackPanel>
+
+        <Slider Margin="20, 10" x:Name="ProgressBar" Value="{Binding Path=Position.TotalSeconds, Mode=OneWay, ElementName=MediaElement}"/>
         
-    </Grid>
+        <CheckBox IsChecked="False" Checked="ToggleButton_OnChecked" >Request Active</CheckBox>
+        
+    </StackPanel>
 </views:ViewBase>
