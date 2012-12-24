@@ -14,9 +14,12 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         {
             this.container = container;
             this.Logger = this.container.Resolve<ILogManager>().CreateLogger(this.GetType().Name);
+            this.Dispatcher = container.Resolve<IDispatcher>();
         }
 
         protected ILogger Logger { get; private set; }
+
+        protected IDispatcher Dispatcher { get; private set; }
 
         public virtual void OnNavigatedTo(object parameter)
         {

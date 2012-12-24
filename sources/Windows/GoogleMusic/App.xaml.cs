@@ -12,6 +12,7 @@ namespace OutcoldSolutions.GoogleMusic
 
     using Windows.ApplicationModel;
     using Windows.ApplicationModel.Activation;
+    using Windows.UI.Core;
     using Windows.UI.Xaml;
 
     public sealed partial class App : Application
@@ -69,6 +70,8 @@ namespace OutcoldSolutions.GoogleMusic
                     registration.Register<IAuthentificationService>().As<AuthentificationService>();
                     registration.Register<IPlaylistsWebService>().As<PlaylistsWebService>();
                     registration.Register<ISongWebService>().As<SongWebService>();
+
+                    registration.Register<IDispatcher>().AsSingleton(new DispatcherContainer(CoreWindow.GetForCurrentThread().Dispatcher));
                 }
 
                 // Create a Frame to act as the navigation context and navigate to the first page

@@ -19,7 +19,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     {
         private readonly ISongWebService songWebService;
         
-
         public PlayerViewPresenter(
             IDependencyResolverContainer container, 
             IPlayerView view,
@@ -84,17 +83,24 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.ClearPlaylist();
             this.AddSongs(songs);
 
-            if (this.BindingModel.Songs.Count > 0)
-            {
-                this.BindingModel.CurrentSongIndex = 0;
-                this.PlayCurrentSong();
-            }
+            this.Dispatcher.RunAsync(
+                () =>
+                    {
+                        if (this.BindingModel.Songs.Count > 0)
+                        {
+                            this.BindingModel.CurrentSongIndex = 0;
+                            this.PlayCurrentSong();
+                        }
+                    });
         }
 
         public void OnMediaEnded()
         {
             this.BindingModel.State = PlayState.Stop;
-            this.NextSong();
+            if (this.BindingModel.SkipAheadCommand.CanExecute())
+            {
+                this.NextSong();
+            }
         }
 
         public void NextSong()

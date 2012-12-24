@@ -9,7 +9,7 @@
     d:DesignHeight="768"
     d:DesignWidth="320">
 
-    <StackPanel Width="320" DataContext="{Binding Path=BindingModel, Mode=OneTime}">
+    <StackPanel Width="320" DataContext="{Binding Path=BindingModel, Mode=OneTime}" VerticalAlignment="Bottom">
         
         <MediaElement 
                 x:Name="MediaElement"
@@ -22,8 +22,8 @@
                Source="{Binding Path=CurrentSong.AlbumArt, Mode=OneWay}" />
 
         <StackPanel Margin="20" >
-            <TextBlock Style="{StaticResource GroupHeaderTextStyle}" Text="{Binding Path=CurrentSong.Artist, Mode=OneWay}" />
-            <TextBlock Style="{StaticResource SubtitleTextStyle}" Text="{Binding Path=CurrentSong.Title, Mode=OneWay}" />
+            <TextBlock Style="{StaticResource GroupHeaderTextStyle}" Text="{Binding Path=CurrentSong.Title, Mode=OneWay}" />
+            <TextBlock Style="{StaticResource SubtitleTextStyle}" Text="{Binding Path=CurrentSong.Artist, Mode=OneWay}" />
         </StackPanel>
 
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
@@ -54,9 +54,40 @@
             
         </StackPanel>
 
-        <Slider Margin="20, 10" x:Name="ProgressBar" Value="{Binding Path=Position.TotalSeconds, Mode=OneWay, ElementName=MediaElement}"/>
-        
-        <CheckBox IsChecked="False" Checked="ToggleButton_OnChecked" >Request Active</CheckBox>
+        <StackPanel 
+            HorizontalAlignment="Stretch" 
+            Margin="20, 10" >
+            
+            <StackPanel 
+                HorizontalAlignment="Stretch"
+                Visibility="{Binding Path=DownloadProgress, ElementName=MediaElement, Mode=OneWay, Converter={StaticResource ValueToInvisibilityConverter}, ConverterParameter=1.0}">
+                <ProgressBar Value="{Binding Path=DownloadProgress, ElementName=MediaElement}" Maximum="1"  Margin="0, 10, 0, 0" Height="5"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Width="280" Margin="0, 10, 0, 0">
+                    <TextBlock HorizontalAlignment="Left" Style="{StaticResource SmallTextStyle}" Width="140">Buffering...</TextBlock>
+                    <TextBlock Style="{StaticResource SmallTextStyle}" 
+                               Width="140"
+                               HorizontalAlignment="Stretch"
+                               TextAlignment="Right"
+                               Text="{Binding Path=DownloadProgress, ElementName=MediaElement, Converter={StaticResource StringFormatConverter}, ConverterParameter=P0}" />
+                </StackPanel>
+            </StackPanel>
+            
+            <StackPanel HorizontalAlignment="Stretch"
+                        Visibility="{Binding Path=DownloadProgress, ElementName=MediaElement, Mode=OneWay, Converter={StaticResource ValueToVisibilityConverter}, ConverterParameter=1.0}">
+                <Slider x:Name="ProgressBar" 
+                        ValueChanged="ProgressBar_OnValueChanged"
+                        Margin="0, 10, 0, 0"
+                        ThumbToolTipValueConverter="{StaticResource DoubleToTimeConverter}"
+                        Value="{Binding Path=Position.TotalSeconds, Mode=OneWay, ElementName=MediaElement}"
+                        Padding="0"/>                                        
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0, 10, 0, 0">
+                    <TextBlock Style="{StaticResource SmallTextStyle}" x:Name="CurrentTime" />
+                    <TextBlock Style="{StaticResource SmallTextStyle}" Text="/"  Margin="5, 0"/>
+                    <TextBlock Style="{StaticResource SmallTextStyle}" Text="{Binding Path=CurrentSong.Time, Mode=OneWay}" />
+                </StackPanel>
+            </StackPanel>
+
+        </StackPanel>
         
     </StackPanel>
 </views:ViewBase>

@@ -11,6 +11,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
     using Windows.System.Display;
     using Windows.UI.Core;
     using Windows.UI.Xaml;
+    using Windows.UI.Xaml.Controls.Primitives;
 
     public interface IPlayerView : IView
     {
@@ -26,7 +27,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
     public sealed partial class PlayerView : ViewBase, IPlayerView
     {
         private readonly DispatcherTimer timer = new DispatcherTimer();
-        private DisplayRequest request;
 
         public PlayerView()
         {
@@ -38,12 +38,13 @@ namespace OutcoldSolutions.GoogleMusic.Views
                     this.ProgressBar.Maximum = this.MediaElement.NaturalDuration.TimeSpan.TotalSeconds;
                 };
 
-            this.timer.Interval = TimeSpan.FromMilliseconds(1000);
+            this.timer.Interval = TimeSpan.FromSeconds(1);
             this.timer.Tick += (sender, o) =>
                 {
                     if (this.Presenter<PlayerViewPresenter>().BindingModel.IsPlaying)
                     {
                         this.ProgressBar.Value = this.MediaElement.Position.TotalSeconds;
+                        this.CurrentTime.Text = string.Format("{0:N0}:{1:00}", this.MediaElement.Position.TotalMinutes, this.MediaElement.Position.Seconds);
                     }
                 };
 
@@ -86,17 +87,11 @@ namespace OutcoldSolutions.GoogleMusic.Views
             this.Presenter<PlayerViewPresenter>().OnMediaEnded();
         }
 
-        private void ToggleButton_OnChecked(object sender, RoutedEventArgs e)
+        private void ProgressBar_OnValueChanged(object sender, RangeBaseValueChangedEventArgs e)
         {
-            if (this.request == null)
+            if (Math.Abs(this.MediaElement.Position.TotalSeconds - this.ProgressBar.Value) > 2)
             {
-                this.request = new DisplayRequest();
-                this.request.RequestActive();
-            }
-            else
-            {
-                this.request.RequestRelease();
-                this.request = null;
+                this.MediaElement.Position = TimeSpan.FromSeconds(this.ProgressBar.Value);
             }
         }
     }

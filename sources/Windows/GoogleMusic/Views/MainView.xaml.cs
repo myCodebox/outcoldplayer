@@ -6,6 +6,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
 {
     using OutcoldSolutions.GoogleMusic.Presenters;
 
+    using Windows.System.Display;
     using Windows.UI.Xaml;
 
     public interface IMainView : IView
@@ -19,8 +20,10 @@ namespace OutcoldSolutions.GoogleMusic.Views
         void HidePlayer();
     }
 
-    public sealed partial class MainView : ViewBase, IMainView
+    public sealed partial class MainView : PageBase, IMainView
     {
+        private DisplayRequest request;
+
         public MainView()
         {
             this.InitializePresenter<MainViewPresenter>();
@@ -53,6 +56,20 @@ namespace OutcoldSolutions.GoogleMusic.Views
             if (mainViewPresenter.CanGoBack())
             {
                 mainViewPresenter.GoBack();
+            }
+        }
+
+        private void ToggleButton_OnChecked(object sender, RoutedEventArgs e)
+        {
+            if (this.request == null)
+            {
+                this.request = new DisplayRequest();
+                this.request.RequestActive();
+            }
+            else
+            {
+                this.request.RequestRelease();
+                this.request = null;
             }
         }
     }

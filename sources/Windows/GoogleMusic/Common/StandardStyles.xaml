@@ -30,6 +30,10 @@
     <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     <converters:BooleanToVisibilityConverter x:Key="BooleanToInvisibilityConverter" Invert="True" />
     <converters:InvertBooleanConverter x:Key="InvertBooleanConverter" />
+    <converters:ValueToVisibilityConverter x:Key="ValueToVisibilityConverter" />
+    <converters:ValueToVisibilityConverter x:Key="ValueToInvisibilityConverter" Invert="True"/>
+    <converters:StringFormatConverter x:Key="StringFormatConverter"/>
+    <converters:DoubleToTimeConverter x:Key="DoubleToTimeConverter"/>
 
     <x:String x:Key="ChevronGlyph">&#xE26B;</x:String>
 
@@ -432,6 +436,12 @@
         <Setter Property="AutomationProperties.AutomationId" Value="PauseAppBarButton"/>
         <Setter Property="AutomationProperties.Name" Value="Pause"/>
         <Setter Property="Content" Value="&#xE103;"/>
+    </Style>
+
+    <Style x:Key="SetLockScreenAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
+        <Setter Property="AutomationProperties.AutomationId" Value="SetLockscreenAppBarButton"/>
+        <Setter Property="AutomationProperties.Name" Value="Set Lockscreen"/>
+        <Setter Property="Content" Value="&#xE18C;"/>
     </Style>
 
     <!-- 

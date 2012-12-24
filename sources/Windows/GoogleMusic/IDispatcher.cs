@@ -4,9 +4,10 @@
 namespace OutcoldSolutions.GoogleMusic
 {
     using System;
+    using System.Threading.Tasks;
 
     public interface IDispatcher
     {
-        void Invoke(Action action);
+        Task RunAsync(Action action);
     }
 }

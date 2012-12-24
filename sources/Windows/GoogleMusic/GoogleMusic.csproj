@@ -112,8 +112,12 @@
     <Compile Include="BindingModels\StartViewBindingModel.cs" />
     <Compile Include="BindingModels\UserAuthentificationBindingModel.cs" />
     <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
+    <Compile Include="Converters\DoubleToTimeConverter.cs" />
     <Compile Include="Converters\InvertBooleanConverter.cs" />
+    <Compile Include="Converters\StringFormatConverter.cs" />
+    <Compile Include="Converters\ValueToVisibilityConverter.cs" />
     <Compile Include="DelegateCommand.cs" />
+    <Compile Include="DispatcherContainer.cs" />
     <Compile Include="IDispatcher.cs" />
     <Compile Include="INavigationService.cs" />
     <Compile Include="Presenters\AuthentificationPresenter.cs" />
@@ -136,6 +140,7 @@
     <Compile Include="Views\AuthentificationView.xaml.cs">
       <DependentUpon>AuthentificationView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\PageBase.cs" />
     <Compile Include="Views\PlayerView.xaml.cs">
       <DependentUpon>PlayerView.xaml</DependentUpon>
     </Compile>
