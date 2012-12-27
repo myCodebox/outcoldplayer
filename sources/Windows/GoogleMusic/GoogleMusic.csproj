@@ -111,6 +111,7 @@
     <Compile Include="BindingModels\SongBindingModel.cs" />
     <Compile Include="BindingModels\StartViewBindingModel.cs" />
     <Compile Include="BindingModels\UserAuthentificationBindingModel.cs" />
+    <Compile Include="Controls\AppBarToggleButton.cs" />
     <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\DoubleToTimeConverter.cs" />
     <Compile Include="Converters\InvertBooleanConverter.cs" />
@@ -215,7 +216,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Controls\" />
     <Folder Include="Models\" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '11.0' ">

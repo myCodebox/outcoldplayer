@@ -19,6 +19,10 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         private int currentSongIndex = -1;
         private PlayState playState = PlayState.Stop;
 
+        private bool isShuffleEnabled = false;
+        private bool isRepeatAllEnabled = false;
+        private bool isLockScreenEnabled = false;
+
         public PlayerBindingModel()
         {
             this.Songs = new ObservableCollection<SongBindingModel>();
@@ -40,7 +44,64 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
         public DelegateCommand SkipAheadCommand { get; set; }
 
+        public DelegateCommand ShuffleCommand { get; set; }
+
+        public DelegateCommand RepeatAllCommand { get; set; }
+
+        public DelegateCommand LockScreenCommand { get; set; }
+
         public ObservableCollection<SongBindingModel> Songs { get; private set; }
+
+        public bool IsShuffleEnabled
+        {
+            get
+            {
+                return this.isShuffleEnabled;
+            }
+
+            set
+            {
+                if (this.isShuffleEnabled != value)
+                {
+                    this.isShuffleEnabled = value;
+                    this.RaiseCurrentPropertyChanged();
+                }
+            }
+        }
+
+        public bool IsRepeatAllEnabled
+        {
+            get
+            {
+                return this.isRepeatAllEnabled;
+            }
+
+            set
+            {
+                if (this.isRepeatAllEnabled != value)
+                {
+                    this.isRepeatAllEnabled = value;
+                    this.RaiseCurrentPropertyChanged();
+                }
+            }
+        }
+
+        public bool IsLockScreenEnabled
+        {
+            get
+            {
+                return this.isLockScreenEnabled;
+            }
+
+            set
+            {
+                if (this.isLockScreenEnabled != value)
+                {
+                    this.isLockScreenEnabled = value;
+                    this.RaiseCurrentPropertyChanged();
+                }
+            }
+        }
 
         public bool IsPlaying
         {

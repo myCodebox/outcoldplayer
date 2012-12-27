@@ -4,11 +4,32 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:views="using:OutcoldSolutions.GoogleMusic.Views"
+    xmlns:views="using:OutcoldSolutions.GoogleMusic.Views" 
     mc:Ignorable="d">
+
+    <views:PageBase.BottomAppBar>
+        <AppBar IsSticky="True">
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <views:PlayerView Grid.Column="1" x:Name="PlayerView" Visibility="Collapsed" HorizontalAlignment="Right" VerticalAlignment="Stretch" />
+
+            </Grid>
+
+        </AppBar>
+    </views:PageBase.BottomAppBar>
 
     <Grid Background="{StaticResource ApplicationPageBackgroundThemeBrush}" DataContext="{Binding Path=BindingModel, Mode=OneTime}">
 
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        
         <MediaElement 
                 x:Name="MediaElement"
                 IsLooping="False"
@@ -29,38 +50,8 @@
             <TextBlock Style="{StaticResource BasicTextStyle}" Text="{Binding Path=Message, Mode=OneWay}">Loading...</TextBlock>
         </StackPanel>
 
-        
+        <Border x:Name="BottomBorder" Grid.Row="1" Height="85" />
 
     </Grid>
-    
-    <views:PageBase.BottomAppBar>
-        <AppBar IsSticky="True" >
-            
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-
-                <views:PlayerView Grid.Column="1" x:Name="PlayerView" Visibility="Collapsed" HorizontalAlignment="Right" VerticalAlignment="Stretch" />
-
-                <Button Style="{StaticResource MoreAppBarButtonStyle}" Grid.Column="2" Click="MoreClick" />
-                <Popup x:Name="MorePopup" IsLightDismissEnabled="True" Grid.ColumnSpan="3" HorizontalAlignment="Right" HorizontalOffset="-190" VerticalOffset="-70">
-                    <StackPanel Orientation="Vertical" Width="200" Background="{StaticResource AppBarBackgroundThemeBrush}">
-                        <StackPanel Orientation="Horizontal">
-                            <ToggleButton Style="{StaticResource SetLockScreenAppBarButtonStyle}" 
-                                          Checked="ToggleButton_OnChecked"
-                                          AutomationProperties.Name=""
-                                          Height="70"/>
-                            <TextBlock Text="Lock screen" Style="{StaticResource TitleTextStyle}" Margin="0, 20, 0, 0" />
-                        </StackPanel>
-                    </StackPanel>
-                </Popup>
-                
-            </Grid>
-            
-        </AppBar>
-    </views:PageBase.BottomAppBar>
     
 </views:PageBase>

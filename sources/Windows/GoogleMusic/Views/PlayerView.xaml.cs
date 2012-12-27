@@ -153,5 +153,10 @@ namespace OutcoldSolutions.GoogleMusic.Views
                 this.Presenter<PlayerViewPresenter>().Play();
             }
         }
+
+        private void MoreClick(object sender, RoutedEventArgs e)
+        {
+            this.MorePopup.IsOpen = true;
+        }
     }
 }

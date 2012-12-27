@@ -73,7 +73,7 @@
       <HintPath>..\packages\Newtonsoft.Json.4.5.11\lib\portable-net40+sl4+wp7+win8\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="OutcoldSolutions.Framework">
-      <HintPath>..\GoogleMusic.Core.Suites\bin\Debug\OutcoldSolutions.Framework.dll</HintPath>
+      <HintPath>..\packages\OutcoldSolutions.Framework.1.0.21209.40220\lib\portable-win+net45+sl40+wp71\OutcoldSolutions.Framework.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

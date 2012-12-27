@@ -5,6 +5,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
@@ -14,11 +15,16 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using OutcoldSolutions.GoogleMusic.WebServices.Models;
 
     using Windows.Media;
+    using Windows.System.Display;
 
     public class PlayerViewPresenter : ViewPresenterBase<IPlayerView>, ICurrentPlaylistService, IDisposable
     {
         private readonly ISongWebService songWebService;
-        
+        private readonly List<int> playOrder = new List<int>();
+        private int playIndex = 0;
+
+        private DisplayRequest request;
+
         public PlayerViewPresenter(
             IDependencyResolverContainer container, 
             IPlayerView view,
@@ -33,10 +39,36 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             MediaControl.PausePressed += this.MediaControlPausePressed;
             MediaControl.StopPressed += this.MediaControlStopPressed;
 
-            this.BindingModel.SkipBackCommand = new DelegateCommand(this.PreviousSong, () => this.BindingModel.CurrentSongIndex > 0);
+            this.BindingModel.SkipBackCommand = new DelegateCommand(this.PreviousSong, () => this.playIndex > 0);
             this.BindingModel.PlayCommand = new DelegateCommand(this.Play, () => !this.BindingModel.IsPlaying && this.BindingModel.Songs.Count > 0);
             this.BindingModel.PauseCommand = new DelegateCommand(this.Pause, () => this.BindingModel.IsPlaying);
-            this.BindingModel.SkipAheadCommand = new DelegateCommand(this.NextSong, () => this.BindingModel.CurrentSongIndex < (this.BindingModel.Songs.Count - 1));
+            this.BindingModel.SkipAheadCommand = new DelegateCommand(
+                                                            this.NextSong,
+                                                            () => this.playIndex < (this.playOrder.Count - 1)
+                                                                || this.BindingModel.IsRepeatAllEnabled && this.BindingModel.Songs.Count > 0);
+
+            this.BindingModel.LockScreenCommand = new DelegateCommand(() =>
+                {
+                    if (this.request == null)
+                    {
+                        this.request = new DisplayRequest();
+                        this.request.RequestActive();
+                    }
+                    else
+                    {
+                        this.request.RequestRelease();
+                        this.request = null;
+                    }
+
+                    this.BindingModel.IsLockScreenEnabled = this.request != null; 
+                });
+
+            this.BindingModel.RepeatAllCommand = new DelegateCommand(() => this.BindingModel.IsRepeatAllEnabled = !this.BindingModel.IsRepeatAllEnabled);
+            this.BindingModel.ShuffleCommand = new DelegateCommand(() =>
+                { 
+                    this.BindingModel.IsShuffleEnabled = !this.BindingModel.IsShuffleEnabled;
+                    this.UpdateOrder();
+                });
 
             this.BindingModel.UpdateBindingModel();
         }
@@ -56,8 +88,10 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         
         public void ClearPlaylist()
         {
+            this.playIndex = -1;
             this.BindingModel.CurrentSongIndex = -1;
             this.BindingModel.Songs.Clear();
+            this.UpdateOrder();
         }
 
         public void AddSongs(IEnumerable<GoogleMusicSong> songs)
@@ -71,6 +105,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             {
                 this.BindingModel.Songs.Add(new SongBindingModel(song));
             }
+
+            this.UpdateOrder();
         }
 
         public void PlaySongs(IEnumerable<GoogleMusicSong> songs)
@@ -88,7 +124,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     {
                         if (this.BindingModel.Songs.Count > 0)
                         {
-                            this.BindingModel.CurrentSongIndex = 0;
+                            this.playIndex = 0;
+                            this.BindingModel.CurrentSongIndex = this.playOrder[this.playIndex];
                             this.PlayCurrentSong();
                         }
                     });
@@ -105,15 +142,30 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         public void NextSong()
         {
-            this.BindingModel.CurrentSongIndex++;
-            this.PlayCurrentSong();
+            if (this.playIndex == (this.playOrder.Count - 1)
+                && this.BindingModel.IsRepeatAllEnabled)
+            {
+                this.playIndex = 0;
+                this.BindingModel.CurrentSongIndex = this.playOrder[this.playIndex];
+            }
+            else
+            {
+                this.playIndex++;
+                this.BindingModel.CurrentSongIndex = this.playOrder[this.playIndex];
+            }
 
+            this.PlayCurrentSong();
             this.BindingModel.UpdateBindingModel();
         }
 
         public void PreviousSong()
         {
-            this.BindingModel.CurrentSongIndex--;
+            if (this.playIndex != 0)
+            {
+                this.playIndex--;
+                this.BindingModel.CurrentSongIndex = this.playOrder[this.playIndex];
+            }
+
             this.PlayCurrentSong();
 
             this.BindingModel.UpdateBindingModel();
@@ -244,6 +296,42 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private void MediaControlOnPreviousTrackPressed(object sender, object o)
         {
             this.PreviousSong();
+        }
+
+        private void UpdateOrder()
+        {
+            this.playOrder.Clear();
+
+            if (this.BindingModel.Songs.Count > 0)
+            {
+                var range = Enumerable.Range(0, this.BindingModel.Songs.Count);
+
+                if (this.BindingModel.IsShuffleEnabled)
+                {
+                    var random = new Random((int)DateTime.Now.Ticks);
+                    this.playOrder.AddRange(
+                        range.ToDictionary(
+                            x =>
+                            {
+                                if (x == this.BindingModel.CurrentSongIndex)
+                                {
+                                    return -1;
+                                }
+                                else
+                                {
+                                    return random.Next();
+                                }
+                            }, 
+                            x => x)
+                            .OrderBy(x => x.Key).Select(x => x.Value));
+                }
+                else
+                {
+                    this.playOrder.AddRange(range);
+                }
+
+                this.playIndex = this.playOrder.IndexOf(this.BindingModel.CurrentSongIndex);
+            }
         }
     }
 }
