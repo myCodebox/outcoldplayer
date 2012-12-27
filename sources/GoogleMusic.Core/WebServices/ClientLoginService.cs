@@ -25,6 +25,8 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
 
         public async Task<GoogleLoginResponse> LoginAsync(string email, string password)
         {
+            this.logger.Debug("LoginAsync");
+
             // Check for details: https://developers.google.com/accounts/docs/AuthForInstalledApps
             var requestParameters = new Dictionary<string, string>
                                         {
@@ -39,6 +41,8 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
 
         public async Task<GoogleWebResponse> GetCookieAsync(string auth)
         {
+            this.logger.Debug("GetCookieAsync");
+
             return await this.googleWebService.PostAsync(GetAuthCookie);
         }
     }

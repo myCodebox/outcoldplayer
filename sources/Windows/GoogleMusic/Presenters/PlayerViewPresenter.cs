@@ -39,13 +39,15 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             MediaControl.PausePressed += this.MediaControlPausePressed;
             MediaControl.StopPressed += this.MediaControlStopPressed;
 
-            this.BindingModel.SkipBackCommand = new DelegateCommand(this.PreviousSong, () => this.playIndex > 0);
-            this.BindingModel.PlayCommand = new DelegateCommand(this.Play, () => !this.BindingModel.IsPlaying && this.BindingModel.Songs.Count > 0);
-            this.BindingModel.PauseCommand = new DelegateCommand(this.Pause, () => this.BindingModel.IsPlaying);
+            this.BindingModel.SkipBackCommand = new DelegateCommand(this.PreviousSong, () => !this.BindingModel.IsBusy && this.playIndex > 0);
+            this.BindingModel.PlayCommand = new DelegateCommand(this.Play, () => !this.BindingModel.IsBusy && !this.BindingModel.IsPlaying && this.BindingModel.Songs.Count > 0);
+            this.BindingModel.PauseCommand = new DelegateCommand(this.Pause, () => !this.BindingModel.IsBusy && this.BindingModel.IsPlaying);
             this.BindingModel.SkipAheadCommand = new DelegateCommand(
-                                                            this.NextSong,
-                                                            () => this.playIndex < (this.playOrder.Count - 1)
-                                                                || this.BindingModel.IsRepeatAllEnabled && this.BindingModel.Songs.Count > 0);
+                this.NextSong,
+                () =>
+                !this.BindingModel.IsBusy
+                && ((this.playIndex < (this.playOrder.Count - 1))
+                    || (this.BindingModel.IsRepeatAllEnabled && this.BindingModel.Songs.Count > 0)));
 
             this.BindingModel.LockScreenCommand = new DelegateCommand(() =>
                 {
@@ -53,11 +55,13 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     {
                         this.request = new DisplayRequest();
                         this.request.RequestActive();
+                        this.Logger.Debug("Request display active.");
                     }
                     else
                     {
                         this.request.RequestRelease();
                         this.request = null;
+                        this.Logger.Debug("Release display active.");
                     }
 
                     this.BindingModel.IsLockScreenEnabled = this.request != null; 
@@ -88,6 +92,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         
         public void ClearPlaylist()
         {
+            this.Logger.Debug("ClearPlaylist.");
             this.playIndex = -1;
             this.BindingModel.CurrentSongIndex = -1;
             this.BindingModel.Songs.Clear();
@@ -96,6 +101,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         public void AddSongs(IEnumerable<GoogleMusicSong> songs)
         {
+            this.Logger.Debug("AddSongs.");
+
             if (songs == null)
             {
                 throw new ArgumentNullException("songs");
@@ -111,6 +118,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         public void PlaySongs(IEnumerable<GoogleMusicSong> songs)
         {
+            this.Logger.Debug("PlaySongs.");
+
             if (songs == null)
             {
                 throw new ArgumentNullException("songs");
@@ -133,6 +142,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         public void OnMediaEnded()
         {
+            this.Logger.Debug("OnMediaEnded.");
+
             this.BindingModel.State = PlayState.Stop;
             if (this.BindingModel.SkipAheadCommand.CanExecute())
             {
@@ -142,6 +153,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         public void NextSong()
         {
+            this.Logger.Debug("NextSong.");
+
             if (this.playIndex == (this.playOrder.Count - 1)
                 && this.BindingModel.IsRepeatAllEnabled)
             {
@@ -160,6 +173,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         public void PreviousSong()
         {
+            this.Logger.Debug("PreviousSong.");
+
             if (this.playIndex != 0)
             {
                 this.playIndex--;
@@ -173,6 +188,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         public void Play()
         {
+            this.Logger.Debug("Play.");
+
             if (this.BindingModel.State == PlayState.Stop)
             {
                 this.PlayCurrentSong();
@@ -188,6 +205,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         public void Pause()
         {
+            this.Logger.Debug("Pause.");
+
             this.View.Pause();
             this.BindingModel.State = PlayState.Pause;
 
@@ -196,6 +215,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         public void Stop()
         {
+            this.Logger.Debug("Stop.");
+
             this.View.Stop();
             this.BindingModel.State = PlayState.Stop;
 
@@ -204,15 +225,22 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private void PlayCurrentSong()
         {
+            this.Logger.Debug("PlayCurrentSong.");
+
             this.BindingModel.UpdateBindingModel();
 
             var songBindingModel = this.BindingModel.CurrentSong;
             if (songBindingModel != null)
             {
+                this.Logger.Debug("Found current song.");
                 var song = songBindingModel.GetSong();
+
+                this.Logger.Debug("Getting url for song '{0}'.", song.Id);
+                this.BindingModel.IsBusy = true;
                 this.songWebService.GetSongUrlAsync(song.Id).ContinueWith(
                     (t) =>
                         {
+                            this.Logger.Debug("Found url for song '{0}'. Url is '{1}'.", song.Id, t.Result.Url);
                             if (t.Result != null)
                             {
                                 MediaControl.NextTrackPressed -= this.MediaControlOnNextTrackPressed;
@@ -243,8 +271,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                             }
                             else
                             {
-                                // TODO: Show error
+                                this.Logger.Debug("Could not find url for song {0}. Trying to switch to next song.", song.Id);
+                                this.NextSong();
                             }
+
+                            this.BindingModel.IsBusy = false;
                         }, 
                         TaskScheduler.FromCurrentSynchronizationContext());
             }
@@ -263,21 +294,25 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private void MediaControlPausePressed(object sender, object e)
         {
+            this.Logger.Debug("MediaControlPausePressed.");
             this.Pause();
         }
 
         private void MediaControlPlayPressed(object sender, object e)
         {
+            this.Logger.Debug("MediaControlPlayPressed.");
             this.Play();
         }
 
         private void MediaControlStopPressed(object sender, object e)
         {
+            this.Logger.Debug("MediaControlStopPressed.");
             this.Stop();
         }
 
         private void MediaControlPlayPauseTogglePressed(object sender, object e)
         {
+            this.Logger.Debug("MediaControlPlayPauseTogglePressed.");
             if (this.BindingModel.State == PlayState.Play)
             {
                 this.Pause();
@@ -290,16 +325,19 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private void MediaControlOnNextTrackPressed(object sender, object o)
         {
+            this.Logger.Debug("MediaControlOnNextTrackPressed.");
             this.NextSong();
         }
 
         private void MediaControlOnPreviousTrackPressed(object sender, object o)
         {
+            this.Logger.Debug("MediaControlOnPreviousTrackPressed.");
             this.PreviousSong();
         }
 
         private void UpdateOrder()
         {
+            this.Logger.Debug("UpdateOrder.");
             this.playOrder.Clear();
 
             if (this.BindingModel.Songs.Count > 0)
@@ -328,6 +366,12 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 else
                 {
                     this.playOrder.AddRange(range);
+                }
+
+                if (this.Logger.IsInfoEnabled)
+                {
+                    this.Logger.Info("Shuffle enabled: {0}", this.BindingModel.IsShuffleEnabled);
+                    this.Logger.Info("Playing order: {0}", string.Join(",", this.playOrder));
                 }
 
                 this.playIndex = this.playOrder.IndexOf(this.BindingModel.CurrentSongIndex);

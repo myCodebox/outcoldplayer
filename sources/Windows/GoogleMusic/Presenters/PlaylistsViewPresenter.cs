@@ -25,6 +25,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.navigationService = navigationService;
             this.BindingModel = new PlaylistsViewBindingModel();
 
+            this.Logger.Debug("Loading playlists.");
             this.playlistsWebService.GetAllPlaylistsAsync()
                 .ContinueWith(
                 task =>
@@ -32,6 +33,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                         var playlists = task.Result;
                         if (playlists.Playlists != null)
                         {
+                            this.Logger.Debug("Playlists are not null. Count {0}.", playlists.Playlists.Count);
                             foreach (var playlist in playlists.Playlists)
                             {
                                 this.BindingModel.Playlists.Add(new PlaylistBindingModel(playlist));
@@ -40,6 +42,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
                         if (playlists.MagicPlaylists != null)
                         {
+                            this.Logger.Debug("MagicPlaylists are not null. Count {0}.", playlists.MagicPlaylists.Count);
                             foreach (var playlist in playlists.MagicPlaylists)
                             {
                                 this.BindingModel.Playlists.Add(new PlaylistBindingModel(playlist));
@@ -55,8 +58,10 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         public void ItemClick(PlaylistBindingModel playlistBindingModel)
         {
+            this.Logger.Debug("ItemClick.");
             if (playlistBindingModel != null)
             {
+                this.Logger.Debug("ItemClick. Playlist '{0}'.", playlistBindingModel.Title);
                 this.navigationService.NavigateTo<IPlaylistView>(playlistBindingModel.GetPlaylist());
             }
         }

@@ -49,14 +49,14 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
                         }
                         catch (Exception exception)
                         {
-                            logger.LogException(exception);
+                            logger.LogErrorException(exception);
 
                             this.HandleRequestException(exception, taskCompletionSource);
                         }
                     }
                     catch (Exception exception)
                     {
-                        logger.LogException(exception);
+                        logger.LogErrorException(exception);
                         taskCompletionSource.SetException(exception);
                     }
                 });
@@ -101,7 +101,7 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
                                 }
                                 catch (Exception exception)
                                 {
-                                    logger.LogException(exception);
+                                    logger.LogErrorException(exception);
 
                                     this.HandleRequestException(exception, taskCompletionSource);
                                 }
@@ -110,7 +110,7 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
                     }
                     catch (Exception exception)
                     {
-                        logger.LogException(exception);
+                        logger.LogErrorException(exception);
                         taskCompletionSource.SetException(exception);
                     }
                 });
@@ -172,11 +172,12 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
                         }
                         catch (WebException exception)
                         {
+                            this.logger.LogDebugException(exception);
                             taskCompletionSource.SetResult(this.ParseResponse(exception.Response));
                         }
                         catch (Exception exception)
                         {
-                            this.logger.LogException(exception);
+                            this.logger.LogErrorException(exception);
                             taskCompletionSource.SetException(exception);
                         }
                     },

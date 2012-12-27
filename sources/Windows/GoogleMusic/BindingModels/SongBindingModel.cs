@@ -7,6 +7,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
     using System.Globalization;
     using System.Text;
 
+    using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.WebServices.Models;
 
     using Windows.UI.Xaml.Media;
@@ -80,8 +81,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         {
             get
             {
-                var timeSpan = TimeSpan.FromMilliseconds(this.song.DurationMillis);
-                return string.Format("{0:N0}:{1:00}", timeSpan.Subtract(TimeSpan.FromSeconds(timeSpan.Seconds)).TotalMinutes, timeSpan.Seconds);
+                return TimeSpan.FromMilliseconds(this.song.DurationMillis).ToPresentString();
             }
         }
 

@@ -32,26 +32,33 @@ namespace OutcoldSolutions.GoogleMusic.Services
         {
             if (userInfo == null)
             {
+                this.logger.Debug("Trying to get user info.");
                 userInfo = this.userDataStorage.GetUserInfo();
             }
 
             if (userInfo == null)
             {
+                this.logger.Debug("Cannot get user info.");
                 return AuthentificationResult.FailedResult(null);
             }
 
+            this.logger.Debug("Logging.");
             GoogleLoginResponse loginResponse = await this.clientLoginService.LoginAsync(userInfo.Email, userInfo.Password);
 
             if (loginResponse.IsOk)
             {
+                this.logger.Debug("Logged in.");
+
                 string auth = loginResponse.GetAuth();
                 var userSession = new UserSession(auth, new CookieContainer());
                 this.userDataStorage.SetUserSession(userSession);
 
+                this.logger.Debug("Getting cookies.");
                 GoogleWebResponse cookieResponse = await this.clientLoginService.GetCookieAsync(auth);
                 if (cookieResponse.HttpWebResponse.StatusCode == HttpStatusCode.OK)
                 {
                     userSession.Cookies = cookieResponse.HttpWebResponse.Cookies;
+                    this.logger.Debug("Cookies count: {0}", userSession.Cookies.Count);
                     return AuthentificationResult.SucceedResult();
                 }
                 else
@@ -64,9 +71,12 @@ namespace OutcoldSolutions.GoogleMusic.Services
             }
             else
             {
+                this.logger.Warning("Could not log in.");
+
                 var errorResponse = loginResponse.AsError();
                 string errorMessage = this.GetErrorMessage(errorResponse.Code);
 
+                this.logger.Warning("ErrorMessage: {0}, error code: {1}", errorMessage, errorResponse.Code);
                 var authentificationResult = AuthentificationResult.FailedResult(errorMessage);
 
                 if (errorResponse.Code == GoogleLoginResponse.ErrorResponseCode.CaptchaRequired)

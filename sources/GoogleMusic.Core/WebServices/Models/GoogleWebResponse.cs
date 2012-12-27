@@ -57,8 +57,8 @@ namespace OutcoldSolutions.GoogleMusic.WebServices.Models
                     }
                     catch (Exception e)
                     {
-                        this.logger.Error("Canot deserialize json data '{0}'", body);
-                        this.logger.LogException(e);
+                        this.logger.Error("Canot deserialize json data: '{0}'", body);
+                        this.logger.LogErrorException(e);
                     }
                 }
             }

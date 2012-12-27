@@ -32,16 +32,19 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                                         IsProgressRingActive = true
                                     };
 
+            this.Logger.Debug("Checking authentification.");
             this.authentificationService.CheckAuthentificationAsync().ContinueWith(
                task =>
                    {
                        if (task.Result.Succeed)
                        {
+                           this.Logger.Debug("User is logged in. Going to start view and showing player.");
                            this.NavigateTo<IStartView>();
                            this.View.ShowPlayer();
                        }
                        else
                        {
+                           this.Logger.Debug("User is not logged in. Showing authentification view.");
                            this.ShowView<IAuthentificationView>().Succeed += this.AuthentificationViewOnSucceed;
                        }
                    },
@@ -52,6 +55,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         public void NavigateTo<TView>(object parameter = null) where TView : IView
         {
+            this.Logger.Debug("Navigating to {0}. Parameter {1}.", typeof(TView), parameter);
+
             if (this.viewsHistory.Count > 0)
             {
                 var value = this.viewsHistory.Last.Value;
@@ -74,6 +79,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         public void GoBack()
         {
+            this.Logger.Debug("Going back");
+
             if (this.CanGoBack())
             {
                 this.viewsHistory.RemoveLast();
@@ -98,6 +105,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private void AuthentificationViewOnSucceed(object sender, EventArgs eventArgs)
         {
+            this.Logger.Debug("Authentification view on succed.");
+
             this.View.HideView();
             ((IAuthentificationView)sender).Succeed -= this.AuthentificationViewOnSucceed;
 
@@ -107,11 +116,14 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private TView ShowView<TView>() where TView : IView
         {
+            this.Logger.Debug("Showing view {0}. Creating.", typeof(TView));
             return (TView)this.ShowView(this.container.Resolve<TView>());
         }
 
         private object ShowView(IView view)
         {
+            this.Logger.Debug("Showing view {0}. Instance.", view.GetType());
+
             this.View.HideView();
             this.BindingModel.Message = null;
             this.BindingModel.IsProgressRingActive = false;

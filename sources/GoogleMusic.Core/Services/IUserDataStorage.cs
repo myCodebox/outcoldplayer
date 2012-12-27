@@ -11,6 +11,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         UserInfo GetUserInfo();
 
+        void ClearUserInfo();
+
         void SetUserSession(UserSession session);
 
         UserSession GetUserSession();

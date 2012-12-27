@@ -23,6 +23,8 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         private bool isRepeatAllEnabled = false;
         private bool isLockScreenEnabled = false;
 
+        private bool isBusy = false;
+
         public PlayerBindingModel()
         {
             this.Songs = new ObservableCollection<SongBindingModel>();
@@ -163,6 +165,24 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
                 }
 
                 return null;
+            }
+        }
+
+        public bool IsBusy
+        {
+            get
+            {
+                return this.isBusy;
+            }
+
+            set
+            {
+                if (this.isBusy != value)
+                {
+                    this.isBusy = value;
+                    this.RaiseCurrentPropertyChanged();
+                    this.UpdateBindingModel();
+                }
             }
         }
 

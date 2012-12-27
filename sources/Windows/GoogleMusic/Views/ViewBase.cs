@@ -5,6 +5,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
 {
     using System;
 
+    using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Presenters;
 
     using Windows.UI.Xaml.Controls;
@@ -19,7 +20,10 @@ namespace OutcoldSolutions.GoogleMusic.Views
         public ViewBase()
         {
             this.container = App.Container;
+            this.Logger = this.container.Resolve<ILogManager>().CreateLogger(this.GetType().Name);
         }
+
+        protected ILogger Logger { get; private set; }
 
         public virtual void OnNavigatedTo(object parameter)
         {
