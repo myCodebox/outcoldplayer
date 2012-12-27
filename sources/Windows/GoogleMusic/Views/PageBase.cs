@@ -11,7 +11,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
     public class PageBase : Page
     {
-          private readonly IDependencyResolverContainer container;
+        private readonly IDependencyResolverContainer container;
 #if DEBUG
         private bool presenterInitialized = false;
 #endif

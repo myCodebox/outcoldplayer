@@ -6,29 +6,15 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:views="using:OutcoldSolutions.GoogleMusic.Views"
     mc:Ignorable="d"
-    d:DesignHeight="768"
-    d:DesignWidth="320">
+    d:DesignHeight="85"
+    d:DesignWidth="800">
 
-    <Grid Width="320" DataContext="{Binding Path=BindingModel, Mode=OneTime}" >
-        
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-        
-        <MediaElement 
-                x:Name="MediaElement"
-                IsLooping="False"
-                AutoPlay="True"
-                AudioCategory="BackgroundCapableMedia"
-                MediaEnded="MediaEnded" />
+    <StackPanel DataContext="{Binding Path=BindingModel, Mode=OneTime}" Orientation="Horizontal" >
 
-        <Image Grid.Row="0" Height="256" Width="256" Margin="32"
+        <Image Grid.Row="0" Height="64" Width="64" Margin="20, 10"
                Source="{Binding Path=CurrentSong.AlbumArt, Mode=OneWay}" />
 
-        <ListView Grid.Row="1"
+        <!--<ListView Grid.Row="1"
                   x:Name="SongsList"
                   ItemsSource="{Binding Path=Songs, Mode=OneTime}" 
                   SelectionMode="Single"
@@ -81,19 +67,16 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
             
-        </ListView>
+        </ListView>-->
 
-        <StackPanel Grid.Row="2"
-                    HorizontalAlignment="Stretch"
-                    Margin="20, 10" >
+        <StackPanel HorizontalAlignment="Stretch"
+                    Margin="0, 10" Width="400">
             <Slider x:Name="ProgressBar" 
                     ValueChanged="ProgressBarValueChanged"
                     ManipulationStarted="ProgressBarManipulationStarted"
                     ManipulationCompleted="ProgressBarManipulationCompleted"
-                    Margin="0, 10, 0, 0"
                     ThumbToolTipValueConverter="{StaticResource DoubleToTimeConverter}"
-                    Value="{Binding Path=Position.TotalSeconds, Mode=OneWay, ElementName=MediaElement}"
-                    Padding="0"/>
+                    Padding="0" />
 
             <Grid Margin="0, 10, 0, 0">
                 <Grid.ColumnDefinitions>
@@ -101,12 +84,11 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <StackPanel Orientation="Horizontal" Visibility="{Binding Path=DownloadProgress, ElementName=MediaElement, Mode=OneWay, Converter={StaticResource ValueToInvisibilityConverter}, ConverterParameter=1.0}">
+                <StackPanel Orientation="Horizontal" x:Name="DownloadProgressPanel" Visibility="Collapsed">
                     <TextBlock HorizontalAlignment="Left" Style="{StaticResource SmallTextStyle}">Buffering (</TextBlock>
-                    <TextBlock Style="{StaticResource SmallTextStyle}" 
+                    <TextBlock Style="{StaticResource SmallTextStyle}"  x:Name="DownloadProgressText"
                             HorizontalAlignment="Stretch"
-                            TextAlignment="Right"
-                            Text="{Binding Path=DownloadProgress, ElementName=MediaElement, Converter={StaticResource StringFormatConverter}, ConverterParameter=P0}" />
+                            TextAlignment="Right" />
                     <TextBlock HorizontalAlignment="Left" Style="{StaticResource SmallTextStyle}">)</TextBlock>
                 </StackPanel>
 
@@ -116,6 +98,8 @@
                     <TextBlock Style="{StaticResource SmallTextStyle}" Text="{Binding Path=CurrentSong.Time, Mode=OneWay}" />
                 </StackPanel>
             </Grid>
+
+            <TextBlock Style="{StaticResource TitleTextStyle}" Text="{Binding Path=CurrentSong.FullTitle, Mode=OneWay}" TextWrapping="NoWrap" TextTrimming="WordEllipsis"/>
 
         </StackPanel>
 
@@ -139,5 +123,5 @@
             
         </StackPanel>
         
-    </Grid>
+    </StackPanel>
 </views:ViewBase>

@@ -275,6 +275,7 @@
                         <StackPanel VerticalAlignment="Top" Margin="0,12,0,11">
                             <Grid Width="40" Height="40" Margin="0,0,0,5" HorizontalAlignment="Center">
                                 <TextBlock x:Name="BackgroundGlyph" Text="&#xE0A8;" FontFamily="Segoe UI Symbol" FontSize="53.333" Margin="-4,-19,0,0" Foreground="{StaticResource AppBarItemBackgroundThemeBrush}"/>
+                                <TextBlock x:Name="BackgroundCheckedGlyph" Visibility="Collapsed" Text="&#xE0A8;" FontFamily="Segoe UI Symbol" FontSize="53.333" Margin="-4,-19,0,0" Foreground="{StaticResource AppBarItemForegroundThemeBrush}"/>
                                 <TextBlock x:Name="OutlineGlyph" Text="&#xE0A7;" FontFamily="Segoe UI Symbol" FontSize="53.333" Margin="-4,-19,0,0"/>
                                 <ContentPresenter x:Name="Content" HorizontalAlignment="Center" Margin="-1,-1,0,0" VerticalAlignment="Center"/>
                             </Grid>
@@ -444,6 +445,12 @@
         <Setter Property="Content" Value="&#xE18C;"/>
     </Style>
 
+    <Style x:Key="MoreAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
+        <Setter Property="AutomationProperties.AutomationId" Value="MoreAppBarButton"/>
+        <Setter Property="AutomationProperties.Name" Value="More"/>
+        <Setter Property="Content" Value="&#xE10C;"/>
+    </Style>
+
     <!-- 
         Standard AppBarButton Styles for use with Button and ToggleButton
     
@@ -499,11 +506,6 @@
         <Setter Property="AutomationProperties.AutomationId" Value="YesAppBarButton"/>
         <Setter Property="AutomationProperties.Name" Value="Yes"/>
         <Setter Property="Content" Value="&#xE10B;"/>
-    </Style>
-    <Style x:Key="MoreAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
-        <Setter Property="AutomationProperties.AutomationId" Value="MoreAppBarButton"/>
-        <Setter Property="AutomationProperties.Name" Value="More"/>
-        <Setter Property="Content" Value="&#xE10C;"/>
     </Style>
     <Style x:Key="RedoAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
         <Setter Property="AutomationProperties.AutomationId" Value="RedoAppBarButton"/>

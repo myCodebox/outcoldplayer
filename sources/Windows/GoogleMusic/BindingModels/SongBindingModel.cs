@@ -4,6 +4,8 @@
 namespace OutcoldSolutions.GoogleMusic.BindingModels
 {
     using System;
+    using System.Globalization;
+    using System.Text;
 
     using OutcoldSolutions.GoogleMusic.WebServices.Models;
 
@@ -20,6 +22,26 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         public SongBindingModel(GoogleMusicSong song)
         {
             this.song = song;
+        }
+
+        public string FullTitle
+        {
+            get
+            {
+                StringBuilder fullTitle = new StringBuilder();
+                fullTitle.AppendFormat(CultureInfo.CurrentCulture, "{0}. ", this.Index);
+
+                if (string.IsNullOrEmpty(this.Artist))
+                {
+                    fullTitle.Append(this.Title);
+                }
+                else
+                {
+                    fullTitle.AppendFormat(CultureInfo.CurrentCulture, "{0} by {1}", this.Title, this.Artist);
+                }
+
+                return fullTitle.ToString();
+            }
         }
 
         public string Title
@@ -59,7 +81,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             get
             {
                 var timeSpan = TimeSpan.FromMilliseconds(this.song.DurationMillis);
-                return string.Format("{0:N0}:{1:00}", timeSpan.TotalMinutes, timeSpan.Seconds);
+                return string.Format("{0:N0}:{1:00}", timeSpan.Subtract(TimeSpan.FromSeconds(timeSpan.Seconds)).TotalMinutes, timeSpan.Seconds);
             }
         }
 

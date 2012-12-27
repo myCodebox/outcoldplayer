@@ -28,6 +28,8 @@ namespace OutcoldSolutions.GoogleMusic.Views
         {
             this.InitializePresenter<MainViewPresenter>();
             this.InitializeComponent();
+
+            this.PlayerView.SetMediaElement(this.MediaElement);
         }
 
         public void ShowView(IView view)
@@ -71,6 +73,11 @@ namespace OutcoldSolutions.GoogleMusic.Views
                 this.request.RequestRelease();
                 this.request = null;
             }
+        }
+
+        private void MoreClick(object sender, RoutedEventArgs e)
+        {
+            this.MorePopup.IsOpen = true;
         }
     }
 }

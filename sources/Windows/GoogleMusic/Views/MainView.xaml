@@ -8,11 +8,13 @@
     mc:Ignorable="d">
 
     <Grid Background="{StaticResource ApplicationPageBackgroundThemeBrush}" DataContext="{Binding Path=BindingModel, Mode=OneTime}">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="320"/>
-        </Grid.ColumnDefinitions>
-        
+
+        <MediaElement 
+                x:Name="MediaElement"
+                IsLooping="False"
+                AutoPlay="True"
+                AudioCategory="BackgroundCapableMedia"/>
+
         <Button 
             Style="{StaticResource BackButtonStyle}" 
             VerticalAlignment="Top" 
@@ -26,14 +28,38 @@
             <ProgressRing IsActive="{Binding Path=IsProgressRingActive, Mode=OneWay}" />
             <TextBlock Style="{StaticResource BasicTextStyle}" Text="{Binding Path=Message, Mode=OneWay}">Loading...</TextBlock>
         </StackPanel>
+
         
-        <views:PlayerView Grid.Column="1" x:Name="PlayerView" Visibility="Collapsed" HorizontalAlignment="Right" VerticalAlignment="Stretch" Margin="0, 0, 0, 0" />
 
     </Grid>
     
     <views:PageBase.BottomAppBar>
-        <AppBar>
-            <ToggleButton Style="{StaticResource SetLockScreenAppBarButtonStyle}" Checked="ToggleButton_OnChecked"  />
+        <AppBar IsSticky="True" >
+            
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <views:PlayerView Grid.Column="1" x:Name="PlayerView" Visibility="Collapsed" HorizontalAlignment="Right" VerticalAlignment="Stretch" />
+
+                <Button Style="{StaticResource MoreAppBarButtonStyle}" Grid.Column="2" Click="MoreClick" />
+                <Popup x:Name="MorePopup" IsLightDismissEnabled="True" Grid.ColumnSpan="3" HorizontalAlignment="Right" HorizontalOffset="-190" VerticalOffset="-70">
+                    <StackPanel Orientation="Vertical" Width="200" Background="{StaticResource AppBarBackgroundThemeBrush}">
+                        <StackPanel Orientation="Horizontal">
+                            <ToggleButton Style="{StaticResource SetLockScreenAppBarButtonStyle}" 
+                                          Checked="ToggleButton_OnChecked"
+                                          AutomationProperties.Name=""
+                                          Height="70"/>
+                            <TextBlock Text="Lock screen" Style="{StaticResource TitleTextStyle}" Margin="0, 20, 0, 0" />
+                        </StackPanel>
+                    </StackPanel>
+                </Popup>
+                
+            </Grid>
+            
         </AppBar>
     </views:PageBase.BottomAppBar>
     

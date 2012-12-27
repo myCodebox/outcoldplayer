@@ -18,7 +18,7 @@ namespace OutcoldSolutions.GoogleMusic.Converters
             }
 
             var timeSpan = TimeSpan.FromSeconds((double)value);
-            return string.Format("{0:N0}:{1:00}", timeSpan.TotalMinutes, timeSpan.Seconds);
+            return string.Format("{0:N0}:{1:00}", timeSpan.Subtract(TimeSpan.FromSeconds(timeSpan.Seconds)).TotalMinutes, timeSpan.Seconds);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
