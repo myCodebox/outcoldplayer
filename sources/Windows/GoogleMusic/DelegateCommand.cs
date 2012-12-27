@@ -11,16 +11,19 @@ namespace OutcoldSolutions.GoogleMusic
     /// </summary>
     public class DelegateCommand : ICommand
     {
-        private readonly Action execute;
-        private readonly Func<bool> canExecute;
+        private readonly Action<object> execute;
+        private readonly Func<object, bool> canExecute;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="DelegateCommand"/> class.
-        /// </summary>
-        /// <param name="execute">
-        /// The execute.
-        /// </param>
         public DelegateCommand(Action execute)
+            : this(o => execute())
+        {
+            if (execute == null)
+            {
+                throw new ArgumentNullException("execute");
+            }
+        }
+
+        public DelegateCommand(Action<object> execute)
         {
             if (execute == null)
             {
@@ -30,23 +33,23 @@ namespace OutcoldSolutions.GoogleMusic
             this.execute = execute;
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="DelegateCommand"/> class.
-        /// </summary>
-        /// <param name="execute">
-        /// The execute.
-        /// </param>
-        /// <param name="canExecute">
-        /// The can execute.
-        /// </param>
         public DelegateCommand(Action execute, Func<bool> canExecute)
+            : this(o => execute(), (o) => canExecute())
+        {
+            if (canExecute == null)
+            {
+                throw new ArgumentNullException("canExecute");
+            }
+        }
+
+        public DelegateCommand(Action<object> execute, Func<object, bool> canExecute)
             : this(execute)
         {
             if (canExecute == null)
             {
                 throw new ArgumentNullException("canExecute");
             }
-            
+
             this.canExecute = canExecute;
         }
 
@@ -61,7 +64,7 @@ namespace OutcoldSolutions.GoogleMusic
                 return true;
             }
 
-            return this.canExecute();
+            return this.canExecute(parameter);
         }
 
         /// <inheritdoc />
@@ -69,7 +72,7 @@ namespace OutcoldSolutions.GoogleMusic
         {
             if (this.CanExecute(null))
             {
-                this.execute();
+                this.execute(parameter);
             }
         }
 

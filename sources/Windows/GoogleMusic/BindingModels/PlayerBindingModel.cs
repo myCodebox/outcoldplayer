@@ -22,6 +22,14 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         public PlayerBindingModel()
         {
             this.Songs = new ObservableCollection<SongBindingModel>();
+            this.Songs.CollectionChanged += (sender, args) =>
+                {
+                    for (int index = 0; index < this.Songs.Count; index++)
+                    {
+                        var songBindingModel = this.Songs[index];
+                        songBindingModel.Index = index + 1;
+                    }
+                };
         }
 
         public DelegateCommand SkipBackCommand { get; set; }
@@ -56,6 +64,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
                     this.playState = value;
                     this.RaiseCurrentPropertyChanged();
                     this.RaisePropertyChanged("IsPlaying");
+                    this.UpdateCurrentSong();
                 }
             }
         }
@@ -71,11 +80,13 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             {
                 if (this.currentSongIndex != value)
                 {
+                    this.UpdateCurrentSong();
                     if (value < this.Songs.Count)
                     {
                         this.currentSongIndex = value;
                         this.RaiseCurrentPropertyChanged();
                         this.RaisePropertyChanged("CurrentSong");
+                        this.UpdateCurrentSong();
                     }
                 }
             }
@@ -94,12 +105,30 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             }
         }
 
-        public void UpdateCommands()
+        public void UpdateBindingModel()
         {
             this.PauseCommand.RaiseCanExecuteChanged();
             this.PlayCommand.RaiseCanExecuteChanged();
             this.SkipAheadCommand.RaiseCanExecuteChanged();
             this.SkipBackCommand.RaiseCanExecuteChanged();
+
+            this.UpdateCurrentSong();
+        }
+
+        private void UpdateCurrentSong()
+        {
+            if (this.CurrentSong != null)
+            {
+                foreach (var songBindingModel in this.Songs)
+                {
+                    if (songBindingModel != this.CurrentSong)
+                    {
+                        songBindingModel.IsPlaying = false;
+                    }
+                }
+
+                this.CurrentSong.IsPlaying = this.State == PlayState.Play;
+            }
         }
     }
 }

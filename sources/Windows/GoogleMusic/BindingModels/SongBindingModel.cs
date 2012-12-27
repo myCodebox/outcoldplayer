@@ -10,9 +10,12 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
     using Windows.UI.Xaml.Media;
     using Windows.UI.Xaml.Media.Imaging;
 
-    public class SongBindingModel
+    public class SongBindingModel : BindingModelBase
     {
         private readonly GoogleMusicSong song;
+        private bool isPlaying = false;
+        private bool isSelected = false;
+        private int index = 0;
 
         public SongBindingModel(GoogleMusicSong song)
         {
@@ -80,6 +83,57 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
                 // TODO: Some default image
                 return null;
+            }
+        }
+
+        public bool IsPlaying
+        {
+            get
+            {
+                return this.isPlaying;
+            }
+            
+            set
+            {
+                if (this.isPlaying != value)
+                {
+                    this.isPlaying = value;
+                    this.RaiseCurrentPropertyChanged();
+                }
+            }
+        }
+
+        public bool IsSelected
+        {
+            get
+            {
+                return this.isSelected;
+            }
+
+            set
+            {
+                if (this.isSelected != value)
+                {
+                    this.isSelected = value;
+                    this.RaiseCurrentPropertyChanged();
+                }
+            }
+        }
+
+        public int Index
+        {
+            get
+            {
+                return this.index;
+            }
+
+            set
+            {
+                if (this.index != value)
+                {
+                    this.index = value;
+                    this.RaiseCurrentPropertyChanged();
+                }
             }
         }
 

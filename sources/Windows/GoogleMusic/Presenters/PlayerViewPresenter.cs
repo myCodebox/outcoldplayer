@@ -38,7 +38,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.BindingModel.PauseCommand = new DelegateCommand(this.Pause, () => this.BindingModel.IsPlaying);
             this.BindingModel.SkipAheadCommand = new DelegateCommand(this.NextSong, () => this.BindingModel.CurrentSongIndex < (this.BindingModel.Songs.Count - 1));
 
-            this.BindingModel.UpdateCommands();
+            this.BindingModel.UpdateBindingModel();
         }
 
         ~PlayerViewPresenter()
@@ -108,7 +108,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.BindingModel.CurrentSongIndex++;
             this.PlayCurrentSong();
 
-            this.BindingModel.UpdateCommands();
+            this.BindingModel.UpdateBindingModel();
         }
 
         public void PreviousSong()
@@ -116,7 +116,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.BindingModel.CurrentSongIndex--;
             this.PlayCurrentSong();
 
-            this.BindingModel.UpdateCommands();
+            this.BindingModel.UpdateBindingModel();
         }
 
         public void Play()
@@ -131,7 +131,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 this.BindingModel.State = PlayState.Play;
             }
 
-            this.BindingModel.UpdateCommands();
+            this.BindingModel.UpdateBindingModel();
         }
 
         public void Pause()
@@ -139,7 +139,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.View.Pause();
             this.BindingModel.State = PlayState.Pause;
 
-            this.BindingModel.UpdateCommands();
+            this.BindingModel.UpdateBindingModel();
         }
 
         public void Stop()
@@ -147,12 +147,13 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.View.Stop();
             this.BindingModel.State = PlayState.Stop;
 
-            this.BindingModel.UpdateCommands();
+            this.BindingModel.UpdateBindingModel();
         }
 
         private void PlayCurrentSong()
         {
-            this.BindingModel.UpdateCommands();
+            this.BindingModel.UpdateBindingModel();
+
             var songBindingModel = this.BindingModel.CurrentSong;
             if (songBindingModel != null)
             {
@@ -186,7 +187,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                                 }
 
                                 this.BindingModel.State = PlayState.Play;
-                                this.BindingModel.UpdateCommands();
+                                this.BindingModel.UpdateBindingModel();
                             }
                             else
                             {

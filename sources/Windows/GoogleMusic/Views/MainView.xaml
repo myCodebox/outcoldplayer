@@ -27,7 +27,7 @@
             <TextBlock Style="{StaticResource BasicTextStyle}" Text="{Binding Path=Message, Mode=OneWay}">Loading...</TextBlock>
         </StackPanel>
         
-        <views:PlayerView Grid.Column="1" x:Name="PlayerView" Visibility="Collapsed" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0, 0, 0, 40" />
+        <views:PlayerView Grid.Column="1" x:Name="PlayerView" Visibility="Collapsed" HorizontalAlignment="Right" VerticalAlignment="Stretch" Margin="0, 0, 0, 0" />
 
     </Grid>
     
