@@ -25,6 +25,10 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
         private bool isBusy = false;
 
+        private double totalSeconds;
+        private double currentPosition;
+        private double downloadProgress;
+
         public PlayerBindingModel()
         {
             this.Songs = new ObservableCollection<SongBindingModel>();
@@ -183,6 +187,57 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
                     this.RaiseCurrentPropertyChanged();
                     this.UpdateBindingModel();
                 }
+            }
+        }
+
+        public double TotalSeconds
+        {
+            get
+            {
+                return this.totalSeconds;
+            }
+
+            set
+            {
+                this.totalSeconds = value;
+                this.RaiseCurrentPropertyChanged();
+            }
+        }
+
+        public double CurrentPosition
+        {
+            get
+            {
+                return this.currentPosition;
+            }
+
+            set
+            {
+                this.currentPosition = value;
+                this.RaiseCurrentPropertyChanged();
+            }
+        }
+
+        public double DownloadProgress
+        {
+            get
+            {
+                return this.downloadProgress;
+            }
+
+            set
+            {
+                this.downloadProgress = value;
+                this.RaiseCurrentPropertyChanged();
+                this.RaisePropertyChanged("IsDownloaded");
+            }
+        }
+
+        public bool IsDownloaded
+        {
+            get
+            {
+                return this.DownloadProgress <= 0.001 || this.DownloadProgress >= 0.999;
             }
         }
 

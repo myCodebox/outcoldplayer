@@ -40,7 +40,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                        {
                            this.Logger.Debug("User is logged in. Going to start view and showing player.");
                            this.NavigateTo<IStartView>();
-                           this.View.ShowPlayer();
                        }
                        else
                        {
@@ -49,9 +48,13 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                        }
                    },
                TaskScheduler.FromCurrentSynchronizationContext());
+
+            this.PlayerViewPresenter = this.container.Resolve<PlayerViewPresenter>(new object[] { view });
         }
 
         public MainViewBindingModel BindingModel { get; private set; }
+
+        public PlayerViewPresenter PlayerViewPresenter { get; private set; }
 
         public void NavigateTo<TView>(object parameter = null) where TView : IView
         {
@@ -111,7 +114,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             ((IAuthentificationView)sender).Succeed -= this.AuthentificationViewOnSucceed;
 
             this.NavigateTo<IStartView>();
-            this.View.ShowPlayer();
         }
 
         private TView ShowView<TView>() where TView : IView

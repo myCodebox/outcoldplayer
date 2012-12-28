@@ -8,16 +8,14 @@
     mc:Ignorable="d">
 
     <views:PageBase.BottomAppBar>
-        <AppBar IsSticky="True">
+        <AppBar IsSticky="True" >
 
-            <Grid>
+            <Grid x:Name="AppBarContent">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-
-                <views:PlayerView Grid.Column="1" x:Name="PlayerView" Visibility="Collapsed" HorizontalAlignment="Right" VerticalAlignment="Stretch" />
-
+                
             </Grid>
 
         </AppBar>
@@ -41,9 +39,10 @@
             VerticalAlignment="Top" 
             HorizontalAlignment="Left"
             IsEnabled="{Binding Path=CanGoBack, Mode=OneWay}"
-            Click="GoBackClick" Margin="36, 52, 36, 0"/>
+            Click="GoBackClick" Margin="36, 52, 36, 0"
+            x:Name="BackButton"/>
 
-        <Grid x:Name="Content" Margin="120, 0, 20, 0"  />
+        <Grid x:Name="Content" Margin="120, 0, 20, 0" />
 
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Grid.ColumnSpan="2">
             <ProgressRing IsActive="{Binding Path=IsProgressRingActive, Mode=OneWay}" />

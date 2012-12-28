@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/2010/manifest">
-  <Identity Name="e49a5bb4-5915-4d3e-8e79-e4d471071849" Publisher="CN=Den" Version="1.0.0.0" />
+  <Identity Name="e49a5bb4-5915-4d3e-8e79-e4d471071849" Publisher="CN=Den" Version="0.1.0.0" />
   <Properties>
     <DisplayName>GoogleMusic</DisplayName>
     <PublisherDisplayName>Den</PublisherDisplayName>
@@ -18,6 +18,10 @@
       <VisualElements DisplayName="Unofficial Google Music Player" Logo="Assets\Logo.png" SmallLogo="Assets\SmallLogo.png" Description="Best Unofficial Google Music Player by OutcoldSolution." ForegroundText="light" BackgroundColor="#207CB0">
         <DefaultTile ShowName="allLogos" />
         <SplashScreen Image="Assets\SplashScreen.png" BackgroundColor="#000000" />
+        <InitialRotationPreference>
+          <Rotation Preference="landscape" />
+          <Rotation Preference="landscapeFlipped" />
+        </InitialRotationPreference>
       </VisualElements>
       <Extensions>
         <Extension Category="windows.backgroundTasks" EntryPoint="OutcoldSolutions.GoogleMusic.App">
