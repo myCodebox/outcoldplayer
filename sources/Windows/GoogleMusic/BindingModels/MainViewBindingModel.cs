@@ -10,6 +10,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         private string message;
         private bool isProgressRingActive = true;
         private bool canGoBack = false;
+        private bool isAuthentificated = false;
 
         public string Message
         {
@@ -57,6 +58,23 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
                 if (this.canGoBack != value)
                 {
                     this.canGoBack = value;
+                    this.RaiseCurrentPropertyChanged();
+                }
+            }
+        }
+
+        public bool IsAuthentificated
+        {
+            get
+            {
+                return this.isAuthentificated;
+            }
+            
+            set
+            {
+                if (this.isAuthentificated != value)
+                {
+                    this.isAuthentificated = value;
                     this.RaiseCurrentPropertyChanged();
                 }
             }

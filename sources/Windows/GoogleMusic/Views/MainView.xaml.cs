@@ -52,6 +52,12 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
         public void ShowView(IView view)
         {
+            Debug.Assert(this.BottomAppBar != null, "this.BottomAppBar != null");
+            this.BottomAppBar.IsEnabled = this.Presenter<MainViewPresenter>().BindingModel.IsAuthentificated;
+
+            Debug.Assert(this.TopAppBar != null, "this.TopAppBar != null");
+            this.TopAppBar.IsEnabled = this.Presenter<MainViewPresenter>().BindingModel.IsAuthentificated;
+
             this.ClearContext();
             this.Content.Children.Add((UIElement)view);
         }
@@ -144,6 +150,13 @@ namespace OutcoldSolutions.GoogleMusic.Views
             {
                 mainViewPresenter.GoBack();
             }
+        }
+
+        private void QueueNavigate(object sender, RoutedEventArgs e)
+        {
+            Debug.Assert(this.TopAppBar != null, "this.TopAppBar != null");
+            this.TopAppBar.IsOpen = false;
+            App.Container.Resolve<INavigationService>().NavigateTo<ICurrentPlaylistView>();
         }
     }
 }
