@@ -3,10 +3,6 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.BindingModels
 {
-    using System;
-    using System.Collections.ObjectModel;
-    using System.Linq;
-
     public enum PlayState
     {
         Stop = 0,
@@ -18,7 +14,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
     public class PlayerBindingModel : SongsBindingModelBase
     {
-        private string currentSongId = null;
+        private int currentSongIndex = -1;
         private PlayState playState = PlayState.Stop;
 
         private bool isShuffleEnabled = false;
@@ -122,21 +118,18 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             }
         }
 
-        public string CurrentSongId
+        public int CurrentSongIndex
         {
             get
             {
-                return this.currentSongId;
+                return this.currentSongIndex;
             }
 
             set
             {
-                if (!string.Equals(this.currentSongId, value, StringComparison.OrdinalIgnoreCase))
-                {
-                    this.currentSongId = value;
-                    this.RaiseCurrentPropertyChanged();
-                    this.RaisePropertyChanged("CurrentSong");
-                }
+                this.currentSongIndex = value;
+                this.RaiseCurrentPropertyChanged();
+                this.RaisePropertyChanged("CurrentSong");
             }
         }
 
@@ -144,7 +137,12 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         {
             get
             {
-                return this.Songs.FirstOrDefault(x => string.Equals(this.currentSongId, x.GetSong().Id, StringComparison.OrdinalIgnoreCase));
+                if (this.currentSongIndex >= 0 && this.currentSongIndex < this.Songs.Count)
+                {
+                    return this.Songs[this.currentSongIndex];
+                }
+
+                return null;
             }
         }
 

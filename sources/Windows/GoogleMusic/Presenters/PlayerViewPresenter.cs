@@ -26,7 +26,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private readonly MediaElement mediaElement;
 
-        private readonly List<string> playOrder = new List<string>();
+        private readonly List<int> playOrder = new List<int>();
         private int playIndex = 0;
 
         private DisplayRequest request;
@@ -154,7 +154,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         {
             this.Logger.Debug("ClearPlaylist.");
             this.playIndex = -1;
-            this.BindingModel.CurrentSongId = null;
+            this.BindingModel.CurrentSongIndex = -1;
             this.BindingModel.Songs.Clear();
             this.UpdateOrder();
             this.BindingModel.UpdateBindingModel();
@@ -187,20 +187,19 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             return this.BindingModel.Songs.Select(x => x.GetSong());
         }
 
-        public void Play(GoogleMusicSong song)
+        public async Task PlayAsync(int songIndex)
         {
-            var songBindingModel = this.BindingModel.Songs.FirstOrDefault(x => x.GetSong() == song);
+            var songBindingModel = this.BindingModel.Songs[songIndex];
             if (songBindingModel == null)
             {
-                this.Logger.Error("Cannot find song '{0}'", song.Id);
+                this.Logger.Error("Cannot find song with index '{0}'", songIndex);
             }
             else
             {
-                this.Dispatcher.RunAsync(
+                await this.Dispatcher.RunAsync(
                     () =>
                         {
-                            this.playIndex = this.playOrder.IndexOf(songBindingModel.GetSong().Id);
-                            
+                            this.playIndex = this.playOrder.IndexOf(songIndex);
                             this.PlayCurrentSong();
                         });
 
@@ -208,23 +207,33 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             }
         }
 
-        public void Remove(GoogleMusicSong song)
+        public async Task RemoveAsync(int songIndex)
         {
-            if (song != null)
+            if (this.BindingModel.Songs.Count > songIndex)
             {
-                var songBindingModel = this.BindingModel.Songs.FirstOrDefault(x => x.GetSong() == song);
+                var songBindingModel = this.BindingModel.Songs[songIndex];
                 if (songBindingModel == null)
                 {
-                    this.Logger.Error("Cannot find song '{0}'", song.Id);
+                    this.Logger.Error("Cannot find song with index '{0}'", songIndex);
                 }
                 else
                 {
-                    this.Dispatcher.RunAsync(
+                    await this.Dispatcher.RunAsync(
                         () =>
                             {
-                                var index = this.playOrder.IndexOf(songBindingModel.GetSong().Id);
+                                var index = this.playOrder.IndexOf(songIndex);
 
                                 this.playOrder.RemoveAt(index);
+                                for (int i = 0; i < this.playOrder.Count; i++)
+                                {
+                                    if (this.playOrder[i] > songIndex)
+                                    {
+                                        this.playOrder[i]--;
+                                    }
+                                }
+
+                                this.BindingModel.Songs.Remove(songBindingModel);
+
                                 if (index == this.playIndex)
                                 {
                                     this.Stop();
@@ -237,8 +246,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                                         this.playIndex--;
                                     }
                                 }
-
-                                this.BindingModel.Songs.Remove(songBindingModel);
+                                
                                 if (this.BindingModel.Songs.Count == 0)
                                 {
                                     this.ClearPlaylist();
@@ -330,7 +338,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
             if (this.playOrder.Count > this.playIndex)
             {
-                this.BindingModel.CurrentSongId = this.playOrder[this.playIndex];
+                this.BindingModel.CurrentSongIndex = this.playOrder[this.playIndex];
                 var songBindingModel = this.BindingModel.CurrentSong;
                 if (songBindingModel != null)
                 {
@@ -455,7 +463,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
             if (this.BindingModel.Songs.Count > 0)
             {
-                var range = this.BindingModel.Songs.Select(x => x.GetSong().Id);
+                var range = Enumerable.Range(0, this.BindingModel.Songs.Count);
 
                 if (this.BindingModel.IsShuffleEnabled)
                 {
@@ -465,7 +473,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                             x =>
                             {
                                 if (this.BindingModel.CurrentSong != null 
-                                    && x == this.BindingModel.CurrentSong.GetSong().Id)
+                                    && x == this.BindingModel.CurrentSongIndex)
                                 {
                                     return -1;
                                 }
@@ -490,11 +498,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
                 if (this.BindingModel.CurrentSong != null)
                 {
-                    this.playIndex = this.playOrder.IndexOf(this.BindingModel.CurrentSong.GetSong().Id);
+                    this.playIndex = this.playOrder.IndexOf(this.BindingModel.CurrentSongIndex);
                 }
                 else
                 {
-                    this.playIndex = -1;
+                    this.playIndex = 0;
                 }
             }
         }

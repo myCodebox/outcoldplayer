@@ -5,6 +5,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 {
     using System;
     using System.Collections.Generic;
+    using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.WebServices.Models;
 
@@ -18,8 +19,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         IEnumerable<GoogleMusicSong> GetPlaylist();
 
-        void Play(GoogleMusicSong song);
+        Task PlayAsync(int index);
 
-        void Remove(GoogleMusicSong song);
+        Task RemoveAsync(int index);
     }
 }

@@ -3,6 +3,8 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Presenters
 {
+    using System.Threading.Tasks;
+
     using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
@@ -34,7 +36,21 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             var songBindingModel = this.View.SelectedSong;
             if (songBindingModel != null)
             {
-                this.currentPlaylistService.Remove(songBindingModel.GetSong());
+                var selectedIndex = this.BindingModel.Songs.IndexOf(songBindingModel);
+                this.currentPlaylistService.RemoveAsync(songBindingModel.Index - 1)
+                    .ContinueWith(
+                        (t) =>
+                        {
+                            if (selectedIndex < this.BindingModel.Songs.Count)
+                            {
+                                this.View.SelectedSong = this.BindingModel.Songs[selectedIndex];
+                            }
+                            else if (this.BindingModel.Songs.Count > 0)
+                            {
+                                this.View.SelectedSong = this.BindingModel.Songs[selectedIndex - 1];
+                            }
+                        }, 
+                        TaskScheduler.FromCurrentSynchronizationContext());
             }
         }
 
@@ -43,7 +59,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             var songBindingModel = this.View.SelectedSong;
             if (songBindingModel != null)
             {
-                this.currentPlaylistService.Play(songBindingModel.GetSong());
+                this.currentPlaylistService.PlayAsync(songBindingModel.Index - 1);
             }
         }
 

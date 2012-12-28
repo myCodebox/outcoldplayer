@@ -15,7 +15,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
     public interface ICurrentPlaylistView : IView
     {
-        SongBindingModel SelectedSong { get; }
+        SongBindingModel SelectedSong { get; set; }
     }
 
     public sealed partial class CurrentPlaylistView : ViewBase, ICurrentPlaylistView
@@ -48,6 +48,11 @@ namespace OutcoldSolutions.GoogleMusic.Views
             get
             {
                 return this.ListView.SelectedItem as SongBindingModel;
+            }
+
+            set
+            {
+                this.ListView.SelectedItem = value;
             }
         }
 

@@ -53,7 +53,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 if (playlist.Playlist != null && playlist.Playlist.Count > 0)
                 {
                     this.currentPlaylistService.AddSongs(playlist.Playlist);
-                    this.currentPlaylistService.Play(playlist.Playlist[0]);
+                    this.currentPlaylistService.PlayAsync(0);
                 }
             }
             else
