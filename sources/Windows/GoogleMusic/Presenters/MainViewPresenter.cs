@@ -38,7 +38,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                    {
                        if (task.Result.Succeed)
                        {
-                           this.BindingModel.IsAuthentificated = true;
+                           this.BindingModel.IsAuthenticated = true;
                            this.Logger.Debug("User is logged in. Going to start view and showing player.");
                            this.NavigateTo<IStartView>();
                        }
@@ -115,7 +115,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.View.HideView();
             ((IAuthentificationView)sender).Succeed -= this.AuthentificationViewOnSucceed;
 
-            this.BindingModel.IsAuthentificated = true;
+            this.BindingModel.IsAuthenticated = true;
             this.NavigateTo<IStartView>();
         }
 

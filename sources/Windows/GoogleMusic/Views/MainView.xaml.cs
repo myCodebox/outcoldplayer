@@ -53,10 +53,10 @@ namespace OutcoldSolutions.GoogleMusic.Views
         public void ShowView(IView view)
         {
             Debug.Assert(this.BottomAppBar != null, "this.BottomAppBar != null");
-            this.BottomAppBar.IsEnabled = this.Presenter<MainViewPresenter>().BindingModel.IsAuthentificated;
+            this.BottomAppBar.IsEnabled = this.Presenter<MainViewPresenter>().BindingModel.IsAuthenticated;
 
             Debug.Assert(this.TopAppBar != null, "this.TopAppBar != null");
-            this.TopAppBar.IsEnabled = this.Presenter<MainViewPresenter>().BindingModel.IsAuthentificated;
+            this.TopAppBar.IsEnabled = this.Presenter<MainViewPresenter>().BindingModel.IsAuthenticated;
 
             this.ClearContext();
             this.Content.Children.Add((UIElement)view);
