@@ -3,7 +3,9 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.BindingModels
 {
+    using System;
     using System.Collections.ObjectModel;
+    using System.Linq;
 
     public enum PlayState
     {
@@ -14,9 +16,9 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         Pause = 2
     }
 
-    public class PlayerBindingModel : BindingModelBase
+    public class PlayerBindingModel : SongsBindingModelBase
     {
-        private int currentSongIndex = -1;
+        private string currentSongId = null;
         private PlayState playState = PlayState.Stop;
 
         private bool isShuffleEnabled = false;
@@ -28,19 +30,6 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         private double totalSeconds = 1;
         private double currentPosition;
         private double downloadProgress;
-
-        public PlayerBindingModel()
-        {
-            this.Songs = new ObservableCollection<SongBindingModel>();
-            this.Songs.CollectionChanged += (sender, args) =>
-                {
-                    for (int index = 0; index < this.Songs.Count; index++)
-                    {
-                        var songBindingModel = this.Songs[index];
-                        songBindingModel.Index = index + 1;
-                    }
-                };
-        }
 
         public DelegateCommand SkipBackCommand { get; set; }
 
@@ -55,8 +44,6 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         public DelegateCommand RepeatAllCommand { get; set; }
 
         public DelegateCommand LockScreenCommand { get; set; }
-
-        public ObservableCollection<SongBindingModel> Songs { get; private set; }
 
         public bool IsShuffleEnabled
         {
@@ -131,30 +118,24 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
                     this.playState = value;
                     this.RaiseCurrentPropertyChanged();
                     this.RaisePropertyChanged("IsPlaying");
-                    this.UpdateCurrentSong();
                 }
             }
         }
 
-        public int CurrentSongIndex
+        public string CurrentSongId
         {
             get
             {
-                return this.currentSongIndex;
+                return this.currentSongId;
             }
 
             set
             {
-                if (this.currentSongIndex != value)
+                if (!string.Equals(this.currentSongId, value, StringComparison.OrdinalIgnoreCase))
                 {
-                    this.UpdateCurrentSong();
-                    if (value < this.Songs.Count)
-                    {
-                        this.currentSongIndex = value;
-                        this.RaiseCurrentPropertyChanged();
-                        this.RaisePropertyChanged("CurrentSong");
-                        this.UpdateCurrentSong();
-                    }
+                    this.currentSongId = value;
+                    this.RaiseCurrentPropertyChanged();
+                    this.RaisePropertyChanged("CurrentSong");
                 }
             }
         }
@@ -163,12 +144,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         {
             get
             {
-                if (this.CurrentSongIndex >= 0 && this.CurrentSongIndex < this.Songs.Count)
-                {
-                    return this.Songs[this.CurrentSongIndex];
-                }
-
-                return null;
+                return this.Songs.FirstOrDefault(x => string.Equals(this.currentSongId, x.GetSong().Id, StringComparison.OrdinalIgnoreCase));
             }
         }
 
@@ -247,24 +223,6 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             this.PlayCommand.RaiseCanExecuteChanged();
             this.SkipAheadCommand.RaiseCanExecuteChanged();
             this.SkipBackCommand.RaiseCanExecuteChanged();
-
-            this.UpdateCurrentSong();
-        }
-
-        private void UpdateCurrentSong()
-        {
-            if (this.CurrentSong != null)
-            {
-                foreach (var songBindingModel in this.Songs)
-                {
-                    if (songBindingModel != this.CurrentSong)
-                    {
-                        songBindingModel.IsPlaying = false;
-                    }
-                }
-
-                this.CurrentSong.IsPlaying = this.State == PlayState.Play;
-            }
         }
     }
 }

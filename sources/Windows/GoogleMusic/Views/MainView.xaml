@@ -15,9 +15,12 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                
-            </Grid>
 
+                <StackPanel x:Name="ContextCommands" Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Left" Height="85">
+
+                </StackPanel>
+
+            </Grid>
         </AppBar>
     </views:PageBase.BottomAppBar>
 
@@ -42,7 +45,7 @@
             Click="GoBackClick" Margin="36, 52, 36, 0"
             x:Name="BackButton"/>
 
-        <Grid x:Name="Content" Margin="120, 0, 20, 0" />
+        <Grid x:Name="Content" Margin="0" />
 
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Grid.ColumnSpan="2">
             <ProgressRing IsActive="{Binding Path=IsProgressRingActive, Mode=OneWay}" />

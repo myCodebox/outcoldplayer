@@ -108,23 +108,6 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             }
         }
 
-        public bool IsPlaying
-        {
-            get
-            {
-                return this.isPlaying;
-            }
-            
-            set
-            {
-                if (this.isPlaying != value)
-                {
-                    this.isPlaying = value;
-                    this.RaiseCurrentPropertyChanged();
-                }
-            }
-        }
-
         public bool IsSelected
         {
             get

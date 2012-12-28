@@ -4,18 +4,21 @@
 
 namespace OutcoldSolutions.GoogleMusic.Views
 {
+    using System.Collections.Generic;
     using System.Diagnostics;
 
     using OutcoldSolutions.GoogleMusic.Presenters;
+    using OutcoldSolutions.GoogleMusic.Services;
 
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
+    using Windows.UI.Xaml.Controls.Primitives;
 
     public interface IMediaElemenetContainerView : IView
     {
         MediaElement GetMediaElement();
 
-        void ActivateMediaContent();
+        void Activate();
     }
 
     public interface IMainView : IView, IMediaElemenetContainerView
@@ -25,7 +28,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
         void HideView();
     }
 
-    public sealed partial class MainView : PageBase, IMainView, IMediaElemenetContainerView
+    public sealed partial class MainView : PageBase, IMainView, IMediaElemenetContainerView, ICurrentContextCommands
     {
         private readonly PlayerView playerView;
         private UIElement currentView;
@@ -57,11 +60,13 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
         public void ShowView(IView view)
         {
+            this.ClearContext();
             this.Content.Children.Add((UIElement)view);
         }
 
         public void HideView()
         {
+            this.ClearContext();
             this.Content.Children.Clear();
         }
 
@@ -70,10 +75,29 @@ namespace OutcoldSolutions.GoogleMusic.Views
             return this.MediaElement;
         }
 
-        public void ActivateMediaContent()
+        public void Activate()
         {
             Debug.Assert(this.BottomAppBar != null, "this.BottomAppBar != null");
             this.BottomAppBar.IsOpen = true;
+        }
+
+        public void SetCommands(IEnumerable<ButtonBase> buttons)
+        {
+            this.ClearContext();
+            if (buttons != null)
+            {
+                foreach (var buttonBase in buttons)
+                {
+                    this.ContextCommands.Children.Add(buttonBase);
+                }
+
+                this.Activate();
+            }
+        }
+
+        public void ClearContext()
+        {
+            this.ContextCommands.Children.Clear(); 
         }
 
         private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
@@ -114,11 +138,8 @@ namespace OutcoldSolutions.GoogleMusic.Views
                     }
 
                     this.AppBarContent.Children.Add(this.playerView);
-                    this.Content.Margin = new Thickness(120, 0, 20, 0);
                     this.BackButton.Visibility = Visibility.Visible;
                 }
-
-                this.playerView.Width = this.ActualWidth - 350;
             }
 
             this.smallView = isSmallView;

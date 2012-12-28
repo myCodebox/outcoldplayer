@@ -26,7 +26,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private readonly MediaElement mediaElement;
 
-        private readonly List<int> playOrder = new List<int>();
+        private readonly List<string> playOrder = new List<string>();
         private int playIndex = 0;
 
         private DisplayRequest request;
@@ -140,6 +140,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.Dispose(disposing: false);
         }
 
+        public event EventHandler PlaylistChanged;
+
         public PlayerBindingModel BindingModel { get; private set; }
 
         public void Dispose()
@@ -147,14 +149,17 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }
-        
+
         public void ClearPlaylist()
         {
             this.Logger.Debug("ClearPlaylist.");
             this.playIndex = -1;
-            this.BindingModel.CurrentSongIndex = -1;
+            this.BindingModel.CurrentSongId = null;
             this.BindingModel.Songs.Clear();
             this.UpdateOrder();
+            this.BindingModel.UpdateBindingModel();
+
+            this.RaisePlaylistChanged();
         }
 
         public void AddSongs(IEnumerable<GoogleMusicSong> songs)
@@ -172,32 +177,80 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             }
 
             this.UpdateOrder();
-            this.Dispatcher.RunAsync(() => this.View.ActivateMediaContent());
+            this.Dispatcher.RunAsync(() => this.View.Activate());
+
+            this.RaisePlaylistChanged();
+        }
+ 
+        public IEnumerable<GoogleMusicSong> GetPlaylist()
+        {
+            return this.BindingModel.Songs.Select(x => x.GetSong());
         }
 
-        public void PlaySongs(IEnumerable<GoogleMusicSong> songs)
+        public void Play(GoogleMusicSong song)
         {
-            this.Logger.Debug("PlaySongs.");
-
-            if (songs == null)
+            var songBindingModel = this.BindingModel.Songs.FirstOrDefault(x => x.GetSong() == song);
+            if (songBindingModel == null)
             {
-                throw new ArgumentNullException("songs");
+                this.Logger.Error("Cannot find song '{0}'", song.Id);
             }
-
-            this.ClearPlaylist();
-            this.AddSongs(songs);
-            this.View.ActivateMediaContent();
-
-            this.Dispatcher.RunAsync(
-                () =>
-                    {
-                        if (this.BindingModel.Songs.Count > 0)
+            else
+            {
+                this.Dispatcher.RunAsync(
+                    () =>
                         {
-                            this.playIndex = 0;
-                            this.BindingModel.CurrentSongIndex = this.playOrder[this.playIndex];
+                            this.playIndex = this.playOrder.IndexOf(songBindingModel.GetSong().Id);
+                            
                             this.PlayCurrentSong();
-                        }
-                    });
+                        });
+
+                this.View.Activate();
+            }
+        }
+
+        public void Remove(GoogleMusicSong song)
+        {
+            if (song != null)
+            {
+                var songBindingModel = this.BindingModel.Songs.FirstOrDefault(x => x.GetSong() == song);
+                if (songBindingModel == null)
+                {
+                    this.Logger.Error("Cannot find song '{0}'", song.Id);
+                }
+                else
+                {
+                    this.Dispatcher.RunAsync(
+                        () =>
+                            {
+                                var index = this.playOrder.IndexOf(songBindingModel.GetSong().Id);
+
+                                this.playOrder.RemoveAt(index);
+                                if (index == this.playIndex)
+                                {
+                                    this.Stop();
+                                    this.PlayCurrentSong();
+                                }
+                                else 
+                                {
+                                    if (index < this.playIndex)
+                                    {
+                                        this.playIndex--;
+                                    }
+                                }
+
+                                this.BindingModel.Songs.Remove(songBindingModel);
+                                if (this.BindingModel.Songs.Count == 0)
+                                {
+                                    this.ClearPlaylist();
+                                }
+                                else
+                                {
+                                    this.RaisePlaylistChanged();
+                                    this.BindingModel.UpdateBindingModel();
+                                }
+                            });
+                }
+            }
         }
 
         private void NextSong()
@@ -208,12 +261,10 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 && this.BindingModel.IsRepeatAllEnabled)
             {
                 this.playIndex = 0;
-                this.BindingModel.CurrentSongIndex = this.playOrder[this.playIndex];
             }
             else
             {
                 this.playIndex++;
-                this.BindingModel.CurrentSongIndex = this.playOrder[this.playIndex];
             }
 
             this.PlayCurrentSong();
@@ -227,7 +278,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             if (this.playIndex != 0)
             {
                 this.playIndex--;
-                this.BindingModel.CurrentSongIndex = this.playOrder[this.playIndex];
             }
 
             this.PlayCurrentSong();
@@ -278,64 +328,69 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
             this.BindingModel.UpdateBindingModel();
 
-            var songBindingModel = this.BindingModel.CurrentSong;
-            if (songBindingModel != null)
+            if (this.playOrder.Count > this.playIndex)
             {
-                this.Logger.Debug("Found current song.");
-                var song = songBindingModel.GetSong();
+                this.BindingModel.CurrentSongId = this.playOrder[this.playIndex];
+                var songBindingModel = this.BindingModel.CurrentSong;
+                if (songBindingModel != null)
+                {
+                    this.Logger.Debug("Found current song.");
+                    var song = songBindingModel.GetSong();
 
-                this.Logger.Debug("Getting url for song '{0}'.", song.Id);
-                this.BindingModel.IsBusy = true;
-                this.songWebService.GetSongUrlAsync(song.Id).ContinueWith(
-                    (t) =>
-                        {
-                            if (t.Result != null)
+                    this.Logger.Debug("Getting url for song '{0}'.", song.Id);
+                    this.BindingModel.IsBusy = true;
+                    this.songWebService.GetSongUrlAsync(song.Id).ContinueWith(
+                        (t) =>
                             {
-                                this.Logger.Debug("Found url for song '{0}'. Url is '{1}'.", song.Id, t.Result.Url);
-
-                                MediaControl.NextTrackPressed -= this.MediaControlOnNextTrackPressed;
-                                MediaControl.NextTrackPressed -= this.MediaControlOnPreviousTrackPressed;
-
-                                MediaControl.ArtistName = song.Artist;
-                                MediaControl.TrackName = song.Title;
-
-                                /*if (song.AlbumArtUrl != null)
+                                if (t.Result != null)
                                 {
-                                    MediaControl.AlbumArt = new Uri("https:" + song.AlbumArtUrl);
-                                }*/
+                                    this.Logger.Debug("Found url for song '{0}'. Url is '{1}'.", song.Id, t.Result.Url);
 
-                                if (this.mediaElement.Source != null)
+                                    MediaControl.NextTrackPressed -= this.MediaControlOnNextTrackPressed;
+                                    MediaControl.NextTrackPressed -= this.MediaControlOnPreviousTrackPressed;
+
+                                    MediaControl.ArtistName = song.Artist;
+                                    MediaControl.TrackName = song.Title;
+
+                                    /*if (song.AlbumArtUrl != null)
+                                    {
+                                        MediaControl.AlbumArt = new Uri("https:" + song.AlbumArtUrl);
+                                    }*/
+
+                                    if (this.mediaElement.Source != null)
+                                    {
+                                        this.Logger.Info("Media Element contains source. Stop it first.");
+                                        this.mediaElement.Stop();
+                                    }
+
+                                    this.Logger.Info("Set new source for media element '{0}'.", t.Result.Url);
+                                    this.mediaElement.Source = new Uri(t.Result.Url);
+                                    this.mediaElement.Play();
+
+                                    if (this.BindingModel.SkipAheadCommand.CanExecute())
+                                    {
+                                        MediaControl.NextTrackPressed += this.MediaControlOnNextTrackPressed;
+                                    }
+
+                                    if (this.BindingModel.SkipBackCommand.CanExecute())
+                                    {
+                                        MediaControl.PreviousTrackPressed += this.MediaControlOnPreviousTrackPressed;
+                                    }
+
+                                    this.BindingModel.State = PlayState.Play;
+                                    this.BindingModel.UpdateBindingModel();
+                                }
+                                else
                                 {
-                                    this.Logger.Info("Media Element contains source. Stop it first.");
-                                    this.mediaElement.Stop();
+                                    this.Logger.Debug(
+                                        "Could not find url for song {0}. Trying to switch to next song.", song.Id);
+                                    this.NextSong();
                                 }
 
-                                this.Logger.Info("Set new source for media element '{0}'.", t.Result.Url);
-                                this.mediaElement.Source = new Uri(t.Result.Url);
-                                this.mediaElement.Play();
-
-                                if (this.BindingModel.SkipAheadCommand.CanExecute())
-                                {
-                                    MediaControl.NextTrackPressed += this.MediaControlOnNextTrackPressed;
-                                }
-
-                                if (this.BindingModel.SkipBackCommand.CanExecute())
-                                {
-                                    MediaControl.PreviousTrackPressed += this.MediaControlOnPreviousTrackPressed;
-                                }
-
-                                this.BindingModel.State = PlayState.Play;
-                                this.BindingModel.UpdateBindingModel();
-                            }
-                            else
-                            {
-                                this.Logger.Debug("Could not find url for song {0}. Trying to switch to next song.", song.Id);
-                                this.NextSong();
-                            }
-
-                            this.BindingModel.IsBusy = false;
-                        }, 
+                                this.BindingModel.IsBusy = false;
+                            },
                         TaskScheduler.FromCurrentSynchronizationContext());
+                }
             }
         }
         
@@ -400,7 +455,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
             if (this.BindingModel.Songs.Count > 0)
             {
-                var range = Enumerable.Range(0, this.BindingModel.Songs.Count);
+                var range = this.BindingModel.Songs.Select(x => x.GetSong().Id);
 
                 if (this.BindingModel.IsShuffleEnabled)
                 {
@@ -409,7 +464,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                         range.ToDictionary(
                             x =>
                             {
-                                if (x == this.BindingModel.CurrentSongIndex)
+                                if (this.BindingModel.CurrentSong != null 
+                                    && x == this.BindingModel.CurrentSong.GetSong().Id)
                                 {
                                     return -1;
                                 }
@@ -432,7 +488,14 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     this.Logger.Info("Playing order: {0}", string.Join(",", this.playOrder));
                 }
 
-                this.playIndex = this.playOrder.IndexOf(this.BindingModel.CurrentSongIndex);
+                if (this.BindingModel.CurrentSong != null)
+                {
+                    this.playIndex = this.playOrder.IndexOf(this.BindingModel.CurrentSong.GetSong().Id);
+                }
+                else
+                {
+                    this.playIndex = -1;
+                }
             }
         }
 
@@ -444,6 +507,15 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             if (this.BindingModel.SkipAheadCommand.CanExecute())
             {
                 this.NextSong();
+            }
+        }
+
+        private void RaisePlaylistChanged()
+        {
+            var handler = this.PlaylistChanged;
+            if (handler != null)
+            {
+                handler(this, EventArgs.Empty);
             }
         }
     }

@@ -3,12 +3,11 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.BindingModels
 {
-    using System.Collections.ObjectModel;
     using System.Linq;
 
     using OutcoldSolutions.GoogleMusic.WebServices.Models;
 
-    public class PlaylistViewBindingModel : BindingModelBase
+    public class PlaylistViewBindingModel : SongsBindingModelBase
     {
         private readonly GoogleMusicPlaylist playlist;
 
@@ -18,15 +17,12 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
             if (this.playlist.Playlist != null)
             {
-                this.Songs = new ObservableCollection<SongBindingModel>(this.playlist.Playlist.Select(s => new SongBindingModel(s)));
-            }
-            else
-            {
-                this.Songs = new ObservableCollection<SongBindingModel>();
+                foreach (var song in this.playlist.Playlist.Select(s => new SongBindingModel(s)))
+                {
+                    this.Songs.Add(song);
+                }
             }
         }
-
-        public ObservableCollection<SongBindingModel> Songs { get; private set; }
 
         public string Title
         {

@@ -58,13 +58,14 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         public void NavigateTo<TView>(object parameter = null) where TView : IView
         {
-            this.Logger.Debug("Navigating to {0}. Parameter {1}.", typeof(TView), parameter);
+            var viewType = typeof(TView);
+            this.Logger.Debug("Navigating to {0}. Parameter {1}.", viewType, parameter);
 
             if (this.viewsHistory.Count > 0)
             {
                 var value = this.viewsHistory.Last.Value;
                 if (object.Equals(value.Parameter, parameter)
-                    && typeof(TView) == value.View.GetType())
+                    && value.ViewType == viewType)
                 {
                     this.Logger.Warning("Double click found. Ignoring...");
                     return;
@@ -74,7 +75,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             var view = this.ShowView<TView>();
             view.OnNavigatedTo(parameter);
 
-            var historyItem = new HistoryItem(view, parameter);
+            var historyItem = new HistoryItem(view, viewType, parameter);
             this.viewsHistory.AddLast(historyItem);
 
             this.UpdateCanGoBack();
@@ -135,13 +136,16 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private class HistoryItem
         {
-            public HistoryItem(IView view, object parameter)
+            public HistoryItem(IView view, Type viewType, object parameter)
             {
                 this.View = view;
+                this.ViewType = viewType;
                 this.Parameter = parameter;
             }
 
             public IView View { get; private set; }
+
+            public Type ViewType { get; private set; }
 
             public object Parameter { get; private set; }
         }

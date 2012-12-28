@@ -50,9 +50,10 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 this.BindingModel = new PlaylistViewBindingModel(playlist);
 
                 // TODO: Temporary solution
-                if (playlist.Playlist != null)
+                if (playlist.Playlist != null && playlist.Playlist.Count > 0)
                 {
-                    this.currentPlaylistService.PlaySongs(playlist.Playlist);
+                    this.currentPlaylistService.AddSongs(playlist.Playlist);
+                    this.currentPlaylistService.Play(playlist.Playlist[0]);
                 }
             }
             else
