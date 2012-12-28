@@ -6,6 +6,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
+    using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
     using OutcoldSolutions.GoogleMusic.WebServices;
 
@@ -13,16 +14,19 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     {
         private readonly IPlaylistsWebService playlistsWebService;
         private readonly INavigationService navigationService;
+        private readonly ICurrentPlaylistService currentPlaylistService;
 
         public PlaylistsViewPresenter(
             IDependencyResolverContainer container,
             IPlaylistsView view,
             IPlaylistsWebService playlistsWebService,
-            INavigationService navigationService)
+            INavigationService navigationService,
+            ICurrentPlaylistService currentPlaylistService)
             : base(container, view)
         {
             this.playlistsWebService = playlistsWebService;
             this.navigationService = navigationService;
+            this.currentPlaylistService = currentPlaylistService;
             this.BindingModel = new PlaylistsViewBindingModel();
 
             this.Logger.Debug("Loading playlists.");
@@ -63,6 +67,23 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             {
                 this.Logger.Debug("ItemClick. Playlist '{0}'.", playlistBindingModel.Title);
                 this.navigationService.NavigateTo<IPlaylistView>(playlistBindingModel.GetPlaylist());
+            }
+        }
+
+        public void StartPlaylist(PlaylistBindingModel playlistBindingModel)
+        {
+            if (playlistBindingModel != null)
+            {
+                var googleMusicPlaylist = playlistBindingModel.GetPlaylist();
+
+                this.currentPlaylistService.ClearPlaylist();
+                if (googleMusicPlaylist.Playlist != null)
+                {
+                    this.currentPlaylistService.AddSongs(googleMusicPlaylist.Playlist);
+                    this.currentPlaylistService.PlayAsync(0);
+                }
+
+                this.navigationService.NavigateTo<IPlaylistView>(googleMusicPlaylist);
             }
         }
     }

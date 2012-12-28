@@ -18,56 +18,60 @@
 
         <TextBlock Style="{StaticResource HeaderTextStyle}" Text="{Binding Path=Title, Mode=OneWay}" VerticalAlignment="Bottom" Margin="120, 0, 20, 0"/>
 
-        <Grid Grid.Row="1" Margin="0, 20, 20, 40" HorizontalAlignment="Stretch" >
+        <Grid Grid.Row="1" Margin="80, 20, 20, 20" HorizontalAlignment="Stretch" >
             <Grid.ColumnDefinitions >
-                <ColumnDefinition Width="125" />
+                <ColumnDefinition Width="45" />
                 <ColumnDefinition Width="2*" />
                 <ColumnDefinition Width="80" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="60" />
-                <ColumnDefinition Width="60" />
+                <ColumnDefinition Width="85" />
             </Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="1" Margin="20, 0, 0, 0" Text="name" TextTrimming="WordEllipsis" Style="{StaticResource TitleTextStyle}" />
-            <TextBlock Grid.Column="2" Margin="20, 0, 0, 0" Text="time" HorizontalAlignment="Right" Style="{StaticResource TitleTextStyle}"/>
-            <TextBlock Grid.Column="3" Margin="20, 0, 0, 0" Text="artist" TextTrimming="WordEllipsis" Style="{StaticResource TitleTextStyle}"/>
-            <TextBlock Grid.Column="4" Margin="20, 0, 0, 0" Text="album" TextTrimming="WordEllipsis" Style="{StaticResource TitleTextStyle}"/>
-            <TextBlock Grid.Column="5" Margin="20, 0, 0, 0" Text="plays" HorizontalAlignment="Right" Style="{StaticResource TitleTextStyle}"/>
-            <TextBlock Grid.Column="6" Margin="20, 0, 0, 0" Text="rating" HorizontalAlignment="Right" Style="{StaticResource TitleTextStyle}"/>
+            <TextBlock Grid.Column="1" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="name" TextTrimming="WordEllipsis" Style="{StaticResource TitleTextStyle}" />
+            <TextBlock Grid.Column="2" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="time" HorizontalAlignment="Right" Style="{StaticResource TitleTextStyle}"/>
+            <TextBlock Grid.Column="3" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="artist" TextTrimming="WordEllipsis" Style="{StaticResource TitleTextStyle}"/>
+            <TextBlock Grid.Column="4" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="album" TextTrimming="WordEllipsis" Style="{StaticResource TitleTextStyle}"/>
+            <TextBlock Grid.Column="5" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="plays" HorizontalAlignment="Right" Style="{StaticResource TitleTextStyle}"/>
+            <TextBlock Grid.Column="6" VerticalAlignment="Center" Margin="20, 0, 25, 0" Text="rating" HorizontalAlignment="Right" Style="{StaticResource TitleTextStyle}"/>
         </Grid>
 
         <ListView Grid.Row="2"
                   ItemsSource="{Binding Path=Songs, Mode=OneTime}"
-                  SelectionMode="None"
+                  SelectionMode="Single"
                   HorizontalAlignment="Stretch"
                   HorizontalContentAlignment="Stretch"
                   IsTapEnabled="False"
-                  Margin="0, 0, 0, 20">
+                  Margin="80, 0, 0, 20" 
+                  SelectionChanged="ListOnSelectionChanged"
+                  x:Name="ListView">
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <Setter Property="HorizontalAlignment" Value="Stretch" />
                     <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    <Setter Property="Margin" Value="0"/>
+                    <Setter Property="Padding" Value="0"/>
                 </Style>
             </ListView.ItemContainerStyle>
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <Grid>
+                    <Grid VerticalAlignment="Center" Margin="0, 10, 0, 0">
                         <Grid.ColumnDefinitions >
-                            <ColumnDefinition Width="120" />
+                            <ColumnDefinition Width="40" />
                             <ColumnDefinition Width="2*" />
                             <ColumnDefinition Width="80" />
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="60" />
-                            <ColumnDefinition Width="60" />
+                            <ColumnDefinition Width="100" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="{Binding Path=Index, Mode=OneTime}"  HorizontalAlignment="Right" />
-                        <TextBlock Grid.Column="1" Margin="20, 0, 0, 0" Text="{Binding Path=Title, Mode=OneTime}" TextTrimming="WordEllipsis" />
-                        <TextBlock Grid.Column="2" Margin="20, 0, 0, 0" Text="{Binding Path=Time, Mode=OneTime}" HorizontalAlignment="Right"/>
-                        <TextBlock Grid.Column="3" Margin="20, 0, 0, 0" Text="{Binding Path=Artist, Mode=OneTime}" TextTrimming="WordEllipsis" />
-                        <TextBlock Grid.Column="4" Margin="20, 0, 0, 0" Text="{Binding Path=Album, Mode=OneTime}" TextTrimming="WordEllipsis" />
-                        <TextBlock Grid.Column="5" Margin="20, 0, 0, 0" Text="{Binding Path=Plays, Mode=OneTime}" HorizontalAlignment="Right" />
-                        <TextBlock Grid.Column="6" Margin="20, 0, 0, 0" Text="{Binding Path=Raiting, Mode=OneTime}" HorizontalAlignment="Right" />
+                        <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{Binding Path=Index, Mode=OneTime}"  HorizontalAlignment="Right" />
+                        <TextBlock Grid.Column="1" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="{Binding Path=Title, Mode=OneTime}" TextTrimming="WordEllipsis" />
+                        <TextBlock Grid.Column="2" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="{Binding Path=Time, Mode=OneTime}" HorizontalAlignment="Right"/>
+                        <TextBlock Grid.Column="3" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="{Binding Path=Artist, Mode=OneTime}" TextTrimming="WordEllipsis" />
+                        <TextBlock Grid.Column="4" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="{Binding Path=Album, Mode=OneTime}" TextTrimming="WordEllipsis" />
+                        <TextBlock Grid.Column="5" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="{Binding Path=Plays, Mode=OneTime}" HorizontalAlignment="Right" />
+                        <TextBlock Grid.Column="6" VerticalAlignment="Center" Margin="20, 0, 40, 0" Text="{Binding Path=Raiting, Mode=OneTime}" HorizontalAlignment="Right" />
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>

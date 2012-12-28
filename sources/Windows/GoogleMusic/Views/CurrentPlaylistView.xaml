@@ -9,7 +9,7 @@
     d:DesignHeight="600"
     d:DesignWidth="800">
 
-    <Grid DataContext="{Binding Path=BindingModel, Mode=OneWay}">
+    <Grid DataContext="{Binding Path=BindingModel, Mode=OneWay}" >
         <Grid.RowDefinitions>
             <RowDefinition Height="100" />
             <RowDefinition Height="Auto" />

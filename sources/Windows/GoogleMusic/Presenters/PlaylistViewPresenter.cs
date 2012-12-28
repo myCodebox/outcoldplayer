@@ -3,6 +3,8 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Presenters
 {
+    using System.Linq;
+
     using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
@@ -21,7 +23,10 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             : base(container, view)
         {
             this.currentPlaylistService = currentPlaylistService;
+            this.PlaySelectedSongCommand = new DelegateCommand(this.PlaySelectedSong);
         }
+
+        public DelegateCommand PlaySelectedSongCommand { get; private set; }
 
         public PlaylistViewBindingModel BindingModel
         {
@@ -48,18 +53,22 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             if (playlist != null && playlist.Playlist != null)
             {
                 this.BindingModel = new PlaylistViewBindingModel(playlist);
-
-                // TODO: Temporary solution
-                if (playlist.Playlist != null && playlist.Playlist.Count > 0)
-                {
-                    this.currentPlaylistService.AddSongs(playlist.Playlist);
-                    this.currentPlaylistService.PlayAsync(0);
-                }
             }
             else
             {
                 this.BindingModel = null;
                 this.Logger.Error("OnNavigatedTo: Playlist it null.");
+            }
+        }
+
+        private void PlaySelectedSong()
+        {
+            var songBindingModel = this.View.SelectedSong;
+            if (songBindingModel != null)
+            {
+                this.currentPlaylistService.ClearPlaylist();
+                this.currentPlaylistService.AddSongs(this.BindingModel.Songs.Select(x => x.GetSong()));
+                this.currentPlaylistService.PlayAsync(this.BindingModel.Songs.IndexOf(this.View.SelectedSong));
             }
         }
     }

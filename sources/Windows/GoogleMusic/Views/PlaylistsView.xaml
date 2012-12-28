@@ -7,7 +7,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     d:DesignHeight="300"
-    d:DesignWidth="400">
+    d:DesignWidth="400"
+    x:Name="CurrentView">
     
     <Grid DataContext="{Binding Path=BindingModel, Mode=OneTime}" >
 
@@ -20,7 +21,7 @@
 
         <ProgressRing Grid.Row="1" IsActive="{Binding Path=IsLoading, Mode=OneWay}" />
 
-        <ListView Grid.Row="1"
+        <GridView Grid.Row="1"
                   Visibility="{Binding Path=IsLoading, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}" 
                   Margin="0, 20, 0, 0" 
                   ItemsSource="{Binding Path=Playlists, Mode=OneTime}"
@@ -29,30 +30,49 @@
                   ScrollViewer.IsHorizontalRailEnabled="False"
                   ItemClick="PlaylistItemClick"
                   IsItemClickEnabled="True">
-            <ListView.ItemsPanel>
+            <GridView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <WrapGrid Orientation="Vertical" />
                 </ItemsPanelTemplate>
-            </ListView.ItemsPanel>
-            <ListView.ItemTemplate>
+            </GridView.ItemsPanel>
+            <GridView.ItemContainerStyle>
+                <Style TargetType="GridViewItem">
+                    <Setter Property="Margin" Value="0" />
+                    <Setter Property="Padding" Value="0" />
+                </Style>
+            </GridView.ItemContainerStyle>
+            <GridView.ItemTemplate>
                 <DataTemplate>
-                    <Grid Width="200" >
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-
-                        <Border Width="60" Height="60" Background="Silver">
-                            <Image Width="60" Height="60" Source="{Binding Path=PreviewImage, Mode=OneWay}" />
-                        </Border>
-
-                        <TextBlock Grid.Column="1" Margin="10, 0, 0, 0" 
-                                   Text="{Binding Path=Title, Mode=OneTime}" 
-                                   TextWrapping="Wrap"
-                                   Style="{StaticResource TitleTextStyle}"/>
-                    </Grid>
+                    <Border Background="{StaticResource ListViewItemPlaceholderBackgroundThemeBrush}">
+                        <Grid Width="294" Height="146" Margin="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Border Margin="15" Width="116" Height="116" Background="#FF207CB0">
+                                <Image Width="116" Height="116" Source="{Binding Path=PreviewImage, Mode=OneWay}" Stretch="UniformToFill"/>
+                            </Border>
+                            <StackPanel Grid.Column="1" Margin="0,15,10,0">
+                                <TextBlock Text="{Binding Path=Title, Mode=OneTime}"  Style="{StaticResource BodyTextStyle}" TextWrapping="Wrap"/>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding Path=Duration, Mode=OneTime, Converter={StaticResource DoubleToTimeConverter}}" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
+                                    <TextBlock Text=" (" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
+                                    <TextBlock Text="{Binding Path=SongsCount, Mode=OneTime}" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
+                                    <TextBlock Text=")" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
+                                </StackPanel>
+                            </StackPanel>
+                            <Button Grid.Column="1"
+                                    Width="65"
+                                    Height="65"
+                                    Style="{StaticResource PlayAppBarButtonStyle}"  
+                                    AutomationProperties.Name=""
+                                    VerticalAlignment="Bottom"
+                                    HorizontalAlignment="Right"
+                                    Click="StartPlaylistClick"/>
+                        </Grid>
+                    </Border>
                 </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+            </GridView.ItemTemplate>
+        </GridView>
     </Grid>
 </local:ViewBase>

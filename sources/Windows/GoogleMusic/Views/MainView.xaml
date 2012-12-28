@@ -27,10 +27,12 @@
     <Grid Background="{StaticResource ApplicationPageBackgroundThemeBrush}" DataContext="{Binding Path=BindingModel, Mode=OneTime}">
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        
+
+        <Image Source="ms-appx:///Resources/logo460.png" Height="460" Width="460" Margin="20" HorizontalAlignment="Right" VerticalAlignment="Top" Opacity="0.02" />
+
         <MediaElement 
                 x:Name="MediaElement"
                 IsLooping="False"
@@ -51,8 +53,10 @@
             <ProgressRing IsActive="{Binding Path=IsProgressRingActive, Mode=OneWay}" />
             <TextBlock Style="{StaticResource BasicTextStyle}" Text="{Binding Path=Message, Mode=OneWay}">Loading...</TextBlock>
         </StackPanel>
+        
+        <Border x:Name="BottomBorder" Grid.Row="1" Visibility="Collapsed" Height="100" />
 
-        <Border x:Name="BottomBorder" Grid.Row="1" Height="85" />
+        
 
     </Grid>
     

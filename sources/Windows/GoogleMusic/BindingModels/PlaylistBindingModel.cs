@@ -13,7 +13,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
     public class PlaylistBindingModel : BindingModelBase
     {
-        private static Random random = new Random();
+        private static readonly Random Random = new Random();
 
         private readonly GoogleMusicPlaylist playlist;
 
@@ -30,6 +30,32 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             }
         }
 
+        public int SongsCount
+        {
+            get
+            {
+                if (this.playlist.Playlist == null)
+                {
+                    return 0;
+                }
+
+                return this.playlist.Playlist.Count;
+            }
+        }
+
+        public double Duration
+        {
+            get
+            {
+                if (this.playlist.Playlist == null)
+                {
+                    return TimeSpan.Zero.TotalSeconds;
+                }
+
+                return TimeSpan.FromMilliseconds(this.playlist.Playlist.Sum(x => x.DurationMillis)).TotalSeconds;
+            }
+        }
+
         public ImageSource PreviewImage
         {
             get
@@ -40,7 +66,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
                     if (songsWithArt.Count > 0)
                     {
-                        var index = random.Next(0, songsWithArt.Count - 1);
+                        var index = Random.Next(0, songsWithArt.Count - 1);
                         if (this.playlist.Playlist[index].AlbumArtUrl != null)
                         {
                             // TODO: Load only 40x40 image

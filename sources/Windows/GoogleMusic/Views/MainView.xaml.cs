@@ -44,16 +44,8 @@ namespace OutcoldSolutions.GoogleMusic.Views
             Grid.SetColumn(this.playerView, 1);
 
             Debug.Assert(this.BottomAppBar != null, "this.BottomAppBar != null");
-
-            this.BottomAppBar.Opened += (sender, o) =>
-                {
-                    this.BottomBorder.Visibility = Visibility.Visible;
-                };
-
-            this.BottomAppBar.Closed += (sender, o) =>
-                {
-                    this.BottomBorder.Visibility = Visibility.Collapsed;
-                };
+            this.BottomAppBar.Opened += (sender, o) => { this.BottomBorder.Visibility = Visibility.Visible; };
+            this.BottomAppBar.Closed += (sender, o) => { this.BottomBorder.Visibility = Visibility.Collapsed; };
 
             this.Loaded += this.OnLoaded;
         }
