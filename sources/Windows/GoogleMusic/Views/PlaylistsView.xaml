@@ -21,7 +21,7 @@
 
         <ProgressRing Grid.Row="1" IsActive="{Binding Path=IsLoading, Mode=OneWay}" />
 
-        <GridView Grid.Row="1"
+        <ListView Grid.Row="1"
                   Visibility="{Binding Path=IsLoading, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}" 
                   Margin="0, 20, 0, 0" 
                   ItemsSource="{Binding Path=Playlists, Mode=OneTime}"
@@ -29,19 +29,21 @@
                   ScrollViewer.IsVerticalRailEnabled="False"
                   ScrollViewer.IsHorizontalRailEnabled="False"
                   ItemClick="PlaylistItemClick"
-                  IsItemClickEnabled="True">
-            <GridView.ItemsPanel>
+                  IsItemClickEnabled="True"
+                  ScrollViewer.HorizontalScrollMode="Disabled"
+                  ScrollViewer.VerticalScrollMode="Disabled">
+            <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <WrapGrid Orientation="Vertical" />
                 </ItemsPanelTemplate>
-            </GridView.ItemsPanel>
-            <GridView.ItemContainerStyle>
-                <Style TargetType="GridViewItem">
+            </ListView.ItemsPanel>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
                     <Setter Property="Margin" Value="0" />
                     <Setter Property="Padding" Value="0" />
                 </Style>
-            </GridView.ItemContainerStyle>
-            <GridView.ItemTemplate>
+            </ListView.ItemContainerStyle>
+            <ListView.ItemTemplate>
                 <DataTemplate>
                     <Border Background="{StaticResource ListViewItemPlaceholderBackgroundThemeBrush}">
                         <Grid Width="294" Height="146" Margin="0">
@@ -72,7 +74,7 @@
                         </Grid>
                     </Border>
                 </DataTemplate>
-            </GridView.ItemTemplate>
-        </GridView>
+            </ListView.ItemTemplate>
+        </ListView>
     </Grid>
 </local:ViewBase>

@@ -56,8 +56,6 @@
         
         <Border x:Name="BottomBorder" Grid.Row="1" Visibility="Collapsed" Height="100" />
 
-        
-
     </Grid>
     
 </views:PageBase>
