@@ -10,7 +10,7 @@
     d:DesignWidth="400"
     x:Name="CurrentView">
     
-    <Grid DataContext="{Binding Path=BindingModel, Mode=OneTime}" >
+    <Grid DataContext="{Binding Path=BindingModel, Mode=OneTime}">
 
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -34,7 +34,7 @@
                   ScrollViewer.VerticalScrollMode="Disabled">
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <WrapGrid Orientation="Vertical" />
+                    <WrapGrid Orientation="Vertical" MaximumRowsOrColumns="4" />
                 </ItemsPanelTemplate>
             </ListView.ItemsPanel>
             <ListView.ItemContainerStyle>

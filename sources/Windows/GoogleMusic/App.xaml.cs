@@ -43,7 +43,7 @@ namespace OutcoldSolutions.GoogleMusic
 
                 using (var registration = Container.Registration())
                 {
-                    registration.Register<ILogManager>().As<LogManager>();
+                    registration.Register<ILogManager>().AsSingleton<LogManager>();
 
                     registration.Register<IMainView>().And<IMediaElemenetContainerView>().And<ICurrentContextCommands>().AsSingleton<MainView>();
                     registration.Register<INavigationService>().And<MainViewPresenter>().AsSingleton<MainViewPresenter>();
@@ -51,17 +51,17 @@ namespace OutcoldSolutions.GoogleMusic
                     registration.Register<IAuthentificationView>().As<AuthentificationView>();
                     registration.Register<AuthentificationPresenter>();
 
-                    registration.Register<IStartView>().As<StartView>();
-                    registration.Register<StartViewPresenter>();
+                    registration.Register<IStartView>().AsSingleton<StartView>();
+                    registration.Register<StartViewPresenter>().AsSingleton();
 
-                    registration.Register<IPlaylistsView>().As<PlaylistsView>();
-                    registration.Register<PlaylistsViewPresenter>();
+                    registration.Register<IPlaylistsView>().AsSingleton<PlaylistsView>();
+                    registration.Register<PlaylistsViewPresenter>().AsSingleton();
 
-                    registration.Register<IPlaylistView>().As<PlaylistView>();
-                    registration.Register<PlaylistViewPresenter>();
+                    registration.Register<IPlaylistView>().AsSingleton<PlaylistView>();
+                    registration.Register<PlaylistViewPresenter>().AsSingleton();
 
-                    registration.Register<ICurrentPlaylistView>().As<CurrentPlaylistView>();
-                    registration.Register<CurrentPlaylistViewPresenter>();
+                    registration.Register<ICurrentPlaylistView>().AsSingleton<CurrentPlaylistView>();
+                    registration.Register<CurrentPlaylistViewPresenter>().AsSingleton();
 
                     registration.Register<ICurrentPlaylistService>().And<PlayerViewPresenter>().AsSingleton<PlayerViewPresenter>();
 

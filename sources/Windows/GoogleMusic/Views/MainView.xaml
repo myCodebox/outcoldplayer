@@ -5,7 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:views="using:OutcoldSolutions.GoogleMusic.Views" 
-    mc:Ignorable="d">
+    mc:Ignorable="d" >
 
     <views:PageBase.BottomAppBar>
         <AppBar IsSticky="True" IsEnabled="False">
@@ -26,7 +26,7 @@
 
     <views:PageBase.TopAppBar>
         
-        <AppBar IsEnabled="False">
+        <AppBar IsEnabled="False" IsSticky="False">
             <StackPanel Orientation="Horizontal" Height="86">
                 <StackPanel.Resources>
                     <Style TargetType="Button">
@@ -42,6 +42,10 @@
                         </Setter>
                     </Style>
                 </StackPanel.Resources>
+
+                <Button Click="HomeNavigate">
+                    Home
+                </Button>
                 
                 <Button Click="QueueNavigate">
                     Queue

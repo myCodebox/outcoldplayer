@@ -21,7 +21,7 @@
 
         <TextBlock Style="{StaticResource HeaderTextStyle}" VerticalAlignment="Bottom">Unofficial Google Music Player</TextBlock>
 
-        <views:PlaylistsView Margin="0, 40, 0, 50" Grid.Row="1" />
+        <views:PlaylistsView Margin="0, 40, 0, 0" Grid.Row="1" />
         
     </Grid>
 </views:ViewBase>

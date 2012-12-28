@@ -3,15 +3,19 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Presenters
 {
+    using System.Linq;
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
     using OutcoldSolutions.GoogleMusic.WebServices;
+    using OutcoldSolutions.GoogleMusic.WebServices.Models;
 
     public class PlaylistsViewPresenter : ViewPresenterBase<IPlaylistsView>
     {
+        private const int MaxPlaylists = 12;
+
         private readonly IPlaylistsWebService playlistsWebService;
         private readonly INavigationService navigationService;
         private readonly ICurrentPlaylistService currentPlaylistService;
@@ -34,22 +38,16 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 .ContinueWith(
                 task =>
                     {
-                        var playlists = task.Result;
-                        if (playlists.Playlists != null)
-                        {
-                            this.Logger.Debug("Playlists are not null. Count {0}.", playlists.Playlists.Count);
-                            foreach (var playlist in playlists.Playlists)
-                            {
-                                this.BindingModel.Playlists.Add(new PlaylistBindingModel(playlist));
-                            }
-                        }
+                        var playlists = (task.Result.Playlists ?? Enumerable.Empty<GoogleMusicPlaylist>())
+                            .Union(task.Result.MagicPlaylists ?? Enumerable.Empty<GoogleMusicPlaylist>()).ToList();
 
-                        if (playlists.MagicPlaylists != null)
+                        this.Logger.Debug("Playlists count {0}.", playlists.Count);
+                        foreach (var playlist in playlists)
                         {
-                            this.Logger.Debug("MagicPlaylists are not null. Count {0}.", playlists.MagicPlaylists.Count);
-                            foreach (var playlist in playlists.MagicPlaylists)
+                            this.BindingModel.Playlists.Add(new PlaylistBindingModel(playlist));
+                            if (this.BindingModel.Playlists.Count == MaxPlaylists)
                             {
-                                this.BindingModel.Playlists.Add(new PlaylistBindingModel(playlist));
+                                break;
                             }
                         }
 

@@ -151,12 +151,22 @@ namespace OutcoldSolutions.GoogleMusic.Views
                 mainViewPresenter.GoBack();
             }
         }
+        
+        private void HomeNavigate(object sender, RoutedEventArgs e)
+        {
+            this.Navigate<IStartView>();
+        }
 
         private void QueueNavigate(object sender, RoutedEventArgs e)
         {
+            this.Navigate<ICurrentPlaylistView>();
+        }
+
+        private void Navigate<TView>() where TView : IView
+        {
             Debug.Assert(this.TopAppBar != null, "this.TopAppBar != null");
             this.TopAppBar.IsOpen = false;
-            App.Container.Resolve<INavigationService>().NavigateTo<ICurrentPlaylistView>();
+            App.Container.Resolve<INavigationService>().NavigateTo<TView>();
         }
     }
 }
