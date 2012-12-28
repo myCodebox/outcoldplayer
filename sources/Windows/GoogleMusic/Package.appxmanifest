@@ -15,9 +15,9 @@
   </Resources>
   <Applications>
     <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="GoogleMusic.App">
-      <VisualElements DisplayName="GoogleMusic" Logo="Assets\Logo.png" SmallLogo="Assets\SmallLogo.png" Description="GoogleMusic" ForegroundText="light" BackgroundColor="#464646">
+      <VisualElements DisplayName="Unofficial Google Music Player" Logo="Assets\Logo.png" SmallLogo="Assets\SmallLogo.png" Description="Best Unofficial Google Music Player by OutcoldSolution." ForegroundText="light" BackgroundColor="#207CB0">
         <DefaultTile ShowName="allLogos" />
-        <SplashScreen Image="Assets\SplashScreen.png" />
+        <SplashScreen Image="Assets\SplashScreen.png" BackgroundColor="#000000" />
       </VisualElements>
       <Extensions>
         <Extension Category="windows.backgroundTasks" EntryPoint="OutcoldSolutions.GoogleMusic.App">
