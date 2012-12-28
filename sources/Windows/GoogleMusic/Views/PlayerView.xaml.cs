@@ -16,12 +16,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
             this.SizeChanged += (sender, args) =>
                 {
-                    if (ApplicationView.Value == ApplicationViewState.Snapped)
-                    {
-                        this.ProgressBarArea.Visibility = Visibility.Collapsed;
-                        this.MoreButton.Visibility = Visibility.Collapsed;
-                    }
-                    else
+                    if (ApplicationView.Value != ApplicationViewState.Snapped)
                     {
                         var width = this.ActualWidth - 104 /* Image */ - this.ButtonsArea.ActualWidth;
                         if (width > 0)
@@ -33,8 +28,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
                         {
                             this.ProgressBarArea.Visibility = Visibility.Collapsed;
                         }
-
-                        this.MoreButton.Visibility = Visibility.Visible;
                     }
                 };
         }

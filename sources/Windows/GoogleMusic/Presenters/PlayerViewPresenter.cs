@@ -172,6 +172,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             }
 
             this.UpdateOrder();
+            this.Dispatcher.RunAsync(() => this.View.ActivateMediaContent());
         }
 
         public void PlaySongs(IEnumerable<GoogleMusicSong> songs)
@@ -185,6 +186,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
             this.ClearPlaylist();
             this.AddSongs(songs);
+            this.View.ActivateMediaContent();
 
             this.Dispatcher.RunAsync(
                 () =>

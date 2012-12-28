@@ -25,7 +25,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
         private bool isBusy = false;
 
-        private double totalSeconds;
+        private double totalSeconds = 1;
         private double currentPosition;
         private double downloadProgress;
 

@@ -34,6 +34,8 @@
     <converters:ValueToVisibilityConverter x:Key="ValueToInvisibilityConverter" Invert="True"/>
     <converters:StringFormatConverter x:Key="StringFormatConverter"/>
     <converters:DoubleToTimeConverter x:Key="DoubleToTimeConverter"/>
+    <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
+    <converters:NullToVisibilityConverter x:Key="NullToInvisibilityConverter" Invert="True"/>
 
     <x:String x:Key="ChevronGlyph">&#xE26B;</x:String>
 

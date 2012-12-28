@@ -14,6 +14,8 @@ namespace OutcoldSolutions.GoogleMusic.Views
     public interface IMediaElemenetContainerView : IView
     {
         MediaElement GetMediaElement();
+
+        void ActivateMediaContent();
     }
 
     public interface IMainView : IView, IMediaElemenetContainerView
@@ -68,6 +70,12 @@ namespace OutcoldSolutions.GoogleMusic.Views
             return this.MediaElement;
         }
 
+        public void ActivateMediaContent()
+        {
+            Debug.Assert(this.BottomAppBar != null, "this.BottomAppBar != null");
+            this.BottomAppBar.IsOpen = true;
+        }
+
         private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
         {
             this.Loaded -= this.OnLoaded;
@@ -95,7 +103,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
             {
                 if (!this.smallView.HasValue || this.smallView.Value)
                 {
-                    
                     if (this.smallView.HasValue)
                     {
                         this.HideView();
