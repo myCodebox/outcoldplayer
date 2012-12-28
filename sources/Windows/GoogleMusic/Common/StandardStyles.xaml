@@ -597,6 +597,12 @@
         <Setter Property="Content" Value="&#xE103;"/>
     </Style>
 
+    <Style x:Key="SetLockScreenAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
+        <Setter Property="AutomationProperties.AutomationId" Value="SetLockscreenAppBarButton"/>
+        <Setter Property="AutomationProperties.Name" Value="Set Lockscreen"/>
+        <Setter Property="Content" Value="&#xE18C;"/>
+    </Style>
+    
     <Style x:Key="SetLockScreenPopupMenuButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource PopupMenuButtonStyle}">
         <Setter Property="AutomationProperties.AutomationId" Value="SetLockscreenAppBarButton"/>
         <Setter Property="AutomationProperties.Name" Value="Set Lockscreen"/>
@@ -609,12 +615,24 @@
         <Setter Property="Content" Value="&#xE10C;"/>
     </Style>
 
+    <Style x:Key="ShuffleAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
+        <Setter Property="AutomationProperties.AutomationId" Value="ShuffleAppBarButton"/>
+        <Setter Property="AutomationProperties.Name" Value="Shuffle"/>
+        <Setter Property="Content" Value="&#xE14B;"/>
+    </Style>
+    
     <Style x:Key="ShufflePopupMenuButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource PopupMenuButtonStyle}">
         <Setter Property="AutomationProperties.AutomationId" Value="ShuffleAppBarButton"/>
         <Setter Property="AutomationProperties.Name" Value="Shuffle"/>
         <Setter Property="Content" Value="&#xE14B;"/>
     </Style>
 
+    <Style x:Key="RepeatAllAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
+        <Setter Property="AutomationProperties.AutomationId" Value="RepeatAllAppBarButton"/>
+        <Setter Property="AutomationProperties.Name" Value="Repeat All"/>
+        <Setter Property="Content" Value="&#xE1CD;"/>
+    </Style>
+    
     <Style x:Key="RepeatAllPopupMenuButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource PopupMenuButtonStyle}">
         <Setter Property="AutomationProperties.AutomationId" Value="RepeatAllAppBarButton"/>
         <Setter Property="AutomationProperties.Name" Value="Repeat All"/>
@@ -625,6 +643,12 @@
         <Setter Property="AutomationProperties.AutomationId" Value="RemoveAppBarButton"/>
         <Setter Property="AutomationProperties.Name" Value="Remove"/>
         <Setter Property="Content" Value="&#xE108;"/>
+    </Style>
+
+    <Style x:Key="AddAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
+        <Setter Property="AutomationProperties.AutomationId" Value="AddAppBarButton"/>
+        <Setter Property="AutomationProperties.Name" Value="Add"/>
+        <Setter Property="Content" Value="&#xE109;"/>
     </Style>
 
     <!-- 

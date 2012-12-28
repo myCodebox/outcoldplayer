@@ -16,12 +16,21 @@
         </Grid.RowDefinitions>
         
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
         <TextBlock Style="{StaticResource HeaderTextStyle}" VerticalAlignment="Bottom">Unofficial Google Music Player</TextBlock>
 
-        <views:PlaylistsView Margin="0, 40, 0, 0" Grid.Row="1" />
-        
+        <ScrollViewer Grid.Row="1"  
+                      Margin="0, 40, 0, 0" 
+                      HorizontalScrollMode="Enabled" 
+                      HorizontalScrollBarVisibility="Visible" 
+                      VerticalScrollMode="Disabled" 
+                      VerticalScrollBarVisibility="Disabled">
+            
+            <views:PlaylistsView Width="Auto"/>
+            
+        </ScrollViewer>
+
     </Grid>
 </views:ViewBase>

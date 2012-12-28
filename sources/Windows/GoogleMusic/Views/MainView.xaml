@@ -10,7 +10,7 @@
     <views:PageBase.BottomAppBar>
         <AppBar IsSticky="True" IsEnabled="False">
 
-            <Grid x:Name="AppBarContent">
+            <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
@@ -19,6 +19,8 @@
                 <StackPanel x:Name="ContextCommands" Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Left" Height="85">
 
                 </StackPanel>
+                
+                <views:PlayerView Grid.Column="1" x:Name="PlayerView" />
 
             </Grid>
         </AppBar>
@@ -78,8 +80,10 @@
             Click="GoBackClick" Margin="36, 52, 36, 0"
             x:Name="BackButton"/>
 
-        <Grid x:Name="Content" Margin="0" />
+        <ContentControl x:Name="Content" Margin="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
 
+        <views:SnappedPlayerView x:Name="SnappedPlayerView" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="Collapsed" />
+        
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Grid.ColumnSpan="2" 
                     Visibility="{Binding Path=IsProgressRingActive, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
             <Image Source="ms-appx:///Assets/SplashScreen.png" Width="620" Height="300" />    

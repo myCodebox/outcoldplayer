@@ -10,6 +10,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
     using OutcoldSolutions.GoogleMusic.Presenters;
     using OutcoldSolutions.GoogleMusic.Services;
 
+    using Windows.UI.ViewManagement;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Controls.Primitives;
@@ -30,21 +31,26 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
     public sealed partial class MainView : PageBase, IMainView, IMediaElemenetContainerView, ICurrentContextCommands
     {
-        private readonly PlayerView playerView;
-        private UIElement currentView;
-
-        private bool? smallView = null;
-
         public MainView()
         {
             this.InitializeComponent();
             this.InitializePresenter<MainViewPresenter>();
 
-            this.playerView = new PlayerView() { DataContext = this.Presenter<MainViewPresenter>().PlayerViewPresenter };
-            Grid.SetColumn(this.playerView, 1);
+            this.PlayerView.DataContext = this.Presenter<MainViewPresenter>().PlayerViewPresenter;
+            this.SnappedPlayerView.DataContext = this.Presenter<MainViewPresenter>().PlayerViewPresenter;
 
             Debug.Assert(this.BottomAppBar != null, "this.BottomAppBar != null");
-            this.BottomAppBar.Opened += (sender, o) => { this.BottomBorder.Visibility = Visibility.Visible; };
+            this.BottomAppBar.Opened += (sender, o) =>
+                {
+                    if (this.BottomAppBar.Visibility == Visibility.Collapsed)
+                    {
+                        this.BottomAppBar.IsOpen = false;
+                    }
+                    else
+                    {
+                        this.BottomBorder.Visibility = Visibility.Visible;
+                    }
+                };
             this.BottomAppBar.Closed += (sender, o) => { this.BottomBorder.Visibility = Visibility.Collapsed; };
 
             this.Loaded += this.OnLoaded;
@@ -53,19 +59,21 @@ namespace OutcoldSolutions.GoogleMusic.Views
         public void ShowView(IView view)
         {
             Debug.Assert(this.BottomAppBar != null, "this.BottomAppBar != null");
-            this.BottomAppBar.IsEnabled = this.Presenter<MainViewPresenter>().BindingModel.IsAuthenticated;
+            this.BottomAppBar.IsEnabled = this.Presenter<MainViewPresenter>().BindingModel.IsAuthenticated
+                && ApplicationView.Value != ApplicationViewState.Snapped;
 
             Debug.Assert(this.TopAppBar != null, "this.TopAppBar != null");
-            this.TopAppBar.IsEnabled = this.Presenter<MainViewPresenter>().BindingModel.IsAuthenticated;
+            this.TopAppBar.IsEnabled = this.Presenter<MainViewPresenter>().BindingModel.IsAuthenticated
+                && ApplicationView.Value != ApplicationViewState.Snapped;
 
             this.ClearContext();
-            this.Content.Children.Add((UIElement)view);
+            this.Content.Content = view;
         }
 
         public void HideView()
         {
             this.ClearContext();
-            this.Content.Children.Clear();
+            this.Content.Content = null;
         }
 
         public MediaElement GetMediaElement()
@@ -107,40 +115,28 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
         private void UpdateCurrentView()
         {
-            var isSmallView = this.ActualWidth < 320.1;
-            if (isSmallView)
+            if (ApplicationView.Value == ApplicationViewState.Snapped)
             {
-                if (!this.smallView.HasValue || !this.smallView.Value)
-                {
-                    
-                    this.AppBarContent.Children.Remove(this.playerView);
-                    this.currentView = this.Content.Children[0];
-                    this.HideView();
-                    this.Content.Children.Add(this.playerView);
-                    this.Content.Margin = new Thickness(0);
-                    this.BackButton.Visibility = Visibility.Collapsed;
-                }
+                this.Content.Visibility = Visibility.Collapsed;
+                this.BackButton.Visibility = Visibility.Collapsed;
+                this.SnappedPlayerView.Visibility = Visibility.Visible;
+                this.BottomAppBar.IsEnabled = false;
+                this.TopAppBar.IsEnabled = false;
+                this.BottomAppBar.IsOpen = false;
+                this.TopAppBar.IsOpen = false;
+                this.BottomAppBar.Visibility = Visibility.Collapsed;
+                this.TopAppBar.Visibility = Visibility.Collapsed; 
             }
             else
             {
-                if (!this.smallView.HasValue || this.smallView.Value)
-                {
-                    if (this.smallView.HasValue)
-                    {
-                        this.HideView();
-                        if (this.currentView != null)
-                        {
-                            this.Content.Children.Add(this.currentView);
-                            this.currentView = null;
-                        }
-                    }
-
-                    this.AppBarContent.Children.Add(this.playerView);
-                    this.BackButton.Visibility = Visibility.Visible;
-                }
+                this.Content.Visibility = Visibility.Visible;
+                this.BackButton.Visibility = Visibility.Visible;
+                this.SnappedPlayerView.Visibility = Visibility.Collapsed;
+                this.BottomAppBar.IsEnabled = true;
+                this.TopAppBar.IsEnabled = true;
+                this.BottomAppBar.Visibility = Visibility.Visible;
+                this.TopAppBar.Visibility = Visibility.Visible; 
             }
-
-            this.smallView = isSmallView;
         }
 
         private void GoBackClick(object sender, RoutedEventArgs e)
