@@ -20,31 +20,20 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
 
         private readonly ILogger logger;
         private readonly IGoogleWebService googleWebService;
-        private readonly ISongsService songsService;
         private readonly IUserDataStorage userDataStorage;
-
-        private bool allSongsAreLoaded = false;
 
         public SongWebService(
             ILogManager logManager,
             IGoogleWebService googleWebService,
-            ISongsService songsService,
             IUserDataStorage userDataStorage)
         {
             this.logger = logManager.CreateLogger("SongWebService");
             this.googleWebService = googleWebService;
-            this.songsService = songsService;
             this.userDataStorage = userDataStorage;
         }
 
         public async Task<GoogleMusicSongUrl> GetSongUrlAsync(string id)
         {
-            if (!this.allSongsAreLoaded)
-            {
-                await this.songsService.GetAllGenresAsync();
-                this.allSongsAreLoaded = true;
-            }
-
             var url = string.Format(SongUrlFormat, id);
             var response = await this.googleWebService.GetAsync(url);
             if (response.HttpWebResponse.StatusCode == HttpStatusCode.OK)

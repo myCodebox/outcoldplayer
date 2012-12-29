@@ -80,7 +80,7 @@ namespace OutcoldSolutions.GoogleMusic
                     registration.Register<IUserDataStorage>().AsSingleton<UserDataStorage>();
                     registration.Register<IAuthentificationService>().As<AuthentificationService>();
                     registration.Register<IPlaylistsWebService>().As<PlaylistsWebService>();
-                    registration.Register<ISongWebService>().As<SongWebService>();
+                    registration.Register<ISongWebService>().AsSingleton<SongWebService>();
                     registration.Register<ISongsService>().AsSingleton<SongsService>();
 
                     registration.Register<IDispatcher>().AsSingleton(new DispatcherContainer(CoreWindow.GetForCurrentThread().Dispatcher));

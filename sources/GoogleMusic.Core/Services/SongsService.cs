@@ -112,18 +112,17 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         private async Task<List<GoogleMusicSong>> GetAllGoogleSongsAsync()
         {
-            lock (this.lockerAllSongs)
-            {
-                if (this.taskAllSongsLoader == null)
-                {
-                    this.taskAllSongsLoader = this.webService.GetAllSongsAsync();
-                }
-            }
-
-            return await this.taskAllSongsLoader;
+            await this.GetAllPlaylistsTask();
+            return await this.GetAllSongsTask();
         }
 
         private async Task<GoogleMusicPlaylists> GetAllGooglePlaylistsAsync()
+        {
+            await this.GetAllSongsTask();
+            return await this.GetAllPlaylistsTask();
+        }
+
+        private Task<GoogleMusicPlaylists> GetAllPlaylistsTask()
         {
             lock (this.lockerAllPlaylists)
             {
@@ -133,7 +132,20 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 }
             }
 
-            return await this.taskAllPlaylistsLoader;
+            return this.taskAllPlaylistsLoader;
+        }
+
+        private Task<List<GoogleMusicSong>> GetAllSongsTask()
+        {
+            lock (this.lockerAllSongs)
+            {
+                if (this.taskAllSongsLoader == null)
+                {
+                    this.taskAllSongsLoader = this.webService.GetAllSongsAsync();
+                }
+            }
+
+            return this.taskAllSongsLoader;
         }
     }
 }
