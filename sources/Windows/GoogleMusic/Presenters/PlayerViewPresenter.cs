@@ -22,6 +22,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     public class PlayerViewPresenter : ViewPresenterBase<IMediaElemenetContainerView>, ICurrentPlaylistService, IDisposable
     {
         private readonly DispatcherTimer timer = new DispatcherTimer();
+        private readonly DispatcherTimer recordPlayingTimer = new DispatcherTimer();
+
         private readonly ISongWebService songWebService;
 
         private readonly MediaElement mediaElement;
@@ -133,6 +135,18 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     this.BindingModel.CurrentPosition = this.mediaElement.Position.TotalSeconds;
                 }
             };
+
+            this.recordPlayingTimer.Tick += (sender, o) =>
+                {
+                    this.recordPlayingTimer.Stop();
+
+                    if (this.BindingModel.CurrentSong != null)
+                    {
+                        var song = this.BindingModel.CurrentSong.GetSong();
+                        this.songWebService.RecordPlayingAsync(song.Id, ++song.PlayCount)
+                            .ContinueWith(t => this.Logger.Debug("Record Playing for song '{0}', play count: {1}. Result: {2}.", song.Id, song.PlayCount, t.Result));
+                    }
+                };
         }
 
         ~PlayerViewPresenter()
@@ -390,6 +404,9 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                                     {
                                         MediaControl.PreviousTrackPressed += this.MediaControlOnPreviousTrackPressed;
                                     }
+
+                                    this.recordPlayingTimer.Interval = TimeSpan.FromMilliseconds(song.DurationMillis * 0.3);
+                                    this.recordPlayingTimer.Start();
                                 }
                                 else
                                 {

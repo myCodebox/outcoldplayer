@@ -10,5 +10,7 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
     public interface ISongWebService
     {
         Task<GoogleMusicSongUrl> GetSongUrlAsync(string id);
+
+        Task<bool> RecordPlayingAsync(string id, int playCounts);
     }
 }

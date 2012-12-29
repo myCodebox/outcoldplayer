@@ -63,6 +63,7 @@
     <Compile Include="WebServices\ISongWebService.cs" />
     <Compile Include="WebServices\Models\GoogleLoginResponse.cs" />
     <Compile Include="WebServices\Models\GoogleWebResponse.cs" />
+    <Compile Include="WebServices\Models\SuccessResult.cs" />
     <Compile Include="WebServices\PlaylistsWebService.cs" />
     <Compile Include="WebServices\RequestBodyWriter.cs" />
     <Compile Include="WebServices\Models\AddPlaylistResp.cs" />
