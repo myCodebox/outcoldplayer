@@ -9,7 +9,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
-    using OutcoldSolutions.GoogleMusic.WebServices.Models;
 
     public class PlaylistViewPresenter : ViewPresenterBase<IPlaylistView>
     {

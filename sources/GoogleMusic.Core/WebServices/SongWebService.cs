@@ -10,6 +10,7 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
     using Newtonsoft.Json;
 
     using OutcoldSolutions.GoogleMusic.Diagnostics;
+    using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.WebServices.Models;
 
     public class SongWebService : ISongWebService
@@ -19,17 +20,28 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
 
         private readonly ILogger logger;
         private readonly IGoogleWebService googleWebService;
+        private readonly ISongsService songsService;
+
+        private bool allSongsAreLoaded = false;
 
         public SongWebService(
             ILogManager logManager,
-            IGoogleWebService googleWebService)
+            IGoogleWebService googleWebService,
+            ISongsService songsService)
         {
             this.logger = logManager.CreateLogger("SongWebService");
             this.googleWebService = googleWebService;
+            this.songsService = songsService;
         }
 
         public async Task<GoogleMusicSongUrl> GetSongUrlAsync(string id)
         {
+            if (!this.allSongsAreLoaded)
+            {
+                await this.songsService.GetAllGenresAsync();
+                this.allSongsAreLoaded = true;
+            }
+
             var url = string.Format(SongUrlFormat, id);
             var response = await this.googleWebService.GetAsync(url);
             if (response.HttpWebResponse.StatusCode == HttpStatusCode.OK)

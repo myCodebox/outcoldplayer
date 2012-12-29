@@ -317,6 +317,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             }
             else
             {
+                this.recordPlayingTimer.Start();
+
                 this.mediaElement.Play();
                 this.BindingModel.State = PlayState.Play;
             }
@@ -330,6 +332,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
             this.mediaElement.Pause();
             this.BindingModel.State = PlayState.Pause;
+            this.recordPlayingTimer.Stop();
 
             this.BindingModel.UpdateBindingModel();
         }
@@ -338,6 +341,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         {
             this.Logger.Debug("Stop.");
 
+            this.recordPlayingTimer.Stop();
             this.mediaElement.Stop();
             this.BindingModel.State = PlayState.Stop;
 
@@ -349,6 +353,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.Logger.Debug("PlayCurrentSong.");
 
             this.BindingModel.UpdateBindingModel();
+            this.recordPlayingTimer.Stop();
 
             if (this.playOrder.Count > this.playIndex)
             {
