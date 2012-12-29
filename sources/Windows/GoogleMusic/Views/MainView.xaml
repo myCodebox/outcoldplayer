@@ -52,6 +52,14 @@
                 <Button Click="QueueNavigate">
                     Queue
                 </Button>
+
+                <Button Click="PlaylistsNavigate">
+                    Playlists
+                </Button>
+
+                <Button Click="AlbumsNavigate">
+                    Albums
+                </Button>
             </StackPanel>
         </AppBar>
         

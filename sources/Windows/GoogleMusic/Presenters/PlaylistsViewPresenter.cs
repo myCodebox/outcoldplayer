@@ -3,85 +3,73 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Presenters
 {
-    using System.Linq;
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
+    using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
-    using OutcoldSolutions.GoogleMusic.WebServices;
-    using OutcoldSolutions.GoogleMusic.WebServices.Models;
 
-    public class PlaylistsViewPresenter : ViewPresenterBase<IPlaylistsView>
+    public class PlaylistsViewPresenter : PlaylistsViewPresenterBase<IPlaylistsView>
     {
-        private const int MaxPlaylists = 12;
-
-        private readonly IPlaylistsWebService playlistsWebService;
-        private readonly INavigationService navigationService;
-        private readonly ICurrentPlaylistService currentPlaylistService;
+        private readonly ISongsService songsService;
 
         public PlaylistsViewPresenter(
             IDependencyResolverContainer container,
             IPlaylistsView view,
-            IPlaylistsWebService playlistsWebService,
-            INavigationService navigationService,
-            ICurrentPlaylistService currentPlaylistService)
+            ISongsService songsService)
             : base(container, view)
         {
-            this.playlistsWebService = playlistsWebService;
-            this.navigationService = navigationService;
-            this.currentPlaylistService = currentPlaylistService;
+            this.songsService = songsService;
             this.BindingModel = new PlaylistsViewBindingModel();
-
-            this.Logger.Debug("Loading playlists.");
-            this.playlistsWebService.GetAllPlaylistsAsync()
-                .ContinueWith(
-                task =>
-                    {
-                        var playlists = (task.Result.Playlists ?? Enumerable.Empty<GoogleMusicPlaylist>())
-                            .Union(task.Result.MagicPlaylists ?? Enumerable.Empty<GoogleMusicPlaylist>()).ToList();
-
-                        this.Logger.Debug("Playlists count {0}.", playlists.Count);
-                        foreach (var playlist in playlists)
-                        {
-                            this.BindingModel.Playlists.Add(new PlaylistBindingModel(playlist));
-                            if (this.BindingModel.Playlists.Count == MaxPlaylists)
-                            {
-                                break;
-                            }
-                        }
-
-                        this.BindingModel.IsLoading = false;
-                    }, 
-                    TaskScheduler.FromCurrentSynchronizationContext());
         }
 
         public PlaylistsViewBindingModel BindingModel { get; private set; }
 
-        public void ItemClick(PlaylistBindingModel playlistBindingModel)
+        public override void OnNavigatedTo(object parameter)
         {
-            this.Logger.Debug("ItemClick.");
-            if (playlistBindingModel != null)
-            {
-                this.Logger.Debug("ItemClick. Playlist '{0}'.", playlistBindingModel.Title);
-                this.navigationService.NavigateTo<IPlaylistView>(playlistBindingModel.GetPlaylist());
-            }
-        }
+            base.OnNavigatedTo(parameter);
 
-        public void StartPlaylist(PlaylistBindingModel playlistBindingModel)
-        {
-            if (playlistBindingModel != null)
-            {
-                var googleMusicPlaylist = playlistBindingModel.GetPlaylist();
+            this.BindingModel.Playlists.Clear();
+            this.BindingModel.Count = 0;
 
-                this.currentPlaylistService.ClearPlaylist();
-                if (googleMusicPlaylist.Playlist != null)
+            if (parameter is PlaylistsRequest)
+            {
+                this.BindingModel.IsLoading = true;
+                var playlistsRequest = (PlaylistsRequest)parameter;
+
+                if (playlistsRequest == PlaylistsRequest.Albums)
                 {
-                    this.currentPlaylistService.AddSongs(googleMusicPlaylist.Playlist);
-                    this.currentPlaylistService.PlayAsync(0);
-                }
+                    this.BindingModel.Title = "Albums";
+                    this.songsService.GetAllAlbumsAsync().ContinueWith(
+                        t =>
+                            {
+                                this.BindingModel.Count = t.Result.Count;
+                                this.BindingModel.IsLoading = false;
 
-                this.navigationService.NavigateTo<IPlaylistView>(googleMusicPlaylist);
+                                foreach (var album in t.Result)
+                                {
+                                    this.BindingModel.Playlists.Add(new PlaylistBindingModel(album));
+                                }
+                            },
+                        TaskScheduler.FromCurrentSynchronizationContext());
+                }
+                else
+                {
+                    this.BindingModel.Title = "Playlists";
+                    this.songsService.GetAllPlaylistsAsync().ContinueWith(
+                        t =>
+                            {
+                                this.BindingModel.Count = t.Result.Count;
+                                this.BindingModel.IsLoading = false;
+
+                                foreach (var playlist in t.Result)
+                                {
+                                    this.BindingModel.Playlists.Add(new PlaylistBindingModel(playlist));
+                                }
+                            },
+                        TaskScheduler.FromCurrentSynchronizationContext());
+                }
             }
         }
     }

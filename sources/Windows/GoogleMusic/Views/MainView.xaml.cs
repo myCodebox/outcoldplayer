@@ -7,6 +7,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
     using System.Collections.Generic;
     using System.Diagnostics;
 
+    using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Presenters;
     using OutcoldSolutions.GoogleMusic.Services;
 
@@ -159,11 +160,21 @@ namespace OutcoldSolutions.GoogleMusic.Views
             this.Navigate<ICurrentPlaylistView>();
         }
 
-        private void Navigate<TView>() where TView : IView
+        private void PlaylistsNavigate(object sender, RoutedEventArgs e)
+        {
+            this.Navigate<IPlaylistsView>(PlaylistsRequest.Playlists);
+        }
+
+        private void AlbumsNavigate(object sender, RoutedEventArgs e)
+        {
+            this.Navigate<IPlaylistsView>(PlaylistsRequest.Albums);
+        }
+
+        private void Navigate<TView>(object parameter = null) where TView : IView
         {
             Debug.Assert(this.TopAppBar != null, "this.TopAppBar != null");
             this.TopAppBar.IsOpen = false;
-            App.Container.Resolve<INavigationService>().NavigateTo<TView>();
+            App.Container.Resolve<INavigationService>().NavigateTo<TView>(parameter: parameter);
         }
     }
 }

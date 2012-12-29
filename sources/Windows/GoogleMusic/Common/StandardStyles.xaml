@@ -2169,6 +2169,8 @@
         </Setter>
     </Style>
 
+    <!-- Custom Styles -->
+    
     <Style TargetType="Slider">
         <Setter Property="Background" Value="{StaticResource SliderTrackBackgroundThemeBrush}" />
         <Setter Property="BorderBrush" Value="{StaticResource SliderBorderThemeBrush}" />
@@ -2514,5 +2516,43 @@
             </Setter.Value>
         </Setter>
     </Style>
+    
+    <!-- Data Templates -->
+
+    <DataTemplate x:Key="PlaylistDataTemplate">
+        <Border Background="{StaticResource ListViewItemPlaceholderBackgroundThemeBrush}">
+            <Grid Width="294" Height="146" Margin="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Border Margin="15" Width="116" Height="116" Background="#FF207CB0">
+                    <Image Width="116" Height="116" Source="{Binding Path=PreviewImage, Mode=OneWay}" Stretch="UniformToFill"/>
+                </Border>
+                <StackPanel Grid.Column="1" Margin="0,15,10,0">
+                    <TextBlock Text="{Binding Path=Playlist.Title, Mode=OneTime}"  Style="{StaticResource BodyTextStyle}" TextWrapping="Wrap"/>
+                    <TextBlock Visibility="{Binding Path=IsAlbum, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                                           Text="{Binding Path=Playlist.Artist, Mode=OneTime}"  
+                                                           Style="{StaticResource BodyTextStyle}" 
+                                                           Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" 
+                                                           TextWrapping="Wrap"/>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding Path=Playlist.Duration, Mode=OneTime, Converter={StaticResource DoubleToTimeConverter}}" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
+                        <TextBlock Text=" (" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
+                        <TextBlock Text="{Binding Path=Playlist.Songs.Count, Mode=OneTime}" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
+                        <TextBlock Text=")" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
+                    </StackPanel>
+                </StackPanel>
+                <Button Grid.Column="1"
+                                                Width="65"
+                                                Height="65"
+                                                Style="{StaticResource PlayAppBarButtonStyle}"  
+                                                AutomationProperties.Name=""
+                                                VerticalAlignment="Bottom"
+                                                HorizontalAlignment="Right"
+                                                Click="StartPlaylistClick"/>
+            </Grid>
+        </Border>
+    </DataTemplate>
 
 </ResourceDictionary>

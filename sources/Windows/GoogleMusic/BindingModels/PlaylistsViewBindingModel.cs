@@ -7,11 +7,12 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
     public class PlaylistsViewBindingModel : BindingModelBase
     {
+        private int count;
+        private string title;
         private bool isLoading;
 
         public PlaylistsViewBindingModel()
         {
-            this.IsLoading = true;
             this.Playlists = new ObservableCollection<PlaylistBindingModel>();
         }
 
@@ -29,6 +30,40 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
                 if (this.isLoading != value)
                 {
                     this.isLoading = value;
+                    this.RaiseCurrentPropertyChanged();
+                }
+            }
+        }
+
+        public int Count
+        {
+            get
+            {
+                return this.count;
+            }
+
+            set
+            {
+                if (this.count != value)
+                {
+                    this.count = value;
+                    this.RaiseCurrentPropertyChanged();
+                }
+            }
+        }
+
+        public string Title
+        {
+            get
+            {
+                return this.title;
+            }
+
+            set
+            {
+                if (this.title != value)
+                {
+                    this.title = value;
                     this.RaiseCurrentPropertyChanged();
                 }
             }

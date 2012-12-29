@@ -125,6 +125,7 @@
     <Compile Include="DispatcherContainer.cs" />
     <Compile Include="IDispatcher.cs" />
     <Compile Include="INavigationService.cs" />
+    <Compile Include="Models\PlaylistsRequest.cs" />
     <Compile Include="Models\TimeSpanEx.cs" />
     <Compile Include="Presenters\AuthentificationPresenter.cs" />
     <Compile Include="Presenters\CurrentPlaylistViewPresenter.cs" />
@@ -133,6 +134,7 @@
     <Compile Include="Presenters\PlaylistsViewPresenter.cs" />
     <Compile Include="BindingModels\PlaylistViewBindingModel.cs" />
     <Compile Include="Presenters\PlaylistViewPresenter.cs" />
+    <Compile Include="Presenters\PlaylistsViewPresenterBase.cs" />
     <Compile Include="Presenters\PresenterBase.cs" />
     <Compile Include="Presenters\Settings\AccountViewPresenter.cs" />
     <Compile Include="Presenters\StartViewPresenter.cs" />

@@ -25,8 +25,85 @@
                       VerticalScrollMode="Disabled" 
                       VerticalScrollBarVisibility="Disabled">
 
-            <views:PlaylistsView Width="Auto"/>
-            
+            <Grid DataContext="{Binding Path=BindingModel, Mode=OneTime}">
+                <Grid.Resources>
+                    <Style TargetType="ListView">
+                        <Setter Property="Margin" Value="0, 20, 40, 0" />
+                        <Setter Property="SelectionMode" Value="None" />
+                        <Setter Property="ScrollViewer.IsVerticalRailEnabled" Value="False" />
+                        <Setter Property="ScrollViewer.IsHorizontalRailEnabled" Value="False" />
+                        <Setter Property="IsItemClickEnabled" Value="True" />
+                        <Setter Property="ScrollViewer.HorizontalScrollMode" Value="Disabled" />
+                        <Setter Property="ScrollViewer.VerticalScrollMode" Value="Disabled" />
+                        <Setter Property="ItemsPanel">
+                            <Setter.Value>
+                                <ItemsPanelTemplate>
+                                    <WrapGrid Orientation="Vertical" MaximumRowsOrColumns="4" />
+                                </ItemsPanelTemplate>
+                            </Setter.Value>
+                        </Setter>
+                        <Setter Property="ItemContainerStyle">
+                            <Setter.Value>
+                                <Style TargetType="ListViewItem">
+                                    <Setter Property="Margin" Value="0" />
+                                    <Setter Property="Padding" Value="0" />
+                                </Style>
+                            </Setter.Value>
+                        </Setter>
+                        <Setter Property="ItemTemplate" Value="{StaticResource PlaylistDataTemplate}" />
+                    </Style>
+                </Grid.Resources>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <Button Margin="0, 0, 80, 0" Click="NavigateToPlaylists">
+                    <Button.Template>
+                        <ControlTemplate>
+                            <StackPanel Orientation="Horizontal" >
+                                <TextBlock Style="{StaticResource GroupHeaderTextStyle}">Playlists</TextBlock>
+                                <TextBlock Style="{StaticResource GroupHeaderTextStyle}" Text=" (" />
+                                <TextBlock Style="{StaticResource GroupHeaderTextStyle}" Text="{Binding Path=PlaylistsCount, Mode=OneWay}" />
+                                <TextBlock Style="{StaticResource GroupHeaderTextStyle}" Text=")" />
+                                <TextBlock Style="{StaticResource GroupHeaderTextStyle}" Margin="10, 0, 0, 0" FontFamily="Segoe UI Symbol" Text="{StaticResource ChevronGlyph}"></TextBlock>
+                            </StackPanel>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+                <ProgressRing Grid.Row="1" IsActive="{Binding Path=IsLoadingPlaylists, Mode=OneWay}" />
+                <ListView Grid.Row="1"
+                  Visibility="{Binding Path=IsLoadingPlaylists, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}" 
+                  ItemsSource="{Binding Path=Playlists, Mode=OneTime}"
+                  ItemClick="PlaylistItemClick" />
+
+                <Button Grid.Column="1" Margin="0, 0, 80, 0" Click="NavigateToAlbums">
+                    <Button.Template>
+                        <ControlTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Style="{StaticResource GroupHeaderTextStyle}">Albums</TextBlock>
+                                <TextBlock Style="{StaticResource GroupHeaderTextStyle}" Text=" (" />
+                                <TextBlock Style="{StaticResource GroupHeaderTextStyle}" Text="{Binding Path=AlbumsCount, Mode=OneWay}" />
+                                <TextBlock Style="{StaticResource GroupHeaderTextStyle}" Text=")" />
+                                <TextBlock Style="{StaticResource GroupHeaderTextStyle}" Margin="10, 0, 0, 0" FontFamily="Segoe UI Symbol" Text="{StaticResource ChevronGlyph}"></TextBlock>
+                            </StackPanel>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+                <ProgressRing Grid.Column="1" Grid.Row="1" IsActive="{Binding Path=IsLoadingAlbums, Mode=OneWay}" />
+                <ListView Grid.Column="1" Grid.Row="1"
+                  Visibility="{Binding Path=IsLoadingAlbums, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}" 
+                  ItemsSource="{Binding Path=Albums, Mode=OneTime}"
+                  ItemClick="PlaylistItemClick" />
+                
+            </Grid>
+
         </ScrollViewer>
 
     </Grid>

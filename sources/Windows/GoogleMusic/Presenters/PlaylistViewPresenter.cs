@@ -6,6 +6,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using System.Linq;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
+    using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
     using OutcoldSolutions.GoogleMusic.WebServices.Models;
@@ -49,8 +50,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         {
             base.OnNavigatedTo(parameter);
 
-            var playlist = parameter as GoogleMusicPlaylist;
-            if (playlist != null && playlist.Playlist != null)
+            var playlist = parameter as Playlist;
+            if (playlist != null)
             {
                 this.BindingModel = new PlaylistViewBindingModel(playlist);
             }

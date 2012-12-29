@@ -7,17 +7,21 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     d:DesignHeight="300"
-    d:DesignWidth="400"
-    x:Name="CurrentView">
-    
-    <Grid DataContext="{Binding Path=BindingModel, Mode=OneTime}">
+    d:DesignWidth="400">
+
+    <Grid Margin="120, 0, 20, 0" DataContext="{Binding Path=BindingModel, Mode=OneTime}">
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="100" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        
-        <TextBlock Style="{StaticResource SubheaderTextStyle}">Playlists</TextBlock>
+
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom">
+            <TextBlock Style="{StaticResource HeaderTextStyle}" Text="{Binding Path=Title, Mode=OneWay}" />
+            <TextBlock Style="{StaticResource HeaderTextStyle}" Text=" (" />
+            <TextBlock Style="{StaticResource HeaderTextStyle}" Text="{Binding Path=Count, Mode=OneWay}" />
+            <TextBlock Style="{StaticResource HeaderTextStyle}" Text=")" />
+        </StackPanel>
 
         <ProgressRing Grid.Row="1" IsActive="{Binding Path=IsLoading, Mode=OneWay}" />
 
@@ -30,11 +34,12 @@
                   ScrollViewer.IsHorizontalRailEnabled="False"
                   ItemClick="PlaylistItemClick"
                   IsItemClickEnabled="True"
-                  ScrollViewer.HorizontalScrollMode="Disabled"
-                  ScrollViewer.VerticalScrollMode="Disabled">
+                  ScrollViewer.HorizontalScrollMode="Enabled"
+                  ScrollViewer.VerticalScrollMode="Disabled"
+                  ItemTemplate="{StaticResource PlaylistDataTemplate}">
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <WrapGrid Orientation="Vertical" MaximumRowsOrColumns="4" />
+                    <WrapGrid Orientation="Vertical" />
                 </ItemsPanelTemplate>
             </ListView.ItemsPanel>
             <ListView.ItemContainerStyle>
@@ -43,38 +48,6 @@
                     <Setter Property="Padding" Value="0" />
                 </Style>
             </ListView.ItemContainerStyle>
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <Border Background="{StaticResource ListViewItemPlaceholderBackgroundThemeBrush}">
-                        <Grid Width="294" Height="146" Margin="0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <Border Margin="15" Width="116" Height="116" Background="#FF207CB0">
-                                <Image Width="116" Height="116" Source="{Binding Path=PreviewImage, Mode=OneWay}" Stretch="UniformToFill"/>
-                            </Border>
-                            <StackPanel Grid.Column="1" Margin="0,15,10,0">
-                                <TextBlock Text="{Binding Path=Title, Mode=OneTime}"  Style="{StaticResource BodyTextStyle}" TextWrapping="Wrap"/>
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="{Binding Path=Duration, Mode=OneTime, Converter={StaticResource DoubleToTimeConverter}}" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
-                                    <TextBlock Text=" (" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
-                                    <TextBlock Text="{Binding Path=SongsCount, Mode=OneTime}" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
-                                    <TextBlock Text=")" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
-                                </StackPanel>
-                            </StackPanel>
-                            <Button Grid.Column="1"
-                                    Width="65"
-                                    Height="65"
-                                    Style="{StaticResource PlayAppBarButtonStyle}"  
-                                    AutomationProperties.Name=""
-                                    VerticalAlignment="Bottom"
-                                    HorizontalAlignment="Right"
-                                    Click="StartPlaylistClick"/>
-                        </Grid>
-                    </Border>
-                </DataTemplate>
-            </ListView.ItemTemplate>
         </ListView>
     </Grid>
 </local:ViewBase>
