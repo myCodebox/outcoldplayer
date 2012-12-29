@@ -3,18 +3,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Services
 {
-    using OutcoldSolutions.GoogleMusic.Models;
-
-    public interface IUserDataStorage
+    public interface ISettingsCommands
     {
-        void SaveUserInfo(UserInfo userInfo);
-
-        UserInfo GetUserInfo(bool retrievePassword);
-
-        void ClearUserInfo();
-
-        void SetUserSession(UserSession session);
-
-        UserSession GetUserSession();
     }
 }

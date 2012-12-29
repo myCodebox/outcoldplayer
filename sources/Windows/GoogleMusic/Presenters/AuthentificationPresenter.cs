@@ -28,7 +28,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.authentificationService = authentificationService;
             this.BindingModel = new UserAuthentificationBindingModel();
 
-            var userInfo = this.userDataStorage.GetUserInfo();
+            var userInfo = this.userDataStorage.GetUserInfo(retrievePassword: true);
             if (userInfo != null)
             {
                 this.Logger.Debug("Found user info. Trying to set user email.");

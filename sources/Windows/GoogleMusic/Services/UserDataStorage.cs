@@ -49,7 +49,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             vault.Add(passwordCredential);
         }
 
-        public UserInfo GetUserInfo()
+        public UserInfo GetUserInfo(bool retrievePassword)
         {
             this.logger.Debug("GetUserInfo");
 
@@ -61,7 +61,10 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 if (list.Count > 0)
                 {
                     this.logger.Debug("Found password credentials. Count: {0}", list.Count);
-                    list[0].RetrievePassword();
+                    if (retrievePassword)
+                    {
+                        list[0].RetrievePassword();
+                    }
                     return new UserInfo(list[0].UserName, list[0].Password);
                 }
             }

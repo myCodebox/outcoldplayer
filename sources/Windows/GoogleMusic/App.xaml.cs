@@ -6,8 +6,10 @@ namespace OutcoldSolutions.GoogleMusic
 {
     using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Presenters;
+    using OutcoldSolutions.GoogleMusic.Presenters.Settings;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
+    using OutcoldSolutions.GoogleMusic.Views.Settings;
     using OutcoldSolutions.GoogleMusic.WebServices;
 
     using Windows.ApplicationModel;
@@ -65,6 +67,13 @@ namespace OutcoldSolutions.GoogleMusic
 
                     registration.Register<ICurrentPlaylistService>().And<PlayerViewPresenter>().AsSingleton<PlayerViewPresenter>();
 
+                    // Settings
+                    registration.Register<ISettingsCommands>().AsSingleton<SettingsCommands>();
+
+                    // Settings views
+                    registration.Register<AccountView>();
+                    registration.Register<AccountViewPresenter>();
+
                     // Services
                     registration.Register<IClientLoginService>().As<ClientLoginService>();
                     registration.Register<IGoogleWebService>().AsSingleton<GoogleWebService>();
@@ -83,9 +92,12 @@ namespace OutcoldSolutions.GoogleMusic
                 {
                     // TODO: Load state from previously suspended application
                 }
-
+                
                 // Place the frame in the current Window
                 Window.Current.Content = mainView;
+
+                // Initialize settings view
+                Container.Resolve<ISettingsCommands>();
             }
 
             // Ensure the current window is active

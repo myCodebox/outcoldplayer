@@ -33,7 +33,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             if (userInfo == null)
             {
                 this.logger.Debug("Trying to get user info.");
-                userInfo = this.userDataStorage.GetUserInfo();
+                userInfo = this.userDataStorage.GetUserInfo(retrievePassword: true);
             }
 
             if (userInfo == null)

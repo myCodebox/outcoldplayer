@@ -109,6 +109,7 @@
     <Compile Include="BindingModels\PlayerBindingModel.cs" />
     <Compile Include="BindingModels\PlaylistBindingModel.cs" />
     <Compile Include="BindingModels\PlaylistsViewBindingModel.cs" />
+    <Compile Include="BindingModels\Settings\AccountViewBindingModel.cs" />
     <Compile Include="BindingModels\SongBindingModel.cs" />
     <Compile Include="BindingModels\SongsBindingModelBase.cs" />
     <Compile Include="BindingModels\StartViewBindingModel.cs" />
@@ -133,10 +134,13 @@
     <Compile Include="BindingModels\PlaylistViewBindingModel.cs" />
     <Compile Include="Presenters\PlaylistViewPresenter.cs" />
     <Compile Include="Presenters\PresenterBase.cs" />
+    <Compile Include="Presenters\Settings\AccountViewPresenter.cs" />
     <Compile Include="Presenters\StartViewPresenter.cs" />
     <Compile Include="Presenters\ViewPresenterBase.cs" />
     <Compile Include="Services\ICurrentContextCommands.cs" />
     <Compile Include="Services\ICurrentPlaylistService.cs" />
+    <Compile Include="Services\ISettingsCommands.cs" />
+    <Compile Include="Services\SettingsCommands.cs" />
     <Compile Include="Services\UserDataStorage.cs" />
     <Compile Include="Views\CurrentPlaylistView.xaml.cs">
       <DependentUpon>CurrentPlaylistView.xaml</DependentUpon>
@@ -159,6 +163,9 @@
     </Compile>
     <Compile Include="Views\PlaylistView.xaml.cs">
       <DependentUpon>PlaylistView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\AccountView.xaml.cs">
+      <DependentUpon>AccountView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SnappedPlayerView.xaml.cs">
       <DependentUpon>SnappedPlayerView.xaml</DependentUpon>
@@ -212,6 +219,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\PlaylistView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\AccountView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

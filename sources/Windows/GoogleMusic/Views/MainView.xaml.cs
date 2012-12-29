@@ -51,6 +51,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
                         this.BottomBorder.Visibility = Visibility.Visible;
                     }
                 };
+
             this.BottomAppBar.Closed += (sender, o) => { this.BottomBorder.Visibility = Visibility.Collapsed; };
 
             this.Loaded += this.OnLoaded;

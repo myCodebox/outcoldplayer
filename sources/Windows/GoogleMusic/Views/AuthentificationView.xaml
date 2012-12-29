@@ -9,7 +9,7 @@
     d:DesignHeight="480"
     d:DesignWidth="600">
     
-    <Border Padding="10"  Width="600" Height="480" Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
+    <Border Padding="10"  Width="600" Height="480">
         <Grid>
             <Grid  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
                 <Grid.RowDefinitions>
@@ -21,8 +21,8 @@
                 <TextBlock Style="{StaticResource HeaderTextStyle}">Sign in</TextBlock>
 
                 <TextBlock Grid.Row="1" Margin="0, 20, 0, 0" TextWrapping="Wrap" Style="{StaticResource SmallTextStyle}">
-                To use GMusic player you need to provide your Google Account's email and password. 
-                If you do not have one, you need to create one. 
+                To use Unofficial Google Music player you need to provide your Google Account's email and password. 
+                If you do not have one, you need to create Google Account. 
                 Please make sure that you have subscribed to Google Music service. For more details go to the Google Music site.
                 </TextBlock>
 
@@ -45,7 +45,13 @@
                     Password will be stored in encrypted Windows Storage.
                 </TextBlock>
 
-                <HyperlinkButton Grid.Row="2" HorizontalAlignment="Left" Click="GotoGoogleMusic">Go to Google Music</HyperlinkButton>
+                <HyperlinkButton Grid.Row="2" HorizontalAlignment="Left" Click="GotoGoogleMusic">
+                    <StackPanel>
+                        <TextBlock FontSize="14">Go to Google Music</TextBlock>
+                        <TextBlock FontSize="12">https://play.google.com/music</TextBlock>
+                    </StackPanel> 
+                </HyperlinkButton>
+
                 <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
                     <ProgressRing IsActive="False" x:Name="ProgressRing" />
                     <Button Width="80" Margin="10, 0, 0, 0"
