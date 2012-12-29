@@ -23,6 +23,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         private List<Playlist> playlistsCache = null;
         private List<Album> albumsCache = null;
+        private List<Genre> genresCache = null;
 
         public SongsService(IPlaylistsWebService webService)
         {
@@ -31,7 +32,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         public async Task<List<Album>> GetAllAlbumsAsync(Order order = Order.Name)
         {
-            if (this.albumsCache != null)
+            if (this.albumsCache == null)
             {
                 var songs = await this.GetAllGoogleSongsAsync();
 
@@ -50,7 +51,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         public async Task<List<Playlist>> GetAllPlaylistsAsync(Order order = Order.Name)
         {
-            if (this.playlistsCache != null)
+            if (this.playlistsCache == null)
             {
                 var googleMusicPlaylists = await this.GetAllGooglePlaylistsAsync();
 
@@ -61,6 +62,25 @@ namespace OutcoldSolutions.GoogleMusic.Services
             }
 
             IEnumerable<Playlist> enumerable = this.playlistsCache;
+
+            if (order == Order.LastPlayed)
+            {
+                enumerable = enumerable.OrderBy(x => x.Songs.Max(s => s.LastPlayed));
+            }
+
+            return enumerable.ToList();
+        }
+
+        public async Task<List<Genre>> GetAllGenresAsync(Order order = Order.Name)
+        {
+            if (this.genresCache == null)
+            {
+                var songs = await this.GetAllGoogleSongsAsync();
+
+                this.genresCache = songs.GroupBy(x => x.Genre).Select(x => new Genre(x.Key, x.ToList())).ToList();
+            }
+
+            IEnumerable<Genre> enumerable = this.genresCache;
 
             if (order == Order.LastPlayed)
             {

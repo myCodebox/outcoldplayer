@@ -60,6 +60,10 @@
                 <Button Click="AlbumsNavigate">
                     Albums
                 </Button>
+
+                <Button Click="GenresNavigate">
+                    Genres
+                </Button>
             </StackPanel>
         </AppBar>
         

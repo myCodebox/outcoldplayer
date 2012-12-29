@@ -58,6 +58,22 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     this.BindingModel.IsLoadingAlbums = false;
                 },
                 TaskScheduler.FromCurrentSynchronizationContext());
+
+            this.songsService.GetAllGenresAsync(Order.LastPlayed).ContinueWith(
+                task =>
+                {
+                    this.Logger.Debug("Albums count {0}.", task.Result.Count);
+
+                    this.BindingModel.GenresCount = task.Result.Count;
+
+                    foreach (var playlist in task.Result.Take(MaxItems))
+                    {
+                        this.BindingModel.Genres.Add(new PlaylistBindingModel(playlist));
+                    }
+
+                    this.BindingModel.IsLoadingGenres = false;
+                },
+                TaskScheduler.FromCurrentSynchronizationContext());
         }
 
         public StartViewBindingModel BindingModel { get; private set; }

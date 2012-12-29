@@ -44,6 +44,8 @@
     <Compile Include="Diagnostics\LoggerEx.cs" />
     <Compile Include="Diagnostics\LogManager.cs" />
     <Compile Include="Models\Album.cs" />
+    <Compile Include="Models\Artist.cs" />
+    <Compile Include="Models\Genre.cs" />
     <Compile Include="Models\Playlist.cs" />
     <Compile Include="Models\UserInfo.cs" />
     <Compile Include="Models\UserSession.cs" />

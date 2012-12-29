@@ -3,12 +3,10 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Models
 {
-    public enum PlaylistsRequest
+    using System.Collections.Generic;
+
+    public class Artist
     {
-        Albums = 0,
-
-        Playlists = 1,
-
-        Genres = 2
+        public List<Playlist> Playlists { get; private set; }
     }
 }

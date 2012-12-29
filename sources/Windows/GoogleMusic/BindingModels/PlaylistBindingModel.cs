@@ -6,6 +6,8 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
     using System;
 
     using OutcoldSolutions.GoogleMusic.Models;
+    using OutcoldSolutions.GoogleMusic.Services;
+    using OutcoldSolutions.GoogleMusic.Views;
 
     using Windows.UI.Xaml.Media;
     using Windows.UI.Xaml.Media.Imaging;
@@ -17,7 +19,22 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         public PlaylistBindingModel(Playlist playlist)
         {
             this.playlist = playlist;
+            this.PlayCommand = new DelegateCommand(() =>
+                {
+                    var currentPlaylistService = App.Container.Resolve<ICurrentPlaylistService>();
+
+                    currentPlaylistService.ClearPlaylist();
+                    if (playlist.Songs.Count > 0)
+                    {
+                        currentPlaylistService.AddSongs(playlist.Songs);
+                        currentPlaylistService.PlayAsync(0);
+                    }
+
+                    App.Container.Resolve<INavigationService>().NavigateTo<IPlaylistView>(playlist);
+                });
         }
+
+        public DelegateCommand PlayCommand { get; private set; }
 
         public bool IsAlbum
         {

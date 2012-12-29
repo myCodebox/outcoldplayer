@@ -28,19 +28,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
             this.Presenter<StartViewPresenter>().ItemClick(e.ClickedItem as PlaylistBindingModel);
         }
 
-        private void StartPlaylistClick(object sender, RoutedEventArgs e)
-        {
-            var frameworkElement = e.OriginalSource as FrameworkElement;
-            if (frameworkElement != null)
-            {
-                var playlistBindingModel = frameworkElement.DataContext as PlaylistBindingModel;
-                if (playlistBindingModel != null)
-                {
-                    this.Presenter<StartViewPresenter>().StartPlaylist(playlistBindingModel);
-                }
-            }
-        }
-
         private void NavigateToPlaylists(object sender, RoutedEventArgs e)
         {
             App.Container.Resolve<INavigationService>().NavigateTo<IPlaylistsView>(PlaylistsRequest.Playlists);
@@ -49,6 +36,11 @@ namespace OutcoldSolutions.GoogleMusic.Views
         private void NavigateToAlbums(object sender, RoutedEventArgs e)
         {
             App.Container.Resolve<INavigationService>().NavigateTo<IPlaylistsView>(PlaylistsRequest.Albums);
+        }
+
+        private void NavigateToGenres(object sender, RoutedEventArgs e)
+        {
+            App.Container.Resolve<INavigationService>().NavigateTo<IPlaylistsView>(PlaylistsRequest.Genres);
         }
     }
 }

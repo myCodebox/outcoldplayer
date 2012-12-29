@@ -170,6 +170,11 @@ namespace OutcoldSolutions.GoogleMusic.Views
             this.Navigate<IPlaylistsView>(PlaylistsRequest.Albums);
         }
 
+        private void GenresNavigate(object sender, RoutedEventArgs e)
+        {
+            this.Navigate<IPlaylistsView>(PlaylistsRequest.Genres);
+        }
+
         private void Navigate<TView>(object parameter = null) where TView : IView
         {
             Debug.Assert(this.TopAppBar != null, "this.TopAppBar != null");

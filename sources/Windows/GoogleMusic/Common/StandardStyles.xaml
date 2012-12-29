@@ -2544,13 +2544,13 @@
                     </StackPanel>
                 </StackPanel>
                 <Button Grid.Column="1"
-                                                Width="65"
-                                                Height="65"
-                                                Style="{StaticResource PlayAppBarButtonStyle}"  
-                                                AutomationProperties.Name=""
-                                                VerticalAlignment="Bottom"
-                                                HorizontalAlignment="Right"
-                                                Click="StartPlaylistClick"/>
+                        Width="65"
+                        Height="65"
+                        Style="{StaticResource PlayAppBarButtonStyle}"  
+                        AutomationProperties.Name=""
+                        VerticalAlignment="Bottom"
+                        HorizontalAlignment="Right"
+                        Command="{Binding Path=PlayCommand, Mode=OneTime}" />
             </Grid>
         </Border>
     </DataTemplate>
