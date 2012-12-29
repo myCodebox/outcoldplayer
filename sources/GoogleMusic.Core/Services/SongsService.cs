@@ -44,7 +44,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
             if (order == Order.LastPlayed)
             {
-                enumerable = enumerable.OrderBy(x => x.Songs.Max(s => s.LastPlayed));
+                enumerable = enumerable.OrderBy(x => x.Songs.Count > 0 ? x.Songs.Max(s => s.LastPlayed) : double.MaxValue);
             }
 
             return enumerable.ToList();
@@ -66,7 +66,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
             if (order == Order.LastPlayed)
             {
-                enumerable = enumerable.OrderBy(x => x.Songs.Max(s => s.LastPlayed));
+                enumerable = enumerable.OrderBy(x => x.Songs.Count > 0 ? x.Songs.Max(s => s.LastPlayed) : double.MaxValue);
             }
 
             return enumerable.ToList();
@@ -85,7 +85,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
             if (order == Order.LastPlayed)
             {
-                enumerable = enumerable.OrderBy(x => x.Songs.Max(s => s.LastPlayed));
+                enumerable = enumerable.OrderBy(x => x.Songs.Count > 0 ? x.Songs.Max(s => s.LastPlayed) : double.MaxValue);
             }
 
             return enumerable.ToList();
@@ -104,7 +104,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
             if (order == Order.LastPlayed)
             {
-                enumerable = enumerable.OrderBy(x => x.Songs.Max(s => s.LastPlayed));
+                enumerable = enumerable.OrderBy(x => x.Songs.Count > 0 ? x.Songs.Max(s => s.LastPlayed) : double.MaxValue);
             }
 
             return enumerable.ToList();

@@ -6,6 +6,9 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
     using System.Collections.Generic;
     using System.Threading.Tasks;
 
+    using Newtonsoft.Json;
+
+    using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.WebServices.Models;
 
     public interface IPlaylistsWebService
@@ -21,17 +24,21 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
         private const string AllSongsUrl = "https://play.google.com/music/services/loadalltracks";
 
         private readonly IGoogleWebService googleWebService;
+        private readonly IUserDataStorage userDataStorage;
 
-        public PlaylistsWebService(IGoogleWebService googleWebService)
+        public PlaylistsWebService(
+            IGoogleWebService googleWebService,
+            IUserDataStorage userDataStorage)
         {
             this.googleWebService = googleWebService;
+            this.userDataStorage = userDataStorage;
         }
 
         public async Task<GoogleMusicPlaylists> GetAllPlaylistsAsync()
         {
             var requestParameters = new Dictionary<string, string>
                                         {
-                                            { "json", "{}" }
+                                            { "json", JsonConvert.SerializeObject(new { sessionId = this.userDataStorage.GetUserSession().SessionId }) }
                                         };
 
             var response = await this.googleWebService.PostAsync(PlaylistsUrl, arguments: requestParameters);
@@ -50,11 +57,11 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
 
                 if (playlist != null && !string.IsNullOrEmpty(playlist.ContinuationToken))
                 {
-                    json = string.Format("{{continuationToken:\"{0}\"}}", playlist.ContinuationToken);
+                    json = JsonConvert.SerializeObject(new { sessionId = this.userDataStorage.GetUserSession().SessionId, continuationToken = playlist.ContinuationToken });
                 }
                 else
                 {
-                    json = "{}";
+                    json = JsonConvert.SerializeObject(new { sessionId = this.userDataStorage.GetUserSession().SessionId });
                 }
 
                 var requestParameters = new Dictionary<string, string>

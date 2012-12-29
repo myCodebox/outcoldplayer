@@ -15,23 +15,26 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
 
     public class SongWebService : ISongWebService
     {
-        private const string SongUrlFormat = "https://play.google.com/music/play?u=0&songid={0}&pt=e";
+        private const string SongUrlFormat = "https://play.google.com/music/play?u=0&songid={0}";
         private const string RecordPlayingUrl = "https://play.google.com/music/services/recordplaying";
 
         private readonly ILogger logger;
         private readonly IGoogleWebService googleWebService;
         private readonly ISongsService songsService;
+        private readonly IUserDataStorage userDataStorage;
 
         private bool allSongsAreLoaded = false;
 
         public SongWebService(
             ILogManager logManager,
             IGoogleWebService googleWebService,
-            ISongsService songsService)
+            ISongsService songsService,
+            IUserDataStorage userDataStorage)
         {
             this.logger = logManager.CreateLogger("SongWebService");
             this.googleWebService = googleWebService;
             this.songsService = songsService;
+            this.userDataStorage = userDataStorage;
         }
 
         public async Task<GoogleMusicSongUrl> GetSongUrlAsync(string id)
@@ -59,7 +62,7 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
         {
             var requestParameters = new Dictionary<string, string>
                                         {
-                                            { "json", JsonConvert.SerializeObject(new { songId = id, playCount = playCounts }) }
+                                            { "json", JsonConvert.SerializeObject(new { songId = id, playCount = playCounts, sessionId = this.userDataStorage.GetUserSession().SessionId }) }
                                         };
 
             var response = await this.googleWebService.PostAsync(RecordPlayingUrl, arguments: requestParameters);
