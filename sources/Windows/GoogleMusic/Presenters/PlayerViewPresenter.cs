@@ -338,8 +338,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
             if (this.playOrder.Count > this.playIndex)
             {
-                this.BindingModel.CurrentSongIndex = this.playOrder[this.playIndex];
-                var songBindingModel = this.BindingModel.CurrentSong;
+                var currentSongIndex = this.playOrder[this.playIndex];
+                var songBindingModel = this.BindingModel.Songs[currentSongIndex];
                 if (songBindingModel != null)
                 {
                     this.Logger.Debug("Found current song.");
@@ -355,7 +355,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                                     this.Logger.Debug("Found url for song '{0}'. Url is '{1}'.", song.Id, t.Result.Url);
 
                                     MediaControl.NextTrackPressed -= this.MediaControlOnNextTrackPressed;
-                                    MediaControl.NextTrackPressed -= this.MediaControlOnPreviousTrackPressed;
+                                    MediaControl.PreviousTrackPressed -= this.MediaControlOnPreviousTrackPressed;
 
                                     MediaControl.ArtistName = song.Artist;
                                     MediaControl.TrackName = song.Title;
@@ -371,9 +371,15 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                                         this.mediaElement.Stop();
                                     }
 
+                                    this.BindingModel.CurrentSongIndex = currentSongIndex;
+
                                     this.Logger.Info("Set new source for media element '{0}'.", t.Result.Url);
                                     this.mediaElement.Source = new Uri(t.Result.Url);
                                     this.mediaElement.Play();
+
+                                    this.BindingModel.State = PlayState.Play;
+                                    this.BindingModel.UpdateBindingModel();
+                                    this.BindingModel.IsBusy = false;
 
                                     if (this.BindingModel.SkipAheadCommand.CanExecute())
                                     {
@@ -384,18 +390,14 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                                     {
                                         MediaControl.PreviousTrackPressed += this.MediaControlOnPreviousTrackPressed;
                                     }
-
-                                    this.BindingModel.State = PlayState.Play;
-                                    this.BindingModel.UpdateBindingModel();
                                 }
                                 else
                                 {
                                     this.Logger.Debug(
                                         "Could not find url for song {0}. Trying to switch to next song.", song.Id);
                                     this.NextSong();
+                                    this.BindingModel.IsBusy = false;
                                 }
-
-                                this.BindingModel.IsBusy = false;
                             },
                         TaskScheduler.FromCurrentSynchronizationContext());
                 }
@@ -416,19 +418,19 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private void MediaControlPausePressed(object sender, object e)
         {
             this.Logger.Debug("MediaControlPausePressed.");
-            this.Pause();
+            this.Dispatcher.RunAsync(this.Pause);
         }
 
         private void MediaControlPlayPressed(object sender, object e)
         {
             this.Logger.Debug("MediaControlPlayPressed.");
-            this.Play();
+            this.Dispatcher.RunAsync(this.Play);
         }
 
         private void MediaControlStopPressed(object sender, object e)
         {
             this.Logger.Debug("MediaControlStopPressed.");
-            this.Stop();
+            this.Dispatcher.RunAsync(this.Stop);
         }
 
         private void MediaControlPlayPauseTogglePressed(object sender, object e)
@@ -436,24 +438,24 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.Logger.Debug("MediaControlPlayPauseTogglePressed.");
             if (this.BindingModel.State == PlayState.Play)
             {
-                this.Pause();
+                this.Dispatcher.RunAsync(this.Pause);
             }
             else
             {
-                this.Play();
+                this.Dispatcher.RunAsync(this.Play);
             }
         }
 
         private void MediaControlOnNextTrackPressed(object sender, object o)
         {
             this.Logger.Debug("MediaControlOnNextTrackPressed.");
-            this.NextSong();
+            this.Dispatcher.RunAsync(this.NextSong);
         }
 
         private void MediaControlOnPreviousTrackPressed(object sender, object o)
         {
             this.Logger.Debug("MediaControlOnPreviousTrackPressed.");
-            this.PreviousSong();
+            this.Dispatcher.RunAsync(this.PreviousSong);
         }
 
         private void UpdateOrder()

@@ -80,7 +80,12 @@
             Click="GoBackClick" Margin="36, 52, 36, 0"
             x:Name="BackButton"/>
 
-        <ContentControl x:Name="Content" Margin="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+        <ContentControl x:Name="Content" 
+                        Margin="0" 
+                        HorizontalAlignment="Stretch" 
+                        VerticalAlignment="Stretch" 
+                        HorizontalContentAlignment="Stretch" 
+                        VerticalContentAlignment="Stretch" />
 
         <views:SnappedPlayerView x:Name="SnappedPlayerView" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="Collapsed" />
         

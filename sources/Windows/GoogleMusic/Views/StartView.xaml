@@ -9,25 +9,22 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
     
-    <Grid Margin="120, 0, 20, 0">
+    <Grid Margin="120, 0, 20, 0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="100" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
 
         <TextBlock Style="{StaticResource HeaderTextStyle}" VerticalAlignment="Bottom">Unofficial Google Music Player</TextBlock>
 
         <ScrollViewer Grid.Row="1"  
                       Margin="0, 40, 0, 0" 
+                      VerticalAlignment="Stretch"
                       HorizontalScrollMode="Enabled" 
                       HorizontalScrollBarVisibility="Visible" 
                       VerticalScrollMode="Disabled" 
                       VerticalScrollBarVisibility="Disabled">
-            
+
             <views:PlaylistsView Width="Auto"/>
             
         </ScrollViewer>
