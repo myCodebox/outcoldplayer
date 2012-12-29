@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:views="using:OutcoldSolutions.GoogleMusic.Views"
+    xmlns:views="using:OutcoldSolutions.GoogleMusic.Views" xmlns:controls="using:OutcoldSolutions.GoogleMusic.Controls"
     mc:Ignorable="d"
     d:DesignHeight="600"
     d:DesignWidth="800">
@@ -26,14 +26,14 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="60" />
-                <ColumnDefinition Width="85" />
+                <ColumnDefinition Width="125" />
             </Grid.ColumnDefinitions>
             <TextBlock Grid.Column="1" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="name" TextTrimming="WordEllipsis" Style="{StaticResource TitleTextStyle}" />
             <TextBlock Grid.Column="2" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="time" HorizontalAlignment="Right" Style="{StaticResource TitleTextStyle}"/>
             <TextBlock Grid.Column="3" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="artist" TextTrimming="WordEllipsis" Style="{StaticResource TitleTextStyle}"/>
             <TextBlock Grid.Column="4" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="album" TextTrimming="WordEllipsis" Style="{StaticResource TitleTextStyle}"/>
             <TextBlock Grid.Column="5" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="plays" HorizontalAlignment="Right" Style="{StaticResource TitleTextStyle}"/>
-            <TextBlock Grid.Column="6" VerticalAlignment="Center" Margin="20, 0, 25, 0" Text="rating" HorizontalAlignment="Right" Style="{StaticResource TitleTextStyle}"/>
+            <TextBlock Grid.Column="6" VerticalAlignment="Center" Margin="20, 0, 25, 0" Text="rating" HorizontalAlignment="Left" Style="{StaticResource TitleTextStyle}"/>
         </Grid>
 
         <ListView Grid.Row="2"
@@ -63,7 +63,7 @@
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="60" />
-                            <ColumnDefinition Width="100" />
+                            <ColumnDefinition Width="140" />
                         </Grid.ColumnDefinitions>
                         <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{Binding Path=Index, Mode=OneTime}"  HorizontalAlignment="Right" />
                         <TextBlock Grid.Column="1" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="{Binding Path=Title, Mode=OneTime}" TextTrimming="WordEllipsis" />
@@ -71,7 +71,7 @@
                         <TextBlock Grid.Column="3" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="{Binding Path=Artist, Mode=OneTime}" TextTrimming="WordEllipsis" />
                         <TextBlock Grid.Column="4" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="{Binding Path=Album, Mode=OneTime}" TextTrimming="WordEllipsis" />
                         <TextBlock Grid.Column="5" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="{Binding Path=Plays, Mode=OneTime}" HorizontalAlignment="Right" />
-                        <TextBlock Grid.Column="6" VerticalAlignment="Center" Margin="20, 0, 40, 0" Text="{Binding Path=Raiting, Mode=OneTime}" HorizontalAlignment="Right" />
+                        <controls:Rating Grid.Column="6" VerticalAlignment="Center" Margin="20, 0, 40, 0" Value="{Binding Path=Raiting, Mode=OneTime}" HorizontalAlignment="Right"/>
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>

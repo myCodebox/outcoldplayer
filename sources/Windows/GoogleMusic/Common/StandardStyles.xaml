@@ -11,7 +11,8 @@
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:converters="using:OutcoldSolutions.GoogleMusic.Converters">
+    xmlns:converters="using:OutcoldSolutions.GoogleMusic.Converters"
+    xmlns:controls="using:OutcoldSolutions.GoogleMusic.Controls">
 
     <!-- Non-brush values that vary across themes -->
 
@@ -2516,7 +2517,23 @@
             </Setter.Value>
         </Setter>
     </Style>
-    
+
+    <Style TargetType="controls:Rating" >
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Margin="0, 0, 0, 0" Text="&#xE082;" FontFamily="Segoe UI Symbol" x:Name="Star1" />
+                        <TextBlock Margin="1, 0, 0, 0" Text="&#xE082;" FontFamily="Segoe UI Symbol" x:Name="Star2" />
+                        <TextBlock Margin="1, 0, 0, 0" Text="&#xE082;" FontFamily="Segoe UI Symbol" x:Name="Star3" />
+                        <TextBlock Margin="1, 0, 0, 0" Text="&#xE082;" FontFamily="Segoe UI Symbol" x:Name="Star4" />
+                        <TextBlock Margin="1, 0, 0, 0" Text="&#xE082;" FontFamily="Segoe UI Symbol" x:Name="Star5" />
+                    </StackPanel>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <!-- Data Templates -->
 
     <DataTemplate x:Key="PlaylistDataTemplate">
