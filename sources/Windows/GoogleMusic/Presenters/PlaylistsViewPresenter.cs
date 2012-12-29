@@ -70,7 +70,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                             },
                         TaskScheduler.FromCurrentSynchronizationContext());
                 }
-                else
+                else if (playlistsRequest == PlaylistsRequest.Genres)
                 {
                     this.BindingModel.Title = "Genres";
                     this.songsService.GetAllGenresAsync().ContinueWith(
@@ -86,7 +86,24 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                         },
                         TaskScheduler.FromCurrentSynchronizationContext());
                 }
+                else
+                {
+                    this.BindingModel.Title = "Artists";
+                    this.songsService.GetAllArtistsAsync().ContinueWith(
+                        t =>
+                        {
+                            this.BindingModel.Count = t.Result.Count;
+                            this.BindingModel.IsLoading = false;
+
+                            foreach (var playlist in t.Result)
+                            {
+                                this.BindingModel.Playlists.Add(new PlaylistBindingModel(playlist));
+                            }
+                        },
+                        TaskScheduler.FromCurrentSynchronizationContext());
+                }
             }
+            
         }
     }
 }

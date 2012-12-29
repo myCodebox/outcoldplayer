@@ -24,6 +24,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
         private List<Playlist> playlistsCache = null;
         private List<Album> albumsCache = null;
         private List<Genre> genresCache = null;
+        private List<Artist> artistsCache = null;
 
         public SongsService(IPlaylistsWebService webService)
         {
@@ -36,7 +37,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             {
                 var songs = await this.GetAllGoogleSongsAsync();
 
-                this.albumsCache = songs.GroupBy(x => new { x.AlbumNorm, ArtistNorm = x.AlbumArtistNorm ?? x.ArtistNorm }).Select(x => new Album(x.ToList())).ToList();
+                this.albumsCache = songs.GroupBy(x => new { x.AlbumNorm, ArtistNorm = string.IsNullOrWhiteSpace(x.AlbumArtistNorm) ? x.ArtistNorm : x.AlbumArtistNorm }).Select(x => new Album(x.ToList())).ToList();
             }
 
             IEnumerable<Album> enumerable = this.albumsCache;
@@ -77,10 +78,29 @@ namespace OutcoldSolutions.GoogleMusic.Services
             {
                 var songs = await this.GetAllGoogleSongsAsync();
 
-                this.genresCache = songs.GroupBy(x => x.Genre).Select(x => new Genre(x.Key, x.ToList())).ToList();
+                this.genresCache = songs.GroupBy(x => x.Genre).OrderBy(x => x.Key).Select(x => new Genre(x.Key, x.ToList())).ToList();
             }
 
             IEnumerable<Genre> enumerable = this.genresCache;
+
+            if (order == Order.LastPlayed)
+            {
+                enumerable = enumerable.OrderBy(x => x.Songs.Max(s => s.LastPlayed));
+            }
+
+            return enumerable.ToList();
+        }
+
+        public async Task<List<Artist>> GetAllArtistsAsync(Order order = Order.Name)
+        {
+            if (this.artistsCache == null)
+            {
+                var songs = await this.GetAllGoogleSongsAsync();
+
+                this.artistsCache = songs.GroupBy(x => string.IsNullOrWhiteSpace(x.AlbumArtistNorm) ? x.ArtistNorm : x.AlbumArtistNorm).OrderBy(x => x.Key).Select(x => new Artist(x.ToList())).ToList();
+            }
+
+            IEnumerable<Artist> enumerable = this.artistsCache;
 
             if (order == Order.LastPlayed)
             {

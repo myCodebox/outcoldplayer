@@ -22,5 +22,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
         Task<List<Playlist>> GetAllPlaylistsAsync(Order order = Order.Name);
 
         Task<List<Genre>> GetAllGenresAsync(Order order = Order.Name);
+
+        Task<List<Artist>> GetAllArtistsAsync(Order order = Order.Name);
     }
 }

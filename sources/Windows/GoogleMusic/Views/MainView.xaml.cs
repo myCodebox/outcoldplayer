@@ -175,6 +175,11 @@ namespace OutcoldSolutions.GoogleMusic.Views
             this.Navigate<IPlaylistsView>(PlaylistsRequest.Genres);
         }
 
+        private void ArtistsNavigate(object sender, RoutedEventArgs e)
+        {
+            this.Navigate<IPlaylistsView>(PlaylistsRequest.Artists);
+        }
+
         private void Navigate<TView>(object parameter = null) where TView : IView
         {
             Debug.Assert(this.TopAppBar != null, "this.TopAppBar != null");

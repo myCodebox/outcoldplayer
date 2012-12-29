@@ -9,6 +9,8 @@ namespace OutcoldSolutions.GoogleMusic.Models
 
         Playlists = 1,
 
-        Genres = 2
+        Genres = 2,
+
+        Artists = 3,
     }
 }

@@ -4,9 +4,21 @@
 namespace OutcoldSolutions.GoogleMusic.Models
 {
     using System.Collections.Generic;
+    using System.Linq;
 
-    public class Artist
+    using OutcoldSolutions.GoogleMusic.WebServices.Models;
+
+    public class Artist : Playlist
     {
-        public List<Playlist> Playlists { get; private set; }
+        public Artist(List<GoogleMusicSong> songs)
+            : base(null, songs)
+        {
+            var song = songs.FirstOrDefault(x => !string.IsNullOrWhiteSpace(x.AlbumArtist))
+                   ?? songs.FirstOrDefault(x => !string.IsNullOrWhiteSpace(x.Artist));
+            if (song != null)
+            {
+                this.Title = string.IsNullOrWhiteSpace(song.AlbumArtist) ? song.Artist : song.AlbumArtist;
+            }
+        }
     }
 }

@@ -42,5 +42,10 @@ namespace OutcoldSolutions.GoogleMusic.Views
         {
             App.Container.Resolve<INavigationService>().NavigateTo<IPlaylistsView>(PlaylistsRequest.Genres);
         }
+
+        private void NavigateToArtists(object sender, RoutedEventArgs e)
+        {
+            App.Container.Resolve<INavigationService>().NavigateTo<IPlaylistsView>(PlaylistsRequest.Artists);
+        }
     }
 }

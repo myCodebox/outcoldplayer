@@ -10,19 +10,23 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         private bool isLoadingPlaylists;
         private bool isLoadingAlbums;
         private bool isLoadingGenres;
+        private bool isLoadingArtists;
 
         private int playlistsCount;
         private int albumsCount;
         private int genresCount;
+        private int artistsCount;
 
         public StartViewBindingModel()
         {
             this.IsLoadingPlaylists = true;
             this.IsLoadingAlbums = true;
             this.IsLoadingGenres = true;
+            this.IsLoadingArtists = true;
             this.Playlists = new ObservableCollection<PlaylistBindingModel>();
             this.Albums = new ObservableCollection<PlaylistBindingModel>();
             this.Genres = new ObservableCollection<PlaylistBindingModel>();
+            this.Artists = new ObservableCollection<PlaylistBindingModel>();
         }
 
         public ObservableCollection<PlaylistBindingModel> Playlists { get; private set; }
@@ -30,6 +34,8 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         public ObservableCollection<PlaylistBindingModel> Albums { get; private set; }
 
         public ObservableCollection<PlaylistBindingModel> Genres { get; private set; }
+
+        public ObservableCollection<PlaylistBindingModel> Artists { get; private set; }
 
         public int PlaylistsCount
         {
@@ -69,6 +75,20 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             set
             {
                 this.genresCount = value;
+                this.RaiseCurrentPropertyChanged();
+            }
+        }
+
+        public int ArtistsCount
+        {
+            get
+            {
+                return this.artistsCount;
+            }
+
+            set
+            {
+                this.artistsCount = value;
                 this.RaiseCurrentPropertyChanged();
             }
         }
@@ -119,6 +139,23 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
                 if (this.isLoadingGenres != value)
                 {
                     this.isLoadingGenres = value;
+                    this.RaiseCurrentPropertyChanged();
+                }
+            }
+        }
+
+        public bool IsLoadingArtists
+        {
+            get
+            {
+                return this.isLoadingArtists;
+            }
+
+            set
+            {
+                if (this.isLoadingArtists != value)
+                {
+                    this.isLoadingArtists = value;
                     this.RaiseCurrentPropertyChanged();
                 }
             }

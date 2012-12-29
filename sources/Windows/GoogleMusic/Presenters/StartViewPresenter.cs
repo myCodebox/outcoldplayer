@@ -62,7 +62,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.songsService.GetAllGenresAsync(Order.LastPlayed).ContinueWith(
                 task =>
                 {
-                    this.Logger.Debug("Albums count {0}.", task.Result.Count);
+                    this.Logger.Debug("Genres count {0}.", task.Result.Count);
 
                     this.BindingModel.GenresCount = task.Result.Count;
 
@@ -72,6 +72,22 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     }
 
                     this.BindingModel.IsLoadingGenres = false;
+                },
+                TaskScheduler.FromCurrentSynchronizationContext());
+
+            this.songsService.GetAllArtistsAsync(Order.LastPlayed).ContinueWith(
+                task =>
+                {
+                    this.Logger.Debug("Artists count {0}.", task.Result.Count);
+
+                    this.BindingModel.ArtistsCount = task.Result.Count;
+
+                    foreach (var playlist in task.Result.Take(MaxItems))
+                    {
+                        this.BindingModel.Artists.Add(new PlaylistBindingModel(playlist));
+                    }
+
+                    this.BindingModel.IsLoadingArtists = false;
                 },
                 TaskScheduler.FromCurrentSynchronizationContext());
         }

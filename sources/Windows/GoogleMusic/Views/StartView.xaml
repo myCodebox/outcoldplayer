@@ -63,6 +63,7 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
                 <Button Margin="0, 0, 160, 0" Click="NavigateToPlaylists">
@@ -84,7 +85,26 @@
                   ItemsSource="{Binding Path=Playlists, Mode=OneTime}"
                   ItemClick="PlaylistItemClick" />
 
-                <Button Grid.Column="1" Margin="0, 0, 160, 0" Click="NavigateToAlbums">
+                <Button Grid.Column="1" Margin="0, 0, 160, 0" Click="NavigateToArtists">
+                    <Button.Template>
+                        <ControlTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Style="{StaticResource GroupHeaderTextStyle}">Artists</TextBlock>
+                                <TextBlock Style="{StaticResource GroupHeaderTextStyle}" Text=" (" />
+                                <TextBlock Style="{StaticResource GroupHeaderTextStyle}" Text="{Binding Path=ArtistsCount, Mode=OneWay}" />
+                                <TextBlock Style="{StaticResource GroupHeaderTextStyle}" Text=")" />
+                                <TextBlock Style="{StaticResource GroupHeaderTextStyle}" Margin="10, 0, 0, 0" FontFamily="Segoe UI Symbol" Text="{StaticResource ChevronGlyph}"></TextBlock>
+                            </StackPanel>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+                <ProgressRing Grid.Column="1" Grid.Row="1" IsActive="{Binding Path=IsLoadingArtists, Mode=OneWay}" />
+                <ListView Grid.Column="1" Grid.Row="1"
+                  Visibility="{Binding Path=IsLoadingArtists, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}" 
+                  ItemsSource="{Binding Path=Artists, Mode=OneTime}"
+                  ItemClick="PlaylistItemClick" />
+                
+                <Button Grid.Column="2" Margin="0, 0, 160, 0" Click="NavigateToAlbums">
                     <Button.Template>
                         <ControlTemplate>
                             <StackPanel Orientation="Horizontal">
@@ -97,13 +117,13 @@
                         </ControlTemplate>
                     </Button.Template>
                 </Button>
-                <ProgressRing Grid.Column="1" Grid.Row="1" IsActive="{Binding Path=IsLoadingAlbums, Mode=OneWay}" />
-                <ListView Grid.Column="1" Grid.Row="1"
+                <ProgressRing Grid.Column="2" Grid.Row="1" IsActive="{Binding Path=IsLoadingAlbums, Mode=OneWay}" />
+                <ListView Grid.Column="2" Grid.Row="1"
                   Visibility="{Binding Path=IsLoadingAlbums, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}" 
                   ItemsSource="{Binding Path=Albums, Mode=OneTime}"
                   ItemClick="PlaylistItemClick" />
 
-                <Button Grid.Column="2" Margin="0, 0, 160, 0" Click="NavigateToGenres">
+                <Button Grid.Column="3" Margin="0, 0, 160, 0" Click="NavigateToGenres">
                     <Button.Template>
                         <ControlTemplate>
                             <StackPanel Orientation="Horizontal">
@@ -116,8 +136,8 @@
                         </ControlTemplate>
                     </Button.Template>
                 </Button>
-                <ProgressRing Grid.Column="2" Grid.Row="1" IsActive="{Binding Path=IsLoadingGenres, Mode=OneWay}" />
-                <ListView Grid.Column="2" Grid.Row="1"
+                <ProgressRing Grid.Column="3" Grid.Row="1" IsActive="{Binding Path=IsLoadingGenres, Mode=OneWay}" />
+                <ListView Grid.Column="3" Grid.Row="1"
                   Visibility="{Binding Path=IsLoadingGenres, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}" 
                   ItemsSource="{Binding Path=Genres, Mode=OneTime}"
                   ItemClick="PlaylistItemClick" />
