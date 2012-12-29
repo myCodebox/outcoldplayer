@@ -10,12 +10,21 @@ namespace OutcoldSolutions.GoogleMusic.Views.Settings
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls.Primitives;
 
-    public sealed partial class AccountView : ViewBase, IView
+    public sealed partial class AccountView : ViewBase, ISettingsView
     {
         public AccountView()
         {
             this.InitializePresenter<AccountViewPresenter>();
             this.InitializeComponent();
+        }
+
+        public void Hide()
+        {
+            var popup = this.Parent as Popup;
+            if (popup != null)
+            {
+                popup.IsOpen = false;
+            }
         }
 
         private void BackButtonClick(object sender, RoutedEventArgs e)

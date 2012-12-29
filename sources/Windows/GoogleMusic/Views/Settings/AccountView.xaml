@@ -51,29 +51,46 @@
                     </TransitionCollection>
                 </StackPanel.Transitions>
 
+                <TextBlock Style="{StaticResource BodyTextStyle}"
+                           Visibility="{Binding Path=BindingModel.AccountName, Converter={StaticResource NullToVisibilityConverter}}">
+                    You are not logged in.
+                </TextBlock>
+                
+                <TextBlock Style="{StaticResource BodyTextStyle}"
+                           Visibility="{Binding Path=BindingModel.AccountName, Converter={StaticResource NullToInvisibilityConverter}}">
+                    You are logged in with Google Account:
+                </TextBlock>
+
+                <TextBlock Text="{Binding Path=BindingModel.AccountName, Mode=OneWay}" 
+                           Style="{StaticResource TitleTextStyle}"  
+                           Visibility="{Binding Path=BindingModel.AccountName, Converter={StaticResource NullToInvisibilityConverter}}"
+                           Margin="0, 20, 0, 0"/>
+
+                <Button Command="{Binding Path=SignOutCommand}" 
+                        Visibility="{Binding Path=BindingModel.AccountName, Converter={StaticResource NullToInvisibilityConverter}}"
+                        Content="Sign out" 
+                        Margin="0, 40, 0, 0"/>
+                
                 <TextBlock Style="{StaticResource BodyTextStyle}" 
-                           Visibility="{Binding Path=BindingModel.AccountName, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}">
+                           Margin="0, 40, 0, 0"
+                           Visibility="{Binding Path=BindingModel.IsRemembered, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}">
                     Unofficial Google Music Player does not store email and password of current Google Account.
                 </TextBlock>
 
-                <TextBlock Style="{StaticResource BodyTextStyle}" Text="{Binding Path=BindingModel.Message, Mode=OneWay}" Margin="0, 20, 0, 0"
-                           Visibility="{Binding Path=BindingModel.Message, Mode=OneWay, Converter={StaticResource NullToInvisibilityConverter}}"/>
-
                 <TextBlock Style="{StaticResource BodyTextStyle}" 
-                           Visibility="{Binding Path=BindingModel.AccountName, Mode=OneWay, Converter={StaticResource NullToInvisibilityConverter}}">
-                    Unofficial Google Music Player stores email and password in protected Windows store. Remembered Google Account:
+                           Margin="0, 40, 0, 0"
+                           Visibility="{Binding Path=BindingModel.IsRemembered, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    Unofficial Google Music Player stores email and password in protected Windows store. 
                 </TextBlock>
-                
-                <TextBlock Text="{Binding Path=BindingModel.AccountName, Mode=OneWay}" 
-                           Style="{StaticResource TitleTextStyle}"  
-                           Margin="0, 20, 0, 0"
-                           Visibility="{Binding Path=BindingModel.AccountName, Mode=OneWay, Converter={StaticResource NullToInvisibilityConverter}}"/>
                 
                 <Button Command="{Binding Path=ForgetAccountCommand}" 
                         Content="Forget account" 
                         Margin="0, 40, 0, 0"
-                        Visibility="{Binding Path=BindingModel.AccountName, Mode=OneWay, Converter={StaticResource NullToInvisibilityConverter}}"/>
-                
+                        Visibility="{Binding Path=BindingModel.IsRemembered, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+                <TextBlock Style="{StaticResource BodyTextStyle}" Text="{Binding Path=BindingModel.Message, Mode=OneWay}" Margin="0, 20, 0, 0"
+                           Visibility="{Binding Path=BindingModel.Message, Mode=OneWay, Converter={StaticResource NullToInvisibilityConverter}}"/>
+
             </StackPanel>
 
         </Grid>

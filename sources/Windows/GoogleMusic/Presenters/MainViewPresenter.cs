@@ -15,17 +15,20 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     {
         private readonly IDependencyResolverContainer container;
         private readonly IAuthentificationService authentificationService;
+        private readonly IUserDataStorage userDataStorage;
 
         private readonly LinkedList<HistoryItem> viewsHistory = new LinkedList<HistoryItem>();
 
         public MainViewPresenter(
             IDependencyResolverContainer container, 
             IMainView view,
-            IAuthentificationService authentificationService)
+            IAuthentificationService authentificationService,
+            IUserDataStorage userDataStorage)
             : base(container, view)
         {
             this.container = container;
             this.authentificationService = authentificationService;
+            this.userDataStorage = userDataStorage;
             this.BindingModel = new MainViewBindingModel
                                     {
                                         Message = "Signing in...", 
@@ -51,6 +54,12 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                TaskScheduler.FromCurrentSynchronizationContext());
 
             this.PlayerViewPresenter = this.container.Resolve<PlayerViewPresenter>(new object[] { view });
+
+            this.userDataStorage.SessionCleared += (sender, args) =>
+                {
+                    this.ShowView<IAuthentificationView>().Succeed += this.AuthentificationViewOnSucceed;
+                    this.viewsHistory.Clear();
+                };
         }
 
         public MainViewBindingModel BindingModel { get; private set; }

@@ -25,7 +25,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private readonly DispatcherTimer recordPlayingTimer = new DispatcherTimer();
 
         private readonly ISongWebService songWebService;
-
+        private readonly IUserDataStorage userDataStorage;
         private readonly MediaElement mediaElement;
 
         private readonly List<int> playOrder = new List<int>();
@@ -36,10 +36,12 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         public PlayerViewPresenter(
             IDependencyResolverContainer container,
             IMediaElemenetContainerView view,
-            ISongWebService songWebService)
+            ISongWebService songWebService,
+            IUserDataStorage userDataStorage)
             : base(container, view)
         {
             this.songWebService = songWebService;
+            this.userDataStorage = userDataStorage;
             this.BindingModel = new PlayerBindingModel();
 
             MediaControl.PlayPauseTogglePressed += this.MediaControlPlayPauseTogglePressed;
@@ -147,6 +149,13 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                             .ContinueWith(t => this.Logger.Debug("Record Playing for song '{0}', play count: {1}. Result: {2}.", song.Id, song.PlayCount, t.Result));
                     }
                 };
+
+            this.userDataStorage.SessionCleared += (sender, args) => this.Dispatcher.RunAsync(
+                () =>
+                    {
+                        this.Stop();
+                        this.ClearPlaylist();
+                    });
         }
 
         ~PlayerViewPresenter()

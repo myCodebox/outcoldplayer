@@ -3,18 +3,24 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Services
 {
+    using System;
+
     using OutcoldSolutions.GoogleMusic.Models;
 
     public interface IUserDataStorage
     {
-        void SaveUserInfo(UserInfo userInfo);
+        event EventHandler SessionCleared;
 
-        UserInfo GetUserInfo(bool retrievePassword);
+        void SetUserInfo(UserInfo info);
+
+        UserInfo GetUserInfo();
 
         void ClearUserInfo();
 
         void SetUserSession(UserSession session);
 
         UserSession GetUserSession();
+
+        void ClearSession();
     }
 }

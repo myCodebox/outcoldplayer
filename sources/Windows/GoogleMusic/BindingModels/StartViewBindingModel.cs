@@ -19,10 +19,6 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
         public StartViewBindingModel()
         {
-            this.IsLoadingPlaylists = true;
-            this.IsLoadingAlbums = true;
-            this.IsLoadingGenres = true;
-            this.IsLoadingArtists = true;
             this.Playlists = new ObservableCollection<PlaylistBindingModel>();
             this.Albums = new ObservableCollection<PlaylistBindingModel>();
             this.Genres = new ObservableCollection<PlaylistBindingModel>();

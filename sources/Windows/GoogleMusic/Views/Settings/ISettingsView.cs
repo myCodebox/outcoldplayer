@@ -1,14 +1,10 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // Outcold Solutions (http://outcoldman.com)
 // --------------------------------------------------------------------------------------------------------------------
-namespace OutcoldSolutions.GoogleMusic.Services
+namespace OutcoldSolutions.GoogleMusic.Views.Settings
 {
-    using System.Threading.Tasks;
-
-    using OutcoldSolutions.GoogleMusic.Models;
-
-    public interface IAuthentificationService
+    public interface ISettingsView : IView
     {
-        Task<AuthentificationService.AuthentificationResult> CheckAuthentificationAsync(UserInfo userInfo = null);
+        void Hide();
     }
 }

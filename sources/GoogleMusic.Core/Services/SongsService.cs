@@ -18,6 +18,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         private readonly IPlaylistsWebService webService;
 
+        private readonly IUserDataStorage userDataStorage;
+
         private Task<List<GoogleMusicSong>> taskAllSongsLoader = null;
         private Task<GoogleMusicPlaylists> taskAllPlaylistsLoader = null;
 
@@ -26,9 +28,30 @@ namespace OutcoldSolutions.GoogleMusic.Services
         private List<Genre> genresCache = null;
         private List<Artist> artistsCache = null;
 
-        public SongsService(IPlaylistsWebService webService)
+        public SongsService(
+            IPlaylistsWebService webService,
+            IUserDataStorage userDataStorage)
         {
             this.webService = webService;
+            this.userDataStorage = userDataStorage;
+
+            this.userDataStorage.SessionCleared += (sender, args) =>
+                {
+                    lock (this.lockerAllPlaylists)
+                    {
+                        this.taskAllPlaylistsLoader = null;
+                    }
+
+                    lock (this.lockerAllPlaylists)
+                    {
+                        this.taskAllSongsLoader = null;
+                    }
+
+                    this.albumsCache = null;
+                    this.artistsCache = null;
+                    this.genresCache = null;
+                    this.playlistsCache = null;
+                };
         }
 
         public async Task<List<Album>> GetAllAlbumsAsync(Order order = Order.Name)
@@ -112,14 +135,20 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         private async Task<List<GoogleMusicSong>> GetAllGoogleSongsAsync()
         {
-            await this.GetAllPlaylistsTask();
+            await this.LoadAllAsync();
             return await this.GetAllSongsTask();
         }
 
         private async Task<GoogleMusicPlaylists> GetAllGooglePlaylistsAsync()
         {
-            await this.GetAllSongsTask();
+            await this.LoadAllAsync();
             return await this.GetAllPlaylistsTask();
+        }
+
+        private async Task LoadAllAsync()
+        {
+            await this.GetAllPlaylistsTask();
+            await this.GetAllSongsTask();
         }
 
         private Task<GoogleMusicPlaylists> GetAllPlaylistsTask()

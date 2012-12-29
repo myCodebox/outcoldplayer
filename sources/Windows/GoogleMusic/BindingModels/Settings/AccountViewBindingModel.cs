@@ -7,6 +7,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels.Settings
     {
         private string accountName;
         private string message;
+        private bool isRemembered;
 
         public string AccountName
         {
@@ -18,6 +19,20 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels.Settings
             set
             {
                 this.accountName = value;
+                this.RaiseCurrentPropertyChanged();
+            }
+        }
+
+        public bool IsRemembered
+        {
+            get
+            {
+                return this.isRemembered;
+            }
+
+            set
+            {
+                this.isRemembered = value;
                 this.RaiseCurrentPropertyChanged();
             }
         }

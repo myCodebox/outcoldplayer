@@ -17,41 +17,56 @@ namespace OutcoldSolutions.GoogleMusic.Services
         private readonly ILogger logger;
 
         private UserSession userSession;
+        private UserInfo userInfo;
 
         public UserDataStorage(ILogManager logManager)
         {
             this.logger = logManager.CreateLogger("UserDataStorage");
         }
 
-        public void SaveUserInfo(UserInfo userInfo)
+        public event EventHandler SessionCleared;
+
+        public void SetUserInfo(UserInfo info)
         {
-            this.logger.Debug("SaveUserInfo");
+            this.logger.Debug("SetUserInfo. Is null {0}.", info == null);
+            this.userInfo = info;
 
-            var passwordCredential = new PasswordCredential(GoogleAccountsResource, userInfo.Email, userInfo.Password);
-            PasswordVault vault = new PasswordVault();
-
-            // Remove old
-            try
+            if (info != null && info.RememberAccount)
             {
-                var all = vault.FindAllByResource(GoogleAccountsResource);
-                foreach (var credential in all)
+                this.logger.Debug("SetUserInfo: RememberAccount");
+
+                var passwordCredential = new PasswordCredential(GoogleAccountsResource, info.Email, info.Password);
+                PasswordVault vault = new PasswordVault();
+
+                // Remove old
+                try
                 {
-                    this.logger.Debug("Remove old password credentials.");
-                    vault.Remove(credential);
+                    var all = vault.FindAllByResource(GoogleAccountsResource);
+                    foreach (var credential in all)
+                    {
+                        this.logger.Debug("Remove old password credentials.");
+                        vault.Remove(credential);
+                    }
                 }
+                catch (Exception exception)
+                {
+                    this.logger.LogDebugException(exception);
+                }
+
+                this.logger.Debug("Add new passwrod credentials.");
+                vault.Add(passwordCredential);
             }
-            catch (Exception exception)
-            {
-                this.logger.LogDebugException(exception);
-            }
-            
-            this.logger.Debug("Add new passwrod credentials.");
-            vault.Add(passwordCredential);
         }
 
-        public UserInfo GetUserInfo(bool retrievePassword)
+        public UserInfo GetUserInfo()
         {
             this.logger.Debug("GetUserInfo");
+
+            if (this.userInfo != null)
+            {
+                this.logger.Debug("User info set before");
+                return this.userInfo;
+            }
 
             PasswordVault vault = new PasswordVault();
 
@@ -61,11 +76,10 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 if (list.Count > 0)
                 {
                     this.logger.Debug("Found password credentials. Count: {0}", list.Count);
-                    if (retrievePassword)
-                    {
-                        list[0].RetrievePassword();
-                    }
-                    return new UserInfo(list[0].UserName, list[0].Password);
+                    list[0].RetrievePassword();
+                    var info = new UserInfo(list[0].UserName, list[0].Password) { RememberAccount = true };
+                    this.SetUserInfo(info);
+                    return this.userInfo = info;
                 }
             }
             catch (Exception exception)
@@ -80,6 +94,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
         public void ClearUserInfo()
         {
             this.logger.Debug("ClearUserInfo");
+
+            this.userInfo = null;
 
             PasswordVault vault = new PasswordVault();
 
@@ -108,6 +124,22 @@ namespace OutcoldSolutions.GoogleMusic.Services
         {
             this.logger.Debug("GetUserSession. User session is not null: {0}.", this.userSession != null);
             return this.userSession;
+        }
+
+        public void ClearSession()
+        {
+            this.userInfo = null;
+            this.userSession = null;
+            this.RaiseSessionCleared();
+        }
+
+        private void RaiseSessionCleared()
+        {
+            var handler = this.SessionCleared;
+            if (handler != null)
+            {
+                handler(this, EventArgs.Empty);
+            }
         }
     }
 }

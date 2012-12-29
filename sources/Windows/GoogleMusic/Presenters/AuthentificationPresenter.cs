@@ -28,7 +28,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.authentificationService = authentificationService;
             this.BindingModel = new UserAuthentificationBindingModel();
 
-            var userInfo = this.userDataStorage.GetUserInfo(retrievePassword: true);
+            var userInfo = this.userDataStorage.GetUserInfo();
             if (userInfo != null)
             {
                 this.Logger.Debug("Found user info. Trying to set user email.");
@@ -59,7 +59,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             else
             {
                 this.captchaToken = null;
-                var userInfo = new UserInfo(email, password);
+                var userInfo = new UserInfo(email, password) { RememberAccount = rememberPassword };
 
                 this.Logger.Debug("Trying to proceed authentification.");
 
@@ -69,16 +69,14 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 {
                     this.Logger.Debug("Authentification succeded.");
 
-                    if (rememberPassword)
-                    {
-                        this.Logger.Debug("Saving user info and password.");
-                        this.userDataStorage.SaveUserInfo(userInfo);
-                    }
-                    else
+                    if (!rememberPassword)
                     {
                         this.Logger.Debug("User asked to not save user information. Removing user info and password.");
                         this.userDataStorage.ClearUserInfo();
                     }
+
+                    this.Logger.Debug("Saving user info and password.");
+                    this.userDataStorage.SetUserInfo(userInfo);
                 }
                 else
                 {

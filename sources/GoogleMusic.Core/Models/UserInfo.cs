@@ -14,5 +14,7 @@ namespace OutcoldSolutions.GoogleMusic.Models
         public string Email { get; private set; }
 
         public string Password { get; private set; }
+
+        public bool RememberAccount { get; set; }
     }
 }
