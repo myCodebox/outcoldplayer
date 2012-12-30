@@ -127,7 +127,20 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
             set
             {
+                var currentSong = this.CurrentSong;
+                if (currentSong != null)
+                {
+                    currentSong.Song.IsPlaying = false;
+                }
+
                 this.currentSongIndex = value;
+
+                currentSong = this.CurrentSong;
+                if (currentSong != null)
+                {
+                    currentSong.Song.IsPlaying = true;
+                }
+
                 this.RaiseCurrentPropertyChanged();
                 this.RaisePropertyChanged("CurrentSong");
             }

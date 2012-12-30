@@ -42,6 +42,7 @@
     <converters:NullToVisibilityConverter x:Key="NullToInvisibilityConverter" Invert="True"/>
 
     <x:String x:Key="ChevronGlyph">&#xE26B;</x:String>
+    <x:String x:Key="PlayingGlyph">&#xE15D;</x:String>
 
     <!-- RichTextBlock styles -->
 

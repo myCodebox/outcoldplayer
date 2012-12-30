@@ -13,8 +13,8 @@ namespace OutcoldSolutions.GoogleMusic.Models
         private readonly GoogleMusicSong googleMusicSong;
 
         private int rating;
-
         private int playCount;
+        private bool isPlaying;
 
         public Song(GoogleMusicSong googleMusicSong)
         {
@@ -68,6 +68,20 @@ namespace OutcoldSolutions.GoogleMusic.Models
             get
             {
                 return this.googleMusicSong;
+            }
+        }
+
+        public bool IsPlaying
+        {
+            get
+            {
+                return this.isPlaying;
+            }
+
+            set
+            {
+                this.isPlaying = value;
+                this.RaiseCurrentPropertyChanged();
             }
         }
     }
