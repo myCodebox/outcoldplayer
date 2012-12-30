@@ -6,18 +6,16 @@ namespace OutcoldSolutions.GoogleMusic.Models
     using System.Collections.Generic;
     using System.Linq;
 
-    using OutcoldSolutions.GoogleMusic.WebServices.Models;
-
     public class Artist : Playlist
     {
-        public Artist(List<GoogleMusicSong> songs)
+        public Artist(List<Song> songs)
             : base(null, songs)
         {
-            var song = songs.FirstOrDefault(x => !string.IsNullOrWhiteSpace(x.AlbumArtist))
-                   ?? songs.FirstOrDefault(x => !string.IsNullOrWhiteSpace(x.Artist));
+            var song = songs.FirstOrDefault(x => !string.IsNullOrWhiteSpace(x.GoogleMusicMetadata.AlbumArtist))
+                   ?? songs.FirstOrDefault(x => !string.IsNullOrWhiteSpace(x.GoogleMusicMetadata.Artist));
             if (song != null)
             {
-                this.Title = string.IsNullOrWhiteSpace(song.AlbumArtist) ? song.Artist : song.AlbumArtist;
+                this.Title = string.IsNullOrWhiteSpace(song.GoogleMusicMetadata.AlbumArtist) ? song.GoogleMusicMetadata.Artist : song.GoogleMusicMetadata.AlbumArtist;
             }
         }
     }

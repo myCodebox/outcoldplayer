@@ -16,12 +16,14 @@ namespace OutcoldSolutions.GoogleMusic.Services
         private readonly object lockerAllSongs = new object();
         private readonly object lockerAllPlaylists = new object();
 
+        private readonly Dictionary<string, Song> songsRepository = new Dictionary<string, Song>();
+
         private readonly IPlaylistsWebService webService;
 
         private readonly IUserDataStorage userDataStorage;
 
-        private Task<List<GoogleMusicSong>> taskAllSongsLoader = null;
-        private Task<GoogleMusicPlaylists> taskAllPlaylistsLoader = null;
+        private Task<List<Song>> taskAllSongsLoader = null;
+        private Task<List<Playlist>> taskAllPlaylistsLoader = null;
 
         private List<Playlist> playlistsCache = null;
         private List<Album> albumsCache = null;
@@ -51,6 +53,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     this.artistsCache = null;
                     this.genresCache = null;
                     this.playlistsCache = null;
+
+                    this.songsRepository.Clear();
                 };
         }
 
@@ -60,39 +64,20 @@ namespace OutcoldSolutions.GoogleMusic.Services
             {
                 var songs = await this.GetAllGoogleSongsAsync();
 
-                this.albumsCache = songs.GroupBy(x => new { x.AlbumNorm, ArtistNorm = string.IsNullOrWhiteSpace(x.AlbumArtistNorm) ? x.ArtistNorm : x.AlbumArtistNorm }).Select(x => new Album(x.ToList())).ToList();
+                this.albumsCache = songs.GroupBy(x => new { x.GoogleMusicMetadata.AlbumNorm, ArtistNorm = string.IsNullOrWhiteSpace(x.GoogleMusicMetadata.AlbumArtistNorm) ? x.GoogleMusicMetadata.ArtistNorm : x.GoogleMusicMetadata.AlbumArtistNorm }).Select(x => new Album(x.ToList())).ToList();
             }
 
-            IEnumerable<Album> enumerable = this.albumsCache;
-
-            if (order == Order.LastPlayed)
-            {
-                enumerable = enumerable.OrderBy(x => x.Songs.Count > 0 ? x.Songs.Max(s => s.LastPlayed) : double.MaxValue);
-            }
-
-            return enumerable.ToList();
+            return OrderCollection(this.albumsCache, order).ToList();
         }
 
         public async Task<List<Playlist>> GetAllPlaylistsAsync(Order order = Order.Name)
         {
             if (this.playlistsCache == null)
             {
-                var googleMusicPlaylists = await this.GetAllGooglePlaylistsAsync();
-
-                var playlists = (googleMusicPlaylists.Playlists ?? Enumerable.Empty<GoogleMusicPlaylist>())
-                    .Union(googleMusicPlaylists.MagicPlaylists ?? Enumerable.Empty<GoogleMusicPlaylist>());
-
-                this.playlistsCache = playlists.Select(x => new Playlist(x.Title, (x.Playlist ?? Enumerable.Empty<GoogleMusicSong>()).ToList())).ToList();
+                this.playlistsCache = await this.GetAllGooglePlaylistsAsync();
             }
-
-            IEnumerable<Playlist> enumerable = this.playlistsCache;
-
-            if (order == Order.LastPlayed)
-            {
-                enumerable = enumerable.OrderBy(x => x.Songs.Count > 0 ? x.Songs.Max(s => s.LastPlayed) : double.MaxValue);
-            }
-
-            return enumerable.ToList();
+            
+            return OrderCollection(this.playlistsCache, order).ToList();
         }
 
         public async Task<List<Genre>> GetAllGenresAsync(Order order = Order.Name)
@@ -101,17 +86,10 @@ namespace OutcoldSolutions.GoogleMusic.Services
             {
                 var songs = await this.GetAllGoogleSongsAsync();
 
-                this.genresCache = songs.GroupBy(x => x.Genre).OrderBy(x => x.Key).Select(x => new Genre(x.Key, x.ToList())).ToList();
+                this.genresCache = songs.GroupBy(x => x.GoogleMusicMetadata.Genre).OrderBy(x => x.Key).Select(x => new Genre(x.Key, x.ToList())).ToList();
             }
 
-            IEnumerable<Genre> enumerable = this.genresCache;
-
-            if (order == Order.LastPlayed)
-            {
-                enumerable = enumerable.OrderBy(x => x.Songs.Count > 0 ? x.Songs.Max(s => s.LastPlayed) : double.MaxValue);
-            }
-
-            return enumerable.ToList();
+            return OrderCollection(this.genresCache, order).ToList();
         }
 
         public async Task<List<Artist>> GetAllArtistsAsync(Order order = Order.Name)
@@ -120,61 +98,80 @@ namespace OutcoldSolutions.GoogleMusic.Services
             {
                 var songs = await this.GetAllGoogleSongsAsync();
 
-                this.artistsCache = songs.GroupBy(x => string.IsNullOrWhiteSpace(x.AlbumArtistNorm) ? x.ArtistNorm : x.AlbumArtistNorm).OrderBy(x => x.Key).Select(x => new Artist(x.ToList())).ToList();
+                this.artistsCache = songs.GroupBy(x => string.IsNullOrWhiteSpace(x.GoogleMusicMetadata.AlbumArtistNorm) ? x.GoogleMusicMetadata.ArtistNorm : x.GoogleMusicMetadata.AlbumArtistNorm).OrderBy(x => x.Key).Select(x => new Artist(x.ToList())).ToList();
             }
 
-            IEnumerable<Artist> enumerable = this.artistsCache;
+            return OrderCollection(this.artistsCache, order).ToList();
+        }
 
+        private IEnumerable<TPlaylist> OrderCollection<TPlaylist>(IEnumerable<TPlaylist> playlists, Order order)
+            where TPlaylist : Playlist
+        {
             if (order == Order.LastPlayed)
             {
-                enumerable = enumerable.OrderBy(x => x.Songs.Count > 0 ? x.Songs.Max(s => s.LastPlayed) : double.MaxValue);
+                playlists = playlists.OrderBy(x => x.Songs.Count > 0 ? x.Songs.Max(s => s.GoogleMusicMetadata.LastPlayed) : double.MaxValue);
             }
 
-            return enumerable.ToList();
+            return playlists;
         }
 
-        private async Task<List<GoogleMusicSong>> GetAllGoogleSongsAsync()
+        private Task<List<Song>> GetAllGoogleSongsAsync()
         {
-            await this.LoadAllAsync();
-            return await this.GetAllSongsTask();
+            lock (this.lockerAllSongs)
+            {
+                if (this.taskAllSongsLoader == null)
+                {
+                    this.taskAllSongsLoader = this.GetAllSongsTask();
+                }
+            }
+
+            return this.taskAllSongsLoader;
         }
 
-        private async Task<GoogleMusicPlaylists> GetAllGooglePlaylistsAsync()
-        {
-            await this.LoadAllAsync();
-            return await this.GetAllPlaylistsTask();
-        }
-
-        private async Task LoadAllAsync()
-        {
-            await this.GetAllPlaylistsTask();
-            await this.GetAllSongsTask();
-        }
-
-        private Task<GoogleMusicPlaylists> GetAllPlaylistsTask()
+        private Task<List<Playlist>> GetAllGooglePlaylistsAsync()
         {
             lock (this.lockerAllPlaylists)
             {
                 if (this.taskAllPlaylistsLoader == null)
                 {
-                    this.taskAllPlaylistsLoader = this.webService.GetAllPlaylistsAsync();
+                    this.taskAllPlaylistsLoader = this.GetAllPlaylistsTask();
                 }
             }
 
             return this.taskAllPlaylistsLoader;
         }
 
-        private Task<List<GoogleMusicSong>> GetAllSongsTask()
+        private async Task<List<Playlist>> GetAllPlaylistsTask()
         {
-            lock (this.lockerAllSongs)
+            var googleMusicPlaylists = await this.webService.GetAllPlaylistsAsync();
+
+            var playlists =
+                (googleMusicPlaylists.Playlists ?? Enumerable.Empty<GoogleMusicPlaylist>()).Union(
+                    googleMusicPlaylists.MagicPlaylists ?? Enumerable.Empty<GoogleMusicPlaylist>());
+
+            return playlists.Select(
+                    x =>
+                    new Playlist(x.Title, (x.Playlist ?? Enumerable.Empty<GoogleMusicSong>()).Select(this.CreateSong).ToList())).ToList();
+        }
+
+        private async Task<List<Song>> GetAllSongsTask()
+        {
+            var googleSongs = await this.webService.GetAllSongsAsync();
+            return googleSongs.Select(this.CreateSong).ToList();
+        }
+
+        private Song CreateSong(GoogleMusicSong googleSong)
+        {
+            Song song;
+            lock (this.songsRepository)
             {
-                if (this.taskAllSongsLoader == null)
+                if (!this.songsRepository.TryGetValue(googleSong.Id, out song))
                 {
-                    this.taskAllSongsLoader = this.webService.GetAllSongsAsync();
+                    this.songsRepository.Add(googleSong.Id, song = new Song(googleSong));
                 }
             }
 
-            return this.taskAllSongsLoader;
+            return song;
         }
     }
 }

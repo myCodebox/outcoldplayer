@@ -8,10 +8,9 @@ namespace OutcoldSolutions.GoogleMusic.Models
 
     public class UserSession
     {
-        public UserSession(string auth, CookieContainer cookieContainer)
+        public UserSession(string auth)
         {
             this.Auth = auth;
-            this.CookieContainer = cookieContainer;
 
             char[] s = new char[12];
             var random = new Random();
@@ -34,8 +33,6 @@ namespace OutcoldSolutions.GoogleMusic.Models
         public string Auth { get; private set; }
 
         public string SessionId { get; private set; }
-
-        public CookieContainer CookieContainer { get; private set; }
 
         public CookieCollection Cookies { get; set; }
     }

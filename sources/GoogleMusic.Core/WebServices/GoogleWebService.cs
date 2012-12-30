@@ -121,7 +121,7 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
         private HttpWebRequest SetupRequest(string url, string method, IEnumerable<KeyValuePair<HttpRequestHeader, string>> headers = null)
         {
             var userSession = this.userDataStorage.GetUserSession();
-            if (userSession != null)
+            if (userSession != null && method == "POST")
             {
                 if (userSession.Cookies != null && userSession.Cookies.Count > 0)
                 {
@@ -137,9 +137,14 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
                     url += string.Format("u=0&{0}", userSession.Cookies["xt"]);
                 }
             }
-
+            
             var httpWebRequest = WebRequest.CreateHttp(url);
-            httpWebRequest.ContentType = "application/x-www-form-urlencoded";
+
+            if (method == "POST")
+            {
+                httpWebRequest.ContentType = "application/x-www-form-urlencoded;charset=UTF-8";
+            }
+
             httpWebRequest.Method = method;
 
             if (headers != null)
@@ -152,7 +157,15 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
 
             if (userSession != null)
             {
-                httpWebRequest.CookieContainer = userSession.CookieContainer;
+                httpWebRequest.CookieContainer = new CookieContainer();
+                if (userSession.Cookies != null)
+                {
+                    foreach (Cookie cookie in userSession.Cookies)
+                    {
+                        httpWebRequest.CookieContainer.Add(new Uri(url), cookie);
+                    }
+                }
+
                 httpWebRequest.Headers[HttpRequestHeader.Authorization] =
                     string.Format(CultureInfo.InvariantCulture, "GoogleLogin auth={0}", userSession.Auth);
             }
@@ -172,6 +185,11 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
                         }
                         catch (WebException exception)
                         {
+                            if (((HttpWebResponse)exception.Response).StatusCode == HttpStatusCode.Unauthorized)
+                            {
+                                this.userDataStorage.ClearSession();
+                            }
+
                             this.logger.LogDebugException(exception);
                             taskCompletionSource.SetResult(this.ParseResponse(exception.Response));
                         }

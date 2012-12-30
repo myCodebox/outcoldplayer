@@ -50,7 +50,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 this.logger.Debug("Logged in.");
 
                 string auth = loginResponse.GetAuth();
-                var userSession = new UserSession(auth, new CookieContainer());
+                var userSession = new UserSession(auth);
                 this.userDataStorage.SetUserSession(userSession);
 
                 this.logger.Debug("Getting cookies.");

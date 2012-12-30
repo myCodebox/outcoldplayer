@@ -11,6 +11,6 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
     {
         Task<GoogleMusicSongUrl> GetSongUrlAsync(string id);
 
-        Task<bool> RecordPlayingAsync(string id, int playCounts);
+        Task<bool> RecordPlayingAsync(GoogleMusicSong song, int playCounts);
     }
 }

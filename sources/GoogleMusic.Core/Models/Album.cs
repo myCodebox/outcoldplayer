@@ -6,36 +6,34 @@ namespace OutcoldSolutions.GoogleMusic.Models
     using System.Collections.Generic;
     using System.Linq;
 
-    using OutcoldSolutions.GoogleMusic.WebServices.Models;
-
     public class Album : Playlist
     {
-        public Album(List<GoogleMusicSong> songs)
+        public Album(List<Song> songs)
             : base(null, songs)
         {
-            var song = songs.FirstOrDefault(x => !string.IsNullOrWhiteSpace(x.AlbumArtist))
-                   ?? songs.FirstOrDefault(x => !string.IsNullOrWhiteSpace(x.Artist));
+            var song = songs.FirstOrDefault(x => !string.IsNullOrWhiteSpace(x.GoogleMusicMetadata.AlbumArtist))
+                   ?? songs.FirstOrDefault(x => !string.IsNullOrWhiteSpace(x.GoogleMusicMetadata.Artist));
             if (song != null)
             {
-                this.Artist = string.IsNullOrWhiteSpace(song.AlbumArtist) ? song.Artist : song.AlbumArtist;
+                this.Artist = string.IsNullOrWhiteSpace(song.GoogleMusicMetadata.AlbumArtist) ? song.GoogleMusicMetadata.Artist : song.GoogleMusicMetadata.AlbumArtist;
             }
 
-            song = songs.FirstOrDefault(x => x.Year > 0);
+            song = songs.FirstOrDefault(x => x.GoogleMusicMetadata.Year > 0);
             if (song != null)
             {
-                this.Year = song.Year;
+                this.Year = song.GoogleMusicMetadata.Year;
             }
 
-            song = songs.FirstOrDefault(x => !string.IsNullOrEmpty(x.Album));
+            song = songs.FirstOrDefault(x => !string.IsNullOrEmpty(x.GoogleMusicMetadata.Album));
             if (song != null)
             {
-                this.Title = song.Album;
+                this.Title = song.GoogleMusicMetadata.Album;
             }
 
-            song = songs.FirstOrDefault(x => !string.IsNullOrEmpty(x.Genre));
+            song = songs.FirstOrDefault(x => !string.IsNullOrEmpty(x.GoogleMusicMetadata.Genre));
             if (song != null)
             {
-                this.Genre = song.Genre;
+                this.Genre = song.GoogleMusicMetadata.Genre;
             }
         }
 

@@ -9,10 +9,10 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
+    using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
     using OutcoldSolutions.GoogleMusic.WebServices;
-    using OutcoldSolutions.GoogleMusic.WebServices.Models;
 
     using Windows.Media;
     using Windows.System.Display;
@@ -144,9 +144,21 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
                     if (this.BindingModel.CurrentSong != null)
                     {
-                        var song = this.BindingModel.CurrentSong.GetSong();
-                        this.songWebService.RecordPlayingAsync(song.Id, ++song.PlayCount)
-                            .ContinueWith(t => this.Logger.Debug("Record Playing for song '{0}', play count: {1}. Result: {2}.", song.Id, song.PlayCount, t.Result));
+                        var song = this.BindingModel.CurrentSong.Song;
+                        this.songWebService.RecordPlayingAsync(song.GoogleMusicMetadata, song.PlayCount + 1)
+                            .ContinueWith(t =>
+                                {
+                                    this.Logger.Debug(
+                                        "Record Playing for song '{0}' updated play count: {1}. Result: {2}.",
+                                        song.GoogleMusicMetadata.Id,
+                                        song.PlayCount + 1,
+                                        t.Result);
+
+                                    if (t.Result)
+                                    {
+                                        this.Dispatcher.RunAsync(() => { song.PlayCount++; });
+                                    }
+                                });
                     }
                 };
 
@@ -185,7 +197,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.RaisePlaylistChanged();
         }
 
-        public void AddSongs(IEnumerable<GoogleMusicSong> songs)
+        public void AddSongs(IEnumerable<Song> songs)
         {
             this.Logger.Debug("AddSongs.");
 
@@ -205,9 +217,9 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.RaisePlaylistChanged();
         }
  
-        public IEnumerable<GoogleMusicSong> GetPlaylist()
+        public IEnumerable<Song> GetPlaylist()
         {
-            return this.BindingModel.Songs.Select(x => x.GetSong());
+            return this.BindingModel.Songs.Select(x => x.Song);
         }
 
         public async Task PlayAsync(int songIndex)
@@ -364,6 +376,9 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.BindingModel.UpdateBindingModel();
             this.recordPlayingTimer.Stop();
 
+            this.Stop();
+            this.mediaElement.Source = null;
+
             if (this.playOrder.Count > this.playIndex)
             {
                 var currentSongIndex = this.playOrder[this.playIndex];
@@ -371,66 +386,77 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 if (songBindingModel != null)
                 {
                     this.Logger.Debug("Found current song.");
-                    var song = songBindingModel.GetSong();
+                    var song = songBindingModel.Song;
 
-                    this.Logger.Debug("Getting url for song '{0}'.", song.Id);
+                    this.Logger.Debug("Getting url for song '{0}'.", song.GoogleMusicMetadata.Id);
                     this.BindingModel.IsBusy = true;
-                    this.songWebService.GetSongUrlAsync(song.Id).ContinueWith(
+                    this.songWebService.GetSongUrlAsync(song.GoogleMusicMetadata.Id).ContinueWith(
                         (t) =>
                             {
-                                if (t.Result != null)
-                                {
-                                    this.Logger.Debug("Found url for song '{0}'. Url is '{1}'.", song.Id, t.Result.Url);
+                                this.Dispatcher.RunAsync(
+                                    () =>
+                                        {
+                                            if (t.Result != null)
+                                            {
+                                                this.Logger.Debug(
+                                                    "Found url for song '{0}'. Url is '{1}'.",
+                                                    song.GoogleMusicMetadata.Id,
+                                                    t.Result.Url);
 
-                                    MediaControl.NextTrackPressed -= this.MediaControlOnNextTrackPressed;
-                                    MediaControl.PreviousTrackPressed -= this.MediaControlOnPreviousTrackPressed;
+                                                MediaControl.NextTrackPressed -= this.MediaControlOnNextTrackPressed;
+                                                MediaControl.PreviousTrackPressed -=
+                                                    this.MediaControlOnPreviousTrackPressed;
 
-                                    MediaControl.ArtistName = song.Artist;
-                                    MediaControl.TrackName = song.Title;
+                                                MediaControl.ArtistName = song.Artist;
+                                                MediaControl.TrackName = song.Title;
 
-                                    /*if (song.AlbumArtUrl != null)
-                                    {
-                                        MediaControl.AlbumArt = new Uri("https:" + song.AlbumArtUrl);
-                                    }*/
+                                                /*if (song.AlbumArtUrl != null)
+                                                {
+                                                    MediaControl.AlbumArt = new Uri("https:" + song.AlbumArtUrl);
+                                                }*/
 
-                                    if (this.mediaElement.Source != null)
-                                    {
-                                        this.Logger.Info("Media Element contains source. Stop it first.");
-                                        this.mediaElement.Stop();
-                                    }
+                                                if (this.mediaElement.Source != null)
+                                                {
+                                                    this.Logger.Info("Media Element contains source. Stop it first.");
+                                                    this.mediaElement.Stop();
+                                                }
 
-                                    this.BindingModel.CurrentSongIndex = currentSongIndex;
+                                                this.BindingModel.CurrentSongIndex = currentSongIndex;
 
-                                    this.Logger.Info("Set new source for media element '{0}'.", t.Result.Url);
-                                    this.mediaElement.Source = new Uri(t.Result.Url);
-                                    this.mediaElement.Play();
+                                                this.Logger.Info(
+                                                    "Set new source for media element '{0}'.", t.Result.Url);
+                                                this.mediaElement.Source = new Uri(t.Result.Url);
+                                                this.mediaElement.Play();
 
-                                    this.BindingModel.State = PlayState.Play;
-                                    this.BindingModel.UpdateBindingModel();
-                                    this.BindingModel.IsBusy = false;
+                                                this.BindingModel.State = PlayState.Play;
+                                                this.BindingModel.UpdateBindingModel();
+                                                this.BindingModel.IsBusy = false;
 
-                                    if (this.BindingModel.SkipAheadCommand.CanExecute())
-                                    {
-                                        MediaControl.NextTrackPressed += this.MediaControlOnNextTrackPressed;
-                                    }
+                                                if (this.BindingModel.SkipAheadCommand.CanExecute())
+                                                {
+                                                    MediaControl.NextTrackPressed += this.MediaControlOnNextTrackPressed;
+                                                }
 
-                                    if (this.BindingModel.SkipBackCommand.CanExecute())
-                                    {
-                                        MediaControl.PreviousTrackPressed += this.MediaControlOnPreviousTrackPressed;
-                                    }
+                                                if (this.BindingModel.SkipBackCommand.CanExecute())
+                                                {
+                                                    MediaControl.PreviousTrackPressed +=
+                                                        this.MediaControlOnPreviousTrackPressed;
+                                                }
 
-                                    this.recordPlayingTimer.Interval = TimeSpan.FromMilliseconds(song.DurationMillis * 0.3);
-                                    this.recordPlayingTimer.Start();
-                                }
-                                else
-                                {
-                                    this.Logger.Debug(
-                                        "Could not find url for song {0}. Trying to switch to next song.", song.Id);
-                                    this.NextSong();
-                                    this.BindingModel.IsBusy = false;
-                                }
-                            },
-                        TaskScheduler.FromCurrentSynchronizationContext());
+                                                this.recordPlayingTimer.Interval =
+                                                    TimeSpan.FromSeconds(song.Duration * 0.3);
+                                                this.recordPlayingTimer.Start();
+                                            }
+                                            else
+                                            {
+                                                this.Logger.Debug(
+                                                    "Could not find url for song {0}. Trying to switch to next song.",
+                                                    song.GoogleMusicMetadata.Id);
+                                                this.NextSong();
+                                                this.BindingModel.IsBusy = false;
+                                            }
+                                        });
+                            });
                 }
             }
         }

@@ -7,7 +7,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
     using System.Collections.Generic;
     using System.Threading.Tasks;
 
-    using OutcoldSolutions.GoogleMusic.WebServices.Models;
+    using OutcoldSolutions.GoogleMusic.Models;
 
     public interface ICurrentPlaylistService
     {
@@ -15,9 +15,9 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         void ClearPlaylist();
 
-        void AddSongs(IEnumerable<GoogleMusicSong> songs);
+        void AddSongs(IEnumerable<Song> songs);
 
-        IEnumerable<GoogleMusicSong> GetPlaylist();
+        IEnumerable<Song> GetPlaylist();
 
         Task PlayAsync(int index);
 

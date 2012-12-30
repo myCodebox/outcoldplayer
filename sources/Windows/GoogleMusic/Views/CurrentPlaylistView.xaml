@@ -66,12 +66,12 @@
                             <ColumnDefinition Width="140" />
                         </Grid.ColumnDefinitions>
                         <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{Binding Path=Index, Mode=OneTime}"  HorizontalAlignment="Right" />
-                        <TextBlock Grid.Column="1" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="{Binding Path=Title, Mode=OneTime}" TextTrimming="WordEllipsis" />
-                        <TextBlock Grid.Column="2" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="{Binding Path=Time, Mode=OneTime}" HorizontalAlignment="Right"/>
-                        <TextBlock Grid.Column="3" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="{Binding Path=Artist, Mode=OneTime}" TextTrimming="WordEllipsis" />
-                        <TextBlock Grid.Column="4" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="{Binding Path=Album, Mode=OneTime}" TextTrimming="WordEllipsis" />
-                        <TextBlock Grid.Column="5" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="{Binding Path=Plays, Mode=OneTime}" HorizontalAlignment="Right" />
-                        <controls:Rating Grid.Column="6" VerticalAlignment="Center" Margin="20, 0, 40, 0" Value="{Binding Path=Raiting, Mode=OneTime}" HorizontalAlignment="Right"/>
+                        <TextBlock Grid.Column="1" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="{Binding Path=Song.Title, Mode=OneTime}" TextTrimming="WordEllipsis" />
+                        <TextBlock Grid.Column="2" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="{Binding Path=Song.Duration, Converter={StaticResource DoubleToTimeConverter}, Mode=OneTime}" HorizontalAlignment="Right"/>
+                        <TextBlock Grid.Column="3" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="{Binding Path=Song.Artist, Mode=OneTime}" TextTrimming="WordEllipsis" />
+                        <TextBlock Grid.Column="4" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="{Binding Path=Song.Album, Mode=OneTime}" TextTrimming="WordEllipsis" />
+                        <TextBlock Grid.Column="5" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="{Binding Path=Song.PlayCount, Mode=OneWay}" HorizontalAlignment="Right" />
+                        <controls:Rating Grid.Column="6" VerticalAlignment="Center" Margin="20, 0, 40, 0" Value="{Binding Path=Song.Rating, Mode=OneWay}" HorizontalAlignment="Right"/>
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>

@@ -36,27 +36,36 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
         {
             var url = string.Format(SongUrlFormat, id);
             var response = await this.googleWebService.GetAsync(url);
+            
             if (response.HttpWebResponse.StatusCode == HttpStatusCode.OK)
             {
                 return response.GetAsJsonObject<GoogleMusicSongUrl>();
             }
             else
             {
-                this.logger.Error("Cannot get url for song by url '{0}'.", url);
-                return null;
+                this.logger.Error("Cannot get url for song with id '{0}'.", id);
             }
+
+            return null;
         }
 
-        public async Task<bool> RecordPlayingAsync(string id, int playCounts)
+        public async Task<bool> RecordPlayingAsync(GoogleMusicSong song, int playCounts)
         {
             var requestParameters = new Dictionary<string, string>
                                         {
-                                            { "json", JsonConvert.SerializeObject(new { songId = id, playCount = playCounts, sessionId = this.userDataStorage.GetUserSession().SessionId }) }
+                                            { "json", JsonConvert.SerializeObject(new
+                                                                                      {
+                                                                                          songId = song.Id, 
+                                                                                          playCount = playCounts, 
+                                                                                          sessionId = this.userDataStorage.GetUserSession().SessionId,
+                                                                                          updateRecentAlbum = false,
+                                                                                          updateRecentPlaylist = false,
+                                                                                          playlistId = string.Format("{0} - {1}", song.AlbumArtist,  song.Album)
+                                                                                      }) }
                                         };
 
             var response = await this.googleWebService.PostAsync(RecordPlayingUrl, arguments: requestParameters);
-
-            return response.GetAsJsonObject<SuccessResult>().Success;
+            return response.HttpWebResponse.StatusCode == HttpStatusCode.OK && response.GetAsJsonObject<SuccessResult>().Success;
         }
     }
 }

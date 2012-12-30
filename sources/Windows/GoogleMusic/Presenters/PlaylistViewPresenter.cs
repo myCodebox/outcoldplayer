@@ -67,7 +67,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             if (songBindingModel != null)
             {
                 this.currentPlaylistService.ClearPlaylist();
-                this.currentPlaylistService.AddSongs(this.BindingModel.Songs.Select(x => x.GetSong()));
+                this.currentPlaylistService.AddSongs(this.BindingModel.Songs.Select(x => x.Song));
                 this.currentPlaylistService.PlayAsync(this.BindingModel.Songs.IndexOf(this.View.SelectedSong));
             }
         }
