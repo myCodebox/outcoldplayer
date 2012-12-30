@@ -23,7 +23,7 @@ namespace OutcoldSolutions.GoogleMusic {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class CoreResources {
+    public class CoreResources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -37,7 +37,7 @@ namespace OutcoldSolutions.GoogleMusic {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("OutcoldSolutions.GoogleMusic.CoreResources", typeof(CoreResources).GetTypeInfo().Assembly);
@@ -52,7 +52,7 @@ namespace OutcoldSolutions.GoogleMusic {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -64,7 +64,7 @@ namespace OutcoldSolutions.GoogleMusic {
         /// <summary>
         ///   Looks up a localized string similar to The user account has been deleted..
         /// </summary>
-        internal static string Login_AccountDeleted {
+        public static string Login_AccountDeleted {
             get {
                 return ResourceManager.GetString("Login_AccountDeleted", resourceCulture);
             }
@@ -73,16 +73,16 @@ namespace OutcoldSolutions.GoogleMusic {
         /// <summary>
         ///   Looks up a localized string similar to The user account has been disabled..
         /// </summary>
-        internal static string Login_AccountDisabled {
+        public static string Login_AccountDisabled {
             get {
                 return ResourceManager.GetString("Login_AccountDisabled", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The login request used a username or password that is not recognized..
+        ///   Looks up a localized string similar to Username or password is not recognized..
         /// </summary>
-        internal static string Login_BadAuthentication {
+        public static string Login_BadAuthentication {
             get {
                 return ResourceManager.GetString("Login_BadAuthentication", resourceCulture);
             }
@@ -91,7 +91,7 @@ namespace OutcoldSolutions.GoogleMusic {
         /// <summary>
         ///   Looks up a localized string similar to A CAPTCHA is required..
         /// </summary>
-        internal static string Login_CaptchaRequired {
+        public static string Login_CaptchaRequired {
             get {
                 return ResourceManager.GetString("Login_CaptchaRequired", resourceCulture);
             }
@@ -100,7 +100,7 @@ namespace OutcoldSolutions.GoogleMusic {
         /// <summary>
         ///   Looks up a localized string similar to The account email address has not been verified. The user will need to access their Google account directly to resolve the issue before logging in using a non-Google application..
         /// </summary>
-        internal static string Login_NotVerified {
+        public static string Login_NotVerified {
             get {
                 return ResourceManager.GetString("Login_NotVerified", resourceCulture);
             }
@@ -109,7 +109,7 @@ namespace OutcoldSolutions.GoogleMusic {
         /// <summary>
         ///   Looks up a localized string similar to The user&apos;s access to the specified service has been disabled..
         /// </summary>
-        internal static string Login_ServiceDisabled {
+        public static string Login_ServiceDisabled {
             get {
                 return ResourceManager.GetString("Login_ServiceDisabled", resourceCulture);
             }
@@ -118,7 +118,7 @@ namespace OutcoldSolutions.GoogleMusic {
         /// <summary>
         ///   Looks up a localized string similar to The service is not available; try again later..
         /// </summary>
-        internal static string Login_ServiceUnavailable {
+        public static string Login_ServiceUnavailable {
             get {
                 return ResourceManager.GetString("Login_ServiceUnavailable", resourceCulture);
             }
@@ -127,18 +127,27 @@ namespace OutcoldSolutions.GoogleMusic {
         /// <summary>
         ///   Looks up a localized string similar to The user has not agreed to terms. The user will need to access their Google account directly to resolve the issue before logging in using a non-Google application..
         /// </summary>
-        internal static string Login_TermsNotAgreed {
+        public static string Login_TermsNotAgreed {
             get {
                 return ResourceManager.GetString("Login_TermsNotAgreed", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The error is unknown or unspecified..
+        ///   Looks up a localized string similar to Unknown error. Verify network connection and try again..
         /// </summary>
-        internal static string Login_Unknown {
+        public static string Login_Unknown {
             get {
                 return ResourceManager.GetString("Login_Unknown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please provide email and password first..
+        /// </summary>
+        public static string Login_UserNameAndPassword {
+            get {
+                return ResourceManager.GetString("Login_UserNameAndPassword", resourceCulture);
             }
         }
     }

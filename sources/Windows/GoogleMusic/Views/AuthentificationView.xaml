@@ -21,7 +21,7 @@
                 <TextBlock Style="{StaticResource HeaderTextStyle}">Sign in</TextBlock>
 
                 <TextBlock Grid.Row="1" Margin="0, 20, 0, 0" TextWrapping="Wrap" Style="{StaticResource SmallTextStyle}">
-                To use Unofficial Google Music player you need to provide your Google Account's email and password. 
+                To use gMusic player you need to provide your Google Account's email and password. 
                 If you do not have one, you need to create Google Account. 
                 Please make sure that you have subscribed to Google Music service. For more details go to the Google Music site.
                 </TextBlock>

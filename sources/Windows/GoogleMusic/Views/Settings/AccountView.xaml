@@ -74,13 +74,13 @@
                 <TextBlock Style="{StaticResource BodyTextStyle}" 
                            Margin="0, 40, 0, 0"
                            Visibility="{Binding Path=BindingModel.IsRemembered, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}">
-                    Unofficial Google Music Player does not store email and password of current Google Account.
+                    gMusic does not store email and password of current Google Account.
                 </TextBlock>
 
                 <TextBlock Style="{StaticResource BodyTextStyle}" 
                            Margin="0, 40, 0, 0"
                            Visibility="{Binding Path=BindingModel.IsRemembered, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
-                    Unofficial Google Music Player stores email and password in protected Windows store. 
+                    gMusic stores email and password in protected Windows store. 
                 </TextBlock>
                 
                 <Button Command="{Binding Path=ForgetAccountCommand}" 

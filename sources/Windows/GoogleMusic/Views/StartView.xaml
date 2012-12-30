@@ -15,7 +15,7 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <TextBlock Style="{StaticResource HeaderTextStyle}" VerticalAlignment="Bottom">Unofficial Google Music Player</TextBlock>
+        <TextBlock Style="{StaticResource HeaderTextStyle}" VerticalAlignment="Bottom">gMusic</TextBlock>
 
         <ScrollViewer Grid.Row="1"  
                       Margin="0, 40, 0, 0" 

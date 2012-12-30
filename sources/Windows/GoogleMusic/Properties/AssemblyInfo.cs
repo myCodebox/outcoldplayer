@@ -6,10 +6,10 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle("OutcoldSolutions.GoogleMusic")]
-[assembly: AssemblyDescription("Outcold Solutions Google Music Windows Client")]
+[assembly: AssemblyDescription("Outcold Solutions Google Music Player for Windows")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Outcold Solutions")]
-[assembly: AssemblyProduct("Outcold Solutions Google Music")]
+[assembly: AssemblyProduct("Outcold Solutions gMusic")]
 [assembly: AssemblyCopyright("Outcold Solutions ©  2012")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

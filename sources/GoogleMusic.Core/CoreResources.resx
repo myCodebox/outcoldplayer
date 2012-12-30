@@ -124,7 +124,7 @@
     <value>The user account has been disabled.</value>
   </data>
   <data name="Login_BadAuthentication" xml:space="preserve">
-    <value>The login request used a username or password that is not recognized.</value>
+    <value>Username or password is not recognized.</value>
   </data>
   <data name="Login_CaptchaRequired" xml:space="preserve">
     <value>A CAPTCHA is required.</value>
@@ -142,6 +142,9 @@
     <value>The user has not agreed to terms. The user will need to access their Google account directly to resolve the issue before logging in using a non-Google application.</value>
   </data>
   <data name="Login_Unknown" xml:space="preserve">
-    <value>The error is unknown or unspecified.</value>
+    <value>Unknown error. Verify network connection and try again.</value>
+  </data>
+  <data name="Login_UserNameAndPassword" xml:space="preserve">
+    <value>Please provide email and password first.</value>
   </data>
 </root>
