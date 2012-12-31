@@ -10,8 +10,25 @@ namespace OutcoldSolutions.GoogleMusic.Models
     {
         public UserSession(string auth)
         {
+            this.SessionId = this.GenerateSessionId();
             this.Auth = auth;
+        }
 
+        public UserSession(string auth, string sessionId, Cookie[] cookies)
+        {
+            this.SessionId = sessionId;
+            this.Cookies = cookies;
+            this.Auth = auth;
+        }
+
+        public string Auth { get; private set; }
+
+        public string SessionId { get; private set; }
+
+        public Cookie[] Cookies { get; set; }
+
+        private string GenerateSessionId()
+        {
             char[] s = new char[12];
             var random = new Random();
 
@@ -27,13 +44,7 @@ namespace OutcoldSolutions.GoogleMusic.Models
                 }
             }
 
-            this.SessionId = new string(s);
+            return new string(s);
         }
-
-        public string Auth { get; private set; }
-
-        public string SessionId { get; private set; }
-
-        public CookieCollection Cookies { get; set; }
     }
 }

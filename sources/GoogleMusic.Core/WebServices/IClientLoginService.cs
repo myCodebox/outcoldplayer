@@ -11,6 +11,8 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
     {
         Task<GoogleLoginResponse> LoginAsync(string email, string password);
 
-        Task<GoogleWebResponse> GetCookieAsync(string auth);
+        Task<GoogleWebResponse> GetCookieAsync(string auth = null);
+
+        Task<StatusResp> GetStatusAsync();
     }
 }

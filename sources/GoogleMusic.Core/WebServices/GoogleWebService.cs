@@ -6,6 +6,7 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
     using System;
     using System.Collections.Generic;
     using System.Globalization;
+    using System.Linq;
     using System.Net;
     using System.Threading.Tasks;
 
@@ -123,7 +124,7 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
             var userSession = this.userDataStorage.GetUserSession();
             if (userSession != null && method == "POST")
             {
-                if (userSession.Cookies != null && userSession.Cookies.Count > 0)
+                if (userSession.Cookies != null && userSession.Cookies.Length > 0)
                 {
                     if (url.IndexOf("?", StringComparison.OrdinalIgnoreCase) < 0)
                     {
@@ -134,7 +135,11 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
                         url += "&";
                     }
 
-                    url += string.Format("u=0&{0}", userSession.Cookies["xt"]);
+                    var cookie = userSession.Cookies.FirstOrDefault(x => string.Equals(x.Name, "xt"));
+                    if (cookie != null)
+                    {
+                        url += string.Format("u=0&xt={0}", cookie.Value);
+                    }
                 }
             }
             
@@ -155,19 +160,34 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
                 }
             }
 
+            httpWebRequest.CookieContainer = new CookieContainer();
+
             if (userSession != null)
             {
-                httpWebRequest.CookieContainer = new CookieContainer();
                 if (userSession.Cookies != null)
                 {
-                    foreach (Cookie cookie in userSession.Cookies)
+                    try
                     {
-                        httpWebRequest.CookieContainer.Add(new Uri(url), cookie);
+                        foreach (Cookie cookie in userSession.Cookies)
+                        {
+                            var uri = new Uri(url);
+                            if (string.Equals(cookie.Domain, uri.Host, StringComparison.OrdinalIgnoreCase))
+                            {
+                                httpWebRequest.CookieContainer.Add(new Uri(url), cookie);
+                            }
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        this.logger.Error("Could not set cookies");
+                        this.logger.LogErrorException(e);
                     }
                 }
 
-                httpWebRequest.Headers[HttpRequestHeader.Authorization] =
-                    string.Format(CultureInfo.InvariantCulture, "GoogleLogin auth={0}", userSession.Auth);
+                if (!string.IsNullOrEmpty(userSession.Auth))
+                {
+                    httpWebRequest.Headers[HttpRequestHeader.Authorization] = string.Format(CultureInfo.InvariantCulture, "GoogleLogin auth={0}", userSession.Auth);
+                }
             }
 
             return httpWebRequest;

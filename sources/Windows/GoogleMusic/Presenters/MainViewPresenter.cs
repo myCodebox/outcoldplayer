@@ -55,11 +55,15 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
             this.PlayerViewPresenter = this.container.Resolve<PlayerViewPresenter>(new object[] { view });
 
-            this.userDataStorage.SessionCleared += (sender, args) =>
-                {
-                    this.ShowView<IAuthentificationView>().Succeed += this.AuthentificationViewOnSucceed;
-                    this.viewsHistory.Clear();
-                };
+            this.userDataStorage.SessionCleared += (sender, args) => this.Dispatcher.RunAsync(
+                () =>
+                    {
+                        if (this.BindingModel.IsAuthenticated)
+                        {
+                            this.ShowView<IAuthentificationView>().Succeed += this.AuthentificationViewOnSucceed;
+                            this.viewsHistory.Clear();
+                        }
+                    });
         }
 
         public MainViewBindingModel BindingModel { get; private set; }

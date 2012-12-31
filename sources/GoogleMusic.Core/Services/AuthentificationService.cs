@@ -7,6 +7,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
     using System.Net;
     using System.Threading.Tasks;
 
+    using Newtonsoft.Json;
+
     using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.WebServices;
@@ -30,6 +32,18 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         public async Task<AuthentificationResult> CheckAuthentificationAsync(UserInfo userInfo = null)
         {
+            var session = this.userDataStorage.GetUserSession();
+
+            if (session != null && session.Cookies != null && session.Cookies.Length > 0)
+            {
+                this.logger.Debug("User session is not null. Checking authentification with exisiting cookies");
+                var statusResp = await this.clientLoginService.GetStatusAsync();
+                if (statusResp != null)
+                {
+                    return AuthentificationResult.SucceedResult();
+                }
+            }
+
             if (userInfo == null)
             {
                 this.logger.Debug("Trying to get user info.");
@@ -50,15 +64,22 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 this.logger.Debug("Logged in.");
 
                 string auth = loginResponse.GetAuth();
-                var userSession = new UserSession(auth);
-                this.userDataStorage.SetUserSession(userSession);
 
                 this.logger.Debug("Getting cookies.");
                 GoogleWebResponse cookieResponse = await this.clientLoginService.GetCookieAsync(auth);
-                if (cookieResponse.HttpWebResponse.StatusCode == HttpStatusCode.OK)
+                if (cookieResponse.HttpWebResponse.StatusCode == HttpStatusCode.OK
+                    && !string.Equals(cookieResponse.HttpWebResponse.ResponseUri.Host, "accounts.google.com", StringComparison.OrdinalIgnoreCase))
                 {
-                    userSession.Cookies = cookieResponse.HttpWebResponse.Cookies;
-                    this.logger.Debug("Cookies count: {0}", userSession.Cookies.Count);
+                    var cookies = GetCookies(cookieResponse);
+
+                    this.logger.Debug("Cookies count: {0}", cookies.Length);
+
+                    var userSession = new UserSession(auth)
+                                          {
+                                              Cookies = cookies
+                                          };
+
+                    this.userDataStorage.SetUserSession(userSession);
                     return AuthentificationResult.SucceedResult();
                 }
                 else
@@ -113,6 +134,19 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 default:
                     throw new NotSupportedException("Value is not supported: " + errorResponseCode.ToString());
             }
+        }
+
+        private Cookie[] GetCookies(GoogleWebResponse response)
+        {
+            var cookieCollection = response.HttpWebResponse.Cookies;
+            Cookie[] cookies = new Cookie[cookieCollection.Count];
+            int index = 0;
+            foreach (Cookie cookie in cookieCollection)
+            {
+                cookie.Path = string.Empty;
+                cookies[index++] = cookie;
+            }
+            return cookies;
         }
 
         public class Captcha
