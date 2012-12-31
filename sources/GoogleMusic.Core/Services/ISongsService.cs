@@ -28,5 +28,9 @@ namespace OutcoldSolutions.GoogleMusic.Services
         Task<MusicPlaylist> CreatePlaylistAsync();
 
         Task<bool> DeletePlaylistAsync(MusicPlaylist playlist);
+
+        Task<bool> RemoveSongFromPlaylistAsync(MusicPlaylist playlist, int index);
+
+        Task<bool> AddSongToPlaylistAsync(MusicPlaylist playlist, Song song);
     }
 }

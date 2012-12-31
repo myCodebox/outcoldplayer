@@ -5,6 +5,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
 {
     using System.Collections.Generic;
 
+    using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Presenters;
     using OutcoldSolutions.GoogleMusic.Services;
 
@@ -18,8 +19,11 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
     public sealed partial class PlaylistView : ViewBase, IPlaylistView
     {
-        private readonly List<Button> contextButtons = new List<Button>();
         private readonly ICurrentContextCommands currentContextCommands;
+
+        private readonly Button playButton;
+        private readonly Button removeButton;
+        private readonly Border borderSeparator;
 
         public PlaylistView()
         {
@@ -28,12 +32,19 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
             this.currentContextCommands = App.Container.Resolve<ICurrentContextCommands>();
 
-            this.contextButtons.Add(
-                new Button()
-                    {
-                        Style = (Style)Application.Current.Resources["PlayAppBarButtonStyle"],
-                        Command = this.Presenter<PlaylistViewPresenter>().PlaySelectedSongCommand
-                    });
+            this.playButton = new Button()
+                                  {
+                                      Style = (Style)Application.Current.Resources["PlayAppBarButtonStyle"],
+                                      Command = this.Presenter<PlaylistViewPresenter>().PlaySelectedSongCommand
+                                  };
+
+            this.removeButton = new Button()
+                                  {
+                                      Style = (Style)Application.Current.Resources["RemoveAppBarButtonStyle"],
+                                      Command = this.Presenter<PlaylistViewPresenter>().RemoveFromPlaylistCommand
+                                  };
+
+            this.borderSeparator = new Border() { Style = (Style)Application.Current.Resources["AppBarSeparator"] };
         }
 
         public int SelectedIndex
@@ -45,7 +56,11 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
             set
             {
-                this.ListView.SelectedItem = value;
+                this.ListView.SelectedIndex = value;
+                if (value > 0 && this.ListView.SelectedItem != null)
+                {
+                    this.ListView.ScrollIntoView(this.ListView.SelectedItem);
+                }
             }
         }
 
@@ -53,7 +68,15 @@ namespace OutcoldSolutions.GoogleMusic.Views
         {
             if (this.SelectedIndex >= 0)
             {
-                this.currentContextCommands.SetCommands(this.contextButtons);
+                List<UIElement> elements = new List<UIElement>() { this.playButton };
+
+                if (this.Presenter<PlaylistViewPresenter>().BindingModel.Playlist is MusicPlaylist)
+                {
+                    elements.Add(this.borderSeparator);
+                    elements.Add(this.removeButton);
+                }
+
+                this.currentContextCommands.SetCommands(elements);
             }
             else
             {

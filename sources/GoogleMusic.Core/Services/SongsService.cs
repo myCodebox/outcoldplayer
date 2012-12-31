@@ -132,6 +132,30 @@ namespace OutcoldSolutions.GoogleMusic.Services
             return result;
         }
 
+        public async Task<bool> RemoveSongFromPlaylistAsync(MusicPlaylist playlist, int index)
+        {
+            bool result = await this.webService.RemoveSongFromPlaylistAsync(playlist.Id, playlist.Songs[index].GoogleMusicMetadata.Id, playlist.EntriesIds[index]);
+            if (result)
+            {
+                playlist.EntriesIds.RemoveAt(index);
+                playlist.Songs.RemoveAt(index);
+            }
+
+            return result;
+        }
+
+        public async Task<bool> AddSongToPlaylistAsync(MusicPlaylist playlist, Song song)
+        {
+            var result = await this.webService.AddSongToPlaylistAsync(playlist.Id, song.GoogleMusicMetadata.Id);
+            if (result != null && result.SongIds.Length == 1)
+            {
+                playlist.Songs.Add(song);
+                playlist.EntriesIds.Add(result.SongIds[0].PlaylisEntryId);
+            }
+
+            return result != null;
+        }
+
         private IEnumerable<TPlaylist> OrderCollection<TPlaylist>(IEnumerable<TPlaylist> playlists, Order order)
             where TPlaylist : Playlist
         {

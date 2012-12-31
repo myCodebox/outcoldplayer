@@ -3,7 +3,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Presenters
 {
-    using System.Linq;
+    using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
@@ -14,19 +14,26 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     {
         private readonly ICurrentPlaylistService currentPlaylistService;
 
+        private readonly ISongsService songsService;
+
         private PlaylistViewBindingModel bindingModel;
 
         public PlaylistViewPresenter(
             IDependencyResolverContainer container, 
             IPlaylistView view,
-            ICurrentPlaylistService currentPlaylistService)
+            ICurrentPlaylistService currentPlaylistService,
+            ISongsService songsService)
             : base(container, view)
         {
             this.currentPlaylistService = currentPlaylistService;
+            this.songsService = songsService;
             this.PlaySelectedSongCommand = new DelegateCommand(this.PlaySelectedSong);
+            this.RemoveFromPlaylistCommand = new DelegateCommand(this.RemoveFromPlaylist);
         }
 
         public DelegateCommand PlaySelectedSongCommand { get; private set; }
+
+        public DelegateCommand RemoveFromPlaylistCommand { get; private set; }
 
         public PlaylistViewBindingModel BindingModel
         {
@@ -69,6 +76,34 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 this.currentPlaylistService.ClearPlaylist();
                 this.currentPlaylistService.AddSongs(this.BindingModel.Songs);
                 this.currentPlaylistService.PlayAsync(selectedIndex);
+            }
+        }
+
+        private void RemoveFromPlaylist()
+        {
+            if (this.BindingModel != null && !this.BindingModel.IsBusy)
+            {
+                this.BindingModel.IsBusy = true;
+                var selectedIndex = this.View.SelectedIndex;
+                var musicPlaylist = (MusicPlaylist)this.BindingModel.Playlist;
+
+                this.songsService.RemoveSongFromPlaylistAsync(
+                    musicPlaylist, selectedIndex).ContinueWith(
+                        t =>
+                            {
+                                this.BindingModel.Songs.RemoveAt(selectedIndex);
+                                this.BindingModel.IsBusy = false;
+                                if (this.BindingModel.Songs.Count > 0)
+                                {
+                                    if (this.BindingModel.Songs.Count <= selectedIndex)
+                                    {
+                                        selectedIndex--;
+                                    }
+
+                                    this.View.SelectedIndex = selectedIndex;
+                                }
+                            },
+                        TaskScheduler.FromCurrentSynchronizationContext());
             }
         }
     }

@@ -8,18 +8,13 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
     public class PlaylistViewBindingModel : SongsBindingModelBase
     {
         private readonly Playlist playlist;
+        private bool isBusy = false;
 
         public PlaylistViewBindingModel(Playlist playlist)
         {
             this.playlist = playlist;
 
-            if (this.playlist.Songs != null)
-            {
-                foreach (var song in this.playlist.Songs)
-                {
-                    this.Songs.Add(song);
-                }
-            }
+            this.ReloadSongs();
         }
 
         public string Title
@@ -27,6 +22,40 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             get
             {
                 return this.playlist.Title;
+            }
+        }
+
+        public bool IsBusy
+        {
+            get
+            {
+                return this.isBusy;
+            }
+
+            set
+            {
+                this.isBusy = value;
+                this.RaiseCurrentPropertyChanged();
+            }
+        }
+
+        public Playlist Playlist
+        {
+            get
+            {
+                return this.playlist;
+            }
+        }
+
+        public void ReloadSongs()
+        {
+            if (this.playlist.Songs != null)
+            {
+                this.Songs.Clear();
+                foreach (var song in this.playlist.Songs)
+                {
+                    this.Songs.Add(song);
+                }
             }
         }
     }

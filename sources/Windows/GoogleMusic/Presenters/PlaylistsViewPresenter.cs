@@ -3,7 +3,6 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Presenters
 {
-    using System.Globalization;
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
@@ -14,7 +13,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using Windows.Foundation;
     using Windows.UI.Core;
     using Windows.UI.Popups;
-    using Windows.UI.Xaml;
 
     public class PlaylistsViewPresenter : PlaylistsViewPresenterBase<IPlaylistsView>
     {
