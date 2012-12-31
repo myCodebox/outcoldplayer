@@ -29,11 +29,17 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.songsService = songsService;
             this.PlaySelectedSongCommand = new DelegateCommand(this.PlaySelectedSong);
             this.RemoveFromPlaylistCommand = new DelegateCommand(this.RemoveFromPlaylist);
+            this.AddToPlaylistCommand = new DelegateCommand(this.AddToPlaylist);
+            this.RateCommand = new DelegateCommand(this.Rate);
         }
 
         public DelegateCommand PlaySelectedSongCommand { get; private set; }
 
         public DelegateCommand RemoveFromPlaylistCommand { get; private set; }
+
+        public DelegateCommand AddToPlaylistCommand { get; private set; }
+
+        public DelegateCommand RateCommand { get; private set; }
 
         public PlaylistViewBindingModel BindingModel
         {
@@ -66,6 +72,23 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 this.BindingModel = null;
                 this.Logger.Error("OnNavigatedTo: Playlist it null.");
             }
+        }
+
+        public void AddSelectedSongToPlaylist(MusicPlaylist playlist)
+        {
+            var song = this.BindingModel.Songs[this.View.SelectedIndex];
+            this.songsService.AddSongToPlaylistAsync(playlist, song).ContinueWith(
+                t =>
+                    {
+                        if (t.IsCompleted && t.Result)
+                        {
+                            if (this.BindingModel.Playlist == playlist)
+                            {
+                                this.BindingModel.ReloadSongs();
+                            }
+                        }
+                    },
+                TaskScheduler.FromCurrentSynchronizationContext());
         }
 
         private void PlaySelectedSong()
@@ -105,6 +128,25 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                             },
                         TaskScheduler.FromCurrentSynchronizationContext());
             }
+        }
+
+        private void AddToPlaylist()
+        {
+            this.songsService.GetAllPlaylistsAsync().ContinueWith(
+                t =>
+                    {
+                        if (t.IsCompleted)
+                        {
+                            this.View.ShowPlaylists(t.Result);
+                        }
+                    },
+                TaskScheduler.FromCurrentSynchronizationContext());
+        }
+
+        private void Rate()
+        {
+
+
         }
     }
 }

@@ -682,6 +682,13 @@
         <Setter Property="Content" Value="&#xE106;"/>
     </Style>
 
+    <Style x:Key="RateAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
+        <Setter Property="AutomationProperties.AutomationId" Value="RateAppBarButton"/>
+        <Setter Property="AutomationProperties.Name" Value="Rate"/>
+        <Setter Property="Content" Value="&#xE082;"/>
+    </Style>
+
+
     <!-- 
         Standard AppBarButton Styles for use with Button and ToggleButton
     

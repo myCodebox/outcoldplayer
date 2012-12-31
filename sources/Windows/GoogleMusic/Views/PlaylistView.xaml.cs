@@ -10,11 +10,14 @@ namespace OutcoldSolutions.GoogleMusic.Views
     using OutcoldSolutions.GoogleMusic.Services;
 
     using Windows.UI.Xaml;
+    using Windows.UI.Xaml.Automation;
     using Windows.UI.Xaml.Controls;
 
     public interface IPlaylistView : IView
     {
         int SelectedIndex { get; set; }
+
+        void ShowPlaylists(List<MusicPlaylist> playlists);
     }
 
     public sealed partial class PlaylistView : ViewBase, IPlaylistView
@@ -22,6 +25,8 @@ namespace OutcoldSolutions.GoogleMusic.Views
         private readonly ICurrentContextCommands currentContextCommands;
 
         private readonly Button playButton;
+        private readonly Button addToPlaylistButton;
+        private readonly Button rateButton;
         private readonly Button removeButton;
         private readonly Border borderSeparator;
 
@@ -44,6 +49,19 @@ namespace OutcoldSolutions.GoogleMusic.Views
                                       Command = this.Presenter<PlaylistViewPresenter>().RemoveFromPlaylistCommand
                                   };
 
+            this.addToPlaylistButton = new Button()
+                                {
+                                    Style = (Style)Application.Current.Resources["AddAppBarButtonStyle"],
+                                    Command = this.Presenter<PlaylistViewPresenter>().AddToPlaylistCommand
+                                };
+            this.addToPlaylistButton.SetValue(AutomationProperties.NameProperty, "Playlist");
+
+            this.rateButton = new Button()
+                                  {
+                                      Style = (Style)Application.Current.Resources["RateAppBarButtonStyle"],
+                                      Command = this.Presenter<PlaylistViewPresenter>().RateCommand
+                                  };
+
             this.borderSeparator = new Border() { Style = (Style)Application.Current.Resources["AppBarSeparator"] };
         }
 
@@ -64,11 +82,23 @@ namespace OutcoldSolutions.GoogleMusic.Views
             }
         }
 
+        public void ShowPlaylists(List<MusicPlaylist> playlists)
+        {
+            this.PlaylistsView.ItemsSource = playlists;
+            this.PlaylistsPopup.VerticalOffset = this.ActualHeight - 400;
+            this.PlaylistsPopup.IsOpen = true;
+        }
+
         private void ListOnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (this.SelectedIndex >= 0)
             {
-                List<UIElement> elements = new List<UIElement>() { this.playButton };
+                List<UIElement> elements = new List<UIElement>
+                                               {
+                                                   this.playButton,
+                                                   this.addToPlaylistButton,
+                                                   // this.rateButton
+                                               };
 
                 if (this.Presenter<PlaylistViewPresenter>().BindingModel.Playlist is MusicPlaylist)
                 {
@@ -81,6 +111,15 @@ namespace OutcoldSolutions.GoogleMusic.Views
             else
             {
                 this.currentContextCommands.ClearContext();
+            }
+        }
+
+        private void PlaylistItemClick(object sender, ItemClickEventArgs e)
+        {
+            if (this.PlaylistsPopup.IsOpen)
+            {
+                this.Presenter<PlaylistViewPresenter>().AddSelectedSongToPlaylist((MusicPlaylist)e.ClickedItem);
+                this.PlaylistsPopup.IsOpen = false;
             }
         }
     }

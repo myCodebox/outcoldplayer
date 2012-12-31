@@ -78,5 +78,18 @@
             </ListView.ItemTemplate>
         </ListView>
 
+        <Popup IsLightDismissEnabled="True" x:Name="PlaylistsPopup" HorizontalAlignment="Left" VerticalAlignment="Bottom">
+
+            <Border Padding="20" Background="{StaticResource AppBarBackgroundThemeBrush}" Width="Auto" Height="300">
+                <ListView x:Name="PlaylistsView"
+                    DisplayMemberPath="Title"
+                    IsItemClickEnabled="True"
+                    SelectionMode="None"
+                    Width="Auto"
+                    ItemClick="PlaylistItemClick"  />
+            </Border>
+
+        </Popup>
+        
     </Grid>
 </local:ViewBase>
