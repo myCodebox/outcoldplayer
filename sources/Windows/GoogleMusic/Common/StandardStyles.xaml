@@ -28,7 +28,6 @@
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 
-
     <SolidColorBrush x:Name="ApplicationThemeBrush" Color="#207CB0" />
 
     <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
@@ -587,6 +586,12 @@
         </Setter>
     </Style>
 
+    <Style x:Key="AppBarSeparator" TargetType="Border" >
+        <Setter Property="Height" Value="45"/>
+        <Setter Property="BorderThickness" Value="1, 0, 0, 0"/>
+        <Setter Property="BorderBrush" Value="{StaticResource AppBarItemForegroundThemeBrush}"/>
+    </Style>
+
     <Style x:Key="SkipBackAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
         <Setter Property="AutomationProperties.AutomationId" Value="SkipBackAppBarButton"/>
         <Setter Property="AutomationProperties.Name" Value="Skip Back"/>
@@ -665,6 +670,18 @@
         <Setter Property="Content" Value="&#xE109;"/>
     </Style>
 
+    <Style x:Key="EditAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
+        <Setter Property="AutomationProperties.AutomationId" Value="EditAppBarButton"/>
+        <Setter Property="AutomationProperties.Name" Value="Edit"/>
+        <Setter Property="Content" Value="&#xE104;"/>
+    </Style>
+
+    <Style x:Key="DeleteAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
+        <Setter Property="AutomationProperties.AutomationId" Value="DeleteAppBarButton"/>
+        <Setter Property="AutomationProperties.Name" Value="Delete"/>
+        <Setter Property="Content" Value="&#xE106;"/>
+    </Style>
+
     <!-- 
         Standard AppBarButton Styles for use with Button and ToggleButton
     
@@ -673,8 +690,6 @@
     -->
 
     <!--
-    
-    
     
     <Style x:Key="PauseAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
         <Setter Property="AutomationProperties.AutomationId" Value="PauseAppBarButton"/>

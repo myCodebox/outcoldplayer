@@ -10,6 +10,8 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         private int count;
         private string title;
         private bool isLoading;
+        private bool isEditable;
+        private PlaylistBindingModel selectedItem;
 
         public PlaylistsViewBindingModel()
         {
@@ -66,6 +68,34 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
                     this.title = value;
                     this.RaiseCurrentPropertyChanged();
                 }
+            }
+        }
+
+        public bool IsEditable
+        {
+            get
+            {
+                return this.isEditable;
+            }
+
+            set
+            {
+                this.isEditable = value;
+                this.RaiseCurrentPropertyChanged();
+            }
+        }
+
+        public PlaylistBindingModel SelectedItem
+        {
+            get
+            {
+                return this.selectedItem;
+            }
+
+            set
+            {
+                this.selectedItem = value;
+                this.RaiseCurrentPropertyChanged();
             }
         }
     }

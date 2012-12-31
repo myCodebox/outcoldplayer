@@ -5,11 +5,11 @@ namespace OutcoldSolutions.GoogleMusic.Services
 {
     using System.Collections.Generic;
 
-    using Windows.UI.Xaml.Controls.Primitives;
+    using Windows.UI.Xaml;
 
     public interface ICurrentContextCommands
     {
-        void SetCommands(IEnumerable<ButtonBase> buttons);
+        void SetCommands(IEnumerable<UIElement> buttons);
 
         void ClearContext();
     }

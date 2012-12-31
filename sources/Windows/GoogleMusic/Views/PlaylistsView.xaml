@@ -16,16 +16,18 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom">
-            <TextBlock Style="{StaticResource HeaderTextStyle}" Text="{Binding Path=Title, Mode=OneWay}" />
-            <TextBlock Style="{StaticResource HeaderTextStyle}" Text=" (" />
-            <TextBlock Style="{StaticResource HeaderTextStyle}" Text="{Binding Path=Count, Mode=OneWay}" />
-            <TextBlock Style="{StaticResource HeaderTextStyle}" Text=")" />
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Left">
+            <TextBlock VerticalAlignment="Bottom" Style="{StaticResource HeaderTextStyle}" Text="{Binding Path=Title, Mode=OneWay}" />
+            <TextBlock VerticalAlignment="Bottom" Style="{StaticResource HeaderTextStyle}" Text=" (" />
+            <TextBlock VerticalAlignment="Bottom" Style="{StaticResource HeaderTextStyle}" Text="{Binding Path=Count, Mode=OneWay}" />
+            <TextBlock VerticalAlignment="Bottom" Style="{StaticResource HeaderTextStyle}" Text=")" />
         </StackPanel>
+        
 
         <ProgressRing Grid.Row="1" IsActive="{Binding Path=IsLoading, Mode=OneWay}" />
 
         <ListView Grid.Row="1"
+                  x:Name="ListView"
                   Visibility="{Binding Path=IsLoading, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}" 
                   Margin="0, 20, 0, 0" 
                   ItemsSource="{Binding Path=Playlists, Mode=OneTime}"
@@ -36,7 +38,9 @@
                   IsItemClickEnabled="True"
                   ScrollViewer.HorizontalScrollMode="Enabled"
                   ScrollViewer.VerticalScrollMode="Disabled"
-                  ItemTemplate="{StaticResource PlaylistDataTemplate}">
+                  ItemTemplate="{StaticResource PlaylistDataTemplate}"
+                  SelectionChanged="ListViewOnSelectionChanged"
+                  SelectedItem="{Binding Path=SelectedItem, Mode=TwoWay}">
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <WrapGrid Orientation="Vertical" />

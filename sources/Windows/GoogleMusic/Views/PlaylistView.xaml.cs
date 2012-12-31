@@ -5,7 +5,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
 {
     using System.Collections.Generic;
 
-    using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Presenters;
     using OutcoldSolutions.GoogleMusic.Services;
 

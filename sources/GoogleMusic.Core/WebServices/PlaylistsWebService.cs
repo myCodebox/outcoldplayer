@@ -17,6 +17,8 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
     {
         Task<GoogleMusicPlaylists> GetAllPlaylistsAsync();
 
+        Task<GoogleMusicPlaylist> GetPlaylistAsync(string playlistId);
+
         Task<List<GoogleMusicSong>> GetAllSongsAsync();
 
         Task<AddPlaylistResp> CreatePlaylistAsync(string name);
@@ -61,6 +63,24 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
             var response = await this.googleWebService.PostAsync(PlaylistsUrl, arguments: requestParameters);
 
             return response.GetAsJsonObject<GoogleMusicPlaylists>();
+        }
+
+        public async Task<GoogleMusicPlaylist> GetPlaylistAsync(string playlistId)
+        {
+            var requestParameters = new Dictionary<string, string>
+                                        {
+                                            { 
+                                                "json", JsonConvert.SerializeObject(new
+                                                                                      {
+                                                                                          sessionId = this.userDataStorage.GetUserSession().SessionId,
+                                                                                          id = playlistId
+                                                                                      }) 
+                                            }
+                                        };
+
+            var response = await this.googleWebService.PostAsync(PlaylistsUrl, arguments: requestParameters);
+
+            return response.GetAsJsonObject<GoogleMusicPlaylist>();
         }
 
         public async Task<List<GoogleMusicSong>> GetAllSongsAsync()

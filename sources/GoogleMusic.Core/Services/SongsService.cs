@@ -3,7 +3,9 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Services
 {
+    using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
     using System.Threading.Tasks;
 
@@ -104,6 +106,32 @@ namespace OutcoldSolutions.GoogleMusic.Services
             return OrderCollection(this.artistsCache, order).ToList();
         }
 
+        public async Task<MusicPlaylist> CreatePlaylistAsync()
+        {
+            var name = string.Format(CultureInfo.CurrentCulture, "Playlist - {0}", DateTime.Now);
+            var resp = await this.webService.CreatePlaylistAsync(name);
+            if (resp != null && !string.IsNullOrEmpty(resp.Id))
+            {
+                var musicPlaylist = new MusicPlaylist(resp.Id, resp.Title, new List<Song>(), new List<string>());
+                this.playlistsCache.Add(musicPlaylist);
+                return musicPlaylist;
+            }
+
+            return null;
+        }
+
+        public async Task<bool> DeletePlaylistAsync(MusicPlaylist playlist)
+        {
+            bool result = await this.webService.DeletePlaylistAsync(playlist.Id);
+
+            if (result)
+            {
+                this.playlistsCache.Remove(playlist);
+            }
+
+            return result;
+        }
+
         private IEnumerable<TPlaylist> OrderCollection<TPlaylist>(IEnumerable<TPlaylist> playlists, Order order)
             where TPlaylist : Playlist
         {
@@ -154,7 +182,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             foreach (var googleMusicPlaylist in query)
             {
                 var dictionary = (googleMusicPlaylist.Playlist ?? Enumerable.Empty<GoogleMusicSong>()).ToDictionary(x => x.PlaylistEntryId, this.CreateSong);
-                playlists.Add(new MusicPlaylist(googleMusicPlaylist.Title, dictionary.Values.ToList(), dictionary.Keys.ToList()));
+                playlists.Add(new MusicPlaylist(googleMusicPlaylist.PlaylistId, googleMusicPlaylist.Title, dictionary.Values.ToList(), dictionary.Keys.ToList()));
             }
 
             return playlists;

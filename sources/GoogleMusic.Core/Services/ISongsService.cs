@@ -24,5 +24,9 @@ namespace OutcoldSolutions.GoogleMusic.Services
         Task<List<Genre>> GetAllGenresAsync(Order order = Order.Name);
 
         Task<List<Artist>> GetAllArtistsAsync(Order order = Order.Name);
+
+        Task<MusicPlaylist> CreatePlaylistAsync();
+
+        Task<bool> DeletePlaylistAsync(MusicPlaylist playlist);
     }
 }

@@ -89,7 +89,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
             this.BottomAppBar.IsOpen = true;
         }
 
-        public void SetCommands(IEnumerable<ButtonBase> buttons)
+        public void SetCommands(IEnumerable<UIElement> buttons)
         {
             this.ClearContext();
             if (buttons != null)
