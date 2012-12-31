@@ -5,7 +5,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
 {
     using System.Collections.Generic;
 
-    using OutcoldSolutions.GoogleMusic.BindingModels;
+    using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Presenters;
     using OutcoldSolutions.GoogleMusic.Services;
 
@@ -14,7 +14,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
     public interface IPlaylistView : IView
     {
-        SongBindingModel SelectedSong { get; set; }
+        int SelectedIndex { get; set; }
     }
 
     public sealed partial class PlaylistView : ViewBase, IPlaylistView
@@ -37,11 +37,11 @@ namespace OutcoldSolutions.GoogleMusic.Views
                     });
         }
 
-        public SongBindingModel SelectedSong
+        public int SelectedIndex
         {
             get
             {
-                return this.ListView.SelectedItem as SongBindingModel;
+                return this.ListView.SelectedIndex;
             }
 
             set
@@ -52,7 +52,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
         private void ListOnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (this.SelectedSong != null)
+            if (this.SelectedIndex >= 0)
             {
                 this.currentContextCommands.SetCommands(this.contextButtons);
             }

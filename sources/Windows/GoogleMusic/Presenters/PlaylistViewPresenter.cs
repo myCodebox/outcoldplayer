@@ -63,12 +63,12 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private void PlaySelectedSong()
         {
-            var songBindingModel = this.View.SelectedSong;
-            if (songBindingModel != null)
+            var selectedIndex = this.View.SelectedIndex;
+            if (selectedIndex >= 0)
             {
                 this.currentPlaylistService.ClearPlaylist();
-                this.currentPlaylistService.AddSongs(this.BindingModel.Songs.Select(x => x.Song));
-                this.currentPlaylistService.PlayAsync(this.BindingModel.Songs.IndexOf(this.View.SelectedSong));
+                this.currentPlaylistService.AddSongs(this.BindingModel.Songs);
+                this.currentPlaylistService.PlayAsync(selectedIndex);
             }
         }
     }

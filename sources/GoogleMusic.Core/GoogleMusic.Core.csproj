@@ -47,6 +47,7 @@
     <Compile Include="Models\Album.cs" />
     <Compile Include="Models\Artist.cs" />
     <Compile Include="Models\Genre.cs" />
+    <Compile Include="Models\MusicPlaylist.cs" />
     <Compile Include="Models\Playlist.cs" />
     <Compile Include="Models\Song.cs" />
     <Compile Include="Models\UserInfo.cs" />
@@ -63,8 +64,11 @@
     <Compile Include="WebServices\ICookieManager.cs" />
     <Compile Include="WebServices\IGoogleWebService.cs" />
     <Compile Include="WebServices\ISongWebService.cs" />
+    <Compile Include="WebServices\Models\AddSongResp.cs" />
+    <Compile Include="WebServices\Models\DeleteSongResp.cs" />
     <Compile Include="WebServices\Models\GoogleLoginResponse.cs" />
     <Compile Include="WebServices\Models\GoogleWebResponse.cs" />
+    <Compile Include="WebServices\Models\SongIdResp.cs" />
     <Compile Include="WebServices\Models\SuccessResult.cs" />
     <Compile Include="WebServices\PlaylistsWebService.cs" />
     <Compile Include="WebServices\RequestBodyWriter.cs" />
@@ -90,7 +94,7 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="CoreResources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>CoreResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>

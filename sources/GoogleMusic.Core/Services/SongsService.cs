@@ -23,9 +23,9 @@ namespace OutcoldSolutions.GoogleMusic.Services
         private readonly IUserDataStorage userDataStorage;
 
         private Task<List<Song>> taskAllSongsLoader = null;
-        private Task<List<Playlist>> taskAllPlaylistsLoader = null;
+        private Task<List<MusicPlaylist>> taskAllPlaylistsLoader = null;
 
-        private List<Playlist> playlistsCache = null;
+        private List<MusicPlaylist> playlistsCache = null;
         private List<Album> albumsCache = null;
         private List<Genre> genresCache = null;
         private List<Artist> artistsCache = null;
@@ -70,7 +70,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             return OrderCollection(this.albumsCache, order).ToList();
         }
 
-        public async Task<List<Playlist>> GetAllPlaylistsAsync(Order order = Order.Name)
+        public async Task<List<MusicPlaylist>> GetAllPlaylistsAsync(Order order = Order.Name)
         {
             if (this.playlistsCache == null)
             {
@@ -128,7 +128,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             return this.taskAllSongsLoader;
         }
 
-        private Task<List<Playlist>> GetAllGooglePlaylistsAsync()
+        private Task<List<MusicPlaylist>> GetAllGooglePlaylistsAsync()
         {
             lock (this.lockerAllPlaylists)
             {
@@ -141,17 +141,23 @@ namespace OutcoldSolutions.GoogleMusic.Services
             return this.taskAllPlaylistsLoader;
         }
 
-        private async Task<List<Playlist>> GetAllPlaylistsTask()
+        private async Task<List<MusicPlaylist>> GetAllPlaylistsTask()
         {
             var googleMusicPlaylists = await this.webService.GetAllPlaylistsAsync();
 
-            var playlists =
+            var query =
                 (googleMusicPlaylists.Playlists ?? Enumerable.Empty<GoogleMusicPlaylist>()).Union(
                     googleMusicPlaylists.MagicPlaylists ?? Enumerable.Empty<GoogleMusicPlaylist>());
 
-            return playlists.Select(
-                    x =>
-                    new Playlist(x.Title, (x.Playlist ?? Enumerable.Empty<GoogleMusicSong>()).Select(this.CreateSong).ToList())).ToList();
+            List<MusicPlaylist> playlists = new List<MusicPlaylist>();
+
+            foreach (var googleMusicPlaylist in query)
+            {
+                var dictionary = (googleMusicPlaylist.Playlist ?? Enumerable.Empty<GoogleMusicSong>()).ToDictionary(x => x.PlaylistEntryId, this.CreateSong);
+                playlists.Add(new MusicPlaylist(googleMusicPlaylist.Title, dictionary.Values.ToList(), dictionary.Keys.ToList()));
+            }
+
+            return playlists;
         }
 
         private async Task<List<Song>> GetAllSongsTask()

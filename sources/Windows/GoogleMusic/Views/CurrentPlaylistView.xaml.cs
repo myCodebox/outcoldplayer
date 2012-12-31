@@ -15,7 +15,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
     public interface ICurrentPlaylistView : IView
     {
-        SongBindingModel SelectedSong { get; set; }
+        int SelectedSongIndex { get; set; }
     }
 
     public sealed partial class CurrentPlaylistView : ViewBase, ICurrentPlaylistView
@@ -43,22 +43,22 @@ namespace OutcoldSolutions.GoogleMusic.Views
                                         });
         }
 
-        public SongBindingModel SelectedSong
+        public int SelectedSongIndex
         {
             get
             {
-                return this.ListView.SelectedItem as SongBindingModel;
+                return this.ListView.SelectedIndex;
             }
 
             set
             {
-                this.ListView.SelectedItem = value;
+                this.ListView.SelectedIndex = value;
             }
         }
 
         private void ListOnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (this.SelectedSong != null)
+            if (this.SelectedSongIndex >= 0)
             {
                 this.currentContextCommands.SetCommands(this.contextButtons);
             }

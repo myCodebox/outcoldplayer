@@ -144,7 +144,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
                     if (this.BindingModel.CurrentSong != null)
                     {
-                        var song = this.BindingModel.CurrentSong.Song;
+                        var song = this.BindingModel.CurrentSong;
                         this.songWebService.RecordPlayingAsync(song.GoogleMusicMetadata, song.PlayCount + 1)
                             .ContinueWith(t =>
                                 {
@@ -208,7 +208,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
             foreach (var song in songs)
             {
-                this.BindingModel.Songs.Add(new SongBindingModel(song));
+                this.BindingModel.Songs.Add(song);
             }
 
             this.UpdateOrder();
@@ -219,7 +219,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
  
         public IEnumerable<Song> GetPlaylist()
         {
-            return this.BindingModel.Songs.Select(x => x.Song);
+            return this.BindingModel.Songs;
         }
 
         public async Task PlayAsync(int songIndex)
@@ -386,7 +386,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 if (songBindingModel != null)
                 {
                     this.Logger.Debug("Found current song.");
-                    var song = songBindingModel.Song;
+                    var song = songBindingModel;
 
                     this.Logger.Debug("Getting url for song '{0}'.", song.GoogleMusicMetadata.Id);
                     this.BindingModel.IsBusy = true;

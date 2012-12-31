@@ -13,5 +13,4 @@ namespace OutcoldSolutions.GoogleMusic.Controls
             this.Click += (sender, args) => VisualStateManager.GoToState(this, this.IsChecked.HasValue && this.IsChecked.Value ? "Checked" : "Unchecked", false);
         }
     }
-
 }

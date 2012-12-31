@@ -5,21 +5,15 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 {
     using System.Collections.ObjectModel;
 
+    using OutcoldSolutions.GoogleMusic.Models;
+
     public abstract class SongsBindingModelBase : BindingModelBase
     {
         protected SongsBindingModelBase()
         {
-            this.Songs = new ObservableCollection<SongBindingModel>();
-            this.Songs.CollectionChanged += (sender, args) =>
-                {
-                    for (int index = 0; index < this.Songs.Count; index++)
-                    {
-                        var songBindingModel = this.Songs[index];
-                        songBindingModel.Index = index + 1;
-                    }
-                };
+            this.Songs = new ObservableCollection<Song>();
         }
 
-        public ObservableCollection<SongBindingModel> Songs { get; private set; }
+        public ObservableCollection<Song> Songs { get; private set; }
     }
 }

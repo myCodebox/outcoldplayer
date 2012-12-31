@@ -1,11 +1,12 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // Outcold Solutions (http://outcoldman.com)
 // --------------------------------------------------------------------------------------------------------------------
-
 namespace OutcoldSolutions.GoogleMusic.WebServices.Models
 {
-    public class DeletePlaylistResp
+    public class AddSongResp
     {
-        public string DeleteId { get; set; }
+        public string PlaylistId { get; set; }
+
+        public SongIdResp[] SongIds { get; set; }
     }
 }

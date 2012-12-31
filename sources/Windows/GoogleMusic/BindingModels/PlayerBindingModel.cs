@@ -3,6 +3,8 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.BindingModels
 {
+    using OutcoldSolutions.GoogleMusic.Models;
+
     public enum PlayState
     {
         Stop = 0,
@@ -130,7 +132,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
                 var currentSong = this.CurrentSong;
                 if (currentSong != null)
                 {
-                    currentSong.Song.IsPlaying = false;
+                    currentSong.IsPlaying = false;
                 }
 
                 this.currentSongIndex = value;
@@ -138,7 +140,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
                 currentSong = this.CurrentSong;
                 if (currentSong != null)
                 {
-                    currentSong.Song.IsPlaying = true;
+                    currentSong.IsPlaying = true;
                 }
 
                 this.RaiseCurrentPropertyChanged();
@@ -146,7 +148,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             }
         }
 
-        public SongBindingModel CurrentSong
+        public Song CurrentSong
         {
             get
             {

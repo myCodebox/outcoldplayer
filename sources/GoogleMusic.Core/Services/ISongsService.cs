@@ -19,7 +19,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
     {
         Task<List<Album>> GetAllAlbumsAsync(Order order = Order.Name);
 
-        Task<List<Playlist>> GetAllPlaylistsAsync(Order order = Order.Name);
+        Task<List<MusicPlaylist>> GetAllPlaylistsAsync(Order order = Order.Name);
 
         Task<List<Genre>> GetAllGenresAsync(Order order = Order.Name);
 

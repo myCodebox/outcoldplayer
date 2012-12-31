@@ -33,21 +33,20 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private void RemoveSelectedSong()
         {
-            var songBindingModel = this.View.SelectedSong;
-            if (songBindingModel != null)
+            var selectedSongIndex = this.View.SelectedSongIndex;
+            if (selectedSongIndex >= 0)
             {
-                var selectedIndex = this.BindingModel.Songs.IndexOf(songBindingModel);
-                this.currentPlaylistService.RemoveAsync(songBindingModel.Index - 1)
+                this.currentPlaylistService.RemoveAsync(selectedSongIndex)
                     .ContinueWith(
                         (t) =>
                         {
-                            if (selectedIndex < this.BindingModel.Songs.Count)
+                            if (selectedSongIndex < this.BindingModel.Songs.Count)
                             {
-                                this.View.SelectedSong = this.BindingModel.Songs[selectedIndex];
+                                this.View.SelectedSongIndex = selectedSongIndex;
                             }
                             else if (this.BindingModel.Songs.Count > 0)
                             {
-                                this.View.SelectedSong = this.BindingModel.Songs[selectedIndex - 1];
+                                this.View.SelectedSongIndex = selectedSongIndex - 1;
                             }
                         }, 
                         TaskScheduler.FromCurrentSynchronizationContext());
@@ -56,19 +55,19 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private void PlaySelectedSong()
         {
-            var songBindingModel = this.View.SelectedSong;
-            if (songBindingModel != null)
+            var selectedSongIndex = this.View.SelectedSongIndex;
+            if (selectedSongIndex >= 0)
             {
-                this.currentPlaylistService.PlayAsync(songBindingModel.Index - 1);
+                this.currentPlaylistService.PlayAsync(selectedSongIndex);
             }
         }
 
         private void UpdateSongs()
         {
             this.BindingModel.Songs.Clear();
-            foreach (var googleMusicSong in this.currentPlaylistService.GetPlaylist())
+            foreach (var song in this.currentPlaylistService.GetPlaylist())
             {
-                this.BindingModel.Songs.Add(new SongBindingModel(googleMusicSong));
+                this.BindingModel.Songs.Add(song);
             }
         }
     }

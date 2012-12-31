@@ -7,9 +7,9 @@ namespace OutcoldSolutions.GoogleMusic.Models
     using System.Collections.Generic;
     using System.Linq;
 
-    public class Playlist
+    public abstract class Playlist
     {
-        public Playlist(string name, List<Song> songs)
+        protected Playlist(string name, List<Song> songs)
         {
             this.Title = name;
             this.Songs = songs;

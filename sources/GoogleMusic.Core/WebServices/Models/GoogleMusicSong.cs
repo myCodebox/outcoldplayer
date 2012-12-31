@@ -63,5 +63,7 @@ namespace OutcoldSolutions.GoogleMusic.WebServices.Models
         public string Comment { get; set; }
 
         public string AlbumArtUrl { get; set; }
+
+        public string PlaylistEntryId { get; set; }
     }
 }

@@ -40,6 +40,7 @@
     <converters:DoubleToTimeConverter x:Key="DoubleToTimeConverter"/>
     <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
     <converters:NullToVisibilityConverter x:Key="NullToInvisibilityConverter" Invert="True"/>
+    <converters:AlbumArtUrlToImageConverter x:Key="AlbumArtUrlToImageConverter" />
 
     <x:String x:Key="ChevronGlyph">&#xE26B;</x:String>
     <x:String x:Key="PlayingGlyph">&#xE15D;</x:String>

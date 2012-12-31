@@ -3,8 +3,6 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.BindingModels
 {
-    using System.Linq;
-
     using OutcoldSolutions.GoogleMusic.Models;
 
     public class PlaylistViewBindingModel : SongsBindingModelBase
@@ -17,7 +15,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
             if (this.playlist.Songs != null)
             {
-                foreach (var song in this.playlist.Songs.Select(s => new SongBindingModel(s)))
+                foreach (var song in this.playlist.Songs)
                 {
                     this.Songs.Add(song);
                 }

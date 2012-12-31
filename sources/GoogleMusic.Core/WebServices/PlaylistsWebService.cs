@@ -3,7 +3,9 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.WebServices
 {
+    using System;
     using System.Collections.Generic;
+    using System.Net;
     using System.Threading.Tasks;
 
     using Newtonsoft.Json;
@@ -16,12 +18,27 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
         Task<GoogleMusicPlaylists> GetAllPlaylistsAsync();
 
         Task<List<GoogleMusicSong>> GetAllSongsAsync();
+
+        Task<AddPlaylistResp> CreatePlaylistAsync(string name);
+
+        Task<bool> DeletePlaylistAsync(string id);
+
+        Task<bool> ChangePlaylistNameAsync(string id, string name);
+
+        Task<AddSongResp> AddSongToPlaylistAsync(string playlistId, string songId);
+
+        Task<bool> RemoveSongFromPlaylistAsync(string playlistId, string songId, string entryId);
     }
 
     public class PlaylistsWebService : IPlaylistsWebService
     {
         private const string PlaylistsUrl = "https://play.google.com/music/services/loadplaylist";
         private const string AllSongsUrl = "https://play.google.com/music/services/loadalltracks";
+        private const string AddPlaylistUrl = "https://play.google.com/music/services/addplaylist";
+        private const string DeletePlaylistUrl = "https://play.google.com/music/services/deleteplaylist";
+        private const string ChangePlaylistNameUrl = "https://play.google.com/music/services/modifyplaylist";
+        private const string AddToPlaylistUrl = "https://play.google.com/music/services/addtoplaylist";
+        private const string DeleteSongUrl = "https://play.google.com/music/services/deletesong";
 
         private readonly IGoogleWebService googleWebService;
         private readonly IUserDataStorage userDataStorage;
@@ -79,6 +96,119 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
             while (playlist != null && !string.IsNullOrEmpty(playlist.ContinuationToken));
 
             return googleMusicSongs;
+        }
+
+        public async Task<AddPlaylistResp> CreatePlaylistAsync(string name)
+        {
+            var requestParameters = new Dictionary<string, string>
+                                        {
+                                            { 
+                                                "json", JsonConvert.SerializeObject(new
+                                                                                      {
+                                                                                          sessionId = this.userDataStorage.GetUserSession().SessionId, 
+                                                                                          title = name,
+                                                                                          playlistType = "USER_GENERATED",
+                                                                                          songRefs = new string[] { }
+                                                                                      }) 
+                                            }
+                                        };
+
+            var response = await this.googleWebService.PostAsync(AddPlaylistUrl, arguments: requestParameters);
+
+            if (response.HttpWebResponse.StatusCode == HttpStatusCode.OK)
+            {
+                return response.GetAsJsonObject<AddPlaylistResp>();
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public async Task<bool> DeletePlaylistAsync(string id)
+        {
+            var requestParameters = new Dictionary<string, string>
+                                        {
+                                            { 
+                                                "json", JsonConvert.SerializeObject(new
+                                                                                      {
+                                                                                          sessionId = this.userDataStorage.GetUserSession().SessionId, 
+                                                                                          id, 
+                                                                                          requestType = 1, 
+                                                                                          requestCause = 1
+                                                                                      }) 
+                                            }
+                                        };
+
+            var response = await this.googleWebService.PostAsync(DeletePlaylistUrl, arguments: requestParameters);
+
+            return response.HttpWebResponse.StatusCode == HttpStatusCode.OK
+                   && string.Equals(response.GetAsJsonObject<DeletePlaylistResp>().DeleteId, id, StringComparison.OrdinalIgnoreCase);
+        }
+
+        public async Task<bool> ChangePlaylistNameAsync(string id, string name)
+        {
+            var requestParameters = new Dictionary<string, string>
+                                        {
+                                            { 
+                                                "json", JsonConvert.SerializeObject(new
+                                                                                      {
+                                                                                          sessionId = this.userDataStorage.GetUserSession().SessionId, 
+                                                                                          playlistId = id, 
+                                                                                          playlistName = name
+                                                                                      }) 
+                                            }
+                                        };
+
+            var response = await this.googleWebService.PostAsync(ChangePlaylistNameUrl, arguments: requestParameters);
+
+            return response.HttpWebResponse.StatusCode == HttpStatusCode.OK;
+        }
+
+        public async Task<AddSongResp> AddSongToPlaylistAsync(string playlistId, string songId)
+        {
+            var requestParameters = new Dictionary<string, string>
+                                        {
+                                            { 
+                                                "json", JsonConvert.SerializeObject(new
+                                                                                      {
+                                                                                          sessionId = this.userDataStorage.GetUserSession().SessionId,
+                                                                                          playlistId,
+                                                                                          songRefs = new[] { new { id = songId, type = 1 } }
+                                                                                      })
+                                            }
+                                        };
+
+            var response = await this.googleWebService.PostAsync(AddToPlaylistUrl, arguments: requestParameters);
+
+            if (response.HttpWebResponse.StatusCode == HttpStatusCode.OK)
+            {
+                return response.GetAsJsonObject<AddSongResp>();
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public async Task<bool> RemoveSongFromPlaylistAsync(string playlistId, string songId, string entryId)
+        {
+            var requestParameters = new Dictionary<string, string>
+                                        {
+                                            { 
+                                                "json", JsonConvert.SerializeObject(new
+                                                                                      {
+                                                                                          sessionId = this.userDataStorage.GetUserSession().SessionId,
+                                                                                          listId = playlistId,
+                                                                                          songIds = new[] { songId },
+                                                                                          entryIds = new[] { entryId } 
+                                                                                      })
+                                            }
+                                        };
+
+            var response = await this.googleWebService.PostAsync(DeleteSongUrl, arguments: requestParameters);
+
+            return response.HttpWebResponse.StatusCode == HttpStatusCode.OK;
         }
     }
 }

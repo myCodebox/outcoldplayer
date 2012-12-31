@@ -8,7 +8,7 @@
     <OutputType>AppContainerExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>OutcoldSolutions.GoogleMusic</RootNamespace>
-    <AssemblyName>UnofficialGoogleMusicPlayer</AssemblyName>
+    <AssemblyName>gMusic</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{BC8A1FFA-BEE3-4634-8014-F334798102B3};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -110,12 +110,12 @@
     <Compile Include="BindingModels\PlaylistBindingModel.cs" />
     <Compile Include="BindingModels\PlaylistsViewBindingModel.cs" />
     <Compile Include="BindingModels\Settings\AccountViewBindingModel.cs" />
-    <Compile Include="BindingModels\SongBindingModel.cs" />
     <Compile Include="BindingModels\SongsBindingModelBase.cs" />
     <Compile Include="BindingModels\StartViewBindingModel.cs" />
     <Compile Include="BindingModels\UserAuthentificationBindingModel.cs" />
     <Compile Include="Controls\AppBarToggleButton.cs" />
     <Compile Include="Controls\Rating.cs" />
+    <Compile Include="Converters\AlbumArtUrlToImageConverter.cs" />
     <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\DoubleToTimeConverter.cs" />
     <Compile Include="Converters\InvertBooleanConverter.cs" />
