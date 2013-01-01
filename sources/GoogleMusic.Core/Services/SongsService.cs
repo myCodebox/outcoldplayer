@@ -16,8 +16,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
     public class SongsService : ISongsService
     {
-        private readonly object lockerAllSongs = new object();
-        private readonly object lockerAllPlaylists = new object();
+        private readonly object lockerTasks = new object();
 
         private readonly Dictionary<string, Song> songsRepository = new Dictionary<string, Song>();
 
@@ -44,13 +43,9 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
             this.userDataStorage.SessionCleared += (sender, args) =>
                 {
-                    lock (this.lockerAllPlaylists)
+                    lock (this.lockerTasks)
                     {
                         this.taskAllPlaylistsLoader = null;
-                    }
-
-                    lock (this.lockerAllPlaylists)
-                    {
                         this.taskAllSongsLoader = null;
                     }
 
@@ -189,30 +184,32 @@ namespace OutcoldSolutions.GoogleMusic.Services
             return playlists;
         }
 
-        private Task<List<Song>> GetAllGoogleSongsAsync()
+        private async Task<List<Song>> GetAllGoogleSongsAsync()
         {
-            lock (this.lockerAllSongs)
+            this.CreateTasks();
+
+            await this.taskAllSongsLoader;
+            return await this.taskAllSongsLoader;
+        }
+
+        private async Task<List<MusicPlaylist>> GetAllGooglePlaylistsAsync()
+        {
+            this.CreateTasks();
+            
+            await this.taskAllSongsLoader;
+            return await this.taskAllPlaylistsLoader;
+        }
+
+        private void CreateTasks()
+        {
+            lock (this.lockerTasks)
             {
                 if (this.taskAllSongsLoader == null)
                 {
                     this.taskAllSongsLoader = this.GetAllSongsTask();
-                }
-            }
-
-            return this.taskAllSongsLoader;
-        }
-
-        private Task<List<MusicPlaylist>> GetAllGooglePlaylistsAsync()
-        {
-            lock (this.lockerAllPlaylists)
-            {
-                if (this.taskAllPlaylistsLoader == null)
-                {
                     this.taskAllPlaylistsLoader = this.GetAllPlaylistsTask();
                 }
             }
-
-            return this.taskAllPlaylistsLoader;
         }
 
         private async Task<List<MusicPlaylist>> GetAllPlaylistsTask()
