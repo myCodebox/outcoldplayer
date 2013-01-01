@@ -2571,7 +2571,7 @@
                     <Image Width="116" Height="116" Source="{Binding Path=PreviewImage, Mode=OneWay}" Stretch="UniformToFill"/>
                 </Border>
                 <StackPanel Grid.Column="1" Margin="0,15,10,0">
-                    <TextBlock Text="{Binding Path=Playlist.Title, Mode=OneTime}"  Style="{StaticResource BodyTextStyle}" TextWrapping="Wrap"/>
+                    <TextBlock Text="{Binding Path=Playlist.Title, Mode=OneWay}"  Style="{StaticResource BodyTextStyle}" TextWrapping="Wrap"/>
                     <TextBlock Visibility="{Binding Path=IsAlbum, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}"
                                                            Text="{Binding Path=Playlist.Artist, Mode=OneTime}"  
                                                            Style="{StaticResource BodyTextStyle}" 

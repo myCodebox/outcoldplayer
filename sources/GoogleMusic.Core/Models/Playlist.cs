@@ -7,27 +7,48 @@ namespace OutcoldSolutions.GoogleMusic.Models
     using System.Collections.Generic;
     using System.Linq;
 
-    public abstract class Playlist
+    using OutcoldSolutions.GoogleMusic.BindingModels;
+
+    public abstract class Playlist : BindingModelBase
     {
+        private string title;
+
         protected Playlist(string name, List<Song> songs)
         {
             this.Title = name;
             this.Songs = songs;
-            this.Duration = TimeSpan.FromSeconds(songs.Sum(x => x.Duration)).TotalSeconds;
-
-            var song = songs.FirstOrDefault(x => !string.IsNullOrEmpty(x.GoogleMusicMetadata.AlbumArtUrl));
-            if (song != null)
-            {
-                this.AlbumArtUrl = song.GoogleMusicMetadata.AlbumArtUrl;
-            }
+            this.CalculateFields();
         }
 
-        public string Title { get; protected set; }
+        public string Title
+        {
+            get
+            {
+                return this.title;
+            }
+
+            set
+            {
+                this.title = value;
+                this.RaiseCurrentPropertyChanged();
+            }
+        }
 
         public double Duration { get; private set; }
 
         public string AlbumArtUrl { get; private set; }
 
         public List<Song> Songs { get; private set; }
+
+        public void CalculateFields()
+        {
+            this.Duration = TimeSpan.FromSeconds(this.Songs.Sum(x => x.Duration)).TotalSeconds;
+
+            var song = this.Songs.FirstOrDefault(x => !string.IsNullOrEmpty(x.GoogleMusicMetadata.AlbumArtUrl));
+            if (song != null)
+            {
+                this.AlbumArtUrl = song.GoogleMusicMetadata.AlbumArtUrl;
+            }
+        }
     }
 }

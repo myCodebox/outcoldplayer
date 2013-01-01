@@ -9,24 +9,29 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <Grid Margin="120, 0, 20, 0" DataContext="{Binding Path=BindingModel, Mode=OneTime}">
+    <Grid Margin="0, 0, 20, 0" DataContext="{Binding Path=BindingModel, Mode=OneTime}">
 
         <Grid.RowDefinitions>
             <RowDefinition Height="100" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
+        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="120" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
 
-        <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Left">
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Left" Grid.Column="1">
             <TextBlock VerticalAlignment="Bottom" Style="{StaticResource HeaderTextStyle}" Text="{Binding Path=Title, Mode=OneWay}" />
             <TextBlock VerticalAlignment="Bottom" Style="{StaticResource HeaderTextStyle}" Text=" (" />
             <TextBlock VerticalAlignment="Bottom" Style="{StaticResource HeaderTextStyle}" Text="{Binding Path=Count, Mode=OneWay}" />
             <TextBlock VerticalAlignment="Bottom" Style="{StaticResource HeaderTextStyle}" Text=")" />
         </StackPanel>
-        
 
-        <ProgressRing Grid.Row="1" IsActive="{Binding Path=IsLoading, Mode=OneWay}" />
 
-        <ListView Grid.Row="1"
+        <ProgressRing Grid.Row="1" IsActive="{Binding Path=IsLoading, Mode=OneWay}"  Grid.Column="1"/>
+
+        <ListView Grid.Row="1"  Grid.Column="1"
                   x:Name="ListView"
                   Visibility="{Binding Path=IsLoading, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}" 
                   Margin="0, 20, 0, 0" 
@@ -53,5 +58,19 @@
                 </Style>
             </ListView.ItemContainerStyle>
         </ListView>
+
+        <Popup IsLightDismissEnabled="True" x:Name="PlaylistNamePopup" HorizontalAlignment="Left" VerticalAlignment="Bottom"  Grid.ColumnSpan="2">
+
+            <Border Padding="20" Background="{StaticResource AppBarBackgroundThemeBrush}" Width="340" Height="140">
+                <StackPanel Width="300">
+                    <TextBox Text="" x:Name="TextBoxPlaylistName" KeyUp="TextBoxPlaylistNameKeyUp" KeyDown="TextBoxPlaylistNameOnKeyDown" />
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0, 20, 0, 0">
+                        <Button Width="80" Click="SaveNameClick" x:Name="SaveNameButton">Save</Button>
+                        <Button Width="80" Margin="20, 0, 0, 0" Click="CancelChangeNameClick">Cancel</Button>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+        </Popup>
     </Grid>
 </local:ViewBase>

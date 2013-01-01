@@ -29,11 +29,13 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
             this.AddPlaylistCommand = new DelegateCommand(this.AddPlaylist, () => !this.BindingModel.IsLoading && this.BindingModel.IsEditable);
             this.DeletePlaylistCommand = new DelegateCommand(this.DetelePlaylist);
+            this.EditPlaylistCommand = new DelegateCommand(this.EditPlaylist);
 
             this.BindingModel.PropertyChanged += (sender, args) =>
                 {
                     this.AddPlaylistCommand.RaiseCanExecuteChanged();
                     this.DeletePlaylistCommand.RaiseCanExecuteChanged();
+                    this.EditPlaylistCommand.RaiseCanExecuteChanged();
                 };
         }
 
@@ -42,6 +44,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         public DelegateCommand AddPlaylistCommand { get; private set; }
 
         public DelegateCommand DeletePlaylistCommand { get; private set; }
+
+        public DelegateCommand EditPlaylistCommand { get; private set; }
 
         public override void OnNavigatedTo(object parameter)
         {
@@ -124,6 +128,30 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             }
         }
 
+        public void ChangePlaylistName(string newName)
+        {
+            if (!this.BindingModel.IsLoading && this.BindingModel.IsEditable)
+            {
+                this.BindingModel.IsLoading = true;
+                this.BindingModel.IsEditable = false;
+
+                var playlistBindingModel = this.BindingModel.SelectedItem;
+
+                if (playlistBindingModel != null)
+                {
+                    var playlist = (MusicPlaylist)playlistBindingModel.Playlist;
+
+                    this.songsService.ChangePlaylistNameAsync(playlist, newName).ContinueWith(
+                        t =>
+                        {
+                            this.BindingModel.IsLoading = false;
+                            this.BindingModel.IsEditable = true;
+                        },
+                        TaskScheduler.FromCurrentSynchronizationContext());
+                }
+            }
+        }
+
         private void AddPlaylist()
         {
             if (!this.BindingModel.IsLoading && this.BindingModel.IsEditable)
@@ -194,6 +222,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     dialog.ShowAsync();
                 }
             }
+        }
+
+        private void EditPlaylist()
+        {
+            this.View.EditPlaylist(this.BindingModel.SelectedItem);
         }
     }
 }

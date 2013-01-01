@@ -11,12 +11,16 @@ namespace OutcoldSolutions.GoogleMusic.Views
     using OutcoldSolutions.GoogleMusic.Presenters;
     using OutcoldSolutions.GoogleMusic.Services;
 
+    using Windows.System;
     using Windows.UI.Xaml;
+    using Windows.UI.Xaml.Automation;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Controls.Primitives;
+    using Windows.UI.Xaml.Input;
 
     public interface IPlaylistsView : IView
     {
+        void EditPlaylist(PlaylistBindingModel selectedItem);
     }
 
     public sealed partial class PlaylistsView : ViewBase, IPlaylistsView
@@ -39,8 +43,10 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
             this.editPlaylistButton = new Button()
                                          {
-                                             Style = (Style)Application.Current.Resources["EditAppBarButtonStyle"]
+                                             Style = (Style)Application.Current.Resources["EditAppBarButtonStyle"],
+                                             Command = this.Presenter<PlaylistsViewPresenter>().EditPlaylistCommand
                                          };
+            this.editPlaylistButton.SetValue(AutomationProperties.NameProperty, "Rename");
 
             this.deletePlaylistButton = new Button()
                                          {
@@ -74,6 +80,15 @@ namespace OutcoldSolutions.GoogleMusic.Views
             }
         }
 
+        public void EditPlaylist(PlaylistBindingModel selectedItem)
+        {
+            this.PlaylistNamePopup.VerticalOffset = this.ActualHeight - 240;
+            this.TextBoxPlaylistName.Text = selectedItem.Playlist.Title;
+            this.SaveNameButton.IsEnabled = !string.IsNullOrEmpty(this.TextBoxPlaylistName.Text);
+            this.PlaylistNamePopup.IsOpen = true;
+            this.TextBoxPlaylistName.Focus(FocusState.Keyboard);
+        }
+
         private void PlaylistItemClick(object sender, ItemClickEventArgs e)
         {
             this.Presenter<PlaylistsViewPresenter>().ItemClick(e.ClickedItem as PlaylistBindingModel);
@@ -94,6 +109,31 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
                 var currentContextCommands = App.Container.Resolve<ICurrentContextCommands>();
                 currentContextCommands.SetCommands(uiElements);
+            }
+        }
+
+        private void SaveNameClick(object sender, RoutedEventArgs e)
+        {
+            this.Presenter<PlaylistsViewPresenter>().ChangePlaylistName(this.TextBoxPlaylistName.Text);
+            this.PlaylistNamePopup.IsOpen = false;
+        }
+
+        private void CancelChangeNameClick(object sender, RoutedEventArgs e)
+        {
+            this.PlaylistNamePopup.IsOpen = false;
+        }
+
+        private void TextBoxPlaylistNameKeyUp(object sender, KeyRoutedEventArgs e)
+        {
+            this.SaveNameButton.IsEnabled = !string.IsNullOrEmpty(this.TextBoxPlaylistName.Text);
+        }
+
+        private void TextBoxPlaylistNameOnKeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            if (e.Key == VirtualKey.Enter)
+            {
+                this.SaveNameClick(sender, e);
+                e.Handled = true;
             }
         }
     }
