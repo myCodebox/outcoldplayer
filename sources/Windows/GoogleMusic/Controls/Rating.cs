@@ -31,7 +31,8 @@ namespace OutcoldSolutions.GoogleMusic.Controls
             typeof(Rating),
             new PropertyMetadata(new SolidColorBrush(Color.FromArgb(0xFF, 0x55, 0x55, 0x55))));
 
-        private TextBlock[] stars = new TextBlock[5];
+
+        private readonly Button[] stars = new Button[5];
 
         public int Value
         {
@@ -57,7 +58,12 @@ namespace OutcoldSolutions.GoogleMusic.Controls
 
             for (int i = 0; i < this.stars.Length; i++)
             {
-                this.stars[i] = (TextBlock)this.GetTemplateChild("Star" + (i + 1));
+                var value = i + 1;
+                this.stars[i] = (Button)this.GetTemplateChild("Star" + value);
+                this.stars[i].Click += (sender, args) =>
+                    {
+                        this.Value = value;
+                    };
             }
 
             this.UpdateStars();

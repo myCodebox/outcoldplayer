@@ -58,8 +58,11 @@ namespace OutcoldSolutions.GoogleMusic.Models
 
             set
             {
-                this.rating = value;
-                this.RaiseCurrentPropertyChanged();
+                if (this.rating != value)
+                {
+                    this.rating = value;
+                    this.RaiseCurrentPropertyChanged();
+                }
             }
         }
 

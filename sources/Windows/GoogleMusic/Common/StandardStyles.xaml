@@ -2547,11 +2547,23 @@
             <Setter.Value>
                 <ControlTemplate>
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Margin="0, 0, 0, 0" Text="&#xE082;" FontFamily="Segoe UI Symbol" x:Name="Star1" />
-                        <TextBlock Margin="1, 0, 0, 0" Text="&#xE082;" FontFamily="Segoe UI Symbol" x:Name="Star2" />
-                        <TextBlock Margin="1, 0, 0, 0" Text="&#xE082;" FontFamily="Segoe UI Symbol" x:Name="Star3" />
-                        <TextBlock Margin="1, 0, 0, 0" Text="&#xE082;" FontFamily="Segoe UI Symbol" x:Name="Star4" />
-                        <TextBlock Margin="1, 0, 0, 0" Text="&#xE082;" FontFamily="Segoe UI Symbol" x:Name="Star5" />
+                        <StackPanel.Resources>
+                            <Style TargetType="Button" >
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate>
+                                            <TextBlock Text="&#xE082;" FontFamily="Segoe UI Symbol" FontSize="20" />
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </StackPanel.Resources>
+
+                        <Button Margin="0, 0, 0, 0" x:Name="Star1" />
+                        <Button Margin="1, 0, 0, 0" x:Name="Star2" />
+                        <Button Margin="1, 0, 0, 0" x:Name="Star3" />
+                        <Button Margin="1, 0, 0, 0" x:Name="Star4" />
+                        <Button Margin="1, 0, 0, 0" x:Name="Star5" />
                     </StackPanel>
                 </ControlTemplate>
             </Setter.Value>

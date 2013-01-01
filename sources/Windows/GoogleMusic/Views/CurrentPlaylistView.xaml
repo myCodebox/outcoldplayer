@@ -26,7 +26,7 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="60" />
-                <ColumnDefinition Width="125" />
+                <ColumnDefinition Width="155" />
             </Grid.ColumnDefinitions>
             <TextBlock Grid.Column="1" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="name" TextTrimming="WordEllipsis" Style="{StaticResource TitleTextStyle}" />
             <TextBlock Grid.Column="2" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="time" HorizontalAlignment="Right" Style="{StaticResource TitleTextStyle}"/>
@@ -63,7 +63,7 @@
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="60" />
-                            <ColumnDefinition Width="140" />
+                            <ColumnDefinition Width="170" />
                         </Grid.ColumnDefinitions>
                         <TextBlock Grid.Column="0" Margin="20, 0, 0, 0" Text="{StaticResource PlayingGlyph}" FontFamily="Segoe UI Symbol" Visibility="{Binding Path=IsPlaying, Converter={StaticResource BooleanToVisibilityConverter}}" />
                         <TextBlock Grid.Column="1" Margin="20, 0, 0, 0" Text="{Binding Path=Title, Mode=OneTime}" HorizontalAlignment="Left" VerticalAlignment="Center" TextTrimming="WordEllipsis" />
@@ -71,7 +71,7 @@
                         <TextBlock Grid.Column="3" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="{Binding Path=Artist, Mode=OneTime}" TextTrimming="WordEllipsis" />
                         <TextBlock Grid.Column="4" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="{Binding Path=Album, Mode=OneTime}" TextTrimming="WordEllipsis" />
                         <TextBlock Grid.Column="5" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="{Binding Path=PlayCount, Mode=OneWay}" HorizontalAlignment="Right" />
-                        <controls:Rating Grid.Column="6" VerticalAlignment="Center" Margin="20, 0, 40, 0" Value="{Binding Path=Rating, Mode=OneWay}" HorizontalAlignment="Right"/>
+                        <controls:Rating Grid.Column="6" VerticalAlignment="Center" Margin="20, -3, 40, 0" Value="{Binding Path=Rating, Mode=TwoWay}" HorizontalAlignment="Right"/>
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>

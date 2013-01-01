@@ -17,40 +17,24 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
     {
         private const string SongUrlFormat = "https://play.google.com/music/play?u=0&songid={0}";
         private const string RecordPlayingUrl = "https://play.google.com/music/services/recordplaying";
+        private const string ModifyEntriesUrl = "https://play.google.com/music/services/modifyentries";
 
         private readonly ILogger logger;
         private readonly IGoogleWebService googleWebService;
         private readonly IUserDataStorage userDataStorage;
 
-        private readonly ISongsService songsService;
-
-        private bool songsLoaded = false;
-
         public SongWebService(
             ILogManager logManager,
             IGoogleWebService googleWebService,
-            IUserDataStorage userDataStorage,
-            ISongsService songsService)
+            IUserDataStorage userDataStorage)
         {
             this.logger = logManager.CreateLogger("SongWebService");
             this.googleWebService = googleWebService;
             this.userDataStorage = userDataStorage;
-            this.songsService = songsService;
-
-            this.userDataStorage.SessionCleared += (sender, args) =>
-                {
-                    this.songsLoaded = false;
-                };
         }
 
         public async Task<GoogleMusicSongUrl> GetSongUrlAsync(string id)
         {
-            if (!this.songsLoaded)
-            {
-                await this.songsService.GetAllArtistsAsync();
-                this.songsLoaded = true;
-            }
-
             var url = string.Format(SongUrlFormat, id);
             var response = await this.googleWebService.GetAsync(url);
             
@@ -83,6 +67,33 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
 
             var response = await this.googleWebService.PostAsync(RecordPlayingUrl, arguments: requestParameters);
             return response.HttpWebResponse.StatusCode == HttpStatusCode.OK && response.GetAsJsonObject<SuccessResult>().Success;
+        }
+
+        public async Task<RatingResp> UpdateRatingAsync(GoogleMusicSong song, int rating)
+        {
+            var requestParameters = new Dictionary<string, string>
+                                        {
+                                            { 
+                                                "json", JsonConvert.SerializeObject(new
+                                                                                      {
+                                                                                          entries = new []
+                                                                                                        {
+                                                                                                            new { id = song.Id, rating = rating }
+                                                                                                        },
+                                                                                          sessionId = this.userDataStorage.GetUserSession().SessionId
+                                                                                      }) 
+                                            }
+                                        };
+
+            var response = await this.googleWebService.PostAsync(ModifyEntriesUrl, arguments: requestParameters);
+            if (response.HttpWebResponse.StatusCode == HttpStatusCode.OK)
+            {
+                return response.GetAsJsonObject<RatingResp>();
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 }

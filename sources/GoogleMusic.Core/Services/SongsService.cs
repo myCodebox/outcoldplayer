@@ -5,6 +5,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.Globalization;
     using System.Linq;
     using System.Threading.Tasks;
@@ -21,7 +22,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
         private readonly Dictionary<string, Song> songsRepository = new Dictionary<string, Song>();
 
         private readonly IPlaylistsWebService webService;
-
+        private readonly ISongWebService songWebService;
         private readonly IUserDataStorage userDataStorage;
 
         private Task<List<Song>> taskAllSongsLoader = null;
@@ -34,10 +35,12 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         public SongsService(
             IPlaylistsWebService webService,
-            IUserDataStorage userDataStorage)
+            IUserDataStorage userDataStorage,
+            ISongWebService songWebService)
         {
             this.webService = webService;
             this.userDataStorage = userDataStorage;
+            this.songWebService = songWebService;
 
             this.userDataStorage.SessionCleared += (sender, args) =>
                 {
@@ -55,6 +58,11 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     this.artistsCache = null;
                     this.genresCache = null;
                     this.playlistsCache = null;
+
+                    foreach (var song in this.songsRepository)
+                    {
+                        song.Value.PropertyChanged -= this.SongOnPropertyChanged;
+                    }
 
                     this.songsRepository.Clear();
                 };
@@ -239,11 +247,34 @@ namespace OutcoldSolutions.GoogleMusic.Services
             {
                 if (!this.songsRepository.TryGetValue(googleSong.Id, out song))
                 {
-                    this.songsRepository.Add(googleSong.Id, song = new Song(googleSong));
+                    song = new Song(googleSong);
+                    song.PropertyChanged += this.SongOnPropertyChanged;
+                    this.songsRepository.Add(googleSong.Id, song);
                 }
             }
 
             return song;
+        }
+
+        private void SongOnPropertyChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)
+        {
+            if (string.Equals(propertyChangedEventArgs.PropertyName, "Rating"))
+            {
+                var song = (Song)sender;
+                this.songWebService.UpdateRatingAsync(song.GoogleMusicMetadata, song.Rating).ContinueWith(
+                    t =>
+                        {
+                            if (t.IsCompleted && t.Result != null)
+                            {
+                                var songRatingResp = t.Result.Songs.FirstOrDefault(x => string.Equals(x.Id, song.GoogleMusicMetadata.Id, StringComparison.OrdinalIgnoreCase));
+                                if (songRatingResp != null)
+                                {
+                                    song.Rating = songRatingResp.Rating;
+                                }
+                            }
+                        },
+                    TaskScheduler.FromCurrentSynchronizationContext());
+            }
         }
     }
 }

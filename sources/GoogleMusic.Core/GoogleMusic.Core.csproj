@@ -68,7 +68,9 @@
     <Compile Include="WebServices\Models\DeleteSongResp.cs" />
     <Compile Include="WebServices\Models\GoogleLoginResponse.cs" />
     <Compile Include="WebServices\Models\GoogleWebResponse.cs" />
+    <Compile Include="WebServices\Models\RatingResp.cs" />
     <Compile Include="WebServices\Models\SongIdResp.cs" />
+    <Compile Include="WebServices\Models\SongRatingResp.cs" />
     <Compile Include="WebServices\Models\StatusResp.cs" />
     <Compile Include="WebServices\Models\SuccessResult.cs" />
     <Compile Include="WebServices\PlaylistsWebService.cs" />
