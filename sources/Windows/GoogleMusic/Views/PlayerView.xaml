@@ -26,7 +26,7 @@
             <Button.Template>
                 <ControlTemplate>
                     <Image Height="90" Width="90" 
-                        Source="{Binding Path=CurrentSong.AlbumArtUrl, Converter={StaticResource AlbumArtUrlToImageConverter}, Mode=OneWay}" />
+                        Source="{Binding Path=CurrentSong.GoogleMusicMetadata.AlbumArtUrl, Converter={StaticResource AlbumArtUrlToImageConverter}, Mode=OneWay}" />
                 </ControlTemplate>
             </Button.Template>
         </Button>
