@@ -25,26 +25,34 @@ namespace OutcoldSolutions.GoogleMusic.Services
             var cmd = new SettingsCommand(
                 "account",
                 "Account",
-                (x) =>
-                    {
-                        this.settingsPopup = new Popup();
-                        this.settingsPopup.Closed += this.OnPopupClosed;
-                        Window.Current.Activated += this.OnWindowActivated;
-                        this.settingsPopup.IsLightDismissEnabled = true;
-                        this.settingsPopup.Width = SettingsWidth;
-                        this.settingsPopup.Height = Window.Current.Bounds.Height;
-
-                        this.settingsPopup.Child = new AccountView()
-                                                       {
-                                                           Width = this.settingsPopup.Width,
-                                                           Height = this.settingsPopup.Height
-                                                       };
-                        this.settingsPopup.SetValue(Canvas.LeftProperty, Window.Current.Bounds.Width - SettingsWidth);
-                        this.settingsPopup.SetValue(Canvas.TopProperty, 0);
-                        this.settingsPopup.IsOpen = true;
-                    });
+                (x) => this.CreatePopup(new AccountView()));
 
             args.Request.ApplicationCommands.Add(cmd);
+
+            cmd = new SettingsCommand(
+                "support",
+                "Support",
+                (x) => this.CreatePopup(new SupportView()));
+
+            args.Request.ApplicationCommands.Add(cmd);
+        }
+
+        private void CreatePopup(UserControl view)
+        {
+            this.settingsPopup = new Popup();
+            this.settingsPopup.Closed += this.OnPopupClosed;
+            Window.Current.Activated += this.OnWindowActivated;
+            this.settingsPopup.IsLightDismissEnabled = true;
+            this.settingsPopup.Width = SettingsWidth;
+            this.settingsPopup.Height = Window.Current.Bounds.Height;
+
+            view.Height = this.settingsPopup.Height;
+            view.Width = this.settingsPopup.Width;
+
+            this.settingsPopup.Child = view;
+            this.settingsPopup.SetValue(Canvas.LeftProperty, Window.Current.Bounds.Width - SettingsWidth);
+            this.settingsPopup.SetValue(Canvas.TopProperty, 0);
+            this.settingsPopup.IsOpen = true;
         }
 
         private void OnWindowActivated(object sender, Windows.UI.Core.WindowActivatedEventArgs e)
