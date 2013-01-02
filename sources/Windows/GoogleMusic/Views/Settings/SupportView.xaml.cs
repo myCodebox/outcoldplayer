@@ -5,6 +5,9 @@ namespace OutcoldSolutions.GoogleMusic.Views.Settings
 {
     using System;
 
+    using OutcoldSolutions.GoogleMusic.BindingModels.Settings;
+
+    using Windows.Storage;
     using Windows.System;
     using Windows.UI.ApplicationSettings;
     using Windows.UI.Xaml;
@@ -16,6 +19,10 @@ namespace OutcoldSolutions.GoogleMusic.Views.Settings
         public SupportView()
         {
             this.InitializeComponent();
+
+            this.DataContext = new SupportBindingModel();
+
+            this.LogFolder.Text = ApplicationData.Current.LocalFolder.Path;
         }
 
         private void BackButtonClick(object sender, RoutedEventArgs e)
@@ -37,6 +44,11 @@ namespace OutcoldSolutions.GoogleMusic.Views.Settings
         private void SendEmailClick(object sender, RoutedEventArgs e)
         {
             Launcher.LaunchUriAsync(new Uri("mailto:gMusic@outcoldman.com"));
+        }
+
+        private void LogFolderGotFocus(object sender, RoutedEventArgs e)
+        {
+            this.LogFolder.SelectAll();
         }
     }
 }

@@ -1,15 +1,12 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // Outcold Solutions (http://outcoldman.com)
 // --------------------------------------------------------------------------------------------------------------------
-
 namespace OutcoldSolutions.GoogleMusic.Diagnostics
 {
-    public interface ILogManager
+    public interface ILogWriter
     {
-        LogLevel LogLevel { get; set; }
+        bool IsEnabled { get; set; }
 
-        ILogger CreateLogger(string context);
-
-        void AddWriter(ILogWriter writer);
+        void Log(string level, string context, string message, params object[] parameters);
     }
 }

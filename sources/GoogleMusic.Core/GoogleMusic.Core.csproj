@@ -43,7 +43,9 @@
     <Compile Include="Diagnostics\ILogManager.cs" />
     <Compile Include="Diagnostics\Logger.cs" />
     <Compile Include="Diagnostics\LoggerEx.cs" />
+    <Compile Include="Diagnostics\LogLevel.cs" />
     <Compile Include="Diagnostics\LogManager.cs" />
+    <Compile Include="Diagnostics\LogWriter.cs" />
     <Compile Include="Models\Album.cs" />
     <Compile Include="Models\Artist.cs" />
     <Compile Include="Models\Genre.cs" />
@@ -55,8 +57,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\AuthentificationService.cs" />
     <Compile Include="Services\IAuthentificationService.cs" />
+    <Compile Include="Services\ISettingsService.cs" />
     <Compile Include="Services\ISongsService.cs" />
     <Compile Include="Services\IUserDataStorage.cs" />
+    <Compile Include="Services\SettingsValueChangedEventArgs.cs" />
     <Compile Include="Services\SongsService.cs" />
     <Compile Include="WebServices\ClientLoginService.cs" />
     <Compile Include="WebServices\GoogleWebService.cs" />

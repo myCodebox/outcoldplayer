@@ -4,12 +4,27 @@
 
 namespace OutcoldSolutions.GoogleMusic.Diagnostics
 {
-    public interface ILogManager
+    using System;
+
+    [Flags]
+    public enum LogLevel
     {
-        LogLevel LogLevel { get; set; }
+        None = 0,
 
-        ILogger CreateLogger(string context);
+        OnlyInfo = 1, 
 
-        void AddWriter(ILogWriter writer);
+        Info = OnlyInfo,
+
+        OnlyDebug = 2,
+
+        Debug = OnlyDebug | Info,
+
+        OnlyWarning = 4,
+
+        Warning = OnlyWarning | Debug,
+
+        OnlyError = 8,
+
+        Error = OnlyError | Warning
     }
 }

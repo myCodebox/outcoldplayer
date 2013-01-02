@@ -1,15 +1,16 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // Outcold Solutions (http://outcoldman.com)
 // --------------------------------------------------------------------------------------------------------------------
-
-namespace OutcoldSolutions.GoogleMusic.Diagnostics
+namespace OutcoldSolutions.GoogleMusic.Services
 {
-    public interface ILogManager
+    using System;
+
+    public interface ISettingsService
     {
-        LogLevel LogLevel { get; set; }
+        event EventHandler<SettingsValueChangedEventArgs> ValueChanged;
 
-        ILogger CreateLogger(string context);
+        void SetValue<T>(string key, T value);
 
-        void AddWriter(ILogWriter writer);
+        T GetValue<T>(string key, T defaultValue = default(T));
     }
 }

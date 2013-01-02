@@ -4,6 +4,9 @@
 
 namespace OutcoldSolutions.GoogleMusic
 {
+    using System;
+    using System.Threading.Tasks;
+
     using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Presenters;
     using OutcoldSolutions.GoogleMusic.Presenters.Settings;
@@ -19,6 +22,10 @@ namespace OutcoldSolutions.GoogleMusic
 
     public sealed partial class App : Application
     {
+        private ILogManager logManager;
+
+        private ISettingsService settingsService;
+
         public App()
         {
             this.InitializeComponent();
@@ -82,9 +89,24 @@ namespace OutcoldSolutions.GoogleMusic
                     registration.Register<IPlaylistsWebService>().As<PlaylistsWebService>();
                     registration.Register<ISongWebService>().AsSingleton<SongWebService>();
                     registration.Register<ISongsService>().AsSingleton<SongsService>();
+                    registration.Register<ISettingsService>().AsSingleton<SettingsService>();
 
                     registration.Register<IDispatcher>().AsSingleton(new DispatcherContainer(CoreWindow.GetForCurrentThread().Dispatcher));
                 }
+
+                this.logManager = Container.Resolve<ILogManager>();
+                this.logManager.AddWriter(new FileLogWriter());
+
+                this.settingsService = Container.Resolve<ISettingsService>();
+
+                this.UpdateLogLevel();
+                this.settingsService.ValueChanged += (sender, eventArgs) =>
+                    {
+                        if (string.Equals(eventArgs.Key, "IsLoggingOn", StringComparison.OrdinalIgnoreCase))
+                        {
+                            Task.Factory.StartNew(this.UpdateLogLevel);
+                        }
+                    };
 
                 // Create a Frame to act as the navigation context and navigate to the first page
                 mainView = (MainView)Container.Resolve<IMainView>();
@@ -103,6 +125,11 @@ namespace OutcoldSolutions.GoogleMusic
 
             // Ensure the current window is active
             Window.Current.Activate();
+        }
+
+        private void UpdateLogLevel()
+        {
+            this.logManager.LogLevel = this.settingsService.GetValue("IsLoggingOn", defaultValue: false) ? LogLevel.Error : LogLevel.None;
         }
 
         /// <summary>
