@@ -3,6 +3,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Services
 {
+    using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
 
@@ -26,6 +27,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
         Task<List<Artist>> GetAllArtistsAsync(Order order = Order.Name);
 
         Task<MusicPlaylist> CreatePlaylistAsync();
+
+        Task<List<Song>> GetAllGoogleSongsAsync(IProgress<int> progress = null);
 
         Task<bool> DeletePlaylistAsync(MusicPlaylist playlist);
 

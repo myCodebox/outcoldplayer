@@ -618,13 +618,13 @@
 
     <Style x:Key="SetLockScreenAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
         <Setter Property="AutomationProperties.AutomationId" Value="SetLockscreenAppBarButton"/>
-        <Setter Property="AutomationProperties.Name" Value="Set Lockscreen"/>
+        <Setter Property="AutomationProperties.Name" Value="Screen On"/>
         <Setter Property="Content" Value="&#xE18C;"/>
     </Style>
     
     <Style x:Key="SetLockScreenPopupMenuButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource PopupMenuButtonStyle}">
         <Setter Property="AutomationProperties.AutomationId" Value="SetLockscreenAppBarButton"/>
-        <Setter Property="AutomationProperties.Name" Value="Set Lockscreen"/>
+        <Setter Property="AutomationProperties.Name" Value="Screen On"/>
         <Setter Property="Content" Value="&#xE18C;"/>
     </Style>
 

@@ -173,6 +173,19 @@ namespace OutcoldSolutions.GoogleMusic.Services
             return result != null;
         }
 
+        public async Task<List<Song>> GetAllGoogleSongsAsync(IProgress<int> progress = null)
+        {
+            lock (this.lockerTasks)
+            {
+                if (this.taskAllSongsLoader == null)
+                {
+                    this.taskAllSongsLoader = this.GetAllSongsTask(progress);
+                }
+            }
+
+            return await this.taskAllSongsLoader;
+        }
+
         private IEnumerable<TPlaylist> OrderCollection<TPlaylist>(IEnumerable<TPlaylist> playlists, Order order)
             where TPlaylist : Playlist
         {
@@ -184,32 +197,17 @@ namespace OutcoldSolutions.GoogleMusic.Services
             return playlists;
         }
 
-        private async Task<List<Song>> GetAllGoogleSongsAsync()
-        {
-            this.CreateTasks();
-
-            await this.taskAllSongsLoader;
-            return await this.taskAllSongsLoader;
-        }
-
         private async Task<List<MusicPlaylist>> GetAllGooglePlaylistsAsync()
-        {
-            this.CreateTasks();
-            
-            await this.taskAllSongsLoader;
-            return await this.taskAllPlaylistsLoader;
-        }
-
-        private void CreateTasks()
         {
             lock (this.lockerTasks)
             {
-                if (this.taskAllSongsLoader == null)
+                if (this.taskAllPlaylistsLoader == null)
                 {
-                    this.taskAllSongsLoader = this.GetAllSongsTask();
                     this.taskAllPlaylistsLoader = this.GetAllPlaylistsTask();
                 }
             }
+            
+            return await this.taskAllPlaylistsLoader;
         }
 
         private async Task<List<MusicPlaylist>> GetAllPlaylistsTask()
@@ -231,9 +229,9 @@ namespace OutcoldSolutions.GoogleMusic.Services
             return playlists;
         }
 
-        private async Task<List<Song>> GetAllSongsTask()
+        private async Task<List<Song>> GetAllSongsTask(IProgress<int> progress = null)
         {
-            var googleSongs = await this.webService.GetAllSongsAsync();
+            var googleSongs = await this.webService.GetAllSongsAsync(progress);
             return googleSongs.Select(this.CreateSong).ToList();
         }
 

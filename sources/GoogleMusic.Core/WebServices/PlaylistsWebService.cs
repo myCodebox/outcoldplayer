@@ -19,7 +19,7 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
 
         Task<GoogleMusicPlaylist> GetPlaylistAsync(string playlistId);
 
-        Task<List<GoogleMusicSong>> GetAllSongsAsync();
+        Task<List<GoogleMusicSong>> GetAllSongsAsync(IProgress<int> progress = null);
 
         Task<AddPlaylistResp> CreatePlaylistAsync(string name);
 
@@ -83,7 +83,7 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
             return response.GetAsJsonObject<GoogleMusicPlaylist>();
         }
 
-        public async Task<List<GoogleMusicSong>> GetAllSongsAsync()
+        public async Task<List<GoogleMusicSong>> GetAllSongsAsync(IProgress<int> progress = null)
         {
             List<GoogleMusicSong> googleMusicSongs = new List<GoogleMusicSong>();
             
@@ -91,7 +91,7 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
             do
             {
                 string json = null;
-
+                
                 if (playlist != null && !string.IsNullOrEmpty(playlist.ContinuationToken))
                 {
                     json = JsonConvert.SerializeObject(new { sessionId = this.userDataStorage.GetUserSession().SessionId, continuationToken = playlist.ContinuationToken });
@@ -111,6 +111,11 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
                 if (playlist != null && playlist.Playlist != null)
                 {
                     googleMusicSongs.AddRange(playlist.Playlist);
+                }
+
+                if (progress != null)
+                {
+                    progress.Report(googleMusicSongs.Count);
                 }
             }
             while (playlist != null && !string.IsNullOrEmpty(playlist.ContinuationToken));

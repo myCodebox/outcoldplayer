@@ -43,12 +43,12 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                        {
                            this.BindingModel.IsAuthenticated = true;
                            this.Logger.Debug("User is logged in. Going to start view and showing player.");
-                           this.NavigateTo<IStartView>();
+                           this.NavigateTo<IProgressLoadingView>(keepInHistory: false);
                        }
                        else
                        {
                            this.Logger.Debug("User is not logged in. Showing authentification view.");
-                           this.ShowView<IAuthentificationView>().Succeed += this.AuthentificationViewOnSucceed;
+                           this.NavigateTo<IAuthentificationView>(keepInHistory: false).Succeed += this.AuthentificationViewOnSucceed;
                        }
                    },
                TaskScheduler.FromCurrentSynchronizationContext());
@@ -60,7 +60,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     {
                         if (this.BindingModel.IsAuthenticated)
                         {
-                            this.ShowView<IAuthentificationView>().Succeed += this.AuthentificationViewOnSucceed;
+                            this.NavigateTo<IAuthentificationView>(keepInHistory: false).Succeed += this.AuthentificationViewOnSucceed;
                             this.viewsHistory.Clear();
                         }
                     });
@@ -70,7 +70,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         public PlayerViewPresenter PlayerViewPresenter { get; private set; }
 
-        public void NavigateTo<TView>(object parameter = null) where TView : IView
+        public TView NavigateTo<TView>(object parameter = null, bool keepInHistory = true) where TView : IView
         {
             var viewType = typeof(TView);
             this.Logger.Debug("Navigating to {0}. Parameter {1}.", viewType, parameter);
@@ -82,17 +82,23 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     && value.ViewType == viewType)
                 {
                     this.Logger.Warning("Double click found. Ignoring...");
-                    return;
+                    return (TView)value.View;
                 }
             }
 
-            var view = this.ShowView<TView>();
+            var view = this.container.Resolve<TView>();
+
+            if (keepInHistory)
+            {
+                var historyItem = new HistoryItem(view, viewType, parameter);
+                this.viewsHistory.AddLast(historyItem);
+            }
+
+            this.ShowView(view);
             view.OnNavigatedTo(parameter);
-
-            var historyItem = new HistoryItem(view, viewType, parameter);
-            this.viewsHistory.AddLast(historyItem);
-
             this.UpdateCanGoBack();
+
+            return view;
         }
 
         public void GoBack()
@@ -116,6 +122,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             return this.viewsHistory.Count > 1;
         }
 
+        public bool HasHistory()
+        {
+            return this.viewsHistory.Count > 0;
+        }
+
         private void UpdateCanGoBack()
         {
             this.BindingModel.CanGoBack = this.CanGoBack();
@@ -129,15 +140,9 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             ((IAuthentificationView)sender).Succeed -= this.AuthentificationViewOnSucceed;
 
             this.BindingModel.IsAuthenticated = true;
-            this.NavigateTo<IStartView>();
+            this.NavigateTo<IProgressLoadingView>(keepInHistory: false);
         }
-
-        private TView ShowView<TView>() where TView : IView
-        {
-            this.Logger.Debug("Showing view {0}. Creating.", typeof(TView));
-            return (TView)this.ShowView(this.container.Resolve<TView>());
-        }
-
+        
         private object ShowView(IView view)
         {
             this.Logger.Debug("Showing view {0}. Instance.", view.GetType());

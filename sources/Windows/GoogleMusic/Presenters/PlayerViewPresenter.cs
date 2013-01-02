@@ -26,6 +26,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private readonly ISongWebService songWebService;
         private readonly IUserDataStorage userDataStorage;
+        private readonly ISettingsService settingsService;
+
         private readonly MediaElement mediaElement;
 
         private readonly List<int> playOrder = new List<int>();
@@ -37,12 +39,22 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             IDependencyResolverContainer container,
             IMediaElemenetContainerView view,
             ISongWebService songWebService,
-            IUserDataStorage userDataStorage)
+            IUserDataStorage userDataStorage,
+            ISettingsService settingsService)
             : base(container, view)
         {
             this.songWebService = songWebService;
             this.userDataStorage = userDataStorage;
-            this.BindingModel = new PlayerBindingModel();
+            this.settingsService = settingsService;
+            this.BindingModel = new PlayerBindingModel
+                                    {
+                                        IsRepeatAllEnabled =
+                                            this.settingsService.GetValue("IsRepeatAllEnabled", defaultValue: false),
+                                        IsShuffleEnabled =
+                                            this.settingsService.GetValue("IsShuffleEnabled", defaultValue: false),
+                                        IsLockScreenEnabled =
+                                            this.settingsService.GetValue("IsLockScreenEnabled", defaultValue: false)
+                                    };
 
             MediaControl.PlayPauseTogglePressed += this.MediaControlPlayPauseTogglePressed;
             MediaControl.PlayPressed += this.MediaControlPlayPressed;
@@ -97,6 +109,18 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                         {
                             this.mediaElement.Position = TimeSpan.FromSeconds(this.BindingModel.CurrentPosition);
                         }
+                    }
+                    else if (args.PropertyName.Equals("IsRepeatAllEnabled"))
+                    {
+                        this.settingsService.SetValue("IsRepeatAllEnabled", this.BindingModel.IsRepeatAllEnabled);
+                    }
+                    else if (args.PropertyName.Equals("IsShuffleEnabled"))
+                    {
+                        this.settingsService.SetValue("IsShuffleEnabled", this.BindingModel.IsShuffleEnabled);
+                    }
+                    else if (args.PropertyName.Equals("IsLockScreenEnabled"))
+                    {
+                        this.settingsService.SetValue("IsLockScreenEnabled", this.BindingModel.IsLockScreenEnabled);
                     }
                 };
 
@@ -222,23 +246,31 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             return this.BindingModel.Songs;
         }
 
-        public async Task PlayAsync(int songIndex)
+        public async Task PlayAsync(int songIndex = -1)
         {
-            var songBindingModel = this.BindingModel.Songs[songIndex];
-            if (songBindingModel == null)
+            if (songIndex <= 0 && this.playOrder.Count > 0)
             {
-                this.Logger.Error("Cannot find song with index '{0}'", songIndex);
+                songIndex = this.playOrder[0];
             }
-            else
-            {
-                await this.Dispatcher.RunAsync(
-                    () =>
-                        {
-                            this.playIndex = this.playOrder.IndexOf(songIndex);
-                            this.PlayCurrentSong();
-                        });
 
-                this.View.Activate();
+            if (songIndex >= 0)
+            {
+                var songBindingModel = this.BindingModel.Songs[songIndex];
+                if (songBindingModel == null)
+                {
+                    this.Logger.Error("Cannot find song with index '{0}'", songIndex);
+                }
+                else
+                {
+                    await this.Dispatcher.RunAsync(
+                        () =>
+                            {
+                                this.playIndex = this.playOrder.IndexOf(songIndex);
+                                this.PlayCurrentSong();
+                            });
+
+                    this.View.Activate();
+                }
             }
         }
 

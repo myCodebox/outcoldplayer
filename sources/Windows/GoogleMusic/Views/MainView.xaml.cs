@@ -14,7 +14,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
     using Windows.UI.ViewManagement;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
-    using Windows.UI.Xaml.Controls.Primitives;
 
     public interface IMediaElemenetContainerView : IView
     {
@@ -60,13 +59,10 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
         public void ShowView(IView view)
         {
-            Debug.Assert(this.BottomAppBar != null, "this.BottomAppBar != null");
-            this.BottomAppBar.IsEnabled = this.Presenter<MainViewPresenter>().BindingModel.IsAuthenticated
-                && ApplicationView.Value != ApplicationViewState.Snapped;
-
-            Debug.Assert(this.TopAppBar != null, "this.TopAppBar != null");
-            this.TopAppBar.IsEnabled = this.Presenter<MainViewPresenter>().BindingModel.IsAuthenticated
-                && ApplicationView.Value != ApplicationViewState.Snapped;
+            this.UpdateAppBars(
+                this.Presenter<MainViewPresenter>().BindingModel.IsAuthenticated
+                && this.Presenter<MainViewPresenter>().HasHistory()
+                && ApplicationView.Value != ApplicationViewState.Snapped);
 
             this.ClearContext();
             this.Content.Content = view;
@@ -122,22 +118,34 @@ namespace OutcoldSolutions.GoogleMusic.Views
                 this.Content.Visibility = Visibility.Collapsed;
                 this.BackButton.Visibility = Visibility.Collapsed;
                 this.SnappedPlayerView.Visibility = Visibility.Visible;
-                this.BottomAppBar.IsEnabled = false;
-                this.TopAppBar.IsEnabled = false;
-                this.BottomAppBar.IsOpen = false;
-                this.TopAppBar.IsOpen = false;
-                this.BottomAppBar.Visibility = Visibility.Collapsed;
-                this.TopAppBar.Visibility = Visibility.Collapsed; 
             }
             else
             {
                 this.Content.Visibility = Visibility.Visible;
                 this.BackButton.Visibility = Visibility.Visible;
                 this.SnappedPlayerView.Visibility = Visibility.Collapsed;
+            }
+
+            this.UpdateAppBars(ApplicationView.Value != ApplicationViewState.Snapped);
+        }
+
+        private void UpdateAppBars(bool visible)
+        {
+            if (visible)
+            {
                 this.BottomAppBar.IsEnabled = true;
                 this.TopAppBar.IsEnabled = true;
                 this.BottomAppBar.Visibility = Visibility.Visible;
-                this.TopAppBar.Visibility = Visibility.Visible; 
+                this.TopAppBar.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                this.BottomAppBar.IsEnabled = false;
+                this.TopAppBar.IsEnabled = false;
+                this.BottomAppBar.IsOpen = false;
+                this.TopAppBar.IsOpen = false;
+                this.BottomAppBar.Visibility = Visibility.Collapsed;
+                this.TopAppBar.Visibility = Visibility.Collapsed;
             }
         }
 

@@ -27,7 +27,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
                     if (playlist.Songs.Count > 0)
                     {
                         currentPlaylistService.AddSongs(playlist.Songs);
-                        currentPlaylistService.PlayAsync(0);
+                        currentPlaylistService.PlayAsync();
                     }
 
                     App.Container.Resolve<INavigationService>().NavigateTo<IPlaylistView>(playlist);

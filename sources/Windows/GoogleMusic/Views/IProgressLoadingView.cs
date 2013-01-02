@@ -1,16 +1,9 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // Outcold Solutions (http://outcoldman.com)
 // --------------------------------------------------------------------------------------------------------------------
-namespace OutcoldSolutions.GoogleMusic
+namespace OutcoldSolutions.GoogleMusic.Views
 {
-    using OutcoldSolutions.GoogleMusic.Views;
-
-    public interface INavigationService
+    public interface IProgressLoadingView : IView
     {
-        TView NavigateTo<TView>(object parameter = null, bool keepInHistory = true) where TView : IView;
-
-        void GoBack();
-
-        bool CanGoBack();
     }
 }

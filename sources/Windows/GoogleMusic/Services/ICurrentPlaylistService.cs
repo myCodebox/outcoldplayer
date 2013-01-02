@@ -19,7 +19,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         IEnumerable<Song> GetPlaylist();
 
-        Task PlayAsync(int index);
+        Task PlayAsync(int index = -1);
 
         Task RemoveAsync(int index);
     }
