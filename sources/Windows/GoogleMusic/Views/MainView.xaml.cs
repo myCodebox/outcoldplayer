@@ -141,6 +141,15 @@ namespace OutcoldSolutions.GoogleMusic.Views
             this.UpdateAppBars(visible);
             this.UpdateAdControl();
 
+            if (visible)
+            {
+                this.ShowAd();
+            }
+            else
+            {
+                this.HideAd();
+            }
+
             this.ClearContext();
             this.Content.Content = view;
         }
