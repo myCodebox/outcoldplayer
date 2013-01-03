@@ -130,6 +130,19 @@ namespace OutcoldSolutions.GoogleMusic.Views
                     this.MainGrid.Children.Add(this.adControl);
                 }
             }
+
+            var visible = this.Presenter<MainViewPresenter>().BindingModel.IsAuthenticated
+                          && this.Presenter<MainViewPresenter>().HasHistory()
+                          && ApplicationView.Value != ApplicationViewState.Snapped;
+
+            if (visible)
+            {
+                this.ShowAd();
+            }
+            else
+            {
+                this.HideAd();
+            }
         }
 
         public void ShowView(IView view)
@@ -140,15 +153,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
             this.UpdateAppBars(visible);
             this.UpdateAdControl();
-
-            if (visible)
-            {
-                this.ShowAd();
-            }
-            else
-            {
-                this.HideAd();
-            }
 
             this.ClearContext();
             this.Content.Content = view;
@@ -217,28 +221,19 @@ namespace OutcoldSolutions.GoogleMusic.Views
         {
             if (ApplicationView.Value == ApplicationViewState.Snapped)
             {
-                if (this.adControl != null)
-                {
-                    this.adControl.Visibility = Visibility.Collapsed;
-                }
-
                 this.Content.Visibility = Visibility.Collapsed;
                 this.BackButton.Visibility = Visibility.Collapsed;
                 this.SnappedPlayerView.Visibility = Visibility.Visible;
             }
             else
             {
-                if (this.adControl != null)
-                {
-                    this.adControl.Visibility = Visibility.Visible;
-                }
-
                 this.Content.Visibility = Visibility.Visible;
                 this.BackButton.Visibility = Visibility.Visible;
                 this.SnappedPlayerView.Visibility = Visibility.Collapsed;
             }
 
             this.UpdateAppBars(ApplicationView.Value != ApplicationViewState.Snapped);
+            this.UpdateAdControl();
         }
 
         private void UpdateAppBars(bool visible)

@@ -52,7 +52,7 @@
                 </StackPanel.Transitions>
 
                 <TextBlock Style="{StaticResource BodyTextStyle}"
-                           Visibility="{Binding Path=BindingModel.AccountName, Converter={StaticResource NullToVisibilityConverter}}">
+                           Visibility="{Binding Path=BindingModel.HasSession, Converter={StaticResource BooleanToInvisibilityConverter}}">
                     You are not logged in.
                 </TextBlock>
                 
@@ -67,7 +67,7 @@
                            Margin="0, 20, 0, 0"/>
 
                 <Button Command="{Binding Path=SignOutCommand}" 
-                        Visibility="{Binding Path=BindingModel.AccountName, Converter={StaticResource NullToInvisibilityConverter}}"
+                        Visibility="{Binding Path=BindingModel.HasSession, Converter={StaticResource BooleanToVisibilityConverter}}"
                         Content="Sign out" 
                         Margin="0, 40, 0, 0"/>
                 

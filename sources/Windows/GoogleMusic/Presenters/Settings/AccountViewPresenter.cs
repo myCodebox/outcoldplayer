@@ -28,6 +28,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
                 this.BindingModel.AccountName = userInfo.Email;
                 this.BindingModel.IsRemembered = userInfo.RememberAccount;
             }
+
+            this.BindingModel.HasSession = this.userDataStorage.GetUserSession() != null;
         }
 
         public AccountViewBindingModel BindingModel { get; private set; }
