@@ -3,6 +3,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Services
 {
+    using OutcoldSolutions.GoogleMusic.Views;
     using OutcoldSolutions.GoogleMusic.Views.Settings;
 
     using Windows.UI.ApplicationSettings;
@@ -13,10 +14,14 @@ namespace OutcoldSolutions.GoogleMusic.Services
     public class SettingsCommands : ISettingsCommands
     {
         private const double SettingsWidth = 346;
+
+        private readonly IMediaElemenetContainerView mediaElemenetContainerView;
+
         private Popup settingsPopup;
 
-        public SettingsCommands()
+        public SettingsCommands(IMediaElemenetContainerView mediaElemenetContainerView)
         {
+            this.mediaElemenetContainerView = mediaElemenetContainerView;
             SettingsPane.GetForCurrentView().CommandsRequested += this.CommandsRequested;
         }
 
@@ -53,6 +58,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
             this.settingsPopup.SetValue(Canvas.LeftProperty, Window.Current.Bounds.Width - SettingsWidth);
             this.settingsPopup.SetValue(Canvas.TopProperty, 0);
             this.settingsPopup.IsOpen = true;
+
+            this.mediaElemenetContainerView.HideAd();
         }
 
         private void OnWindowActivated(object sender, Windows.UI.Core.WindowActivatedEventArgs e)
@@ -68,6 +75,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
             Window.Current.Activated -= this.OnWindowActivated;
             this.settingsPopup.Closed -= this.OnPopupClosed;
             this.settingsPopup = null;
+
+            this.mediaElemenetContainerView.ShowAd();
         }
     }
 }

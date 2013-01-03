@@ -9,12 +9,13 @@
     d:DesignHeight="700"
     d:DesignWidth="320">
 
-    <Grid DataContext="{Binding Path=BindingModel, Mode=OneTime}">
+    <Grid DataContext="{Binding Path=BindingModel, Mode=OneTime}" x:Name="SnappedGrid" Margin="0, 0, 0, 20">
 
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -78,7 +79,7 @@
                 Maximum="{Binding Path=TotalSeconds, Mode=OneWay}"
                 Visibility="{Binding Path=CurrentSong, Mode=OneWay, Converter={StaticResource NullToInvisibilityConverter}}" />
         
-        <StackPanel Margin="0, 0, 0, 32" Orientation="Horizontal" HorizontalAlignment="Center" Grid.Row="5" Visibility="{Binding Path=CurrentSong, Mode=OneWay, Converter={StaticResource NullToInvisibilityConverter}}">
+        <StackPanel Margin="0, 0, 0, 0" Orientation="Horizontal" HorizontalAlignment="Center" Grid.Row="5" Visibility="{Binding Path=CurrentSong, Mode=OneWay, Converter={StaticResource NullToInvisibilityConverter}}">
 
             <Button Style="{StaticResource SkipBackAppBarButtonStyle}" 
                     Command="{Binding Path=SkipBackCommand, Mode=OneTime}"

@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:views="using:OutcoldSolutions.GoogleMusic.Views" 
+    xmlns:views="using:OutcoldSolutions.GoogleMusic.Views" xmlns:ui="using:Microsoft.Advertising.WinRT.UI"
     mc:Ignorable="d" >
 
     <views:PageBase.BottomAppBar>
@@ -73,7 +73,7 @@
         
     </views:PageBase.TopAppBar>
     
-    <Grid Background="{StaticResource ApplicationPageBackgroundThemeBrush}" DataContext="{Binding Path=BindingModel, Mode=OneTime}">
+    <Grid x:Name="MainGrid" Background="{StaticResource ApplicationPageBackgroundThemeBrush}" DataContext="{Binding Path=BindingModel, Mode=OneTime}">
 
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
@@ -121,8 +121,6 @@
         </StackPanel>
         
         <Border x:Name="BottomBorder" Grid.Row="1" Visibility="Collapsed" Height="100" />
-
-        <Border x:Name="AddControl" Grid.Column="1" Background="Aqua" Width="100" VerticalAlignment="Stretch" Visibility="Collapsed" />
         
     </Grid>
     

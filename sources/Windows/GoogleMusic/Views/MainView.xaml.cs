@@ -7,6 +7,8 @@ namespace OutcoldSolutions.GoogleMusic.Views
     using System.Collections.Generic;
     using System.Diagnostics;
 
+    using Microsoft.Advertising.WinRT.UI;
+
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Presenters;
     using OutcoldSolutions.GoogleMusic.Services;
@@ -21,6 +23,10 @@ namespace OutcoldSolutions.GoogleMusic.Views
         MediaElement GetMediaElement();
 
         void Activate();
+
+        void HideAd();
+
+        void ShowAd();
     }
 
     public interface IMainView : IView, IMediaElemenetContainerView
@@ -32,6 +38,8 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
     public sealed partial class MainView : PageBase, IMainView, IMediaElemenetContainerView, ICurrentContextCommands
     {
+        private AdControl adControl;
+
         public MainView()
         {
             this.InitializeComponent();
@@ -57,7 +65,8 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
             this.Loaded += this.OnLoaded;
 
-            CurrentApp.LicenseInformation.LicenseChanged += () => this.UpdateAdControl(false);
+            CurrentApp.LicenseInformation.LicenseChanged += this.UpdateAdControl;
+            this.UpdateAdControl();
         }
 
         private bool IsAdFree()
@@ -68,9 +77,33 @@ namespace OutcoldSolutions.GoogleMusic.Views
                 && CurrentApp.LicenseInformation.ProductLicenses["Ultimate"].IsActive);
         }
 
-        private void UpdateAdControl(bool forceHide)
+        private void UpdateAdControl()
         {
-            this.AddControl.Visibility = this.IsAdFree() || forceHide ? Visibility.Collapsed : Visibility.Visible;
+            if (this.IsAdFree())
+            {
+                if (this.adControl != null)
+                {
+                    this.MainGrid.Children.Remove(this.adControl);
+                    this.adControl = null;
+                }
+            }
+            else
+            {
+                if (this.adControl == null)
+                {
+                    this.adControl = new AdControl
+                                         {
+                                             ApplicationId = "8eb9e14b-2133-40db-9500-14eff7c05aab",
+                                             AdUnitId = "111663",
+                                             Width = 160,
+                                             Height = 600,
+                                             VerticalAlignment = VerticalAlignment.Center,
+                                             Margin = new Thickness(0, 0, 10, 0)
+                                         };
+                    Grid.SetColumn(this.adControl, 1);
+                    this.MainGrid.Children.Add(this.adControl);
+                }
+            }
         }
 
         public void ShowView(IView view)
@@ -80,7 +113,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
                           && ApplicationView.Value != ApplicationViewState.Snapped;
 
             this.UpdateAppBars(visible);
-            this.UpdateAdControl(!visible);
+            this.UpdateAdControl();
 
             this.ClearContext();
             this.Content.Content = view;
@@ -101,6 +134,22 @@ namespace OutcoldSolutions.GoogleMusic.Views
         {
             Debug.Assert(this.BottomAppBar != null, "this.BottomAppBar != null");
             this.BottomAppBar.IsOpen = true;
+        }
+
+        public void HideAd()
+        {
+            if (this.adControl != null)
+            {
+                this.adControl.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        public void ShowAd()
+        {
+            if (this.adControl != null)
+            {
+                this.adControl.Visibility = Visibility.Visible;
+            }
         }
 
         public void SetCommands(IEnumerable<UIElement> buttons)
@@ -133,12 +182,22 @@ namespace OutcoldSolutions.GoogleMusic.Views
         {
             if (ApplicationView.Value == ApplicationViewState.Snapped)
             {
+                if (this.adControl != null)
+                {
+                    this.adControl.Visibility = Visibility.Collapsed;
+                }
+
                 this.Content.Visibility = Visibility.Collapsed;
                 this.BackButton.Visibility = Visibility.Collapsed;
                 this.SnappedPlayerView.Visibility = Visibility.Visible;
             }
             else
             {
+                if (this.adControl != null)
+                {
+                    this.adControl.Visibility = Visibility.Visible;
+                }
+
                 this.Content.Visibility = Visibility.Visible;
                 this.BackButton.Visibility = Visibility.Visible;
                 this.SnappedPlayerView.Visibility = Visibility.Collapsed;
