@@ -9,7 +9,7 @@ namespace OutcoldSolutions.GoogleMusic.Models
     public class Album : Playlist
     {
         public Album(List<Song> songs)
-            : base(null, songs)
+            : base(null, songs.OrderBy(s => s.GoogleMusicMetadata.Disc).ThenBy(s => s.GoogleMusicMetadata.Track).ToList())
         {
             var song = songs.FirstOrDefault(x => !string.IsNullOrWhiteSpace(x.GoogleMusicMetadata.AlbumArtist))
                    ?? songs.FirstOrDefault(x => !string.IsNullOrWhiteSpace(x.GoogleMusicMetadata.Artist));

@@ -30,7 +30,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.PlaySelectedSongCommand = new DelegateCommand(this.PlaySelectedSong);
             this.RemoveFromPlaylistCommand = new DelegateCommand(this.RemoveFromPlaylist);
             this.AddToPlaylistCommand = new DelegateCommand(this.AddToPlaylist);
-            this.RateCommand = new DelegateCommand(this.Rate);
         }
 
         public DelegateCommand PlaySelectedSongCommand { get; private set; }
@@ -38,8 +37,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         public DelegateCommand RemoveFromPlaylistCommand { get; private set; }
 
         public DelegateCommand AddToPlaylistCommand { get; private set; }
-
-        public DelegateCommand RateCommand { get; private set; }
 
         public PlaylistViewBindingModel BindingModel
         {
@@ -141,12 +138,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                         }
                     },
                 TaskScheduler.FromCurrentSynchronizationContext());
-        }
-
-        private void Rate()
-        {
-
-
         }
     }
 }

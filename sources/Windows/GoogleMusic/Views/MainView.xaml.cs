@@ -11,6 +11,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
     using OutcoldSolutions.GoogleMusic.Presenters;
     using OutcoldSolutions.GoogleMusic.Services;
 
+    using Windows.ApplicationModel.Store;
     using Windows.UI.ViewManagement;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
@@ -55,14 +56,31 @@ namespace OutcoldSolutions.GoogleMusic.Views
             this.BottomAppBar.Closed += (sender, o) => { this.BottomBorder.Visibility = Visibility.Collapsed; };
 
             this.Loaded += this.OnLoaded;
+
+            CurrentApp.LicenseInformation.LicenseChanged += () => this.UpdateAdControl(false);
+        }
+
+        private bool IsAdFree()
+        {
+            return (CurrentApp.LicenseInformation.ProductLicenses.ContainsKey("AdFree")
+                && CurrentApp.LicenseInformation.ProductLicenses["AddFree"].IsActive)
+                || (CurrentApp.LicenseInformation.ProductLicenses.ContainsKey("Ultimate")
+                && CurrentApp.LicenseInformation.ProductLicenses["Ultimate"].IsActive);
+        }
+
+        private void UpdateAdControl(bool forceHide)
+        {
+            this.AddControl.Visibility = this.IsAdFree() || forceHide ? Visibility.Collapsed : Visibility.Visible;
         }
 
         public void ShowView(IView view)
         {
-            this.UpdateAppBars(
-                this.Presenter<MainViewPresenter>().BindingModel.IsAuthenticated
-                && this.Presenter<MainViewPresenter>().HasHistory()
-                && ApplicationView.Value != ApplicationViewState.Snapped);
+            var visible = this.Presenter<MainViewPresenter>().BindingModel.IsAuthenticated
+                          && this.Presenter<MainViewPresenter>().HasHistory()
+                          && ApplicationView.Value != ApplicationViewState.Snapped;
+
+            this.UpdateAppBars(visible);
+            this.UpdateAdControl(!visible);
 
             this.ClearContext();
             this.Content.Content = view;

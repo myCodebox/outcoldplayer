@@ -79,6 +79,11 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
+        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
 
         <Image Source="ms-appx:///Resources/logo460.png" Height="460" Width="460" Margin="20" HorizontalAlignment="Right" VerticalAlignment="Top" Opacity="0.02" />
 
@@ -117,6 +122,8 @@
         
         <Border x:Name="BottomBorder" Grid.Row="1" Visibility="Collapsed" Height="100" />
 
+        <Border x:Name="AddControl" Grid.Column="1" Background="Aqua" Width="100" VerticalAlignment="Stretch" Visibility="Collapsed" />
+        
     </Grid>
     
 </views:PageBase>

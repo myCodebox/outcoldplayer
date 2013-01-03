@@ -26,7 +26,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
         private readonly Button playButton;
         private readonly Button addToPlaylistButton;
-        private readonly Button rateButton;
         private readonly Button removeButton;
         private readonly Border borderSeparator;
 
@@ -55,12 +54,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
                                     Command = this.Presenter<PlaylistViewPresenter>().AddToPlaylistCommand
                                 };
             this.addToPlaylistButton.SetValue(AutomationProperties.NameProperty, "Playlist");
-
-            this.rateButton = new Button()
-                                  {
-                                      Style = (Style)Application.Current.Resources["RateAppBarButtonStyle"],
-                                      Command = this.Presenter<PlaylistViewPresenter>().RateCommand
-                                  };
 
             this.borderSeparator = new Border() { Style = (Style)Application.Current.Resources["AppBarSeparator"] };
         }
@@ -96,8 +89,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
                 List<UIElement> elements = new List<UIElement>
                                                {
                                                    this.playButton,
-                                                   this.addToPlaylistButton,
-                                                   // this.rateButton
+                                                   this.addToPlaylistButton
                                                };
 
                 if (this.Presenter<PlaylistViewPresenter>().BindingModel.Playlist is MusicPlaylist)

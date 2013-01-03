@@ -56,6 +56,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                                             this.settingsService.GetValue("IsLockScreenEnabled", defaultValue: false)
                                     };
 
+            if (this.BindingModel.IsLockScreenEnabled)
+            {
+                this.UpdateLockScreen();
+            }
+
             MediaControl.PlayPauseTogglePressed += this.MediaControlPlayPauseTogglePressed;
             MediaControl.PlayPressed += this.MediaControlPlayPressed;
             MediaControl.PausePressed += this.MediaControlPausePressed;
@@ -71,23 +76,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 && ((this.playIndex < (this.playOrder.Count - 1))
                     || (this.BindingModel.IsRepeatAllEnabled && this.BindingModel.Songs.Count > 0)));
 
-            this.BindingModel.LockScreenCommand = new DelegateCommand(() =>
-                {
-                    if (this.request == null)
-                    {
-                        this.request = new DisplayRequest();
-                        this.request.RequestActive();
-                        this.Logger.Debug("Request display active.");
-                    }
-                    else
-                    {
-                        this.request.RequestRelease();
-                        this.request = null;
-                        this.Logger.Debug("Release display active.");
-                    }
-
-                    this.BindingModel.IsLockScreenEnabled = this.request != null; 
-                });
+            this.BindingModel.LockScreenCommand = new DelegateCommand(this.UpdateLockScreen);
 
             this.BindingModel.RepeatAllCommand = new DelegateCommand(() => this.BindingModel.IsRepeatAllEnabled = !this.BindingModel.IsRepeatAllEnabled);
             this.BindingModel.ShuffleCommand = new DelegateCommand(() =>
@@ -172,16 +161,20 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                         this.songWebService.RecordPlayingAsync(song.GoogleMusicMetadata, song.PlayCount + 1)
                             .ContinueWith(t =>
                                 {
-                                    this.Logger.Debug(
-                                        "Record Playing for song '{0}' updated play count: {1}. Result: {2}.",
-                                        song.GoogleMusicMetadata.Id,
-                                        song.PlayCount + 1,
-                                        t.Result);
-
-                                    if (t.Result)
+                                    if (t.IsCompleted)
                                     {
-                                        this.Dispatcher.RunAsync(() => { song.PlayCount++; });
+                                        this.Logger.Debug(
+                                            "Record Playing for song '{0}' updated play count: {1}. Result: {2}.",
+                                            song.GoogleMusicMetadata.Id,
+                                            song.PlayCount + 1,
+                                            t.Result);
                                     }
+                                    else
+                                    {
+                                        this.Logger.Error("Cannot update play count for song '{0}'.", song.GoogleMusicMetadata.Id);
+                                    }
+
+                                    this.Dispatcher.RunAsync(() => { song.PlayCount++; });
                                 });
                     }
                 };
@@ -435,10 +428,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                                                     song.GoogleMusicMetadata.Id,
                                                     t.Result.Url);
 
-                                                MediaControl.NextTrackPressed -= this.MediaControlOnNextTrackPressed;
-                                                MediaControl.PreviousTrackPressed -=
-                                                    this.MediaControlOnPreviousTrackPressed;
-
                                                 MediaControl.ArtistName = song.Artist;
                                                 MediaControl.TrackName = song.Title;
 
@@ -466,13 +455,22 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
                                                 if (this.BindingModel.SkipAheadCommand.CanExecute())
                                                 {
+                                                    MediaControl.NextTrackPressed -= this.MediaControlOnNextTrackPressed;
                                                     MediaControl.NextTrackPressed += this.MediaControlOnNextTrackPressed;
+                                                }
+                                                else
+                                                {
+                                                    MediaControl.NextTrackPressed -= this.MediaControlOnNextTrackPressed;
                                                 }
 
                                                 if (this.BindingModel.SkipBackCommand.CanExecute())
                                                 {
-                                                    MediaControl.PreviousTrackPressed +=
-                                                        this.MediaControlOnPreviousTrackPressed;
+                                                    MediaControl.PreviousTrackPressed -= this.MediaControlOnPreviousTrackPressed;
+                                                    MediaControl.PreviousTrackPressed += this.MediaControlOnPreviousTrackPressed;
+                                                }
+                                                else
+                                                {
+                                                    MediaControl.PreviousTrackPressed -= this.MediaControlOnPreviousTrackPressed;
                                                 }
 
                                                 this.recordPlayingTimer.Interval =
@@ -616,6 +614,24 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             {
                 handler(this, EventArgs.Empty);
             }
+        }
+
+        private void UpdateLockScreen()
+        {
+            if (this.request == null)
+            {
+                this.request = new DisplayRequest();
+                this.request.RequestActive();
+                this.Logger.Debug("Request display active.");
+            }
+            else
+            {
+                this.request.RequestRelease();
+                this.request = null;
+                this.Logger.Debug("Release display active.");
+            }
+
+            this.BindingModel.IsLockScreenEnabled = this.request != null;
         }
     }
 }

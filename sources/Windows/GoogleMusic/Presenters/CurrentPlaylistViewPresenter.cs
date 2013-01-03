@@ -6,6 +6,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
+    using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
 
@@ -13,13 +14,17 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     {
         private readonly ICurrentPlaylistService currentPlaylistService;
 
+        private readonly ISongsService songsService;
+
         public CurrentPlaylistViewPresenter(
             IDependencyResolverContainer container, 
             ICurrentPlaylistView view,
-            ICurrentPlaylistService currentPlaylistService)
+            ICurrentPlaylistService currentPlaylistService,
+            ISongsService songsService)
             : base(container, view)
         {
             this.currentPlaylistService = currentPlaylistService;
+            this.songsService = songsService;
             this.BindingModel = new CurrentPlaylistBindingModel();
 
             this.currentPlaylistService.PlaylistChanged += (sender, args) => this.UpdateSongs();
@@ -27,9 +32,18 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
             this.BindingModel.PlaySelectedSong = new DelegateCommand(this.PlaySelectedSong);
             this.BindingModel.RemoveSelectedSong = new DelegateCommand(this.RemoveSelectedSong);
+            this.AddToPlaylistCommand = new DelegateCommand(this.AddToPlaylist);
         }
 
         public CurrentPlaylistBindingModel BindingModel { get; private set; }
+
+        public DelegateCommand AddToPlaylistCommand { get; private set; }
+
+        public void AddSelectedSongToPlaylist(MusicPlaylist playlist)
+        {
+            var song = this.BindingModel.Songs[this.View.SelectedSongIndex];
+            this.songsService.AddSongToPlaylistAsync(playlist, song);
+        }
 
         private void RemoveSelectedSong()
         {
@@ -69,6 +83,19 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             {
                 this.BindingModel.Songs.Add(song);
             }
+        }
+
+        private void AddToPlaylist()
+        {
+            this.songsService.GetAllPlaylistsAsync().ContinueWith(
+                t =>
+                {
+                    if (t.IsCompleted)
+                    {
+                        this.View.ShowPlaylists(t.Result);
+                    }
+                },
+                TaskScheduler.FromCurrentSynchronizationContext());
         }
     }
 }
