@@ -6,6 +6,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
     using OutcoldSolutions.GoogleMusic.Views;
     using OutcoldSolutions.GoogleMusic.Views.Settings;
 
+    using Windows.ApplicationModel.Store;
     using Windows.UI.ApplicationSettings;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
@@ -34,12 +35,29 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
             args.Request.ApplicationCommands.Add(cmd);
 
+            if (!this.AllPurchased())
+            {
+                cmd = new SettingsCommand("upgrade", "Upgrade", (x) => this.CreatePopup(new UpgradeView())); 
+                args.Request.ApplicationCommands.Add(cmd);
+            }
+
             cmd = new SettingsCommand(
                 "support",
                 "Support",
                 (x) => this.CreatePopup(new SupportView()));
 
             args.Request.ApplicationCommands.Add(cmd);
+        }
+
+        private bool AllPurchased()
+        {
+#if DEBUG
+            return CurrentAppSimulator.LicenseInformation.ProductLicenses.ContainsKey("Ultimate")
+                && CurrentAppSimulator.LicenseInformation.ProductLicenses["Ultimate"].IsActive;
+#else
+            return CurrentApp.LicenseInformation.ProductLicenses.ContainsKey("Ultimate")
+                && CurrentApp.LicenseInformation.ProductLicenses["Ultimate"].IsActive;
+#endif
         }
 
         private void CreatePopup(UserControl view)

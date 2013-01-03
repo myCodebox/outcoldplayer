@@ -18,17 +18,27 @@ namespace OutcoldSolutions.GoogleMusic.Views
         public SnappedPlayerView()
         {
             this.InitializeComponent();
-
+#if DEBUG
+            CurrentAppSimulator.LicenseInformation.LicenseChanged += this.UpdateAdControl;
+#else
             CurrentApp.LicenseInformation.LicenseChanged += this.UpdateAdControl;
+#endif
             this.UpdateAdControl();
         }
 
         private bool IsAdFree()
         {
-            return (CurrentApp.LicenseInformation.ProductLicenses.ContainsKey("AdFree")
-                && CurrentApp.LicenseInformation.ProductLicenses["AddFree"].IsActive)
+#if DEBUG
+            return (CurrentAppSimulator.LicenseInformation.ProductLicenses.ContainsKey("AdFreeUnlimited")
+                && CurrentAppSimulator.LicenseInformation.ProductLicenses["AdFreeUnlimited"].IsActive)
+                || (CurrentAppSimulator.LicenseInformation.ProductLicenses.ContainsKey("Ultimate")
+                && CurrentAppSimulator.LicenseInformation.ProductLicenses["Ultimate"].IsActive);
+#else
+            return (CurrentApp.LicenseInformation.ProductLicenses.ContainsKey("AdFreeUnlimited")
+                && CurrentApp.LicenseInformation.ProductLicenses["AdFreeUnlimited"].IsActive)
                 || (CurrentApp.LicenseInformation.ProductLicenses.ContainsKey("Ultimate")
                 && CurrentApp.LicenseInformation.ProductLicenses["Ultimate"].IsActive);
+#endif
         }
 
         private void UpdateAdControl()

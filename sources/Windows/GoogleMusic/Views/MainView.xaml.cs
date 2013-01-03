@@ -4,6 +4,7 @@
 
 namespace OutcoldSolutions.GoogleMusic.Views
 {
+    using System;
     using System.Collections.Generic;
     using System.Diagnostics;
 
@@ -13,7 +14,9 @@ namespace OutcoldSolutions.GoogleMusic.Views
     using OutcoldSolutions.GoogleMusic.Presenters;
     using OutcoldSolutions.GoogleMusic.Services;
 
+    using Windows.ApplicationModel;
     using Windows.ApplicationModel.Store;
+    using Windows.Storage;
     using Windows.UI.ViewManagement;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
@@ -65,16 +68,39 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
             this.Loaded += this.OnLoaded;
 
+#if DEBUG
+            this.LoadFakeAdds();
+            CurrentAppSimulator.LicenseInformation.LicenseChanged += this.UpdateAdControl;
+#else
             CurrentApp.LicenseInformation.LicenseChanged += this.UpdateAdControl;
+#endif
+
             this.UpdateAdControl();
         }
 
+#if DEBUG
+        private async void LoadFakeAdds()
+        {
+            StorageFolder proxyDataFolder = await Package.Current.InstalledLocation.GetFolderAsync("Resources");
+            StorageFile proxyFile = await proxyDataFolder.GetFileAsync("in-app-purchase.xml");
+
+            await CurrentAppSimulator.ReloadSimulatorAsync(proxyFile);
+        }
+#endif
+
         private bool IsAdFree()
         {
-            return (CurrentApp.LicenseInformation.ProductLicenses.ContainsKey("AdFree")
-                && CurrentApp.LicenseInformation.ProductLicenses["AddFree"].IsActive)
+#if DEBUG
+            return (CurrentAppSimulator.LicenseInformation.ProductLicenses.ContainsKey("AdFreeUnlimited")
+                && CurrentAppSimulator.LicenseInformation.ProductLicenses["AdFreeUnlimited"].IsActive)
+                || (CurrentAppSimulator.LicenseInformation.ProductLicenses.ContainsKey("Ultimate")
+                && CurrentAppSimulator.LicenseInformation.ProductLicenses["Ultimate"].IsActive);
+#else
+            return (CurrentApp.LicenseInformation.ProductLicenses.ContainsKey("AdFreeUnlimited")
+                && CurrentApp.LicenseInformation.ProductLicenses["AdFreeUnlimited"].IsActive)
                 || (CurrentApp.LicenseInformation.ProductLicenses.ContainsKey("Ultimate")
                 && CurrentApp.LicenseInformation.ProductLicenses["Ultimate"].IsActive);
+#endif
         }
 
         private void UpdateAdControl()

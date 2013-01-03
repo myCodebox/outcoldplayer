@@ -185,6 +185,9 @@
     <Compile Include="Views\Settings\SupportView.xaml.cs">
       <DependentUpon>SupportView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Settings\UpgradeView.xaml.cs">
+      <DependentUpon>UpgradeView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\SnappedPlayerView.xaml.cs">
       <DependentUpon>SnappedPlayerView.xaml</DependentUpon>
     </Compile>
@@ -205,6 +208,7 @@
     <Content Include="Assets\SmallLogo.png" />
     <Content Include="Assets\SplashScreen.png" />
     <Content Include="Assets\StoreLogo.png" />
+    <Content Include="Resources\in-app-purchase.xml" />
     <Content Include="Resources\logo460.png" />
     <Content Include="Resources\uservoice.png" />
   </ItemGroup>
@@ -250,6 +254,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Settings\SupportView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\UpgradeView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
