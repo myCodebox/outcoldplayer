@@ -47,6 +47,13 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 (x) => this.CreatePopup(new SupportView()));
 
             args.Request.ApplicationCommands.Add(cmd);
+
+            cmd = new SettingsCommand(
+                "privacy",
+                "Privacy Policy",
+                (x) => this.CreatePopup(new PrivacyView()));
+
+            args.Request.ApplicationCommands.Add(cmd);
         }
 
         private bool AllPurchased()
