@@ -39,7 +39,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.authentificationService.CheckAuthentificationAsync().ContinueWith(
                task =>
                    {
-                       if (task.Result.Succeed)
+                       if (task.IsCompleted && task.Result.Succeed)
                        {
                            this.BindingModel.IsAuthenticated = true;
                            this.Logger.Debug("User is logged in. Going to start view and showing player.");

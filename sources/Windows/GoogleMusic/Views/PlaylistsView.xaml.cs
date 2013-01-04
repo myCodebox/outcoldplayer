@@ -59,6 +59,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
         public override void OnNavigatedTo(object parameter)
         {
+            this.ListView.SelectedIndex = -1;
             if (this.ListView.Items != null && this.ListView.Items.Count > 0)
             {
                 this.ListView.ScrollIntoView(this.ListView.Items[0]);

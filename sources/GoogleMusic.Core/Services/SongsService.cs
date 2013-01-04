@@ -193,6 +193,10 @@ namespace OutcoldSolutions.GoogleMusic.Services
             {
                 playlists = playlists.OrderBy(x => x.Songs.Count > 0 ? x.Songs.Max(s => s.GoogleMusicMetadata.LastPlayed) : double.MaxValue);
             }
+            else if (order == Order.Name)
+            {
+                playlists = playlists.OrderBy(x => (x.Title ?? string.Empty).ToUpper());
+            }
 
             return playlists;
         }

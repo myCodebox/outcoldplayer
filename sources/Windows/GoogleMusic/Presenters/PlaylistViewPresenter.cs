@@ -63,6 +63,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             if (playlist != null)
             {
                 this.BindingModel = new PlaylistViewBindingModel(playlist);
+                this.View.SelectedIndex = -1;
             }
             else
             {

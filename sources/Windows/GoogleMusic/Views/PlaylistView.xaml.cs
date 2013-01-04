@@ -68,11 +68,22 @@ namespace OutcoldSolutions.GoogleMusic.Views
             set
             {
                 this.ListView.SelectedIndex = value;
-                if (value > 0 && this.ListView.SelectedItem != null)
+                if (value >= 0 && this.ListView.SelectedItem != null)
                 {
                     this.ListView.ScrollIntoView(this.ListView.SelectedItem);
                 }
             }
+        }
+
+        public override void OnNavigatedTo(object parameter)
+        {
+            this.ListView.SelectedIndex = -1;
+            if (this.ListView.Items != null && this.ListView.Items.Count > 0)
+            {
+                this.ListView.ScrollIntoView(this.ListView.Items[0]);
+            }
+
+            base.OnNavigatedTo(parameter);
         }
 
         public void ShowPlaylists(List<MusicPlaylist> playlists)

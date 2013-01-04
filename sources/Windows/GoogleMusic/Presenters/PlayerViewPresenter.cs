@@ -457,6 +457,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                                                     this.BindingModel.State = PlayState.Play;
                                                     this.BindingModel.UpdateBindingModel();
 
+                                                    this.BindingModel.IsBusy = false;
+
                                                     if (this.BindingModel.SkipAheadCommand.CanExecute())
                                                     {
                                                         MediaControl.NextTrackPressed -=
@@ -489,11 +491,12 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                                                 }
                                                 else
                                                 {
+                                                    this.BindingModel.IsBusy = false;
                                                     this.Logger.Debug("Could not find url for song {0}.", song.GoogleMusicMetadata.Id);
                                                     (new MessageDialog("Cannot play right now. Make sure that you don't use current account on different device at the same time. Try after couple minutes.")).ShowAsync();
                                                 }
                                             }
-                                            
+
                                             this.BindingModel.IsBusy = false;
                                         });
                             });
