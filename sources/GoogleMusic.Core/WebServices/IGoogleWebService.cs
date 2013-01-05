@@ -11,8 +11,13 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
 
     public interface IGoogleWebService
     {
-        Task<GoogleWebResponse> GetAsync(string url, IEnumerable<KeyValuePair<HttpRequestHeader, string>> headers = null, IEnumerable<KeyValuePair<string, string>> arguments = null);
+        Task<GoogleWebResponse> GetAsync(
+            string url, 
+            IEnumerable<KeyValuePair<HttpRequestHeader, string>> headers = null);
 
-        Task<GoogleWebResponse> PostAsync(string url, IEnumerable<KeyValuePair<HttpRequestHeader, string>> headers = null, IEnumerable<KeyValuePair<string, string>> arguments = null);
+        Task<GoogleWebResponse> PostAsync(
+            string url, 
+            IEnumerable<KeyValuePair<HttpRequestHeader, string>> headers = null, 
+            IEnumerable<KeyValuePair<string, string>> arguments = null);
     }
 }

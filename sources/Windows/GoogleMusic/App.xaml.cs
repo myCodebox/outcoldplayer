@@ -94,6 +94,8 @@ namespace OutcoldSolutions.GoogleMusic
                     registration.Register<ISongsService>().AsSingleton<SongsService>();
                     registration.Register<ISettingsService>().AsSingleton<SettingsService>();
 
+                    registration.Register<IMediaStreamDownloadService>().AsSingleton<MediaStreamDownloadService>();
+
                     registration.Register<IDispatcher>().AsSingleton(new DispatcherContainer(CoreWindow.GetForCurrentThread().Dispatcher));
                 }
 

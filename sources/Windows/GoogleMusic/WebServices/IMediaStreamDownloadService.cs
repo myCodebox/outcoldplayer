@@ -1,16 +1,12 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // Outcold Solutions (http://outcoldman.com)
 // --------------------------------------------------------------------------------------------------------------------
-namespace OutcoldSolutions.GoogleMusic.WebServices.Models
+namespace OutcoldSolutions.GoogleMusic.WebServices
 {
-    public class StatusResp
+    using System.Threading.Tasks;
+
+    public interface IMediaStreamDownloadService
     {
-        public int AvailableTracks { get; set; }
-
-        public int TotalTracks { get; set; }
-
-        public string Success { get; set; }
-
-        public string ReloadXsrf { get; set; }
+        Task<INetworkRandomAccessStream> GetStreamAsync(string url);
     }
 }

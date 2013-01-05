@@ -199,6 +199,9 @@
       <DependentUpon>StartView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ViewBase.cs" />
+    <Compile Include="WebServices\IMediaStreamDownloadService.cs" />
+    <Compile Include="WebServices\INetworkRandomAccessStream.cs" />
+    <Compile Include="WebServices\MediaStreamDownloadService.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">

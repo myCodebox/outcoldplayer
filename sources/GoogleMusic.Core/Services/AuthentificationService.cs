@@ -38,7 +38,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             {
                 this.logger.Debug("User session is not null. Checking authentification with exisiting cookies");
                 var statusResp = await this.clientLoginService.GetStatusAsync();
-                if (statusResp != null)
+                if (statusResp != null && string.IsNullOrEmpty(statusResp.Success) && string.IsNullOrEmpty(statusResp.ReloadXsrf))
                 {
                     return AuthentificationResult.SucceedResult();
                 }
