@@ -11,17 +11,16 @@ namespace OutcoldSolutions.GoogleMusic.Suites.WebServices
 
     using Moq;
 
-    
+    using NUnit.Framework;
+
     using OutcoldSolutions.GoogleMusic.WebServices;
     using OutcoldSolutions.GoogleMusic.WebServices.Models;
-
-    using Xunit;
 
     public class AuthorizationServiceSuites : SuitesBase
     {
         
 
-        [Fact(Skip = "Web Service")]
+        [Test]
         public async Task Authorize_SetCredentials_CookiesLoaded()
         {
             //var authorizationDataService = new Mock<IUserAuthorizationDataService>();
