@@ -9,6 +9,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
     {
         private readonly Playlist playlist;
         private bool isBusy = false;
+        private bool isLoading = false;
 
         public PlaylistViewBindingModel(Playlist playlist)
         {
@@ -38,6 +39,21 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
                 this.RaiseCurrentPropertyChanged();
             }
         }
+
+        public bool IsLoading
+        {
+            get
+            {
+                return this.isLoading;
+            }
+
+            set
+            {
+                this.isLoading = value;
+                this.RaiseCurrentPropertyChanged();
+            }
+        }
+
 
         public Playlist Playlist
         {

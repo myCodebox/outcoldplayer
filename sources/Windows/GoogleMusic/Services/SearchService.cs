@@ -87,6 +87,28 @@ namespace OutcoldSolutions.GoogleMusic.Services
                                 playlists = await this.songsService.GetAllPlaylistsAsync();
                                 break;
                             }
+
+                        case Songs:
+                            {
+                                var songs = await this.songsService.GetAllGoogleSongsAsync();
+                                var song = songs.Where(
+                                    x =>
+                                    {
+                                        if (x.Title == null)
+                                        {
+                                            return false;
+                                        }
+
+                                        return string.Equals(strings[1], string.Format(CultureInfo.CurrentCulture, "{0} - {1}", x.Artist, x.Title), StringComparison.CurrentCultureIgnoreCase);
+                                    }).FirstOrDefault();
+
+                                if (song != null)
+                                {
+                                    await this.dispatcher.RunAsync(() => this.navigationService.NavigateTo<IPlaylistView>(song));
+                                }
+
+                                return;
+                            }
                     }
 
                     if (playlists != null)
@@ -151,45 +173,45 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 }
             }
 
-            //var songs = await this.songsService.GetAllGoogleSongsAsync();
-            //var songsSearch = songs.Where( 
-            //    x =>
-            //        {
-            //            if (x.Title == null)
-            //            {
-            //                return false;
-            //            }
+            var songs = await this.songsService.GetAllGoogleSongsAsync();
+            var songsSearch = songs.Where(
+                x =>
+                {
+                    if (x.Title == null)
+                    {
+                        return false;
+                    }
 
-            //            var found = x.Title.IndexOf(args.QueryText.ToUpper(), StringComparison.CurrentCultureIgnoreCase);
-            //            return (found == 0) || (found > 0 && char.IsSeparator(x.Title[found - 1]));
-            //        }).Take(Math.Max(MaxResults - artistsSearch.Count - albumsSearch.Count, 0)).ToList();
+                    var found = x.Title.IndexOf(args.QueryText.ToUpper(), StringComparison.CurrentCultureIgnoreCase);
+                    return (found == 0) || (found > 0 && char.IsSeparator(x.Title[found - 1]));
+                }).Take(Math.Max(MaxResults - artistsSearch.Count - albumsSearch.Count, 0)).ToList();
 
-            //if (songsSearch.Count > 0)
-            //{
-            //    args.Request.SearchSuggestionCollection.AppendSearchSeparator(Songs);
+            if (songsSearch.Count > 0)
+            {
+                args.Request.SearchSuggestionCollection.AppendSearchSeparator(Songs);
 
-            //    foreach (var song in songsSearch)
-            //    {
-            //        IRandomAccessStreamReference randomAccessStreamReference = null;
-            //        if (!string.IsNullOrEmpty(song.GoogleMusicMetadata.AlbumArtUrl))
-            //        {
-            //            randomAccessStreamReference =
-            //                RandomAccessStreamReference.CreateFromUri(new Uri("https:" + song.GoogleMusicMetadata.AlbumArtUrl));
-            //        }
-            //        else
-            //        {
-            //            randomAccessStreamReference =
-            //                RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx:///Assets/SmallLogo.png"));
-            //        }
+                foreach (var song in songsSearch)
+                {
+                    IRandomAccessStreamReference randomAccessStreamReference = null;
+                    if (!string.IsNullOrEmpty(song.GoogleMusicMetadata.AlbumArtUrl))
+                    {
+                        randomAccessStreamReference =
+                            RandomAccessStreamReference.CreateFromUri(new Uri("https:" + song.GoogleMusicMetadata.AlbumArtUrl));
+                    }
+                    else
+                    {
+                        randomAccessStreamReference =
+                            RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx:///Assets/SmallLogo.png"));
+                    }
 
-            //        args.Request.SearchSuggestionCollection.AppendResultSuggestion(
-            //            song.Title,
-            //            song.Artist,
-            //            string.Format(CultureInfo.CurrentCulture, "{0}:{1} - {2}", Songs, song.Artist, song.Title),
-            //            randomAccessStreamReference,
-            //            "gMusic");
-            //    }
-            //}
+                    args.Request.SearchSuggestionCollection.AppendResultSuggestion(
+                        song.Title,
+                        song.Artist,
+                        string.Format(CultureInfo.CurrentCulture, "{0}:{1} - {2}", Songs, song.Artist, song.Title),
+                        randomAccessStreamReference,
+                        "gMusic");
+                }
+            }
 
             var playlistsSearch = this.SearchPlaylists(
                                 await this.songsService.GetAllPlaylistsAsync(Order.Name), 

@@ -3,6 +3,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Presenters
 {
+    using System.Linq;
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
@@ -60,6 +61,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             base.OnNavigatedTo(parameter);
 
             var playlist = parameter as Playlist;
+
             if (playlist != null)
             {
                 this.BindingModel = new PlaylistViewBindingModel(playlist);
@@ -67,8 +69,24 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             }
             else
             {
-                this.BindingModel = null;
-                this.Logger.Error("OnNavigatedTo: Playlist it null.");
+                var song = parameter as Song;
+                if (song != null)
+                {
+                    this.View.SetIsLoading(true);
+                    this.SearchAlbum(song).ContinueWith(
+                        (t) =>
+                            {
+                                this.BindingModel = new PlaylistViewBindingModel(t.Result);
+                                this.View.SelectedIndex = t.Result.Songs.IndexOf(song);
+                                this.View.SetIsLoading(false);
+                            },
+                        TaskScheduler.FromCurrentSynchronizationContext());
+                }
+                else
+                {
+                    this.BindingModel = null;
+                    this.Logger.Error("OnNavigatedTo: Playlist or song is null.");
+                }
             }
         }
 
@@ -87,6 +105,15 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                         }
                     },
                 TaskScheduler.FromCurrentSynchronizationContext());
+        }
+
+        private async Task<Playlist> SearchAlbum(Song song)
+        {
+            var albums = await this.songsService.GetAllAlbumsAsync();
+
+            var album = albums.FirstOrDefault(x => x.Songs.Contains(song));
+
+            return album;
         }
 
         private void PlaySelectedSong()

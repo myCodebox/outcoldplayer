@@ -2579,8 +2579,8 @@
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Border Margin="15" Width="116" Height="116" Background="#FF207CB0">
-                    <Image Width="116" Height="116" Source="{Binding Path=PreviewImage, Mode=OneWay}" Stretch="UniformToFill"/>
+                <Border Margin="15" Width="116" Height="116" Background="Gray">
+                    <Image Width="116" Height="116" Source="{Binding Path=Playlist.AlbumArtUrl, Converter={StaticResource AlbumArtUrlToImageConverter}, Mode=OneWay}" Stretch="UniformToFill"/>
                 </Border>
                 <StackPanel Grid.Column="1" Margin="0,15,10,0">
                     <TextBlock Text="{Binding Path=Playlist.Title, Mode=OneWay}"  Style="{StaticResource BodyTextStyle}" TextWrapping="Wrap"/>

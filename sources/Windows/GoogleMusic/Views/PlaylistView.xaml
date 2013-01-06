@@ -41,7 +41,10 @@
             <TextBlock Grid.Column="6" VerticalAlignment="Center" Margin="20, 0, 25, 0" Text="rating" HorizontalAlignment="Left" Style="{StaticResource TitleTextStyle}"/>
         </Grid>
 
+        <ProgressRing Grid.Row="2" IsActive="{Binding Path=IsLoading, Mode=OneWay}" x:Name="ProgressRing"  />
+        
         <ListView Grid.Row="2"
+                  Visibility="{Binding Path=IsLoading, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}"
                   ItemsSource="{Binding Path=Songs, Mode=OneTime}"
                   SelectionMode="Single"
                   HorizontalAlignment="Stretch"

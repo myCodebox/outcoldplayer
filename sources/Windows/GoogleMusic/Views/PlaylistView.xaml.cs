@@ -19,6 +19,8 @@ namespace OutcoldSolutions.GoogleMusic.Views
         int SelectedIndex { get; set; }
 
         void ShowPlaylists(List<MusicPlaylist> playlists);
+
+        void SetIsLoading(bool value);
     }
 
     public sealed partial class PlaylistView : ViewBase, IPlaylistView
@@ -92,6 +94,12 @@ namespace OutcoldSolutions.GoogleMusic.Views
             this.PlaylistsView.ItemsSource = playlists;
             this.PlaylistsPopup.VerticalOffset = this.ActualHeight - 400;
             this.PlaylistsPopup.IsOpen = true;
+        }
+
+        public void SetIsLoading(bool value)
+        {
+            this.ProgressRing.IsActive = value;
+            this.ListView.Visibility = value ? Visibility.Collapsed : Visibility.Visible;
         }
 
         private void ListOnSelectionChanged(object sender, SelectionChangedEventArgs e)

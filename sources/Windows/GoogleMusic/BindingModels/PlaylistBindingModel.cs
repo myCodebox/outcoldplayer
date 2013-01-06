@@ -44,20 +44,6 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             }
         }
 
-        public ImageSource PreviewImage
-        {
-            get
-            {
-                if (!string.IsNullOrEmpty(this.playlist.AlbumArtUrl))
-                {
-                    // TODO: Load only 40x40 image
-                    return new BitmapImage(new Uri("https:" + this.playlist.AlbumArtUrl));
-                }
-
-                return null;
-            }
-        }
-
         public Playlist Playlist
         {
             get
