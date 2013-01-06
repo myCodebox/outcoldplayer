@@ -48,8 +48,8 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
             long start = Math.Max(response.ContentLength - DefaultBufferSize, 0);
 
             HttpClient client = new HttpClient(new HttpClientHandler());
-            client.DefaultRequestHeaders.Range = RangeHeaderValue.Parse(string.Format("bytes={0}-{1}", start, response.ContentLength));
-
+            client.DefaultRequestHeaders.Range = new RangeHeaderValue(start, response.ContentLength); 
+            
             var readCount = (int)(response.ContentLength - start);
 
             if (this.logger.IsDebugEnabled)
