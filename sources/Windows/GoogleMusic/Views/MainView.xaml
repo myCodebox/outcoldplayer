@@ -121,6 +121,14 @@
         </StackPanel>
         
         <Border x:Name="BottomBorder" Grid.Row="1" Visibility="Collapsed" Height="105" />
+
+        <HyperlinkButton Grid.Column="1" 
+                         x:Name="RemoveAdsButton" 
+                         Click="RemoveAdsClick" 
+                         VerticalAlignment="Bottom" 
+                         Visibility="Collapsed"
+                         Content="Remove Ads"
+                         HorizontalAlignment="Center"/>
         
     </Grid>
     

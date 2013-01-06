@@ -112,6 +112,8 @@ namespace OutcoldSolutions.GoogleMusic.Views
                     this.MainGrid.Children.Remove(this.adControl);
                     this.adControl = null;
                 }
+
+                this.RemoveAdsButton.Visibility = Visibility.Collapsed;
             }
             else
             {
@@ -129,6 +131,8 @@ namespace OutcoldSolutions.GoogleMusic.Views
                     Grid.SetColumn(this.adControl, 1);
                     this.MainGrid.Children.Add(this.adControl);
                 }
+
+                this.RemoveAdsButton.Visibility = Visibility.Visible;
             }
 
             var visible = this.Presenter<MainViewPresenter>().BindingModel.IsAuthenticated
@@ -179,7 +183,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
         {
             if (this.adControl != null)
             {
-                this.adControl.Visibility = Visibility.Collapsed;
+                this.RemoveAdsButton.Visibility = this.adControl.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -187,7 +191,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
         {
             if (this.adControl != null)
             {
-                this.adControl.Visibility = Visibility.Visible;
+                this.RemoveAdsButton.Visibility = this.adControl.Visibility = Visibility.Visible;
             }
         }
 
@@ -300,6 +304,11 @@ namespace OutcoldSolutions.GoogleMusic.Views
             Debug.Assert(this.TopAppBar != null, "this.TopAppBar != null");
             this.TopAppBar.IsOpen = false;
             App.Container.Resolve<INavigationService>().NavigateTo<TView>(parameter: parameter);
+        }
+
+        private void RemoveAdsClick(object sender, RoutedEventArgs e)
+        {
+            App.Container.Resolve<ISettingsCommands>().ActivateSettings("upgrade");
         }
     }
 }
