@@ -3,10 +3,12 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Presenters
 {
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
+    using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
 
@@ -33,85 +35,36 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         {
             base.OnNavigatedTo(parameter);
 
-            this.BindingModel.Playlists.Clear();
-            this.BindingModel.Artists.Clear();
-            this.BindingModel.Albums.Clear();
-            this.BindingModel.Genres.Clear();
-
-            this.BindingModel.IsLoadingPlaylists = true;
-            this.BindingModel.IsLoadingAlbums = true;
-            this.BindingModel.IsLoadingGenres = true;
-            this.BindingModel.IsLoadingArtists = true;
-
-            this.BindingModel.PlaylistsCount = 0;
-            this.BindingModel.AlbumsCount = 0;
-            this.BindingModel.ArtistsCount = 0;
-            this.BindingModel.GenresCount = 0;
+            this.View.SetGroups(null);
+            this.BindingModel.IsLoading = true;
 
             this.Logger.Debug("Loading playlists.");
-            this.songsService.GetAllPlaylistsAsync(Order.LastPlayed).ContinueWith(
+            this.GetGroupsAsync().ContinueWith(
                 task =>
-                {
-                    this.Logger.Debug("Playlists count {0}.", task.Result.Count);
-
-                    this.BindingModel.PlaylistsCount = task.Result.Count;
-
-                    foreach (var playlist in task.Result.Take(MaxItems))
                     {
-                        this.BindingModel.Playlists.Add(new PlaylistBindingModel(playlist));
-                    }
-
-                    this.BindingModel.IsLoadingPlaylists = false;
-                },
+                        this.View.SetGroups(task.Result);
+                        this.BindingModel.IsLoading = false;
+                    },
                 TaskScheduler.FromCurrentSynchronizationContext());
+        }
 
-            this.songsService.GetAllAlbumsAsync(Order.LastPlayed).ContinueWith(
-                task =>
-                {
-                    this.Logger.Debug("Albums count {0}.", task.Result.Count);
+        public async Task<List<GroupBindingModel>> GetGroupsAsync()
+        {
+            var groups = new List<GroupBindingModel>();
 
-                    this.BindingModel.AlbumsCount = task.Result.Count;
+            var playlists = await this.songsService.GetAllPlaylistsAsync(Order.LastPlayed);
+            groups.Add(new GroupBindingModel("Playlists", playlists.Count, PlaylistsRequest.Playlists, playlists.Take(MaxItems).Select(x => new PlaylistBindingModel(x))));
 
-                    foreach (var playlist in task.Result.Take(MaxItems))
-                    {
-                        this.BindingModel.Albums.Add(new PlaylistBindingModel(playlist));
-                    }
+            var artists = await this.songsService.GetAllArtistsAsync(Order.LastPlayed);
+            groups.Add(new GroupBindingModel("Artists", artists.Count, PlaylistsRequest.Artists, artists.Take(MaxItems).Select(x => new PlaylistBindingModel(x))));
 
-                    this.BindingModel.IsLoadingAlbums = false;
-                },
-                TaskScheduler.FromCurrentSynchronizationContext());
+            var albums = await this.songsService.GetAllAlbumsAsync(Order.LastPlayed);
+            groups.Add(new GroupBindingModel("Albums", albums.Count, PlaylistsRequest.Albums, albums.Take(MaxItems).Select(x => new PlaylistBindingModel(x))));
 
-            this.songsService.GetAllGenresAsync(Order.LastPlayed).ContinueWith(
-                task =>
-                {
-                    this.Logger.Debug("Genres count {0}.", task.Result.Count);
+            var genres = await this.songsService.GetAllGenresAsync(Order.LastPlayed);
+            groups.Add(new GroupBindingModel("Genres", genres.Count, PlaylistsRequest.Genres, genres.Take(MaxItems).Select(x => new PlaylistBindingModel(x))));
 
-                    this.BindingModel.GenresCount = task.Result.Count;
-
-                    foreach (var playlist in task.Result.Take(MaxItems))
-                    {
-                        this.BindingModel.Genres.Add(new PlaylistBindingModel(playlist));
-                    }
-
-                    this.BindingModel.IsLoadingGenres = false;
-                },
-                TaskScheduler.FromCurrentSynchronizationContext());
-
-            this.songsService.GetAllArtistsAsync(Order.LastPlayed).ContinueWith(
-                task =>
-                {
-                    this.Logger.Debug("Artists count {0}.", task.Result.Count);
-
-                    this.BindingModel.ArtistsCount = task.Result.Count;
-
-                    foreach (var playlist in task.Result.Take(MaxItems))
-                    {
-                        this.BindingModel.Artists.Add(new PlaylistBindingModel(playlist));
-                    }
-
-                    this.BindingModel.IsLoadingArtists = false;
-                },
-                TaskScheduler.FromCurrentSynchronizationContext());
+            return groups;
         }
     }
 }

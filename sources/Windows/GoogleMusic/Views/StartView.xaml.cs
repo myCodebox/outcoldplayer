@@ -4,8 +4,9 @@
 
 namespace OutcoldSolutions.GoogleMusic.Views
 {
+    using System.Collections.Generic;
+
     using OutcoldSolutions.GoogleMusic.BindingModels;
-    using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Presenters;
 
     using Windows.UI.Xaml;
@@ -13,6 +14,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
     public interface IStartView : IView
     {
+        void SetGroups(List<GroupBindingModel> groups);
     }
 
     public sealed partial class StartView : ViewBase, IStartView
@@ -23,29 +25,27 @@ namespace OutcoldSolutions.GoogleMusic.Views
             this.InitializeComponent();
         }
 
+        public void SetGroups(List<GroupBindingModel> groups)
+        {
+            this.Groups.Source = groups;
+        }
+
         private void PlaylistItemClick(object sender, ItemClickEventArgs e)
         {
             this.Presenter<StartViewPresenter>().ItemClick(e.ClickedItem as PlaylistBindingModel);
         }
 
-        private void NavigateToPlaylists(object sender, RoutedEventArgs e)
+        private void NavigateTo(object sender, RoutedEventArgs e)
         {
-            App.Container.Resolve<INavigationService>().NavigateTo<IPlaylistsView>(PlaylistsRequest.Playlists);
-        }
-
-        private void NavigateToAlbums(object sender, RoutedEventArgs e)
-        {
-            App.Container.Resolve<INavigationService>().NavigateTo<IPlaylistsView>(PlaylistsRequest.Albums);
-        }
-
-        private void NavigateToGenres(object sender, RoutedEventArgs e)
-        {
-            App.Container.Resolve<INavigationService>().NavigateTo<IPlaylistsView>(PlaylistsRequest.Genres);
-        }
-
-        private void NavigateToArtists(object sender, RoutedEventArgs e)
-        {
-            App.Container.Resolve<INavigationService>().NavigateTo<IPlaylistsView>(PlaylistsRequest.Artists);
+            var frameworkElement = sender as FrameworkElement;
+            if (frameworkElement != null)
+            {
+                var groupBindingModel = frameworkElement.DataContext as GroupBindingModel;
+                if (groupBindingModel != null)
+                {
+                    App.Container.Resolve<INavigationService>().NavigateTo<IPlaylistsView>(groupBindingModel.Request);
+                }
+            }
         }
     }
 }
