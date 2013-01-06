@@ -79,6 +79,7 @@ namespace OutcoldSolutions.GoogleMusic
 
                     // Settings
                     registration.Register<ISettingsCommands>().AsSingleton<SettingsCommands>();
+                    registration.Register<ISearchService>().AsSingleton<SearchService>();
 
                     // Settings views
                     registration.Register<AccountView>();
@@ -126,6 +127,7 @@ namespace OutcoldSolutions.GoogleMusic
 
                 // Initialize settings view
                 Container.Resolve<ISettingsCommands>();
+                Container.Resolve<ISearchService>();
             }
 
             // Ensure the current window is active

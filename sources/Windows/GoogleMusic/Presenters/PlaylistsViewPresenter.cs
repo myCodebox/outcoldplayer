@@ -64,7 +64,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 if (playlistsRequest == PlaylistsRequest.Albums)
                 {
                     this.BindingModel.Title = "Albums";
-                    this.songsService.GetAllAlbumsAsync().ContinueWith(
+                    this.songsService.GetAllAlbumsAsync(Order.Name).ContinueWith(
                         t =>
                             {
                                 var groupBindingModels = t.Result.GroupBy(x => string.IsNullOrEmpty(x.Title) ? ' ' : char.ToUpper(x.Title[0]))
@@ -82,7 +82,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 else if (playlistsRequest == PlaylistsRequest.Playlists)
                 {
                     this.BindingModel.Title = "Playlists";
-                    this.songsService.GetAllPlaylistsAsync().ContinueWith(
+                    this.songsService.GetAllPlaylistsAsync(Order.Name).ContinueWith(
                         t =>
                             {
                                 var groupBindingModels = t.Result.GroupBy(x => string.IsNullOrEmpty(x.Title) ? ' ' : char.ToUpper(x.Title[0]))
@@ -101,7 +101,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 else if (playlistsRequest == PlaylistsRequest.Genres)
                 {
                     this.BindingModel.Title = "Genres";
-                    this.songsService.GetAllGenresAsync().ContinueWith(
+                    this.songsService.GetAllGenresAsync(Order.Name).ContinueWith(
                         t =>
                         {
                             var groupBindingModels = t.Result.GroupBy(x => string.IsNullOrEmpty(x.Title) ? ' ' : char.ToUpper(x.Title[0]))
@@ -119,7 +119,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 else
                 {
                     this.BindingModel.Title = "Artists";
-                    this.songsService.GetAllArtistsAsync().ContinueWith(
+                    this.songsService.GetAllArtistsAsync(Order.Name).ContinueWith(
                         t =>
                         {
                             var groupBindingModels = t.Result.GroupBy(x => string.IsNullOrEmpty(x.Title) ? ' ' : char.ToUpper(x.Title[0]))

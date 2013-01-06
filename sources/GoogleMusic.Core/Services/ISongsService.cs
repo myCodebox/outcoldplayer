@@ -11,20 +11,22 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
     public enum Order
     {
-        Name = 0,
+        None = 0,
 
-        LastPlayed = 1
+        Name = 1,
+
+        LastPlayed = 2
     }
 
     public interface ISongsService
     {
-        Task<List<Album>> GetAllAlbumsAsync(Order order = Order.Name);
+        Task<List<Album>> GetAllAlbumsAsync(Order order = Order.None);
 
-        Task<List<MusicPlaylist>> GetAllPlaylistsAsync(Order order = Order.Name);
+        Task<List<MusicPlaylist>> GetAllPlaylistsAsync(Order order = Order.None);
 
-        Task<List<Genre>> GetAllGenresAsync(Order order = Order.Name);
+        Task<List<Genre>> GetAllGenresAsync(Order order = Order.None);
 
-        Task<List<Artist>> GetAllArtistsAsync(Order order = Order.Name);
+        Task<List<Artist>> GetAllArtistsAsync(Order order = Order.None);
 
         Task<MusicPlaylist> CreatePlaylistAsync();
 

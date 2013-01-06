@@ -450,6 +450,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                                                 MediaControl.ArtistName = song.Artist;
                                                 MediaControl.TrackName = song.Title;
 
+                                                MediaControl.AlbumArt = new Uri("ms-appx:///Assets/Logo.png");
                                                 /*if (song.AlbumArtUrl != null)
                                                 {
                                                     MediaControl.AlbumArt = new Uri("https:" + song.AlbumArtUrl);
@@ -493,11 +494,16 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                                 }
                                 else
                                 {
-                                    this.BindingModel.IsBusy = false;
-                                    this.Logger.Debug("Could not find url for song {0}.", song.GoogleMusicMetadata.Id);
-                                    (new MessageDialog(
-                                        "Cannot play right now. Make sure that you don't use current account on different device at the same time. Try after couple minutes."))
-                                        .ShowAsync();
+                                    await this.Dispatcher.RunAsync(
+                                        () =>
+                                            {
+                                                this.BindingModel.IsBusy = false;
+                                                this.Logger.Debug(
+                                                    "Could not find url for song {0}.", song.GoogleMusicMetadata.Id);
+                                                (new MessageDialog(
+                                                    "Cannot play right now. Make sure that you don't use current account on different device at the same time. Try after couple minutes."))
+                                                    .ShowAsync();
+                                            });
                                 }
                             });
                 }

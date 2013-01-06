@@ -17,7 +17,11 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <TextBlock Style="{StaticResource HeaderTextStyle}" Text="{Binding Path=Title, Mode=OneWay}" VerticalAlignment="Bottom" Margin="120, 0, 20, 0"/>
+        <TextBlock Style="{StaticResource HeaderTextStyle}" 
+                   Text="{Binding Path=Title, Mode=OneWay}" 
+                   VerticalAlignment="Bottom" 
+                   Margin="120, 0, 20, 0"
+                   TextWrapping="NoWrap"/>
 
         <Grid Grid.Row="1" Margin="40, 20, 20, 20" HorizontalAlignment="Stretch" >
             <Grid.ColumnDefinitions >
@@ -45,6 +49,7 @@
                   IsTapEnabled="False"
                   Margin="40, 0, 0, 20" 
                   SelectionChanged="ListOnSelectionChanged"
+                  DoubleTapped="ListDoubleTapped"
                   x:Name="ListView">
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">

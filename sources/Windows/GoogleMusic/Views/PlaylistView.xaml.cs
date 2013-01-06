@@ -12,6 +12,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Automation;
     using Windows.UI.Xaml.Controls;
+    using Windows.UI.Xaml.Input;
 
     public interface IPlaylistView : IView
     {
@@ -124,6 +125,11 @@ namespace OutcoldSolutions.GoogleMusic.Views
                 this.Presenter<PlaylistViewPresenter>().AddSelectedSongToPlaylist((MusicPlaylist)e.ClickedItem);
                 this.PlaylistsPopup.IsOpen = false;
             }
+        }
+
+        private void ListDoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+        {
+            this.Presenter<PlaylistViewPresenter>().PlaySelectedSongCommand.Execute(null);
         }
     }
 }

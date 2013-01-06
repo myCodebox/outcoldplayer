@@ -74,12 +74,14 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
                 }
             }
 
-            return new MemoryRandomAccessStream(response.GetResponseStream(), data, response.ContentType);
+            return new MemoryRandomAccessStream(response.GetResponseStream(), data, response.ContentType, read);
         }
 
         private class MemoryRandomAccessStream : INetworkRandomAccessStream
         {
             private readonly object locker = new object();
+
+            private readonly int endFilled;
 
             private readonly int contentLength;
             private byte[] data;
@@ -93,7 +95,7 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
 
             private double latestDownloadProgressUpdate = 0;
             
-            public MemoryRandomAccessStream(Stream networkStream, byte[] data, string contentType)
+            public MemoryRandomAccessStream(Stream networkStream, byte[] data, string contentType, int endFilled)
             {
                 if (networkStream == null)
                 {
@@ -104,6 +106,7 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
 
                 this.contentLength = data.Length;
                 this.data = data;
+                this.endFilled = endFilled;
                 this.networkStream = networkStream;
 
                 var cancellationToken = this.cancellationTokenSource.Token;
@@ -319,14 +322,14 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
 
                     lock (this.locker)
                     {
-                        if ((int)this.readPosition >= this.contentLength - DefaultBufferSize)
+                        if ((int)this.readPosition >= this.contentLength - this.endFilled)
                         {
                             break;
                         }
 
-                        if (currentRead + (int)this.readPosition >= (this.contentLength - DefaultBufferSize))
+                        if (currentRead + (int)this.readPosition >= (this.contentLength - this.endFilled))
                         {
-                            currentRead = (this.contentLength - DefaultBufferSize) - (int)this.readPosition;
+                            currentRead = (this.contentLength - this.endFilled) - (int)this.readPosition;
                         }
                     }
 
