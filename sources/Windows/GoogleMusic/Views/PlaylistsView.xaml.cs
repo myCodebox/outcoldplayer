@@ -21,6 +21,8 @@ namespace OutcoldSolutions.GoogleMusic.Views
     public interface IPlaylistsView : IView
     {
         void EditPlaylist(PlaylistBindingModel selectedItem);
+
+        void SetGroups(List<PlaylistsGroupBindingModel> playlistsGroupBindingModels);
     }
 
     public sealed partial class PlaylistsView : ViewBase, IPlaylistsView
@@ -90,6 +92,14 @@ namespace OutcoldSolutions.GoogleMusic.Views
             this.TextBoxPlaylistName.Focus(FocusState.Keyboard);
         }
 
+        public void SetGroups(List<PlaylistsGroupBindingModel> playlistsGroupBindingModels)
+        {
+            this.Groups.Source = playlistsGroupBindingModels;
+            ((ListViewBase)SemanticZoom.ZoomedOutView).ItemsSource = Groups.View.CollectionGroups;
+            this.ListView.SelectedIndex = -1;
+            this.SemanticZoom.IsZoomedInViewActive = true;
+        }
+
         private void PlaylistItemClick(object sender, ItemClickEventArgs e)
         {
             this.Presenter<PlaylistsViewPresenter>().ItemClick(e.ClickedItem as PlaylistBindingModel);
@@ -136,6 +146,11 @@ namespace OutcoldSolutions.GoogleMusic.Views
                 this.SaveNameClick(sender, e);
                 e.Handled = true;
             }
+        }
+
+        private void ZoomOutClick(object sender, RoutedEventArgs e)
+        {
+            this.SemanticZoom.IsZoomedInViewActive = false;
         }
     }
 }

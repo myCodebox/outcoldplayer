@@ -48,21 +48,21 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 TaskScheduler.FromCurrentSynchronizationContext());
         }
 
-        public async Task<List<GroupBindingModel>> GetGroupsAsync()
+        public async Task<List<PlaylistsGroupBindingModel>> GetGroupsAsync()
         {
-            var groups = new List<GroupBindingModel>();
+            var groups = new List<PlaylistsGroupBindingModel>();
 
             var playlists = await this.songsService.GetAllPlaylistsAsync(Order.LastPlayed);
-            groups.Add(new GroupBindingModel("Playlists", playlists.Count, PlaylistsRequest.Playlists, playlists.Take(MaxItems).Select(x => new PlaylistBindingModel(x))));
+            groups.Add(new PlaylistsGroupBindingModel("Playlists", playlists.Count, playlists.Take(MaxItems).Select(x => new PlaylistBindingModel(x)), PlaylistsRequest.Playlists));
 
             var artists = await this.songsService.GetAllArtistsAsync(Order.LastPlayed);
-            groups.Add(new GroupBindingModel("Artists", artists.Count, PlaylistsRequest.Artists, artists.Take(MaxItems).Select(x => new PlaylistBindingModel(x))));
+            groups.Add(new PlaylistsGroupBindingModel("Artists", artists.Count, artists.Take(MaxItems).Select(x => new PlaylistBindingModel(x)), PlaylistsRequest.Artists));
 
             var albums = await this.songsService.GetAllAlbumsAsync(Order.LastPlayed);
-            groups.Add(new GroupBindingModel("Albums", albums.Count, PlaylistsRequest.Albums, albums.Take(MaxItems).Select(x => new PlaylistBindingModel(x))));
+            groups.Add(new PlaylistsGroupBindingModel("Albums", albums.Count, albums.Take(MaxItems).Select(x => new PlaylistBindingModel(x)), PlaylistsRequest.Albums));
 
             var genres = await this.songsService.GetAllGenresAsync(Order.LastPlayed);
-            groups.Add(new GroupBindingModel("Genres", genres.Count, PlaylistsRequest.Genres, genres.Take(MaxItems).Select(x => new PlaylistBindingModel(x))));
+            groups.Add(new PlaylistsGroupBindingModel("Genres", genres.Count, genres.Take(MaxItems).Select(x => new PlaylistBindingModel(x)), PlaylistsRequest.Genres));
 
             return groups;
         }

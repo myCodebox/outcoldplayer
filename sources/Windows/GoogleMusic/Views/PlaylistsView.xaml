@@ -9,6 +9,10 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
+    <local:ViewBase.Resources>
+        <CollectionViewSource x:Name="Groups" IsSourceGrouped="true" ItemsPath="Playlists" />
+    </local:ViewBase.Resources>
+    
     <Grid Margin="0, 0, 20, 0" DataContext="{Binding Path=BindingModel, Mode=OneTime}">
 
         <Grid.RowDefinitions>
@@ -31,45 +35,99 @@
 
         <ProgressRing Grid.Row="1" IsActive="{Binding Path=IsLoading, Mode=OneWay}"  Grid.Column="1"/>
 
-        <ListView Grid.Row="1"  Grid.Column="1"
-                  x:Name="ListView"
-                  Visibility="{Binding Path=IsLoading, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}" 
-                  Margin="0, 20, 0, 0" 
-                  ItemsSource="{Binding Path=Playlists, Mode=OneTime}"
-                  SelectionMode="None"
-                  ScrollViewer.VerticalScrollBarVisibility="Disabled"
-                  ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                  ItemClick="PlaylistItemClick"
-                  IsItemClickEnabled="True"
-                  ScrollViewer.HorizontalScrollMode="Enabled"
-                  ScrollViewer.VerticalScrollMode="Disabled"
-                  ItemTemplate="{StaticResource PlaylistDataTemplate}"
-                  SelectionChanged="ListViewOnSelectionChanged"
-                  SelectedItem="{Binding Path=SelectedItem, Mode=TwoWay}">
-            <ListView.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <WrapGrid Orientation="Vertical" />
-                </ItemsPanelTemplate>
-            </ListView.ItemsPanel>
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem">
-                    <Setter Property="Margin" Value="0" />
-                    <Setter Property="Padding" Value="0" />
-                </Style>
-            </ListView.ItemContainerStyle>
-        </ListView>
+        <SemanticZoom VerticalAlignment="Bottom" x:Name="SemanticZoom" Grid.Row="1"  Grid.Column="1" 
+                      Visibility="{Binding Path=IsLoading, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}" >
+            <SemanticZoom.ZoomedInView>
+                <GridView x:Name="ListView"
+                          Margin="0, 20, 0, 0" 
+                          ItemsSource="{Binding Source={StaticResource Groups}}"
+                          SelectionMode="None"
+                          ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                          ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                          ItemClick="PlaylistItemClick"
+                          IsItemClickEnabled="True"
+                          ScrollViewer.HorizontalScrollMode="Enabled"
+                          ScrollViewer.VerticalScrollMode="Disabled"
+                          ItemTemplate="{StaticResource PlaylistDataTemplate}"
+                          SelectionChanged="ListViewOnSelectionChanged"
+                          SelectedItem="{Binding Path=SelectedItem, Mode=TwoWay}">
+                    <GridView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <VirtualizingStackPanel Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                    </GridView.ItemsPanel>
+                    <GridView.ItemContainerStyle>
+                        <Style TargetType="GridViewItem">
+                            <Setter Property="Margin" Value="0" />
+                            <Setter Property="Padding" Value="0" />
+                        </Style>
+                    </GridView.ItemContainerStyle>
 
+                    <GridView.GroupStyle>
+                        <GroupStyle>
+                            <GroupStyle.HeaderTemplate>
+                                <DataTemplate>
+                                    <Button Margin="0, 0, 160, 0" Click="ZoomOutClick">
+                                        <Button.Template>
+                                            <ControlTemplate>
+                                                <Border Background="Transparent" Width="200">
+                                                    <TextBlock Style="{StaticResource GroupHeaderTextStyle}" Text="{Binding Path=Title, Mode=OneWay}" />
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Button.Template>
+                                    </Button>
+                                </DataTemplate>
+                            </GroupStyle.HeaderTemplate>
+
+                            <GroupStyle.Panel>
+                                <ItemsPanelTemplate>
+                                    <VariableSizedWrapGrid Orientation="Vertical" Margin="0, 20, 40, 0" />
+                                </ItemsPanelTemplate>
+                            </GroupStyle.Panel>
+                        </GroupStyle>
+                    </GridView.GroupStyle>
+
+                </GridView>
+            </SemanticZoom.ZoomedInView>
+            <SemanticZoom.ZoomedOutView>
+                <GridView ScrollViewer.IsHorizontalScrollChainingEnabled="False" SelectionMode="None">
+                    <GridView.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Path=Group.Title, Mode=OneTime}"
+                                       Style="{StaticResource GroupHeaderTextStyle}"/>
+                        </DataTemplate>
+                    </GridView.ItemTemplate>
+                    <GridView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapGrid ItemWidth="75" ItemHeight="75" MaximumRowsOrColumns="1" VerticalChildrenAlignment="Center" />
+                        </ItemsPanelTemplate>
+                    </GridView.ItemsPanel>
+                    <GridView.ItemContainerStyle>
+                        <Style TargetType="GridViewItem">
+                            <Setter Property="Margin" Value="4" />
+                            <Setter Property="Padding" Value="10" />
+                            <Setter Property="BorderBrush" Value="Gray" />
+                            <Setter Property="BorderThickness" Value="1" />
+                            <Setter Property="HorizontalContentAlignment" Value="Center" />
+                            <Setter Property="VerticalContentAlignment" Value="Center" />
+                            <Setter Property="IsTabStop" Value="False" />
+                        </Style>
+                    </GridView.ItemContainerStyle>
+                </GridView>
+            </SemanticZoom.ZoomedOutView>
+        </SemanticZoom>
+        
         <Popup IsLightDismissEnabled="True" x:Name="PlaylistNamePopup" HorizontalAlignment="Left" VerticalAlignment="Bottom"  Grid.ColumnSpan="2">
 
-            <Border Padding="20" Background="{StaticResource AppBarBackgroundThemeBrush}" Width="340" Height="140">
-                <StackPanel Width="300">
-                    <TextBox Text="" x:Name="TextBoxPlaylistName" KeyUp="TextBoxPlaylistNameKeyUp" KeyDown="TextBoxPlaylistNameOnKeyDown" />
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0, 20, 0, 0">
-                        <Button Width="80" Click="SaveNameClick" x:Name="SaveNameButton">Save</Button>
-                        <Button Width="80" Margin="20, 0, 0, 0" Click="CancelChangeNameClick">Cancel</Button>
-                    </StackPanel>
+        <Border Padding="20" Background="{StaticResource AppBarBackgroundThemeBrush}" Width="340" Height="140">
+            <StackPanel Width="300">
+                <TextBox Text="" x:Name="TextBoxPlaylistName" KeyUp="TextBoxPlaylistNameKeyUp" KeyDown="TextBoxPlaylistNameOnKeyDown" />
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0, 20, 0, 0">
+                    <Button Width="80" Click="SaveNameClick" x:Name="SaveNameButton">Save</Button>
+                    <Button Width="80" Margin="20, 0, 0, 0" Click="CancelChangeNameClick">Cancel</Button>
                 </StackPanel>
-            </Border>
+            </StackPanel>
+        </Border>
 
         </Popup>
     </Grid>

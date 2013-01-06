@@ -8,14 +8,21 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
     using OutcoldSolutions.GoogleMusic.Models;
 
-    public class GroupBindingModel
+    public class PlaylistsGroupBindingModel
     {
-        public GroupBindingModel(string title, int playlistsCount, PlaylistsRequest request, IEnumerable<PlaylistBindingModel> playlists)
+        public PlaylistsGroupBindingModel(string title, int playlistsCount, IEnumerable<PlaylistBindingModel> playlists, PlaylistsRequest request)
         {
             this.Title = title;
             this.Playlists = new ObservableCollection<PlaylistBindingModel>(playlists);
             this.PlaylistsCount = playlistsCount;
             this.Request = request;
+        }
+
+        public PlaylistsGroupBindingModel(string title, int playlistsCount, IEnumerable<PlaylistBindingModel> playlists)
+        {
+            this.Title = title;
+            this.PlaylistsCount = playlistsCount;
+            this.Playlists = new ObservableCollection<PlaylistBindingModel>(playlists);
         }
 
         public string Title { get; private set; }

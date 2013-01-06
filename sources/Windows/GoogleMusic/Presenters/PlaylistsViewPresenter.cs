@@ -3,6 +3,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Presenters
 {
+    using System.Linq;
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
@@ -66,15 +67,17 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     this.songsService.GetAllAlbumsAsync().ContinueWith(
                         t =>
                             {
-                                this.BindingModel.Count = t.Result.Count;
-                                this.BindingModel.IsLoading = false;
+                                var groupBindingModels = t.Result.GroupBy(x => string.IsNullOrEmpty(x.Title) ? ' ' : char.ToUpper(x.Title[0]))
+                                 .OrderBy(x => x.Key)
+                                 .Select(x => new PlaylistsGroupBindingModel(x.Key.ToString(), 0, x.Select(p => new PlaylistBindingModel(p)))).ToList();
 
-                                foreach (var album in t.Result)
-                                {
-                                    this.BindingModel.Playlists.Add(new PlaylistBindingModel(album));
-                                }
-                            },
-                        TaskScheduler.FromCurrentSynchronizationContext());
+                                this.Dispatcher.RunAsync(() =>
+                                    {
+                                        this.View.SetGroups(groupBindingModels);
+                                        this.BindingModel.Count = t.Result.Count;
+                                        this.BindingModel.IsLoading = false;
+                                    });
+                            });
                 }
                 else if (playlistsRequest == PlaylistsRequest.Playlists)
                 {
@@ -82,16 +85,18 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     this.songsService.GetAllPlaylistsAsync().ContinueWith(
                         t =>
                             {
-                                this.BindingModel.Count = t.Result.Count;
-                                this.BindingModel.IsLoading = false;
-                                this.BindingModel.IsEditable = true;
+                                var groupBindingModels = t.Result.GroupBy(x => string.IsNullOrEmpty(x.Title) ? ' ' : char.ToUpper(x.Title[0]))
+                                .OrderBy(x => x.Key)
+                                .Select(x => new PlaylistsGroupBindingModel(x.Key.ToString(), 0, x.Select(p => new PlaylistBindingModel(p)))).ToList();
 
-                                foreach (var playlist in t.Result)
-                                {
-                                    this.BindingModel.Playlists.Add(new PlaylistBindingModel(playlist));
-                                }
-                            },
-                        TaskScheduler.FromCurrentSynchronizationContext());
+                                this.Dispatcher.RunAsync(() =>
+                                    {
+                                        this.View.SetGroups(groupBindingModels);
+                                        this.BindingModel.Count = t.Result.Count;
+                                        this.BindingModel.IsLoading = false;
+                                        this.BindingModel.IsEditable = true;
+                                    });
+                            });
                 }
                 else if (playlistsRequest == PlaylistsRequest.Genres)
                 {
@@ -99,15 +104,17 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     this.songsService.GetAllGenresAsync().ContinueWith(
                         t =>
                         {
-                            this.BindingModel.Count = t.Result.Count;
-                            this.BindingModel.IsLoading = false;
+                            var groupBindingModels = t.Result.GroupBy(x => string.IsNullOrEmpty(x.Title) ? ' ' : char.ToUpper(x.Title[0]))
+                                .OrderBy(x => x.Key)
+                                .Select(x => new PlaylistsGroupBindingModel(x.Key.ToString(), 0, x.Select(p => new PlaylistBindingModel(p)))).ToList();
 
-                            foreach (var playlist in t.Result)
-                            {
-                                this.BindingModel.Playlists.Add(new PlaylistBindingModel(playlist));
-                            }
-                        },
-                        TaskScheduler.FromCurrentSynchronizationContext());
+                            this.Dispatcher.RunAsync(() =>
+                                { 
+                                    this.View.SetGroups(groupBindingModels);
+                                    this.BindingModel.Count = t.Result.Count;
+                                    this.BindingModel.IsLoading = false;
+                                });
+                        });
                 }
                 else
                 {
@@ -115,15 +122,17 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     this.songsService.GetAllArtistsAsync().ContinueWith(
                         t =>
                         {
-                            this.BindingModel.Count = t.Result.Count;
-                            this.BindingModel.IsLoading = false;
+                            var groupBindingModels = t.Result.GroupBy(x => string.IsNullOrEmpty(x.Title) ? ' ' : char.ToUpper(x.Title[0]))
+                                .OrderBy(x => x.Key)
+                                .Select(x => new PlaylistsGroupBindingModel(x.Key.ToString(), 0, x.Select(p => new PlaylistBindingModel(p)))).ToList();
 
-                            foreach (var playlist in t.Result)
-                            {
-                                this.BindingModel.Playlists.Add(new PlaylistBindingModel(playlist));
-                            }
-                        },
-                        TaskScheduler.FromCurrentSynchronizationContext());
+                            this.Dispatcher.RunAsync(() =>
+                                {
+                                    this.BindingModel.Count = t.Result.Count;
+                                    this.BindingModel.IsLoading = false;
+                                    this.View.SetGroups(groupBindingModels);
+                                });
+                        });
                 }
             }
         }

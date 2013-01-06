@@ -14,7 +14,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
     public interface IStartView : IView
     {
-        void SetGroups(List<GroupBindingModel> groups);
+        void SetGroups(List<PlaylistsGroupBindingModel> groups);
     }
 
     public sealed partial class StartView : ViewBase, IStartView
@@ -25,7 +25,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
             this.InitializeComponent();
         }
 
-        public void SetGroups(List<GroupBindingModel> groups)
+        public void SetGroups(List<PlaylistsGroupBindingModel> groups)
         {
             this.Groups.Source = groups;
         }
@@ -40,7 +40,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
             var frameworkElement = sender as FrameworkElement;
             if (frameworkElement != null)
             {
-                var groupBindingModel = frameworkElement.DataContext as GroupBindingModel;
+                var groupBindingModel = frameworkElement.DataContext as PlaylistsGroupBindingModel;
                 if (groupBindingModel != null)
                 {
                     App.Container.Resolve<INavigationService>().NavigateTo<IPlaylistsView>(groupBindingModel.Request);
