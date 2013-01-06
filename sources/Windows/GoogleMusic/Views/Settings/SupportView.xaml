@@ -36,7 +36,7 @@
 
                     <TextBlock Grid.Column="1" Style="{StaticResource SettingTitleTextStyle}" Text="Support" />
 
-                    <Image Source="ms-appx:///Assets/SmallLogo.png" HorizontalAlignment="Right" Grid.Column="2" Margin="0,0,6,0" />
+                    <Image Source="ms-appx:///Assets/SmallLogo.png" HorizontalAlignment="Right" Grid.Column="2" Margin="0,0,6,0" Width="30" Height="30" />
 
                 </Grid>
 
