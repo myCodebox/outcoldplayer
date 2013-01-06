@@ -10,6 +10,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
     public interface ISearchView : IView
     {
+        int SelectedFilterIndex { set; }
     }
 
     public sealed partial class SearchView : ViewBase, ISearchView
@@ -18,6 +19,14 @@ namespace OutcoldSolutions.GoogleMusic.Views
         {
             this.InitializePresenter<SearchViewPresenter>();
             this.InitializeComponent();
+        }
+
+        public int SelectedFilterIndex
+        {
+            set
+            {
+                this.Groups.SelectedIndex = value;
+            }
         }
 
         private void ListViewOnItemClick(object sender, ItemClickEventArgs e)

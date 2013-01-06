@@ -9,7 +9,8 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
     {
         private readonly Song result;
 
-        public SongResultBindingModel(Song result)
+        public SongResultBindingModel(string search, Song result)
+            : base(search, result.Title)
         {
             this.result = result;
         }
@@ -19,14 +20,6 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             get
             {
                 return this.result;
-            }
-        }
-
-        public override string Title
-        {
-            get
-            {
-                return this.result.Title;
             }
         }
 

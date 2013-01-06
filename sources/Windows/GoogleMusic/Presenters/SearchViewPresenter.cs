@@ -35,6 +35,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
             var query = parameter as string;
 
+            this.BindingModel.Groups.Clear();
             this.BindingModel.Query = query;
             
 
@@ -46,61 +47,85 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     t =>
                         {
                             this.BindingModel.IsLoading = false; 
-                            this.BindingModel.Results = t.Result;
+                            this.BindingModel.Groups.Add(new SearchGroupBindingModel("All", t.Result.SelectMany(x => x.Results).ToList()));
+                            foreach (var searchGroupBindingModel in t.Result)
+                            {
+                                this.BindingModel.Groups.Add(searchGroupBindingModel);   
+                            }
+
+                            this.View.SelectedFilterIndex = 0;
                         },
                     TaskScheduler.FromCurrentSynchronizationContext());
             }
+            else
+            {
+                this.BindingModel.Groups.Add(new SearchGroupBindingModel("All", new List<SearchResultBindingModel>()));
+                this.View.SelectedFilterIndex = 0;
+            }
         }
 
-        public async Task<List<SearchResultBindingModel>> Search(string query)
+        public async Task<List<SearchGroupBindingModel>> Search(string query)
         {
-            var results = new List<SearchResultBindingModel>();
+            var results = new List<SearchGroupBindingModel>();
 
-            results.AddRange(
+            var artists =
                 this.SearchPlaylists(await this.songsService.GetAllArtistsAsync(), query)
-                    .Select(x => new PlaylistResultBindingModel(x)));
+                    .Select(x => new PlaylistResultBindingModel(query, x))
+                    .Cast<SearchResultBindingModel>()
+                    .ToList();
 
-            results.AddRange(
+            if (artists.Count > 0)
+            {
+                results.Add(new SearchGroupBindingModel("Artists", artists));
+            }
+
+            var albums =
                 this.SearchPlaylists(await this.songsService.GetAllAlbumsAsync(), query)
-                    .Select(x => new PlaylistResultBindingModel(x)));
+                    .Select(x => new PlaylistResultBindingModel(query, x))
+                    .Cast<SearchResultBindingModel>()
+                    .ToList();
 
-            results.AddRange(
+            if (albums.Count > 0)
+            {
+                results.Add(new SearchGroupBindingModel("Albums", albums));
+            }
+
+            var genres =
                 this.SearchPlaylists(await this.songsService.GetAllGenresAsync(), query)
-                    .Select(x => new PlaylistResultBindingModel(x)));
+                    .Select(x => new PlaylistResultBindingModel(query, x))
+                    .Cast<SearchResultBindingModel>()
+                    .ToList();
 
-            results.AddRange(
-                (await this.songsService.GetAllGoogleSongsAsync()).Where(
-                    x =>
-                        {
-                            if (x.Title == null)
-                            {
-                                return false;
-                            }
+            if (genres.Count > 0)
+            {
+                results.Add(new SearchGroupBindingModel("Genres", genres));
+            }
 
-                            var found = x.Title.IndexOf(query.ToUpper(), StringComparison.CurrentCultureIgnoreCase);
-                            return (found == 0) || (found > 0 && char.IsSeparator(x.Title[found - 1]));
-                        }).Select(x => new SongResultBindingModel(x)));
+            var songs = (await this.songsService.GetAllGoogleSongsAsync()).Where(
+                x => Models.Search.Contains(x.Title, query)).Select(x => new SongResultBindingModel(query, x)).Cast<SearchResultBindingModel>().ToList();
 
-            results.AddRange(
+            if (songs.Count > 0)
+            {
+                results.Add(new SearchGroupBindingModel("Songs", songs));
+            }
+
+            var playlists =
                 this.SearchPlaylists(await this.songsService.GetAllPlaylistsAsync(), query)
-                    .Select(x => new PlaylistResultBindingModel(x)));
+                    .Select(x => new PlaylistResultBindingModel(query, x))
+                    .Cast<SearchResultBindingModel>()
+                    .ToList();
+
+            if (playlists.Count > 0)
+            {
+                results.Add(new SearchGroupBindingModel("Playlists", playlists));
+            }
 
             return results;
         }
 
         private IEnumerable<Playlist> SearchPlaylists(IEnumerable<Playlist> playlists, string search)
         {
-            return playlists.Where(
-                x =>
-                {
-                    if (x.Title == null)
-                    {
-                        return false;
-                    }
-
-                    var found = x.Title.IndexOf(search.ToUpper(), StringComparison.CurrentCultureIgnoreCase);
-                    return (found == 0) || (found > 0 && char.IsSeparator(x.Title[found - 1]));
-                });
+            return playlists.Where(x => Models.Search.Contains(x.Title, search));
         }
     }
 }

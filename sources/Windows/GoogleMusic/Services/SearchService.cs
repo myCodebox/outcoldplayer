@@ -187,17 +187,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             }
 
             var songs = await this.songsService.GetAllGoogleSongsAsync();
-            var songsSearch = songs.Where(
-                x =>
-                {
-                    if (x.Title == null)
-                    {
-                        return false;
-                    }
-
-                    var found = x.Title.IndexOf(args.QueryText.ToUpper(), StringComparison.CurrentCultureIgnoreCase);
-                    return (found == 0) || (found > 0 && char.IsSeparator(x.Title[found - 1]));
-                }).Take(Math.Max(MaxResults - artistsSearch.Count - albumsSearch.Count, 0)).ToList();
+            var songsSearch = songs.Where(x => Search.Contains(x.Title, args.QueryText)).Take(Math.Max(MaxResults - artistsSearch.Count - albumsSearch.Count, 0)).ToList();
 
             if (songsSearch.Count > 0)
             {
@@ -275,17 +265,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         private IEnumerable<Playlist> SearchPlaylists(IEnumerable<Playlist> playlists, string search, int take)
         {
-            return playlists.Where(
-                x =>
-                    {
-                        if (x.Title == null)
-                        {
-                            return false;
-                        }
-
-                        var found = x.Title.IndexOf(search.ToUpper(), StringComparison.CurrentCultureIgnoreCase);
-                        return (found == 0) || (found > 0 && char.IsSeparator(x.Title[found - 1]));
-                    }).Take(take);
+            return playlists.Where(x => Search.Contains(x.Title, search)).Take(take);
         }
     }
 }

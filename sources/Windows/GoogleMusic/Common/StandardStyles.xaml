@@ -29,6 +29,7 @@
     </ResourceDictionary.ThemeDictionaries>
 
     <SolidColorBrush x:Name="ApplicationThemeBrush" Color="#207CB0" />
+    <SolidColorBrush x:Name="TextHighlightedBrush" Color="#369EFF" />
 
     <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     <converters:BooleanToVisibilityConverter x:Key="BooleanToInvisibilityConverter" Invert="True" />

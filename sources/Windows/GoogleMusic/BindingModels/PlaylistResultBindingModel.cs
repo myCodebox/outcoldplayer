@@ -11,7 +11,8 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
     {
         private readonly Playlist result;
 
-        public PlaylistResultBindingModel(Playlist result)
+        public PlaylistResultBindingModel(string search, Playlist result)
+            : base(search, result.Title)
         {
             this.result = result;
         }
@@ -21,14 +22,6 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             get
             {
                 return this.result;
-            }
-        }
-
-        public override string Title
-        {
-            get
-            {
-                return this.result.Title;
             }
         }
 
