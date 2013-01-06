@@ -75,6 +75,9 @@ namespace OutcoldSolutions.GoogleMusic
                     registration.Register<IProgressLoadingView>().As<ProgressLoadingView>();
                     registration.Register<ProgressLoadingPresenter>();
 
+                    registration.Register<ISearchView>().AsSingleton<SearchView>();
+                    registration.Register<SearchViewPresenter>();
+
                     registration.Register<ICurrentPlaylistService>().And<PlayerViewPresenter>().AsSingleton<PlayerViewPresenter>();
 
                     // Settings

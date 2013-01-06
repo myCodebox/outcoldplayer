@@ -17,7 +17,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
     public class SearchService : ISearchService
     {
-        private const int MaxResults = 4;
+        private const int MaxResults = 5;
 
         private const string Artists = "Artists";
         private const string Albums = "Albums";
@@ -37,8 +37,21 @@ namespace OutcoldSolutions.GoogleMusic.Services
             this.dispatcher = dispatcher;
 
             var searchPane = SearchPane.GetForCurrentView();
+            searchPane.ShowOnKeyboardInput = true;
             searchPane.SuggestionsRequested += this.OnSuggestionsRequested;
             searchPane.ResultSuggestionChosen += this.SearchPaneOnResultSuggestionChosen;
+            searchPane.QuerySubmitted += this.SearchPaneOnQuerySubmitted;
+        }
+
+        public void SetShowOnKeyboardInput(bool value)
+        {
+            var searchPane = SearchPane.GetForCurrentView();
+            searchPane.ShowOnKeyboardInput = value;
+        }
+
+        private void SearchPaneOnQuerySubmitted(SearchPane sender, SearchPaneQuerySubmittedEventArgs args)
+        {
+            this.navigationService.NavigateTo<ISearchView>(args.QueryText);
         }
 
         private void OnSuggestionsRequested(SearchPane sender, SearchPaneSuggestionsRequestedEventArgs args)

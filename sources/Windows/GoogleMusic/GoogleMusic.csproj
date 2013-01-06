@@ -108,14 +108,18 @@
     </Compile>
     <Compile Include="BindingModels\BindingModelBase.cs" />
     <Compile Include="BindingModels\CurrentPlaylistBindingModel.cs" />
+    <Compile Include="BindingModels\PlaylistResultBindingModel.cs" />
     <Compile Include="BindingModels\PlaylistsGroupBindingModel.cs" />
     <Compile Include="BindingModels\MainViewBindingModel.cs" />
     <Compile Include="BindingModels\PlayerBindingModel.cs" />
     <Compile Include="BindingModels\PlaylistBindingModel.cs" />
     <Compile Include="BindingModels\PlaylistsViewBindingModel.cs" />
     <Compile Include="BindingModels\ProgressLoadingBindingModel.cs" />
+    <Compile Include="BindingModels\SearchBindingModel.cs" />
+    <Compile Include="BindingModels\SearchResultBindingModel.cs" />
     <Compile Include="BindingModels\Settings\AccountViewBindingModel.cs" />
     <Compile Include="BindingModels\Settings\SupportBindingModel.cs" />
+    <Compile Include="BindingModels\SongResultBindingModel.cs" />
     <Compile Include="BindingModels\SongsBindingModelBase.cs" />
     <Compile Include="BindingModels\StartViewBindingModel.cs" />
     <Compile Include="BindingModels\UserAuthentificationBindingModel.cs" />
@@ -145,6 +149,7 @@
     <Compile Include="Presenters\PlaylistsViewPresenterBase.cs" />
     <Compile Include="Presenters\PresenterBase.cs" />
     <Compile Include="Presenters\ProgressLoadingPresenter.cs" />
+    <Compile Include="Presenters\SearchViewPresenter.cs" />
     <Compile Include="Presenters\Settings\AccountViewPresenter.cs" />
     <Compile Include="Presenters\StartViewPresenter.cs" />
     <Compile Include="Presenters\ViewPresenterBase.cs" />
@@ -181,6 +186,9 @@
     </Compile>
     <Compile Include="Views\ProgressLoadingView.xaml.cs">
       <DependentUpon>ProgressLoadingView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SearchView.xaml.cs">
+      <DependentUpon>SearchView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\AccountView.xaml.cs">
       <DependentUpon>AccountView.xaml</DependentUpon>
@@ -258,6 +266,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ProgressLoadingView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SearchView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

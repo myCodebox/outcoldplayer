@@ -19,8 +19,11 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <TextBlock Style="{StaticResource HeaderTextStyle}" VerticalAlignment="Bottom">gMusic - Home</TextBlock>
-
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom">
+            <TextBlock Style="{StaticResource HeaderTextStyle}" VerticalAlignment="Bottom">gMusic</TextBlock>
+            <TextBlock Style="{StaticResource SubheaderTextStyle}" VerticalAlignment="Bottom" Margin="20, 0, 0, 0" Text="Home"/>
+        </StackPanel>
+        
         <ProgressRing Grid.Row="1" IsActive="{Binding Path=IsLoading, Mode=OneWay}" />
                 
         <GridView Grid.Row="1" 

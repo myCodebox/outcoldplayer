@@ -32,7 +32,6 @@
             <TextBlock VerticalAlignment="Bottom" Style="{StaticResource HeaderTextStyle}" Text=")" />
         </StackPanel>
 
-
         <ProgressRing Grid.Row="1" IsActive="{Binding Path=IsLoading, Mode=OneWay}"  Grid.Column="1"/>
 
         <SemanticZoom VerticalAlignment="Bottom" x:Name="SemanticZoom" Grid.Row="1"  Grid.Column="1" 
@@ -117,17 +116,17 @@
             </SemanticZoom.ZoomedOutView>
         </SemanticZoom>
         
-        <Popup IsLightDismissEnabled="True" x:Name="PlaylistNamePopup" HorizontalAlignment="Left" VerticalAlignment="Bottom"  Grid.ColumnSpan="2">
+        <Popup IsLightDismissEnabled="True" x:Name="PlaylistNamePopup" HorizontalAlignment="Left" VerticalAlignment="Bottom"  Grid.ColumnSpan="2" Closed="PlaylistNamePopupOnClosed">
 
-        <Border Padding="20" Background="{StaticResource AppBarBackgroundThemeBrush}" Width="340" Height="140">
-            <StackPanel Width="300">
-                <TextBox Text="" x:Name="TextBoxPlaylistName" KeyUp="TextBoxPlaylistNameKeyUp" KeyDown="TextBoxPlaylistNameOnKeyDown" />
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0, 20, 0, 0">
-                    <Button Width="80" Click="SaveNameClick" x:Name="SaveNameButton">Save</Button>
-                    <Button Width="80" Margin="20, 0, 0, 0" Click="CancelChangeNameClick">Cancel</Button>
+            <Border Padding="20" Background="{StaticResource AppBarBackgroundThemeBrush}" Width="340" Height="140">
+                <StackPanel Width="300">
+                    <TextBox Text="" x:Name="TextBoxPlaylistName" KeyUp="TextBoxPlaylistNameKeyUp" KeyDown="TextBoxPlaylistNameOnKeyDown" />
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0, 20, 0, 0">
+                        <Button Width="80" Click="SaveNameClick" x:Name="SaveNameButton">Save</Button>
+                        <Button Width="80" Margin="20, 0, 0, 0" Click="CancelChangeNameClick">Cancel</Button>
+                    </StackPanel>
                 </StackPanel>
-            </StackPanel>
-        </Border>
+            </Border>
 
         </Popup>
     </Grid>

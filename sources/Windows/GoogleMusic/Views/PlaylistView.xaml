@@ -17,12 +17,22 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <TextBlock Style="{StaticResource HeaderTextStyle}" 
-                   Text="{Binding Path=Title, Mode=OneWay}" 
-                   VerticalAlignment="Bottom" 
-                   Margin="120, 0, 20, 0"
-                   TextWrapping="NoWrap"/>
+        <Grid VerticalAlignment="Bottom" Margin="120, 0, 20, 0" HorizontalAlignment="Left" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
 
+            <TextBlock Style="{StaticResource HeaderTextStyle}" 
+                       Text="{Binding Path=Title, Mode=OneWay}" 
+                       VerticalAlignment="Bottom" 
+                       TextWrapping="NoWrap" 
+                       TextTrimming="WordEllipsis" />
+
+            <TextBlock Style="{StaticResource SubheaderTextStyle}" Grid.Column="1" VerticalAlignment="Bottom" Margin="20, 0, 0, 0" Text="{Binding Path=Type, Mode=OneWay}"/>
+            
+        </Grid>
+ 
         <Grid Grid.Row="1" Margin="40, 20, 20, 20" HorizontalAlignment="Stretch" >
             <Grid.ColumnDefinitions >
                 <ColumnDefinition Width="45" />

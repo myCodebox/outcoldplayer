@@ -26,6 +26,34 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             }
         }
 
+        public string Type
+        {
+            get
+            {
+                if (this.playlist is Album)
+                {
+                    return "Album";
+                }
+
+                if (this.playlist is Artist)
+                {
+                    return "Artist";
+                }
+
+                if (this.playlist is Genre)
+                {
+                    return "Genre";
+                }
+
+                if (this.playlist is MusicPlaylist)
+                {
+                    return "Playlist";
+                }
+
+                return null;
+            }
+        }
+
         public bool IsBusy
         {
             get

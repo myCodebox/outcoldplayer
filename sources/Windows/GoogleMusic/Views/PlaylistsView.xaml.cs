@@ -85,6 +85,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
         public void EditPlaylist(PlaylistBindingModel selectedItem)
         {
+            App.Container.Resolve<ISearchService>().SetShowOnKeyboardInput(false);
             this.PlaylistNamePopup.VerticalOffset = this.ActualHeight - 240;
             this.TextBoxPlaylistName.Text = selectedItem.Playlist.Title;
             this.SaveNameButton.IsEnabled = !string.IsNullOrEmpty(this.TextBoxPlaylistName.Text);
@@ -151,6 +152,11 @@ namespace OutcoldSolutions.GoogleMusic.Views
         private void ZoomOutClick(object sender, RoutedEventArgs e)
         {
             this.SemanticZoom.IsZoomedInViewActive = false;
+        }
+
+        private void PlaylistNamePopupOnClosed(object sender, object e)
+        {
+            App.Container.Resolve<ISearchService>().SetShowOnKeyboardInput(true);
         }
     }
 }
