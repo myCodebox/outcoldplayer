@@ -131,7 +131,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             {
                 var allSongs = await this.GetAllGoogleSongsAsync();
 
-                SystemPlaylist allSongsPlaylist = new SystemPlaylist("All Songs", allSongs);
+                SystemPlaylist allSongsPlaylist = new SystemPlaylist("All songs", allSongs);
                 SystemPlaylist highlyRatedPlaylist = new SystemPlaylist("Highly rated", allSongs.Where(x => x.GoogleMusicMetadata.Rating >= 4));
 
                 this.systemPlaylistsCache = new List<SystemPlaylist>() { allSongsPlaylist, highlyRatedPlaylist };
