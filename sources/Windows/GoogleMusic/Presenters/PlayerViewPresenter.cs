@@ -167,6 +167,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                         this.songWebService.RecordPlayingAsync(song.GoogleMusicMetadata, song.PlayCount + 1)
                             .ContinueWith(t =>
                                 {
+                                    song.GoogleMusicMetadata.LastPlayed = DateTime.Now.ToFileTime();
+
                                     if (t.IsCompleted)
                                     {
                                         this.Logger.Debug(

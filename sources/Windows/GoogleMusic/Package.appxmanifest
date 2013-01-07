@@ -14,7 +14,7 @@
     <Resource Language="x-generate" />
   </Resources>
   <Applications>
-    <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="GoogleMusic.App">
+    <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="OutcoldSolutions.GoogleMusic.App">
       <VisualElements DisplayName="gMusic" Logo="Assets\Logo.png" SmallLogo="Assets\SmallLogo.png" Description="gMusic - best Unofficial Google Music Player by OutcoldSolution." ForegroundText="light" BackgroundColor="#207CB0">
         <DefaultTile ShowName="allLogos" />
         <SplashScreen Image="Assets\SplashScreen.png" BackgroundColor="#000000" />
@@ -29,7 +29,7 @@
             <Task Type="audio" />
           </BackgroundTasks>
         </Extension>
-        <Extension Category="windows.search" />
+        <Extension Category="windows.search" EntryPoint="OutcoldSolutions.GoogleMusic.App" />
       </Extensions>
     </Application>
   </Applications>

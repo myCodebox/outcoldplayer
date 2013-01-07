@@ -10,12 +10,15 @@ namespace OutcoldSolutions.GoogleMusic.Services
     using System.Linq;
     using System.Threading.Tasks;
 
+    using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.WebServices;
     using OutcoldSolutions.GoogleMusic.WebServices.Models;
 
     public class SongsService : ISongsService
     {
+        private const int HighlyRatedValue = 4;
+
         private readonly object lockerTasks = new object();
 
         private readonly Dictionary<string, Song> songsRepository = new Dictionary<string, Song>();
@@ -31,16 +34,19 @@ namespace OutcoldSolutions.GoogleMusic.Services
         private List<Album> albumsCache = null;
         private List<Genre> genresCache = null;
         private List<Artist> artistsCache = null;
-        private List<SystemPlaylist> systemPlaylistsCache = null;
+
+        private ILogger logger;
 
         public SongsService(
             IPlaylistsWebService webService,
             IUserDataStorage userDataStorage,
-            ISongWebService songWebService)
+            ISongWebService songWebService,
+            ILogManager logManager)
         {
             this.webService = webService;
             this.userDataStorage = userDataStorage;
             this.songWebService = songWebService;
+            this.logger = logManager.CreateLogger("SongsService");
 
             this.userDataStorage.SessionCleared += (sender, args) =>
                 {
@@ -54,7 +60,6 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     this.artistsCache = null;
                     this.genresCache = null;
                     this.playlistsCache = null;
-                    this.systemPlaylistsCache = null;
 
                     foreach (var song in this.songsRepository)
                     {
@@ -127,17 +132,12 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         public async Task<List<SystemPlaylist>> GetSystemPlaylists()
         {
-            if (this.systemPlaylistsCache == null)
-            {
-                var allSongs = await this.GetAllGoogleSongsAsync();
+            var allSongs = await this.GetAllGoogleSongsAsync();
 
-                SystemPlaylist allSongsPlaylist = new SystemPlaylist("All songs", allSongs);
-                SystemPlaylist highlyRatedPlaylist = new SystemPlaylist("Highly rated", allSongs.Where(x => x.GoogleMusicMetadata.Rating >= 4));
+            SystemPlaylist allSongsPlaylist = new SystemPlaylist("All songs", SystemPlaylist.SystemPlaylistType.AllSongs,  allSongs);
+            SystemPlaylist highlyRatedPlaylist = new SystemPlaylist("Highly rated", SystemPlaylist.SystemPlaylistType.HighlyRated, allSongs.Where(x => x.Rating >= HighlyRatedValue));
 
-                this.systemPlaylistsCache = new List<SystemPlaylist>() { allSongsPlaylist, highlyRatedPlaylist };
-            }
-
-            return this.systemPlaylistsCache;
+            return new List<SystemPlaylist>() { allSongsPlaylist, highlyRatedPlaylist };
         }
 
         public async Task<bool> DeletePlaylistAsync(MusicPlaylist playlist)
@@ -277,19 +277,33 @@ namespace OutcoldSolutions.GoogleMusic.Services
             if (string.Equals(propertyChangedEventArgs.PropertyName, "Rating"))
             {
                 var song = (Song)sender;
+
+                this.logger.Debug("Rating is changed for song '{0}'. Updating server.", song.GoogleMusicMetadata.Id);
+                
                 this.songWebService.UpdateRatingAsync(song.GoogleMusicMetadata, song.Rating).ContinueWith(
                     t =>
                         {
                             if (t.IsCompleted && t.Result != null)
                             {
-                                var songRatingResp = t.Result.Songs.FirstOrDefault(x => string.Equals(x.Id, song.GoogleMusicMetadata.Id, StringComparison.OrdinalIgnoreCase));
-                                if (songRatingResp != null)
+                                if (this.logger.IsDebugEnabled)
                                 {
-                                    song.Rating = songRatingResp.Rating;
+                                    this.logger.Debug("Rating update completed for song: {0}.", song.GoogleMusicMetadata.Id);
+                                    foreach (var songUpdate in t.Result.Songs)
+                                    {
+                                        this.logger.Debug(
+                                            "Song updated: {0}, Rate: {1}.", songUpdate.Id, songUpdate.Rating);
+                                    }
                                 }
                             }
-                        },
-                    TaskScheduler.FromCurrentSynchronizationContext());
+                            else
+                            {
+                                this.logger.Debug("Failed to update rating for song: {0}.", song.GoogleMusicMetadata.Id);
+                                if (t.IsFaulted && t.Exception != null)
+                                {
+                                    this.logger.LogErrorException(t.Exception);
+                                }
+                            }
+                        });
             }
         }
     }

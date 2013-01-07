@@ -34,6 +34,13 @@ namespace OutcoldSolutions.GoogleMusic
 
         public static IDependencyResolverContainer Container { get; private set; }
 
+        protected override void OnSearchActivated(SearchActivatedEventArgs args)
+        {
+            this.EnsureMainViewActivated();
+
+            base.OnSearchActivated(args);
+        }
+
         /// <summary>
         /// Invoked when the application is launched normally by the end user.  Other entry points
         /// will be used when the application is launched to open a specific file, to display
@@ -41,6 +48,11 @@ namespace OutcoldSolutions.GoogleMusic
         /// </summary>
         /// <param name="args">Details about the launch request and process.</param>
         protected override void OnLaunched(LaunchActivatedEventArgs args)
+        {
+            this.EnsureMainViewActivated();
+        }
+
+        private void EnsureMainViewActivated()
         {
             MainView mainView = Window.Current.Content as MainView;
 
@@ -54,7 +66,10 @@ namespace OutcoldSolutions.GoogleMusic
                 {
                     registration.Register<ILogManager>().AsSingleton<LogManager>();
 
-                    registration.Register<IMainView>().And<IMediaElemenetContainerView>().And<ICurrentContextCommands>().AsSingleton<MainView>();
+                    registration.Register<IMainView>()
+                                .And<IMediaElemenetContainerView>()
+                                .And<ICurrentContextCommands>()
+                                .AsSingleton<MainView>();
                     registration.Register<INavigationService>().And<MainViewPresenter>().AsSingleton<MainViewPresenter>();
 
                     registration.Register<IAuthentificationView>().As<AuthentificationView>();
@@ -78,7 +93,9 @@ namespace OutcoldSolutions.GoogleMusic
                     registration.Register<ISearchView>().AsSingleton<SearchView>();
                     registration.Register<SearchViewPresenter>();
 
-                    registration.Register<ICurrentPlaylistService>().And<PlayerViewPresenter>().AsSingleton<PlayerViewPresenter>();
+                    registration.Register<ICurrentPlaylistService>()
+                                .And<PlayerViewPresenter>()
+                                .AsSingleton<PlayerViewPresenter>();
 
                     registration.Register<IWhatIsNewView>().As<WhatIsNewView>();
 
@@ -102,7 +119,8 @@ namespace OutcoldSolutions.GoogleMusic
 
                     registration.Register<IMediaStreamDownloadService>().AsSingleton<MediaStreamDownloadService>();
 
-                    registration.Register<IDispatcher>().AsSingleton(new DispatcherContainer(CoreWindow.GetForCurrentThread().Dispatcher));
+                    registration.Register<IDispatcher>()
+                                .AsSingleton(new DispatcherContainer(CoreWindow.GetForCurrentThread().Dispatcher));
                 }
 
                 this.logManager = Container.Resolve<ILogManager>();
@@ -122,11 +140,11 @@ namespace OutcoldSolutions.GoogleMusic
                 // Create a Frame to act as the navigation context and navigate to the first page
                 mainView = (MainView)Container.Resolve<IMainView>();
 
-                if (args.PreviousExecutionState == ApplicationExecutionState.Terminated)
-                {
-                    // TODO: Load state from previously suspended application
-                }
-                
+                //if (args.PreviousExecutionState == ApplicationExecutionState.Terminated)
+                //{
+                //    // TODO: Load state from previously suspended application
+                //}
+
                 // Place the frame in the current Window
                 Window.Current.Content = mainView;
 

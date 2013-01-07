@@ -4,6 +4,8 @@
 
 namespace OutcoldSolutions.GoogleMusic.Suites
 {
+    using System;
+
     using Newtonsoft.Json;
 
     using NUnit.Framework;
@@ -15,9 +17,6 @@ namespace OutcoldSolutions.GoogleMusic.Suites
         [Test]
         public void TestSessionId()
         {
-           
-
-
         }
     }
 }
