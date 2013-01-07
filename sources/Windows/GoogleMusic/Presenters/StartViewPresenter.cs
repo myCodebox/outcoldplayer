@@ -52,6 +52,9 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         {
             var groups = new List<PlaylistsGroupBindingModel>();
 
+            var systemPlaylists = await this.songsService.GetSystemPlaylists();
+            groups.Add(new PlaylistsGroupBindingModel(null, systemPlaylists.Count, systemPlaylists.Select(x => new PlaylistBindingModel(x))));
+
             var playlists = await this.songsService.GetAllPlaylistsAsync(Order.LastPlayed);
             groups.Add(new PlaylistsGroupBindingModel("Playlists", playlists.Count, playlists.Take(MaxItems).Select(x => new PlaylistBindingModel(x)), PlaylistsRequest.Playlists));
 

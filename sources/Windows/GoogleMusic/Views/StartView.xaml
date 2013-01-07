@@ -52,19 +52,21 @@
                 <GroupStyle>
                     <GroupStyle.HeaderTemplate>
                         <DataTemplate>
-                            <Button Margin="0, 0, 160, 0" Click="NavigateTo">
-                                <Button.Template>
-                                    <ControlTemplate>
-                                        <StackPanel Orientation="Horizontal" >
-                                            <TextBlock Style="{StaticResource GroupHeaderTextStyle}" Text="{Binding Path=Title, Mode=OneWay}" />
-                                            <TextBlock Style="{StaticResource GroupHeaderTextStyle}" Text=" (" />
-                                            <TextBlock Style="{StaticResource GroupHeaderTextStyle}" Text="{Binding Path=PlaylistsCount, Mode=OneWay}" />
-                                            <TextBlock Style="{StaticResource GroupHeaderTextStyle}" Text=")" />
-                                            <TextBlock Style="{StaticResource GroupHeaderTextStyle}" Margin="10, 0, 0, 0" FontFamily="Segoe UI Symbol" Text="{StaticResource ChevronGlyph}"></TextBlock>
-                                        </StackPanel>
-                                    </ControlTemplate>
-                                </Button.Template>
-                            </Button>
+                            <Border Height="30">
+                                <Button Margin="0, 0, 160, 0" Click="NavigateTo" Visibility="{Binding Path=Title, Converter={StaticResource NullToInvisibilityConverter}}">
+                                    <Button.Template>
+                                        <ControlTemplate>
+                                            <StackPanel Orientation="Horizontal" >
+                                                <TextBlock Style="{StaticResource GroupHeaderTextStyle}" Text="{Binding Path=Title, Mode=OneWay}" />
+                                                <TextBlock Style="{StaticResource GroupHeaderTextStyle}" Text=" (" />
+                                                <TextBlock Style="{StaticResource GroupHeaderTextStyle}" Text="{Binding Path=PlaylistsCount, Mode=OneWay}" />
+                                                <TextBlock Style="{StaticResource GroupHeaderTextStyle}" Text=")" />
+                                                <TextBlock Style="{StaticResource GroupHeaderTextStyle}" Margin="10, 0, 0, 0" FontFamily="Segoe UI Symbol" Text="{StaticResource ChevronGlyph}"></TextBlock>
+                                            </StackPanel>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+                            </Border>
                         </DataTemplate>
                     </GroupStyle.HeaderTemplate>
 

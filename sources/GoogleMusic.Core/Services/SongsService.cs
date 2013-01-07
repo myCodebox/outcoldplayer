@@ -31,6 +31,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
         private List<Album> albumsCache = null;
         private List<Genre> genresCache = null;
         private List<Artist> artistsCache = null;
+        private List<SystemPlaylist> systemPlaylistsCache = null;
 
         public SongsService(
             IPlaylistsWebService webService,
@@ -53,6 +54,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     this.artistsCache = null;
                     this.genresCache = null;
                     this.playlistsCache = null;
+                    this.systemPlaylistsCache = null;
 
                     foreach (var song in this.songsRepository)
                     {
@@ -121,6 +123,21 @@ namespace OutcoldSolutions.GoogleMusic.Services
             }
 
             return null;
+        }
+
+        public async Task<List<SystemPlaylist>> GetSystemPlaylists()
+        {
+            if (this.systemPlaylistsCache == null)
+            {
+                var allSongs = await this.GetAllGoogleSongsAsync();
+
+                SystemPlaylist allSongsPlaylist = new SystemPlaylist("All Songs", allSongs);
+                SystemPlaylist highlyRatedPlaylist = new SystemPlaylist("Highly rated", allSongs.Where(x => x.GoogleMusicMetadata.Rating >= 4));
+
+                this.systemPlaylistsCache = new List<SystemPlaylist>() { allSongsPlaylist, highlyRatedPlaylist };
+            }
+
+            return this.systemPlaylistsCache;
         }
 
         public async Task<bool> DeletePlaylistAsync(MusicPlaylist playlist)
