@@ -62,15 +62,15 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             {
                 this.currentRequest = (PlaylistsRequest)parameter;
                 this.BindingModel.IsLoading = true;
+                this.BindingModel.Title = this.currentRequest.ToString();
 
                 this.LoadPlaylistsAsync().ContinueWith(
                     (t) =>
                         {
                             this.View.SetGroups(t.Result);
-                            this.BindingModel.Title = this.currentRequest.ToString();
                             this.BindingModel.IsLoading = false;
                             this.BindingModel.IsEditable = this.currentRequest == PlaylistsRequest.Playlists;
-                            this.BindingModel.Count = t.Result.Sum(x => x.PlaylistsCount);
+                            this.BindingModel.Count = t.Result.Sum(x => x.Playlists.Count);
                         },
                     TaskScheduler.FromCurrentSynchronizationContext());
             }
