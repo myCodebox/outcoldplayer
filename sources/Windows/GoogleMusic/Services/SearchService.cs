@@ -29,18 +29,32 @@ namespace OutcoldSolutions.GoogleMusic.Services
         private readonly INavigationService navigationService;
         private readonly IDispatcher dispatcher;
 
-
-        public SearchService(ISongsService songsService, INavigationService navigationService, IDispatcher dispatcher)
+        public SearchService(
+            ISongsService songsService, 
+            INavigationService navigationService, 
+            IDispatcher dispatcher)
         {
             this.songsService = songsService;
             this.navigationService = navigationService;
             this.dispatcher = dispatcher;
+        }
 
+        public void Register()
+        {
             var searchPane = SearchPane.GetForCurrentView();
             searchPane.ShowOnKeyboardInput = true;
             searchPane.SuggestionsRequested += this.OnSuggestionsRequested;
             searchPane.ResultSuggestionChosen += this.SearchPaneOnResultSuggestionChosen;
             searchPane.QuerySubmitted += this.SearchPaneOnQuerySubmitted;
+        }
+
+        public void Unregister()
+        {
+            var searchPane = SearchPane.GetForCurrentView();
+            searchPane.ShowOnKeyboardInput = false;
+            searchPane.SuggestionsRequested -= this.OnSuggestionsRequested;
+            searchPane.ResultSuggestionChosen -= this.SearchPaneOnResultSuggestionChosen;
+            searchPane.QuerySubmitted -= this.SearchPaneOnQuerySubmitted;
         }
 
         public void SetShowOnKeyboardInput(bool value)

@@ -58,6 +58,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.userDataStorage.SessionCleared += (sender, args) => this.Dispatcher.RunAsync(
                 () =>
                     {
+                        App.Container.Resolve<ISearchService>().Unregister();
                         if (this.BindingModel.IsAuthenticated)
                         {
                             this.NavigateTo<IAuthentificationView>(keepInHistory: false).Succeed += this.AuthentificationViewOnSucceed;
@@ -143,7 +144,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.NavigateTo<IProgressLoadingView>(keepInHistory: false);
         }
         
-        private object ShowView(IView view)
+        private void ShowView(IView view)
         {
             this.Logger.Debug("Showing view {0}. Instance.", view.GetType());
 
@@ -151,7 +152,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.BindingModel.Message = null;
             this.BindingModel.IsProgressRingActive = false;
             this.View.ShowView(view);
-            return view;
         }
 
         private class HistoryItem

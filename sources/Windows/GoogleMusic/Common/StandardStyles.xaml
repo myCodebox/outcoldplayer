@@ -689,6 +689,17 @@
         <Setter Property="Content" Value="&#xE082;"/>
     </Style>
 
+    <Style x:Key="SearchAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
+        <Setter Property="AutomationProperties.AutomationId" Value="SearchAppBarButton"/>
+        <Setter Property="AutomationProperties.Name" Value="Search"/>
+        <Setter Property="Content" Value="&#xE11A;"/>
+    </Style>
+
+    <Style x:Key="SearchPopupMenuButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource PopupMenuButtonStyle}">
+        <Setter Property="AutomationProperties.AutomationId" Value="SearchAppBarButton"/>
+        <Setter Property="AutomationProperties.Name" Value="Search"/>
+        <Setter Property="Content" Value="&#xE11A;"/>
+    </Style>
 
     <!-- 
         Standard AppBarButton Styles for use with Button and ToggleButton
@@ -811,12 +822,7 @@
         <Setter Property="AutomationProperties.AutomationId" Value="MailAppBarButton"/>
         <Setter Property="AutomationProperties.Name" Value="Mail"/>
         <Setter Property="Content" Value="&#xE119;"/>
-    </Style>
-    <Style x:Key="SearchAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
-        <Setter Property="AutomationProperties.AutomationId" Value="SearchAppBarButton"/>
-        <Setter Property="AutomationProperties.Name" Value="Search"/>
-        <Setter Property="Content" Value="&#xE11A;"/>
-    </Style>
+    </Style>    
     <Style x:Key="HelpAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
         <Setter Property="AutomationProperties.AutomationId" Value="HelpAppBarButton"/>
         <Setter Property="AutomationProperties.Name" Value="Help"/>

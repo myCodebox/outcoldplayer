@@ -17,17 +17,21 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private readonly IClientLoginService loginService;
         private readonly INavigationService navigationService;
 
+        private readonly ISearchService searchService;
+
         public ProgressLoadingPresenter(
             IDependencyResolverContainer container, 
             IView view,
             ISongsService songsService,
             IClientLoginService loginService,
-            INavigationService navigationService)
+            INavigationService navigationService,
+            ISearchService searchService)
             : base(container, view)
         {
             this.songsService = songsService;
             this.loginService = loginService;
             this.navigationService = navigationService;
+            this.searchService = searchService;
             this.BindingModel = new ProgressLoadingBindingModel();
         }
 
@@ -71,6 +75,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                                         {
                                             if (tSongs.IsCompleted)
                                             {
+                                                this.searchService.Register();
                                                 this.navigationService.NavigateTo<IStartView>();
                                             }
                                             else
