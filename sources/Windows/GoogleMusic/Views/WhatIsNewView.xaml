@@ -50,13 +50,13 @@
                 <Run>Bug fixes:</Run>
             </TextBlock>
             <TextBlock Style="{StaticResource BodyTextStyle}"  Margin="0, 5, 0, 0">
-                [b] Surface RT (Windows RT devices): some streams do not play till end. gMusic can switch to next song at the middle of the track.
+                [b] Surface RT (Windows RT devices): some streams do not play untill end. gMusic can switch to next song at the middle of the track.
             </TextBlock>
             <TextBlock Style="{StaticResource BodyTextStyle}" Margin="0, 0, 0, 0">
                 [b] gMusic can stop to load playlists and songs. Re-signing in is required to make it works again.
             </TextBlock>
             <TextBlock Style="{StaticResource BodyTextStyle}" Margin="0, 0, 0, 0">
-                [b] Horizontal scrolling is hidden on playlists/albums/artists/genres views.
+                [b] Horizontal scrolling not showing on playlists/albums/artists/genres views.
             </TextBlock>
             <TextBlock Style="{StaticResource BodyTextStyle}" Margin="0, 0, 0, 0">
                 [b] Fix scrolling by mouse wheel on Home screen.
@@ -77,10 +77,6 @@
                 </Button>
                 <TextBlock Style="{StaticResource BodyTextStyle}" VerticalAlignment="Center" Margin="10, 0, 0, 0">Follow us on twitter to know about our plans.</TextBlock>
             </StackPanel>
-            <TextBlock Style="{StaticResource SmallTextStyle}" HorizontalAlignment="Left" Margin="0, 20, 0, 0">
-                You can find this links in Support tab of gMusic settings (swipe from right and choose settings).
-            </TextBlock>
-
         </StackPanel>
         
 
