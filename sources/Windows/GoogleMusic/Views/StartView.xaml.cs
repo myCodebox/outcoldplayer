@@ -4,11 +4,13 @@
 
 namespace OutcoldSolutions.GoogleMusic.Views
 {
+    using System;
     using System.Collections.Generic;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Presenters;
 
+    using Windows.System;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
 
@@ -46,6 +48,16 @@ namespace OutcoldSolutions.GoogleMusic.Views
                     App.Container.Resolve<INavigationService>().NavigateTo<IPlaylistsView>(groupBindingModel.Request);
                 }
             }
+        }
+
+        private void UserVoiceClick(object sender, RoutedEventArgs e)
+        {
+            Launcher.LaunchUriAsync(new Uri("https://gmusic.uservoice.com"));
+        }
+
+        private void TwitterFollowClick(object sender, RoutedEventArgs e)
+        {
+            Launcher.LaunchUriAsync(new Uri("https://twitter.com/gMusicW"));
         }
     }
 }

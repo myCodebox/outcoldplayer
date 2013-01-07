@@ -11,6 +11,26 @@
 
     <Grid DataContext="{Binding Path=BindingModel, Mode=OneTime}">
 
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0, 20, 40, 0">
+            <Button Click="TwitterFollowClick">
+                <Button.Template>
+                    <ControlTemplate>
+                        <StackPanel Height="28" Width="118" Orientation="Horizontal" >
+                            <Image Source="ms-appx:///Resources/twitter-logo.png" Height="22" Width="26" Margin="10, 0, 0, 0" VerticalAlignment="Center"  />
+                            <TextBlock VerticalAlignment="Center" Margin="10, 0, 0, 0">gMusicW</TextBlock>
+                        </StackPanel>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+
+            <Button Margin="10, 0, 0, 0" Click="UserVoiceClick" >
+                <Button.Template>
+                    <ControlTemplate>
+                        <Image Source="ms-appx:///Resources/uservoice.png" Height="28" Width="118" Margin="10, 0, 0, 0"  />
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+        </StackPanel>
 
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" 
                     Visibility="{Binding Path=IsProgressRingActive, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
@@ -23,6 +43,6 @@
             
             <Button Content="Try Again" Click="TryAgainClick" Visibility="{Binding Path=IsFailed, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
         </StackPanel>
-
+        
     </Grid>
 </local:ViewBase>

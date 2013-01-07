@@ -50,5 +50,10 @@ namespace OutcoldSolutions.GoogleMusic.Views.Settings
         {
             this.LogFolder.SelectAll();
         }
+
+        private void TwitterFollowClick(object sender, RoutedEventArgs e)
+        {
+            Launcher.LaunchUriAsync(new Uri("https://twitter.com/gMusicW"));
+        }
     }
 }

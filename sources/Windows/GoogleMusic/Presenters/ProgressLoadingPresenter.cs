@@ -75,8 +75,15 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                                         {
                                             if (tSongs.IsCompleted)
                                             {
-                                                this.searchService.Register();
-                                                this.navigationService.NavigateTo<IStartView>();
+                                                if (App.Container.Resolve<ISettingsService>().GetValue<bool>("VersionHistory v1.1"))
+                                                {
+                                                    this.searchService.Register();
+                                                    this.navigationService.NavigateTo<IStartView>();
+                                                }
+                                                else
+                                                {
+                                                    this.navigationService.NavigateTo<IWhatIsNewView>(keepInHistory: false);
+                                                }
                                             }
                                             else
                                             {

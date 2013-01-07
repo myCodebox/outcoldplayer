@@ -19,7 +19,29 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0, 20, 20, 0">
+            <Button  Click="TwitterFollowClick">
+                <Button.Template>
+                    <ControlTemplate>
+                        <StackPanel Height="28" Width="118" Orientation="Horizontal" >
+                            <Image Source="ms-appx:///Resources/twitter-logo.png" Height="22" Width="26" Margin="10, 0, 0, 0" VerticalAlignment="Center"  />
+                            <TextBlock VerticalAlignment="Center" Margin="10, 0, 0, 0">gMusicW</TextBlock>
+                        </StackPanel>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+
+            <Button Margin="10, 0, 0, 0" Click="UserVoiceClick">
+                <Button.Template>
+                    <ControlTemplate>
+                        <Image Source="ms-appx:///Resources/uservoice.png" Height="28" Width="118" Margin="10, 0, 0, 0"  />
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+        </StackPanel>
+
         <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom">
+            <Image Source="ms-appx:///Assets/StoreLogo.png" VerticalAlignment="Bottom" Margin="0,-20,20,0" Width="50" Height="50"/>
             <TextBlock Style="{StaticResource HeaderTextStyle}" VerticalAlignment="Bottom">gMusic</TextBlock>
             <TextBlock Style="{StaticResource SubheaderTextStyle}" VerticalAlignment="Bottom" Margin="20, 0, 0, 0" Text="Home"/>
         </StackPanel>

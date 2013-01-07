@@ -186,6 +186,9 @@
     <Compile Include="Views\PlaylistView.xaml.cs">
       <DependentUpon>PlaylistView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\WhatIsNewView.xaml.cs">
+      <DependentUpon>WhatIsNewView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ProgressLoadingView.xaml.cs">
       <DependentUpon>ProgressLoadingView.xaml</DependentUpon>
     </Compile>
@@ -232,6 +235,7 @@
     <None Include="Package.StoreAssociation.xml" />
     <Content Include="Resources\in-app-purchase.xml" />
     <Content Include="Resources\logo460.png" />
+    <Content Include="Resources\twitter-logo.png" />
     <Content Include="Resources\uservoice.png" />
   </ItemGroup>
   <ItemGroup>
@@ -264,6 +268,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\PlaylistView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\WhatIsNewView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

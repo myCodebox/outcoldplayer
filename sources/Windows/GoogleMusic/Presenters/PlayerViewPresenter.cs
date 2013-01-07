@@ -327,6 +327,14 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             }
         }
 
+        public int CurrentSongIndex
+        {
+            get
+            {
+                return this.BindingModel.CurrentSongIndex;
+            }
+        }
+
         private void NextSong()
         {
             this.Logger.Debug("NextSong.");

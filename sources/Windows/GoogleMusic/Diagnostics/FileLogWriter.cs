@@ -11,8 +11,10 @@ namespace OutcoldSolutions.GoogleMusic.Diagnostics
 
     public class FileLogWriter : ILogWriter, IDisposable
     {
+        private readonly object locker = new object();
+
         private StreamWriter writer;
-        
+
         public bool IsEnabled
         {
             get
@@ -35,18 +37,24 @@ namespace OutcoldSolutions.GoogleMusic.Diagnostics
 
         public void Dispose()
         {
-            if (this.writer != null)
+            lock (this.locker)
             {
-                this.ClearStream();
+                if (this.writer != null)
+                {
+                    this.ClearStream();
+                }
             }
         }
 
         public void Log(string level, string context, string message, params object[] parameters)
         {
-            if (this.writer != null)
+            lock (this.locker)
             {
-                this.writer.WriteLine("{0}::: {1} --- {2}", level, context, string.Format(message, parameters));
-                this.writer.Flush();
+                if (this.writer != null)
+                {
+                    this.writer.WriteLine("{0}::: {1} --- {2}", level, context, string.Format(message, parameters));
+                    this.writer.Flush();
+                }
             }
         }
 
@@ -56,15 +64,21 @@ namespace OutcoldSolutions.GoogleMusic.Diagnostics
             enableLoggingAsync.Wait();
             if (enableLoggingAsync.IsCompleted)
             {
-                this.writer = enableLoggingAsync.Result;
+                lock (this.locker)
+                {
+                    this.writer = enableLoggingAsync.Result;   
+                }
             }
         }
 
         private void ClearStream()
         {
-            this.writer.Flush();
-            this.writer.Dispose();
-            this.writer = null;
+            lock (this.locker)
+            {
+                this.writer.Flush();
+                this.writer.Dispose();
+                this.writer = null;
+            }
         }
 
         private async Task<StreamWriter> EnableLoggingAsync()

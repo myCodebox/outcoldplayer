@@ -23,6 +23,8 @@ namespace OutcoldSolutions.GoogleMusic.Views
         void EditPlaylist(PlaylistBindingModel selectedItem);
 
         void SetGroups(List<PlaylistsGroupBindingModel> playlistsGroupBindingModels);
+
+        void ShowPlaylist(PlaylistBindingModel playlistBindingModel);
     }
 
     public sealed partial class PlaylistsView : ViewBase, IPlaylistsView
@@ -96,9 +98,25 @@ namespace OutcoldSolutions.GoogleMusic.Views
         public void SetGroups(List<PlaylistsGroupBindingModel> playlistsGroupBindingModels)
         {
             this.Groups.Source = playlistsGroupBindingModels;
-            ((ListViewBase)SemanticZoom.ZoomedOutView).ItemsSource = Groups.View.CollectionGroups;
+            if (Groups.View == null)
+            {
+                ((ListViewBase)SemanticZoom.ZoomedOutView).ItemsSource = null;
+            }
+            else
+            {
+                ((ListViewBase)SemanticZoom.ZoomedOutView).ItemsSource = Groups.View.CollectionGroups;
+            }
+            
             this.ListView.SelectedIndex = -1;
             this.SemanticZoom.IsZoomedInViewActive = true;
+        }
+
+        public void ShowPlaylist(PlaylistBindingModel playlistBindingModel)
+        {
+            if (playlistBindingModel != null)
+            {
+                this.ListView.ScrollIntoView(playlistBindingModel);
+            }
         }
 
         private void PlaylistItemClick(object sender, ItemClickEventArgs e)

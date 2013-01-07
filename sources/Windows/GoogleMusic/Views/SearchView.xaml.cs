@@ -42,5 +42,13 @@ namespace OutcoldSolutions.GoogleMusic.Views
                     .NavigateTo<IPlaylistView>(((PlaylistResultBindingModel)e.ClickedItem).Result);
             }
         }
+
+        private void GroupsOnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (this.ListView.Items != null && this.ListView.Items.Count > 0)
+            {
+                this.ListView.ScrollIntoView(this.ListView.Items[0]);
+            }
+        }
     }
 }

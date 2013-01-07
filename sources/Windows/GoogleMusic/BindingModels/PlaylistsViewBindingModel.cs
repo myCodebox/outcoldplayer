@@ -3,8 +3,6 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.BindingModels
 {
-    using System.Collections.ObjectModel;
-
     public class PlaylistsViewBindingModel : BindingModelBase
     {
         private int count;
@@ -12,13 +10,6 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         private bool isLoading;
         private bool isEditable;
         private PlaylistBindingModel selectedItem;
-
-        public PlaylistsViewBindingModel()
-        {
-            this.Playlists = new ObservableCollection<PlaylistBindingModel>();
-        }
-
-        public ObservableCollection<PlaylistBindingModel> Playlists { get; private set; }
 
         public bool IsLoading
         {

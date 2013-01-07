@@ -39,6 +39,7 @@
                   ItemsSource="{Binding Path=Groups, Mode=OneWay}"
                   ScrollViewer.HorizontalScrollMode="Disabled"
                   ScrollViewer.VerticalScrollMode="Disabled"
+                  SelectionChanged="GroupsOnSelectionChanged"
                   SelectionMode="Single">
             
              <ListView.ItemsPanel>

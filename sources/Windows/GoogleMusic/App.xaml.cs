@@ -80,6 +80,8 @@ namespace OutcoldSolutions.GoogleMusic
 
                     registration.Register<ICurrentPlaylistService>().And<PlayerViewPresenter>().AsSingleton<PlayerViewPresenter>();
 
+                    registration.Register<IWhatIsNewView>().As<WhatIsNewView>();
+
                     // Settings
                     registration.Register<ISettingsCommands>().AsSingleton<SettingsCommands>();
                     registration.Register<ISearchService>().AsSingleton<SearchService>();
