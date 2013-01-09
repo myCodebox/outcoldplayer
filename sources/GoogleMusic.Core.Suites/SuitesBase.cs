@@ -6,8 +6,6 @@ namespace OutcoldSolutions.GoogleMusic.Suites
 {
     using NUnit.Framework;
 
-    using OutcoldSolutions.GoogleMusic.Diagnostics;
-
     public abstract class SuitesBase 
     {
         private IDependencyResolverContainer container;
@@ -25,7 +23,7 @@ namespace OutcoldSolutions.GoogleMusic.Suites
             this.container = fixtureContainer;
             using (var registration = this.container.Registration())
             {
-                registration.Register<ILogManager>().As<LogManager>();
+                // registration.Register<ILogManager>().As<LogManager>();
             }
         }
     }

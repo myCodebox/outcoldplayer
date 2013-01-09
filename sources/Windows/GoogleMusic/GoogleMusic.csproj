@@ -309,12 +309,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\GoogleMusic.Core\GoogleMusic.Core.csproj">
-      <Project>{66BCCB59-90BD-4334-9BD4-919B760F76C6}</Project>
-      <Name>GoogleMusic.Core</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\..\packages\Newtonsoft.Json.4.5.11\lib\winrt45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -327,6 +321,12 @@
     <SDKReference Include="MSAdvertisingXaml, Version=6.1">
       <Name>MSAdvertisingXaml</Name>
     </SDKReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GoogleMusic.Core\GoogleMusic.Core.csproj">
+      <Project>{5E3DD0FF-8829-433B-BD53-3CEBD7D0946A}</Project>
+      <Name>GoogleMusic.Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '11.0' ">
     <VisualStudioVersion>11.0</VisualStudioVersion>

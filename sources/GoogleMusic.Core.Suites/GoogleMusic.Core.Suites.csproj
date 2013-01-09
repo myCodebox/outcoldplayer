@@ -60,12 +60,6 @@
     <Compile Include="WebServices\PlainLinesBodyReaderSuites.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\GoogleMusic.Core\GoogleMusic.Core.csproj">
-      <Project>{66bccb59-90bd-4334-9bd4-919b760f76c6}</Project>
-      <Name>GoogleMusic.Core</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

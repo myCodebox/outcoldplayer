@@ -13,8 +13,6 @@ namespace OutcoldSolutions.GoogleMusic.Suites.WebServices
 
     using NUnit.Framework;
 
-    using OutcoldSolutions.GoogleMusic.WebServices;
-    using OutcoldSolutions.GoogleMusic.WebServices.Models;
 
     public class AuthorizationServiceSuites : SuitesBase
     {
