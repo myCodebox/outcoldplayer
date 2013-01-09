@@ -42,14 +42,14 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
         private const string AddToPlaylistUrl = "https://play.google.com/music/services/addtoplaylist";
         private const string DeleteSongUrl = "https://play.google.com/music/services/deletesong";
 
-        private readonly IGoogleWebService googleWebService;
+        private readonly IGoogleMusicWebService googleMusicWebService;
         private readonly IUserDataStorage userDataStorage;
 
         public PlaylistsWebService(
-            IGoogleWebService googleWebService,
+            IGoogleMusicWebService googleMusicWebService,
             IUserDataStorage userDataStorage)
         {
-            this.googleWebService = googleWebService;
+            this.googleMusicWebService = googleMusicWebService;
             this.userDataStorage = userDataStorage;
         }
 
@@ -60,7 +60,7 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
                                             { "json", JsonConvert.SerializeObject(new { sessionId = this.userDataStorage.GetUserSession().SessionId }) }
                                         };
 
-            var response = await this.googleWebService.PostAsync(PlaylistsUrl, arguments: requestParameters);
+            var response = await this.googleMusicWebService.PostAsync(PlaylistsUrl, arguments: requestParameters);
 
             return response.GetAsJsonObject<GoogleMusicPlaylists>();
         }
@@ -78,7 +78,7 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
                                             }
                                         };
 
-            var response = await this.googleWebService.PostAsync(PlaylistsUrl, arguments: requestParameters);
+            var response = await this.googleMusicWebService.PostAsync(PlaylistsUrl, arguments: requestParameters);
 
             return response.GetAsJsonObject<GoogleMusicPlaylist>();
         }
@@ -106,7 +106,7 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
                                             { "json", json }
                                         };
 
-                var response = await this.googleWebService.PostAsync(AllSongsUrl, arguments: requestParameters);
+                var response = await this.googleMusicWebService.PostAsync(AllSongsUrl, arguments: requestParameters);
                 playlist = response.GetAsJsonObject<GoogleMusicPlaylist>();
                 if (playlist != null && playlist.Playlist != null)
                 {
@@ -138,7 +138,7 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
                                             }
                                         };
 
-            var response = await this.googleWebService.PostAsync(AddPlaylistUrl, arguments: requestParameters);
+            var response = await this.googleMusicWebService.PostAsync(AddPlaylistUrl, arguments: requestParameters);
 
             if (response.HttpWebResponse.StatusCode == HttpStatusCode.OK)
             {
@@ -165,7 +165,7 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
                                             }
                                         };
 
-            var response = await this.googleWebService.PostAsync(DeletePlaylistUrl, arguments: requestParameters);
+            var response = await this.googleMusicWebService.PostAsync(DeletePlaylistUrl, arguments: requestParameters);
 
             return response.HttpWebResponse.StatusCode == HttpStatusCode.OK
                    && string.Equals(response.GetAsJsonObject<DeletePlaylistResp>().DeleteId, id, StringComparison.OrdinalIgnoreCase);
@@ -185,7 +185,7 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
                                             }
                                         };
 
-            var response = await this.googleWebService.PostAsync(ChangePlaylistNameUrl, arguments: requestParameters);
+            var response = await this.googleMusicWebService.PostAsync(ChangePlaylistNameUrl, arguments: requestParameters);
 
             return response.HttpWebResponse.StatusCode == HttpStatusCode.OK;
         }
@@ -204,7 +204,7 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
                                             }
                                         };
 
-            var response = await this.googleWebService.PostAsync(AddToPlaylistUrl, arguments: requestParameters);
+            var response = await this.googleMusicWebService.PostAsync(AddToPlaylistUrl, arguments: requestParameters);
 
             if (response.HttpWebResponse.StatusCode == HttpStatusCode.OK)
             {
@@ -231,7 +231,7 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
                                             }
                                         };
 
-            var response = await this.googleWebService.PostAsync(DeleteSongUrl, arguments: requestParameters);
+            var response = await this.googleMusicWebService.PostAsync(DeleteSongUrl, arguments: requestParameters);
 
             return response.HttpWebResponse.StatusCode == HttpStatusCode.OK;
         }

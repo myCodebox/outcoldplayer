@@ -8,19 +8,24 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
     using System.Globalization;
     using System.Linq;
     using System.Net;
+    using System.Net.Http;
+    using System.Net.Http.Headers;
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.WebServices.Models;
 
-    public class GoogleWebService : IGoogleWebService
+    public class GoogleMusicWebService : IGoogleMusicWebService
     {
         private readonly IDependencyResolverContainer container;
         private readonly IUserDataStorage userDataStorage;
         private readonly ILogger logger;
 
-        public GoogleWebService(
+        private HttpClient httpClient;
+        private HttpClientHandler httpClientHandler;
+
+        public GoogleMusicWebService(
             IDependencyResolverContainer container, 
             ILogManager logManager,
             IUserDataStorage userDataStorage)
@@ -30,38 +35,33 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
             this.logger = logManager.CreateLogger("ClientLoginService");
         }
 
-        public Task<GoogleWebResponse> GetAsync(
-            string url, 
-            IEnumerable<KeyValuePair<HttpRequestHeader, string>> headers = null)
+        public void Initialize(Cookie[] cookies, string auth)
         {
-            var taskCompletionSource = new TaskCompletionSource<GoogleWebResponse>();
+            this.httpClientHandler = new HttpClientHandler
+            {
+                CookieContainer = new CookieContainer(),
+                UseCookies = true
+            };
 
-            Task.Factory.StartNew(
-                () =>
-                {
-                    try
-                    {
-                        var httpWebRequest = this.SetupRequest(url, "GET", headers);
+            foreach (var cookie in cookies)
+            {
+                this.httpClientHandler.CookieContainer.Add(new Uri("https://play.google.com/music"), cookie);
+            }
 
-                        try
-                        {
-                            this.HandleGetResponse(httpWebRequest, taskCompletionSource);
-                        }
-                        catch (Exception exception)
-                        {
-                            logger.LogErrorException(exception);
+            this.httpClient = new HttpClient(this.httpClientHandler)
+                                  {
+                                      BaseAddress = new Uri("https://play.google.com/music/")
+                                  };
 
-                            this.HandleRequestException(exception, taskCompletionSource);
-                        }
-                    }
-                    catch (Exception exception)
-                    {
-                        logger.LogErrorException(exception);
-                        taskCompletionSource.SetException(exception);
-                    }
-                });
+            if (!string.IsNullOrEmpty(auth))
+            {
+                this.httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("GoogleLogin", string.Format(CultureInfo.InvariantCulture, "auth={0}", auth));
+            }
+        }
 
-            return taskCompletionSource.Task;
+        public async Task<HttpResponseMessage> GetAsync(string url)
+        {
+            return await this.httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Get, url));
         }
 
         public Task<GoogleWebResponse> PostAsync(

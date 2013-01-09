@@ -18,11 +18,11 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
         private const string GetStatusUrl = "https://play.google.com/music/services/getstatus";
 
         private readonly ILogger logger;
-        private readonly IGoogleWebService googleWebService;
+        private readonly IGoogleMusicWebService googleMusicWebService;
 
-        public ClientLoginService(ILogManager logManager, IGoogleWebService googleWebService)
+        public ClientLoginService(ILogManager logManager, IGoogleMusicWebService googleMusicWebService)
         {
-            this.googleWebService = googleWebService;
+            this.googleMusicWebService = googleMusicWebService;
             this.logger = logManager.CreateLogger("ClientLoginService");
         }
 
@@ -39,7 +39,7 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
                                             { "service", "sj" }
                                         };
 
-            return new GoogleLoginResponse(await this.googleWebService.PostAsync(ClientLoginUrl, arguments: requestParameters));
+            return new GoogleLoginResponse(await this.googleMusicWebService.PostAsync(ClientLoginUrl, arguments: requestParameters));
         }
 
         public async Task<GoogleWebResponse> GetCookieAsync(string auth = null)
@@ -53,12 +53,12 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
                 headers.Add(HttpRequestHeader.Authorization, string.Format(CultureInfo.InvariantCulture, "GoogleLogin auth={0}", auth));
             }
 
-            return await this.googleWebService.PostAsync(GetAuthCookie, headers: headers);
+            return await this.googleMusicWebService.PostAsync(GetAuthCookie, headers: headers);
         }
 
         public async Task<StatusResp> GetStatusAsync()
         {
-            var googleWebResponse = await this.googleWebService.PostAsync(GetStatusUrl);
+            var googleWebResponse = await this.googleMusicWebService.PostAsync(GetStatusUrl);
 
             if (googleWebResponse.HttpWebResponse.StatusCode == HttpStatusCode.OK)
             {

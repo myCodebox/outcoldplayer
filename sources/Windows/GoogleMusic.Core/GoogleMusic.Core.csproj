@@ -130,13 +130,14 @@
     <Compile Include="Services\SettingsValueChangedEventArgs.cs" />
     <Compile Include="Services\SongsService.cs" />
     <Compile Include="WebServices\ClientLoginService.cs" />
-    <Compile Include="WebServices\GoogleWebService.cs" />
+    <Compile Include="WebServices\GoogleMusicWebService.cs" />
     <Compile Include="WebServices\IClientLoginService.cs" />
     <Compile Include="WebServices\ICookieManager.cs" />
-    <Compile Include="WebServices\IGoogleWebService.cs" />
+    <Compile Include="WebServices\IGoogleMusicWebService.cs" />
     <Compile Include="WebServices\IMediaStreamDownloadService.cs" />
     <Compile Include="WebServices\INetworkRandomAccessStream.cs" />
     <Compile Include="WebServices\ISongWebService.cs" />
+    <Compile Include="WebServices\IUserSession.cs" />
     <Compile Include="WebServices\MediaStreamDownloadService.cs" />
     <Compile Include="WebServices\Models\AddPlaylistResp.cs" />
     <Compile Include="WebServices\Models\AddSongResp.cs" />

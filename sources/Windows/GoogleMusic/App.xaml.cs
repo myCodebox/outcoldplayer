@@ -109,7 +109,7 @@ namespace OutcoldSolutions.GoogleMusic
 
                     // Services
                     registration.Register<IClientLoginService>().As<ClientLoginService>();
-                    registration.Register<IGoogleWebService>().AsSingleton<GoogleWebService>();
+                    registration.Register<IGoogleMusicWebService>().AsSingleton<GoogleMusicWebService>();
                     registration.Register<IUserDataStorage>().AsSingleton<UserDataStorage>();
                     registration.Register<IAuthentificationService>().As<AuthentificationService>();
                     registration.Register<IPlaylistsWebService>().As<PlaylistsWebService>();

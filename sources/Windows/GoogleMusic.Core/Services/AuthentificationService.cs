@@ -7,8 +7,6 @@ namespace OutcoldSolutions.GoogleMusic.Services
     using System.Net;
     using System.Threading.Tasks;
 
-    using Newtonsoft.Json;
-
     using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.WebServices;
@@ -19,15 +17,18 @@ namespace OutcoldSolutions.GoogleMusic.Services
         private readonly ILogger logger;
         private readonly IUserDataStorage userDataStorage;
         private readonly IClientLoginService clientLoginService;
+        private readonly IGoogleMusicWebService googleMusicWebService;
 
         public AuthentificationService(
             ILogManager logManager,
             IUserDataStorage userDataStorage,
-            IClientLoginService clientLoginService)
+            IClientLoginService clientLoginService,
+            IGoogleMusicWebService googleMusicWebService)
         {
             this.logger = logManager.CreateLogger("AuthentificationService");
             this.userDataStorage = userDataStorage;
             this.clientLoginService = clientLoginService;
+            this.googleMusicWebService = googleMusicWebService;
         }
 
         public async Task<AuthentificationResult> CheckAuthentificationAsync(UserInfo userInfo = null)
@@ -40,6 +41,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 var statusResp = await this.clientLoginService.GetStatusAsync();
                 if (statusResp != null && string.IsNullOrEmpty(statusResp.Success) && string.IsNullOrEmpty(statusResp.ReloadXsrf))
                 {
+                    this.googleMusicWebService.Initialize(session.Cookies, session.Auth);
+
                     return AuthentificationResult.SucceedResult();
                 }
             }
@@ -70,16 +73,19 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 if (cookieResponse.HttpWebResponse.StatusCode == HttpStatusCode.OK
                     && !string.Equals(cookieResponse.HttpWebResponse.ResponseUri.Host, "accounts.google.com", StringComparison.OrdinalIgnoreCase))
                 {
-                    var cookies = GetCookies(cookieResponse);
+                    var cookies = this.GetCookies(cookieResponse);
 
                     this.logger.Debug("Cookies count: {0}", cookies.Length);
 
-                    var userSession = new UserSession(auth)
+                    session = new UserSession(auth)
                                           {
                                               Cookies = cookies
                                           };
 
-                    this.userDataStorage.SetUserSession(userSession);
+                    this.userDataStorage.SetUserSession(session);
+
+                    this.googleMusicWebService.Initialize(session.Cookies, session.Auth);
+
                     return AuthentificationResult.SucceedResult();
                 }
                 else

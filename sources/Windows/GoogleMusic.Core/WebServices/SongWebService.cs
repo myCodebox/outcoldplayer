@@ -3,6 +3,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.WebServices
 {
+    using System;
     using System.Collections.Generic;
     using System.Net;
     using System.Threading.Tasks;
@@ -15,32 +16,47 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
 
     public class SongWebService : ISongWebService
     {
-        private const string SongUrlFormat = "https://play.google.com/music/play?u=0&songid={0}";
+        private const string SongUrlFormat = "play?u=0&songid={0}";
         private const string RecordPlayingUrl = "https://play.google.com/music/services/recordplaying";
         private const string ModifyEntriesUrl = "https://play.google.com/music/services/modifyentries";
 
         private readonly ILogger logger;
-        private readonly IGoogleWebService googleWebService;
+        private readonly IGoogleMusicWebService googleMusicWebService;
         private readonly IUserDataStorage userDataStorage;
 
         public SongWebService(
             ILogManager logManager,
-            IGoogleWebService googleWebService,
+            IGoogleMusicWebService googleMusicWebService,
             IUserDataStorage userDataStorage)
         {
             this.logger = logManager.CreateLogger("SongWebService");
-            this.googleWebService = googleWebService;
+            this.googleMusicWebService = googleMusicWebService;
             this.userDataStorage = userDataStorage;
         }
 
         public async Task<GoogleMusicSongUrl> GetSongUrlAsync(string id)
         {
             var url = string.Format(SongUrlFormat, id);
-            var response = await this.googleWebService.GetAsync(url);
-            
-            if (response.HttpWebResponse.StatusCode == HttpStatusCode.OK)
+            var response = await this.googleMusicWebService.GetAsync(url);
+
+            if (response.StatusCode == HttpStatusCode.OK)
             {
-                return response.GetAsJsonObject<GoogleMusicSongUrl>();
+                var responseString = await response.Content.ReadAsStringAsync();
+
+                if (this.logger.IsDebugEnabled)
+                {
+                    this.logger.Debug("GetSongUrlAsync: Response JSON: '{0}'.", responseString);
+                }
+
+                try
+                {
+                    return JsonConvert.DeserializeObject<GoogleMusicSongUrl>(responseString);
+                }
+                catch (Exception e)
+                {
+                    this.logger.Error("Canot deserialize json data");
+                    this.logger.LogErrorException(e);
+                }
             }
             else
             {
@@ -65,7 +81,7 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
                                                                                       }) }
                                         };
 
-            var response = await this.googleWebService.PostAsync(RecordPlayingUrl, arguments: requestParameters);
+            var response = await this.googleMusicWebService.PostAsync(RecordPlayingUrl, arguments: requestParameters);
             return response.HttpWebResponse.StatusCode == HttpStatusCode.OK && response.GetAsJsonObject<SuccessResult>().Success;
         }
 
@@ -85,7 +101,7 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
                                             }
                                         };
 
-            var response = await this.googleWebService.PostAsync(ModifyEntriesUrl, arguments: requestParameters);
+            var response = await this.googleMusicWebService.PostAsync(ModifyEntriesUrl, arguments: requestParameters);
             if (response.HttpWebResponse.StatusCode == HttpStatusCode.OK)
             {
                 return response.GetAsJsonObject<RatingResp>();
