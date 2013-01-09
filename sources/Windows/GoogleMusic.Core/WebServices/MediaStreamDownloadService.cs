@@ -5,7 +5,6 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
 {
     using System;
     using System.IO;
-    using System.Net;
     using System.Net.Http;
     using System.Net.Http.Headers;
     using System.Runtime.InteropServices.WindowsRuntime;
@@ -22,6 +21,7 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
         private const int DefaultBufferSize = 0x10000;
 
         private readonly ILogger logger;
+        private readonly HttpClient client = new HttpClient();
 
         public MediaStreamDownloadService(ILogManager logManager)
         {
@@ -35,32 +35,41 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
                 this.logger.Debug("Stream requested at url '{0}'.", url);
             }
 
-            var webRequest = WebRequest.CreateHttp(url);
-            webRequest.Method = "GET";
-            webRequest.AllowReadStreamBuffering = false;
-            var response = await webRequest.GetResponseAsync();
+            var response = await this.client.SendAsync(new HttpRequestMessage(HttpMethod.Get, url), HttpCompletionOption.ResponseHeadersRead);
 
             if (this.logger.IsDebugEnabled)
             {
-                this.logger.Debug("Got response. ContentLength: {0}, ContentType: {1}.", response.ContentLength, response.ContentType);
+                this.logger.Debug("Got response. ContentLength: {0}, ContentType: {1}.", response.Content.Headers.ContentLength, response.Content.Headers.ContentType);
             }
 
-            long start = Math.Max(response.ContentLength - DefaultBufferSize, 0);
+            if (!response.Content.Headers.ContentLength.HasValue)
+            {
+                this.logger.Error("Headers does not contains Content Length. Returning null.");
+                return null;
+            }
 
-            HttpClient client = new HttpClient(new HttpClientHandler());
-            client.DefaultRequestHeaders.Range = new RangeHeaderValue(start, response.ContentLength); 
-            
-            var readCount = (int)(response.ContentLength - start);
+            var contentLength = response.Content.Headers.ContentLength.Value;
+
+            long start = Math.Max(response.Content.Headers.ContentLength.Value - DefaultBufferSize, 0);
+
+            var readCount = (int)(response.Content.Headers.ContentLength - start);
 
             if (this.logger.IsDebugEnabled)
             {
-                this.logger.Debug("Requestion end of stream. Start: {0}, End: {1}, Read Count: {2}.", start, response.ContentLength, readCount);
+                this.logger.Debug("Requestion end of stream. Start: {0}, End: {1}, Read Count: {2}.", start, response.Content.Headers.ContentLength, readCount);
             }
 
-            var audioStreamEnd = await client.GetStreamAsync(url);
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, url);
+            request.Headers.Range = new RangeHeaderValue(start, contentLength);
+            var streamResponse = await this.client.SendAsync(request);
 
-            var data = new byte[response.ContentLength];
-            var read = await audioStreamEnd.ReadAsync(data, (int)start, readCount);
+            var data = new byte[contentLength];
+            int read;
+
+            using (var audioStreamEnd = await streamResponse.Content.ReadAsStreamAsync())
+            {
+                read = await audioStreamEnd.ReadAsync(data, (int)start, readCount);
+            }
 
             if (this.logger.IsDebugEnabled || this.logger.IsWarningEnabled)
             {
@@ -74,7 +83,7 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
                 }
             }
 
-            return new MemoryRandomAccessStream(response.GetResponseStream(), data, response.ContentType, read);
+            return new MemoryRandomAccessStream(await response.Content.ReadAsStreamAsync(), data, response.Content.Headers.ContentType.MediaType, read);
         }
 
         private class MemoryRandomAccessStream : INetworkRandomAccessStream
@@ -90,10 +99,10 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
             private Stream networkStream;
             private Task readTask;
 
-            private ulong currentPosition = 0;
-            private ulong readPosition = 0;
+            private ulong currentPosition;
+            private ulong readPosition;
 
-            private double latestDownloadProgressUpdate = 0;
+            private double latestDownloadProgressUpdate;
             
             public MemoryRandomAccessStream(Stream networkStream, byte[] data, string contentType, int endFilled)
             {
@@ -193,7 +202,7 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
                     {
                         progress.Report(0);
 
-                        bool fReading = true;
+                        bool fReading;
                         do
                         {
                             lock (locker)
