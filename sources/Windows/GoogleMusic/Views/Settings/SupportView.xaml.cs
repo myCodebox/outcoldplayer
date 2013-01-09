@@ -38,12 +38,12 @@ namespace OutcoldSolutions.GoogleMusic.Views.Settings
 
         private void UserVoiceClick(object sender, RoutedEventArgs e)
         {
-            Launcher.LaunchUriAsync(new Uri("https://gmusic.uservoice.com"));
+            var taskResult = Launcher.LaunchUriAsync(new Uri("https://gmusic.uservoice.com"));
         }
 
         private void SendEmailClick(object sender, RoutedEventArgs e)
         {
-            Launcher.LaunchUriAsync(new Uri("mailto:gMusic@outcoldman.com"));
+            var taskResult = Launcher.LaunchUriAsync(new Uri("mailto:gMusic@outcoldman.com"));
         }
 
         private void LogFolderGotFocus(object sender, RoutedEventArgs e)
@@ -53,7 +53,7 @@ namespace OutcoldSolutions.GoogleMusic.Views.Settings
 
         private void TwitterFollowClick(object sender, RoutedEventArgs e)
         {
-            Launcher.LaunchUriAsync(new Uri("https://twitter.com/gMusicW"));
+            var taskResult = Launcher.LaunchUriAsync(new Uri("https://twitter.com/gMusicW"));
         }
     }
 }

@@ -99,7 +99,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                                                                 (cmd) =>
                                                                     {
                                                                         this.settingsService.SetRoamingValue<bool>(DoNotAskToReviewKey, true);
-                                                                        Launcher.LaunchUriAsync(new Uri("ms-windows-store:REVIEW?PFN=47286outcoldman.gMusic_z1q2m7teapq4y"));
+                                                                        var tLauncher = Launcher.LaunchUriAsync(new Uri("ms-windows-store:REVIEW?PFN=47286outcoldman.gMusic_z1q2m7teapq4y"));
                                                                     }));
                                                         dialog.Commands.Add(
                                                             new UICommand(
@@ -110,7 +110,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                                                                 "Remind me later",
                                                                 (cmd) => this.settingsService.SetRoamingValue<int>(CountOfStartsBeforeReview, 0)));
 
-                                                        dialog.ShowAsync();
+                                                        var tResult = dialog.ShowAsync();
                                                     }
                                                     else
                                                     {

@@ -7,8 +7,6 @@ namespace OutcoldSolutions.GoogleMusic.Models
     using System.Collections.Generic;
     using System.Linq;
 
-    using OutcoldSolutions.GoogleMusic.BindingModels;
-
     public abstract class Playlist : BindingModelBase
     {
         private string title;

@@ -28,12 +28,12 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
         private void TwitterFollowClick(object sender, RoutedEventArgs e)
         {
-            Launcher.LaunchUriAsync(new Uri("https://twitter.com/gMusicW"));
+            var result = Launcher.LaunchUriAsync(new Uri("https://twitter.com/gMusicW"));
         }
 
         private void UserVoiceClick(object sender, RoutedEventArgs e)
         {
-            Launcher.LaunchUriAsync(new Uri("https://gmusic.uservoice.com"));
+            var result = Launcher.LaunchUriAsync(new Uri("https://gmusic.uservoice.com"));
         }
     }
 }

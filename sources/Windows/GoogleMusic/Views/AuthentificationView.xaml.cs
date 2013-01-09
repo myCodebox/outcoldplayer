@@ -58,7 +58,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
         private void GotoGoogleMusic(object sender, RoutedEventArgs e)
         {
-            Launcher.LaunchUriAsync(new Uri("https://play.google.com/music"));
+            var tResult = Launcher.LaunchUriAsync(new Uri("https://play.google.com/music"));
         }
 
         private void RaiseSucceed()

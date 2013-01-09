@@ -106,7 +106,6 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BindingModels\BindingModelBase.cs" />
     <Compile Include="BindingModels\CurrentPlaylistBindingModel.cs" />
     <Compile Include="BindingModels\PlaylistResultBindingModel.cs" />
     <Compile Include="BindingModels\PlaylistsGroupBindingModel.cs" />

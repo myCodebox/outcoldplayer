@@ -44,7 +44,7 @@ namespace OutcoldSolutions.GoogleMusic.Views.Settings
             {
                 this.AdFreePackageButton.IsEnabled = false;
 #if DEBUG
-                CurrentAppSimulator.RequestProductPurchaseAsync("AdFreeUnlimited", false);
+                var taskResult = CurrentAppSimulator.RequestProductPurchaseAsync("AdFreeUnlimited", false);
 #else
                 CurrentApp.RequestProductPurchaseAsync("AdFreeUnlimited", false);
 #endif
@@ -58,7 +58,7 @@ namespace OutcoldSolutions.GoogleMusic.Views.Settings
             {
                 this.UltimatePackageButton.IsEnabled = false;
 #if DEBUG
-                CurrentAppSimulator.RequestProductPurchaseAsync("Ultimate", false);
+                var taskResult = CurrentAppSimulator.RequestProductPurchaseAsync("Ultimate", false);
 #else
                 CurrentApp.RequestProductPurchaseAsync("Ultimate", false);
 #endif

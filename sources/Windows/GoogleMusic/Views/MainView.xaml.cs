@@ -159,13 +159,13 @@ namespace OutcoldSolutions.GoogleMusic.Views
             this.UpdateAdControl();
 
             this.ClearContext();
-            this.Content.Content = view;
+            this.MainContent.Content = view;
         }
 
         public void HideView()
         {
             this.ClearContext();
-            this.Content.Content = null;
+            this.MainContent.Content = null;
         }
 
         public MediaElement GetMediaElement()
@@ -225,13 +225,13 @@ namespace OutcoldSolutions.GoogleMusic.Views
         {
             if (ApplicationView.Value == ApplicationViewState.Snapped)
             {
-                this.Content.Visibility = Visibility.Collapsed;
+                this.MainContent.Visibility = Visibility.Collapsed;
                 this.BackButton.Visibility = Visibility.Collapsed;
                 this.SnappedPlayerView.Visibility = Visibility.Visible;
             }
             else
             {
-                this.Content.Visibility = Visibility.Visible;
+                this.MainContent.Visibility = Visibility.Visible;
                 this.BackButton.Visibility = Visibility.Visible;
                 this.SnappedPlayerView.Visibility = Visibility.Collapsed;
             }

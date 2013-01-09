@@ -36,12 +36,12 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
         private void UserVoiceClick(object sender, RoutedEventArgs e)
         {
-            Launcher.LaunchUriAsync(new Uri("https://gmusic.uservoice.com"));
+            var taskResult = Launcher.LaunchUriAsync(new Uri("https://gmusic.uservoice.com"));
         }
 
         private void TwitterFollowClick(object sender, RoutedEventArgs e)
         {
-            Launcher.LaunchUriAsync(new Uri("https://twitter.com/gMusicW"));
+            var taskResult = Launcher.LaunchUriAsync(new Uri("https://twitter.com/gMusicW"));
         }
     }
 }

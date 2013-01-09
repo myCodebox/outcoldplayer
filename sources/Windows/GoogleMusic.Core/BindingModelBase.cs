@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // Outcold Solutions (http://outcoldman.com)
 // --------------------------------------------------------------------------------------------------------------------
-namespace OutcoldSolutions.GoogleMusic.BindingModels
+namespace OutcoldSolutions.GoogleMusic
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;

@@ -510,7 +510,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                                                 this.BindingModel.IsBusy = false;
                                                 this.Logger.Debug(
                                                     "Could not find url for song {0}.", song.GoogleMusicMetadata.Id);
-                                                (new MessageDialog(
+                                                var tResult = (new MessageDialog(
                                                     "Cannot play right now. Make sure that you don't use current account on different device at the same time. Try after couple minutes."))
                                                     .ShowAsync();
                                             });

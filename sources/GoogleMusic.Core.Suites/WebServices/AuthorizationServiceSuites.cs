@@ -4,20 +4,13 @@
 
 namespace OutcoldSolutions.GoogleMusic.Suites.WebServices
 {
-    using System;
-    using System.Net;
-    using System.Threading;
     using System.Threading.Tasks;
-
-    using Moq;
 
     using NUnit.Framework;
 
 
     public class AuthorizationServiceSuites : SuitesBase
     {
-        
-
         [Test]
         public async Task Authorize_SetCredentials_CookiesLoaded()
         {

@@ -27,7 +27,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
         private void NavigateToCurrentPlaylist(object sender, RoutedEventArgs e)
         {
             App.Container.Resolve<INavigationService>().NavigateTo<ICurrentPlaylistView>();
-            Dispatcher.RunAsync(
+            var taskResult = Dispatcher.RunAsync(
                 CoreDispatcherPriority.Low,
                 () => App.Container.Resolve<ICurrentPlaylistView>().SelectCurrentSong());
         }

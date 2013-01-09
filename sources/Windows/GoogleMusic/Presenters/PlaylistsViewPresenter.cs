@@ -3,6 +3,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Presenters
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
@@ -180,7 +181,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
                     dialog.DefaultCommandIndex = 0;
                     dialog.CancelCommandIndex = 1;
-                    dialog.ShowAsync();
+                    var taskResult = dialog.ShowAsync();
                 }
             }
         }
