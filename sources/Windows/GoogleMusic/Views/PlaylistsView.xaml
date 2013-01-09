@@ -34,7 +34,7 @@
 
         <ProgressRing Grid.Row="1" IsActive="{Binding Path=IsLoading, Mode=OneWay}"  Grid.Column="1"/>
 
-        <SemanticZoom VerticalAlignment="Bottom" x:Name="SemanticZoom" Grid.Row="1"  Grid.Column="1" 
+        <SemanticZoom VerticalAlignment="Bottom" x:Name="SemanticZoom" Grid.Row="1"  Grid.Column="0" Grid.ColumnSpan="2"
                       Visibility="{Binding Path=IsLoading, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}" >
             <SemanticZoom.ZoomedInView>
                 <GridView x:Name="ListView"
@@ -49,7 +49,8 @@
                           ScrollViewer.VerticalScrollMode="Disabled"
                           ItemTemplate="{StaticResource PlaylistDataTemplate}"
                           SelectionChanged="ListViewOnSelectionChanged"
-                          SelectedItem="{Binding Path=SelectedItem, Mode=TwoWay}">
+                          SelectedItem="{Binding Path=SelectedItem, Mode=TwoWay}" 
+                          Padding="120, 0, 0, 0">
                     <GridView.ItemsPanel>
                         <ItemsPanelTemplate>
                             <VirtualizingStackPanel Orientation="Horizontal" />
@@ -80,7 +81,7 @@
 
                             <GroupStyle.Panel>
                                 <ItemsPanelTemplate>
-                                    <VariableSizedWrapGrid Orientation="Vertical" Margin="0, 20, 40, 0" />
+                                    <VariableSizedWrapGrid Orientation="Vertical" Margin="0, 20, 40, 0" ItemWidth="294" ItemHeight="146" />
                                 </ItemsPanelTemplate>
                             </GroupStyle.Panel>
                         </GroupStyle>
