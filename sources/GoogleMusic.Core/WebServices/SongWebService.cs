@@ -58,10 +58,10 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
                                                                                       {
                                                                                           songId = song.Id, 
                                                                                           playCount = playCounts, 
-                                                                                          sessionId = this.userDataStorage.GetUserSession().SessionId,
                                                                                           updateRecentAlbum = false,
                                                                                           updateRecentPlaylist = false,
-                                                                                          playlistId = string.Format("{0} - {1}", song.AlbumArtist,  song.Album)
+                                                                                          playlistId = song.Title,
+                                                                                          sessionId = this.userDataStorage.GetUserSession().SessionId
                                                                                       }) }
                                         };
 

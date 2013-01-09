@@ -26,6 +26,14 @@ namespace OutcoldSolutions.GoogleMusic.Services
             SettingsPane.GetForCurrentView().CommandsRequested += this.CommandsRequested;
         }
 
+        public void ActivateSettings(string name)
+        {
+            if (name == "upgrade")
+            {
+                this.CreatePopup(new UpgradeView());
+            }
+        }
+
         private void CommandsRequested(SettingsPane sender, SettingsPaneCommandsRequestedEventArgs args)
         {
             var cmd = new SettingsCommand(

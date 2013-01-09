@@ -4,11 +4,11 @@
 
 namespace OutcoldSolutions.GoogleMusic.Suites
 {
+    using NUnit.Framework;
+
     using OutcoldSolutions.GoogleMusic.Diagnostics;
 
-    using Xunit;
-
-    public abstract class SuitesBase : IUseFixture<DependencyResolverContainer>
+    public abstract class SuitesBase 
     {
         private IDependencyResolverContainer container;
 
@@ -17,6 +17,7 @@ namespace OutcoldSolutions.GoogleMusic.Suites
             get { return this.container; }
         }
 
+        [SetUp]
         public virtual void SetFixture(DependencyResolverContainer fixtureContainer)
         {
             fixtureContainer.Behavior.AutoRegistration = true;

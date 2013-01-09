@@ -5,7 +5,6 @@ namespace OutcoldSolutions.GoogleMusic.Converters
 {
     using System;
 
-    using Windows.UI.Xaml;
     using Windows.UI.Xaml.Data;
     using Windows.UI.Xaml.Media.Imaging;
 
@@ -14,13 +13,15 @@ namespace OutcoldSolutions.GoogleMusic.Converters
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             var url = value as string;
-            if (url != null)
+            if (string.IsNullOrEmpty(url))
+            {
+                return new BitmapImage(new Uri("ms-appx:///Assets/Logo.png"));
+            }
+            else
             {
                 // TODO: Use converter parameter to set image size
                 return new BitmapImage(new Uri("https:" + url));
             }
-
-            return DependencyProperty.UnsetValue;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)

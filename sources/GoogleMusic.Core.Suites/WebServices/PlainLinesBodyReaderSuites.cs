@@ -5,13 +5,13 @@ namespace OutcoldSolutions.GoogleMusic.Suites.WebServices
 {
     using System.IO;
 
-    using OutcoldSolutions.GoogleMusic.WebServices;
+    using NUnit.Framework;
 
-    using Xunit;
+    using OutcoldSolutions.GoogleMusic.WebServices;
 
     public class PlainLinesBodyReaderSuites
     {
-        [Fact]
+        [Test]
         public void GetValues_SimpleInput_AllValuesRead()
         {
             // Arrange
@@ -33,9 +33,9 @@ Auth=DQAAAGgAdk3fA5N");
                         var dictionary = reader.GetValues();
 
                         // Assert
-                        Assert.Equal("DQAAAGgA7Zg8CTN", dictionary["SID"]);
-                        Assert.Equal("DQAAAGsAlk8BBbG", dictionary["LSID"]);
-                        Assert.Equal("DQAAAGgAdk3fA5N", dictionary["Auth"]);
+                        Assert.AreEqual("DQAAAGgA7Zg8CTN", dictionary["SID"]);
+                        Assert.AreEqual("DQAAAGsAlk8BBbG", dictionary["LSID"]);
+                        Assert.AreEqual("DQAAAGgAdk3fA5N", dictionary["Auth"]);
                     }
                 }
             }

@@ -22,5 +22,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
         Task PlayAsync(int index = -1);
 
         Task RemoveAsync(int index);
+
+        int CurrentSongIndex { get; }
     }
 }

@@ -21,6 +21,10 @@ namespace OutcoldSolutions.GoogleMusic.Views
     public interface IPlaylistsView : IView
     {
         void EditPlaylist(PlaylistBindingModel selectedItem);
+
+        void SetGroups(List<PlaylistsGroupBindingModel> playlistsGroupBindingModels);
+
+        void ShowPlaylist(PlaylistBindingModel playlistBindingModel);
     }
 
     public sealed partial class PlaylistsView : ViewBase, IPlaylistsView
@@ -83,11 +87,36 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
         public void EditPlaylist(PlaylistBindingModel selectedItem)
         {
+            App.Container.Resolve<ISearchService>().SetShowOnKeyboardInput(false);
             this.PlaylistNamePopup.VerticalOffset = this.ActualHeight - 240;
             this.TextBoxPlaylistName.Text = selectedItem.Playlist.Title;
             this.SaveNameButton.IsEnabled = !string.IsNullOrEmpty(this.TextBoxPlaylistName.Text);
             this.PlaylistNamePopup.IsOpen = true;
             this.TextBoxPlaylistName.Focus(FocusState.Keyboard);
+        }
+
+        public void SetGroups(List<PlaylistsGroupBindingModel> playlistsGroupBindingModels)
+        {
+            this.Groups.Source = playlistsGroupBindingModels;
+            if (Groups.View == null)
+            {
+                ((ListViewBase)SemanticZoom.ZoomedOutView).ItemsSource = null;
+            }
+            else
+            {
+                ((ListViewBase)SemanticZoom.ZoomedOutView).ItemsSource = Groups.View.CollectionGroups;
+            }
+            
+            this.ListView.SelectedIndex = -1;
+            this.SemanticZoom.IsZoomedInViewActive = true;
+        }
+
+        public void ShowPlaylist(PlaylistBindingModel playlistBindingModel)
+        {
+            if (playlistBindingModel != null)
+            {
+                this.ListView.ScrollIntoView(playlistBindingModel);
+            }
         }
 
         private void PlaylistItemClick(object sender, ItemClickEventArgs e)
@@ -136,6 +165,16 @@ namespace OutcoldSolutions.GoogleMusic.Views
                 this.SaveNameClick(sender, e);
                 e.Handled = true;
             }
+        }
+
+        private void ZoomOutClick(object sender, RoutedEventArgs e)
+        {
+            this.SemanticZoom.IsZoomedInViewActive = false;
+        }
+
+        private void PlaylistNamePopupOnClosed(object sender, object e)
+        {
+            App.Container.Resolve<ISearchService>().SetShowOnKeyboardInput(true);
         }
     }
 }

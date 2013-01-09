@@ -8,5 +8,9 @@ namespace OutcoldSolutions.GoogleMusic.WebServices.Models
         public int AvailableTracks { get; set; }
 
         public int TotalTracks { get; set; }
+
+        public string Success { get; set; }
+
+        public string ReloadXsrf { get; set; }
     }
 }

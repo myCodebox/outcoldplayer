@@ -87,7 +87,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private void AddToPlaylist()
         {
-            this.songsService.GetAllPlaylistsAsync().ContinueWith(
+            this.songsService.GetAllPlaylistsAsync(Order.Name).ContinueWith(
                 t =>
                 {
                     if (t.IsCompleted)

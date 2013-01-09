@@ -10,10 +10,10 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Outcold Solutions")]
 [assembly: AssemblyProduct("Outcold Solutions gMusic")]
-[assembly: AssemblyCopyright("Outcold Solutions ©  2012")]
+[assembly: AssemblyCopyright("Outcold Solutions © 2012")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
-[assembly: AssemblyVersion("0.1.*")]
-[assembly: AssemblyFileVersion("0.1.0.0")]
+[assembly: AssemblyVersion("1.1.*")]
+[assembly: AssemblyFileVersion("1.1.0.0")]
 [assembly: ComVisible(false)]

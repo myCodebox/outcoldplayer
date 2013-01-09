@@ -32,8 +32,7 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
 
         public Task<GoogleWebResponse> GetAsync(
             string url, 
-            IEnumerable<KeyValuePair<HttpRequestHeader, string>> headers = null, 
-            IEnumerable<KeyValuePair<string, string>> arguments = null)
+            IEnumerable<KeyValuePair<HttpRequestHeader, string>> headers = null)
         {
             var taskCompletionSource = new TaskCompletionSource<GoogleWebResponse>();
 

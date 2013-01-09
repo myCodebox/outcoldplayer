@@ -1,0 +1,87 @@
+﻿<UserControl
+    x:Class="OutcoldSolutions.GoogleMusic.Views.WhatIsNewView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignHeight="768"
+    d:DesignWidth="1366">
+
+    <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Width="800" Height="640">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        
+        <StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Image Source="ms-appx:///Assets/SmallLogo.png" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,0,10,0" Width="30" Height="30"></Image>
+                <TextBlock Style="{StaticResource SubheaderTextStyle}" HorizontalAlignment="Center" Margin="0,-5,0,0">gMusic v1.1</TextBlock>
+            </StackPanel>
+
+            <TextBlock Style="{StaticResource BodyTextStyle}"  Margin="0, 20, 0, 0" >
+                You just installed version 1.1.
+            </TextBlock>
+            
+            <TextBlock Style="{StaticResource TitleTextStyle}" Margin="0, 20, 0, 0" >
+                <Run>New features:</Run>
+            </TextBlock>
+            <TextBlock Style="{StaticResource BodyTextStyle}"  Margin="0, 5, 0, 0">
+                [+] Windows Search support. You can search artists, albums, genres, playlists and songs from default Windows Search charm (swipe from right to find it or just start typing on one of next views). 
+            </TextBlock>
+            <TextBlock Style="{StaticResource BodyTextStyle}" Margin="0, 0, 0, 0">
+                [+] Add semantic zoon on Playlists/Artists/Albums/Genres screens. Allows you to find items much faster in lists.
+            </TextBlock>
+            <TextBlock Style="{StaticResource BodyTextStyle}" Margin="0, 0, 0, 0">
+                [+] Double click or tap on song starts playing.
+            </TextBlock>
+            <TextBlock Style="{StaticResource BodyTextStyle}" Margin="0, 0, 0, 0">
+                [+] Add two system playlists on Home screen: "All songs" and "Highly rated".
+            </TextBlock>
+            <TextBlock Style="{StaticResource BodyTextStyle}" Margin="0, 0, 0, 0">
+                [+] Playing tracks from queue with turned off screen.
+            </TextBlock>
+            <TextBlock Style="{StaticResource BodyTextStyle}" Margin="0, 0, 0, 0">
+                [+] Clicking on song name in player highlight it in queue.
+            </TextBlock>
+
+            <TextBlock Style="{StaticResource TitleTextStyle}" Margin="0, 10, 0, 0" >
+                <Run>Bug fixes:</Run>
+            </TextBlock>
+            <TextBlock Style="{StaticResource BodyTextStyle}"  Margin="0, 5, 0, 0">
+                [b] Surface RT (Windows RT devices): some streams do not play untill end. gMusic can switch to next song at the middle of the track.
+            </TextBlock>
+            <TextBlock Style="{StaticResource BodyTextStyle}" Margin="0, 0, 0, 0">
+                [b] gMusic can stop to load playlists and songs. Re-signing in is required to make it works again.
+            </TextBlock>
+            <TextBlock Style="{StaticResource BodyTextStyle}" Margin="0, 0, 0, 0">
+                [b] Horizontal scrolling not showing on playlists/albums/artists/genres views.
+            </TextBlock>
+            <TextBlock Style="{StaticResource BodyTextStyle}" Margin="0, 0, 0, 0">
+                [b] Fix scrolling by mouse wheel on Home screen.
+            </TextBlock>
+
+            <StackPanel Orientation="Horizontal" Margin="0, 20, 0, 0">
+                <Button Click="UserVoiceClick">
+                    <Image Source="ms-appx:///Resources/uservoice.png" Height="28" Width="118" VerticalAlignment="Top"  />
+                </Button>
+                <TextBlock Style="{StaticResource BodyTextStyle}" VerticalAlignment="Center" Margin="10, 0, 0, 0">UserVoice is the best way to tell us what features you want to see in next versions of gMusic.</TextBlock>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0, 20, 0, 0">
+                <Button Click="TwitterFollowClick">
+                    <StackPanel Height="28" Width="118" Orientation="Horizontal" >
+                        <Image Source="ms-appx:///Resources/twitter-logo.png" Height="22" Width="26" Margin="10, 0, 0, 0" VerticalAlignment="Center"  />
+                        <TextBlock VerticalAlignment="Center" Margin="10, 0, 0, 0">gMusicW</TextBlock>
+                    </StackPanel>
+                </Button>
+                <TextBlock Style="{StaticResource BodyTextStyle}" VerticalAlignment="Center" Margin="10, 0, 0, 0">Follow us on twitter to know about our plans.</TextBlock>
+            </StackPanel>
+        </StackPanel>
+        
+
+        <TextBlock Grid.Row="1" Style="{StaticResource TitleTextStyle}" Margin="0, 0, 0, 0" >Thank you for using gMusic application!</TextBlock>
+
+        <Button Grid.Row="1" HorizontalAlignment="Right" Width="80" Margin="0, 0, 20, 0" Click="ClickOk">OK</Button>
+    </Grid>
+</UserControl>

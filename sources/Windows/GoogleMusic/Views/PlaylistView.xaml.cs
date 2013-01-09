@@ -12,12 +12,15 @@ namespace OutcoldSolutions.GoogleMusic.Views
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Automation;
     using Windows.UI.Xaml.Controls;
+    using Windows.UI.Xaml.Input;
 
     public interface IPlaylistView : IView
     {
         int SelectedIndex { get; set; }
 
         void ShowPlaylists(List<MusicPlaylist> playlists);
+
+        void SetIsLoading(bool value);
     }
 
     public sealed partial class PlaylistView : ViewBase, IPlaylistView
@@ -93,6 +96,12 @@ namespace OutcoldSolutions.GoogleMusic.Views
             this.PlaylistsPopup.IsOpen = true;
         }
 
+        public void SetIsLoading(bool value)
+        {
+            this.ProgressRing.IsActive = value;
+            this.ListView.Visibility = value ? Visibility.Collapsed : Visibility.Visible;
+        }
+
         private void ListOnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (this.SelectedIndex >= 0)
@@ -124,6 +133,11 @@ namespace OutcoldSolutions.GoogleMusic.Views
                 this.Presenter<PlaylistViewPresenter>().AddSelectedSongToPlaylist((MusicPlaylist)e.ClickedItem);
                 this.PlaylistsPopup.IsOpen = false;
             }
+        }
+
+        private void ListDoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+        {
+            this.Presenter<PlaylistViewPresenter>().PlaySelectedSongCommand.Execute(null);
         }
     }
 }

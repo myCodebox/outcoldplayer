@@ -36,7 +36,7 @@
 
                     <TextBlock Grid.Column="1" Style="{StaticResource SettingTitleTextStyle}" Text="Support" />
 
-                    <Image Source="ms-appx:///Assets/SmallLogo.png" HorizontalAlignment="Right" Grid.Column="2" Margin="0,0,6,0" />
+                    <Image Source="ms-appx:///Assets/SmallLogo.png" HorizontalAlignment="Right" Grid.Column="2" Margin="0,0,6,0" Width="30" Height="30" />
 
                 </Grid>
 
@@ -55,11 +55,11 @@
                     UserVoice is the best way to tell us what features you want to see in next versions of gMusic.
                 </TextBlock>
                 
-                <Button Click="UserVoiceClick" Margin="0, 20, 0, 0">
+                <Button Click="UserVoiceClick" Margin="0, 20, 0, 0" >
                     <Image Source="ms-appx:///Resources/uservoice.png" Height="28" Width="118" VerticalAlignment="Top"  />
                 </Button>
 
-                <TextBlock Style="{StaticResource BodyTextStyle}"  Margin="0, 40, 0, 0">
+                <TextBlock Style="{StaticResource BodyTextStyle}"  Margin="0, 20, 0, 0">
                     Or you can just send email to:
                 </TextBlock>
 
@@ -67,7 +67,18 @@
                     gMusic@outcoldman.com
                 </HyperlinkButton>
 
-                <TextBlock Style="{StaticResource BodyTextStyle}"  Margin="0, 40, 0, 0">
+                <TextBlock Style="{StaticResource BodyTextStyle}"  Margin="0, 20, 0, 0">
+                    Follow us on twitter to know about our plans:
+                </TextBlock>
+
+                <Button Click="TwitterFollowClick" Margin="0, 20, 0, 0">
+                    <StackPanel Height="28" Width="118" Orientation="Horizontal" >
+                        <Image Source="ms-appx:///Resources/twitter-logo.png" Height="22" Width="26" Margin="10, 0, 0, 0" VerticalAlignment="Center"  />
+                        <TextBlock VerticalAlignment="Center" Margin="10, 0, 0, 0">gMusicW</TextBlock>
+                    </StackPanel>
+                </Button>
+
+                <TextBlock Style="{StaticResource BodyTextStyle}"  Margin="0, 20, 0, 0">
                     Sometimes we can ask you to enable logging to help us find bugs and unexpected behaviors with gMusic. 
                     We are sorry, if this happend with you. 
                     And thank you for your help.

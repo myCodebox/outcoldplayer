@@ -4,15 +4,19 @@
 
 namespace OutcoldSolutions.GoogleMusic.Views
 {
+    using System;
+    using System.Collections.Generic;
+
     using OutcoldSolutions.GoogleMusic.BindingModels;
-    using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Presenters;
 
+    using Windows.System;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
 
     public interface IStartView : IView
     {
+        void SetGroups(List<PlaylistsGroupBindingModel> groups);
     }
 
     public sealed partial class StartView : ViewBase, IStartView
@@ -23,29 +27,37 @@ namespace OutcoldSolutions.GoogleMusic.Views
             this.InitializeComponent();
         }
 
+        public void SetGroups(List<PlaylistsGroupBindingModel> groups)
+        {
+            this.Groups.Source = groups;
+        }
+
         private void PlaylistItemClick(object sender, ItemClickEventArgs e)
         {
             this.Presenter<StartViewPresenter>().ItemClick(e.ClickedItem as PlaylistBindingModel);
         }
 
-        private void NavigateToPlaylists(object sender, RoutedEventArgs e)
+        private void NavigateTo(object sender, RoutedEventArgs e)
         {
-            App.Container.Resolve<INavigationService>().NavigateTo<IPlaylistsView>(PlaylistsRequest.Playlists);
+            var frameworkElement = sender as FrameworkElement;
+            if (frameworkElement != null)
+            {
+                var groupBindingModel = frameworkElement.DataContext as PlaylistsGroupBindingModel;
+                if (groupBindingModel != null)
+                {
+                    App.Container.Resolve<INavigationService>().NavigateTo<IPlaylistsView>(groupBindingModel.Request);
+                }
+            }
         }
 
-        private void NavigateToAlbums(object sender, RoutedEventArgs e)
+        private void UserVoiceClick(object sender, RoutedEventArgs e)
         {
-            App.Container.Resolve<INavigationService>().NavigateTo<IPlaylistsView>(PlaylistsRequest.Albums);
+            Launcher.LaunchUriAsync(new Uri("https://gmusic.uservoice.com"));
         }
 
-        private void NavigateToGenres(object sender, RoutedEventArgs e)
+        private void TwitterFollowClick(object sender, RoutedEventArgs e)
         {
-            App.Container.Resolve<INavigationService>().NavigateTo<IPlaylistsView>(PlaylistsRequest.Genres);
-        }
-
-        private void NavigateToArtists(object sender, RoutedEventArgs e)
-        {
-            App.Container.Resolve<INavigationService>().NavigateTo<IPlaylistsView>(PlaylistsRequest.Artists);
+            Launcher.LaunchUriAsync(new Uri("https://twitter.com/gMusicW"));
         }
     }
 }

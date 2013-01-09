@@ -36,7 +36,7 @@ namespace OutcoldSolutions.GoogleMusic.Models
 
         public double Duration { get; private set; }
 
-        public string AlbumArtUrl { get; private set; }
+        public string AlbumArtUrl { get; protected set; }
 
         public List<Song> Songs { get; private set; }
 

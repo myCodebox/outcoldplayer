@@ -29,6 +29,7 @@
     </ResourceDictionary.ThemeDictionaries>
 
     <SolidColorBrush x:Name="ApplicationThemeBrush" Color="#207CB0" />
+    <SolidColorBrush x:Name="TextHighlightedBrush" Color="#369EFF" />
 
     <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     <converters:BooleanToVisibilityConverter x:Key="BooleanToInvisibilityConverter" Invert="True" />
@@ -101,7 +102,7 @@
     <Style x:Key="HeaderTextStyle" TargetType="TextBlock" BasedOn="{StaticResource BaselineTextStyle}">
         <Setter Property="FontSize" Value="56"/>
         <Setter Property="FontWeight" Value="Light"/>
-        <Setter Property="LineHeight" Value="40"/>
+        <Setter Property="LineHeight" Value="60"/>
         <Setter Property="RenderTransform">
             <Setter.Value>
                 <TranslateTransform X="-2" Y="8"/>
@@ -688,6 +689,17 @@
         <Setter Property="Content" Value="&#xE082;"/>
     </Style>
 
+    <Style x:Key="SearchAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
+        <Setter Property="AutomationProperties.AutomationId" Value="SearchAppBarButton"/>
+        <Setter Property="AutomationProperties.Name" Value="Search"/>
+        <Setter Property="Content" Value="&#xE11A;"/>
+    </Style>
+
+    <Style x:Key="SearchPopupMenuButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource PopupMenuButtonStyle}">
+        <Setter Property="AutomationProperties.AutomationId" Value="SearchAppBarButton"/>
+        <Setter Property="AutomationProperties.Name" Value="Search"/>
+        <Setter Property="Content" Value="&#xE11A;"/>
+    </Style>
 
     <!-- 
         Standard AppBarButton Styles for use with Button and ToggleButton
@@ -810,12 +822,7 @@
         <Setter Property="AutomationProperties.AutomationId" Value="MailAppBarButton"/>
         <Setter Property="AutomationProperties.Name" Value="Mail"/>
         <Setter Property="Content" Value="&#xE119;"/>
-    </Style>
-    <Style x:Key="SearchAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
-        <Setter Property="AutomationProperties.AutomationId" Value="SearchAppBarButton"/>
-        <Setter Property="AutomationProperties.Name" Value="Search"/>
-        <Setter Property="Content" Value="&#xE11A;"/>
-    </Style>
+    </Style>    
     <Style x:Key="HelpAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
         <Setter Property="AutomationProperties.AutomationId" Value="HelpAppBarButton"/>
         <Setter Property="AutomationProperties.Name" Value="Help"/>
@@ -2579,8 +2586,8 @@
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Border Margin="15" Width="116" Height="116" Background="#FF207CB0">
-                    <Image Width="116" Height="116" Source="{Binding Path=PreviewImage, Mode=OneWay}" Stretch="UniformToFill"/>
+                <Border Margin="15" Width="116" Height="116" Background="Gray">
+                    <Image Width="116" Height="116" Source="{Binding Path=Playlist.AlbumArtUrl, Converter={StaticResource AlbumArtUrlToImageConverter}, Mode=OneWay}" Stretch="UniformToFill"/>
                 </Border>
                 <StackPanel Grid.Column="1" Margin="0,15,10,0">
                     <TextBlock Text="{Binding Path=Playlist.Title, Mode=OneWay}"  Style="{StaticResource BodyTextStyle}" TextWrapping="Wrap"/>

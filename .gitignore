@@ -14,3 +14,6 @@ packages
 TestResults
 FakesAssemblies
 WinAppPackages
+*.opensdf
+*.sdf
+Thumbs.db

@@ -13,12 +13,15 @@ namespace OutcoldSolutions.GoogleMusic.Views
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Automation;
     using Windows.UI.Xaml.Controls;
+    using Windows.UI.Xaml.Input;
 
     public interface ICurrentPlaylistView : IView
     {
         int SelectedSongIndex { get; set; }
 
         void ShowPlaylists(List<MusicPlaylist> playlists);
+
+        void SelectCurrentSong();
     }
 
     public sealed partial class CurrentPlaylistView : ViewBase, ICurrentPlaylistView
@@ -28,8 +31,8 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
         public CurrentPlaylistView()
         {
-            this.InitializePresenter<CurrentPlaylistViewPresenter>();
             this.InitializeComponent();
+            this.InitializePresenter<CurrentPlaylistViewPresenter>();
 
             this.currentContextCommands = App.Container.Resolve<ICurrentContextCommands>();
 
@@ -58,17 +61,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
                                         });
         }
 
-        public override void OnNavigatedTo(object parameter)
-        {
-            this.ListView.SelectedIndex = -1;
-            if (this.ListView.Items != null && this.ListView.Items.Count > 0)
-            {
-                this.ListView.ScrollIntoView(this.ListView.Items[0]);
-            }
-
-            base.OnNavigatedTo(parameter);
-        }
-
         public int SelectedSongIndex
         {
             get
@@ -79,7 +71,20 @@ namespace OutcoldSolutions.GoogleMusic.Views
             set
             {
                 this.ListView.SelectedIndex = value;
+                this.ListView.ScrollIntoView(this.ListView.SelectedItem);
             }
+        }
+
+        public override void OnNavigatedTo(object parameter)
+        {
+            if (this.ListView.Items != null && this.ListView.Items.Count > 0)
+            {
+                int currentSongIndex = App.Container.Resolve<ICurrentPlaylistService>().CurrentSongIndex;
+                this.ListView.SelectedIndex = currentSongIndex;
+                this.ListView.ScrollIntoView(this.ListView.SelectedItem);
+            }
+
+            base.OnNavigatedTo(parameter);
         }
 
         public void ShowPlaylists(List<MusicPlaylist> playlists)
@@ -87,6 +92,13 @@ namespace OutcoldSolutions.GoogleMusic.Views
             this.PlaylistsView.ItemsSource = playlists;
             this.PlaylistsPopup.VerticalOffset = this.ActualHeight - 400;
             this.PlaylistsPopup.IsOpen = true;
+        }
+
+        public void SelectCurrentSong()
+        {
+            int currentSongIndex = App.Container.Resolve<ICurrentPlaylistService>().CurrentSongIndex;
+            this.ListView.SelectedIndex = currentSongIndex;
+            this.ListView.ScrollIntoView(this.ListView.SelectedItem);
         }
 
         private void ListOnSelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -108,6 +120,11 @@ namespace OutcoldSolutions.GoogleMusic.Views
                 this.Presenter<CurrentPlaylistViewPresenter>().AddSelectedSongToPlaylist((MusicPlaylist)e.ClickedItem);
                 this.PlaylistsPopup.IsOpen = false;
             }
+        }
+
+        private void ListDoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+        {
+            this.Presenter<CurrentPlaylistViewPresenter>().BindingModel.PlaySelectedSong.Execute(null);
         }
     }
 }

@@ -108,13 +108,19 @@
     </Compile>
     <Compile Include="BindingModels\BindingModelBase.cs" />
     <Compile Include="BindingModels\CurrentPlaylistBindingModel.cs" />
+    <Compile Include="BindingModels\PlaylistResultBindingModel.cs" />
+    <Compile Include="BindingModels\PlaylistsGroupBindingModel.cs" />
     <Compile Include="BindingModels\MainViewBindingModel.cs" />
     <Compile Include="BindingModels\PlayerBindingModel.cs" />
     <Compile Include="BindingModels\PlaylistBindingModel.cs" />
     <Compile Include="BindingModels\PlaylistsViewBindingModel.cs" />
     <Compile Include="BindingModels\ProgressLoadingBindingModel.cs" />
+    <Compile Include="BindingModels\SearchBindingModel.cs" />
+    <Compile Include="BindingModels\SearchGroupBindingModel.cs" />
+    <Compile Include="BindingModels\SearchResultBindingModel.cs" />
     <Compile Include="BindingModels\Settings\AccountViewBindingModel.cs" />
     <Compile Include="BindingModels\Settings\SupportBindingModel.cs" />
+    <Compile Include="BindingModels\SongResultBindingModel.cs" />
     <Compile Include="BindingModels\SongsBindingModelBase.cs" />
     <Compile Include="BindingModels\StartViewBindingModel.cs" />
     <Compile Include="BindingModels\UserAuthentificationBindingModel.cs" />
@@ -133,6 +139,7 @@
     <Compile Include="IDispatcher.cs" />
     <Compile Include="INavigationService.cs" />
     <Compile Include="Models\PlaylistsRequest.cs" />
+    <Compile Include="Models\Search.cs" />
     <Compile Include="Models\TimeSpanEx.cs" />
     <Compile Include="Presenters\AuthentificationPresenter.cs" />
     <Compile Include="Presenters\CurrentPlaylistViewPresenter.cs" />
@@ -144,12 +151,15 @@
     <Compile Include="Presenters\PlaylistsViewPresenterBase.cs" />
     <Compile Include="Presenters\PresenterBase.cs" />
     <Compile Include="Presenters\ProgressLoadingPresenter.cs" />
+    <Compile Include="Presenters\SearchViewPresenter.cs" />
     <Compile Include="Presenters\Settings\AccountViewPresenter.cs" />
     <Compile Include="Presenters\StartViewPresenter.cs" />
     <Compile Include="Presenters\ViewPresenterBase.cs" />
     <Compile Include="Services\ICurrentContextCommands.cs" />
     <Compile Include="Services\ICurrentPlaylistService.cs" />
+    <Compile Include="Services\ISearchService.cs" />
     <Compile Include="Services\ISettingsCommands.cs" />
+    <Compile Include="Services\SearchService.cs" />
     <Compile Include="Services\SettingsCommands.cs" />
     <Compile Include="Services\SettingsService.cs" />
     <Compile Include="Services\UserDataStorage.cs" />
@@ -176,8 +186,14 @@
     <Compile Include="Views\PlaylistView.xaml.cs">
       <DependentUpon>PlaylistView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\WhatIsNewView.xaml.cs">
+      <DependentUpon>WhatIsNewView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ProgressLoadingView.xaml.cs">
       <DependentUpon>ProgressLoadingView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SearchView.xaml.cs">
+      <DependentUpon>SearchView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\AccountView.xaml.cs">
       <DependentUpon>AccountView.xaml</DependentUpon>
@@ -199,6 +215,9 @@
       <DependentUpon>StartView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ViewBase.cs" />
+    <Compile Include="WebServices\IMediaStreamDownloadService.cs" />
+    <Compile Include="WebServices\INetworkRandomAccessStream.cs" />
+    <Compile Include="WebServices\MediaStreamDownloadService.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -216,6 +235,7 @@
     <None Include="Package.StoreAssociation.xml" />
     <Content Include="Resources\in-app-purchase.xml" />
     <Content Include="Resources\logo460.png" />
+    <Content Include="Resources\twitter-logo.png" />
     <Content Include="Resources\uservoice.png" />
   </ItemGroup>
   <ItemGroup>
@@ -251,7 +271,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\WhatIsNewView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\ProgressLoadingView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SearchView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -287,9 +315,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\Debug\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\packages\Newtonsoft.Json.4.5.11\lib\winrt45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="OutcoldSolutions.Framework, Version=1.0.21209.40220, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

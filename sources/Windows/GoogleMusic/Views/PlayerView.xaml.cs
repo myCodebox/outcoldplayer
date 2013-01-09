@@ -4,6 +4,8 @@
 
 namespace OutcoldSolutions.GoogleMusic.Views
 {
+    using Windows.ApplicationModel.Search;
+    using Windows.UI.Core;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
 
@@ -25,6 +27,14 @@ namespace OutcoldSolutions.GoogleMusic.Views
         private void NavigateToCurrentPlaylist(object sender, RoutedEventArgs e)
         {
             App.Container.Resolve<INavigationService>().NavigateTo<ICurrentPlaylistView>();
+            Dispatcher.RunAsync(
+                CoreDispatcherPriority.Low,
+                () => App.Container.Resolve<ICurrentPlaylistView>().SelectCurrentSong());
+        }
+
+        private void ShowSearch(object sender, RoutedEventArgs e)
+        {
+            SearchPane.GetForCurrentView().Show();
         }
     }
 }
