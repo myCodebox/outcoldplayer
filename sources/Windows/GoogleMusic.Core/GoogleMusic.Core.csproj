@@ -154,7 +154,7 @@
     <Compile Include="WebServices\Models\SongRatingResp.cs" />
     <Compile Include="WebServices\Models\StatusResp.cs" />
     <Compile Include="WebServices\Models\SuccessResult.cs" />
-    <Compile Include="WebServices\PlainLinesBodyReader.cs" />
+    <Compile Include="WebServices\KeyValueListContent.cs" />
     <Compile Include="WebServices\PlaylistsWebService.cs" />
     <Compile Include="WebServices\RequestBodyWriter.cs" />
     <Compile Include="WebServices\SongWebService.cs" />

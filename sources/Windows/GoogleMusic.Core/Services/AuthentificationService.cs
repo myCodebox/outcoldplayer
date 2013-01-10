@@ -66,7 +66,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             {
                 this.logger.Debug("Logged in.");
 
-                string auth = loginResponse.GetAuth();
+                string auth = await loginResponse.GetAuth();
 
                 this.logger.Debug("Getting cookies.");
                 GoogleWebResponse cookieResponse = await this.clientLoginService.GetCookieAsync(auth);
@@ -100,7 +100,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             {
                 this.logger.Warning("Could not log in.");
 
-                var errorResponse = loginResponse.AsError();
+                var errorResponse = await loginResponse.AsErrorAsync();
                 string errorMessage = this.GetErrorMessage(errorResponse.Code);
 
                 this.logger.Warning("ErrorMessage: {0}, error code: {1}", errorMessage, errorResponse.Code);

@@ -6,6 +6,7 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
     using System.Collections.Generic;
     using System.Globalization;
     using System.Net;
+    using System.Net.Http;
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.Diagnostics;
@@ -18,10 +19,14 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
         private const string GetStatusUrl = "https://play.google.com/music/services/getstatus";
 
         private readonly ILogger logger;
+
+        private readonly ILogManager logManager;
+
         private readonly IGoogleMusicWebService googleMusicWebService;
 
         public ClientLoginService(ILogManager logManager, IGoogleMusicWebService googleMusicWebService)
         {
+            this.logManager = logManager;
             this.googleMusicWebService = googleMusicWebService;
             this.logger = logManager.CreateLogger("ClientLoginService");
         }
@@ -39,7 +44,12 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
                                             { "service", "sj" }
                                         };
 
-            return new GoogleLoginResponse(await this.googleMusicWebService.PostAsync(ClientLoginUrl, arguments: requestParameters));
+            HttpClient client = new HttpClient();
+            var response = await client.PostAsync(ClientLoginUrl, new FormUrlEncodedContent(requestParameters));
+
+            return new GoogleLoginResponse(new GoogleWebResponse(this.logManager, response));
+
+            // return new GoogleLoginResponse(await this.googleMusicWebService.PostAsync(ClientLoginUrl, arguments: requestParameters));
         }
 
         public async Task<GoogleWebResponse> GetCookieAsync(string auth = null)

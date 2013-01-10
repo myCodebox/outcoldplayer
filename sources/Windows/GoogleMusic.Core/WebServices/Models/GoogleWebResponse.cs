@@ -8,6 +8,7 @@ namespace OutcoldSolutions.GoogleMusic.WebServices.Models
     using System.IO;
     using System.Net;
     using System.Net.Http;
+    using System.Threading.Tasks;
 
     using Newtonsoft.Json;
 
@@ -33,7 +34,7 @@ namespace OutcoldSolutions.GoogleMusic.WebServices.Models
 
         public HttpResponseMessage HttpResponseMessage { get; private set; }
 
-        public IDictionary<string, string> GetAsPlainLines()
+        public async Task<IDictionary<string, string>> GetAsPlainLinesAsync()
         {
             if (this.HttpWebResponse != null)
             {
@@ -41,9 +42,9 @@ namespace OutcoldSolutions.GoogleMusic.WebServices.Models
                 {
                     using (var responseStream = this.HttpWebResponse.GetResponseStream())
                     {
-                        using (var reader = new PlainLinesBodyReader(responseStream))
+                        using (var reader = new KeyValueListContent(responseStream))
                         {
-                            return reader.GetValues();
+                            return await reader.GetValuesAsync();
                         }
                     }
                 }
@@ -62,9 +63,9 @@ namespace OutcoldSolutions.GoogleMusic.WebServices.Models
 
                     using (var responseStream = readAsStreamAsync.Result)
                     {
-                        using (var reader = new PlainLinesBodyReader(responseStream))
+                        using (var reader = new KeyValueListContent(responseStream))
                         {
-                            return reader.GetValues();
+                            return await reader.GetValuesAsync();
                         }
                     }
                 }

@@ -11,6 +11,7 @@
     <AssemblyName>OutcoldSolutions.GoogleMusic.Core.Suites</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetPlatformVersion>8.0</TargetPlatformVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -46,22 +47,152 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Net.Http.WebRequest" />
+    <Reference Include="System.Runtime" />
+    <Reference Include="System.Runtime.WindowsRuntime, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Windows\Microsoft.NET\Framework\v4.0.30319\System.Runtime.WindowsRuntime.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.WindowsRuntime.UI.Xaml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Windows\Microsoft.NET\Framework\v4.0.30319\System.Runtime.WindowsRuntime.UI.Xaml.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="Windows" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\Windows\GoogleMusic.Core\Diagnostics\ILogger.cs">
+      <Link>sources\Diagnostics\ILogger.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Diagnostics\ILogManager.cs">
+      <Link>sources\Diagnostics\ILogManager.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Diagnostics\Logger.cs">
+      <Link>sources\Diagnostics\Logger.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Diagnostics\LoggerEx.cs">
+      <Link>sources\Diagnostics\LoggerEx.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Diagnostics\LogLevel.cs">
+      <Link>sources\Diagnostics\LogLevel.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Diagnostics\LogManager.cs">
+      <Link>sources\Diagnostics\LogManager.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Diagnostics\LogWriter.cs">
+      <Link>sources\Diagnostics\LogWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Models\UserInfo.cs">
+      <Link>sources\Models\UserInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Models\UserSession.cs">
+      <Link>sources\Models\UserSession.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Services\IUserDataStorage.cs">
+      <Link>sources\Services\IUserDataStorage.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\WebServices\ClientLoginService.cs">
+      <Link>sources\WebServices\ClientLoginService.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\WebServices\GoogleMusicWebService.cs">
+      <Link>sources\WebServices\GoogleMusicWebService.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\WebServices\IClientLoginService.cs">
+      <Link>sources\WebServices\IClientLoginService.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\WebServices\ICookieManager.cs">
+      <Link>sources\WebServices\ICookieManager.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\WebServices\IGoogleMusicWebService.cs">
+      <Link>sources\WebServices\IGoogleMusicWebService.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\WebServices\IMediaStreamDownloadService.cs">
+      <Link>sources\WebServices\IMediaStreamDownloadService.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\WebServices\INetworkRandomAccessStream.cs">
+      <Link>sources\WebServices\INetworkRandomAccessStream.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\WebServices\ISongWebService.cs">
+      <Link>sources\WebServices\ISongWebService.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\WebServices\IUserSession.cs">
+      <Link>sources\WebServices\IUserSession.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\WebServices\KeyValueListContent.cs">
+      <Link>sources\WebServices\KeyValueListContent.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\WebServices\MediaStreamDownloadService.cs">
+      <Link>sources\WebServices\MediaStreamDownloadService.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\WebServices\Models\AddPlaylistResp.cs">
+      <Link>sources\WebServices\Models\AddPlaylistResp.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\WebServices\Models\AddSongResp.cs">
+      <Link>sources\WebServices\Models\AddSongResp.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\WebServices\Models\DeletePlaylistResp.cs">
+      <Link>sources\WebServices\Models\DeletePlaylistResp.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\WebServices\Models\DeleteSongResp.cs">
+      <Link>sources\WebServices\Models\DeleteSongResp.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\WebServices\Models\GoogleLoginResponse.cs">
+      <Link>sources\WebServices\Models\GoogleLoginResponse.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\WebServices\Models\GoogleMusicPlaylist.cs">
+      <Link>sources\WebServices\Models\GoogleMusicPlaylist.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\WebServices\Models\GoogleMusicPlaylists.cs">
+      <Link>sources\WebServices\Models\GoogleMusicPlaylists.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\WebServices\Models\GoogleMusicSong.cs">
+      <Link>sources\WebServices\Models\GoogleMusicSong.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\WebServices\Models\GoogleMusicSongUrl.cs">
+      <Link>sources\WebServices\Models\GoogleMusicSongUrl.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\WebServices\Models\GoogleWebResponse.cs">
+      <Link>sources\WebServices\Models\GoogleWebResponse.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\WebServices\Models\RatingResp.cs">
+      <Link>sources\WebServices\Models\RatingResp.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\WebServices\Models\SongIdResp.cs">
+      <Link>sources\WebServices\Models\SongIdResp.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\WebServices\Models\SongRatingResp.cs">
+      <Link>sources\WebServices\Models\SongRatingResp.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\WebServices\Models\StatusResp.cs">
+      <Link>sources\WebServices\Models\StatusResp.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\WebServices\Models\SuccessResult.cs">
+      <Link>sources\WebServices\Models\SuccessResult.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\WebServices\PlaylistsWebService.cs">
+      <Link>sources\WebServices\PlaylistsWebService.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\WebServices\RequestBodyWriter.cs">
+      <Link>sources\WebServices\RequestBodyWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\WebServices\SongWebService.cs">
+      <Link>sources\WebServices\SongWebService.cs</Link>
+    </Compile>
     <Compile Include="JsonTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SuitesBase.cs" />
     <Compile Include="WebServices\AuthorizationServiceSuites.cs" />
-    <Compile Include="WebServices\PlainLinesBodyReaderSuites.cs" />
+    <Compile Include="WebServices\KeyValueListContentSuites.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

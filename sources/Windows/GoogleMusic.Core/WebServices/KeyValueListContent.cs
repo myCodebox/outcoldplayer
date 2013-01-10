@@ -7,33 +7,34 @@ namespace OutcoldSolutions.GoogleMusic.WebServices
     using System.Collections.Generic;
     using System.IO;
     using System.Net;
+    using System.Threading.Tasks;
 
-    public class PlainLinesBodyReader : IDisposable
+    public class KeyValueListContent : IDisposable
     {
         private readonly StreamReader streamReader;
 
-        public PlainLinesBodyReader(Stream responseSteam)
+        public KeyValueListContent(Stream stream)
         {
-            if (responseSteam == null)
+            if (stream == null)
             {
-                throw new ArgumentNullException("responseSteam");
+                throw new ArgumentNullException("stream");
             }
 
-            this.streamReader = new StreamReader(responseSteam);
+            this.streamReader = new StreamReader(stream);
         }
 
-        ~PlainLinesBodyReader()
+        ~KeyValueListContent()
         {
             this.Dispose(disposing: false);
         }
 
-        public IDictionary<string, string> GetValues()
+        public async Task<IDictionary<string, string>> GetValuesAsync()
         {
             var responseValues = new Dictionary<string, string>();
 
             while (!this.streamReader.EndOfStream)
             {
-                var responseLine = this.streamReader.ReadLine();
+                var responseLine = await this.streamReader.ReadLineAsync();
                 var firstEqual = responseLine.IndexOf("=", StringComparison.OrdinalIgnoreCase);
                 if (firstEqual > 0)
                 {

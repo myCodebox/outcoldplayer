@@ -5,6 +5,8 @@ namespace OutcoldSolutions.GoogleMusic.WebServices.Models
 {
     using System;
     using System.Net;
+    using System.Net.Http;
+    using System.Threading.Tasks;
 
     public class GoogleLoginResponse
     {
@@ -32,11 +34,12 @@ namespace OutcoldSolutions.GoogleMusic.WebServices.Models
         {
             get
             {
-                return this.googleWebResponse.HttpWebResponse.StatusCode == HttpStatusCode.OK;
+                return (this.googleWebResponse.HttpWebResponse != null && this.googleWebResponse.HttpWebResponse.StatusCode == HttpStatusCode.OK)
+                    || (this.googleWebResponse.HttpResponseMessage != null && this.googleWebResponse.HttpResponseMessage.StatusCode == HttpStatusCode.OK);
             }
         }
 
-        public string GetAuth()
+        public async Task<string> GetAuth()
         {
             if (!this.IsOk)
             {
@@ -44,8 +47,8 @@ namespace OutcoldSolutions.GoogleMusic.WebServices.Models
             }
 
             string auth = null;
-
-            var body = this.googleWebResponse.GetAsPlainLines();
+                
+            var body = await this.googleWebResponse.GetAsPlainLinesAsync();
 
             foreach (var bodyLine in body)
             {
@@ -58,15 +61,16 @@ namespace OutcoldSolutions.GoogleMusic.WebServices.Models
             return auth;
         }
 
-        public ErrorResponse AsError()
+        public async Task<ErrorResponse> AsErrorAsync()
         {
             ErrorResponseCode code = ErrorResponseCode.Unknown;
             string captchaToken = null;
             string captchaUrl = null;
 
-            if (this.googleWebResponse.HttpWebResponse.StatusCode == HttpStatusCode.Forbidden)
+            if ((this.googleWebResponse.HttpWebResponse != null && this.googleWebResponse.HttpWebResponse.StatusCode == HttpStatusCode.Forbidden)
+                || (this.googleWebResponse.HttpResponseMessage != null && this.googleWebResponse.HttpResponseMessage.StatusCode == HttpStatusCode.Forbidden))
             {
-                var body = this.googleWebResponse.GetAsPlainLines();
+                var body = await this.googleWebResponse.GetAsPlainLinesAsync();
 
                 foreach (var bodyLine in body)
                 {
