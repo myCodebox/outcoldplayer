@@ -5,10 +5,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 {
     using System;
     using System.Collections.Generic;
-    using System.IO;
     using System.Linq;
-    using System.Net;
-    using System.Net.Http;
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
@@ -18,8 +15,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using OutcoldSolutions.GoogleMusic.Web;
 
     using Windows.Media;
-    using Windows.Storage;
-    using Windows.Storage.Streams;
     using Windows.System.Display;
     using Windows.UI.Popups;
     using Windows.UI.Xaml;
@@ -152,7 +147,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             {
                 if (this.BindingModel.IsPlaying)
                 {
-                    this.Logger.Info("Update progress bar to {0}.", this.mediaElement.Position.TotalSeconds);
                     this.BindingModel.CurrentPosition = this.mediaElement.Position.TotalSeconds;
                 }
             };
@@ -498,7 +492,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                                                     MediaControl.PreviousTrackPressed -= this.MediaControlOnPreviousTrackPressed;
                                                 }
 
-                                                this.recordPlayingTimer.Interval = TimeSpan.FromSeconds(song.Duration * 0.03);
+                                                this.recordPlayingTimer.Interval = TimeSpan.FromSeconds(song.Duration * 0.3);
                                                 this.recordPlayingTimer.Start();
                                             });
                                 }

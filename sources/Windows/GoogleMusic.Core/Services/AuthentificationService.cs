@@ -49,14 +49,16 @@ namespace OutcoldSolutions.GoogleMusic.Services
             }
 
             this.logger.Debug("Logging.");
-            GoogleLoginResponse loginResponse = await this.googleAccountWebService.LoginAsync(userInfo.Email, userInfo.Password);
+            GoogleLoginResponse loginResponse = await this.googleAccountWebService.Authenticate(userInfo.Email, userInfo.Password);
 
             if (loginResponse.Success)
             {
-                bool result = await this.googleMusicWebService.InitializeAsync(loginResponse.Auth);
-                
-                if (result)
+                var cookieCollection = await this.googleAccountWebService.GetCookiesAsync(this.googleMusicWebService.GetServiceUrl());
+
+                if (cookieCollection != null && cookieCollection.Count > 0)
                 {
+                    this.googleMusicWebService.Initialize(cookieCollection);
+
                     this.userDataStorage.SetUserSession(new UserSession());
 
                     return AuthentificationResult.SucceedResult();
@@ -76,14 +78,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 string errorMessage = this.GetErrorMessage(loginResponse.Error.Value);
 
                 this.logger.Warning("ErrorMessage: {0}, error code: {1}", errorMessage, loginResponse.Error.Value);
-                var authentificationResult = AuthentificationResult.FailedResult(errorMessage);
-
-                if (loginResponse.Error.Value == GoogleLoginResponse.ErrorResponseCode.CaptchaRequired)
-                {
-                    authentificationResult.Captcha = new Captcha(loginResponse.CaptchaToken, loginResponse.CaptchaUrl);
-                }
-
-                return authentificationResult;
+                return AuthentificationResult.FailedResult(errorMessage);
             }
         }
 
@@ -138,8 +133,6 @@ namespace OutcoldSolutions.GoogleMusic.Services
             public bool Succeed { get; private set; }
 
             public string ErrorMessage { get; set; }
-
-            public Captcha Captcha { get; set; }
 
             public static AuthentificationResult FailedResult(string errorMessage)
             {

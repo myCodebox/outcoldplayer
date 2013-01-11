@@ -10,13 +10,14 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
     public interface IGoogleMusicWebService
     {
-        Task<bool> InitializeAsync(string auth);
+        string GetServiceUrl();
+
+        void Initialize(CookieCollection cookieCollection);
 
         Task<HttpResponseMessage> GetAsync(string url);
 
         Task<HttpResponseMessage> PostAsync(
             string url,
-            IDictionary<HttpRequestHeader, string> headers = null,
             IDictionary<string, string> formData = null);
     }
 }

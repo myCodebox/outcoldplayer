@@ -3,12 +3,15 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Web
 {
+    using System.Net;
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.Web.Models;
 
     public interface IGoogleAccountWebService
     {
-        Task<GoogleLoginResponse> LoginAsync(string email, string password);
+        Task<GoogleLoginResponse> Authenticate(string email, string password);
+
+        Task<CookieCollection> GetCookiesAsync(string redirectUrl);
     }
 }

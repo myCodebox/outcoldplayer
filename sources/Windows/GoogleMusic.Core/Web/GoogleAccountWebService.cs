@@ -5,7 +5,9 @@ namespace OutcoldSolutions.GoogleMusic.Web
 {
     using System;
     using System.Collections.Generic;
+    using System.Net;
     using System.Net.Http;
+    using System.Text;
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.Diagnostics;
@@ -18,20 +20,27 @@ namespace OutcoldSolutions.GoogleMusic.Web
         private const string TokenAuthPath = "accounts/TokenAuth";
 
         private readonly ILogger logger;
-        
-        private readonly HttpClient client = new HttpClient()
-                                                 {
-                                                     BaseAddress = new Uri("https://www.google.com")
-                                                 };
+        private readonly HttpClientHandler httpClientHandler;
+        private readonly HttpClient httpClient;
+
+        private string token;
 
         public GoogleAccountWebService(ILogManager logManager)
         {
             this.logger = logManager.CreateLogger("GoogleAccountWebService");
 
-            this.client.DefaultRequestHeaders.UserAgent.ParseAdd("Music Manager (1, 0, 24, 7712 - Windows)");
+            this.httpClientHandler = new HttpClientHandler
+            {
+                CookieContainer = new CookieContainer(),
+                UseCookies = true
+            };
+
+            this.httpClient = new HttpClient(this.httpClientHandler) { BaseAddress = new Uri("https://www.google.com") };
+
+            this.httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Music Manager (1, 0, 24, 7712 - Windows)");
         }
 
-        public async Task<GoogleLoginResponse> LoginAsync(string email, string password)
+        public async Task<GoogleLoginResponse> Authenticate(string email, string password)
         {
             this.logger.Debug("Calling ClientLogin.");
 
@@ -44,7 +53,17 @@ namespace OutcoldSolutions.GoogleMusic.Web
                                             { "service", "sj" }
                                         };
 
-            var responseMessage = await this.client.PostAsync(ClientLoginPath, new FormUrlEncodedContent(requestParameters));
+            var responseMessage = await this.httpClient.SendAsync(
+                                                        new HttpRequestMessage(HttpMethod.Post, ClientLoginPath)
+                                                            {
+                                                                Content = new FormUrlEncodedContent(requestParameters)
+                                                            },
+                                                        HttpCompletionOption.ResponseContentRead);
+
+            if (this.logger.IsDebugEnabled)
+            {
+                await this.logger.LogResponseAsync(ClientLoginPath, responseMessage);
+            }
 
             if (!responseMessage.Content.Headers.ContentType.IsPlainText())
             {
@@ -60,59 +79,57 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
             var dictionary = await responseMessage.Content.ReadAsDictionaryAsync();
 
-            string auth = null;
-            string sid = null;
-            string lsid = null;
-            string captchaToken = null;
-            string captchaUrl = null;
-            GoogleLoginResponse.ErrorResponseCode error = GoogleLoginResponse.ErrorResponseCode.Unknown;
-
-            foreach (var line in dictionary)
+            if (responseMessage.IsSuccessStatusCode && !string.IsNullOrEmpty(dictionary["SID"]) && !string.IsNullOrEmpty(dictionary["LSID"]))
             {
+                var authResponseMessage = await this.httpClient.SendAsync(
+                                                        new HttpRequestMessage(HttpMethod.Post, IssueAuthTokenPath)
+                                                            {
+                                                                Content = new FormUrlEncodedContent(
+                                                                    new Dictionary<string, string>() { { "SID", dictionary["SID"] }, { "LSID", dictionary["LSID"] }, { "service", "gaia" } })
+                                                            },
+                                                        HttpCompletionOption.ResponseContentRead);
+
                 if (this.logger.IsDebugEnabled)
                 {
-                    this.logger.Debug("ClientLogin response line: Key='{0}', Value='{1}'.", line.Key, line.Value);
+                    await this.logger.LogResponseAsync(IssueAuthTokenPath, authResponseMessage);
                 }
 
-                if (string.Equals(line.Key, "Auth", StringComparison.OrdinalIgnoreCase))
-                {
-                    auth = line.Value;
-                }
-                else if (string.Equals(line.Key, "SID", StringComparison.OrdinalIgnoreCase))
-                {
-                    sid = line.Value;
-                }
-                else if (string.Equals(line.Key, "LSID", StringComparison.OrdinalIgnoreCase))
-                {
-                    lsid = line.Value;
-                }
-                else if (string.Equals(line.Key, "Error", StringComparison.OrdinalIgnoreCase))
-                {
-                    Enum.TryParse(line.Value, out error);
-                }
-                else if (string.Equals(line.Key, "CaptchaToken", StringComparison.OrdinalIgnoreCase))
-                {
-                    captchaToken = line.Value;
-                }
-                else if (string.Equals(line.Key, "CaptchaUrl", StringComparison.OrdinalIgnoreCase))
-                {
-                    captchaUrl = line.Value;
-                }
-            }
-
-            if (responseMessage.IsSuccessStatusCode && !string.IsNullOrEmpty(auth))
-            {
-                var authResponseMessage = await this.client.PostAsync(
-                                                    IssueAuthTokenPath,
-                                                    new FormUrlEncodedContent(
-                                                    new Dictionary<string, string>() { { "SID", sid }, { "LSID", lsid }, { "service", "gaia" } }));
                 if (authResponseMessage.IsSuccessStatusCode)
                 {
-                    return GoogleLoginResponse.SuccessResponse(await authResponseMessage.Content.ReadAsStringAsync());
+                    this.token = await authResponseMessage.Content.ReadAsStringAsync();
+
+                    return GoogleLoginResponse.SuccessResponse();
                 }
             }
 
-            return GoogleLoginResponse.ErrorResponse(error, captchaToken, captchaUrl);
+            GoogleLoginResponse.ErrorResponseCode error = GoogleLoginResponse.ErrorResponseCode.Unknown;
+
+            string dictionaryValue;
+            if (dictionary.TryGetValue("Error", out dictionaryValue))
+            {
+                Enum.TryParse(dictionary["Error"], out error);
+            }
+
+            return GoogleLoginResponse.ErrorResponse(error);
+        }
+
+        public async Task<CookieCollection> GetCookiesAsync(string redirectUrl)
+        {
+            var url = new StringBuilder(TokenAuthPath);
+            url.Append("?");
+            url.AppendFormat("auth={0}", WebUtility.UrlEncode(this.token));
+            url.AppendFormat("&service=sj");
+            url.AppendFormat("&continue={0}", WebUtility.UrlEncode(redirectUrl));
+            var requestUri = url.ToString();
+
+            var responseMessage = await this.httpClient.GetAsync(requestUri);
+
+            if (this.logger.IsDebugEnabled)
+            {
+                await this.logger.LogResponseAsync(TokenAuthPath, responseMessage);
+            }
+
+            return this.httpClientHandler.CookieContainer.GetCookies(new Uri(redirectUrl));
         }
     }
 }

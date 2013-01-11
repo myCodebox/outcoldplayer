@@ -8,7 +8,5 @@ namespace OutcoldSolutions.GoogleMusic.Views
     public interface IAuthentificationView : IView
     {
         event EventHandler Succeed;
-
-        void ShowCaptcha(string captchaUrl);
     }
 }

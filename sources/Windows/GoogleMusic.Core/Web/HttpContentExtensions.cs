@@ -23,25 +23,21 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
             var responseValues = new Dictionary<string, string>();
 
-            using (var stream = await @this.ReadAsStreamAsync())
+            using (var streamReader = new StringReader(await @this.ReadAsStringAsync()))
             {
-                using (var streamReader = new StreamReader(stream))
+                string responseLine = null;
+                while ((responseLine = await streamReader.ReadLineAsync()) != null)
                 {
-                    while (!streamReader.EndOfStream)
+                    var firstEqual = responseLine.IndexOf("=", StringComparison.OrdinalIgnoreCase);
+                    if (firstEqual > 0)
                     {
-                        var responseLine = await streamReader.ReadLineAsync();
-                        var firstEqual = responseLine.IndexOf("=", StringComparison.OrdinalIgnoreCase);
-                        if (firstEqual > 0)
-                        {
-                            string name = responseLine.Substring(0, firstEqual);
-                            string value = responseLine.Substring(
-                                firstEqual + 1, responseLine.Length - (firstEqual + 1));
-                            responseValues.Add(name, WebUtility.UrlDecode(value));
-                        }
-                        else
-                        {
-                            responseValues.Add(responseLine, string.Empty);
-                        }
+                        string name = responseLine.Substring(0, firstEqual);
+                        string value = responseLine.Substring(firstEqual + 1, responseLine.Length - (firstEqual + 1));
+                        responseValues.Add(name, WebUtility.UrlDecode(value));
+                    }
+                    else
+                    {
+                        responseValues.Add(responseLine, string.Empty);
                     }
                 }
             }

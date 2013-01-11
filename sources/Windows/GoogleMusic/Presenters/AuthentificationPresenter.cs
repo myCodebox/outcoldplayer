@@ -15,8 +15,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private readonly IUserDataStorage userDataStorage;
         private readonly IAuthentificationService authentificationService;
 
-        private string captchaToken = null;
-
         public AuthentificationPresenter(
             IDependencyResolverContainer container, 
             IAuthentificationView view,
@@ -46,7 +44,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             var email = this.BindingModel.Email;
             var password = this.BindingModel.Password;
             var rememberPassword = this.BindingModel.RememberAccount;
-            var token = this.captchaToken;
 
             // TODO: Implement captcha
             if (string.IsNullOrEmpty(email) 
@@ -58,7 +55,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             }
             else
             {
-                this.captchaToken = null;
                 var userInfo = new UserInfo(email, password) { RememberAccount = rememberPassword };
 
                 this.Logger.Debug("Trying to proceed authentification.");
@@ -82,12 +78,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 {
                     this.Logger.Debug("Authentification is not succeded. {0}.", result.ErrorMessage);
                     this.BindingModel.ErrorMessage = result.ErrorMessage;
-                    
-                    if (result.Captcha != null)
-                    {
-                        this.View.ShowCaptcha(result.Captcha.CaptchaUrl);
-                        this.captchaToken = result.Captcha.CaptchaToken;
-                    }
                 }
 
                 return result.Succeed;

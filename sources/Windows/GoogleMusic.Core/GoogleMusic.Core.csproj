@@ -135,6 +135,7 @@
     <Compile Include="Web\IMediaStreamDownloadService.cs" />
     <Compile Include="Web\INetworkRandomAccessStream.cs" />
     <Compile Include="Web\ISongWebService.cs" />
+    <Compile Include="Web\LoggerWebExtensions.cs" />
     <Compile Include="Web\MediaStreamDownloadService.cs" />
     <Compile Include="Web\MediaTypeHeaderValueExtensions.cs" />
     <Compile Include="Web\Models\AddPlaylistResp.cs" />

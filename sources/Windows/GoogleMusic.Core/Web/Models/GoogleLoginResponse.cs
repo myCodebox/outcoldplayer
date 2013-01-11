@@ -20,31 +20,22 @@ namespace OutcoldSolutions.GoogleMusic.Web.Models
 
         public bool Success { get; private set; }
 
-        public string Auth { get; private set; }
-
         public ErrorResponseCode? Error { get; private set; }
 
-        public string CaptchaToken { get; private set; }
-
-        public string CaptchaUrl { get; private set; }
-
-        public static GoogleLoginResponse SuccessResponse(string auth)
+        public static GoogleLoginResponse SuccessResponse()
         {
             return new GoogleLoginResponse()
                        {
-                           Success = true,
-                           Auth = auth
+                           Success = true
                        };
         }
 
-        public static GoogleLoginResponse ErrorResponse(ErrorResponseCode error, string captchToken = null, string captchaUrl = null)
+        public static GoogleLoginResponse ErrorResponse(ErrorResponseCode error)
         {
             return new GoogleLoginResponse()
                        {
                            Success = false,
-                           Error = error,
-                           CaptchaToken = captchToken,
-                           CaptchaUrl = captchaUrl
+                           Error = error
                        };
         }
     }

@@ -126,6 +126,9 @@
     <Compile Include="..\Windows\GoogleMusic.Core\Web\ISongWebService.cs">
       <Link>sources\Web\ISongWebService.cs</Link>
     </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Web\LoggerWebExtensions.cs">
+      <Link>sources\Web\LoggerWebExtensions.cs</Link>
+    </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Web\MediaStreamDownloadService.cs">
       <Link>sources\Web\MediaStreamDownloadService.cs</Link>
     </Compile>

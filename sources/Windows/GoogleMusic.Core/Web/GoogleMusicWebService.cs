@@ -6,11 +6,9 @@ namespace OutcoldSolutions.GoogleMusic.Web
     using System;
     using System.Collections.Generic;
     using System.Globalization;
-    using System.IO;
     using System.Linq;
     using System.Net;
     using System.Net.Http;
-    using System.Text;
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.Diagnostics;
@@ -35,11 +33,16 @@ namespace OutcoldSolutions.GoogleMusic.Web
             this.logger = logManager.CreateLogger("GoogleAccountWebService");
         }
 
-        public async Task<bool> InitializeAsync(string auth)
+        public string GetServiceUrl()
         {
-            if (auth == null)
+            return PlayMusicUrl;
+        }
+
+        public void Initialize(CookieCollection cookieCollection)
+        {
+            if (cookieCollection == null)
             {
-                throw new ArgumentNullException("auth");
+                throw new ArgumentNullException("cookieCollection");
             }
 
             this.httpClientHandler = new HttpClientHandler
@@ -53,27 +56,23 @@ namespace OutcoldSolutions.GoogleMusic.Web
                                       BaseAddress = new Uri(OriginUrl)
                                   };
 
-            var url = new StringBuilder("https://www.google.com/accounts/TokenAuth");
-            url.Append("?");
-            url.AppendFormat("auth={0}", WebUtility.UrlEncode(auth));
-            url.AppendFormat("&service=sj");
-            url.AppendFormat("&continue={0}", WebUtility.UrlEncode(PlayMusicUrl));
-            var requestUri = url.ToString();
-
-            var getCookieResponse = await this.httpClient.GetAsync(requestUri);
-            await this.LogResponseAsync(requestUri, getCookieResponse);
-
-            return this.httpClientHandler.CookieContainer.Count > 0;
+            this.httpClientHandler.CookieContainer.Add(new Uri(this.GetServiceUrl()), cookieCollection);
         }
 
         public async Task<HttpResponseMessage> GetAsync(string url)
         {
-            this.logger.Debug("GetAsync: {0}.", url);
+            if (this.logger.IsDebugEnabled)
+            {
+                this.logger.LogRequest(HttpMethod.Get, url, this.httpClientHandler.CookieContainer.GetCookies(new Uri(PlayMusicUrl)));
+            }
 
             var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, url);
-            var responseMessage = await this.httpClient.SendAsync(httpRequestMessage);
+            var responseMessage = await this.httpClient.SendAsync(httpRequestMessage, HttpCompletionOption.ResponseContentRead);
 
-            await this.LogResponseAsync(url, responseMessage);
+            if (this.logger.IsDebugEnabled)
+            {
+                await this.logger.LogResponseAsync(url, responseMessage);
+            }
 
             this.VerifyAuthorization(responseMessage);
 
@@ -82,45 +81,13 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
         public async Task<HttpResponseMessage> PostAsync(
             string url, 
-            IDictionary<HttpRequestHeader, string> headers = null,
             IDictionary<string, string> formData = null)
         {
             var cookieCollection = this.httpClientHandler.CookieContainer.GetCookies(new Uri(PlayMusicUrl));
 
             if (this.logger.IsDebugEnabled)
             {
-                this.logger.Debug("-----------------------");
-
-                this.logger.Debug("PostAsync: {0}.", url);
-
-                if (headers != null)
-                {
-                    this.logger.Debug("    HEADERS: ");
-
-                    foreach (var header in headers)
-                    {
-                        this.logger.Debug("        {0}={1}", header.Key, header.Value);
-                    }
-                }
-
-                if (formData != null)
-                {
-                    this.logger.Debug("    FORMDATA: ");
-
-                    foreach (var argument in formData)
-                    {
-                        this.logger.Debug("        {0}={1}", argument.Key, argument.Value);
-                    }
-                }
-
-                this.logger.Debug("    COOKIES({0}):", cookieCollection.Count);
-
-                foreach (Cookie cookieLog in cookieCollection)
-                {
-                    this.logger.Debug("        {0}", cookieLog.ToString());
-                }
-
-                this.logger.Debug("-----------------------");
+                this.logger.LogRequest(HttpMethod.Post, url, cookieCollection, formData);
             }
 
             var cookie = cookieCollection.Cast<Cookie>().FirstOrDefault(x => string.Equals(x.Name, "xt", StringComparison.OrdinalIgnoreCase));
@@ -146,14 +113,6 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
             var requestMessage = new HttpRequestMessage(HttpMethod.Post, url);
 
-            if (headers != null)
-            {
-                foreach (var header in headers)
-                {
-                    requestMessage.Headers.Add(header.Key.ToString(), header.Value);
-                }
-            }
-
             if (formData != null)
             {
                 requestMessage.Content = new FormUrlEncodedContent(formData);
@@ -161,65 +120,14 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
             var responseMessage = await this.httpClient.SendAsync(requestMessage, HttpCompletionOption.ResponseContentRead);
 
-            await this.LogResponseAsync(url, responseMessage);
+            if (this.logger.IsDebugEnabled)
+            {
+                await this.logger.LogResponseAsync(url, responseMessage);
+            }
 
             this.VerifyAuthorization(responseMessage);
 
             return responseMessage;
-        }
-
-        private async Task LogResponseAsync(string url, HttpResponseMessage httpResponseMessage)
-        {
-            if (this.logger.IsDebugEnabled)
-            {
-                this.logger.Debug("-----------------------");
-                this.logger.Debug("Request '{0}' completed, Status code: {1}.", url, httpResponseMessage.StatusCode);
-
-                this.logger.Debug("    RESPONSE HEADERS: ");
-
-                foreach (var httpResponseHeader in httpResponseMessage.Headers)
-                {
-                    this.logger.Debug("        {0}={1}", httpResponseHeader.Key, string.Join("&&&", httpResponseHeader.Value));
-                }
-
-                if (httpResponseMessage.Content != null)
-                {
-                    this.logger.Debug("    RESPONSE CONTENT HEADERS: ");
-
-                    foreach (var header in httpResponseMessage.Content.Headers)
-                    {
-                        this.logger.Debug("        {0}={1}", header.Key, string.Join("&&&", header.Value));
-                    }
-
-                    if (httpResponseMessage.Content.Headers.ContentType.IsPlainText()
-                        || httpResponseMessage.Content.Headers.ContentType.IsHtmlText())
-                    {
-                        using (var stream = await httpResponseMessage.Content.ReadAsStreamAsync())
-                        {
-                            using (StreamReader reader = new StreamReader(stream))
-                            {
-                                char[] buffer = new char[4096];
-                                var read = await reader.ReadAsync(buffer, 0, buffer.Length);
-
-                                if (read > 0)
-                                {
-                                    var bodyData = new StringBuilder();
-                                    bodyData.Append(buffer, 0, read);
-
-                                    this.logger.Debug("    RESPONSE CONTENT:{0}{1}", Environment.NewLine, bodyData);
-                                    this.logger.Debug("    RESPONSE ENDCONTENT.");
-                                }
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    this.logger.Debug("CONTENT is null.");
-                }
-
-                this.logger.Debug("-----------------------");
-            }
         }
 
         private void VerifyAuthorization(HttpResponseMessage responseMessage)

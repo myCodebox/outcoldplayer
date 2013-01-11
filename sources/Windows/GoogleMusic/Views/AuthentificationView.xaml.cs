@@ -21,10 +21,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
         public event EventHandler Succeed;
 
-        public void ShowCaptcha(string captchaUrl)
-        {
-        }
-
         private void SignInClick(object sender, RoutedEventArgs e)
         {
             if (this.SignInButton.IsEnabled)
