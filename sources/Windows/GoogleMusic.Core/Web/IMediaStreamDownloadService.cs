@@ -1,18 +1,12 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // Outcold Solutions (http://outcoldman.com)
 // --------------------------------------------------------------------------------------------------------------------
-
-namespace OutcoldSolutions.GoogleMusic.Diagnostics
+namespace OutcoldSolutions.GoogleMusic.Web
 {
-    using System;
-    using System.Collections.Concurrent;
+    using System.Threading.Tasks;
 
-    public interface ILogManager
+    public interface IMediaStreamDownloadService
     {
-        ConcurrentDictionary<Type, ILogWriter> Writers { get; }
-
-        LogLevel LogLevel { get; set; }
-
-        ILogger CreateLogger(string context);
+        Task<INetworkRandomAccessStream> GetStreamAsync(string url);
     }
 }

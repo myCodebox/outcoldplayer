@@ -9,7 +9,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
-    using OutcoldSolutions.GoogleMusic.WebServices;
+    using OutcoldSolutions.GoogleMusic.Web;
 
     using Windows.System;
     using Windows.UI.Popups;
@@ -21,7 +21,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private const string CountOfStartsBeforeReview = "CountOfStartsBeforeReview";
 
         private readonly ISongsService songsService;
-        private readonly IClientLoginService loginService;
+        private readonly IPlaylistsWebService playlistsWebService;
         private readonly INavigationService navigationService;
 
         private readonly ISearchService searchService;
@@ -32,17 +32,17 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             IDependencyResolverContainer container, 
             IView view,
             ISongsService songsService,
-            IClientLoginService loginService,
             INavigationService navigationService,
             ISearchService searchService,
-            ISettingsService settingsService)
+            ISettingsService settingsService,
+            IPlaylistsWebService playlistsWebService)
             : base(container, view)
         {
             this.songsService = songsService;
-            this.loginService = loginService;
             this.navigationService = navigationService;
             this.searchService = searchService;
             this.settingsService = settingsService;
+            this.playlistsWebService = playlistsWebService;
             this.BindingModel = new ProgressLoadingBindingModel();
         }
 
@@ -61,7 +61,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.BindingModel.Message = "Initializing...";
             this.BindingModel.IsFailed = false;
 
-            this.loginService.GetStatusAsync().ContinueWith(
+            this.playlistsWebService.GetStatusAsync().ContinueWith(
                 tStatus =>
                 {
                     if (tStatus.IsCompleted)

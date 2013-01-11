@@ -1,18 +1,16 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // Outcold Solutions (http://outcoldman.com)
 // --------------------------------------------------------------------------------------------------------------------
-
-namespace OutcoldSolutions.GoogleMusic.Diagnostics
+namespace OutcoldSolutions.GoogleMusic.Web.Models
 {
-    using System;
-    using System.Collections.Concurrent;
-
-    public interface ILogManager
+    public class StatusResp
     {
-        ConcurrentDictionary<Type, ILogWriter> Writers { get; }
+        public int AvailableTracks { get; set; }
 
-        LogLevel LogLevel { get; set; }
+        public int TotalTracks { get; set; }
 
-        ILogger CreateLogger(string context);
+        public string Success { get; set; }
+
+        public string ReloadXsrf { get; set; }
     }
 }

@@ -133,7 +133,6 @@
     <Compile Include="Converters\StringFormatConverter.cs" />
     <Compile Include="Converters\ValueToVisibilityConverter.cs" />
     <Compile Include="DelegateCommand.cs" />
-    <Compile Include="Diagnostics\FileLogWriter.cs" />
     <Compile Include="DispatcherContainer.cs" />
     <Compile Include="IDispatcher.cs" />
     <Compile Include="INavigationService.cs" />
@@ -222,6 +221,7 @@
     <None Include="GoogleMusic_StoreKey.pfx" />
     <None Include="GoogleMusic_TemporaryKey.pfx" />
     <None Include="packages.config" />
+    <PRIResource Include="CoreResources.resw" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\Logo.png" />

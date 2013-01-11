@@ -4,28 +4,15 @@
 namespace OutcoldSolutions.GoogleMusic.Models
 {
     using System;
-    using System.Net;
 
     public class UserSession
     {
-        public UserSession(string auth)
+        public UserSession()
         {
             this.SessionId = this.GenerateSessionId();
-            this.Auth = auth;
         }
-
-        public UserSession(string auth, string sessionId, Cookie[] cookies)
-        {
-            this.SessionId = sessionId;
-            this.Cookies = cookies;
-            this.Auth = auth;
-        }
-
-        public string Auth { get; private set; }
 
         public string SessionId { get; private set; }
-
-        public Cookie[] Cookies { get; set; }
 
         private string GenerateSessionId()
         {

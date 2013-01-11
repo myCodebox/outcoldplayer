@@ -4,6 +4,8 @@
 
 namespace OutcoldSolutions.GoogleMusic.Diagnostics
 {
+    using System.Diagnostics;
+
     public class Logger : ILogger
     {
         private readonly string context;
@@ -17,22 +19,22 @@ namespace OutcoldSolutions.GoogleMusic.Diagnostics
 
         public bool IsInfoEnabled
         {
-            get { return this.logManager.IsInfoEnabled; }
+            get { return Debugger.IsAttached || this.logManager.IsInfoEnabled; }
         }
 
         public bool IsDebugEnabled
         {
-            get { return this.logManager.IsDebugEnabled; }
+            get { return Debugger.IsAttached || this.logManager.IsDebugEnabled; }
         }
 
         public bool IsWarningEnabled
         {
-            get { return this.logManager.IsWarningEnabled; }
+            get { return Debugger.IsAttached || this.logManager.IsWarningEnabled; }
         }
 
         public bool IsErrorEnabled
         {
-            get { return this.logManager.IsErrorEnabled; }
+            get { return Debugger.IsAttached || this.logManager.IsErrorEnabled; }
         }
 
         public void Info(string message, params object[] parameters)

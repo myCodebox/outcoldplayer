@@ -1,18 +1,15 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // Outcold Solutions (http://outcoldman.com)
 // --------------------------------------------------------------------------------------------------------------------
-
-namespace OutcoldSolutions.GoogleMusic.Diagnostics
+namespace OutcoldSolutions.GoogleMusic.Web
 {
     using System;
-    using System.Collections.Concurrent;
+    using System.Net;
 
-    public interface ILogManager
+    public interface ICookieManager
     {
-        ConcurrentDictionary<Type, ILogWriter> Writers { get; }
+        CookieContainer GetCookies();
 
-        LogLevel LogLevel { get; set; }
-
-        ILogger CreateLogger(string context);
+        void SaveCookies(Uri uri, CookieCollection cookies);
     }
 }

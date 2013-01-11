@@ -5,7 +5,7 @@ namespace OutcoldSolutions.GoogleMusic.Models
 {
     using System;
 
-    using OutcoldSolutions.GoogleMusic.WebServices.Models;
+    using OutcoldSolutions.GoogleMusic.Web.Models;
 
     public class Song : BindingModelBase
     {

@@ -1,30 +1,12 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // Outcold Solutions (http://outcoldman.com)
 // --------------------------------------------------------------------------------------------------------------------
-
 namespace OutcoldSolutions.GoogleMusic.Diagnostics
 {
-    using System;
-
-    [Flags]
-    public enum LogLevel
+    public interface ILogWriter
     {
-        None = 0,
+        bool IsEnabled { get; }
 
-        OnlyError = 1,
-
-        Error = OnlyError,
-
-        OnlyWarning = 2,
-
-        Warning = OnlyWarning | Error,
-
-        OnlyDebug = 3,
-
-        Debug = OnlyDebug | Warning,
-
-        OnlyInfo = 4,
-
-        Info = OnlyInfo | Debug,
+        void Log(string level, string context, string message, params object[] parameters);
     }
 }

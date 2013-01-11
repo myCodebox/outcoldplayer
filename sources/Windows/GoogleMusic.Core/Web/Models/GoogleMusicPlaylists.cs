@@ -2,17 +2,14 @@
 // Outcold Solutions (http://outcoldman.com)
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace OutcoldSolutions.GoogleMusic.Diagnostics
+namespace OutcoldSolutions.GoogleMusic.Web.Models
 {
-    using System;
-    using System.Collections.Concurrent;
+    using System.Collections.Generic;
 
-    public interface ILogManager
+    public class GoogleMusicPlaylists
     {
-        ConcurrentDictionary<Type, ILogWriter> Writers { get; }
+        public List<GoogleMusicPlaylist> Playlists { get; set; }
 
-        LogLevel LogLevel { get; set; }
-
-        ILogger CreateLogger(string context);
+        public List<GoogleMusicPlaylist> MagicPlaylists { get; set; }
     }
 }

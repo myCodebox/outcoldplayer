@@ -53,7 +53,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 || string.IsNullOrEmpty(password))
             {
                 this.Logger.Warning("Cannot login. Email or password is not provided.");
-                this.BindingModel.ErrorMessage = CoreResources.Login_UserNameAndPassword;
+                this.BindingModel.ErrorMessage = "Please provide email and password first.";// CoreResources.Login_UserNameAndPassword;
                 return false;
             }
             else

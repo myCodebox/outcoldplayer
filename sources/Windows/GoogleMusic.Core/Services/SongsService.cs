@@ -12,8 +12,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
     using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Models;
-    using OutcoldSolutions.GoogleMusic.WebServices;
-    using OutcoldSolutions.GoogleMusic.WebServices.Models;
+    using OutcoldSolutions.GoogleMusic.Web;
+    using OutcoldSolutions.GoogleMusic.Web.Models;
 
     public class SongsService : ISongsService
     {

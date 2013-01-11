@@ -5,6 +5,7 @@
 namespace OutcoldSolutions.GoogleMusic
 {
     using System;
+    using System.Diagnostics;
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.Diagnostics;
@@ -13,7 +14,7 @@ namespace OutcoldSolutions.GoogleMusic
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
     using OutcoldSolutions.GoogleMusic.Views.Settings;
-    using OutcoldSolutions.GoogleMusic.WebServices;
+    using OutcoldSolutions.GoogleMusic.Web;
 
     using Windows.ApplicationModel;
     using Windows.ApplicationModel.Activation;
@@ -108,7 +109,7 @@ namespace OutcoldSolutions.GoogleMusic
                     registration.Register<AccountViewPresenter>();
 
                     // Services
-                    registration.Register<IClientLoginService>().As<ClientLoginService>();
+                    registration.Register<IGoogleAccountWebService>().As<GoogleAccountWebService>();
                     registration.Register<IGoogleMusicWebService>().AsSingleton<GoogleMusicWebService>();
                     registration.Register<IUserDataStorage>().AsSingleton<UserDataStorage>();
                     registration.Register<IAuthentificationService>().As<AuthentificationService>();
@@ -124,8 +125,7 @@ namespace OutcoldSolutions.GoogleMusic
                 }
 
                 this.logManager = Container.Resolve<ILogManager>();
-                this.logManager.AddWriter(new FileLogWriter());
-
+                
                 this.settingsService = Container.Resolve<ISettingsService>();
 
                 this.UpdateLogLevel();
@@ -159,7 +159,26 @@ namespace OutcoldSolutions.GoogleMusic
 
         private void UpdateLogLevel()
         {
-            this.logManager.LogLevel = this.settingsService.GetValue("IsLoggingOn", defaultValue: false) ? LogLevel.Error : LogLevel.None;
+            var isLoggingOn = this.settingsService.GetValue("IsLoggingOn", defaultValue: false);
+            if (isLoggingOn)
+            {
+                this.logManager.Writers.AddOrUpdate(typeof(FileLogWriter), type => new FileLogWriter(), (type, writer) => writer);
+            }
+            else
+            {
+                ILogWriter fileLogWriter;
+                if (this.logManager.Writers.TryRemove(typeof(FileLogWriter), out fileLogWriter))
+                {
+                    ((FileLogWriter)fileLogWriter).Dispose();
+                }
+            }
+
+            if (Debugger.IsAttached)
+            {
+                this.logManager.Writers.AddOrUpdate(typeof(DebugLogWriter), type => new DebugLogWriter(), (type, writer) => writer);
+            }
+
+            this.logManager.LogLevel = this.logManager.Writers.Count > 0 ? LogLevel.Info : LogLevel.None;
         }
 
         /// <summary>

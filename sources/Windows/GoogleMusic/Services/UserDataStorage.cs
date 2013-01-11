@@ -120,45 +120,12 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         public void SetUserSession(UserSession session)
         {
-            this.logger.Debug("SetUserSession");
             this.userSession = session;
-
-            var localSettings = ApplicationData.Current.LocalSettings;
-            var applicationDataContainer = localSettings.CreateContainer("UserSession", ApplicationDataCreateDisposition.Always);
-
-            applicationDataContainer.Values["Cookies"] = JsonConvert.SerializeObject(session.Cookies);
-            applicationDataContainer.Values["SessionId"] = session.SessionId;
-            applicationDataContainer.Values["Auth"] = session.Auth;
         }
 
         public UserSession GetUserSession()
         {
-            var session = this.userSession;
-            this.logger.Debug("GetUserSession. User session is not null: {0}.", session != null);
-
-            if (session == null)
-            {
-                var localSettings = ApplicationData.Current.LocalSettings;
-                if (localSettings.Containers.ContainsKey("UserSession"))
-                {
-                    var applicationDataContainer = localSettings.Containers["UserSession"];
-
-                    try
-                    {
-                        this.userSession = session = new UserSession(
-                                (string)applicationDataContainer.Values["Auth"],
-                                (string)applicationDataContainer.Values["SessionId"],
-                                JsonConvert.DeserializeObject<Cookie[]>((string)applicationDataContainer.Values["Cookies"]));
-                    }
-                    catch (Exception e)
-                    {
-                        this.logger.Debug("Cannot get session from local storage");
-                        this.logger.LogDebugException(e);
-                    }
-                }
-            }
-
-            return session;
+            return this.userSession;
         }
 
         public void ClearSession()

@@ -15,7 +15,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
-    using OutcoldSolutions.GoogleMusic.WebServices;
+    using OutcoldSolutions.GoogleMusic.Web;
 
     using Windows.Media;
     using Windows.Storage;
@@ -498,7 +498,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                                                     MediaControl.PreviousTrackPressed -= this.MediaControlOnPreviousTrackPressed;
                                                 }
 
-                                                this.recordPlayingTimer.Interval = TimeSpan.FromSeconds(song.Duration * 0.3);
+                                                this.recordPlayingTimer.Interval = TimeSpan.FromSeconds(song.Duration * 0.03);
                                                 this.recordPlayingTimer.Start();
                                             });
                                 }

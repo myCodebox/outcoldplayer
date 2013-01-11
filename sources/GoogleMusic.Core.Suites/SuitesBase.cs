@@ -6,9 +6,11 @@ namespace OutcoldSolutions.GoogleMusic.Suites
 {
     using NUnit.Framework;
 
+    using OutcoldSolutions.GoogleMusic.Diagnostics;
+
     public abstract class SuitesBase 
     {
-        private IDependencyResolverContainer container;
+        private DependencyResolverContainer container;
 
         protected IDependencyResolverContainer Container
         {
@@ -16,15 +18,18 @@ namespace OutcoldSolutions.GoogleMusic.Suites
         }
 
         [SetUp]
-        public virtual void SetFixture(DependencyResolverContainer fixtureContainer)
+        public virtual void SetFixture()
         {
-            fixtureContainer.Behavior.AutoRegistration = true;
+            this.container = new DependencyResolverContainer();
 
-            this.container = fixtureContainer;
             using (var registration = this.container.Registration())
             {
-                // registration.Register<ILogManager>().As<LogManager>();
+                 registration.Register<ILogManager>().AsSingleton<LogManager>();
             }
+
+            var logManager = this.container.Resolve<ILogManager>();
+            logManager.LogLevel = LogLevel.Info;
+            logManager.Writers.AddOrUpdate(typeof(DebugLogWriter), type => new DebugLogWriter(), (type, writer) => writer);
         }
     }
 }

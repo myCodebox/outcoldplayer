@@ -100,18 +100,15 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="BindingModelBase.cs" />
-    <Compile Include="CoreResources.Designer.cs">
-      <DependentUpon>CoreResources.resx</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-    </Compile>
+    <Compile Include="Diagnostics\DebugLogWriter.cs" />
+    <Compile Include="Diagnostics\FileLogWriter.cs" />
     <Compile Include="Diagnostics\ILogger.cs" />
     <Compile Include="Diagnostics\ILogManager.cs" />
     <Compile Include="Diagnostics\Logger.cs" />
     <Compile Include="Diagnostics\LoggerEx.cs" />
     <Compile Include="Diagnostics\LogLevel.cs" />
     <Compile Include="Diagnostics\LogManager.cs" />
-    <Compile Include="Diagnostics\LogWriter.cs" />
+    <Compile Include="Diagnostics\ILogWriter.cs" />
     <Compile Include="Models\Album.cs" />
     <Compile Include="Models\Artist.cs" />
     <Compile Include="Models\Genre.cs" />
@@ -129,35 +126,34 @@
     <Compile Include="Services\IUserDataStorage.cs" />
     <Compile Include="Services\SettingsValueChangedEventArgs.cs" />
     <Compile Include="Services\SongsService.cs" />
-    <Compile Include="WebServices\ClientLoginService.cs" />
-    <Compile Include="WebServices\GoogleMusicWebService.cs" />
-    <Compile Include="WebServices\IClientLoginService.cs" />
-    <Compile Include="WebServices\ICookieManager.cs" />
-    <Compile Include="WebServices\IGoogleMusicWebService.cs" />
-    <Compile Include="WebServices\IMediaStreamDownloadService.cs" />
-    <Compile Include="WebServices\INetworkRandomAccessStream.cs" />
-    <Compile Include="WebServices\ISongWebService.cs" />
-    <Compile Include="WebServices\IUserSession.cs" />
-    <Compile Include="WebServices\MediaStreamDownloadService.cs" />
-    <Compile Include="WebServices\Models\AddPlaylistResp.cs" />
-    <Compile Include="WebServices\Models\AddSongResp.cs" />
-    <Compile Include="WebServices\Models\DeletePlaylistResp.cs" />
-    <Compile Include="WebServices\Models\DeleteSongResp.cs" />
-    <Compile Include="WebServices\Models\GoogleLoginResponse.cs" />
-    <Compile Include="WebServices\Models\GoogleMusicPlaylist.cs" />
-    <Compile Include="WebServices\Models\GoogleMusicPlaylists.cs" />
-    <Compile Include="WebServices\Models\GoogleMusicSong.cs" />
-    <Compile Include="WebServices\Models\GoogleMusicSongUrl.cs" />
-    <Compile Include="WebServices\Models\GoogleWebResponse.cs" />
-    <Compile Include="WebServices\Models\RatingResp.cs" />
-    <Compile Include="WebServices\Models\SongIdResp.cs" />
-    <Compile Include="WebServices\Models\SongRatingResp.cs" />
-    <Compile Include="WebServices\Models\StatusResp.cs" />
-    <Compile Include="WebServices\Models\SuccessResult.cs" />
-    <Compile Include="WebServices\KeyValueListContent.cs" />
-    <Compile Include="WebServices\PlaylistsWebService.cs" />
-    <Compile Include="WebServices\RequestBodyWriter.cs" />
-    <Compile Include="WebServices\SongWebService.cs" />
+    <Compile Include="Web\GoogleAccountWebService.cs" />
+    <Compile Include="Web\GoogleMusicWebService.cs" />
+    <Compile Include="Web\HttpContentExtensions.cs" />
+    <Compile Include="Web\IGoogleAccountWebService.cs" />
+    <Compile Include="Web\ICookieManager.cs" />
+    <Compile Include="Web\IGoogleMusicWebService.cs" />
+    <Compile Include="Web\IMediaStreamDownloadService.cs" />
+    <Compile Include="Web\INetworkRandomAccessStream.cs" />
+    <Compile Include="Web\ISongWebService.cs" />
+    <Compile Include="Web\MediaStreamDownloadService.cs" />
+    <Compile Include="Web\MediaTypeHeaderValueExtensions.cs" />
+    <Compile Include="Web\Models\AddPlaylistResp.cs" />
+    <Compile Include="Web\Models\AddSongResp.cs" />
+    <Compile Include="Web\Models\DeletePlaylistResp.cs" />
+    <Compile Include="Web\Models\DeleteSongResp.cs" />
+    <Compile Include="Web\Models\GoogleLoginResponse.cs" />
+    <Compile Include="Web\Models\GoogleMusicPlaylist.cs" />
+    <Compile Include="Web\Models\GoogleMusicPlaylists.cs" />
+    <Compile Include="Web\Models\GoogleMusicSong.cs" />
+    <Compile Include="Web\Models\GoogleMusicSongUrl.cs" />
+    <Compile Include="Web\Models\GoogleWebResponse.cs" />
+    <Compile Include="Web\Models\RatingResp.cs" />
+    <Compile Include="Web\Models\SongIdResp.cs" />
+    <Compile Include="Web\Models\SongRatingResp.cs" />
+    <Compile Include="Web\Models\StatusResp.cs" />
+    <Compile Include="Web\Models\SuccessResult.cs" />
+    <Compile Include="Web\PlaylistsWebService.cs" />
+    <Compile Include="Web\SongWebService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">
@@ -169,12 +165,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <PRIResource Include="CoreResources.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>CoreResources.Designer.cs</LastGenOutput>
-    </PRIResource>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '11.0' ">
     <VisualStudioVersion>11.0</VisualStudioVersion>

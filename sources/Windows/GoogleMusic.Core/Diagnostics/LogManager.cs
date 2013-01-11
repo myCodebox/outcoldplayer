@@ -4,27 +4,19 @@
 
 namespace OutcoldSolutions.GoogleMusic.Diagnostics
 {
-    using System.Collections.Generic;
+    using System;
+    using System.Collections.Concurrent;
 
     public class LogManager : ILogManager
     {
-        private readonly List<ILogWriter> writers = new List<ILogWriter>();
-
-        private LogLevel logLevel;
-
-        public LogLevel LogLevel
+        public LogManager()
         {
-            get
-            {
-                return this.logLevel;
-            }
-
-            set
-            {
-                this.logLevel = value;
-                this.UpdateLoggers();
-            }
+            this.Writers = new ConcurrentDictionary<Type, ILogWriter>();
         }
+
+        public ConcurrentDictionary<Type, ILogWriter> Writers { get; set; }
+
+        public LogLevel LogLevel { get; set; }
 
         internal bool IsInfoEnabled
         {
@@ -49,12 +41,6 @@ namespace OutcoldSolutions.GoogleMusic.Diagnostics
         public ILogger CreateLogger(string context)
         {
             return new Logger(context, this);
-        }
-
-        public void AddWriter(ILogWriter writer)
-        {
-            this.writers.Add(writer);
-            writer.IsEnabled = LogLevel != LogLevel.None;
         }
 
         internal void Info(string context, string message, params object[] parameters)
@@ -89,24 +75,21 @@ namespace OutcoldSolutions.GoogleMusic.Diagnostics
             }
         }
 
-        private void UpdateLoggers()
-        {
-            foreach (var logWriter in this.writers)
-            {
-                logWriter.IsEnabled = LogLevel != LogLevel.None;
-            }
-        }
-
         private void Log(string level, string context, string message, params object[] parameters)
         {
-            foreach (var logWriter in this.writers)
+            var enumerator = this.Writers.GetEnumerator();
+
+            while (enumerator.MoveNext())
             {
-                try
+                if (enumerator.Current.Value.IsEnabled)
                 {
-                    logWriter.Log(level, context, message, parameters);
-                }
-                catch
-                {
+                    try
+                    {
+                        enumerator.Current.Value.Log(level, context, message, parameters);
+                    }
+                    catch
+                    {
+                    }
                 }
             }
         }

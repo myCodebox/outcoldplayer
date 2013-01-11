@@ -4,49 +4,38 @@
 namespace OutcoldSolutions.GoogleMusic.Services
 {
     using System;
-    using System.Net;
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Models;
-    using OutcoldSolutions.GoogleMusic.WebServices;
-    using OutcoldSolutions.GoogleMusic.WebServices.Models;
+    using OutcoldSolutions.GoogleMusic.Web;
+    using OutcoldSolutions.GoogleMusic.Web.Models;
+
+    using Windows.ApplicationModel.Resources;
 
     public class AuthentificationService : IAuthentificationService
     {
         private readonly ILogger logger;
         private readonly IUserDataStorage userDataStorage;
-        private readonly IClientLoginService clientLoginService;
+        private readonly IGoogleAccountWebService googleAccountWebService;
         private readonly IGoogleMusicWebService googleMusicWebService;
+
+        private readonly ResourceLoader resourceLoader = new ResourceLoader("CoreResources");
 
         public AuthentificationService(
             ILogManager logManager,
             IUserDataStorage userDataStorage,
-            IClientLoginService clientLoginService,
+            IGoogleAccountWebService googleAccountWebService,
             IGoogleMusicWebService googleMusicWebService)
         {
             this.logger = logManager.CreateLogger("AuthentificationService");
             this.userDataStorage = userDataStorage;
-            this.clientLoginService = clientLoginService;
+            this.googleAccountWebService = googleAccountWebService;
             this.googleMusicWebService = googleMusicWebService;
         }
 
         public async Task<AuthentificationResult> CheckAuthentificationAsync(UserInfo userInfo = null)
         {
-            var session = this.userDataStorage.GetUserSession();
-
-            if (session != null && session.Cookies != null && session.Cookies.Length > 0)
-            {
-                this.logger.Debug("User session is not null. Checking authentification with exisiting cookies");
-                var statusResp = await this.clientLoginService.GetStatusAsync();
-                if (statusResp != null && string.IsNullOrEmpty(statusResp.Success) && string.IsNullOrEmpty(statusResp.ReloadXsrf))
-                {
-                    this.googleMusicWebService.Initialize(session.Cookies, session.Auth);
-
-                    return AuthentificationResult.SucceedResult();
-                }
-            }
-
             if (userInfo == null)
             {
                 this.logger.Debug("Trying to get user info.");
@@ -60,55 +49,38 @@ namespace OutcoldSolutions.GoogleMusic.Services
             }
 
             this.logger.Debug("Logging.");
-            GoogleLoginResponse loginResponse = await this.clientLoginService.LoginAsync(userInfo.Email, userInfo.Password);
+            GoogleLoginResponse loginResponse = await this.googleAccountWebService.LoginAsync(userInfo.Email, userInfo.Password);
 
-            if (loginResponse.IsOk)
+            if (loginResponse.Success)
             {
-                this.logger.Debug("Logged in.");
-
-                string auth = await loginResponse.GetAuth();
-
-                this.logger.Debug("Getting cookies.");
-                GoogleWebResponse cookieResponse = await this.clientLoginService.GetCookieAsync(auth);
-                if (cookieResponse.HttpWebResponse.StatusCode == HttpStatusCode.OK
-                    && !string.Equals(cookieResponse.HttpWebResponse.ResponseUri.Host, "accounts.google.com", StringComparison.OrdinalIgnoreCase))
+                bool result = await this.googleMusicWebService.InitializeAsync(loginResponse.Auth);
+                
+                if (result)
                 {
-                    var cookies = this.GetCookies(cookieResponse);
-
-                    this.logger.Debug("Cookies count: {0}", cookies.Length);
-
-                    session = new UserSession(auth)
-                                          {
-                                              Cookies = cookies
-                                          };
-
-                    this.userDataStorage.SetUserSession(session);
-
-                    this.googleMusicWebService.Initialize(session.Cookies, session.Auth);
+                    this.userDataStorage.SetUserSession(new UserSession());
 
                     return AuthentificationResult.SucceedResult();
                 }
                 else
                 {
-                    this.logger.Error("Cannot get cookie. Web Response Status code is '{0}'.", cookieResponse.HttpWebResponse.StatusCode);
+                    this.logger.Error("Cannot get cookie. Web Response Status code is '{0}'.", false);
 
                     // Better error
-                    return AuthentificationResult.FailedResult(CoreResources.Login_Unknown);
+                    return AuthentificationResult.FailedResult(this.resourceLoader.GetString("Login_Unknown"));
                 }
             }
             else
             {
                 this.logger.Warning("Could not log in.");
 
-                var errorResponse = await loginResponse.AsErrorAsync();
-                string errorMessage = this.GetErrorMessage(errorResponse.Code);
+                string errorMessage = this.GetErrorMessage(loginResponse.Error.Value);
 
-                this.logger.Warning("ErrorMessage: {0}, error code: {1}", errorMessage, errorResponse.Code);
+                this.logger.Warning("ErrorMessage: {0}, error code: {1}", errorMessage, loginResponse.Error.Value);
                 var authentificationResult = AuthentificationResult.FailedResult(errorMessage);
 
-                if (errorResponse.Code == GoogleLoginResponse.ErrorResponseCode.CaptchaRequired)
+                if (loginResponse.Error.Value == GoogleLoginResponse.ErrorResponseCode.CaptchaRequired)
                 {
-                    authentificationResult.Captcha = new Captcha(errorResponse.CaptchaToken, errorResponse.CaptchaUrl);
+                    authentificationResult.Captcha = new Captcha(loginResponse.CaptchaToken, loginResponse.CaptchaUrl);
                 }
 
                 return authentificationResult;
@@ -120,39 +92,26 @@ namespace OutcoldSolutions.GoogleMusic.Services
             switch (errorResponseCode)
             {
                 case GoogleLoginResponse.ErrorResponseCode.BadAuthentication:
-                    return CoreResources.Login_BadAuthentication;
+                    return this.resourceLoader.GetString("Login_BadAuthentication");
                 case GoogleLoginResponse.ErrorResponseCode.NotVerified:
-                    return CoreResources.Login_NotVerified;
+                    return this.resourceLoader.GetString("Login_NotVerified");
                 case GoogleLoginResponse.ErrorResponseCode.TermsNotAgreed:
-                    return CoreResources.Login_TermsNotAgreed;
+                    return this.resourceLoader.GetString("Login_TermsNotAgreed");
                 case GoogleLoginResponse.ErrorResponseCode.CaptchaRequired:
-                    return CoreResources.Login_CaptchaRequired;
+                    return this.resourceLoader.GetString("Login_CaptchaRequired");
                 case GoogleLoginResponse.ErrorResponseCode.Unknown:
-                    return CoreResources.Login_Unknown;
+                    return this.resourceLoader.GetString("Login_Unknown");
                 case GoogleLoginResponse.ErrorResponseCode.AccountDeleted:
-                    return CoreResources.Login_AccountDeleted;
+                    return this.resourceLoader.GetString("Login_AccountDeleted");
                 case GoogleLoginResponse.ErrorResponseCode.AccountDisabled:
-                    return CoreResources.Login_AccountDisabled;
+                    return this.resourceLoader.GetString("Login_AccountDisabled");
                 case GoogleLoginResponse.ErrorResponseCode.ServiceDisabled:
-                    return CoreResources.Login_ServiceDisabled;
+                    return this.resourceLoader.GetString("Login_ServiceDisabled");
                 case GoogleLoginResponse.ErrorResponseCode.ServiceUnavailable:
-                    return CoreResources.Login_ServiceUnavailable;
+                    return this.resourceLoader.GetString("Login_ServiceUnavailable");
                 default:
                     throw new NotSupportedException("Value is not supported: " + errorResponseCode.ToString());
             }
-        }
-
-        private Cookie[] GetCookies(GoogleWebResponse response)
-        {
-            var cookieCollection = response.HttpWebResponse.Cookies;
-            Cookie[] cookies = new Cookie[cookieCollection.Count];
-            int index = 0;
-            foreach (Cookie cookie in cookieCollection)
-            {
-                cookie.Path = string.Empty;
-                cookies[index++] = cookie;
-            }
-            return cookies;
         }
 
         public class Captcha
