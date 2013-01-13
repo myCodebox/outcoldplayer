@@ -6,14 +6,14 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-
-                <!-- 
-                    Styles that define common aspects of the platform look and feel
-                    Required by Visual Studio project and item templates
-                 -->
+                
                 <ResourceDictionary Source="Common/StandardStyles.xaml"/>
+                <ResourceDictionary Source="Common/Converters.xaml"/>
+                <ResourceDictionary Source="Common/Buttons.xaml"/>
+                <ResourceDictionary Source="Common/DataTemplates.xaml"/>
+                
+                
             </ResourceDictionary.MergedDictionaries>
-
         </ResourceDictionary>
     </Application.Resources>
 </Application>
