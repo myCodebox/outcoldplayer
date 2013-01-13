@@ -34,8 +34,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
         private readonly Button deletePlaylistButton;
         private readonly Border separator;
 
-        private object lastClickedItem;
-
         public PlaylistsView()
         {
             this.InitializePresenter<PlaylistsViewPresenter>();

@@ -230,6 +230,7 @@
     <Content Include="Assets\SplashScreen.png" />
     <Content Include="Assets\StoreLogo.png" />
     <None Include="Package.StoreAssociation.xml" />
+    <Content Include="Assets\WideLogo.png" />
     <Content Include="Resources\in-app-purchase.xml" />
     <Content Include="Resources\logo460.png" />
     <Content Include="Resources\twitter-logo.png" />
