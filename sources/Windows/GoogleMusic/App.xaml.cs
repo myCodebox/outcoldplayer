@@ -24,8 +24,9 @@ namespace OutcoldSolutions.GoogleMusic
     public sealed partial class App : Application
     {
         private ILogManager logManager;
-
         private ISettingsService settingsService;
+        private IGoogleMusicSessionService sessionService;
+        private IGoogleMusicWebService webService;
 
         public App()
         {
@@ -126,8 +127,9 @@ namespace OutcoldSolutions.GoogleMusic
                 }
 
                 this.logManager = Container.Resolve<ILogManager>();
-                
                 this.settingsService = Container.Resolve<ISettingsService>();
+                this.sessionService = Container.Resolve<IGoogleMusicSessionService>();
+                this.webService = Container.Resolve<IGoogleMusicWebService>();
 
                 this.UpdateLogLevel();
                 this.settingsService.ValueChanged += (sender, eventArgs) =>
@@ -141,15 +143,12 @@ namespace OutcoldSolutions.GoogleMusic
                 // Create a Frame to act as the navigation context and navigate to the first page
                 mainView = (MainView)Container.Resolve<IMainView>();
 
-                //if (args.PreviousExecutionState == ApplicationExecutionState.Terminated)
-                //{
-                //    // TODO: Load state from previously suspended application
-                //}
+                this.sessionService.LoadSession();
 
                 // Place the frame in the current Window
                 Window.Current.Content = mainView;
 
-                // Initialize settings view
+                // Initialize settings and search views
                 Container.Resolve<ISettingsCommands>();
                 Container.Resolve<ISearchService>();
             }
@@ -193,8 +192,23 @@ namespace OutcoldSolutions.GoogleMusic
         {
             var deferral = e.SuspendingOperation.GetDeferral();
 
-            // TODO: Save application state and stop any background activity
-            deferral.Complete();
+            this.OnSuspendingAsync().ContinueWith((t) => deferral.Complete());
+        }
+
+        private Task OnSuspendingAsync()
+        {
+            return Task.Factory.StartNew(
+                () =>
+                    {
+                        if (this.sessionService != null)
+                        {
+                            var cookieCollection = this.webService.GetCurrentCookies();
+                            if (cookieCollection != null)
+                            {
+                                this.sessionService.SaveCurrentSession(cookieCollection);
+                            }
+                        }
+                    });
         }
     }
 }
