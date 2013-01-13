@@ -31,7 +31,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             {
                 this.Logger.Debug("Found user info. Trying to set user email.");
                 this.BindingModel.Email = userInfo.Email;
-                this.BindingModel.RememberAccount = true;
+                this.BindingModel.RememberAccount = userInfo.RememberAccount;
             }
         }
 

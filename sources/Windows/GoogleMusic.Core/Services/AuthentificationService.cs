@@ -66,13 +66,13 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
             if (userInfo == null)
             {
-                this.logger.Debug("Trying to get user info.");
-                userInfo = this.googleAccountService.GetUserInfo();
+                this.logger.Debug("CheckAuthentificationAsync: Trying to get user info with pasword.");
+                userInfo = this.googleAccountService.GetUserInfo(retrievePassword: true);
             }
 
             if (userInfo == null)
             {
-                this.logger.Debug("Cannot get user info.");
+                this.logger.Debug("CheckAuthentificationAsync: Cannot get user info.");
                 return AuthentificationResult.FailedResult(null);
             }
 

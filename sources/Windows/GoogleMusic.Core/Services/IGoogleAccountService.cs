@@ -9,7 +9,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
     {
         void SetUserInfo(UserInfo info);
 
-        UserInfo GetUserInfo();
+        UserInfo GetUserInfo(bool retrievePassword = false);
 
         void ClearUserInfo();
     }
