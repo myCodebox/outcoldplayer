@@ -7,10 +7,8 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
     using Windows.Storage.Streams;
 
-    public interface INetworkRandomAccessStream : IRandomAccessStream
+    public interface INetworkRandomAccessStream : IRandomAccessStreamWithContentType
     {
         event EventHandler<double> DownloadProgressChanged;
-
-        string ContentType { get; }
     }
 }

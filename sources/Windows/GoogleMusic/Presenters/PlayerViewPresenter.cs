@@ -433,15 +433,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                                                 this.currentSongStream = stream;
                                                 this.currentSongStream.DownloadProgressChanged += CurrentSongStreamOnDownloadProgressChanged;
 
-                                                MediaControl.ArtistName = song.Artist;
-                                                MediaControl.TrackName = song.Title;
-
-                                                MediaControl.AlbumArt = new Uri("ms-appx:///Assets/Logo.png");
-                                                /*if (song.AlbumArtUrl != null)
-                                                {
-                                                    MediaControl.AlbumArt = new Uri("https:" + song.AlbumArtUrl);
-                                                }*/
-
                                                 this.BindingModel.CurrentSongIndex = currentSongIndex;
 
                                                 this.Logger.Info("Set new source for media element with content type '{0}'.", this.currentSongStream.ContentType);

@@ -129,6 +129,7 @@ namespace OutcoldSolutions.GoogleMusic
                     // Publishers
                     registration.Register<ICurrentSongPublisherService>().AsSingleton<CurrentSongPublisherService>();
                     registration.Register<GoogleMusicCurrentSongPublisher>().AsSingleton();
+                    registration.Register<MediaControlCurrentSongPublisher>().AsSingleton();
                 }
 
                 this.logManager = Container.Resolve<ILogManager>();
@@ -160,6 +161,7 @@ namespace OutcoldSolutions.GoogleMusic
                 // Publishers
                 var currentSongPublisherService = Container.Resolve<ICurrentSongPublisherService>();
                 currentSongPublisherService.AddPublisher(new Lazy<ICurrentSongPublisher>(() => Container.Resolve<GoogleMusicCurrentSongPublisher>()));
+                currentSongPublisherService.AddPublisher(new Lazy<ICurrentSongPublisher>(() => Container.Resolve<MediaControlCurrentSongPublisher>()));
             }
 
             // Ensure the current window is active
