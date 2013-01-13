@@ -213,7 +213,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     if (!string.IsNullOrEmpty(song.GoogleMusicMetadata.AlbumArtUrl))
                     {
                         randomAccessStreamReference =
-                            RandomAccessStreamReference.CreateFromUri(new Uri("https:" + song.GoogleMusicMetadata.AlbumArtUrl));
+                            RandomAccessStreamReference.CreateFromUri(new Uri("http:" + song.GoogleMusicMetadata.AlbumArtUrl));
                     }
                     else
                     {
@@ -260,7 +260,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 if (!string.IsNullOrEmpty(playlist.AlbumArtUrl))
                 {
                     randomAccessStreamReference =
-                        RandomAccessStreamReference.CreateFromUri(new Uri("https:" + playlist.AlbumArtUrl));
+                        RandomAccessStreamReference.CreateFromUri(new Uri("http:" + playlist.AlbumArtUrl));
                 }
                 else
                 {

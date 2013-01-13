@@ -21,7 +21,12 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Image Grid.Row="0" Margin="32" Height="256" Width="256" Source="{Binding Path=CurrentSong.GoogleMusicMetadata.AlbumArtUrl, Converter={StaticResource AlbumArtUrlToImageConverter}, Mode=OneWay}" />
+        <Image Grid.Row="0" 
+               Margin="32" 
+               Height="256" 
+               Width="256" 
+               Source="{Binding Path=CurrentSong.GoogleMusicMetadata.AlbumArtUrl, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=256, Mode=OneWay}"
+               Stretch="None"/>
 
         <StackPanel Grid.Row="1" Margin="32, 0" Visibility="{Binding Path=CurrentSong, Mode=OneWay, Converter={StaticResource NullToInvisibilityConverter}}">
             <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Style="{StaticResource TitleTextStyle}" Text="{Binding Path=CurrentSong.Title, Mode=OneWay}" TextWrapping="NoWrap" TextTrimming="WordEllipsis"/>

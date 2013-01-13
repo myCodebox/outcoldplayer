@@ -254,7 +254,7 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <Border Background="{StaticResource ListViewItemPlaceholderBackgroundThemeBrush}" Margin="0,0,0,10" Width="40" Height="40">
-                            <Image Source="{Binding Path=ImageUrl, Converter={StaticResource AlbumArtUrlToImageConverter}, Mode=OneTime}" Stretch="UniformToFill"/>
+                            <Image Source="{Binding Path=ImageUrl, Converter={StaticResource AlbumArtUrlToImageConverter}, Mode=OneTime, ConverterParameter=40}" Stretch="UniformToFill"/>
                         </Border>
                         <StackPanel Grid.Column="1" Margin="10,-10,0,0">
                             <StackPanel Orientation="Horizontal" >
