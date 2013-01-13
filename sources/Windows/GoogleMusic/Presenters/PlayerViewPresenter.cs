@@ -11,6 +11,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services;
+    using OutcoldSolutions.GoogleMusic.Services.Publishers;
     using OutcoldSolutions.GoogleMusic.Views;
     using OutcoldSolutions.GoogleMusic.Web;
 
@@ -23,13 +24,14 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     public class PlayerViewPresenter : ViewPresenterBase<IMediaElemenetContainerView>, ICurrentPlaylistService, IDisposable
     {
         private readonly DispatcherTimer timer = new DispatcherTimer();
-        private readonly DispatcherTimer recordPlayingTimer = new DispatcherTimer();
 
         private readonly ISongWebService songWebService;
         private readonly IGoogleMusicSessionService sessionService;
         private readonly ISettingsService settingsService;
 
         private readonly IMediaStreamDownloadService mediaStreamDownloadService;
+
+        private readonly ICurrentSongPublisherService publisherService;
 
         private readonly MediaElement mediaElement;
 
@@ -40,19 +42,23 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private INetworkRandomAccessStream currentSongStream;
 
+        private Playlist currentPlaylist;
+
         public PlayerViewPresenter(
             IDependencyResolverContainer container,
             IMediaElemenetContainerView view,
             ISongWebService songWebService,
             IGoogleMusicSessionService sessionService,
             ISettingsService settingsService,
-            IMediaStreamDownloadService mediaStreamDownloadService)
+            IMediaStreamDownloadService mediaStreamDownloadService,
+            ICurrentSongPublisherService publisherService)
             : base(container, view)
         {
             this.songWebService = songWebService;
             this.sessionService = sessionService;
             this.settingsService = settingsService;
             this.mediaStreamDownloadService = mediaStreamDownloadService;
+            this.publisherService = publisherService;
             this.BindingModel = new PlayerBindingModel
                                     {
                                         IsRepeatAllEnabled =
@@ -94,7 +100,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
             this.BindingModel.UpdateBindingModel();
 
-            this.timer.Interval = TimeSpan.FromSeconds(1);
+            this.timer.Interval = TimeSpan.FromMilliseconds(500);
             this.timer.Start();
 
             this.BindingModel.PropertyChanged += (sender, args) =>
@@ -151,36 +157,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 }
             };
 
-            this.recordPlayingTimer.Tick += (sender, o) =>
-                {
-                    this.recordPlayingTimer.Stop();
-
-                    if (this.BindingModel.CurrentSong != null)
-                    {
-                        var song = this.BindingModel.CurrentSong;
-                        this.songWebService.RecordPlayingAsync(song.GoogleMusicMetadata, song.PlayCount + 1)
-                            .ContinueWith(t =>
-                                {
-                                    song.GoogleMusicMetadata.LastPlayed = DateTime.Now.ToFileTime();
-
-                                    if (t.IsCompleted)
-                                    {
-                                        this.Logger.Debug(
-                                            "Record Playing for song '{0}' updated play count: {1}. Result: {2}.",
-                                            song.GoogleMusicMetadata.Id,
-                                            song.PlayCount + 1,
-                                            t.Result);
-                                    }
-                                    else
-                                    {
-                                        this.Logger.Error("Cannot update play count for song '{0}'.", song.GoogleMusicMetadata.Id);
-                                    }
-
-                                    this.Dispatcher.RunAsync(() => { song.PlayCount++; });
-                                });
-                    }
-                };
-
             this.sessionService.SessionCleared += (sender, args) => this.Dispatcher.RunAsync(
                 () =>
                     {
@@ -214,6 +190,12 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.BindingModel.UpdateBindingModel();
 
             this.RaisePlaylistChanged();
+        }
+
+        public void SetPlaylist(Playlist playlist)
+        {
+            this.currentPlaylist = playlist;
+            this.AddSongs(playlist.Songs);
         }
 
         public void AddSongs(IEnumerable<Song> songs)
@@ -373,7 +355,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             }
             else
             {
-                this.recordPlayingTimer.Start();
+                this.publisherService.PublishAsync(this.BindingModel.CurrentSong, this.currentPlaylist);
 
                 this.mediaElement.Play();
                 this.BindingModel.State = PlayState.Play;
@@ -388,7 +370,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
             this.mediaElement.Pause();
             this.BindingModel.State = PlayState.Pause;
-            this.recordPlayingTimer.Stop();
+            this.publisherService.CancelActiveTasks();
 
             this.BindingModel.UpdateBindingModel();
         }
@@ -397,7 +379,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         {
             this.Logger.Debug("Stop.");
 
-            this.recordPlayingTimer.Stop();
+            this.publisherService.CancelActiveTasks();
             this.mediaElement.Stop();
             this.BindingModel.State = PlayState.Stop;
 
@@ -409,7 +391,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.Logger.Debug("PlayCurrentSong.");
 
             this.BindingModel.UpdateBindingModel();
-            this.recordPlayingTimer.Stop();
+            this.publisherService.CancelActiveTasks();
 
             this.Stop();
 
@@ -492,8 +474,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                                                     MediaControl.PreviousTrackPressed -= this.MediaControlOnPreviousTrackPressed;
                                                 }
 
-                                                this.recordPlayingTimer.Interval = TimeSpan.FromSeconds(song.Duration * 0.3);
-                                                this.recordPlayingTimer.Start();
+                                                this.publisherService.PublishAsync(this.BindingModel.CurrentSong, this.currentPlaylist);
                                             });
                                 }
                                 else

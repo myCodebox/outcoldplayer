@@ -17,15 +17,15 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Web
         private GoogleAccountWebService googleAccountWebService;
 
         [SetUp]
-        public override void SetFixture()
+        public override void SetUp()
         {
-            base.SetFixture();
+            base.SetUp();
 
             var logManager = this.Container.Resolve<ILogManager>();
             this.googleAccountWebService = new GoogleAccountWebService(logManager);
         }
 
-        [Test]
+        [Test, Ignore]
         public async Task LoginAsync_RightCredentials_GetAuth()
         {
             var googleLoginResponse = await this.googleAccountWebService.Authenticate("outcoldman.test@gmail.com", "Qw12er34");
@@ -34,7 +34,7 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Web
             Assert.IsNull(googleLoginResponse.Error);
         }
 
-        [Test]
+        [Test, Ignore]
         public async Task LoginAsync_WrongCredentials_GetAuth()
         {
             var googleLoginResponse = await this.googleAccountWebService.Authenticate("outcoldman.test@gmail.com", "WrongPassword");

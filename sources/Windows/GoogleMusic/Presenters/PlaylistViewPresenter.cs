@@ -122,7 +122,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             if (selectedIndex >= 0)
             {
                 this.currentPlaylistService.ClearPlaylist();
-                this.currentPlaylistService.AddSongs(this.BindingModel.Songs);
+                this.currentPlaylistService.SetPlaylist(this.BindingModel.Playlist);
                 this.currentPlaylistService.PlayAsync(selectedIndex);
             }
         }

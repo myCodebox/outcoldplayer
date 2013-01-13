@@ -66,6 +66,9 @@
     <Reference Include="Windows" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\Windows\GoogleMusic.Core\BindingModelBase.cs">
+      <Link>_sources\BindingModelBase.cs</Link>
+    </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Diagnostics\DebugLogWriter.cs">
       <Link>sources\Diagnostics\DebugLogWriter.cs</Link>
     </Compile>
@@ -90,6 +93,30 @@
     <Compile Include="..\Windows\GoogleMusic.Core\Diagnostics\LogManager.cs">
       <Link>sources\Diagnostics\LogManager.cs</Link>
     </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\IDispatcher.cs">
+      <Link>_sources\IDispatcher.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Models\Album.cs">
+      <Link>sources\Models\Album.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Models\Artist.cs">
+      <Link>sources\Models\Artist.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Models\Genre.cs">
+      <Link>sources\Models\Genre.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Models\MusicPlaylist.cs">
+      <Link>sources\Models\MusicPlaylist.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Models\Playlist.cs">
+      <Link>sources\Models\Playlist.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Models\Song.cs">
+      <Link>sources\Models\Song.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Models\SystemPlaylist.cs">
+      <Link>sources\Models\SystemPlaylist.cs</Link>
+    </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Models\UserInfo.cs">
       <Link>sources\Models\UserInfo.cs</Link>
     </Compile>
@@ -98,6 +125,27 @@
     </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Services\IGoogleMusicSessionService.cs">
       <Link>sources\Services\IGoogleMusicSessionService.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Services\ISettingsService.cs">
+      <Link>Services\ISettingsService.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Services\Publishers\CurrentSongPublisherService.cs">
+      <Link>sources\Services\Publishers\CurrentSongPublisherService.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Services\Publishers\ICurrentSongPublisher.cs">
+      <Link>sources\Services\Publishers\ICurrentSongPublisher.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Services\Publishers\ICurrentSongPublisherService.cs">
+      <Link>sources\Services\Publishers\ICurrentSongPublisherService.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Services\Publishers\PublisherType.cs">
+      <Link>sources\Services\Publishers\PublisherType.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Services\SettingsValueChangedEventArgs.cs">
+      <Link>_sources\Services\SettingsValueChangedEventArgs.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\TaskEx.cs">
+      <Link>_sources\TaskEx.cs</Link>
     </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Web\GoogleAccountWebService.cs">
       <Link>sources\Web\GoogleAccountWebService.cs</Link>
@@ -188,6 +236,7 @@
     </Compile>
     <Compile Include="JsonTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\Pubslishers\CurrentSongPublisherServiceSuites.cs" />
     <Compile Include="SuitesBase.cs" />
     <Compile Include="Web\GoogleAccountWebServiceSuites.cs" />
     <Compile Include="Web\HttpContentExtensionsSuites.cs" />

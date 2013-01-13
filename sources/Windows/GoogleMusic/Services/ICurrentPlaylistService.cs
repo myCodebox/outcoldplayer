@@ -15,6 +15,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         void ClearPlaylist();
 
+        void SetPlaylist(Playlist playlist);
+
         void AddSongs(IEnumerable<Song> songs);
 
         IEnumerable<Song> GetPlaylist();

@@ -3,14 +3,9 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.BindingModels
 {
-    using System;
-
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
-
-    using Windows.UI.Xaml.Media;
-    using Windows.UI.Xaml.Media.Imaging;
 
     public class PlaylistBindingModel : BindingModelBase
     {
@@ -26,7 +21,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
                     currentPlaylistService.ClearPlaylist();
                     if (playlist.Songs.Count > 0)
                     {
-                        currentPlaylistService.AddSongs(playlist.Songs);
+                        currentPlaylistService.SetPlaylist(playlist);
                         currentPlaylistService.PlayAsync();
                     }
 

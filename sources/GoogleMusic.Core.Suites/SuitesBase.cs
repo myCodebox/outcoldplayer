@@ -10,26 +10,23 @@ namespace OutcoldSolutions.GoogleMusic.Suites
 
     public abstract class SuitesBase 
     {
-        private DependencyResolverContainer container;
+        protected IDependencyResolverContainer Container { get; private set; }
 
-        protected IDependencyResolverContainer Container
-        {
-            get { return this.container; }
-        }
+        protected ILogManager LogManager { get; private set; }
 
         [SetUp]
-        public virtual void SetFixture()
+        public virtual void SetUp()
         {
-            this.container = new DependencyResolverContainer();
+            this.Container = new DependencyResolverContainer();
 
-            using (var registration = this.container.Registration())
+            using (var registration = this.Container.Registration())
             {
                  registration.Register<ILogManager>().AsSingleton<LogManager>();
             }
 
-            var logManager = this.container.Resolve<ILogManager>();
-            logManager.LogLevel = LogLevel.Info;
-            logManager.Writers.AddOrUpdate(typeof(DebugLogWriter), type => new DebugLogWriter(), (type, writer) => writer);
+            this.LogManager = this.Container.Resolve<ILogManager>();
+            this.LogManager.LogLevel = LogLevel.Info;
+            this.LogManager.Writers.AddOrUpdate(typeof(DebugLogWriter), type => new DebugLogWriter(), (type, writer) => writer);
         }
     }
 }

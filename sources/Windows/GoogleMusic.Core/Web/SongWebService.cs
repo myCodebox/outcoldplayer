@@ -66,17 +66,17 @@ namespace OutcoldSolutions.GoogleMusic.Web
             return null;
         }
 
-        public async Task<bool> RecordPlayingAsync(GoogleMusicSong song, int playCounts)
+        public async Task<bool> RecordPlayingAsync(GoogleMusicSong song, string playlistId, bool updateRecentAlbum, bool updateRecentPlaylist, int playCount)
         {
             var requestParameters = new Dictionary<string, string>
                                         {
                                             { "json", JsonConvert.SerializeObject(new
                                                                                       {
                                                                                           songId = song.Id, 
-                                                                                          playCount = playCounts, 
-                                                                                          updateRecentAlbum = false,
-                                                                                          updateRecentPlaylist = false,
-                                                                                          playlistId = song.Title,
+                                                                                          playCount, 
+                                                                                          updateRecentAlbum,
+                                                                                          updateRecentPlaylist,
+                                                                                          playlistId,
                                                                                           sessionId = this.sessionService.GetSession().SessionId
                                                                                       }) }
                                         };

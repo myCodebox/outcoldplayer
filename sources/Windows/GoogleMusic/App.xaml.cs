@@ -12,6 +12,7 @@ namespace OutcoldSolutions.GoogleMusic
     using OutcoldSolutions.GoogleMusic.Presenters;
     using OutcoldSolutions.GoogleMusic.Presenters.Settings;
     using OutcoldSolutions.GoogleMusic.Services;
+    using OutcoldSolutions.GoogleMusic.Services.Publishers;
     using OutcoldSolutions.GoogleMusic.Views;
     using OutcoldSolutions.GoogleMusic.Views.Settings;
     using OutcoldSolutions.GoogleMusic.Web;
@@ -124,6 +125,10 @@ namespace OutcoldSolutions.GoogleMusic
 
                     registration.Register<IDispatcher>()
                                 .AsSingleton(new DispatcherContainer(CoreWindow.GetForCurrentThread().Dispatcher));
+
+                    // Publishers
+                    registration.Register<ICurrentSongPublisherService>().AsSingleton<CurrentSongPublisherService>();
+                    registration.Register<GoogleMusicCurrentSongPublisher>().AsSingleton();
                 }
 
                 this.logManager = Container.Resolve<ILogManager>();
@@ -151,6 +156,10 @@ namespace OutcoldSolutions.GoogleMusic
                 // Initialize settings and search views
                 Container.Resolve<ISettingsCommands>();
                 Container.Resolve<ISearchService>();
+
+                // Publishers
+                var currentSongPublisherService = Container.Resolve<ICurrentSongPublisherService>();
+                currentSongPublisherService.AddPublisher(new Lazy<ICurrentSongPublisher>(() => Container.Resolve<GoogleMusicCurrentSongPublisher>()));
             }
 
             // Ensure the current window is active

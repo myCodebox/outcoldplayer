@@ -109,6 +109,7 @@
     <Compile Include="Diagnostics\LogLevel.cs" />
     <Compile Include="Diagnostics\LogManager.cs" />
     <Compile Include="Diagnostics\ILogWriter.cs" />
+    <Compile Include="IDispatcher.cs" />
     <Compile Include="Models\Album.cs" />
     <Compile Include="Models\Artist.cs" />
     <Compile Include="Models\Genre.cs" />
@@ -125,9 +126,15 @@
     <Compile Include="Services\ISongsService.cs" />
     <Compile Include="Services\IGoogleAccountService.cs" />
     <Compile Include="Services\IGoogleMusicSessionService.cs" />
+    <Compile Include="Services\Publishers\CurrentSongPublisherService.cs" />
+    <Compile Include="Services\Publishers\GoogleMusicCurrentSongPublisher.cs" />
+    <Compile Include="Services\Publishers\ICurrentSongPublisher.cs" />
+    <Compile Include="Services\Publishers\ICurrentSongPublisherService.cs" />
+    <Compile Include="Services\Publishers\PublisherType.cs" />
     <Compile Include="Services\SettingsValueChangedEventArgs.cs" />
     <Compile Include="Services\SongsService.cs" />
     <Compile Include="Services\GoogleMusicSessionService.cs" />
+    <Compile Include="TaskEx.cs" />
     <Compile Include="Web\GoogleAccountWebService.cs" />
     <Compile Include="Web\GoogleMusicWebService.cs" />
     <Compile Include="Web\HttpContentExtensions.cs" />
