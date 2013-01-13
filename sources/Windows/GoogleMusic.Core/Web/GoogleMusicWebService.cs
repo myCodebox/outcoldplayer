@@ -19,17 +19,17 @@ namespace OutcoldSolutions.GoogleMusic.Web
         private const string OriginUrl = "https://play.google.com";
         private const string PlayMusicUrl = "https://play.google.com/music/listen?u=0&hl=en";
 
-        private readonly IUserDataStorage userDataStorage;
         private readonly ILogger logger;
+        private readonly IGoogleMusicSessionService sessionService;
 
         private HttpClient httpClient;
         private HttpClientHandler httpClientHandler;
 
         public GoogleMusicWebService(
             ILogManager logManager,
-            IUserDataStorage userDataStorage)
+            IGoogleMusicSessionService sessionService)
         {
-            this.userDataStorage = userDataStorage;
+            this.sessionService = sessionService;
             this.logger = logManager.CreateLogger("GoogleAccountWebService");
         }
 
@@ -57,6 +57,11 @@ namespace OutcoldSolutions.GoogleMusic.Web
                                   };
 
             this.httpClientHandler.CookieContainer.Add(new Uri(this.GetServiceUrl()), cookieCollection);
+        }
+
+        public CookieCollection GetCurrentCookies()
+        {
+            return this.httpClientHandler.CookieContainer.GetCookies(new Uri(this.GetServiceUrl()));
         }
 
         public async Task<HttpResponseMessage> GetAsync(string url)
@@ -136,7 +141,9 @@ namespace OutcoldSolutions.GoogleMusic.Web
             {
                 if (responseMessage.StatusCode == HttpStatusCode.Unauthorized)
                 {
-                    this.userDataStorage.ClearSession();
+                    this.logger.Warning("Got the Unauthorized http status code. Going to clear session.");
+
+                    this.sessionService.ClearSession();
                     responseMessage.EnsureSuccessStatusCode();
                 }
             }

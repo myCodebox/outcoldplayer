@@ -22,16 +22,16 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
         private readonly ILogger logger;
         private readonly IGoogleMusicWebService googleMusicWebService;
-        private readonly IUserDataStorage userDataStorage;
+        private readonly IGoogleMusicSessionService sessionService;
 
         public SongWebService(
             ILogManager logManager,
             IGoogleMusicWebService googleMusicWebService,
-            IUserDataStorage userDataStorage)
+            IGoogleMusicSessionService sessionService)
         {
             this.logger = logManager.CreateLogger("SongWebService");
             this.googleMusicWebService = googleMusicWebService;
-            this.userDataStorage = userDataStorage;
+            this.sessionService = sessionService;
         }
 
         public async Task<GoogleMusicSongUrl> GetSongUrlAsync(string id)
@@ -77,7 +77,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
                                                                                           updateRecentAlbum = false,
                                                                                           updateRecentPlaylist = false,
                                                                                           playlistId = song.Title,
-                                                                                          sessionId = this.userDataStorage.GetUserSession().SessionId
+                                                                                          sessionId = this.sessionService.GetSession().SessionId
                                                                                       }) }
                                         };
 
@@ -96,7 +96,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
                                                                                                         {
                                                                                                             new { id = song.Id, rating = rating }
                                                                                                         },
-                                                                                          sessionId = this.userDataStorage.GetUserSession().SessionId
+                                                                                          sessionId = this.sessionService.GetSession().SessionId
                                                                                       }) 
                                             }
                                         };

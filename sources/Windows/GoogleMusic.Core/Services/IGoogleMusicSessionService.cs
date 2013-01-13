@@ -4,22 +4,21 @@
 namespace OutcoldSolutions.GoogleMusic.Services
 {
     using System;
+    using System.Net;
 
     using OutcoldSolutions.GoogleMusic.Models;
 
-    public interface IUserDataStorage
+    public interface IGoogleMusicSessionService
     {
         event EventHandler SessionCleared;
 
-        void SetUserInfo(UserInfo info);
+        UserSession GetSession();
 
-        UserInfo GetUserInfo();
+        void SaveCurrentSession(CookieCollection cookieCollection);
 
-        void ClearUserInfo();
+        void LoadSession();
 
-        void SetUserSession(UserSession session);
-
-        UserSession GetUserSession();
+        CookieCollection GetSavedCookies();
 
         void ClearSession();
     }

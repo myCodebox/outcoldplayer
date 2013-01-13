@@ -23,9 +23,13 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         private readonly Dictionary<string, Song> songsRepository = new Dictionary<string, Song>();
 
+        private readonly ILogger logger;
+
         private readonly IPlaylistsWebService webService;
+
+        private readonly IGoogleMusicSessionService sessionService;
+
         private readonly ISongWebService songWebService;
-        private readonly IUserDataStorage userDataStorage;
 
         private Task<List<Song>> taskAllSongsLoader = null;
         private Task<List<MusicPlaylist>> taskAllPlaylistsLoader = null;
@@ -35,20 +39,18 @@ namespace OutcoldSolutions.GoogleMusic.Services
         private List<Genre> genresCache = null;
         private List<Artist> artistsCache = null;
 
-        private ILogger logger;
-
         public SongsService(
             IPlaylistsWebService webService,
-            IUserDataStorage userDataStorage,
+            IGoogleMusicSessionService sessionService,
             ISongWebService songWebService,
             ILogManager logManager)
         {
             this.webService = webService;
-            this.userDataStorage = userDataStorage;
+            this.sessionService = sessionService;
             this.songWebService = songWebService;
             this.logger = logManager.CreateLogger("SongsService");
 
-            this.userDataStorage.SessionCleared += (sender, args) =>
+            this.sessionService.SessionCleared += (sender, args) =>
                 {
                     lock (this.lockerTasks)
                     {

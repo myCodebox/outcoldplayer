@@ -7,17 +7,25 @@ namespace OutcoldSolutions.GoogleMusic.Models
 
     public class UserSession
     {
-        public UserSession()
+        public UserSession(string sessionId)
         {
-            this.SessionId = this.GenerateSessionId();
+            this.SessionId = sessionId;
+            this.IsAuthenticated = false;
+        }
+
+        public UserSession()
+            : this(GenerateSessionId())
+        {
         }
 
         public string SessionId { get; private set; }
 
-        private string GenerateSessionId()
+        public bool IsAuthenticated { get; set; }
+
+        private static string GenerateSessionId()
         {
             char[] s = new char[12];
-            var random = new Random();
+            var random = new Random((int)DateTime.Now.Ticks);
 
             for (int i = 0; i < s.Length; i++)
             {

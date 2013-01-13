@@ -111,12 +111,13 @@ namespace OutcoldSolutions.GoogleMusic
                     // Services
                     registration.Register<IGoogleAccountWebService>().As<GoogleAccountWebService>();
                     registration.Register<IGoogleMusicWebService>().AsSingleton<GoogleMusicWebService>();
-                    registration.Register<IUserDataStorage>().AsSingleton<UserDataStorage>();
+                    registration.Register<IGoogleAccountService>().AsSingleton<GoogleAccountService>();
                     registration.Register<IAuthentificationService>().As<AuthentificationService>();
                     registration.Register<IPlaylistsWebService>().As<PlaylistsWebService>();
                     registration.Register<ISongWebService>().AsSingleton<SongWebService>();
                     registration.Register<ISongsService>().AsSingleton<SongsService>();
                     registration.Register<ISettingsService>().AsSingleton<SettingsService>();
+                    registration.Register<IGoogleMusicSessionService>().AsSingleton<GoogleMusicSessionService>();
 
                     registration.Register<IMediaStreamDownloadService>().AsSingleton<MediaStreamDownloadService>();
 

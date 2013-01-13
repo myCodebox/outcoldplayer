@@ -14,6 +14,8 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
         void Initialize(CookieCollection cookieCollection);
 
+        CookieCollection GetCurrentCookies();
+
         Task<HttpResponseMessage> GetAsync(string url);
 
         Task<HttpResponseMessage> PostAsync(

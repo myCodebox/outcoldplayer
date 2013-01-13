@@ -9,27 +9,30 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
 
     public class AccountViewPresenter : ViewPresenterBase<ISettingsView>
     {
-        private readonly IUserDataStorage userDataStorage;
+        private readonly IGoogleAccountService googleAccountService;
+        private readonly IGoogleMusicSessionService sessionService;
 
         public AccountViewPresenter(
             IDependencyResolverContainer container,
             ISettingsView view,
-            IUserDataStorage userDataStorage)
+            IGoogleAccountService googleAccountService,
+            IGoogleMusicSessionService sessionService)
             : base(container, view)
         {
-            this.userDataStorage = userDataStorage;
+            this.googleAccountService = googleAccountService;
+            this.sessionService = sessionService;
             this.BindingModel = new AccountViewBindingModel();
             this.ForgetAccountCommand = new DelegateCommand(this.ForgetAccount);
             this.SignOutCommand = new DelegateCommand(this.SignOutAccount);
 
-            var userInfo = this.userDataStorage.GetUserInfo();
+            var userInfo = this.googleAccountService.GetUserInfo();
             if (userInfo != null)
             {
                 this.BindingModel.AccountName = userInfo.Email;
                 this.BindingModel.IsRemembered = userInfo.RememberAccount;
             }
 
-            this.BindingModel.HasSession = this.userDataStorage.GetUserSession() != null;
+            this.BindingModel.HasSession = this.sessionService.GetSession().IsAuthenticated;
         }
 
         public AccountViewBindingModel BindingModel { get; private set; }
@@ -40,14 +43,14 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
 
         private void ForgetAccount()
         {
-            this.userDataStorage.ClearUserInfo();
+            this.googleAccountService.ClearUserInfo();
             this.BindingModel.AccountName = null;
             this.BindingModel.Message = "All stored information were cleared. Next time you will be asked to provide Google Account email and password to continue use application.";
         }
 
         private void SignOutAccount()
         {
-            this.userDataStorage.ClearSession();
+            this.sessionService.ClearSession();
             this.View.Hide();
         }
     }

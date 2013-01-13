@@ -15,7 +15,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     {
         private readonly IDependencyResolverContainer container;
         private readonly IAuthentificationService authentificationService;
-        private readonly IUserDataStorage userDataStorage;
+        private readonly IGoogleMusicSessionService sessionService;
 
         private readonly LinkedList<HistoryItem> viewsHistory = new LinkedList<HistoryItem>();
 
@@ -23,12 +23,12 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             IDependencyResolverContainer container, 
             IMainView view,
             IAuthentificationService authentificationService,
-            IUserDataStorage userDataStorage)
+            IGoogleMusicSessionService sessionService)
             : base(container, view)
         {
             this.container = container;
             this.authentificationService = authentificationService;
-            this.userDataStorage = userDataStorage;
+            this.sessionService = sessionService;
             this.BindingModel = new MainViewBindingModel
                                     {
                                         Message = "Signing in...", 
@@ -55,7 +55,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
             this.PlayerViewPresenter = this.container.Resolve<PlayerViewPresenter>(new object[] { view });
 
-            this.userDataStorage.SessionCleared += (sender, args) => this.Dispatcher.RunAsync(
+            this.sessionService.SessionCleared += (sender, args) => this.Dispatcher.RunAsync(
                 () =>
                     {
                         App.Container.Resolve<ISearchService>().Unregister();

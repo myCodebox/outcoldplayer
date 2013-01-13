@@ -4,6 +4,7 @@
 namespace OutcoldSolutions.GoogleMusic.Services
 {
     using System;
+    using System.Net;
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.Diagnostics;
@@ -16,30 +17,57 @@ namespace OutcoldSolutions.GoogleMusic.Services
     public class AuthentificationService : IAuthentificationService
     {
         private readonly ILogger logger;
-        private readonly IUserDataStorage userDataStorage;
+        private readonly IGoogleAccountService googleAccountService;
+        private readonly IGoogleMusicSessionService sessionService;
         private readonly IGoogleAccountWebService googleAccountWebService;
         private readonly IGoogleMusicWebService googleMusicWebService;
+        private readonly IPlaylistsWebService playlistsWebService;
 
         private readonly ResourceLoader resourceLoader = new ResourceLoader("CoreResources");
 
         public AuthentificationService(
             ILogManager logManager,
-            IUserDataStorage userDataStorage,
+            IGoogleAccountService googleAccountService,
+            IGoogleMusicSessionService sessionService,
             IGoogleAccountWebService googleAccountWebService,
-            IGoogleMusicWebService googleMusicWebService)
+            IGoogleMusicWebService googleMusicWebService,
+            IPlaylistsWebService playlistsWebService)
         {
             this.logger = logManager.CreateLogger("AuthentificationService");
-            this.userDataStorage = userDataStorage;
+            this.googleAccountService = googleAccountService;
+            this.sessionService = sessionService;
             this.googleAccountWebService = googleAccountWebService;
             this.googleMusicWebService = googleMusicWebService;
+            this.playlistsWebService = playlistsWebService;
         }
 
         public async Task<AuthentificationResult> CheckAuthentificationAsync(UserInfo userInfo = null)
         {
             if (userInfo == null)
             {
+                this.logger.Debug("CheckAuthentificationAsync: trying to restore previos session.");
+                var userSession = this.sessionService.GetSession();
+                if (userSession != null)
+                {
+                    this.logger.Debug("CheckAuthentificationAsync: GetSession is not null.");
+
+                    var cookieCollection = this.sessionService.GetSavedCookies();
+                    if (cookieCollection != null)
+                    {
+                        this.logger.Debug("CheckAuthentificationAsync: cookie collection is not null. Initializing web services.");
+                        if (await this.InitializeWebServices(cookieCollection))
+                        {
+                            userSession.IsAuthenticated = true;
+                            return AuthentificationResult.SucceedResult();
+                        }
+                    }
+                }
+            }
+
+            if (userInfo == null)
+            {
                 this.logger.Debug("Trying to get user info.");
-                userInfo = this.userDataStorage.GetUserInfo();
+                userInfo = this.googleAccountService.GetUserInfo();
             }
 
             if (userInfo == null)
@@ -57,29 +85,40 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
                 if (cookieCollection != null && cookieCollection.Count > 0)
                 {
-                    this.googleMusicWebService.Initialize(cookieCollection);
-
-                    this.userDataStorage.SetUserSession(new UserSession());
-
-                    return AuthentificationResult.SucceedResult();
-                }
-                else
-                {
-                    this.logger.Error("Cannot get cookie. Web Response Status code is '{0}'.", false);
-
-                    // Better error
-                    return AuthentificationResult.FailedResult(this.resourceLoader.GetString("Login_Unknown"));
+                    if (await this.InitializeWebServices(cookieCollection))
+                    {
+                        this.sessionService.GetSession().IsAuthenticated = true;
+                        return AuthentificationResult.SucceedResult();
+                    }
                 }
             }
-            else
+            else if (loginResponse.Error.HasValue)
             {
-                this.logger.Warning("Could not log in.");
-
                 string errorMessage = this.GetErrorMessage(loginResponse.Error.Value);
-
-                this.logger.Warning("ErrorMessage: {0}, error code: {1}", errorMessage, loginResponse.Error.Value);
+                this.logger.Warning("CheckAuthentificationAsync: ErrorMessage: {0}, error code: {1}", errorMessage, loginResponse.Error.Value);
                 return AuthentificationResult.FailedResult(errorMessage);
             }
+
+            this.logger.Error("CheckAuthentificationAsync: showing 'Login_Unknown'.");
+            return AuthentificationResult.FailedResult(this.resourceLoader.GetString("Login_Unknown"));
+        }
+
+        private async Task<bool> InitializeWebServices(CookieCollection cookieCollection)
+        {
+            this.googleMusicWebService.Initialize(cookieCollection);
+
+            var statusResp = await this.playlistsWebService.GetStatusAsync();
+            if (statusResp != null 
+                && string.IsNullOrEmpty(statusResp.ReloadXsrf)
+                && (string.IsNullOrEmpty(statusResp.Success) || string.Equals(statusResp.Success, bool.TrueString, StringComparison.OrdinalIgnoreCase)))
+            {
+                this.logger.Debug("InitializeWebServices: GetStatusAsync returns for us success result.");
+                return true;
+            }
+
+            this.logger.Debug("InitializeWebServices: GetStatusAsync returns for us unsuccess result.");
+
+            return false;
         }
 
         private string GetErrorMessage(GoogleLoginResponse.ErrorResponseCode errorResponseCode)

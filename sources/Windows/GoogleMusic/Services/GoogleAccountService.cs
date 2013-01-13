@@ -4,6 +4,7 @@
 namespace OutcoldSolutions.GoogleMusic.Services
 {
     using System;
+    using System.Linq;
     using System.Net;
 
     using Newtonsoft.Json;
@@ -14,7 +15,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
     using Windows.Security.Credentials;
     using Windows.Storage;
 
-    public class UserDataStorage : IUserDataStorage
+    public class GoogleAccountService : IGoogleAccountService
     {
         private const string GoogleAccountsResource = "OutcoldSolutions.GoogleMusic";
 
@@ -23,9 +24,9 @@ namespace OutcoldSolutions.GoogleMusic.Services
         private UserSession userSession;
         private UserInfo userInfo;
 
-        public UserDataStorage(ILogManager logManager)
+        public GoogleAccountService(ILogManager logManager)
         {
-            this.logger = logManager.CreateLogger("UserDataStorage");
+            this.logger = logManager.CreateLogger("GoogleAccountService");
         }
 
         public event EventHandler SessionCleared;
@@ -130,6 +131,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         public void ClearSession()
         {
+            this.logger.Debug("ClearSession: clearing session.");
+
             if (this.userSession != null)
             {
                 this.userInfo = null;
@@ -142,6 +145,34 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 }
 
                 this.RaiseSessionCleared();
+
+                this.logger.Debug("ClearSession: session was cleared.");
+            }
+            else
+            {
+                this.logger.Warning("ClearSession: Current session is null already.");
+            }
+        }
+
+        public void SaveCurrentSession(CookieCollection cookieCollection)
+        {
+            if (this.userSession != null)
+            {
+                var localSettings = ApplicationData.Current.LocalSettings;
+                
+                ApplicationDataContainer userSessionContainer;
+                if (!localSettings.Containers.TryGetValue("UserSession", out userSessionContainer))
+                {
+                    userSessionContainer = localSettings.CreateContainer("UserSession", ApplicationDataCreateDisposition.Always);
+                }
+
+                foreach (var val in userSessionContainer.Values)
+                {
+                    userSessionContainer.Values.Remove(val.Key);
+                }
+
+                userSessionContainer.Values["UserSessionId"] = this.userSession.SessionId;
+                userSessionContainer.Values["Cookies"] = JsonConvert.SerializeObject(cookieCollection.Cast<Cookie>().ToArray());
             }
         }
 

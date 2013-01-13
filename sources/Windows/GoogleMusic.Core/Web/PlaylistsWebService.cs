@@ -46,21 +46,21 @@ namespace OutcoldSolutions.GoogleMusic.Web
         private const string GetStatusUrl = "music/services/getstatus";
 
         private readonly IGoogleMusicWebService googleMusicWebService;
-        private readonly IUserDataStorage userDataStorage;
+        private readonly IGoogleMusicSessionService sessionService;
 
         public PlaylistsWebService(
             IGoogleMusicWebService googleMusicWebService,
-            IUserDataStorage userDataStorage)
+            IGoogleMusicSessionService sessionService)
         {
             this.googleMusicWebService = googleMusicWebService;
-            this.userDataStorage = userDataStorage;
+            this.sessionService = sessionService;
         }
 
         public async Task<GoogleMusicPlaylists> GetAllPlaylistsAsync()
         {
             var requestParameters = new Dictionary<string, string>
                                         {
-                                            { "json", JsonConvert.SerializeObject(new { sessionId = this.userDataStorage.GetUserSession().SessionId }) }
+                                            { "json", JsonConvert.SerializeObject(new { sessionId = this.sessionService.GetSession().SessionId }) }
                                         };
 
             var response = await this.googleMusicWebService.PostAsync(PlaylistsUrl, formData: requestParameters);
@@ -75,7 +75,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
                                             { 
                                                 "json", JsonConvert.SerializeObject(new
                                                                                       {
-                                                                                          sessionId = this.userDataStorage.GetUserSession().SessionId,
+                                                                                          sessionId = this.sessionService.GetSession().SessionId,
                                                                                           id = playlistId
                                                                                       }) 
                                             }
@@ -97,11 +97,11 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 
                 if (playlist != null && !string.IsNullOrEmpty(playlist.ContinuationToken))
                 {
-                    json = JsonConvert.SerializeObject(new { sessionId = this.userDataStorage.GetUserSession().SessionId, continuationToken = playlist.ContinuationToken });
+                    json = JsonConvert.SerializeObject(new { sessionId = this.sessionService.GetSession().SessionId, continuationToken = playlist.ContinuationToken });
                 }
                 else
                 {
-                    json = JsonConvert.SerializeObject(new { sessionId = this.userDataStorage.GetUserSession().SessionId });
+                    json = JsonConvert.SerializeObject(new { sessionId = this.sessionService.GetSession().SessionId });
                 }
 
                 var requestParameters = new Dictionary<string, string>
@@ -133,7 +133,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
                                             { 
                                                 "json", JsonConvert.SerializeObject(new
                                                                                       {
-                                                                                          sessionId = this.userDataStorage.GetUserSession().SessionId, 
+                                                                                          sessionId = this.sessionService.GetSession().SessionId, 
                                                                                           title = name,
                                                                                           playlistType = "USER_GENERATED",
                                                                                           songRefs = new string[] { }
@@ -160,7 +160,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
                                             { 
                                                 "json", JsonConvert.SerializeObject(new
                                                                                       {
-                                                                                          sessionId = this.userDataStorage.GetUserSession().SessionId, 
+                                                                                          sessionId = this.sessionService.GetSession().SessionId, 
                                                                                           id, 
                                                                                           requestType = 1, 
                                                                                           requestCause = 1
@@ -181,7 +181,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
                                             { 
                                                 "json", JsonConvert.SerializeObject(new
                                                                                       {
-                                                                                          sessionId = this.userDataStorage.GetUserSession().SessionId, 
+                                                                                          sessionId = this.sessionService.GetSession().SessionId, 
                                                                                           playlistId = id, 
                                                                                           playlistName = name
                                                                                       }) 
@@ -200,7 +200,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
                                             { 
                                                 "json", JsonConvert.SerializeObject(new
                                                                                       {
-                                                                                          sessionId = this.userDataStorage.GetUserSession().SessionId,
+                                                                                          sessionId = this.sessionService.GetSession().SessionId,
                                                                                           playlistId,
                                                                                           songRefs = new[] { new { id = songId, type = 1 } }
                                                                                       })
@@ -226,7 +226,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
                                             { 
                                                 "json", JsonConvert.SerializeObject(new
                                                                                       {
-                                                                                          sessionId = this.userDataStorage.GetUserSession().SessionId,
+                                                                                          sessionId = this.sessionService.GetSession().SessionId,
                                                                                           listId = playlistId,
                                                                                           songIds = new[] { songId },
                                                                                           entryIds = new[] { entryId } 

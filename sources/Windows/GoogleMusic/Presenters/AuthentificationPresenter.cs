@@ -12,21 +12,21 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
     public class AuthentificationPresenter : ViewPresenterBase<IAuthentificationView>
     {
-        private readonly IUserDataStorage userDataStorage;
+        private readonly IGoogleAccountService googleAccountService;
         private readonly IAuthentificationService authentificationService;
 
         public AuthentificationPresenter(
             IDependencyResolverContainer container, 
             IAuthentificationView view,
-            IUserDataStorage userDataStorage,
+            IGoogleAccountService googleAccountService,
             IAuthentificationService authentificationService)
             : base(container, view)
         {
-            this.userDataStorage = userDataStorage;
+            this.googleAccountService = googleAccountService;
             this.authentificationService = authentificationService;
             this.BindingModel = new UserAuthentificationBindingModel();
 
-            var userInfo = this.userDataStorage.GetUserInfo();
+            var userInfo = this.googleAccountService.GetUserInfo();
             if (userInfo != null)
             {
                 this.Logger.Debug("Found user info. Trying to set user email.");
@@ -68,11 +68,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     if (!rememberPassword)
                     {
                         this.Logger.Debug("User asked to not save user information. Removing user info and password.");
-                        this.userDataStorage.ClearUserInfo();
+                        this.googleAccountService.ClearUserInfo();
                     }
 
                     this.Logger.Debug("Saving user info and password.");
-                    this.userDataStorage.SetUserInfo(userInfo);
+                    this.googleAccountService.SetUserInfo(userInfo);
                 }
                 else
                 {

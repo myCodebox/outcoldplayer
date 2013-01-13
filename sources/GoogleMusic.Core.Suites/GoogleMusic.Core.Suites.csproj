@@ -96,8 +96,8 @@
     <Compile Include="..\Windows\GoogleMusic.Core\Models\UserSession.cs">
       <Link>sources\Models\UserSession.cs</Link>
     </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Services\IUserDataStorage.cs">
-      <Link>sources\Services\IUserDataStorage.cs</Link>
+    <Compile Include="..\Windows\GoogleMusic.Core\Services\IGoogleMusicSessionService.cs">
+      <Link>sources\Services\IGoogleMusicSessionService.cs</Link>
     </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Web\GoogleAccountWebService.cs">
       <Link>sources\Web\GoogleAccountWebService.cs</Link>

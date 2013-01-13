@@ -129,7 +129,13 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 await this.logger.LogResponseAsync(TokenAuthPath, responseMessage);
             }
 
-            return this.httpClientHandler.CookieContainer.GetCookies(new Uri(redirectUrl));
+            if (responseMessage.IsSuccessStatusCode 
+                && string.Equals(responseMessage.RequestMessage.RequestUri.Host, new Uri(redirectUrl).Host, StringComparison.OrdinalIgnoreCase))
+            {
+                return this.httpClientHandler.CookieContainer.GetCookies(new Uri(redirectUrl));
+            }
+
+            return null;
         }
     }
 }

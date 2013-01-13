@@ -142,7 +142,7 @@
     <value>The user has not agreed to terms. The user will need to access their Google account directly to resolve the issue before logging in using a non-Google application.</value>
   </data>
   <data name="Login_Unknown" xml:space="preserve">
-    <value>Unknown error. Verify network connection and try again.</value>
+    <value>Cannot authentificate on Google Play Music with provided credentials. Please make sure that you activated Google Play Music service for current account and this service is available in your country.</value>
   </data>
   <data name="Login_UserNameAndPassword" xml:space="preserve">
     <value>Please provide email and password first.</value>

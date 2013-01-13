@@ -26,7 +26,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private readonly DispatcherTimer recordPlayingTimer = new DispatcherTimer();
 
         private readonly ISongWebService songWebService;
-        private readonly IUserDataStorage userDataStorage;
+        private readonly IGoogleMusicSessionService sessionService;
         private readonly ISettingsService settingsService;
 
         private readonly IMediaStreamDownloadService mediaStreamDownloadService;
@@ -44,13 +44,13 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             IDependencyResolverContainer container,
             IMediaElemenetContainerView view,
             ISongWebService songWebService,
-            IUserDataStorage userDataStorage,
+            IGoogleMusicSessionService sessionService,
             ISettingsService settingsService,
             IMediaStreamDownloadService mediaStreamDownloadService)
             : base(container, view)
         {
             this.songWebService = songWebService;
-            this.userDataStorage = userDataStorage;
+            this.sessionService = sessionService;
             this.settingsService = settingsService;
             this.mediaStreamDownloadService = mediaStreamDownloadService;
             this.BindingModel = new PlayerBindingModel
@@ -181,7 +181,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     }
                 };
 
-            this.userDataStorage.SessionCleared += (sender, args) => this.Dispatcher.RunAsync(
+            this.sessionService.SessionCleared += (sender, args) => this.Dispatcher.RunAsync(
                 () =>
                     {
                         this.Stop();
