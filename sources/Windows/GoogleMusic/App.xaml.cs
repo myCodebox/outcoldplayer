@@ -20,6 +20,7 @@ namespace OutcoldSolutions.GoogleMusic
     using Windows.ApplicationModel;
     using Windows.ApplicationModel.Activation;
     using Windows.UI.Core;
+    using Windows.UI.Notifications;
     using Windows.UI.Xaml;
 
     public sealed partial class App : Application
@@ -130,6 +131,7 @@ namespace OutcoldSolutions.GoogleMusic
                     registration.Register<ICurrentSongPublisherService>().AsSingleton<CurrentSongPublisherService>();
                     registration.Register<GoogleMusicCurrentSongPublisher>().AsSingleton();
                     registration.Register<MediaControlCurrentSongPublisher>().AsSingleton();
+                    registration.Register<TileCurrentSongPublisher>().AsSingleton();
                 }
 
                 this.logManager = Container.Resolve<ILogManager>();
@@ -162,6 +164,7 @@ namespace OutcoldSolutions.GoogleMusic
                 var currentSongPublisherService = Container.Resolve<ICurrentSongPublisherService>();
                 currentSongPublisherService.AddPublisher(new Lazy<ICurrentSongPublisher>(() => Container.Resolve<GoogleMusicCurrentSongPublisher>()));
                 currentSongPublisherService.AddPublisher(new Lazy<ICurrentSongPublisher>(() => Container.Resolve<MediaControlCurrentSongPublisher>()));
+                currentSongPublisherService.AddPublisher(new Lazy<ICurrentSongPublisher>(() => Container.Resolve<TileCurrentSongPublisher>()));
             }
 
             // Ensure the current window is active
@@ -219,6 +222,8 @@ namespace OutcoldSolutions.GoogleMusic
                                 this.sessionService.SaveCurrentSession(cookieCollection);
                             }
                         }
+
+                        TileUpdateManager.CreateTileUpdaterForApplication().Clear();
                     });
         }
     }

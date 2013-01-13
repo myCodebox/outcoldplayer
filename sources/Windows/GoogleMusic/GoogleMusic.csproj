@@ -156,6 +156,7 @@
     <Compile Include="Services\ICurrentPlaylistService.cs" />
     <Compile Include="Services\ISearchService.cs" />
     <Compile Include="Services\ISettingsCommands.cs" />
+    <Compile Include="Services\Publishers\TileCurrentSongPublisher.cs" />
     <Compile Include="Services\SearchService.cs" />
     <Compile Include="Services\SettingsCommands.cs" />
     <Compile Include="Services\SettingsService.cs" />
@@ -230,6 +231,7 @@
     <Content Include="Assets\SplashScreen.png" />
     <Content Include="Assets\StoreLogo.png" />
     <None Include="Package.StoreAssociation.xml" />
+    <Content Include="Assets\WideLogo.png" />
     <Content Include="Resources\in-app-purchase.xml" />
     <Content Include="Resources\logo460.png" />
     <Content Include="Resources\twitter-logo.png" />
