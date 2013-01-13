@@ -31,7 +31,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
             this.settingsService = settingsService;
             this.logger = logManager.CreateLogger("CurrentSongPublisherService");
 
-            this.delayPublishersHoldUp = this.settingsService.GetValue(DelayPublishersSettingsKey, defaultValue: 10000);
+            this.delayPublishersHoldUp = this.settingsService.GetValue(DelayPublishersSettingsKey, defaultValue: 15000);
         }
 
         public void AddPublisher(Lazy<ICurrentSongPublisher> publisher)
@@ -96,7 +96,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
                 return;
             }
 
-            await Task.Delay(this.delayPublishersHoldUp, cancellationToken);
+            await Task.Delay((int)Math.Min(this.delayPublishersHoldUp, (int)(0.3 * (double)song.GoogleMusicMetadata.DurationMillis)), cancellationToken);
 
             cancellationToken.ThrowIfCancellationRequested();
 
