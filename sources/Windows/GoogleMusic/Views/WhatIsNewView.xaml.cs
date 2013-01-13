@@ -23,7 +23,11 @@ namespace OutcoldSolutions.GoogleMusic.Views
             this.InitializeComponent();
         }
 
-        public void OnNavigatedTo(object parameter)
+        public void OnNavigatedTo(NavigatedToEventArgs eventArgs)
+        {
+        }
+
+        public void OnNavigatingFrom(NavigatingFromEventArgs eventArgs)
         {
         }
 

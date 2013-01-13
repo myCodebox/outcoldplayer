@@ -3,8 +3,8 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Presenters
 {
-    using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Diagnostics;
+    using OutcoldSolutions.GoogleMusic.Views;
 
     public class PresenterBase : BindingModelBase
     {
@@ -21,9 +21,12 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         protected IDispatcher Dispatcher { get; private set; }
 
-        public virtual void OnNavigatedTo(object parameter)
+        public virtual void OnNavigatedTo(NavigatedToEventArgs parameter)
         {
-            
+        }
+
+        public virtual void OnNavigatingFrom(NavigatingFromEventArgs eventArgs)
+        {
         }
     }
 }

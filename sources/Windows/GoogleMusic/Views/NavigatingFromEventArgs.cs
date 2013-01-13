@@ -3,10 +3,16 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Views
 {
-    public interface IView
-    {
-        void OnNavigatedTo(NavigatedToEventArgs eventArgs);
+    using System;
+    using System.Collections.Generic;
 
-        void OnNavigatingFrom(NavigatingFromEventArgs eventArgs);
+    public class NavigatingFromEventArgs : EventArgs
+    {
+        public NavigatingFromEventArgs(IDictionary<string, object> state)
+        {
+            this.State = state;
+        }
+
+        public IDictionary<string, object> State { get; private set; }
     }
 }

@@ -56,11 +56,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             }
         }
 
-        public override void OnNavigatedTo(object parameter)
+        public override void OnNavigatedTo(NavigatedToEventArgs eventArgs)
         {
-            base.OnNavigatedTo(parameter);
+            base.OnNavigatedTo(eventArgs);
 
-            var playlist = parameter as Playlist;
+            var playlist = eventArgs.Parameter as Playlist;
 
             if (playlist != null)
             {
@@ -69,7 +69,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             }
             else
             {
-                var song = parameter as Song;
+                var song = eventArgs.Parameter as Song;
                 if (song != null)
                 {
                     this.View.SetIsLoading(true);

@@ -85,18 +85,21 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     this.Logger.Warning("Double click found. Ignoring...");
                     return (TView)value.View;
                 }
+
+                this.viewsHistory.Last.Value.View.OnNavigatingFrom(new NavigatingFromEventArgs(this.viewsHistory.Last.Value.State));
             }
 
             var view = this.container.Resolve<TView>();
 
+            HistoryItem historyItem = null;
             if (keepInHistory)
             {
-                var historyItem = new HistoryItem(view, viewType, parameter);
+                historyItem = new HistoryItem(view, viewType, parameter);
                 this.viewsHistory.AddLast(historyItem);
             }
 
             this.ShowView(view);
-            view.OnNavigatedTo(parameter);
+            view.OnNavigatedTo(new NavigatedToEventArgs(historyItem == null ? null : historyItem.State, parameter, isBack: false));
             this.UpdateCanGoBack();
 
             return view;
@@ -112,7 +115,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 var item = this.viewsHistory.Last.Value;
 
                 this.ShowView(item.View);
-                item.View.OnNavigatedTo(item.Parameter);
+                item.View.OnNavigatedTo(new NavigatedToEventArgs(item.State, item.Parameter, isBack: true));
 
                 this.UpdateCanGoBack();
             }
@@ -161,6 +164,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 this.View = view;
                 this.ViewType = viewType;
                 this.Parameter = parameter;
+                this.State = new Dictionary<string, object>();
             }
 
             public IView View { get; private set; }
@@ -168,6 +172,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             public Type ViewType { get; private set; }
 
             public object Parameter { get; private set; }
+
+            public IDictionary<string, object> State { get; private set; } 
         }
     }
 }

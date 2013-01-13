@@ -21,7 +21,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
             this.container = App.Container;
         }
 
-        public virtual void OnNavigatedTo(object parameter)
+        public virtual void OnNavigatedTo(NavigatedToEventArgs eventArgs)
         {
 #if DEBUG 
             if (!this.presenterInitialized)
@@ -30,7 +30,19 @@ namespace OutcoldSolutions.GoogleMusic.Views
             }
 #endif
 
-            ((PresenterBase)this.DataContext).OnNavigatedTo(parameter);
+            ((PresenterBase)this.DataContext).OnNavigatedTo(eventArgs);
+        }
+
+        public virtual void OnNavigatingFrom(NavigatingFromEventArgs eventArgs)
+        {
+#if DEBUG
+            if (!this.presenterInitialized)
+            {
+                throw new NotSupportedException("View should be initialized with correct presenter!");
+            }
+#endif
+
+            ((PresenterBase)this.DataContext).OnNavigatingFrom(eventArgs);
         }
 
         protected void InitializePresenter<TPresenter>() where TPresenter : PresenterBase

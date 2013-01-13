@@ -50,17 +50,17 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         public DelegateCommand EditPlaylistCommand { get; private set; }
 
-        public override void OnNavigatedTo(object parameter)
+        public override void OnNavigatedTo(NavigatedToEventArgs eventArgs)
         {
-            base.OnNavigatedTo(parameter);
+            base.OnNavigatedTo(eventArgs);
 
             this.View.SetGroups(null);
             this.BindingModel.Count = 0;
             this.BindingModel.IsEditable = false;
 
-            if (parameter is PlaylistsRequest)
+            if (eventArgs.Parameter is PlaylistsRequest)
             {
-                this.currentRequest = (PlaylistsRequest)parameter;
+                this.currentRequest = (PlaylistsRequest)eventArgs.Parameter;
                 this.BindingModel.IsLoading = true;
                 this.BindingModel.Title = this.currentRequest.ToString();
 

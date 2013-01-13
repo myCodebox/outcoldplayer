@@ -75,7 +75,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
             }
         }
 
-        public override void OnNavigatedTo(object parameter)
+        public override void OnNavigatedTo(NavigatedToEventArgs eventArgs)
         {
             if (this.ListView.Items != null && this.ListView.Items.Count > 0)
             {
@@ -84,7 +84,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
                 this.ListView.ScrollIntoView(this.ListView.SelectedItem);
             }
 
-            base.OnNavigatedTo(parameter);
+            base.OnNavigatedTo(eventArgs);
         }
 
         public void ShowPlaylists(List<MusicPlaylist> playlists)

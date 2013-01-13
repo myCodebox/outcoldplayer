@@ -61,7 +61,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
             this.separator = new Border() { Style = (Style)Application.Current.Resources["AppBarSeparator"] };
         }
 
-        public override void OnNavigatedTo(object parameter)
+        public override void OnNavigatedTo(NavigatedToEventArgs eventArgs)
         {
             this.ListView.SelectedIndex = -1;
             if (this.ListView.Items != null && this.ListView.Items.Count > 0)
@@ -69,11 +69,11 @@ namespace OutcoldSolutions.GoogleMusic.Views
                 this.ListView.ScrollIntoView(this.ListView.Items[0]);
             }
 
-            base.OnNavigatedTo(parameter);
+            base.OnNavigatedTo(eventArgs);
 
             var currentContextCommands = App.Container.Resolve<ICurrentContextCommands>();
 
-            if (parameter is PlaylistsRequest && ((PlaylistsRequest)parameter) == PlaylistsRequest.Playlists)
+            if (eventArgs.Parameter is PlaylistsRequest && ((PlaylistsRequest)eventArgs.Parameter) == PlaylistsRequest.Playlists)
             {
                 this.ListView.SelectionMode = ListViewSelectionMode.Single;
                 currentContextCommands.SetCommands(new List<ButtonBase>() { this.addPlaylistButton });

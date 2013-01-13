@@ -48,9 +48,9 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         public ProgressLoadingBindingModel BindingModel { get; private set; }
 
-        public override void OnNavigatedTo(object parameter)
+        public override void OnNavigatedTo(NavigatedToEventArgs eventArgs)
         {
-            base.OnNavigatedTo(parameter);
+            base.OnNavigatedTo(eventArgs);
 
             this.LoadSongs();
         }
