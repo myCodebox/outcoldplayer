@@ -145,6 +145,10 @@
     <Compile Include="Web\IMediaStreamDownloadService.cs" />
     <Compile Include="Web\INetworkRandomAccessStream.cs" />
     <Compile Include="Web\ISongWebService.cs" />
+    <Compile Include="Web\Lastfm\GetSessionError.cs" />
+    <Compile Include="Web\Lastfm\ILastFmAccountWebService.cs" />
+    <Compile Include="Web\Lastfm\LastfmSession.cs" />
+    <Compile Include="Web\Lastfm\LastfmSessionResponse.cs" />
     <Compile Include="Web\LoggerWebExtensions.cs" />
     <Compile Include="Web\MediaStreamDownloadService.cs" />
     <Compile Include="Web\MediaTypeHeaderValueExtensions.cs" />
