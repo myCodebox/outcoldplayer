@@ -33,7 +33,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
             get { return PublisherType.Delay; }
         }
 
-        public async Task PublishAsync(Song song, Playlist currentPlaylist, CancellationToken cancellationToken)
+        public async Task PublishAsync(Song song, Playlist currentPlaylist, Uri albumArtUri, CancellationToken cancellationToken)
         {
             this.logger.Debug("PublishAsync: Publishing song playing to GoogleMusic services. SongId: {0}.", song.GoogleMusicMetadata.Id);
 

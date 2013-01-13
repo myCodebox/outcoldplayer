@@ -3,6 +3,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Services.Publishers
 {
+    using System;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -12,6 +13,6 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
     {
         PublisherType PublisherType { get; }
 
-        Task PublishAsync(Song song, Playlist currentPlaylist, CancellationToken cancellationToken);
+        Task PublishAsync(Song song, Playlist currentPlaylist, Uri imageUri, CancellationToken cancellationToken);
     }
 }

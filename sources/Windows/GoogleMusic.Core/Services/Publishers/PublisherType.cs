@@ -6,6 +6,8 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
     public enum PublisherType
     {
         Immediately,
-        Delay
+        ImmediatelyWithAlbumArt,
+        Delay,
+        DelayWithAlbumArt
     }
 }

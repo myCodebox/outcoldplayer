@@ -4,6 +4,7 @@
 
 namespace OutcoldSolutions.GoogleMusic.Suites.Services.Pubslishers
 {
+    using System;
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
@@ -48,7 +49,7 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Services.Pubslishers
             await service.PublishAsync(this.song, this.playlist);
 
             // Assert
-            publisher.Verify(p => p.PublishAsync(this.song, this.playlist, It.IsAny<CancellationToken>()), Times.Once());
+            publisher.Verify(p => p.PublishAsync(this.song, this.playlist, It.IsAny<Uri>(), It.IsAny<CancellationToken>()), Times.Once());
         }
 
         [Test]
@@ -74,8 +75,8 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Services.Pubslishers
             await TaskEx.WhenAllSafe(task);
 
             // Assert
-            immidiatelyPublisher.Verify(p => p.PublishAsync(this.song, this.playlist, It.IsAny<CancellationToken>()), Times.Once());
-            delayPublisher.Verify(p => p.PublishAsync(this.song, this.playlist, It.IsAny<CancellationToken>()), Times.Never());
+            immidiatelyPublisher.Verify(p => p.PublishAsync(this.song, this.playlist, It.IsAny<Uri>(), It.IsAny<CancellationToken>()), Times.Once());
+            delayPublisher.Verify(p => p.PublishAsync(this.song, this.playlist, It.IsAny<Uri>(), It.IsAny<CancellationToken>()), Times.Never());
         }
 
         [Test]
@@ -97,8 +98,8 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Services.Pubslishers
             await service.PublishAsync(this.song, this.playlist);
 
             // Assert
-            immidiatelyPublisher.Verify(p => p.PublishAsync(this.song, this.playlist, It.IsAny<CancellationToken>()), Times.Once());
-            delayPublisher.Verify(p => p.PublishAsync(this.song, this.playlist, It.IsAny<CancellationToken>()), Times.Once());
+            immidiatelyPublisher.Verify(p => p.PublishAsync(this.song, this.playlist, It.IsAny<Uri>(), It.IsAny<CancellationToken>()), Times.Once());
+            delayPublisher.Verify(p => p.PublishAsync(this.song, this.playlist, It.IsAny<Uri>(), It.IsAny<CancellationToken>()), Times.Once());
         }
 
         [Test]
@@ -121,8 +122,8 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Services.Pubslishers
             await TaskEx.WhenAllSafe(publish1, publish2);
 
             // Assert
-            delayPublisher.Verify(p => p.PublishAsync(this.song, this.playlist, It.IsAny<CancellationToken>()), Times.Never());
-            delayPublisher.Verify(p => p.PublishAsync(song2, this.playlist, It.IsAny<CancellationToken>()), Times.Once());
+            delayPublisher.Verify(p => p.PublishAsync(this.song, this.playlist, It.IsAny<Uri>(), It.IsAny<CancellationToken>()), Times.Never());
+            delayPublisher.Verify(p => p.PublishAsync(song2, this.playlist, It.IsAny<Uri>(), It.IsAny<CancellationToken>()), Times.Once());
         }
 
         [Test]
@@ -144,7 +145,7 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Services.Pubslishers
                 Task.Delay((int)this.song.GoogleMusicMetadata.DurationMillis));
 
             // Assert
-            delayPublisher.Verify(p => p.PublishAsync(this.song, this.playlist, It.IsAny<CancellationToken>()), Times.Once());
+            delayPublisher.Verify(p => p.PublishAsync(this.song, this.playlist, It.IsAny<Uri>(), It.IsAny<CancellationToken>()), Times.Once());
         }
     }
 }

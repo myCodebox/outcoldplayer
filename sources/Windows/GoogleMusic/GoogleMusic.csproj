@@ -156,6 +156,7 @@
     <Compile Include="Services\ICurrentPlaylistService.cs" />
     <Compile Include="Services\ISearchService.cs" />
     <Compile Include="Services\ISettingsCommands.cs" />
+    <Compile Include="Services\Publishers\TileCurrentSongPublisher.cs" />
     <Compile Include="Services\SearchService.cs" />
     <Compile Include="Services\SettingsCommands.cs" />
     <Compile Include="Services\SettingsService.cs" />
