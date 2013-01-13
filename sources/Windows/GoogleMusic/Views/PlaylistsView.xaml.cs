@@ -34,6 +34,8 @@ namespace OutcoldSolutions.GoogleMusic.Views
         private readonly Button deletePlaylistButton;
         private readonly Border separator;
 
+        private object lastClickedItem;
+
         public PlaylistsView()
         {
             this.InitializePresenter<PlaylistsViewPresenter>();
@@ -72,7 +74,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
             base.OnNavigatedTo(eventArgs);
 
             var currentContextCommands = App.Container.Resolve<ICurrentContextCommands>();
-
+            
             if (eventArgs.Parameter is PlaylistsRequest && ((PlaylistsRequest)eventArgs.Parameter) == PlaylistsRequest.Playlists)
             {
                 this.ListView.SelectionMode = ListViewSelectionMode.Single;

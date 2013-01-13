@@ -21,6 +21,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private readonly ISongsService songsService;
         private PlaylistsRequest currentRequest;
 
+        private Playlist clickedPlaylist = null;
+
         public PlaylistsViewPresenter(
             IDependencyResolverContainer container,
             IPlaylistsView view,
@@ -50,6 +52,13 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         public DelegateCommand EditPlaylistCommand { get; private set; }
 
+        public override void OnNavigatingFrom(NavigatingFromEventArgs eventArgs)
+        {
+            base.OnNavigatingFrom(eventArgs);
+            eventArgs.State["LastViewedPlaylist"] = this.clickedPlaylist;
+            this.clickedPlaylist = null;
+        }
+
         public override void OnNavigatedTo(NavigatedToEventArgs eventArgs)
         {
             base.OnNavigatedTo(eventArgs);
@@ -65,9 +74,30 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 this.BindingModel.Title = this.currentRequest.ToString();
 
                 this.LoadPlaylistsAsync().ContinueWith(
-                    (t) =>
+                    async (t) =>
                         {
                             this.View.SetGroups(t.Result);
+
+                            if (eventArgs.IsBack)
+                            {
+                                object lastPlaylist;
+                                if (eventArgs.State.TryGetValue("LastViewedPlaylist", out lastPlaylist)
+                                    && lastPlaylist is Playlist)
+                                {
+                                    foreach (var group in t.Result)
+                                    {
+                                        foreach (var playlist in group.Playlists)
+                                        {
+                                            if (playlist.Playlist.Equals(lastPlaylist))
+                                            {
+                                                await this.Dispatcher.RunAsync(() => this.View.ShowPlaylist(playlist));
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
                             this.BindingModel.IsLoading = false;
                             this.BindingModel.IsEditable = this.currentRequest == PlaylistsRequest.Playlists;
                             this.BindingModel.Count = t.Result.Sum(x => x.Playlists.Count);
@@ -98,6 +128,12 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                         TaskScheduler.FromCurrentSynchronizationContext());
                 }
             }
+        }
+
+        public override void ItemClick(PlaylistBindingModel playlistBindingModel)
+        {
+            this.clickedPlaylist = playlistBindingModel.Playlist;
+            base.ItemClick(playlistBindingModel);
         }
 
         private void AddPlaylist()

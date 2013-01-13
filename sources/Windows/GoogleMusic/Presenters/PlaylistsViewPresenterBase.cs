@@ -18,7 +18,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.navigationService = container.Resolve<INavigationService>();
         }
 
-        public void ItemClick(PlaylistBindingModel playlistBindingModel)
+        public virtual void ItemClick(PlaylistBindingModel playlistBindingModel)
         {
             this.Logger.Debug("ItemClick.");
             if (playlistBindingModel != null)
