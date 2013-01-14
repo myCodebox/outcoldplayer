@@ -43,55 +43,81 @@
 
             </Grid>
 
+            <ScrollViewer Grid.Row="1" Margin="40,24,23,0" VerticalAlignment="Top" 
+                          HorizontalScrollBarVisibility="Disabled" HorizontalScrollMode="Disabled"
+                          VerticalScrollBarVisibility="Auto" VerticalScrollMode="Auto">
             <!-- Settings Panel Content -->
-            <StackPanel Grid.Row="1" Margin="40,24,23,0" VerticalAlignment="Top" >
-                <StackPanel.Transitions>
-                    <TransitionCollection>
-                        <EntranceThemeTransition FromHorizontalOffset="120" />
-                    </TransitionCollection>
-                </StackPanel.Transitions>
+                <StackPanel  >
+                    <StackPanel.Transitions>
+                        <TransitionCollection>
+                            <EntranceThemeTransition FromHorizontalOffset="120" />
+                        </TransitionCollection>
+                    </StackPanel.Transitions>
 
-                <TextBlock Style="{StaticResource BodyTextStyle}"
-                           Visibility="{Binding Path=BindingModel.HasSession, Converter={StaticResource BooleanToInvisibilityConverter}}">
-                    You are not logged in.
-                </TextBlock>
+                    <TextBlock Style="{StaticResource BodyTextStyle}"
+                               Visibility="{Binding Path=BindingModel.HasSession, Converter={StaticResource BooleanToInvisibilityConverter}}">
+                        You are not logged in.
+                    </TextBlock>
                 
-                <TextBlock Style="{StaticResource BodyTextStyle}"
-                           Visibility="{Binding Path=BindingModel.AccountName, Converter={StaticResource NullToInvisibilityConverter}}">
-                    You are logged in with Google Account:
-                </TextBlock>
+                    <TextBlock Style="{StaticResource BodyTextStyle}"
+                               Visibility="{Binding Path=BindingModel.AccountName, Converter={StaticResource NullToInvisibilityConverter}}">
+                        You are logged in with Google Account:
+                    </TextBlock>
 
-                <TextBlock Text="{Binding Path=BindingModel.AccountName, Mode=OneWay}" 
-                           Style="{StaticResource TitleTextStyle}"  
-                           Visibility="{Binding Path=BindingModel.AccountName, Converter={StaticResource NullToInvisibilityConverter}}"
-                           Margin="0, 20, 0, 0"/>
+                    <TextBlock Text="{Binding Path=BindingModel.AccountName, Mode=OneWay}" 
+                               Style="{StaticResource TitleTextStyle}"  
+                               Visibility="{Binding Path=BindingModel.AccountName, Converter={StaticResource NullToInvisibilityConverter}}"
+                               Margin="0, 20, 0, 0"/>
 
-                <Button Command="{Binding Path=SignOutCommand}" 
-                        Visibility="{Binding Path=BindingModel.HasSession, Converter={StaticResource BooleanToVisibilityConverter}}"
-                        Content="Sign out" 
-                        Margin="0, 40, 0, 0"/>
+                    <Button Command="{Binding Path=SignOutCommand}" 
+                            Visibility="{Binding Path=BindingModel.HasSession, Converter={StaticResource BooleanToVisibilityConverter}}"
+                            Content="Sign out" 
+                            Margin="0, 40, 0, 0"/>
                 
-                <TextBlock Style="{StaticResource BodyTextStyle}" 
-                           Margin="0, 40, 0, 0"
-                           Visibility="{Binding Path=BindingModel.IsRemembered, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}">
-                    gMusic does not store email and password of current Google Account.
-                </TextBlock>
+                    <TextBlock Style="{StaticResource BodyTextStyle}" 
+                               Margin="0, 40, 0, 0"
+                               Visibility="{Binding Path=BindingModel.IsRemembered, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}">
+                        gMusic does not store email and password of current Google Account.
+                    </TextBlock>
 
-                <TextBlock Style="{StaticResource BodyTextStyle}" 
-                           Margin="0, 40, 0, 0"
-                           Visibility="{Binding Path=BindingModel.IsRemembered, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
-                    gMusic stores email and password in protected Windows store. 
-                </TextBlock>
+                    <TextBlock Style="{StaticResource BodyTextStyle}" 
+                               Margin="0, 40, 0, 0"
+                               Visibility="{Binding Path=BindingModel.IsRemembered, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        gMusic stores email and password in protected Windows store. 
+                    </TextBlock>
                 
-                <Button Command="{Binding Path=ForgetAccountCommand}" 
-                        Content="Forget account" 
-                        Margin="0, 40, 0, 0"
-                        Visibility="{Binding Path=BindingModel.IsRemembered, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                    <Button Command="{Binding Path=ForgetAccountCommand}" 
+                            Content="Forget account" 
+                            Margin="0, 40, 0, 0"
+                            Visibility="{Binding Path=BindingModel.IsRemembered, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
-                <TextBlock Style="{StaticResource BodyTextStyle}" Text="{Binding Path=BindingModel.Message, Mode=OneWay}" Margin="0, 20, 0, 0"
-                           Visibility="{Binding Path=BindingModel.Message, Mode=OneWay, Converter={StaticResource NullToInvisibilityConverter}}"/>
+                    <TextBlock Style="{StaticResource BodyTextStyle}" Text="{Binding Path=BindingModel.Message, Mode=OneWay}" Margin="0, 20, 0, 0"
+                               Visibility="{Binding Path=BindingModel.Message, Mode=OneWay, Converter={StaticResource NullToInvisibilityConverter}}"/>
 
-            </StackPanel>
+
+                    <TextBlock Style="{StaticResource BodyTextStyle}"
+                               Margin="0, 40, 0, 0"
+                               Visibility="{Binding Path=BindingModel.LastfmAccountName, Converter={StaticResource NullToInvisibilityConverter}}">
+                        Linked Last.fm account:
+                    </TextBlock>
+
+                    <TextBlock Text="{Binding Path=BindingModel.LastfmAccountName, Mode=OneWay}" 
+                               Style="{StaticResource TitleTextStyle}"  
+                               Visibility="{Binding Path=BindingModel.LastfmAccountName, Converter={StaticResource NullToInvisibilityConverter}}"
+                               Margin="0, 20, 0, 0"/>
+
+                    <Button Command="{Binding Path=LastfmUnlinkCommand}" 
+                            Content="Unlink Last.fm" 
+                            Margin="0, 40, 0, 0"
+                            Visibility="{Binding Path=BindingModel.LastfmAccountName, Mode=OneWay, Converter={StaticResource NullToInvisibilityConverter}}"/>
+
+                    <Button Command="{Binding Path=LastfmLinkCommand}" 
+                            Content="Link Last.fm account" 
+                            Margin="0, 40, 0, 0"
+                            Visibility="{Binding Path=BindingModel.LastfmAccountName, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"/>
+
+                </StackPanel>
+            </ScrollViewer>
 
         </Grid>
     </Border>

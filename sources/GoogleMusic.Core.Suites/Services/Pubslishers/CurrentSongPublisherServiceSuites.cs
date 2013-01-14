@@ -39,11 +39,17 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Services.Pubslishers
         {
             // Arrange
             this.settingsService.Setup(x => x.GetValue("DelayPublishersHoldUp", It.IsAny<int>())).Returns(10);
-            var service = new CurrentSongPublisherService(this.LogManager, this.settingsService.Object);
+            var service = new CurrentSongPublisherService(this.LogManager, this.settingsService.Object, this.Container);
 
-            var publisher = new Mock<ICurrentSongPublisher>();
+            var publisher = new Mock<CurrentSongPublisher1>();
             publisher.SetupGet(x => x.PublisherType).Returns(PublisherType.Immediately);
-            service.AddPublisher(publisher.Object);
+
+            using (var registration = this.Container.Registration())
+            {
+                registration.Register<CurrentSongPublisher1>().AsSingleton(publisher.Object);
+            }
+
+            service.AddPublisher<CurrentSongPublisher1>();
 
             // Act
             await service.PublishAsync(this.song, this.playlist);
@@ -57,15 +63,25 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Services.Pubslishers
         {
             // Arrange
             this.settingsService.Setup(x => x.GetValue("DelayPublishersHoldUp", It.IsAny<int>())).Returns(1000);
-            var service = new CurrentSongPublisherService(this.LogManager, this.settingsService.Object);
+            var service = new CurrentSongPublisherService(this.LogManager, this.settingsService.Object, this.Container);
 
-            var immidiatelyPublisher = new Mock<ICurrentSongPublisher>();
+            var immidiatelyPublisher = new Mock<CurrentSongPublisher1>();
             immidiatelyPublisher.SetupGet(x => x.PublisherType).Returns(PublisherType.Immediately);
-            service.AddPublisher(immidiatelyPublisher.Object);
+            using (var registration = this.Container.Registration())
+            {
+                registration.Register<CurrentSongPublisher1>().AsSingleton(immidiatelyPublisher.Object);
+            }
 
-            var delayPublisher = new Mock<ICurrentSongPublisher>();
+            service.AddPublisher<CurrentSongPublisher1>();
+
+            var delayPublisher = new Mock<CurrentSongPublisher2>();
             delayPublisher.SetupGet(x => x.PublisherType).Returns(PublisherType.Delay);
-            service.AddPublisher(delayPublisher.Object);
+            using (var registration = this.Container.Registration())
+            {
+                registration.Register<CurrentSongPublisher2>().AsSingleton(delayPublisher.Object);
+            }
+
+            service.AddPublisher<CurrentSongPublisher2>();
 
             // Act
             var task = service.PublishAsync(this.song, this.playlist);
@@ -84,15 +100,25 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Services.Pubslishers
         {
             // Arrange
             this.settingsService.Setup(x => x.GetValue("DelayPublishersHoldUp", It.IsAny<int>())).Returns(1);
-            var service = new CurrentSongPublisherService(this.LogManager, this.settingsService.Object);
+            var service = new CurrentSongPublisherService(this.LogManager, this.settingsService.Object, this.Container);
 
-            var immidiatelyPublisher = new Mock<ICurrentSongPublisher>();
+            var immidiatelyPublisher = new Mock<CurrentSongPublisher1>();
             immidiatelyPublisher.SetupGet(x => x.PublisherType).Returns(PublisherType.Immediately);
-            service.AddPublisher(immidiatelyPublisher.Object);
+            using (var registration = this.Container.Registration())
+            {
+                registration.Register<CurrentSongPublisher1>().AsSingleton(immidiatelyPublisher.Object);
+            }
 
-            var delayPublisher = new Mock<ICurrentSongPublisher>();
+            service.AddPublisher<CurrentSongPublisher1>();
+
+            var delayPublisher = new Mock<CurrentSongPublisher2>();
             delayPublisher.SetupGet(x => x.PublisherType).Returns(PublisherType.Delay);
-            service.AddPublisher(delayPublisher.Object);
+            using (var registration = this.Container.Registration())
+            {
+                registration.Register<CurrentSongPublisher2>().AsSingleton(delayPublisher.Object);
+            }
+
+            service.AddPublisher<CurrentSongPublisher2>();
 
             // Act
             await service.PublishAsync(this.song, this.playlist);
@@ -107,11 +133,16 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Services.Pubslishers
         {
             // Arrange
             this.settingsService.Setup(x => x.GetValue("DelayPublishersHoldUp", It.IsAny<int>())).Returns(100);
-            var service = new CurrentSongPublisherService(this.LogManager, this.settingsService.Object);
+            var service = new CurrentSongPublisherService(this.LogManager, this.settingsService.Object, this.Container);
 
-            var delayPublisher = new Mock<ICurrentSongPublisher>();
+            var delayPublisher = new Mock<CurrentSongPublisher1>();
             delayPublisher.SetupGet(x => x.PublisherType).Returns(PublisherType.Delay);
-            service.AddPublisher(delayPublisher.Object);
+            using (var registration = this.Container.Registration())
+            {
+                registration.Register<CurrentSongPublisher1>().AsSingleton(delayPublisher.Object);
+            }
+
+            service.AddPublisher<CurrentSongPublisher1>();
 
             Song song2 = new Song(new GoogleMusicSong() { DurationMillis = 60000 });
 
@@ -131,11 +162,16 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Services.Pubslishers
         {
             // Arrange
             this.settingsService.Setup(x => x.GetValue("DelayPublishersHoldUp", It.IsAny<int>())).Returns(10000);
-            var service = new CurrentSongPublisherService(this.LogManager, this.settingsService.Object);
+            var service = new CurrentSongPublisherService(this.LogManager, this.settingsService.Object, this.Container);
 
-            var delayPublisher = new Mock<ICurrentSongPublisher>();
+            var delayPublisher = new Mock<CurrentSongPublisher1>();
             delayPublisher.SetupGet(x => x.PublisherType).Returns(PublisherType.Delay);
-            service.AddPublisher(delayPublisher.Object);
+            using (var registration = this.Container.Registration())
+            {
+                registration.Register<CurrentSongPublisher1>().AsSingleton(delayPublisher.Object);
+            }
+
+            service.AddPublisher<CurrentSongPublisher1>();
 
             this.song.GoogleMusicMetadata.DurationMillis = 100;
 
@@ -146,6 +182,20 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Services.Pubslishers
 
             // Assert
             delayPublisher.Verify(p => p.PublishAsync(this.song, this.playlist, It.IsAny<Uri>(), It.IsAny<CancellationToken>()), Times.Once());
+        }
+
+        public abstract class CurrentSongPublisher1 : ICurrentSongPublisher
+        {
+            public abstract PublisherType PublisherType { get; }
+
+            public abstract Task PublishAsync(Song song, Playlist currentPlaylist, Uri imageUri, CancellationToken cancellationToken);
+        }
+
+        public abstract class CurrentSongPublisher2 : ICurrentSongPublisher
+        {
+            public abstract PublisherType PublisherType { get; }
+
+            public abstract Task PublishAsync(Song song, Playlist currentPlaylist, Uri imageUri, CancellationToken cancellationToken);
         }
     }
 }

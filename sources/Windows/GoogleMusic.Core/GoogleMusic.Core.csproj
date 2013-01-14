@@ -130,6 +130,7 @@
     <Compile Include="Services\Publishers\GoogleMusicCurrentSongPublisher.cs" />
     <Compile Include="Services\Publishers\ICurrentSongPublisher.cs" />
     <Compile Include="Services\Publishers\ICurrentSongPublisherService.cs" />
+    <Compile Include="Services\Publishers\LastFmCurrentSongPublisher.cs" />
     <Compile Include="Services\Publishers\MediaControlCurrentSongPublisher.cs" />
     <Compile Include="Services\Publishers\PublisherType.cs" />
     <Compile Include="Services\SettingsValueChangedEventArgs.cs" />
@@ -145,13 +146,17 @@
     <Compile Include="Web\IMediaStreamDownloadService.cs" />
     <Compile Include="Web\INetworkRandomAccessStream.cs" />
     <Compile Include="Web\ISongWebService.cs" />
-    <Compile Include="Web\Lastfm\GetSessionError.cs" />
-    <Compile Include="Web\Lastfm\ILastFmAccountWebService.cs" />
+    <Compile Include="Web\Lastfm\ErrorResp.cs" />
+    <Compile Include="Web\Lastfm\GetSessionResp.cs" />
+    <Compile Include="Web\Lastfm\ILastfmAccountWebService.cs" />
+    <Compile Include="Web\Lastfm\ILastfmWebService.cs" />
+    <Compile Include="Web\Lastfm\LastfmAccountWebService.cs" />
     <Compile Include="Web\Lastfm\LastfmSession.cs" />
     <Compile Include="Web\Lastfm\LastfmSessionResponse.cs" />
+    <Compile Include="Web\Lastfm\LastfmWebService.cs" />
+    <Compile Include="Web\Lastfm\TokenResp.cs" />
     <Compile Include="Web\LoggerWebExtensions.cs" />
     <Compile Include="Web\MediaStreamDownloadService.cs" />
-    <Compile Include="Web\MediaTypeHeaderValueExtensions.cs" />
     <Compile Include="Web\Models\AddPlaylistResp.cs" />
     <Compile Include="Web\Models\AddSongResp.cs" />
     <Compile Include="Web\Models\DeletePlaylistResp.cs" />
@@ -161,7 +166,6 @@
     <Compile Include="Web\Models\GoogleMusicPlaylists.cs" />
     <Compile Include="Web\Models\GoogleMusicSong.cs" />
     <Compile Include="Web\Models\GoogleMusicSongUrl.cs" />
-    <Compile Include="Web\Models\GoogleWebResponse.cs" />
     <Compile Include="Web\Models\RatingResp.cs" />
     <Compile Include="Web\Models\SongIdResp.cs" />
     <Compile Include="Web\Models\SongRatingResp.cs" />

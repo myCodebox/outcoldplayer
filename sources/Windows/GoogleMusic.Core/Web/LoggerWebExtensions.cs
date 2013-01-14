@@ -13,6 +13,10 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
     using OutcoldSolutions.GoogleMusic.Diagnostics;
 
+    using Windows.Security.Cryptography;
+    using Windows.Security.Cryptography.Core;
+    using Windows.Storage.Streams;
+
     public static class LoggerWebExtensions
     {
         public static void LogRequest(
@@ -49,7 +53,11 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
                     foreach (Cookie cookieLog in cookieCollection)
                     {
-                        @this.Debug("        {0}", cookieLog.ToString());
+                        HashAlgorithmProvider hashProvider = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Md5);
+                        IBuffer hash = hashProvider.HashData(CryptographicBuffer.ConvertStringToBinary(cookieLog.Value, BinaryStringEncoding.Utf8));
+                        string hashValue = CryptographicBuffer.EncodeToBase64String(hash);
+
+                        @this.Debug("        {0}={{MD5_VALUE_HASH}}{1}", cookieLog.Name, hashValue);
                     }
                 }
 
@@ -94,8 +102,9 @@ namespace OutcoldSolutions.GoogleMusic.Web
                         @this.Debug("        {0}={1}", header.Key, string.Join("&&&", header.Value));
                     }
 
-                    if (httpResponseMessage.Content.Headers.ContentType.IsPlainText()
-                        || httpResponseMessage.Content.Headers.ContentType.IsHtmlText())
+                    if (httpResponseMessage.Content.IsPlainText()
+                        || httpResponseMessage.Content.IsHtmlText()
+                        || httpResponseMessage.Content.IsJson())
                     {
                         using (var stream = await httpResponseMessage.Content.ReadAsStreamAsync())
                         {

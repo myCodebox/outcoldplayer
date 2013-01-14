@@ -1,0 +1,77 @@
+﻿// --------------------------------------------------------------------------------------------------------------------
+// Outcold Solutions (http://outcoldman.com)
+// --------------------------------------------------------------------------------------------------------------------
+namespace OutcoldSolutions.GoogleMusic.Services.Publishers
+{
+    using System;
+    using System.Collections.Generic;
+    using System.Threading;
+    using System.Threading.Tasks;
+
+    using OutcoldSolutions.GoogleMusic.Models;
+    using OutcoldSolutions.GoogleMusic.Web.Lastfm;
+
+    public class LastFmCurrentSongPublisher : ICurrentSongPublisher
+    {
+        private readonly ILastfmWebService webService;
+
+        public LastFmCurrentSongPublisher(ILastfmWebService webService)
+        {
+            this.webService = webService;
+        }
+
+        public PublisherType PublisherType
+        {
+            get { return PublisherType.Immediately; }
+        }
+
+        public async Task PublishAsync(Song song, Playlist currentPlaylist, Uri imageUri, CancellationToken cancellationToken)
+        {
+            var startPlaying = DateTime.UtcNow;
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            var parameters = new Dictionary<string, string>()
+                                 {
+                                     { "artist", song.Artist },
+                                     { "track", song.Title },
+                                     { "album", song.Album },
+                                     { "trackNumber", song.GoogleMusicMetadata.Track.ToString("D") },
+                                     { "duration", ((int)song.Duration).ToString("D") }
+                                 };
+
+            if (!string.IsNullOrEmpty(song.GoogleMusicMetadata.AlbumArtist)
+                && string.Equals(song.GoogleMusicMetadata.AlbumArtist, song.Artist, StringComparison.OrdinalIgnoreCase))
+            {
+                parameters.Add("albumArtist", song.GoogleMusicMetadata.AlbumArtist);
+            }
+
+            Task nowPlayingTask = this.webService.CallAsync("track.updateNowPlaying", new Dictionary<string, string>(parameters));
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            // Last.fm only accept songs with > 30 seconds
+            if (song.Duration >= 30)
+            {
+                // 4 minutes or half of the track
+                await Task.Delay(Math.Min(4 * 60 * 1000, (int)(song.Duration * 1000 / 2)), cancellationToken);
+
+                cancellationToken.ThrowIfCancellationRequested();
+
+                var scrobbleParameters = new Dictionary<string, string>(parameters)
+                                             {
+                                                 {
+                                                     "timestamp",
+                                                     ((int)(startPlaying - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds).ToString("D")
+                                                 }
+                                             };
+
+                await this.webService.CallAsync("track.scrobble", scrobbleParameters);
+            }
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            await nowPlayingTask;
+        }
+    }
+}

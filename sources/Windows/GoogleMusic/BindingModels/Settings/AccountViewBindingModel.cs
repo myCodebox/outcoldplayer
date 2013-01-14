@@ -6,6 +6,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels.Settings
     public class AccountViewBindingModel : BindingModelBase
     {
         private string accountName;
+        private string lastfmAccountName;
         private string message;
         private bool isRemembered;
         private bool hasSession;
@@ -62,6 +63,20 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels.Settings
             set
             {
                 this.message = value;
+                this.RaiseCurrentPropertyChanged();
+            }
+        }
+
+        public string LastfmAccountName
+        {
+            get
+            {
+                return this.lastfmAccountName;
+            }
+
+            set
+            {
+                this.lastfmAccountName = value;
                 this.RaiseCurrentPropertyChanged();
             }
         }

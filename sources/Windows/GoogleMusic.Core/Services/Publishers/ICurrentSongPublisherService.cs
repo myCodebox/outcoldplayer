@@ -3,16 +3,15 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Services.Publishers
 {
-    using System;
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.Models;
 
     public interface ICurrentSongPublisherService
     {
-        void AddPublisher(Lazy<ICurrentSongPublisher> publisher);
+        void AddPublisher<TPublisherType>() where TPublisherType : ICurrentSongPublisher;
 
-        void AddPublisher(ICurrentSongPublisher publisher);
+        void RemovePublishers<TPublisherType>() where TPublisherType : ICurrentSongPublisher;
 
         Task PublishAsync(Song song, Playlist currentPlaylist);
 

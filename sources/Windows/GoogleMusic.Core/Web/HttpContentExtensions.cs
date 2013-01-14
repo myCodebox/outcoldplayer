@@ -6,6 +6,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
     using System;
     using System.Collections.Generic;
     using System.IO;
+    using System.Linq;
     using System.Net;
     using System.Net.Http;
     using System.Threading.Tasks;
@@ -16,7 +17,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
     {
         internal static async Task<Dictionary<string, string>> ReadAsDictionaryAsync(this HttpContent @this)
         {
-            if (!@this.Headers.ContentType.IsPlainText())
+            if (!@this.IsPlainText())
             {
                 throw new NotSupportedException("ReadAsDictionaryAsync supports only text/plain content.");
             }
@@ -47,12 +48,42 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
         internal static async Task<TResult> ReadAsJsonObject<TResult>(this HttpContent @this)
         {
-            if (!@this.Headers.ContentType.IsPlainText())
+            if (!@this.IsPlainText() && !@this.IsJson())
             {
-                throw new NotSupportedException("ReadAsJsonObject supports only text/plain content.");
+                throw new NotSupportedException("ReadAsJsonObject supports only text/plain or application/json content.");
             }
 
             return JsonConvert.DeserializeObject<TResult>(await @this.ReadAsStringAsync());
+        }
+
+        internal static bool IsPlainText(this HttpContent @this)
+        {
+            return IsContentType(@this, "text/plain");
+        }
+
+        internal static bool IsHtmlText(this HttpContent @this)
+        {
+            return IsContentType(@this, "text/html");
+        }
+
+        internal static bool IsJson(this HttpContent @this)
+        {
+            return IsContentType(@this, "application/json");
+        }
+
+        private static bool IsContentType(HttpContent @this, string contentType)
+        {
+            if (@this == null)
+            {
+                return false;
+            }
+
+            if (@this.Headers.ContentType != null)
+            {
+                return string.Equals(@this.Headers.ContentType.MediaType, contentType, StringComparison.OrdinalIgnoreCase);
+            }
+
+            return @this.Headers.Contains("Content-Type") && @this.Headers.GetValues("Content-Type").Any(x => x.IndexOf(contentType, StringComparison.OrdinalIgnoreCase) == 0);
         }
     }
 }

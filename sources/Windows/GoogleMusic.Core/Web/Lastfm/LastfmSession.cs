@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // Outcold Solutions (http://outcoldman.com)
 // --------------------------------------------------------------------------------------------------------------------
-namespace OutcoldSolutions.GoogleMusic.Web.LastFm
+namespace OutcoldSolutions.GoogleMusic.Web.Lastfm
 {
     public class LastfmSession
     {

@@ -4,6 +4,7 @@
 namespace OutcoldSolutions.GoogleMusic.Suites.Web
 {
     using System.Net.Http;
+    using System.Net.Http.Headers;
 
     using NUnit.Framework;
 
@@ -27,6 +28,32 @@ Auth=DQAAAGgAdk3fA5N");
             Assert.AreEqual("DQAAAGgA7Zg8CTN", dictionary["SID"]);
             Assert.AreEqual("DQAAAGsAlk8BBbG", dictionary["LSID"]);
             Assert.AreEqual("DQAAAGgAdk3fA5N", dictionary["Auth"]);
+        }
+
+        [Test]
+        public void IsPlainText_NullHeader_False()
+        {
+            // Arrange
+            HttpContent content = new ByteArrayContent(new byte[] { });
+
+            // Act
+            bool result = content.IsPlainText();
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        [Test]
+        public void IsPlainText_PlainTextHeader_True()
+        {
+            // Arrange
+            HttpContent content = new StringContent(string.Empty);
+            
+            // Act
+            bool result = content.IsPlainText();
+
+            // Assert
+            Assert.IsTrue(result);
         }
     }
 }

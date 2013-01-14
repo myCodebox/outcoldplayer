@@ -174,14 +174,38 @@
     <Compile Include="..\Windows\GoogleMusic.Core\Web\ISongWebService.cs">
       <Link>sources\Web\ISongWebService.cs</Link>
     </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Web\Lastfm\ErrorResp.cs">
+      <Link>_sources\Web\Lastfm\ErrorResp.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Web\Lastfm\GetSessionResp.cs">
+      <Link>_sources\Web\Lastfm\GetSessionResp.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Web\Lastfm\ILastFmAccountWebService.cs">
+      <Link>_sources\Web\Lastfm\ILastFmAccountWebService.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Web\Lastfm\ILastfmWebService.cs">
+      <Link>_sources\Web\Lastfm\ILastfmWebService.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Web\Lastfm\LastfmAccountWebService.cs">
+      <Link>_sources\Web\Lastfm\LastfmAccountWebService.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Web\Lastfm\LastfmSession.cs">
+      <Link>_sources\Web\Lastfm\LastfmSession.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Web\Lastfm\LastfmSessionResponse.cs">
+      <Link>_sources\Web\Lastfm\LastfmSessionResponse.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Web\Lastfm\LastfmWebService.cs">
+      <Link>_sources\Web\Lastfm\LastfmWebService.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Web\Lastfm\TokenResp.cs">
+      <Link>_sources\Web\Lastfm\TokenResp.cs</Link>
+    </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Web\LoggerWebExtensions.cs">
       <Link>sources\Web\LoggerWebExtensions.cs</Link>
     </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Web\MediaStreamDownloadService.cs">
       <Link>sources\Web\MediaStreamDownloadService.cs</Link>
-    </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Web\MediaTypeHeaderValueExtensions.cs">
-      <Link>sources\Web\MediaTypeHeaderValueExtensions.cs</Link>
     </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Web\Models\AddPlaylistResp.cs">
       <Link>sources\Web\Models\AddPlaylistResp.cs</Link>
@@ -210,9 +234,6 @@
     <Compile Include="..\Windows\GoogleMusic.Core\Web\Models\GoogleMusicSongUrl.cs">
       <Link>sources\Web\Models\GoogleMusicSongUrl.cs</Link>
     </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Web\Models\GoogleWebResponse.cs">
-      <Link>sources\Web\Models\GoogleWebResponse.cs</Link>
-    </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Web\Models\RatingResp.cs">
       <Link>sources\Web\Models\RatingResp.cs</Link>
     </Compile>
@@ -240,7 +261,7 @@
     <Compile Include="SuitesBase.cs" />
     <Compile Include="Web\GoogleAccountWebServiceSuites.cs" />
     <Compile Include="Web\HttpContentExtensionsSuites.cs" />
-    <Compile Include="Web\MediaTypeHeaderValueExtensionsSuites.cs" />
+    <Compile Include="Web\Lastfm\LastfmAccountWebServiceSuites.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

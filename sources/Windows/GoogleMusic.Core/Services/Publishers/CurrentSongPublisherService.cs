@@ -26,7 +26,9 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
         private readonly object locker = new object();
 
         private readonly ILogger logger;
+        private readonly IDependencyResolverContainer container;
         private readonly ISettingsService settingsService;
+
         private readonly List<Lazy<ICurrentSongPublisher>> songPublishers = new List<Lazy<ICurrentSongPublisher>>();
 
         private readonly HttpClient httpImageDownloadClient = new HttpClient() { Timeout = TimeSpan.FromSeconds(5) };
@@ -35,27 +37,38 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
 
         private CancellationTokenSource cancellationTokenSource;
 
-        public CurrentSongPublisherService(ILogManager logManager, ISettingsService settingsService)
+        public CurrentSongPublisherService(
+            ILogManager logManager, 
+            ISettingsService settingsService,
+            IDependencyResolverContainer container)
         {
             this.settingsService = settingsService;
+            this.container = container;
             this.logger = logManager.CreateLogger("CurrentSongPublisherService");
 
             this.delayPublishersHoldUp = this.settingsService.GetValue(DelayPublishersSettingsKey, defaultValue: 15000);
         }
 
-        public void AddPublisher(Lazy<ICurrentSongPublisher> publisher)
+        public void AddPublisher<TPublisherType>() where TPublisherType : ICurrentSongPublisher
         {
             if (this.logger.IsDebugEnabled)
             {
-                this.logger.Debug("Adding new pubslisher: {0}.", publisher.GetType());
+                this.logger.Debug("Adding new pubslisher: {0}.", typeof(TPublisherType));
             }
 
-            this.songPublishers.Add(publisher);
+            this.songPublishers.Add(new Lazy<ICurrentSongPublisher>(() => this.container.Resolve<TPublisherType>()));
         }
 
-        public void AddPublisher(ICurrentSongPublisher publisher)
+        public void RemovePublishers<TPublisherType>() where TPublisherType : ICurrentSongPublisher
         {
-            this.AddPublisher(new Lazy<ICurrentSongPublisher>(() => publisher));
+            lock (this.songPublishers)
+            {
+                var publishers = this.songPublishers.Where(x => x.GetType() == typeof(Lazy<TPublisherType>)).ToList();
+                foreach (var publisher in publishers)
+                {
+                    this.songPublishers.Remove(publisher);
+                }
+            }
         }
 
         public async Task PublishAsync(Song song, Playlist currentPlaylist)

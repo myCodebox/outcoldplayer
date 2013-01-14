@@ -3,7 +3,10 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Services
 {
+    using System.Collections.Generic;
+
     using OutcoldSolutions.GoogleMusic.Views;
+    using OutcoldSolutions.GoogleMusic.Views.Popups;
     using OutcoldSolutions.GoogleMusic.Views.Settings;
 
     using Windows.ApplicationModel.Store;
@@ -15,15 +18,23 @@ namespace OutcoldSolutions.GoogleMusic.Services
     public class SettingsCommands : ISettingsCommands
     {
         private const double SettingsWidth = 346;
+        private const double LargeSettingsWidth = 646;
 
         private readonly IMediaElemenetContainerView mediaElemenetContainerView;
 
-        private Popup settingsPopup;
+        private readonly Dictionary<Popup, PopupType> settingsPopups = new Dictionary<Popup, PopupType>();
 
         public SettingsCommands(IMediaElemenetContainerView mediaElemenetContainerView)
         {
             this.mediaElemenetContainerView = mediaElemenetContainerView;
             SettingsPane.GetForCurrentView().CommandsRequested += this.CommandsRequested;
+        }
+
+        private enum PopupType
+        {
+            Settings,
+            LargeSettings,
+            Full
         }
 
         public void ActivateSettings(string name)
@@ -32,13 +43,17 @@ namespace OutcoldSolutions.GoogleMusic.Services
             {
                 this.CreatePopup(new UpgradeView());
             }
+            else if (name == "link-lastfm")
+            {
+                this.CreatePopup(new LastfmAuthentificationView(), PopupType.Full);
+            }
         }
 
         private void CommandsRequested(SettingsPane sender, SettingsPaneCommandsRequestedEventArgs args)
         {
             var cmd = new SettingsCommand(
-                "account",
-                "Account",
+                "accounts",
+                "Accounts",
                 (x) => this.CreatePopup(new AccountView()));
 
             args.Request.ApplicationCommands.Add(cmd);
@@ -75,41 +90,60 @@ namespace OutcoldSolutions.GoogleMusic.Services
 #endif
         }
 
-        private void CreatePopup(UserControl view)
+        private void CreatePopup(UserControl view, PopupType type = PopupType.Settings)
         {
-            this.settingsPopup = new Popup();
-            this.settingsPopup.Closed += this.OnPopupClosed;
+            var settingsWidth = type == PopupType.LargeSettings
+                                    ? LargeSettingsWidth
+                                    : (type == PopupType.Full) ? Window.Current.Bounds.Width : SettingsWidth;
+            
+            var settingsPopup = new Popup();
+            settingsPopup.Closed += this.OnPopupClosed;
             Window.Current.Activated += this.OnWindowActivated;
-            this.settingsPopup.IsLightDismissEnabled = true;
-            this.settingsPopup.Width = SettingsWidth;
-            this.settingsPopup.Height = Window.Current.Bounds.Height;
+            settingsPopup.IsLightDismissEnabled = type != PopupType.Full;
+            settingsPopup.Width = settingsWidth;
+            settingsPopup.Height = Window.Current.Bounds.Height;
 
-            view.Height = this.settingsPopup.Height;
-            view.Width = this.settingsPopup.Width;
+            view.Height = settingsPopup.Height;
+            view.Width = settingsPopup.Width;
 
-            this.settingsPopup.Child = view;
-            this.settingsPopup.SetValue(Canvas.LeftProperty, Window.Current.Bounds.Width - SettingsWidth);
-            this.settingsPopup.SetValue(Canvas.TopProperty, 0);
-            this.settingsPopup.IsOpen = true;
+            settingsPopup.Child = view;
+            settingsPopup.SetValue(Canvas.LeftProperty, Window.Current.Bounds.Width - settingsWidth);
+            settingsPopup.SetValue(Canvas.TopProperty, 0);
+            settingsPopup.IsOpen = true;
 
             this.mediaElemenetContainerView.HideAd();
+
+            this.settingsPopups.Add(settingsPopup, type);
         }
 
         private void OnWindowActivated(object sender, Windows.UI.Core.WindowActivatedEventArgs e)
         {
             if (e.WindowActivationState == Windows.UI.Core.CoreWindowActivationState.Deactivated)
             {
-                this.settingsPopup.IsOpen = false;
+                foreach (var settingsPopup in this.settingsPopups)
+                {
+                    if (settingsPopup.Value != PopupType.Full)
+                    {
+                        settingsPopup.Key.IsOpen = false;
+                    }
+                }
             }
         }
 
         private void OnPopupClosed(object sender, object e)
         {
-            Window.Current.Activated -= this.OnWindowActivated;
-            this.settingsPopup.Closed -= this.OnPopupClosed;
-            this.settingsPopup = null;
+            var popup = sender as Popup;
+            if (popup != null)
+            {
+                Window.Current.Activated -= this.OnWindowActivated;
+                popup.Closed -= this.OnPopupClosed;
+                this.settingsPopups.Remove(popup);
 
-            this.mediaElemenetContainerView.ShowAd();
+                if (this.settingsPopups.Count == 0)
+                {
+                    this.mediaElemenetContainerView.ShowAd();
+                }
+            }
         }
     }
 }

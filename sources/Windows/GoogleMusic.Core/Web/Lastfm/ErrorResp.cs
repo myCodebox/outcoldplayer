@@ -3,14 +3,10 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Web.Lastfm
 {
-    using System.Threading.Tasks;
-
-    public interface ILastfmAccountWebService
+    public class ErrorResp
     {
-        Task<TokenResp> GetTokenAsync();
+        public string Error { get; set; }
 
-        Task<GetSessionResp> GetSessionAsync(string token);
-
-        string GetAuthUrl(string token);
+        public string Message { get; set; }
     }
 }

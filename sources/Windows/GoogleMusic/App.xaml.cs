@@ -10,12 +10,15 @@ namespace OutcoldSolutions.GoogleMusic
 
     using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Presenters;
+    using OutcoldSolutions.GoogleMusic.Presenters.Popups;
     using OutcoldSolutions.GoogleMusic.Presenters.Settings;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Services.Publishers;
     using OutcoldSolutions.GoogleMusic.Views;
+    using OutcoldSolutions.GoogleMusic.Views.Popups;
     using OutcoldSolutions.GoogleMusic.Views.Settings;
     using OutcoldSolutions.GoogleMusic.Web;
+    using OutcoldSolutions.GoogleMusic.Web.Lastfm;
 
     using Windows.ApplicationModel;
     using Windows.ApplicationModel.Activation;
@@ -111,6 +114,9 @@ namespace OutcoldSolutions.GoogleMusic
                     registration.Register<AccountView>();
                     registration.Register<AccountViewPresenter>();
 
+                    registration.Register<ILastfmAuthentificationView>().As<LastfmAuthentificationView>();
+                    registration.Register<LastfmAuthentificationPresenter>();
+
                     // Services
                     registration.Register<IGoogleAccountWebService>().As<GoogleAccountWebService>();
                     registration.Register<IGoogleMusicWebService>().AsSingleton<GoogleMusicWebService>();
@@ -127,11 +133,15 @@ namespace OutcoldSolutions.GoogleMusic
                     registration.Register<IDispatcher>()
                                 .AsSingleton(new DispatcherContainer(CoreWindow.GetForCurrentThread().Dispatcher));
 
+                    registration.Register<ILastfmWebService>().AsSingleton<LastfmWebService>();
+                    registration.Register<ILastfmAccountWebService>().As<LastfmAccountWebService>();
+
                     // Publishers
                     registration.Register<ICurrentSongPublisherService>().AsSingleton<CurrentSongPublisherService>();
                     registration.Register<GoogleMusicCurrentSongPublisher>().AsSingleton();
                     registration.Register<MediaControlCurrentSongPublisher>().AsSingleton();
                     registration.Register<TileCurrentSongPublisher>().AsSingleton();
+                    registration.Register<LastFmCurrentSongPublisher>().AsSingleton();
                 }
 
                 this.logManager = Container.Resolve<ILogManager>();
@@ -162,9 +172,14 @@ namespace OutcoldSolutions.GoogleMusic
 
                 // Publishers
                 var currentSongPublisherService = Container.Resolve<ICurrentSongPublisherService>();
-                currentSongPublisherService.AddPublisher(new Lazy<ICurrentSongPublisher>(() => Container.Resolve<GoogleMusicCurrentSongPublisher>()));
-                currentSongPublisherService.AddPublisher(new Lazy<ICurrentSongPublisher>(() => Container.Resolve<MediaControlCurrentSongPublisher>()));
-                currentSongPublisherService.AddPublisher(new Lazy<ICurrentSongPublisher>(() => Container.Resolve<TileCurrentSongPublisher>()));
+                currentSongPublisherService.AddPublisher<GoogleMusicCurrentSongPublisher>();
+                currentSongPublisherService.AddPublisher<MediaControlCurrentSongPublisher>();
+                currentSongPublisherService.AddPublisher<TileCurrentSongPublisher>();
+
+                if (Container.Resolve<ILastfmWebService>().RestoreSession())
+                {
+                    currentSongPublisherService.AddPublisher<LastFmCurrentSongPublisher>();
+                }
             }
 
             // Ensure the current window is active
@@ -222,6 +237,8 @@ namespace OutcoldSolutions.GoogleMusic
                                 this.sessionService.SaveCurrentSession(cookieCollection);
                             }
                         }
+
+                        Container.Resolve<ILastfmWebService>().SaveCurrentSession();
 
                         TileUpdateManager.CreateTileUpdaterForApplication().Clear();
                     });

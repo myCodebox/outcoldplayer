@@ -113,6 +113,7 @@
     <Compile Include="BindingModels\PlayerBindingModel.cs" />
     <Compile Include="BindingModels\PlaylistBindingModel.cs" />
     <Compile Include="BindingModels\PlaylistsViewBindingModel.cs" />
+    <Compile Include="BindingModels\Popups\LastfmAuthentificationBindingModel.cs" />
     <Compile Include="BindingModels\ProgressLoadingBindingModel.cs" />
     <Compile Include="BindingModels\SearchBindingModel.cs" />
     <Compile Include="BindingModels\SearchGroupBindingModel.cs" />
@@ -140,6 +141,7 @@
     <Compile Include="Models\TimeSpanEx.cs" />
     <Compile Include="Presenters\AuthentificationPresenter.cs" />
     <Compile Include="Presenters\CurrentPlaylistViewPresenter.cs" />
+    <Compile Include="Presenters\Popups\LastfmAuthentificationPresenter.cs" />
     <Compile Include="Presenters\MainViewPresenter.cs" />
     <Compile Include="Presenters\PlayerViewPresenter.cs" />
     <Compile Include="Presenters\PlaylistsViewPresenter.cs" />
@@ -167,6 +169,9 @@
     <Compile Include="Views\IAuthentificationView.cs" />
     <Compile Include="Views\IProgressLoadingView.cs" />
     <Compile Include="Views\IView.cs" />
+    <Compile Include="Views\Popups\LastfmAuthentificationView.xaml.cs">
+      <DependentUpon>LastfmAuthentificationView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\MainView.xaml.cs">
       <DependentUpon>MainView.xaml</DependentUpon>
     </Compile>
@@ -265,6 +270,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\CurrentPlaylistView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Popups\LastfmAuthentificationView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

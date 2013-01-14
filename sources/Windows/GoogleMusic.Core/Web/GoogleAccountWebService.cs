@@ -65,7 +65,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 await this.logger.LogResponseAsync(ClientLoginPath, responseMessage);
             }
 
-            if (!responseMessage.Content.Headers.ContentType.IsPlainText())
+            if (!responseMessage.Content.IsPlainText())
             {
                 if (this.logger.IsErrorEnabled)
                 {

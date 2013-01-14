@@ -1,16 +1,11 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // Outcold Solutions (http://outcoldman.com)
 // --------------------------------------------------------------------------------------------------------------------
+
 namespace OutcoldSolutions.GoogleMusic.Web.Lastfm
 {
-    using System.Threading.Tasks;
-
-    public interface ILastfmAccountWebService
+    public class TokenResp : ErrorResp
     {
-        Task<TokenResp> GetTokenAsync();
-
-        Task<GetSessionResp> GetSessionAsync(string token);
-
-        string GetAuthUrl(string token);
+        public string Token { get; set; }
     }
 }
