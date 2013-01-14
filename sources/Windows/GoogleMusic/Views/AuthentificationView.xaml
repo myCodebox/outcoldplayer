@@ -26,9 +26,7 @@
                 Please make sure that you have subscribed to Google Music service. For more details go to the Google Music site.
                 </TextBlock>
 
-                <TextBlock Grid.Row="1" Margin="0, 80, 0, 0" TextWrapping="Wrap" Foreground="Red" 
-                           Text="{Binding Path=BindingModel.ErrorMessage, Mode=OneWay}"
-                           Style="{StaticResource SmallTextStyle}" />
+                
 
                 <StackPanel Width="400" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" DataContext="{Binding Path=BindingModel, Mode=OneTime}">
                     <TextBlock Style="{StaticResource BasicTextStyle}" >Email:</TextBlock>
@@ -40,10 +38,14 @@
                     <CheckBox HorizontalAlignment="Right" Margin="0, 7 ,0 ,0" IsChecked="{Binding Path=RememberAccount, Mode=TwoWay}" x:Name="RememberCheckBox">Remember account</CheckBox>
                 </StackPanel>
 
-                <TextBlock Grid.Row="2" Margin="0, -100, 0, 0" TextWrapping="Wrap" Width="400" TextAlignment="Right"
+                <TextBlock Grid.Row="2" Margin="0, -90, 0, 0" TextWrapping="Wrap" Width="400" TextAlignment="Right"
                         Style="{StaticResource SmallTextStyle}">
                     Password will be stored in encrypted Windows Storage.
                 </TextBlock>
+
+                <TextBlock Grid.Row="2" Margin="0, -60, 0, 0" TextWrapping="Wrap" Foreground="Red" 
+                           Text="{Binding Path=BindingModel.ErrorMessage, Mode=OneWay}"
+                           Style="{StaticResource SmallTextStyle}" />
 
                 <HyperlinkButton Grid.Row="2" HorizontalAlignment="Left" Click="GotoGoogleMusic">
                     <StackPanel>

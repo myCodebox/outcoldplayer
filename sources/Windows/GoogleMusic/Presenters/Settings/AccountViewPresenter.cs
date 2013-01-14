@@ -81,6 +81,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
         {
             this.lastfmWebService.ForgetAccount();
             this.publisherService.RemovePublishers<LastFmCurrentSongPublisher>();
+            this.View.Hide();
         }
 
         private void LastfmLink()

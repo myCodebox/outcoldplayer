@@ -182,7 +182,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
 
         private async Task<Uri> GetAlbumArtUri(Song song)
         {
-            Uri albumArtUri = new Uri("ms-appx:///Assets/Logo.png");
+            Uri albumArtUri = new Uri("ms-appx:///Resources/UnknownArt-116.png");
 
             try
             {
