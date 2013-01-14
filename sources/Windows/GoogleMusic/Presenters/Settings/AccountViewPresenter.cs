@@ -68,7 +68,16 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
         {
             this.googleAccountService.ClearUserInfo();
             this.BindingModel.AccountName = null;
-            this.BindingModel.Message = "All stored information were cleared. Next time you will be asked to provide Google Account email and password to continue use application.";
+            
+            if (this.BindingModel.HasSession)
+            {
+                this.BindingModel.Message =
+                    "Username and password were cleared. You are still signed in, on next application start gMusic can still use your Token and Session keys, to delete them click on Sign Out button.";
+            }
+            else
+            {
+                this.BindingModel.Message = "Username and password were cleared.";
+            }
         }
 
         private void SignOutAccount()
