@@ -81,7 +81,7 @@
 
                             <GroupStyle.Panel>
                                 <ItemsPanelTemplate>
-                                    <VariableSizedWrapGrid Orientation="Vertical" Margin="0, 20, 40, 0" ItemWidth="294" ItemHeight="146"  />
+                                    <VariableSizedWrapGrid Orientation="Vertical" Margin="0, 20, 40, 0" ItemWidth="304" ItemHeight="156"  />
                                 </ItemsPanelTemplate>
                             </GroupStyle.Panel>
                         </GroupStyle>

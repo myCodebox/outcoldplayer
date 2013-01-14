@@ -94,11 +94,16 @@
                                Visibility="{Binding Path=BindingModel.Message, Mode=OneWay, Converter={StaticResource NullToInvisibilityConverter}}"/>
 
                     <Image Margin="0, 60, 0, 0" Source="ms-appx:///Resources/lastfm_Logo.png" Width="100" Height="25" HorizontalAlignment="Left" />
-                    
+
+                    <TextBlock Style="{StaticResource BodyTextStyle}" Margin="0, 20, 0, 0"
+                               Visibility="{Binding Path=BindingModel.LastfmAccountName, Converter={StaticResource NullToVisibilityConverter}}">
+                        gMusic can update your "Recently Listened Tracks" list on Last.fm while you are listening music in application. To do this you need to link Last.fm account.
+                    </TextBlock>
+
                     <TextBlock Style="{StaticResource BodyTextStyle}"
                                Margin="0, 20, 0, 0"
                                Visibility="{Binding Path=BindingModel.LastfmAccountName, Converter={StaticResource NullToInvisibilityConverter}}">
-                        Linked Last.fm account:
+                        Linked Last.fm account (gMusic sends updates for your "Recently Listened Tracks" list):
                     </TextBlock>
 
                     <TextBlock Text="{Binding Path=BindingModel.LastfmAccountName, Mode=OneWay}" 
@@ -107,7 +112,7 @@
                                Margin="0, 10, 0, 0"/>
 
                     <Button Command="{Binding Path=LastfmUnlinkCommand}" 
-                            Content="Unlink Last.fm" 
+                            Content="Unlink Last.fm account" 
                             Margin="0, 20, 0, 0"
                             Visibility="{Binding Path=BindingModel.LastfmAccountName, Mode=OneWay, Converter={StaticResource NullToInvisibilityConverter}}"/>
 
@@ -116,7 +121,9 @@
                             Margin="0, 20, 0, 0"
                             Visibility="{Binding Path=BindingModel.LastfmAccountName, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"/>
 
-                    
+                    <TextBlock Style="{StaticResource BodyTextStyle}" Margin="0, 10, 0, 0">
+                        *Last.fm scrobbing available to all users, while this feature is in beta version.
+                    </TextBlock>
                     
                 </StackPanel>
             </ScrollViewer>
