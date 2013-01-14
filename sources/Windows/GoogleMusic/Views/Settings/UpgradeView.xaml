@@ -44,41 +44,42 @@
 
             </Grid>
 
-            <!-- Settings Panel Content -->
-            <StackPanel Grid.Row="1" Margin="40,24,23,0" VerticalAlignment="Top" >
-                <StackPanel.Transitions>
-                    <TransitionCollection>
-                        <EntranceThemeTransition FromHorizontalOffset="120" />
-                    </TransitionCollection>
-                </StackPanel.Transitions>
+            <ScrollViewer Grid.Row="1" Margin="40,24,23,0" VerticalAlignment="Top" 
+                          HorizontalScrollBarVisibility="Disabled" HorizontalScrollMode="Disabled"
+                          VerticalScrollBarVisibility="Auto" VerticalScrollMode="Auto">
+                <StackPanel>
+                    <StackPanel.Transitions>
+                        <TransitionCollection>
+                            <EntranceThemeTransition FromHorizontalOffset="120" />
+                        </TransitionCollection>
+                    </StackPanel.Transitions>
 
-                <TextBlock Style="{StaticResource BodyTextStyle}">
-                    Do you want to remove advertisements from gMusic? 
-                </TextBlock>
+                    <TextBlock Style="{StaticResource BodyTextStyle}">
+                        Do you want to remove advertisements from gMusic? 
+                    </TextBlock>
 
-                <TextBlock Style="{StaticResource BodyTextStyle}" Margin="0, 20, 0, 0">
-                    You can buy for $1.99 AdFree package, which will remove all advertisements (limited offer):
-                </TextBlock>
+                    <TextBlock Style="{StaticResource BodyTextStyle}" Margin="0, 20, 0, 0">
+                        You can buy for $1.99 AdFree package, which will remove all advertisements (limited offer):
+                    </TextBlock>
 
-                <Button Click="AdFreeUnlimitedPackage" Margin="0, 20, 0, 0" x:Name="AdFreePackageButton">
-                    Ad Free (unlimited)
-                </Button>
+                    <Button Click="AdFreeUnlimitedPackage" Margin="0, 20, 0, 0" x:Name="AdFreePackageButton">
+                        Ad Free (unlimited)
+                    </Button>
 
-                <TextBlock Style="{StaticResource BodyTextStyle}"  Margin="0, 40, 0, 0">
-                    Or you can spend $4.99 for Ultimate package. This package does not offer any additional features now (other than Ad Free package has). 
-                    But it will contains all additional features, which we will ship in future (limited offer):
-                </TextBlock>
+                    <TextBlock Style="{StaticResource BodyTextStyle}"  Margin="0, 40, 0, 0">
+                        Or you can spend $4.99 for Ultimate package. This package does not offer any additional features now (other than Ad Free package has). 
+                        But it will contains all additional features, which we will ship in future (limited offer):
+                    </TextBlock>
 
-                <Button Click="UltimatePackage" Margin="0, 20, 0, 0" x:Name="UltimatePackageButton">
-                    Ultimate (unlimited)
-                </Button>
+                    <Button Click="UltimatePackage" Margin="0, 20, 0, 0" x:Name="UltimatePackageButton">
+                        Ultimate (unlimited)
+                    </Button>
 
-                <TextBlock Style="{StaticResource BodyTextStyle}"  Margin="0, 40, 0, 0">
-                    Thank you!
-                </TextBlock>
-
-
-            </StackPanel>
+                    <TextBlock Style="{StaticResource BodyTextStyle}"  Margin="0, 40, 0, 0">
+                        Thank you!
+                    </TextBlock>
+                </StackPanel>
+            </ScrollViewer>
 
         </Grid>
     </Border>
