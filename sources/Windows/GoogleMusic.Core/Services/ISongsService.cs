@@ -22,7 +22,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
     {
         Task<List<Album>> GetAllAlbumsAsync(Order order = Order.None);
 
-        Task<List<MusicPlaylist>> GetAllPlaylistsAsync(Order order = Order.None);
+        Task<List<MusicPlaylist>> GetAllPlaylistsAsync(Order order = Order.None, bool canReload = false);
 
         Task<List<Genre>> GetAllGenresAsync(Order order = Order.None);
 

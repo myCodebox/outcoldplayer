@@ -15,6 +15,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
     using OutcoldSolutions.GoogleMusic.Web;
     using OutcoldSolutions.GoogleMusic.Web.Models;
 
+    using Windows.UI.Xaml;
+
     public class SongsService : ISongsService
     {
         private const int HighlyRatedValue = 4;
@@ -34,10 +36,9 @@ namespace OutcoldSolutions.GoogleMusic.Services
         private Task<List<Song>> taskAllSongsLoader = null;
         private Task<List<MusicPlaylist>> taskAllPlaylistsLoader = null;
 
-        private List<MusicPlaylist> playlistsCache = null;
-        private List<Album> albumsCache = null;
-        private List<Genre> genresCache = null;
-        private List<Artist> artistsCache = null;
+        private DispatcherTimer timer;
+
+        private DateTime? lastPlaylistsLoad;
 
         public SongsService(
             IPlaylistsWebService webService,
@@ -52,16 +53,14 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
             this.sessionService.SessionCleared += (sender, args) =>
                 {
+                    this.timer.Stop();
+                    this.timer = null;
+
                     lock (this.lockerTasks)
                     {
                         this.taskAllPlaylistsLoader = null;
                         this.taskAllSongsLoader = null;
                     }
-
-                    this.albumsCache = null;
-                    this.artistsCache = null;
-                    this.genresCache = null;
-                    this.playlistsCache = null;
 
                     foreach (var song in this.songsRepository)
                     {
@@ -72,50 +71,55 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 };
         }
 
-        public async Task<List<Album>> GetAllAlbumsAsync(Order order = Order.Name)
+        public Task<List<Album>> GetAllAlbumsAsync(Order order = Order.Name)
         {
-            if (this.albumsCache == null)
-            {
-                var songs = await this.GetAllGoogleSongsAsync();
+            return Task.Factory.StartNew(() =>
+                {
+                    var albums = this.songsRepository.Values
+                        .GroupBy(x => new
+                                          {
+                                              x.GoogleMusicMetadata.AlbumNorm, 
+                                              ArtistNorm = string.IsNullOrWhiteSpace(x.GoogleMusicMetadata.AlbumArtistNorm) 
+                                                                    ? x.GoogleMusicMetadata.ArtistNorm 
+                                                                    : x.GoogleMusicMetadata.AlbumArtistNorm
+                                          })
+                        .Select(x => new Album(x.ToList()));
 
-                this.albumsCache = songs.GroupBy(x => new { x.GoogleMusicMetadata.AlbumNorm, ArtistNorm = string.IsNullOrWhiteSpace(x.GoogleMusicMetadata.AlbumArtistNorm) ? x.GoogleMusicMetadata.ArtistNorm : x.GoogleMusicMetadata.AlbumArtistNorm }).Select(x => new Album(x.ToList())).ToList();
-            }
-
-            return OrderCollection(this.albumsCache, order).ToList();
+                    return OrderCollection(albums, order).ToList();
+                });
         }
 
-        public async Task<List<MusicPlaylist>> GetAllPlaylistsAsync(Order order = Order.Name)
+        public async Task<List<MusicPlaylist>> GetAllPlaylistsAsync(Order order = Order.Name, bool canReload = false)
         {
-            if (this.playlistsCache == null)
-            {
-                this.playlistsCache = await this.GetAllGooglePlaylistsAsync();
-            }
-            
-            return OrderCollection(this.playlistsCache, order).ToList();
+            return OrderCollection(await this.GetAllGooglePlaylistsAsync(canReload), order).ToList();
         }
 
-        public async Task<List<Genre>> GetAllGenresAsync(Order order = Order.Name)
+        public Task<List<Genre>> GetAllGenresAsync(Order order = Order.Name)
         {
-            if (this.genresCache == null)
-            {
-                var songs = await this.GetAllGoogleSongsAsync();
+            return Task.Factory.StartNew(
+                () =>
+                    {
+                        var genresCache = this.songsRepository.Values
+                                .GroupBy(x => x.GoogleMusicMetadata.Genre)
+                                .OrderBy(x => x.Key)
+                                .Select(x => new Genre(x.Key, x.ToList()));
 
-                this.genresCache = songs.GroupBy(x => x.GoogleMusicMetadata.Genre).OrderBy(x => x.Key).Select(x => new Genre(x.Key, x.ToList())).ToList();
-            }
-
-            return OrderCollection(this.genresCache, order).ToList();
+                        return OrderCollection(genresCache, order).ToList();
+                    });
         }
 
-        public async Task<List<Artist>> GetAllArtistsAsync(Order order = Order.Name)
+        public Task<List<Artist>> GetAllArtistsAsync(Order order = Order.Name)
         {
-            if (this.artistsCache == null)
-            {
-                var songs = await this.GetAllGoogleSongsAsync();
+            return Task.Factory.StartNew(
+                () =>
+                    {
+                        var artistsCache = this.songsRepository.Values
+                            .GroupBy(x => string.IsNullOrWhiteSpace(x.GoogleMusicMetadata.AlbumArtistNorm) ? x.GoogleMusicMetadata.ArtistNorm : x.GoogleMusicMetadata.AlbumArtistNorm)
+                            .OrderBy(x => x.Key)
+                            .Select(x => new Artist(x.ToList()));
 
-                this.artistsCache = songs.GroupBy(x => string.IsNullOrWhiteSpace(x.GoogleMusicMetadata.AlbumArtistNorm) ? x.GoogleMusicMetadata.ArtistNorm : x.GoogleMusicMetadata.AlbumArtistNorm).OrderBy(x => x.Key).Select(x => new Artist(x.ToList())).ToList();
-            }
-
-            return OrderCollection(this.artistsCache, order).ToList();
+                        return OrderCollection(artistsCache, order).ToList();
+                    });
         }
 
         public async Task<MusicPlaylist> CreatePlaylistAsync()
@@ -124,8 +128,10 @@ namespace OutcoldSolutions.GoogleMusic.Services
             var resp = await this.webService.CreatePlaylistAsync(name);
             if (resp != null && !string.IsNullOrEmpty(resp.Id))
             {
+                this.lastPlaylistsLoad = null;
+                await this.GetAllGooglePlaylistsAsync(canReload: true);
+
                 var musicPlaylist = new MusicPlaylist(resp.Id, resp.Title, new List<Song>(), new List<string>());
-                this.playlistsCache.Add(musicPlaylist);
                 return musicPlaylist;
             }
 
@@ -148,7 +154,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
             if (result)
             {
-                this.playlistsCache.Remove(playlist);
+                this.lastPlaylistsLoad = null;
+                await this.GetAllGooglePlaylistsAsync(canReload: true);
             }
 
             return result;
@@ -220,13 +227,14 @@ namespace OutcoldSolutions.GoogleMusic.Services
             return playlists;
         }
 
-        private async Task<List<MusicPlaylist>> GetAllGooglePlaylistsAsync()
+        private async Task<List<MusicPlaylist>> GetAllGooglePlaylistsAsync(bool canReload)
         {
             lock (this.lockerTasks)
             {
-                if (this.taskAllPlaylistsLoader == null)
+                if (this.taskAllPlaylistsLoader == null || (canReload && (this.lastPlaylistsLoad == null || (DateTime.Now - this.lastPlaylistsLoad.Value).TotalMinutes > 10)))
                 {
                     this.taskAllPlaylistsLoader = this.GetAllPlaylistsTask();
+                    this.lastPlaylistsLoad = DateTime.Now;
                 }
             }
             
@@ -245,7 +253,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
             foreach (var googleMusicPlaylist in query)
             {
-                var dictionary = (googleMusicPlaylist.Playlist ?? Enumerable.Empty<GoogleMusicSong>()).ToDictionary(x => x.PlaylistEntryId, this.CreateSong);
+                var dictionary = (googleMusicPlaylist.Playlist ?? Enumerable.Empty<GoogleMusicSong>()).ToDictionary(x => x.PlaylistEntryId, x => this.CreateSong(x));
                 playlists.Add(new MusicPlaylist(googleMusicPlaylist.PlaylistId, googleMusicPlaylist.Title, dictionary.Values.ToList(), dictionary.Keys.ToList()));
             }
 
@@ -254,11 +262,48 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         private async Task<List<Song>> GetAllSongsTask(IProgress<int> progress = null)
         {
-            var googleSongs = await this.webService.GetAllSongsAsync(progress);
-            return googleSongs.Select(this.CreateSong).ToList();
+            List<GoogleMusicSong> googleSongs = null;
+            try
+            {
+                googleSongs = await this.webService.StreamingLoadAllTracksAsync(progress);
+
+                this.timer = new DispatcherTimer
+                                 {
+                                     Interval = TimeSpan.FromMinutes(5)
+                                 };
+
+                this.timer.Tick += this.SongsUpdate;
+                this.timer.Start();
+            }
+            catch (Exception exception)
+            {
+                this.logger.LogErrorException(exception);
+
+                googleSongs = null;
+            }
+
+            // Backup plan
+            if (googleSongs == null)
+            {
+                googleSongs = await this.webService.GetAllSongsAsync(progress);
+            }
+
+            return googleSongs.Select(x => this.CreateSong(x)).ToList();
         }
 
-        private Song CreateSong(GoogleMusicSong googleSong)
+        private async void SongsUpdate(object sender, object o)
+        {
+            var updatedSongs = await this.webService.StreamingLoadAllTracksAsync(null);
+            if (updatedSongs.Count > 0)
+            {
+                foreach (var s in updatedSongs)
+                {
+                    this.CreateSong(s, updateSong: true);
+                }
+            }
+        }
+
+        private Song CreateSong(GoogleMusicSong googleSong, bool updateSong = false)
         {
             Song song;
             lock (this.songsRepository)
@@ -268,6 +313,23 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     song = new Song(googleSong);
                     song.PropertyChanged += this.SongOnPropertyChanged;
                     this.songsRepository.Add(googleSong.Id, song);
+                }
+                else if (updateSong)
+                {
+                    if (googleSong.Deleted)
+                    {
+                        this.songsRepository.Remove(googleSong.Id);
+                    }
+                    else
+                    {
+                        song.GoogleMusicMetadata = googleSong;
+                        song.Title = googleSong.Title;
+                        song.Duration = TimeSpan.FromMilliseconds(googleSong.DurationMillis).TotalSeconds;
+                        song.Artist = googleSong.Artist;
+                        song.Album = googleSong.Album;
+                        song.PlayCount = googleSong.PlayCount;
+                        song.Rating = googleSong.Rating;
+                    }
                 }
             }
 
@@ -281,31 +343,36 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 var song = (Song)sender;
 
                 this.logger.Debug("Rating is changed for song '{0}'. Updating server.", song.GoogleMusicMetadata.Id);
-                
-                this.songWebService.UpdateRatingAsync(song.GoogleMusicMetadata, song.Rating).ContinueWith(
-                    t =>
-                        {
-                            if (t.IsCompleted && t.Result != null)
+
+                if (song.Rating != song.GoogleMusicMetadata.Rating)
+                {
+                    this.songWebService.UpdateRatingAsync(song.GoogleMusicMetadata, song.Rating).ContinueWith(
+                        t =>
                             {
-                                if (this.logger.IsDebugEnabled)
+                                if (t.IsCompleted && t.Result != null)
                                 {
-                                    this.logger.Debug("Rating update completed for song: {0}.", song.GoogleMusicMetadata.Id);
-                                    foreach (var songUpdate in t.Result.Songs)
+                                    if (this.logger.IsDebugEnabled)
                                     {
                                         this.logger.Debug(
-                                            "Song updated: {0}, Rate: {1}.", songUpdate.Id, songUpdate.Rating);
+                                            "Rating update completed for song: {0}.", song.GoogleMusicMetadata.Id);
+                                        foreach (var songUpdate in t.Result.Songs)
+                                        {
+                                            this.logger.Debug(
+                                                "Song updated: {0}, Rate: {1}.", songUpdate.Id, songUpdate.Rating);
+                                        }
                                     }
                                 }
-                            }
-                            else
-                            {
-                                this.logger.Debug("Failed to update rating for song: {0}.", song.GoogleMusicMetadata.Id);
-                                if (t.IsFaulted && t.Exception != null)
+                                else
                                 {
-                                    this.logger.LogErrorException(t.Exception);
+                                    this.logger.Debug(
+                                        "Failed to update rating for song: {0}.", song.GoogleMusicMetadata.Id);
+                                    if (t.IsFaulted && t.Exception != null)
+                                    {
+                                        this.logger.LogErrorException(t.Exception);
+                                    }
                                 }
-                            }
-                        });
+                            });
+                }
             }
         }
     }

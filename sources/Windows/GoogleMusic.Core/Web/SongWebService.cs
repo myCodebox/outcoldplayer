@@ -37,7 +37,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
         public async Task<GoogleMusicSongUrl> GetSongUrlAsync(string id)
         {
             var url = string.Format(SongUrlFormat, id);
-            var response = await this.googleMusicWebService.GetAsync(url);
+            var response = await this.googleMusicWebService.GetAsync(url, authenticated: false);
 
             if (response.StatusCode == HttpStatusCode.OK)
             {

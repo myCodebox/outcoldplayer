@@ -5,6 +5,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Net;
     using System.Threading.Tasks;
 
@@ -20,6 +21,8 @@ namespace OutcoldSolutions.GoogleMusic.Web
         Task<GoogleMusicPlaylist> GetPlaylistAsync(string playlistId);
 
         Task<List<GoogleMusicSong>> GetAllSongsAsync(IProgress<int> progress = null);
+
+        Task<List<GoogleMusicSong>> StreamingLoadAllTracksAsync(IProgress<int> progress);
 
         Task<AddPlaylistResp> CreatePlaylistAsync(string name);
 
@@ -45,8 +48,12 @@ namespace OutcoldSolutions.GoogleMusic.Web
         private const string DeleteSongUrl = "music/services/deletesong";
         private const string GetStatusUrl = "music/services/getstatus";
 
+        private const string StreamingLoadAllTracks = "music/services/streamingloadalltracks?json=";
+
         private readonly IGoogleMusicWebService googleMusicWebService;
         private readonly IGoogleMusicSessionService sessionService;
+
+        private DateTime? lastStreamingRequest;
 
         public PlaylistsWebService(
             IGoogleMusicWebService googleMusicWebService,
@@ -122,6 +129,68 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 }
             }
             while (playlist != null && !string.IsNullOrEmpty(playlist.ContinuationToken));
+
+            return googleMusicSongs;
+        }
+
+        public async Task<List<GoogleMusicSong>> StreamingLoadAllTracksAsync(IProgress<int> progress)
+        {
+            List<GoogleMusicSong> googleMusicSongs = new List<GoogleMusicSong>();
+
+            string json;
+
+            if (this.lastStreamingRequest == null)
+            {
+                json = JsonConvert.SerializeObject(
+                        new
+                            {
+                                sessionId = this.sessionService.GetSession().SessionId,
+                                requestCause = 3,
+                                requestType = 1
+                            });
+
+                this.lastStreamingRequest = DateTime.UtcNow;
+            }
+            else
+            {
+                json = JsonConvert.SerializeObject(
+                        new
+                            {
+                                sessionId = this.sessionService.GetSession().SessionId,
+                                requestCause = 2,
+                                requestType = 1,
+                                lastUpdated = (long)((this.lastStreamingRequest.Value - new DateTime(1970, 1, 1, 0, 0, 0)).TotalMilliseconds * 1000)
+                            });
+
+                this.lastStreamingRequest = DateTime.UtcNow;
+            }
+
+            var response = await this.googleMusicWebService.GetAsync(StreamingLoadAllTracks + WebUtility.UrlEncode(json));
+
+            var stream = await response.Content.ReadAsStreamAsync();
+            using (StreamReader streamReader = new StreamReader(stream))
+            {
+                while (!streamReader.EndOfStream)
+                {
+                    var line = streamReader.ReadLine();
+                    if (line == null)
+                    {
+                        break;
+                    }
+
+                    if (line.StartsWith("window.parent['slat_process']("))
+                    {
+                        string str = line.Substring("window.parent['slat_process'](".Length, line.Length - ("window.parent['slat_process'](".Length + 2));
+                        var googleMusicPlaylist = JsonConvert.DeserializeObject<GoogleMusicPlaylist>(str);
+                        googleMusicSongs.AddRange(googleMusicPlaylist.Playlist);
+
+                        if (progress != null)
+                        {
+                            progress.Report(googleMusicSongs.Count);
+                        }
+                    }
+                }
+            }
 
             return googleMusicSongs;
         }

@@ -16,10 +16,13 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
         CookieCollection GetCurrentCookies();
 
-        Task<HttpResponseMessage> GetAsync(string url);
+        Task<HttpResponseMessage> GetAsync(
+            string url, 
+            bool authenticated = true);
 
         Task<HttpResponseMessage> PostAsync(
             string url,
-            IDictionary<string, string> formData = null);
+            IDictionary<string, string> formData = null, 
+            bool authenticated = true);
     }
 }

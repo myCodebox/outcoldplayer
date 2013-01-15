@@ -106,23 +106,10 @@ namespace OutcoldSolutions.GoogleMusic.Web
                         || httpResponseMessage.Content.IsHtmlText()
                         || httpResponseMessage.Content.IsJson())
                     {
-                        using (var stream = await httpResponseMessage.Content.ReadAsStreamAsync())
-                        {
-                            using (StreamReader reader = new StreamReader(stream))
-                            {
-                                char[] buffer = new char[4096];
-                                var read = await reader.ReadAsync(buffer, 0, buffer.Length);
+                        var content = await httpResponseMessage.Content.ReadAsStringAsync();
 
-                                if (read > 0)
-                                {
-                                    var bodyData = new StringBuilder();
-                                    bodyData.Append(buffer, 0, read);
-
-                                    @this.Debug("    RESPONSE CONTENT:{0}{1}", Environment.NewLine, bodyData);
-                                    @this.Debug("    RESPONSE ENDCONTENT.");
-                                }
-                            }
-                        }
+                        @this.Debug("    RESPONSE CONTENT:{0}{1}", Environment.NewLine, content.Substring(0, Math.Min(4096, content.Length)));
+                        @this.Debug("    RESPONSE ENDCONTENT.");
                     }
                 }
                 else
