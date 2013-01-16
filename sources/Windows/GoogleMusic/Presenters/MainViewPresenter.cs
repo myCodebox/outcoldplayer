@@ -61,8 +61,9 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                         App.Container.Resolve<ISearchService>().Unregister();
                         if (this.BindingModel.IsAuthenticated)
                         {
-                            this.NavigateTo<IAuthentificationView>(keepInHistory: false).Succeed += this.AuthentificationViewOnSucceed;
+                            this.BindingModel.IsAuthenticated = false;
                             this.viewsHistory.Clear();
+                            this.NavigateTo<IAuthentificationView>(keepInHistory: false).Succeed += this.AuthentificationViewOnSucceed;
                         }
                     });
         }

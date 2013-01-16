@@ -61,6 +61,9 @@ namespace OutcoldSolutions.GoogleMusic.Web
         {
             this.googleMusicWebService = googleMusicWebService;
             this.sessionService = sessionService;
+
+            this.sessionService.SessionCleared += (sender, args) =>
+                { lastStreamingRequest = null; };
         }
 
         public async Task<GoogleMusicPlaylists> GetAllPlaylistsAsync()

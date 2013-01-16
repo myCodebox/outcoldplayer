@@ -30,6 +30,12 @@ namespace OutcoldSolutions.GoogleMusic.Web
             IGoogleMusicSessionService sessionService)
         {
             this.sessionService = sessionService;
+            this.sessionService.SessionCleared += (sender, args) =>
+                {
+                    this.httpClientHandler = null;
+                    this.httpClient = null;
+                };
+
             this.logger = logManager.CreateLogger("GoogleAccountWebService");
         }
 
