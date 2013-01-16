@@ -15,19 +15,11 @@ namespace OutcoldSolutions.GoogleMusic.Diagnostics
 
         private StreamWriter writer;
 
-        public FileLogWriter()
-        {
-            this.EnableLogging();
-        }
-
         public bool IsEnabled
         {
             get
             {
-                lock (this.locker)
-                {
-                    return this.writer != null;
-                }
+                return true;
             }
         }
 
@@ -46,6 +38,11 @@ namespace OutcoldSolutions.GoogleMusic.Diagnostics
         {
             lock (this.locker)
             {
+                if (this.writer == null)
+                {
+                    this.EnableLogging();
+                }
+
                 if (this.writer != null)
                 {
                     this.writer.WriteLine("{0}::: {1} --- {2}", level, context, string.Format(message, parameters));
@@ -57,7 +54,8 @@ namespace OutcoldSolutions.GoogleMusic.Diagnostics
         private void EnableLogging()
         {
             var enableLoggingAsync = this.EnableLoggingAsync();
-            enableLoggingAsync.Wait();
+            TaskEx.WaitAllSafe(enableLoggingAsync);
+
             if (enableLoggingAsync.IsCompleted)
             {
                 lock (this.locker)
@@ -80,7 +78,7 @@ namespace OutcoldSolutions.GoogleMusic.Diagnostics
         private async Task<StreamWriter> EnableLoggingAsync()
         {
             var storageFile =
-                await ApplicationData.Current.LocalFolder.CreateFileAsync(string.Format("{0:yyyy-MM-dd-HH-mm-ss-ffff}.log", DateTime.Now)).AsTask();
+                await ApplicationData.Current.LocalFolder.CreateFileAsync(string.Format("{0:yyyy-MM-dd-HH-mm-ss-ffff}.log", DateTime.Now), CreationCollisionOption.OpenIfExists).AsTask();
 
             var stream = await storageFile.OpenAsync(FileAccessMode.ReadWrite).AsTask();
 

@@ -32,5 +32,28 @@ namespace OutcoldSolutions.GoogleMusic
 
             return await WhenAllSafe(tasks.ToArray());
         }
+
+        public static Task[] WaitAllSafe(params Task[] tasks)
+        {
+            try
+            {
+                Task.WaitAll(tasks);
+            }
+            catch (TaskCanceledException)
+            {
+            }
+
+            return tasks;
+        }
+
+        public static Task[] WaitAllSafe(IEnumerable<Task> tasks)
+        {
+            if (tasks == null)
+            {
+                throw new ArgumentNullException("tasks");
+            }
+
+            return WaitAllSafe(tasks.ToArray());
+        }
     }
 }

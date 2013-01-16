@@ -6,6 +6,7 @@ namespace OutcoldSolutions.GoogleMusic.Diagnostics
 {
     using System;
     using System.Collections.Concurrent;
+    using System.Threading.Tasks;
 
     public class LogManager : ILogManager
     {
@@ -77,21 +78,25 @@ namespace OutcoldSolutions.GoogleMusic.Diagnostics
 
         private void Log(string level, string context, string message, params object[] parameters)
         {
-            var enumerator = this.Writers.GetEnumerator();
+            Task.Factory.StartNew(
+                () =>
+                    {
+                        var enumerator = this.Writers.GetEnumerator();
 
-            while (enumerator.MoveNext())
-            {
-                if (enumerator.Current.Value.IsEnabled)
-                {
-                    try
-                    {
-                        enumerator.Current.Value.Log(level, context, message, parameters);
-                    }
-                    catch
-                    {
-                    }
-                }
-            }
+                        while (enumerator.MoveNext())
+                        {
+                            if (enumerator.Current.Value.IsEnabled)
+                            {
+                                try
+                                {
+                                    enumerator.Current.Value.Log(level, context, message, parameters);
+                                }
+                                catch
+                                {
+                                }
+                            }
+                        }
+                    });
         }
     }
 }
