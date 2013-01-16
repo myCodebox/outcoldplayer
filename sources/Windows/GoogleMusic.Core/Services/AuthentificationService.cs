@@ -51,7 +51,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 {
                     this.logger.Debug("CheckAuthentificationAsync: GetSession is not null.");
 
-                    var cookieCollection = this.sessionService.GetSavedCookies();
+                    var cookieCollection = await this.sessionService.GetSavedCookiesAsync();
                     if (cookieCollection != null)
                     {
                         this.logger.Debug("CheckAuthentificationAsync: cookie collection is not null. Initializing web services.");

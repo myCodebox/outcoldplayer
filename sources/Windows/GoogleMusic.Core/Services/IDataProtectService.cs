@@ -1,14 +1,14 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // Outcold Solutions (http://outcoldman.com)
 // --------------------------------------------------------------------------------------------------------------------
-namespace OutcoldSolutions.GoogleMusic.Diagnostics
+namespace OutcoldSolutions.GoogleMusic.Services
 {
-    using System;
+    using System.Threading.Tasks;
 
-    public interface ILogWriter
+    public interface IDataProtectService
     {
-        bool IsEnabled { get; }
+        Task<string> ProtectStringAsync(string unprotectedString);
 
-        void Log(DateTime dateTime, string level, string context, string message, params object[] parameters);
+        Task<string> UnprotectStringAsync(string protectedString);
     }
 }

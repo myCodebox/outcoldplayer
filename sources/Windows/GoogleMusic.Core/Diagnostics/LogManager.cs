@@ -78,6 +78,8 @@ namespace OutcoldSolutions.GoogleMusic.Diagnostics
 
         private void Log(string level, string context, string message, params object[] parameters)
         {
+            DateTime dateTime = DateTime.Now;
+
             Task.Factory.StartNew(
                 () =>
                     {
@@ -89,7 +91,7 @@ namespace OutcoldSolutions.GoogleMusic.Diagnostics
                             {
                                 try
                                 {
-                                    enumerator.Current.Value.Log(level, context, message, parameters);
+                                    enumerator.Current.Value.Log(dateTime, level, context, message, parameters);
                                 }
                                 catch
                                 {

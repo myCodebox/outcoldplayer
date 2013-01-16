@@ -3,6 +3,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Diagnostics
 {
+    using System;
     using System.Diagnostics;
 
     public class DebugLogWriter : ILogWriter
@@ -15,7 +16,7 @@ namespace OutcoldSolutions.GoogleMusic.Diagnostics
             }
         }
 
-        public void Log(string level, string context, string messageFormat, params object[] parameters)
+        public void Log(DateTime dateTime, string level, string context, string messageFormat, params object[] parameters)
         {
             string message;
 
@@ -28,7 +29,7 @@ namespace OutcoldSolutions.GoogleMusic.Diagnostics
                 message = string.Format(messageFormat, parameters);
             }
 
-            Debug.WriteLine("{0} - {1}:: {2}", level, context, message);
+            Debug.WriteLine("{0:o}: {1} - {2}:: {3}", dateTime, level, context, message);
         }
     }
 }

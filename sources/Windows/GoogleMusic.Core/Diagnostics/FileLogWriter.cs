@@ -34,7 +34,7 @@ namespace OutcoldSolutions.GoogleMusic.Diagnostics
             }
         }
 
-        public void Log(string level, string context, string message, params object[] parameters)
+        public void Log(DateTime dateTime, string level, string context, string message, params object[] parameters)
         {
             lock (this.locker)
             {
@@ -45,7 +45,17 @@ namespace OutcoldSolutions.GoogleMusic.Diagnostics
 
                 if (this.writer != null)
                 {
-                    this.writer.WriteLine("{0}::: {1} --- {2}", level, context, string.Format(message, parameters));
+                    if (parameters.Length == 0)
+                    {
+                        this.writer.WriteLine(
+                            "{0:o}: {1}::: {2} --- {3}", dateTime, level, context, message);
+                    }
+                    else
+                    {
+                        this.writer.WriteLine(
+                            "{0:o}: {1}::: {2} --- {3}", dateTime, level, context, string.Format(message, parameters));
+                    }
+
                     this.writer.Flush();
                 }
             }

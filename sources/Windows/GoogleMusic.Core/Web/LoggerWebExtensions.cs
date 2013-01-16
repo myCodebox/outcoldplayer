@@ -5,7 +5,6 @@ namespace OutcoldSolutions.GoogleMusic.Web
 {
     using System;
     using System.Collections.Generic;
-    using System.IO;
     using System.Net;
     using System.Net.Http;
     using System.Text;
@@ -33,35 +32,41 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
             if (@this.IsDebugEnabled)
             {
-                @this.Debug("-----------------------");
+                var log = new StringBuilder();
 
-                @this.Debug("{0} REQUEST: {1}.", method, requestUrl);
+                log.AppendFormat("{0} REQUEST: {1}.", method, requestUrl);
+                log.AppendLine();
 
                 if (formData != null)
                 {
-                    @this.Debug("    FORMDATA: ");
+                    log.AppendLine("    FORMDATA: ");
 
                     foreach (var argument in formData)
                     {
-                        @this.Debug("        {0}={1}", argument.Key, argument.Value);
+                        log.AppendFormat("        {0}={1}", argument.Key, argument.Value);
+                        log.AppendLine();
                     }
                 }
 
+                LogCookies(log, cookieCollection);
+
+                log.AppendLine();
+
+                @this.Debug(log.ToString());
+            }
+        }
+
+        public static void LogCookies(this ILogger @this, CookieCollection cookieCollection)
+        {
+            if (@this.IsDebugEnabled)
+            {
                 if (cookieCollection != null)
                 {
-                    @this.Debug("    COOKIES({0}):", cookieCollection.Count);
+                    var log = new StringBuilder();
+                    LogCookies(log, cookieCollection);
 
-                    foreach (Cookie cookieLog in cookieCollection)
-                    {
-                        HashAlgorithmProvider hashProvider = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Md5);
-                        IBuffer hash = hashProvider.HashData(CryptographicBuffer.ConvertStringToBinary(cookieLog.Value, BinaryStringEncoding.Utf8));
-                        string hashValue = CryptographicBuffer.EncodeToBase64String(hash);
-
-                        @this.Debug("        {0}={{MD5_VALUE_HASH}}{1}", cookieLog.Name, hashValue);
-                    }
+                    @this.Debug(log.ToString());
                 }
-
-                @this.Debug("-----------------------");
             }
         }
 
@@ -82,24 +87,29 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
             if (@this.IsDebugEnabled)
             {
-                @this.Debug("------------------------------");
-                @this.Debug("Request '{0}' completed, Status code: {1}.", requestUrl, httpResponseMessage.StatusCode);
-                @this.Debug("RequestUri: {0}.", httpResponseMessage.RequestMessage.RequestUri);
+                var log = new StringBuilder();
 
-                @this.Debug("    RESPONSE HEADERS: ");
+                log.AppendFormat("Request '{0}' completed, Status code: {1}.", requestUrl, httpResponseMessage.StatusCode);
+                log.AppendLine();
+                log.AppendFormat("RequestUri: {0}.", httpResponseMessage.RequestMessage.RequestUri);
+                log.AppendLine();
+
+                log.AppendLine("    RESPONSE HEADERS: ");
 
                 foreach (var httpResponseHeader in httpResponseMessage.Headers)
                 {
-                    @this.Debug("        {0}={1}", httpResponseHeader.Key, string.Join("&&&", httpResponseHeader.Value));
+                    log.AppendFormat("        {0}={1}", httpResponseHeader.Key, string.Join("&&&", httpResponseHeader.Value));
+                    log.AppendLine();
                 }
 
                 if (httpResponseMessage.Content != null)
                 {
-                    @this.Debug("    RESPONSE CONTENT HEADERS: ");
+                    log.AppendLine("    RESPONSE CONTENT HEADERS: ");
 
                     foreach (var header in httpResponseMessage.Content.Headers)
                     {
-                        @this.Debug("        {0}={1}", header.Key, string.Join("&&&", header.Value));
+                        log.AppendFormat("        {0}={1}", header.Key, string.Join("&&&", header.Value));
+                        log.AppendLine();
                     }
 
                     if (httpResponseMessage.Content.IsPlainText()
@@ -108,16 +118,41 @@ namespace OutcoldSolutions.GoogleMusic.Web
                     {
                         var content = await httpResponseMessage.Content.ReadAsStringAsync();
 
-                        @this.Debug("    RESPONSE CONTENT:{0}{1}", Environment.NewLine, content.Substring(0, Math.Min(4096, content.Length)));
-                        @this.Debug("    RESPONSE ENDCONTENT.");
+                        log.AppendFormat("    RESPONSE CONTENT:{0}{1}", Environment.NewLine, content.Substring(0, Math.Min(4096, content.Length)));
+                        log.AppendLine();
+                        log.AppendFormat("    RESPONSE ENDCONTENT.");
+                        log.AppendLine();
                     }
                 }
                 else
                 {
-                    @this.Debug("CONTENT is null.");
+                    log.AppendLine("CONTENT is null.");
                 }
 
-                @this.Debug("-----------------------------");
+                log.AppendLine();
+
+                @this.Debug(log.ToString());
+            }
+        }
+
+        private static void LogCookies(StringBuilder log, CookieCollection cookieCollection)
+        {
+            if (cookieCollection != null)
+            {
+                log.AppendFormat("    COOKIES({0}):", cookieCollection.Count);
+                log.AppendLine();
+
+                foreach (Cookie cookieLog in cookieCollection)
+                {
+                    HashAlgorithmProvider hashProvider = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Md5);
+                    IBuffer hash =
+                        hashProvider.HashData(
+                            CryptographicBuffer.ConvertStringToBinary(cookieLog.Value, BinaryStringEncoding.Utf8));
+                    string hashValue = CryptographicBuffer.EncodeToBase64String(hash);
+
+                    log.AppendFormat("        {0}={{MD5_VALUE_HASH}}{1}, Expires={2}", cookieLog.Name, hashValue, cookieLog.Expires);
+                    log.AppendLine();
+                }
             }
         }
     }

@@ -5,6 +5,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 {
     using System;
     using System.Net;
+    using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.Models;
 
@@ -14,11 +15,11 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         UserSession GetSession();
 
-        void SaveCurrentSession(CookieCollection cookieCollection);
-
         void LoadSession();
 
-        CookieCollection GetSavedCookies();
+        Task SaveCurrentSessionAsync(CookieCollection cookieCollection);
+
+        Task<CookieCollection> GetSavedCookiesAsync();
 
         void ClearSession();
     }
