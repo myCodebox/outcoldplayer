@@ -126,9 +126,11 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
         private void ListViewOnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            var uiElements = new List<UIElement>();
+            var currentContextCommands = App.Container.Resolve<ICurrentContextCommands>();
             if (this.Presenter<PlaylistsViewPresenter>().BindingModel.IsEditable)
             {
-                var uiElements = new List<UIElement>() { this.addPlaylistButton };
+                uiElements.Add(this.addPlaylistButton);
 
                 if (this.ListView.SelectedIndex >= 0)
                 {
@@ -136,10 +138,9 @@ namespace OutcoldSolutions.GoogleMusic.Views
                     uiElements.Add(this.editPlaylistButton);
                     uiElements.Add(this.deletePlaylistButton);
                 }
-
-                var currentContextCommands = App.Container.Resolve<ICurrentContextCommands>();
-                currentContextCommands.SetCommands(uiElements);
             }
+
+            currentContextCommands.SetCommands(uiElements);
         }
 
         private void SaveNameClick(object sender, RoutedEventArgs e)
