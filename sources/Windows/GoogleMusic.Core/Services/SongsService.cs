@@ -109,7 +109,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     });
         }
 
-        public Task<List<Artist>> GetAllArtistsAsync(Order order = Order.Name)
+        public Task<List<Artist>> GetAllArtistsAsync(Order order = Order.Name, bool includeNotAlbums = false)
         {
             return Task.Factory.StartNew(
                 () =>
@@ -118,6 +118,35 @@ namespace OutcoldSolutions.GoogleMusic.Services
                             .GroupBy(x => string.IsNullOrWhiteSpace(x.GoogleMusicMetadata.AlbumArtistNorm) ? x.GoogleMusicMetadata.ArtistNorm : x.GoogleMusicMetadata.AlbumArtistNorm)
                             .OrderBy(x => x.Key)
                             .Select(x => new Artist(x.ToList()));
+
+                        if (includeNotAlbums)
+                        {
+                            var artists = artistsCache.ToList();
+
+                            var groupBy = this.songsRepository.Values.GroupBy(x => x.GoogleMusicMetadata.ArtistNorm);
+                            foreach (var group in groupBy)
+                            {
+                                var artist = artists.FirstOrDefault(
+                                    x => string.Equals(group.Key, x.Title, StringComparison.CurrentCultureIgnoreCase));
+
+                                if (artist != null)
+                                {
+                                    foreach (Song song in group)
+                                    {
+                                        if (!artist.Songs.Contains(song))
+                                        {
+                                            artist.Songs.Add(song);
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    artists.Add(new Artist(group.ToList(), useArtist: true));
+                                }
+                            }
+                            
+                            artistsCache = artists;
+                        }
 
                         return OrderCollection(artistsCache, order).ToList();
                     });

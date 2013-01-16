@@ -69,7 +69,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             var results = new List<SearchGroupBindingModel>();
 
             var artists =
-                this.SearchPlaylists(await this.songsService.GetAllArtistsAsync(), query)
+                this.SearchPlaylists(await this.songsService.GetAllArtistsAsync(includeNotAlbums: true), query)
                     .Select(x => new PlaylistResultBindingModel(query, x))
                     .Cast<SearchResultBindingModel>()
                     .ToList();
