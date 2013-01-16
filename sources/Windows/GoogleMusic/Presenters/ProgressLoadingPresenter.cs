@@ -20,6 +20,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private const string DoNotAskToReviewKey = "DoNotAskToReviewKey";
         private const string CountOfStartsBeforeReview = "CountOfStartsBeforeReview";
 
+        private const string CurrentVersion = "1.2";
+
         private readonly ISongsService songsService;
         private readonly IPlaylistsWebService playlistsWebService;
         private readonly INavigationService navigationService;
@@ -66,19 +68,21 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 {
                     if (tStatus.IsCompleted)
                     {
-                        this.BindingModel.Maximum = tStatus.Result.AvailableTracks;
+                        this.BindingModel.Maximum = tStatus.Result.AvailableTracks * 2;
                         this.BindingModel.Message = "Loading playlists...";
 
                         this.songsService.GetAllPlaylistsAsync().ContinueWith(
                             tPlaylists =>
                             {
+                                this.BindingModel.Progress = tStatus.Result.AvailableTracks;
+
                                 if (tStatus.IsCompleted)
                                 {
                                     this.BindingModel.Message = "Loading songs...";
                                     Progress<int> progress = new Progress<int>();
                                     progress.ProgressChanged += (sender, i) =>
                                     {
-                                        this.BindingModel.Progress = i;
+                                        this.BindingModel.Progress = tStatus.Result.AvailableTracks + i;
                                     };
 
                                     this.songsService.GetAllGoogleSongsAsync(progress).ContinueWith(
@@ -97,10 +101,10 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                                                             new UICommand(
                                                                 "Rate",
                                                                 (cmd) =>
-                                                                    {
-                                                                        this.settingsService.SetRoamingValue<bool>(DoNotAskToReviewKey, true);
-                                                                        var tLauncher = Launcher.LaunchUriAsync(new Uri("ms-windows-store:REVIEW?PFN=47286outcoldman.gMusic_z1q2m7teapq4y"));
-                                                                    }));
+                                                                {
+                                                                    this.settingsService.SetRoamingValue<bool>(DoNotAskToReviewKey, true);
+                                                                    var tLauncher = Launcher.LaunchUriAsync(new Uri("ms-windows-store:REVIEW?PFN=47286outcoldman.gMusic_z1q2m7teapq4y"));
+                                                                }));
                                                         dialog.Commands.Add(
                                                             new UICommand(
                                                                 "No, thanks",
@@ -118,13 +122,22 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                                                     }
                                                 }
 
-                                                if (App.Container.Resolve<ISettingsService>().GetRoamingValue<bool>("VersionHistory v1.1"))
+                                                bool forceToShowUpdates = false;
+                                                if (this.settingsService.GetRoamingValue<bool>("VersionHistory v1.1"))
+                                                {
+                                                    forceToShowUpdates = true;
+                                                    this.settingsService.RemoveRoamingValue("VersionHistory v1.1");
+                                                }
+
+                                                if (!forceToShowUpdates
+                                                    && string.Equals(this.settingsService.GetValue<string>("Version", CurrentVersion), CurrentVersion, StringComparison.OrdinalIgnoreCase))
                                                 {
                                                     this.searchService.Register();
                                                     this.navigationService.NavigateTo<IStartView>();
                                                 }
                                                 else
                                                 {
+                                                    this.settingsService.SetValue("Version", CurrentVersion);
                                                     this.navigationService.NavigateTo<IWhatIsNewView>(keepInHistory: false);
                                                 }
                                             }
