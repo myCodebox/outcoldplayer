@@ -75,7 +75,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 {
                     this.logger.Debug("Cookies and sessionId were saved. SessionId: {0}.", this.userSession.SessionId);
                     this.logger.Debug("---------------------------------");
-                    this.logger.Debug("Loaded cookies:");
+                    this.logger.Debug("Saved cookies:");
                     this.logger.LogCookies(cookieCollection);
                     this.logger.Debug("---------------------------------");
                 }

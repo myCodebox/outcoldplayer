@@ -66,7 +66,7 @@ namespace OutcoldSolutions.GoogleMusic.Diagnostics
             var enableLoggingAsync = this.EnableLoggingAsync();
             TaskEx.WaitAllSafe(enableLoggingAsync);
 
-            if (enableLoggingAsync.IsCompleted)
+            if (enableLoggingAsync.IsCompleted && !enableLoggingAsync.IsFaulted)
             {
                 lock (this.locker)
                 {

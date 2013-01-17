@@ -188,7 +188,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                             command => this.songsService.DeletePlaylistAsync((MusicPlaylist)playlist).ContinueWith(
                                 async t =>
                                     {
-                                        if (t.IsCompleted && t.Result)
+                                        if (t.IsCompleted && !t.IsFaulted && t.Result)
                                         {
                                             var playlists = await this.LoadPlaylistsAsync();
                                             await this.Dispatcher.RunAsync(

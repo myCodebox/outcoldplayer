@@ -66,7 +66,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.playlistsWebService.GetStatusAsync().ContinueWith(
                 tStatus =>
                 {
-                    if (tStatus.IsCompleted)
+                    if (tStatus.IsCompleted && !tStatus.IsFaulted)
                     {
                         this.BindingModel.Maximum = tStatus.Result.AvailableTracks * 2;
                         this.BindingModel.Message = "Loading playlists...";
@@ -76,7 +76,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                             {
                                 this.BindingModel.Progress = tStatus.Result.AvailableTracks;
 
-                                if (tStatus.IsCompleted)
+                                if (tPlaylists.IsCompleted && !tPlaylists.IsFaulted)
                                 {
                                     this.BindingModel.Message = "Loading songs...";
                                     Progress<int> progress = new Progress<int>();
@@ -88,7 +88,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                                     this.songsService.GetAllGoogleSongsAsync(progress).ContinueWith(
                                         tSongs =>
                                         {
-                                            if (tSongs.IsCompleted)
+                                            if (tSongs.IsCompleted && !tSongs.IsFaulted)
                                             {
                                                 bool dontAsk = this.settingsService.GetRoamingValue<bool>(DoNotAskToReviewKey);
                                                 if (!dontAsk)

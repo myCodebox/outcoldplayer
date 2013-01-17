@@ -407,7 +407,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     this.songWebService.UpdateRatingAsync(song.GoogleMusicMetadata, song.Rating).ContinueWith(
                         t =>
                             {
-                                if (t.IsCompleted && t.Result != null)
+                                if (t.IsCompleted && !t.IsFaulted && t.Result != null)
                                 {
                                     if (this.logger.IsDebugEnabled)
                                     {

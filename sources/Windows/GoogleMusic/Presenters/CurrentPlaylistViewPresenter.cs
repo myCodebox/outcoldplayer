@@ -90,7 +90,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.songsService.GetAllPlaylistsAsync(Order.Name).ContinueWith(
                 t =>
                 {
-                    if (t.IsCompleted)
+                    if (t.IsCompleted && !t.IsFaulted)
                     {
                         this.View.ShowPlaylists(t.Result);
                     }

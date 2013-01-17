@@ -96,7 +96,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.songsService.AddSongToPlaylistAsync(playlist, song).ContinueWith(
                 t =>
                     {
-                        if (t.IsCompleted && t.Result)
+                        if (t.IsCompleted && !t.IsFaulted && t.Result)
                         {
                             if (this.BindingModel.Playlist == playlist)
                             {
@@ -160,7 +160,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.songsService.GetAllPlaylistsAsync(Order.Name).ContinueWith(
                 t =>
                     {
-                        if (t.IsCompleted)
+                        if (t.IsCompleted && !t.IsFaulted)
                         {
                             this.View.ShowPlaylists(t.Result);
                         }
