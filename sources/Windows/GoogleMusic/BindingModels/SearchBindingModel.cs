@@ -5,6 +5,8 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 {
     using System.Collections.ObjectModel;
 
+    using OutcoldSolutions.GoogleMusic.Presentation;
+
     public class SearchBindingModel : BindingModelBase
     {
         private readonly ObservableCollection<SearchGroupBindingModel> groups;

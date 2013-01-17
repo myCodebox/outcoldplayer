@@ -115,7 +115,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
                 {
                     this.playState = value;
                     this.RaiseCurrentPropertyChanged();
-                    this.RaisePropertyChanged("IsPlaying");
+                    this.RaisePropertyChanged(() => this.IsPlaying);
                 }
             }
         }
@@ -144,7 +144,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
                 }
 
                 this.RaiseCurrentPropertyChanged();
-                this.RaisePropertyChanged("CurrentSong");
+                this.RaisePropertyChanged(() => this.CurrentSong);
             }
         }
 
@@ -218,7 +218,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             {
                 this.downloadProgress = value;
                 this.RaiseCurrentPropertyChanged();
-                this.RaisePropertyChanged("IsDownloaded");
+                this.RaisePropertyChanged(() => this.IsDownloaded);
             }
         }
 

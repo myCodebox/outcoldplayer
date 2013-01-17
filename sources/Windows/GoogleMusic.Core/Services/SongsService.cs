@@ -65,7 +65,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
                     foreach (var song in this.songsRepository)
                     {
-                        song.Value.PropertyChanged -= this.SongOnPropertyChanged;
+                        var songValue = song.Value;
+                        song.Value.Unsubscribe(() => songValue.Rating, this.SongOnPropertyChanged);
                     }
 
                     this.songsRepository.Clear();
@@ -367,7 +368,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 if (!this.songsRepository.TryGetValue(googleSong.Id, out song))
                 {
                     song = new Song(googleSong);
-                    song.PropertyChanged += this.SongOnPropertyChanged;
+                    song.Subscribe(() => song.Rating, this.SongOnPropertyChanged);
                     this.songsRepository.Add(googleSong.Id, song);
                 }
                 else if (updateSong)
@@ -378,7 +379,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     }
                     else
                     {
-                        song.PropertyChanged -= this.SongOnPropertyChanged;
+                        song.Unsubscribe(() => song.Rating, this.SongOnPropertyChanged);
                         song.GoogleMusicMetadata = googleSong;
                         song.Title = googleSong.Title;
                         song.Duration = TimeSpan.FromMilliseconds(googleSong.DurationMillis).TotalSeconds;
@@ -386,7 +387,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                         song.Album = googleSong.Album;
                         song.PlayCount = googleSong.PlayCount;
                         song.Rating = googleSong.Rating;
-                        song.PropertyChanged += this.SongOnPropertyChanged;
+                        song.Subscribe(() => song.Rating, this.SongOnPropertyChanged);
                     }
                 }
             }

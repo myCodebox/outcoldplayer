@@ -5,6 +5,8 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 {
     using System;
 
+    using OutcoldSolutions.GoogleMusic.Presentation;
+
     public class MainViewBindingModel : BindingModelBase
     {
         private string message;

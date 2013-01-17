@@ -3,6 +3,8 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.BindingModels
 {
+    using OutcoldSolutions.GoogleMusic.Presentation;
+
     public class StartViewBindingModel : BindingModelBase
     {
         private bool isLoading;
