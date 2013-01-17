@@ -63,9 +63,9 @@ namespace OutcoldSolutions.GoogleMusic.Services
             searchPane.ShowOnKeyboardInput = value;
         }
 
-        private void SearchPaneOnQuerySubmitted(SearchPane sender, SearchPaneQuerySubmittedEventArgs args)
+        private async void SearchPaneOnQuerySubmitted(SearchPane sender, SearchPaneQuerySubmittedEventArgs args)
         {
-            this.navigationService.NavigateTo<ISearchView>(args.QueryText);
+            await this.dispatcher.RunAsync(() => this.navigationService.NavigateTo<ISearchView>(args.QueryText));
         }
 
         private void OnSuggestionsRequested(SearchPane sender, SearchPaneSuggestionsRequestedEventArgs args)

@@ -77,6 +77,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             var viewType = typeof(TView);
             this.Logger.Debug("Navigating to {0}. Parameter {1}.", viewType, parameter);
 
+            IView currentView = null;
+
             if (this.viewsHistory.Count > 0)
             {
                 var value = this.viewsHistory.Last.Value;
@@ -86,6 +88,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     this.Logger.Warning("Double click found. Ignoring...");
                     return (TView)value.View;
                 }
+
+                currentView = this.viewsHistory.Last.Value.View;
 
                 this.viewsHistory.Last.Value.View.OnNavigatingFrom(new NavigatingFromEventArgs(this.viewsHistory.Last.Value.State));
             }
@@ -99,7 +103,15 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 this.viewsHistory.AddLast(historyItem);
             }
 
-            this.ShowView(view);
+            if (currentView == null || !currentView.Equals(view))
+            {
+                this.ShowView(view);
+            }
+            else
+            {
+                this.Logger.Debug("View the same: {0}.", typeof(TView));
+            }
+
             view.OnNavigatedTo(new NavigatedToEventArgs(historyItem == null ? null : historyItem.State, parameter, isBack: false));
             this.UpdateCanGoBack();
 

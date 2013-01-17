@@ -63,6 +63,7 @@
                   Margin="40, 0, 0, 20" 
                   SelectionChanged="ListOnSelectionChanged"
                   DoubleTapped="ListDoubleTapped"
+                  ManipulationMode="None"
                   x:Name="ListView">
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">

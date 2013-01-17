@@ -40,7 +40,8 @@
                   ScrollViewer.HorizontalScrollMode="Disabled"
                   ScrollViewer.VerticalScrollMode="Disabled"
                   SelectionChanged="GroupsOnSelectionChanged"
-                  SelectionMode="Single">
+                  SelectionMode="Single" 
+                  ManipulationMode="None">
             
              <ListView.ItemsPanel>
                 <ItemsPanelTemplate>

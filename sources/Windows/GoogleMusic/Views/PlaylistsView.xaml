@@ -50,7 +50,8 @@
                           ItemTemplate="{StaticResource PlaylistDataTemplate}"
                           SelectionChanged="ListViewOnSelectionChanged"
                           SelectedItem="{Binding Path=SelectedItem, Mode=TwoWay}" 
-                          Padding="120, 0, 0, 0">
+                          Padding="120, 0, 0, 0"
+                          ManipulationMode="None">
                     <GridView.ItemsPanel>
                         <ItemsPanelTemplate>
                             <VirtualizingStackPanel Orientation="Horizontal" />
@@ -99,7 +100,7 @@
                     </GridView.ItemTemplate>
                     <GridView.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <WrapGrid ItemWidth="75" ItemHeight="75" MaximumRowsOrColumns="1" VerticalChildrenAlignment="Center" />
+                            <WrapGrid ItemWidth="75" ItemHeight="75" MaximumRowsOrColumns="1" VerticalChildrenAlignment="Center" ManipulationMode="None" />
                         </ItemsPanelTemplate>
                     </GridView.ItemsPanel>
                     <GridView.ItemContainerStyle>
