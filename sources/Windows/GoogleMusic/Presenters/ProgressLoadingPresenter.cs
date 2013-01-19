@@ -12,6 +12,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using OutcoldSolutions.GoogleMusic.Web;
 
     using Windows.System;
+    using Windows.UI.Core;
     using Windows.UI.Popups;
 
     public class ProgressLoadingPresenter : ViewPresenterBase<IView>
@@ -80,10 +81,15 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                                 {
                                     this.BindingModel.Message = "Loading songs...";
                                     Progress<int> progress = new Progress<int>();
-                                    progress.ProgressChanged += (sender, i) =>
-                                    {
-                                        this.BindingModel.Progress = tStatus.Result.AvailableTracks + i;
-                                    };
+                                    progress.ProgressChanged += async (sender, i) =>
+                                        {
+                                            await this.Dispatcher.RunAsync(
+                                                CoreDispatcherPriority.High,
+                                                () =>
+                                                    {
+                                                        this.BindingModel.Progress = tStatus.Result.AvailableTracks + i;
+                                                    });
+                                        };
 
                                     this.songsService.GetAllGoogleSongsAsync(progress).ContinueWith(
                                         tSongs =>
