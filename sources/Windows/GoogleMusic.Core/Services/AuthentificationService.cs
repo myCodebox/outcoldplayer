@@ -77,7 +77,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             }
 
             this.logger.Debug("Logging.");
-            GoogleLoginResponse loginResponse = await this.googleAccountWebService.Authenticate(userInfo.Email, userInfo.Password);
+            GoogleLoginResponse loginResponse = await this.googleAccountWebService.AuthenticateAsync(userInfo.Email, userInfo.Password);
 
             if (loginResponse.Success)
             {

@@ -43,7 +43,11 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Web
             var logManager = this.Container.Resolve<ILogManager>();
             this.googleAccountWebService = new GoogleAccountWebService(logManager);
             this.musicWebService = new GoogleMusicWebService(logManager, this.sessionService.Object);
-            this.playlistsWebService = new PlaylistsWebService(this.musicWebService, this.sessionService.Object);
+            this.playlistsWebService = new PlaylistsWebService(
+                this.musicWebService,
+                this.sessionService.Object,
+                Mock.Of<IGoogleAccountWebService>(),
+                Mock.Of<IGoogleAccountService>());
 
             SynchronizationContext.SetSynchronizationContext(new SynchronizationContext());
         }
@@ -51,7 +55,7 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Web
         [Test, Ignore]
         public async Task LoginAsync_RightCredentials_GetAuth()
         {
-            var googleLoginResponse = await this.googleAccountWebService.Authenticate("outcoldman.test@gmail.com", "Qw12er34");
+            var googleLoginResponse = await this.googleAccountWebService.AuthenticateAsync("outcoldman.test@gmail.com", "Qw12er34");
 
             Assert.IsTrue(googleLoginResponse.Success);
             Assert.IsNull(googleLoginResponse.Error);
@@ -60,7 +64,7 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Web
         [Test, Ignore]
         public async Task LoginAsync_WrongCredentials_GetAuth()
         {
-            var googleLoginResponse = await this.googleAccountWebService.Authenticate("outcoldman.test@gmail.com", "WrongPassword");
+            var googleLoginResponse = await this.googleAccountWebService.AuthenticateAsync("outcoldman.test@gmail.com", "WrongPassword");
 
             Assert.IsFalse(googleLoginResponse.Success);
             Assert.IsNotNull(googleLoginResponse.Error);
@@ -70,7 +74,7 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Web
         [Test, Ignore]
         public async Task Test()
         {
-            await this.googleAccountWebService.Authenticate("outcoldman@gmail.com", "Stud10w0rks18467");
+            await this.googleAccountWebService.AuthenticateAsync("outcoldman@gmail.com", "Stud10w0rks18467");
 
             var cookies = await this.googleAccountWebService.GetCookiesAsync(this.musicWebService.GetServiceUrl());
 

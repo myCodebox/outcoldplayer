@@ -6,7 +6,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Models
 {
     using System.Collections.Generic;
 
-    public class GoogleMusicPlaylist
+    public class GoogleMusicPlaylist : CommonResponse
     {
         public string Title { get; set; }
 
