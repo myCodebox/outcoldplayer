@@ -82,7 +82,8 @@ namespace OutcoldSolutions.GoogleMusic.Web
                                         };
 
             var response = await this.googleMusicWebService.PostAsync(RecordPlayingUrl, formData: requestParameters);
-            return response.StatusCode == HttpStatusCode.OK && (await response.Content.ReadAsJsonObject<SuccessResult>()).Success;
+            var commonResponse = await response.Content.ReadAsJsonObject<CommonResponse>();
+            return response.StatusCode == HttpStatusCode.OK && commonResponse.Success.HasValue && commonResponse.Success.Value;
         }
 
         public async Task<RatingResp> UpdateRatingAsync(GoogleMusicSong song, int rating)

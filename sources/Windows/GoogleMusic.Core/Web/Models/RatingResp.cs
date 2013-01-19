@@ -3,10 +3,8 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Web.Models
 {
-    public class RatingResp
+    public class RatingResp : CommonResponse
     {
         public SongRatingResp[] Songs { get; set; }
-
-        public bool Success { get; set; }
     }
 }
