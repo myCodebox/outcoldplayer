@@ -43,7 +43,7 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Web
         [Test]
         public async Task Authenticate_RightCredentials_Success()
         {
-            var googleLoginResponse = await this.googleAccountWebService.Authenticate(
+            var googleLoginResponse = await this.googleAccountWebService.AuthenticateAsync(
                                                 SuitesConstants.GoogleAccountName, 
                                                 SuitesConstants.GoogleAccountPassword);
 
@@ -54,7 +54,7 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Web
         [Test]
         public async Task Authenticate_WrongCredentials_NotSuccess()
         {
-            var googleLoginResponse = await this.googleAccountWebService.Authenticate(
+            var googleLoginResponse = await this.googleAccountWebService.AuthenticateAsync(
                                                 SuitesConstants.GoogleAccountName,
                                                 "WrongPassword");
 

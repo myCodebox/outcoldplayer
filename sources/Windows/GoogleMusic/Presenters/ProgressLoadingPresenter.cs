@@ -12,6 +12,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using OutcoldSolutions.GoogleMusic.Web;
 
     using Windows.System;
+    using Windows.UI.Core;
     using Windows.UI.Popups;
 
     public class ProgressLoadingPresenter : ViewPresenterBase<IView>
@@ -80,10 +81,15 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                                 {
                                     this.BindingModel.Message = "Loading songs...";
                                     Progress<int> progress = new Progress<int>();
-                                    progress.ProgressChanged += (sender, i) =>
-                                    {
-                                        this.BindingModel.Progress = tStatus.Result.AvailableTracks + i;
-                                    };
+                                    progress.ProgressChanged += async (sender, i) =>
+                                        {
+                                            await this.Dispatcher.RunAsync(
+                                                CoreDispatcherPriority.High,
+                                                () =>
+                                                    {
+                                                        this.BindingModel.Progress = tStatus.Result.AvailableTracks + i;
+                                                    });
+                                        };
 
                                     this.songsService.GetAllGoogleSongsAsync(progress).ContinueWith(
                                         tSongs =>
@@ -123,14 +129,16 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                                                 }
 
                                                 bool forceToShowUpdates = false;
-                                                if (this.settingsService.GetRoamingValue<bool>("VersionHistory v1.1"))
+                                                if (this.settingsService.GetRoamingValue<bool>("VersionHistory v1.1", defaultValue: false))
                                                 {
                                                     forceToShowUpdates = true;
                                                     this.settingsService.RemoveRoamingValue("VersionHistory v1.1");
                                                 }
 
-                                                if (!forceToShowUpdates
-                                                    && string.Equals(this.settingsService.GetValue<string>("Version", CurrentVersion), CurrentVersion, StringComparison.OrdinalIgnoreCase))
+                                                if (string.Equals(
+                                                        this.settingsService.GetValue<string>("Version", CurrentVersion),
+                                                        CurrentVersion,
+                                                        StringComparison.OrdinalIgnoreCase) || !forceToShowUpdates)
                                                 {
                                                     this.searchService.Register();
                                                     this.navigationService.NavigateTo<IStartView>();
@@ -138,7 +146,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                                                 else
                                                 {
                                                     this.settingsService.SetValue("Version", CurrentVersion);
-                                                    this.navigationService.NavigateTo<IWhatIsNewView>(keepInHistory: false);
+                                                    this.navigationService.NavigateTo<IWhatIsNewView>(
+                                                        keepInHistory: false);
                                                 }
                                             }
                                             else

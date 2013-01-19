@@ -126,6 +126,9 @@
     <Compile Include="..\Windows\GoogleMusic.Core\PropertyNameExtractor.cs">
       <Link>_sources\PropertyNameExtractor.cs</Link>
     </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Services\IGoogleAccountService.cs">
+      <Link>_sources\Services\IGoogleAccountService.cs</Link>
+    </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Services\IGoogleMusicSessionService.cs">
       <Link>_sources\Services\IGoogleMusicSessionService.cs</Link>
     </Compile>
@@ -216,6 +219,9 @@
     <Compile Include="..\Windows\GoogleMusic.Core\Web\Models\AddSongResp.cs">
       <Link>_sources\Web\Models\AddSongResp.cs</Link>
     </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Web\Models\CommonResponse.cs">
+      <Link>sources\Web\Models\CommonResponse.cs</Link>
+    </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Web\Models\DeletePlaylistResp.cs">
       <Link>_sources\Web\Models\DeletePlaylistResp.cs</Link>
     </Compile>
@@ -249,9 +255,6 @@
     <Compile Include="..\Windows\GoogleMusic.Core\Web\Models\StatusResp.cs">
       <Link>_sources\Web\Models\StatusResp.cs</Link>
     </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Web\Models\SuccessResult.cs">
-      <Link>_sources\Web\Models\SuccessResult.cs</Link>
-    </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Web\PlaylistsWebService.cs">
       <Link>_sources\Web\PlaylistsWebService.cs</Link>
     </Compile>
@@ -259,6 +262,9 @@
       <Link>_sources\Web\SongWebService.cs</Link>
     </Compile>
     <Compile Include="Presentation\BindingModelBaseSuites.cs" />
+    <Compile Include="..\Windows\GoogleMusic.Core\Web\WebServiceBase.cs">
+      <Link>sources\Web\WebServiceBase.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\Pubslishers\CurrentSongPublisherServiceSuites.cs" />
     <Compile Include="SuitesBase.cs" />

@@ -144,6 +144,11 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
                 foreach (Cookie cookieLog in cookieCollection)
                 {
+#if DEBUG
+                    log.AppendFormat("        {0}={1}, Expires={2}", cookieLog.Name, cookieLog.Value, cookieLog.Expires);
+                    log.AppendLine();
+#else
+
                     HashAlgorithmProvider hashProvider = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Md5);
                     IBuffer hash =
                         hashProvider.HashData(
@@ -152,6 +157,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
                     log.AppendFormat("        {0}={{MD5_VALUE_HASH}}{1}, Expires={2}", cookieLog.Name, hashValue, cookieLog.Expires);
                     log.AppendLine();
+#endif
                 }
             }
         }

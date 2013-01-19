@@ -3,8 +3,10 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Web.Models
 {
-    public class SuccessResult
+    public class CommonResponse
     {
-        public bool Success { get; set; }
+        public bool? Success { get; set; }
+
+        public bool? ReloadXsrf { get; set; }
     }
 }

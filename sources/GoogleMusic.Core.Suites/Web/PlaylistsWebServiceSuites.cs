@@ -68,7 +68,7 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Web
 
         private async Task AthenticateAsync()
         {
-            await this.googleAccountWebService.Authenticate(SuitesConstants.GoogleAccountName, SuitesConstants.GoogleAccountPassword);
+            await this.googleAccountWebService.AuthenticateAsync(SuitesConstants.GoogleAccountName, SuitesConstants.GoogleAccountPassword);
             var cookies = await this.googleAccountWebService.GetCookiesAsync(this.musicWebService.GetServiceUrl());
             this.musicWebService.Initialize(cookies);
         }

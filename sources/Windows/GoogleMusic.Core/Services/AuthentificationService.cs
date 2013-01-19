@@ -77,7 +77,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             }
 
             this.logger.Debug("Logging.");
-            GoogleLoginResponse loginResponse = await this.googleAccountWebService.Authenticate(userInfo.Email, userInfo.Password);
+            GoogleLoginResponse loginResponse = await this.googleAccountWebService.AuthenticateAsync(userInfo.Email, userInfo.Password);
 
             if (loginResponse.Success)
             {
@@ -108,9 +108,9 @@ namespace OutcoldSolutions.GoogleMusic.Services
             this.googleMusicWebService.Initialize(cookieCollection);
 
             var statusResp = await this.playlistsWebService.GetStatusAsync();
-            if (statusResp != null 
-                && string.IsNullOrEmpty(statusResp.ReloadXsrf)
-                && (string.IsNullOrEmpty(statusResp.Success) || string.Equals(statusResp.Success, bool.TrueString, StringComparison.OrdinalIgnoreCase)))
+            if (statusResp != null
+                && (!statusResp.ReloadXsrf.HasValue || !statusResp.ReloadXsrf.Value)
+                && (!statusResp.Success.HasValue || statusResp.Success.Value))
             {
                 this.logger.Debug("InitializeWebServices: GetStatusAsync returns for us success result.");
                 return true;

@@ -44,7 +44,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
             this.httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Music Manager (1, 0, 54, 4672 - Windows)");
         }
 
-        public async Task<GoogleLoginResponse> Authenticate(string email, string password)
+        public async Task<GoogleLoginResponse> AuthenticateAsync(string email, string password)
         {
             this.logger.Debug("Calling ClientLogin.");
 
