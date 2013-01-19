@@ -4,7 +4,7 @@
 
 namespace OutcoldSolutions.GoogleMusic.Web.Models
 {
-    public class DeletePlaylistResp
+    public class DeletePlaylistResp : CommonResponse
     {
         public string DeleteId { get; set; }
     }

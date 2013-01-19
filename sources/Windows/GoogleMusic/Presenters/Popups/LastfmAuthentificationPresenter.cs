@@ -38,7 +38,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
             this.accountWebService.GetTokenAsync().ContinueWith(
                 t =>
                     {
-                        if (t.IsCompleted && string.IsNullOrEmpty(t.Result.Error)
+                        if (t.IsCompleted && !t.IsFaulted && string.IsNullOrEmpty(t.Result.Error)
                             && !string.IsNullOrEmpty(t.Result.Token))
                         {
                             this.BindingModel.IsLoading = false;
@@ -59,7 +59,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
             this.accountWebService.GetSessionAsync(this.token).ContinueWith(
                 (t) =>
                     {
-                        if (t.IsCompleted && t.Result.Session != null)
+                        if (t.IsCompleted && !t.IsFaulted && t.Result.Session != null)
                         {
                             this.publisherService.AddPublisher<LastFmCurrentSongPublisher>();
                             this.View.Close();

@@ -9,7 +9,7 @@ namespace OutcoldSolutions.GoogleMusic.Models
 
     public class Song : BindingModelBase
     {
-        private readonly GoogleMusicSong googleMusicSong;
+        private GoogleMusicSong googleMusicSong;
 
         private int rating;
         private int playCount;
@@ -70,6 +70,11 @@ namespace OutcoldSolutions.GoogleMusic.Models
             get
             {
                 return this.googleMusicSong;
+            }
+
+            set
+            {
+                this.googleMusicSong = value;
             }
         }
 

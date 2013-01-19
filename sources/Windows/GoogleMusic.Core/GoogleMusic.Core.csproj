@@ -121,7 +121,9 @@
     <Compile Include="Models\UserSession.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\AuthentificationService.cs" />
+    <Compile Include="Services\DataProtectService.cs" />
     <Compile Include="Services\IAuthentificationService.cs" />
+    <Compile Include="Services\IDataProtectService.cs" />
     <Compile Include="Services\ISettingsService.cs" />
     <Compile Include="Services\ISongsService.cs" />
     <Compile Include="Services\IGoogleAccountService.cs" />
@@ -170,9 +172,10 @@
     <Compile Include="Web\Models\SongIdResp.cs" />
     <Compile Include="Web\Models\SongRatingResp.cs" />
     <Compile Include="Web\Models\StatusResp.cs" />
-    <Compile Include="Web\Models\SuccessResult.cs" />
+    <Compile Include="Web\Models\CommonResponse.cs" />
     <Compile Include="Web\PlaylistsWebService.cs" />
     <Compile Include="Web\SongWebService.cs" />
+    <Compile Include="Web\WebServiceBase.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">

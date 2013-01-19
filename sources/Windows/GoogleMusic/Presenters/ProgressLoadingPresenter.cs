@@ -12,6 +12,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using OutcoldSolutions.GoogleMusic.Web;
 
     using Windows.System;
+    using Windows.UI.Core;
     using Windows.UI.Popups;
 
     public class ProgressLoadingPresenter : ViewPresenterBase<IView>
@@ -19,6 +20,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private const int AskForReviewStarts = 10;
         private const string DoNotAskToReviewKey = "DoNotAskToReviewKey";
         private const string CountOfStartsBeforeReview = "CountOfStartsBeforeReview";
+
+        private const string CurrentVersion = "1.2";
 
         private readonly ISongsService songsService;
         private readonly IPlaylistsWebService playlistsWebService;
@@ -64,27 +67,34 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.playlistsWebService.GetStatusAsync().ContinueWith(
                 tStatus =>
                 {
-                    if (tStatus.IsCompleted)
+                    if (tStatus.IsCompleted && !tStatus.IsFaulted)
                     {
-                        this.BindingModel.Maximum = tStatus.Result.AvailableTracks;
+                        this.BindingModel.Maximum = tStatus.Result.AvailableTracks * 2;
                         this.BindingModel.Message = "Loading playlists...";
 
                         this.songsService.GetAllPlaylistsAsync().ContinueWith(
                             tPlaylists =>
                             {
-                                if (tStatus.IsCompleted)
+                                this.BindingModel.Progress = tStatus.Result.AvailableTracks;
+
+                                if (tPlaylists.IsCompleted && !tPlaylists.IsFaulted)
                                 {
                                     this.BindingModel.Message = "Loading songs...";
                                     Progress<int> progress = new Progress<int>();
-                                    progress.ProgressChanged += (sender, i) =>
-                                    {
-                                        this.BindingModel.Progress = i;
-                                    };
+                                    progress.ProgressChanged += async (sender, i) =>
+                                        {
+                                            await this.Dispatcher.RunAsync(
+                                                CoreDispatcherPriority.High,
+                                                () =>
+                                                    {
+                                                        this.BindingModel.Progress = tStatus.Result.AvailableTracks + i;
+                                                    });
+                                        };
 
                                     this.songsService.GetAllGoogleSongsAsync(progress).ContinueWith(
                                         tSongs =>
                                         {
-                                            if (tSongs.IsCompleted)
+                                            if (tSongs.IsCompleted && !tSongs.IsFaulted)
                                             {
                                                 bool dontAsk = this.settingsService.GetRoamingValue<bool>(DoNotAskToReviewKey);
                                                 if (!dontAsk)
@@ -97,10 +107,10 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                                                             new UICommand(
                                                                 "Rate",
                                                                 (cmd) =>
-                                                                    {
-                                                                        this.settingsService.SetRoamingValue<bool>(DoNotAskToReviewKey, true);
-                                                                        var tLauncher = Launcher.LaunchUriAsync(new Uri("ms-windows-store:REVIEW?PFN=47286outcoldman.gMusic_z1q2m7teapq4y"));
-                                                                    }));
+                                                                {
+                                                                    this.settingsService.SetRoamingValue<bool>(DoNotAskToReviewKey, true);
+                                                                    var tLauncher = Launcher.LaunchUriAsync(new Uri("ms-windows-store:REVIEW?PFN=47286outcoldman.gMusic_z1q2m7teapq4y"));
+                                                                }));
                                                         dialog.Commands.Add(
                                                             new UICommand(
                                                                 "No, thanks",
@@ -118,14 +128,26 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                                                     }
                                                 }
 
-                                                if (App.Container.Resolve<ISettingsService>().GetRoamingValue<bool>("VersionHistory v1.1"))
+                                                bool forceToShowUpdates = false;
+                                                if (this.settingsService.GetRoamingValue<bool>("VersionHistory v1.1", defaultValue: false))
+                                                {
+                                                    forceToShowUpdates = true;
+                                                    this.settingsService.RemoveRoamingValue("VersionHistory v1.1");
+                                                }
+
+                                                if (string.Equals(
+                                                        this.settingsService.GetValue<string>("Version", CurrentVersion),
+                                                        CurrentVersion,
+                                                        StringComparison.OrdinalIgnoreCase) || !forceToShowUpdates)
                                                 {
                                                     this.searchService.Register();
                                                     this.navigationService.NavigateTo<IStartView>();
                                                 }
                                                 else
                                                 {
-                                                    this.navigationService.NavigateTo<IWhatIsNewView>(keepInHistory: false);
+                                                    this.settingsService.SetValue("Version", CurrentVersion);
+                                                    this.navigationService.NavigateTo<IWhatIsNewView>(
+                                                        keepInHistory: false);
                                                 }
                                             }
                                             else

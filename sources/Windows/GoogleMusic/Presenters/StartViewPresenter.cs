@@ -42,7 +42,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.GetGroupsAsync().ContinueWith(
                 task =>
                     {
-                        this.View.SetGroups(task.Result);
+                        if (task.IsCompleted && !task.IsFaulted)
+                        {
+                            this.View.SetGroups(task.Result);
+                        }
+
                         this.BindingModel.IsLoading = false;
                     },
                 TaskScheduler.FromCurrentSynchronizationContext());
@@ -55,7 +59,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             var systemPlaylists = await this.songsService.GetSystemPlaylists();
             groups.Add(new PlaylistsGroupBindingModel(null, systemPlaylists.Count, systemPlaylists.Select(x => new PlaylistBindingModel(x))));
 
-            var playlists = await this.songsService.GetAllPlaylistsAsync(Order.LastPlayed);
+            var playlists = await this.songsService.GetAllPlaylistsAsync(Order.LastPlayed, canReload: true);
             groups.Add(new PlaylistsGroupBindingModel("Playlists", playlists.Count, playlists.Take(MaxItems).Select(x => new PlaylistBindingModel(x)), PlaylistsRequest.Playlists));
 
             var artists = await this.songsService.GetAllArtistsAsync(Order.LastPlayed);

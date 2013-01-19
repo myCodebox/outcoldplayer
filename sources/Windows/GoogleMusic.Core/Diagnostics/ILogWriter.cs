@@ -3,10 +3,12 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Diagnostics
 {
+    using System;
+
     public interface ILogWriter
     {
         bool IsEnabled { get; }
 
-        void Log(string level, string context, string message, params object[] parameters);
+        void Log(DateTime dateTime, string level, string context, string message, params object[] parameters);
     }
 }

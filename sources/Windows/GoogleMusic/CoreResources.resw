@@ -124,7 +124,7 @@
     <value>The user account has been disabled.</value>
   </data>
   <data name="Login_BadAuthentication" xml:space="preserve">
-    <value>Username or password is not recognized.</value>
+    <value>Username or password is not recognized. If you are using 2-step authentication you need to use one of the generated passwords.</value>
   </data>
   <data name="Login_CaptchaRequired" xml:space="preserve">
     <value>A CAPTCHA is required.</value>

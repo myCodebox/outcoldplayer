@@ -118,6 +118,7 @@ namespace OutcoldSolutions.GoogleMusic
                     registration.Register<LastfmAuthentificationPresenter>();
 
                     // Services
+                    registration.Register<IDataProtectService>().AsSingleton<DataProtectService>();
                     registration.Register<IGoogleAccountWebService>().As<GoogleAccountWebService>();
                     registration.Register<IGoogleMusicWebService>().AsSingleton<GoogleMusicWebService>();
                     registration.Register<IGoogleAccountService>().AsSingleton<GoogleAccountService>();
@@ -227,14 +228,14 @@ namespace OutcoldSolutions.GoogleMusic
         private Task OnSuspendingAsync()
         {
             return Task.Factory.StartNew(
-                () =>
+                async () =>
                     {
                         if (this.sessionService != null)
                         {
                             var cookieCollection = this.webService.GetCurrentCookies();
                             if (cookieCollection != null)
                             {
-                                this.sessionService.SaveCurrentSession(cookieCollection);
+                                await this.sessionService.SaveCurrentSessionAsync(cookieCollection);
                             }
                         }
 

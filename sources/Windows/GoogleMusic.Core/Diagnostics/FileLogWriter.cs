@@ -15,19 +15,11 @@ namespace OutcoldSolutions.GoogleMusic.Diagnostics
 
         private StreamWriter writer;
 
-        public FileLogWriter()
-        {
-            this.EnableLogging();
-        }
-
         public bool IsEnabled
         {
             get
             {
-                lock (this.locker)
-                {
-                    return this.writer != null;
-                }
+                return true;
             }
         }
 
@@ -42,13 +34,28 @@ namespace OutcoldSolutions.GoogleMusic.Diagnostics
             }
         }
 
-        public void Log(string level, string context, string message, params object[] parameters)
+        public void Log(DateTime dateTime, string level, string context, string message, params object[] parameters)
         {
             lock (this.locker)
             {
+                if (this.writer == null)
+                {
+                    this.EnableLogging();
+                }
+
                 if (this.writer != null)
                 {
-                    this.writer.WriteLine("{0}::: {1} --- {2}", level, context, string.Format(message, parameters));
+                    if (parameters.Length == 0)
+                    {
+                        this.writer.WriteLine(
+                            "{0:o}: {1}::: {2} --- {3}", dateTime, level, context, message);
+                    }
+                    else
+                    {
+                        this.writer.WriteLine(
+                            "{0:o}: {1}::: {2} --- {3}", dateTime, level, context, string.Format(message, parameters));
+                    }
+
                     this.writer.Flush();
                 }
             }
@@ -57,8 +64,9 @@ namespace OutcoldSolutions.GoogleMusic.Diagnostics
         private void EnableLogging()
         {
             var enableLoggingAsync = this.EnableLoggingAsync();
-            enableLoggingAsync.Wait();
-            if (enableLoggingAsync.IsCompleted)
+            TaskEx.WaitAllSafe(enableLoggingAsync);
+
+            if (enableLoggingAsync.IsCompleted && !enableLoggingAsync.IsFaulted)
             {
                 lock (this.locker)
                 {
@@ -80,7 +88,7 @@ namespace OutcoldSolutions.GoogleMusic.Diagnostics
         private async Task<StreamWriter> EnableLoggingAsync()
         {
             var storageFile =
-                await ApplicationData.Current.LocalFolder.CreateFileAsync(string.Format("{0:yyyy-MM-dd-HH-mm-ss-ffff}.log", DateTime.Now)).AsTask();
+                await ApplicationData.Current.LocalFolder.CreateFileAsync(string.Format("{0:yyyy-MM-dd-HH-mm-ss-ffff}.log", DateTime.Now), CreationCollisionOption.OpenIfExists).AsTask();
 
             var stream = await storageFile.OpenAsync(FileAccessMode.ReadWrite).AsTask();
 

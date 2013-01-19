@@ -97,6 +97,16 @@ namespace OutcoldSolutions.GoogleMusic.Services
             return defaultValue;
         }
 
+        public void RemoveRoamingValue(string key)
+        {
+            this.logger.Debug("Removing roaming value of key '{0}'.'", key);
+            if (this.roamingSettingsContainer.Values.ContainsKey(key))
+            {
+                this.roamingSettingsContainer.Values.Remove(key);
+                this.RaiseValueChanged(key);
+            }
+        }
+
         protected virtual void RaiseValueChanged(string key)
         {
             var handler = this.ValueChanged;

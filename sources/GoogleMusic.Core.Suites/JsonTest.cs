@@ -16,7 +16,12 @@ namespace OutcoldSolutions.GoogleMusic.Suites
             // var fromMilliseconds = TimeSpan.FromMilliseconds(1355715674069770 / 1000);
 
             DateTime dateTime = new DateTime(1970, 1, 1);
-            var addSeconds = dateTime.AddMilliseconds(1353472689288941 / 1000).ToLocalTime();
+            var addSeconds = dateTime.AddMilliseconds(1358228284699000 / 1000).ToLocalTime();
+            // 1355715674069770l
+            // 1355715674069770
+            // 1353471887402476
+            var time = new DateTime(1970, 1, 1);
+            time = time.AddMilliseconds(1355715674069);
         }
     }
 }

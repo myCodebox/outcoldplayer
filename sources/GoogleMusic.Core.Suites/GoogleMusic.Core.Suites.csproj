@@ -123,6 +123,9 @@
     <Compile Include="..\Windows\GoogleMusic.Core\Models\UserSession.cs">
       <Link>sources\Models\UserSession.cs</Link>
     </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Services\IGoogleAccountService.cs">
+      <Link>sources\Services\IGoogleAccountService.cs</Link>
+    </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Services\IGoogleMusicSessionService.cs">
       <Link>sources\Services\IGoogleMusicSessionService.cs</Link>
     </Compile>
@@ -213,6 +216,9 @@
     <Compile Include="..\Windows\GoogleMusic.Core\Web\Models\AddSongResp.cs">
       <Link>sources\Web\Models\AddSongResp.cs</Link>
     </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Web\Models\CommonResponse.cs">
+      <Link>sources\Web\Models\CommonResponse.cs</Link>
+    </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Web\Models\DeletePlaylistResp.cs">
       <Link>sources\Web\Models\DeletePlaylistResp.cs</Link>
     </Compile>
@@ -246,14 +252,14 @@
     <Compile Include="..\Windows\GoogleMusic.Core\Web\Models\StatusResp.cs">
       <Link>sources\Web\Models\StatusResp.cs</Link>
     </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Web\Models\SuccessResult.cs">
-      <Link>sources\Web\Models\SuccessResult.cs</Link>
-    </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Web\PlaylistsWebService.cs">
       <Link>sources\Web\PlaylistsWebService.cs</Link>
     </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Web\SongWebService.cs">
       <Link>sources\Web\SongWebService.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Web\WebServiceBase.cs">
+      <Link>sources\Web\WebServiceBase.cs</Link>
     </Compile>
     <Compile Include="JsonTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

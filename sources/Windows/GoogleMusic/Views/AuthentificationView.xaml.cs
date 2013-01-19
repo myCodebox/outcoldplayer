@@ -30,7 +30,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
                 this.Presenter<AuthentificationPresenter>().LogInAsync().ContinueWith(
                     t =>
                         {
-                            if (!t.Result)
+                            if (!t.IsCompleted || t.IsFaulted || !t.Result)
                             {
                                 this.ProgressRing.IsActive = false;
                                 this.SetLoginLayoutIsEnabled(isEnabled: true);

@@ -92,7 +92,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Lastfm
 
             this.ClearAllPasswordCredentials(vault);
 
-            this.logger.Debug("SaveCurrentSession: Adding new passwrod credentials.");
+            this.logger.Debug("SaveCurrentSessionAsync: Adding new passwrod credentials.");
 
             var session = new PasswordCredential(
                 LastFmSessionResource,
@@ -157,7 +157,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Lastfm
                 var all = vault.FindAllByResource(LastFmSessionResource);
                 foreach (var credential in all)
                 {
-                    this.logger.Debug("SaveCurrentSession: Remove old sessions.");
+                    this.logger.Debug("SaveCurrentSessionAsync: Remove old sessions.");
                     vault.Remove(credential);
                 }
             }

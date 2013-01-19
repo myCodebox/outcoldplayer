@@ -68,8 +68,8 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
                     { 
                         song.PlayCount = playCount;
 
-                        // This is not the same value which Google Gives Us, but bigger than Google gives us
-                        song.GoogleMusicMetadata.LastPlayed = DateTime.Now.ToFileTime();
+                        // This is UNIX format, I guess Google use it.
+                        song.GoogleMusicMetadata.LastPlayed = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalMilliseconds;
                     }),
                 Task.Run(async () =>
                     {

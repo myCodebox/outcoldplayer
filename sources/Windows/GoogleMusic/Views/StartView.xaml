@@ -57,7 +57,8 @@
                   SelectionMode="None"
                   ItemClick="PlaylistItemClick"  
                   Padding="120, 0, 0, 0"
-                  x:Name="GridView">
+                  x:Name="GridView"
+                  ManipulationMode="None">
             
             <GridView.ItemsPanel>
                 <ItemsPanelTemplate>

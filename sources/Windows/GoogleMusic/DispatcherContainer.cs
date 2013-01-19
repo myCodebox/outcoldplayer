@@ -17,9 +17,14 @@ namespace OutcoldSolutions.GoogleMusic
             this.coreDispatcher = coreDispatcher;
         }
 
-        public async Task RunAsync(Action action)
+        public Task RunAsync(Action action)
         {
-            await this.coreDispatcher.RunAsync(CoreDispatcherPriority.Normal, () => action());
+            return this.RunAsync(CoreDispatcherPriority.Normal, action);
+        }
+
+        public Task RunAsync(CoreDispatcherPriority priority, Action action)
+        {
+            return this.coreDispatcher.RunAsync(priority, () => action()).AsTask();
         }
     }
 }

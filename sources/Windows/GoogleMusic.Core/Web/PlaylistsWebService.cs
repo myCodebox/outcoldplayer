@@ -5,6 +5,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Net;
     using System.Threading.Tasks;
 
@@ -21,6 +22,8 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
         Task<List<GoogleMusicSong>> GetAllSongsAsync(IProgress<int> progress = null);
 
+        Task<List<GoogleMusicSong>> StreamingLoadAllTracksAsync(IProgress<int> progress);
+
         Task<AddPlaylistResp> CreatePlaylistAsync(string name);
 
         Task<bool> DeletePlaylistAsync(string id);
@@ -34,7 +37,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
         Task<StatusResp> GetStatusAsync();
     }
 
-    public class PlaylistsWebService : IPlaylistsWebService
+    public class PlaylistsWebService : WebServiceBase, IPlaylistsWebService
     {
         private const string PlaylistsUrl = "music/services/loadplaylist";
         private const string AllSongsUrl = "music/services/loadalltracks";
@@ -45,15 +48,27 @@ namespace OutcoldSolutions.GoogleMusic.Web
         private const string DeleteSongUrl = "music/services/deletesong";
         private const string GetStatusUrl = "music/services/getstatus";
 
+        private const string StreamingLoadAllTracks = "music/services/streamingloadalltracks?json=";
+
         private readonly IGoogleMusicWebService googleMusicWebService;
         private readonly IGoogleMusicSessionService sessionService;
 
+        private DateTime? lastStreamingRequest;
+
         public PlaylistsWebService(
             IGoogleMusicWebService googleMusicWebService,
-            IGoogleMusicSessionService sessionService)
+            IGoogleMusicSessionService sessionService,
+            IGoogleAccountWebService googleAccountWebService,
+            IGoogleAccountService googleAccountService)
+            : base(googleAccountWebService, googleAccountService, googleMusicWebService, sessionService)
         {
             this.googleMusicWebService = googleMusicWebService;
             this.sessionService = sessionService;
+
+            this.sessionService.SessionCleared += (sender, args) =>
+                {
+                    this.lastStreamingRequest = null;
+                };
         }
 
         public async Task<GoogleMusicPlaylists> GetAllPlaylistsAsync()
@@ -64,8 +79,15 @@ namespace OutcoldSolutions.GoogleMusic.Web
                                         };
 
             var response = await this.googleMusicWebService.PostAsync(PlaylistsUrl, formData: requestParameters);
+            var googleMusicPlaylists = await response.Content.ReadAsJsonObject<GoogleMusicPlaylists>();
 
-            return await response.Content.ReadAsJsonObject<GoogleMusicPlaylists>();
+            if (await this.NeedRetry(googleMusicPlaylists))
+            {
+                response = await this.googleMusicWebService.PostAsync(PlaylistsUrl, formData: requestParameters);
+                googleMusicPlaylists = await response.Content.ReadAsJsonObject<GoogleMusicPlaylists>();
+            }
+
+            return googleMusicPlaylists;
         }
 
         public async Task<GoogleMusicPlaylist> GetPlaylistAsync(string playlistId)
@@ -83,7 +105,15 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
             var response = await this.googleMusicWebService.PostAsync(PlaylistsUrl, formData: requestParameters);
 
-            return await response.Content.ReadAsJsonObject<GoogleMusicPlaylist>();
+            var googleMusicPlaylist = await response.Content.ReadAsJsonObject<GoogleMusicPlaylist>();
+
+            if (await this.NeedRetry(googleMusicPlaylist))
+            {
+                response = await this.googleMusicWebService.PostAsync(PlaylistsUrl, formData: requestParameters);
+                googleMusicPlaylist = await response.Content.ReadAsJsonObject<GoogleMusicPlaylist>();
+            }
+
+            return googleMusicPlaylist;
         }
 
         public async Task<List<GoogleMusicSong>> GetAllSongsAsync(IProgress<int> progress = null)
@@ -126,6 +156,68 @@ namespace OutcoldSolutions.GoogleMusic.Web
             return googleMusicSongs;
         }
 
+        public async Task<List<GoogleMusicSong>> StreamingLoadAllTracksAsync(IProgress<int> progress)
+        {
+            List<GoogleMusicSong> googleMusicSongs = new List<GoogleMusicSong>();
+
+            string json;
+
+            if (this.lastStreamingRequest == null)
+            {
+                json = JsonConvert.SerializeObject(
+                        new
+                            {
+                                sessionId = this.sessionService.GetSession().SessionId,
+                                requestCause = 3,
+                                requestType = 1
+                            });
+
+                this.lastStreamingRequest = DateTime.UtcNow;
+            }
+            else
+            {
+                json = JsonConvert.SerializeObject(
+                        new
+                            {
+                                sessionId = this.sessionService.GetSession().SessionId,
+                                requestCause = 2,
+                                requestType = 1,
+                                lastUpdated = (long)((this.lastStreamingRequest.Value - new DateTime(1970, 1, 1, 0, 0, 0)).TotalMilliseconds * 1000)
+                            });
+
+                this.lastStreamingRequest = DateTime.UtcNow;
+            }
+
+            var response = await this.googleMusicWebService.GetAsync(StreamingLoadAllTracks + WebUtility.UrlEncode(json));
+
+            var stream = await response.Content.ReadAsStreamAsync();
+            using (StreamReader streamReader = new StreamReader(stream))
+            {
+                while (!streamReader.EndOfStream)
+                {
+                    var line = streamReader.ReadLine();
+                    if (line == null)
+                    {
+                        break;
+                    }
+
+                    if (line.StartsWith("window.parent['slat_process']("))
+                    {
+                        string str = line.Substring("window.parent['slat_process'](".Length, line.Length - ("window.parent['slat_process'](".Length + 2));
+                        var googleMusicPlaylist = JsonConvert.DeserializeObject<GoogleMusicPlaylist>(str);
+                        googleMusicSongs.AddRange(googleMusicPlaylist.Playlist);
+
+                        if (progress != null)
+                        {
+                            progress.Report(googleMusicSongs.Count);
+                        }
+                    }
+                }
+            }
+
+            return googleMusicSongs;
+        }
+
         public async Task<AddPlaylistResp> CreatePlaylistAsync(string name)
         {
             var requestParameters = new Dictionary<string, string>
@@ -145,7 +237,15 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
             if (response.StatusCode == HttpStatusCode.OK)
             {
-                return await response.Content.ReadAsJsonObject<AddPlaylistResp>();
+                var addPlaylistResp = await response.Content.ReadAsJsonObject<AddPlaylistResp>();
+
+                if (await this.NeedRetry(addPlaylistResp))
+                {
+                    response = await this.googleMusicWebService.PostAsync(AddPlaylistUrl, formData: requestParameters);
+                    addPlaylistResp = await response.Content.ReadAsJsonObject<AddPlaylistResp>();
+                }
+
+                return addPlaylistResp;
             }
             else
             {
@@ -170,8 +270,19 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
             var response = await this.googleMusicWebService.PostAsync(DeletePlaylistUrl, formData: requestParameters);
 
-            return response.StatusCode == HttpStatusCode.OK
-                   && string.Equals((await response.Content.ReadAsJsonObject<DeletePlaylistResp>()).DeleteId, id, StringComparison.OrdinalIgnoreCase);
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                var deletePlaylistResp = await response.Content.ReadAsJsonObject<DeletePlaylistResp>();
+                if (await this.NeedRetry(deletePlaylistResp))
+                {
+                    response = await this.googleMusicWebService.PostAsync(DeletePlaylistUrl, formData: requestParameters);
+                    deletePlaylistResp = await response.Content.ReadAsJsonObject<DeletePlaylistResp>();
+                }
+
+                return response.StatusCode == HttpStatusCode.OK && string.Equals(deletePlaylistResp.DeleteId, id, StringComparison.OrdinalIgnoreCase);
+            }
+
+            return false;
         }
 
         public async Task<bool> ChangePlaylistNameAsync(string id, string name)
@@ -190,7 +301,21 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
             var response = await this.googleMusicWebService.PostAsync(ChangePlaylistNameUrl, formData: requestParameters);
 
-            return response.StatusCode == HttpStatusCode.OK;
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                var objectResponse = await response.Content.ReadAsJsonObject<CommonResponse>();
+
+                if (await this.NeedRetry(objectResponse))
+                {
+                    response = await this.googleMusicWebService.PostAsync(ChangePlaylistNameUrl, formData: requestParameters);
+                }
+
+                return response.IsSuccessStatusCode;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public async Task<AddSongResp> AddSongToPlaylistAsync(string playlistId, string songId)
@@ -211,7 +336,15 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
             if (response.StatusCode == HttpStatusCode.OK)
             {
-                return await response.Content.ReadAsJsonObject<AddSongResp>();
+                var addSongResp = await response.Content.ReadAsJsonObject<AddSongResp>();
+
+                if (await this.NeedRetry(addSongResp))
+                {
+                    response = await this.googleMusicWebService.PostAsync(AddToPlaylistUrl, formData: requestParameters);
+                    addSongResp = await response.Content.ReadAsJsonObject<AddSongResp>();
+                }
+
+                return addSongResp;
             }
             else
             {
@@ -235,6 +368,17 @@ namespace OutcoldSolutions.GoogleMusic.Web
                                         };
 
             var response = await this.googleMusicWebService.PostAsync(DeleteSongUrl, formData: requestParameters);
+
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                var commonResponse = await response.Content.ReadAsJsonObject<CommonResponse>();
+
+                if (await this.NeedRetry(commonResponse))
+                {
+                    response = await this.googleMusicWebService.PostAsync(DeleteSongUrl, formData: requestParameters);
+                    commonResponse = await response.Content.ReadAsJsonObject<CommonResponse>();
+                }
+            }
 
             return response.StatusCode == HttpStatusCode.OK;
         }

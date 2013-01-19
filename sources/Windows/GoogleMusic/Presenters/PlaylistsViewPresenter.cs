@@ -76,31 +76,36 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 this.LoadPlaylistsAsync().ContinueWith(
                     async (t) =>
                         {
-                            this.View.SetGroups(t.Result);
+                            this.BindingModel.IsEditable = this.currentRequest == PlaylistsRequest.Playlists;
 
-                            if (eventArgs.IsBack)
+                            if (t.IsCompleted && !t.IsFaulted)
                             {
-                                object lastPlaylist;
-                                if (eventArgs.State.TryGetValue("LastViewedPlaylist", out lastPlaylist)
-                                    && lastPlaylist is Playlist)
+                                this.View.SetGroups(t.Result);
+
+                                if (eventArgs.IsBack)
                                 {
-                                    foreach (var group in t.Result)
+                                    object lastPlaylist;
+                                    if (eventArgs.State.TryGetValue("LastViewedPlaylist", out lastPlaylist)
+                                        && lastPlaylist is Playlist)
                                     {
-                                        foreach (var playlist in group.Playlists)
+                                        foreach (var group in t.Result)
                                         {
-                                            if (playlist.Playlist.Equals(lastPlaylist))
+                                            foreach (var playlist in group.Playlists)
                                             {
-                                                await this.Dispatcher.RunAsync(() => this.View.ShowPlaylist(playlist));
-                                                break;
+                                                if (playlist.Playlist.Equals(lastPlaylist))
+                                                {
+                                                    await this.Dispatcher.RunAsync(() => this.View.ShowPlaylist(playlist));
+                                                    break;
+                                                }
                                             }
                                         }
                                     }
                                 }
+
+                                this.BindingModel.Count = t.Result.Sum(x => x.Playlists.Count);
                             }
 
                             this.BindingModel.IsLoading = false;
-                            this.BindingModel.IsEditable = this.currentRequest == PlaylistsRequest.Playlists;
-                            this.BindingModel.Count = t.Result.Sum(x => x.Playlists.Count);
                         },
                     TaskScheduler.FromCurrentSynchronizationContext());
             }
@@ -144,23 +149,22 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 this.BindingModel.IsEditable = false;
 
                 this.songsService.CreatePlaylistAsync().ContinueWith(
-                    t =>
+                    async t =>
                         {
                             if (t.Result != null)
                             {
-                                this.LoadPlaylistsAsync().ContinueWith(
-                                    listTask =>
+                                var playlists = await this.LoadPlaylistsAsync();
+
+                                await this.Dispatcher.RunAsync(
+                                    () =>
                                         {
-                                            this.Dispatcher.RunAsync(() =>
-                                                {
-                                                    this.BindingModel.IsLoading = false;
-                                                    this.BindingModel.IsEditable = true;
-                                                    this.View.SetGroups(listTask.Result);
-                                                    var playlistBindingModel =
-                                                        listTask.Result.SelectMany(x => x.Playlists)
-                                                                .FirstOrDefault(x => x.Playlist == t.Result);
-                                                    this.View.ShowPlaylist(playlistBindingModel);
-                                                });
+                                            this.BindingModel.IsEditable = true;
+                                            this.View.SetGroups(playlists);
+                                            var playlistBindingModel =
+                                                playlists.SelectMany(x => x.Playlists)
+                                                         .FirstOrDefault(x => x.Playlist == t.Result);
+                                            this.View.ShowPlaylist(playlistBindingModel);
+                                            this.BindingModel.IsLoading = false;
                                         });
                             }
                         });
@@ -186,21 +190,18 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                         new UICommand(
                             "Yes",
                             command => this.songsService.DeletePlaylistAsync((MusicPlaylist)playlist).ContinueWith(
-                                t =>
+                                async t =>
                                     {
-                                        if (t.IsCompleted && t.Result)
+                                        if (t.IsCompleted && !t.IsFaulted && t.Result)
                                         {
-                                            this.LoadPlaylistsAsync()
-                                                .ContinueWith(listTask =>
-                                                    {
-                                                        this.Dispatcher.RunAsync(
-                                                            () =>
-                                                                {
-                                                                    this.View.SetGroups(listTask.Result);
-                                                                    this.BindingModel.IsLoading = false;
-                                                                    this.BindingModel.IsEditable = true;
-                                                                });
-                                                    });
+                                            var playlists = await this.LoadPlaylistsAsync();
+                                            await this.Dispatcher.RunAsync(
+                                                           () =>
+                                                           {
+                                                               this.BindingModel.IsEditable = true;
+                                                               this.View.SetGroups(playlists);
+                                                               this.BindingModel.IsLoading = false;
+                                                           });
                                         }
                                     })));
 
@@ -223,7 +224,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private void EditPlaylist()
         {
-            this.View.EditPlaylist(this.BindingModel.SelectedItem);
+            var playlistBindingModel = this.BindingModel.SelectedItem;
+            if (playlistBindingModel != null)
+            {
+                this.View.EditPlaylist(playlistBindingModel);
+            }
         }
 
         private async Task<List<PlaylistsGroupBindingModel>> LoadPlaylistsAsync()
@@ -236,7 +241,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             }
             else if (this.currentRequest == PlaylistsRequest.Playlists)
             {
-                playlists = await this.songsService.GetAllPlaylistsAsync(Order.Name);
+                playlists = await this.songsService.GetAllPlaylistsAsync(Order.Name, canReload: true);
             }
             else if (this.currentRequest == PlaylistsRequest.Genres)
             {

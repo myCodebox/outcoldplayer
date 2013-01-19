@@ -410,7 +410,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     this.songWebService.GetSongUrlAsync(song.GoogleMusicMetadata.Id).ContinueWith(
                         async (t) =>
                             {
-                                if (t.IsCompleted && t.Result != null)
+                                if (t.IsCompleted && !t.IsFaulted && t.Result != null)
                                 {
                                     this.Logger.Debug("Request completed. Trying to get stream by url '{0}'.", t.Result.Url);
                                     var stream = await mediaStreamDownloadService.GetStreamAsync(t.Result.Url);

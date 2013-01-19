@@ -4,12 +4,10 @@
 
 namespace OutcoldSolutions.GoogleMusic.Web.Models
 {
-    public class AddPlaylistResp
+    public class AddPlaylistResp : CommonResponse
     {
         public string Id { get; set; }
 
         public string Title { get; set; }
-
-        public bool Success { get; set; }
     }
 }

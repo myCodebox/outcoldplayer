@@ -35,12 +35,16 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 UseCookies = true
             };
 
-            this.httpClient = new HttpClient(this.httpClientHandler) { BaseAddress = new Uri("https://www.google.com") };
+            this.httpClient = new HttpClient(this.httpClientHandler)
+                                  {
+                                      BaseAddress = new Uri("https://www.google.com"),
+                                      Timeout = TimeSpan.FromSeconds(10)
+                                  };
 
-            this.httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Music Manager (1, 0, 24, 7712 - Windows)");
+            this.httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Music Manager (1, 0, 54, 4672 - Windows)");
         }
 
-        public async Task<GoogleLoginResponse> Authenticate(string email, string password)
+        public async Task<GoogleLoginResponse> AuthenticateAsync(string email, string password)
         {
             this.logger.Debug("Calling ClientLogin.");
 

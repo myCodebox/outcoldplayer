@@ -63,9 +63,9 @@ namespace OutcoldSolutions.GoogleMusic.Services
             searchPane.ShowOnKeyboardInput = value;
         }
 
-        private void SearchPaneOnQuerySubmitted(SearchPane sender, SearchPaneQuerySubmittedEventArgs args)
+        private async void SearchPaneOnQuerySubmitted(SearchPane sender, SearchPaneQuerySubmittedEventArgs args)
         {
-            this.navigationService.NavigateTo<ISearchView>(args.QueryText);
+            await this.dispatcher.RunAsync(() => this.navigationService.NavigateTo<ISearchView>(args.QueryText));
         }
 
         private void OnSuggestionsRequested(SearchPane sender, SearchPaneSuggestionsRequestedEventArgs args)
@@ -93,7 +93,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     {
                         case Artists:
                             {
-                                playlists = await this.songsService.GetAllArtistsAsync();
+                                playlists = await this.songsService.GetAllArtistsAsync(includeNotAlbums: true);
                                 break;
                             }
 
@@ -153,7 +153,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
         private async Task SearchAsync(SearchPaneSuggestionsRequestedEventArgs args, SearchPaneSuggestionsRequestDeferral deferral)
         {
             var artistsSearch = this.SearchPlaylists(
-                               await this.songsService.GetAllArtistsAsync(Order.Name),
+                               await this.songsService.GetAllArtistsAsync(Order.Name, includeNotAlbums: true),
                                args.QueryText,
                                Math.Max(MaxResults, 0))
                                .ToList();
@@ -279,7 +279,11 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         private IEnumerable<Playlist> SearchPlaylists(IEnumerable<Playlist> playlists, string search, int take)
         {
-            return playlists.Where(x => Search.Contains(x.Title, search)).Take(take);
+            return playlists.Select(x => Tuple.Create(Search.IndexOf(x.Title, search), x))
+                     .Where(x => x.Item1 >= 0)
+                     .OrderBy(x => x.Item1)
+                     .Take(take)
+                     .Select(x => x.Item2);
         }
     }
 }
