@@ -78,30 +78,34 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                         {
                             this.BindingModel.IsEditable = this.currentRequest == PlaylistsRequest.Playlists;
 
-                            this.View.SetGroups(t.Result);
-
-                            if (eventArgs.IsBack)
+                            if (t.IsCompleted && !t.IsFaulted)
                             {
-                                object lastPlaylist;
-                                if (eventArgs.State.TryGetValue("LastViewedPlaylist", out lastPlaylist)
-                                    && lastPlaylist is Playlist)
+                                this.View.SetGroups(t.Result);
+
+                                if (eventArgs.IsBack)
                                 {
-                                    foreach (var group in t.Result)
+                                    object lastPlaylist;
+                                    if (eventArgs.State.TryGetValue("LastViewedPlaylist", out lastPlaylist)
+                                        && lastPlaylist is Playlist)
                                     {
-                                        foreach (var playlist in group.Playlists)
+                                        foreach (var group in t.Result)
                                         {
-                                            if (playlist.Playlist.Equals(lastPlaylist))
+                                            foreach (var playlist in group.Playlists)
                                             {
-                                                await this.Dispatcher.RunAsync(() => this.View.ShowPlaylist(playlist));
-                                                break;
+                                                if (playlist.Playlist.Equals(lastPlaylist))
+                                                {
+                                                    await this.Dispatcher.RunAsync(() => this.View.ShowPlaylist(playlist));
+                                                    break;
+                                                }
                                             }
                                         }
                                     }
                                 }
+
+                                this.BindingModel.Count = t.Result.Sum(x => x.Playlists.Count);
                             }
 
                             this.BindingModel.IsLoading = false;
-                            this.BindingModel.Count = t.Result.Sum(x => x.Playlists.Count);
                         },
                     TaskScheduler.FromCurrentSynchronizationContext());
             }

@@ -42,7 +42,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.GetGroupsAsync().ContinueWith(
                 task =>
                     {
-                        this.View.SetGroups(task.Result);
+                        if (task.IsCompleted && !task.IsFaulted)
+                        {
+                            this.View.SetGroups(task.Result);
+                        }
+
                         this.BindingModel.IsLoading = false;
                     },
                 TaskScheduler.FromCurrentSynchronizationContext());
