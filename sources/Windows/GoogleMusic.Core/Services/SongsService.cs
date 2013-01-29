@@ -318,11 +318,10 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         private async Task<List<Song>> GetAllSongsTask(IProgress<int> progress = null)
         {
-            List<GoogleMusicSong> googleSongs = null;
-            try
-            {
-                googleSongs = await this.webService.StreamingLoadAllTracksAsync(progress);
+            List<GoogleMusicSong> googleSongs = await this.webService.GetAllSongsAsync(progress);
 
+            if (googleSongs != null)
+            {
                 this.timer = new DispatcherTimer
                                  {
                                      Interval = TimeSpan.FromMinutes(5)
@@ -330,18 +329,6 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
                 this.timer.Tick += this.SongsUpdate;
                 this.timer.Start();
-            }
-            catch (Exception exception)
-            {
-                this.logger.LogErrorException(exception);
-
-                googleSongs = null;
-            }
-
-            // Backup plan
-            if (googleSongs == null)
-            {
-                googleSongs = await this.webService.GetAllSongsAsync(progress);
             }
 
             return googleSongs.Select(x => this.CreateSong(x)).ToList();
