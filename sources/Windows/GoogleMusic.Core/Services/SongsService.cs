@@ -279,31 +279,32 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
             lock (this.playlistsRepository)
             {
-                foreach (var googleMusicPlaylist in googleMusicPlaylists.Playlists)
+                if (googleMusicPlaylists.Playlists != null)
                 {
-                    var dictionary =
-                        (googleMusicPlaylist.Playlist ?? Enumerable.Empty<GoogleMusicSong>()).ToDictionary(
-                            x => x.PlaylistEntryId, x => this.CreateSong(x));
-
-                    MusicPlaylist playlist;
-                    if (this.playlistsRepository.TryGetValue(googleMusicPlaylist.PlaylistId, out playlist))
+                    foreach (var googleMusicPlaylist in googleMusicPlaylists.Playlists)
                     {
-                        playlist.Songs.Clear();
-                        playlist.Title = googleMusicPlaylist.Title;
-                        playlist.EntriesIds.AddRange(dictionary.Keys.ToList());
-                        playlist.Songs.AddRange(dictionary.Values.ToList());
-                        playlist.CalculateFields();
-                    }
-                    else
-                    {
-                        playlist = new MusicPlaylist(
-                            googleMusicPlaylist.PlaylistId,
-                            googleMusicPlaylist.Title,
-                            dictionary.Values.ToList(),
-                            dictionary.Keys.ToList());
-                    }
+                        var dictionary = (googleMusicPlaylist.Playlist ?? Enumerable.Empty<GoogleMusicSong>()).ToDictionary(x => x.PlaylistEntryId, x => this.CreateSong(x));
 
-                    playlists.Add(playlist);
+                        MusicPlaylist playlist;
+                        if (this.playlistsRepository.TryGetValue(googleMusicPlaylist.PlaylistId, out playlist))
+                        {
+                            playlist.Songs.Clear();
+                            playlist.Title = googleMusicPlaylist.Title;
+                            playlist.EntriesIds.AddRange(dictionary.Keys.ToList());
+                            playlist.Songs.AddRange(dictionary.Values.ToList());
+                            playlist.CalculateFields();
+                        }
+                        else
+                        {
+                            playlist = new MusicPlaylist(
+                                googleMusicPlaylist.PlaylistId,
+                                googleMusicPlaylist.Title,
+                                dictionary.Values.ToList(),
+                                dictionary.Keys.ToList());
+                        }
+
+                        playlists.Add(playlist);
+                    }
                 }
 
                 var oldPlaylists = this.playlistsRepository.Where(x => googleMusicPlaylists.Playlists.All(np => string.Equals(np.PlaylistId, x.Key, StringComparison.OrdinalIgnoreCase))).ToList();

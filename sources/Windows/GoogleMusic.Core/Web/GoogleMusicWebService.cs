@@ -60,7 +60,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
             this.httpClient = new HttpClient(this.httpClientHandler)
                                   {
                                       BaseAddress = new Uri(OriginUrl),
-                                      Timeout = TimeSpan.FromSeconds(10)
+                                      Timeout = TimeSpan.FromSeconds(30)
                                   };
 
             this.httpClientHandler.CookieContainer.Add(new Uri(this.GetServiceUrl()), cookieCollection);
