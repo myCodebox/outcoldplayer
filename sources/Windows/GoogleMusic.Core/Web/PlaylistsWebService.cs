@@ -57,10 +57,8 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
         public PlaylistsWebService(
             IGoogleMusicWebService googleMusicWebService,
-            IGoogleMusicSessionService sessionService,
-            IGoogleAccountWebService googleAccountWebService,
-            IGoogleAccountService googleAccountService)
-            : base(googleAccountWebService, googleAccountService, googleMusicWebService, sessionService)
+            IGoogleMusicSessionService sessionService)
+            : base(googleMusicWebService)
         {
             this.googleMusicWebService = googleMusicWebService;
             this.sessionService = sessionService;

@@ -27,10 +27,8 @@ namespace OutcoldSolutions.GoogleMusic.Web
         public SongWebService(
             ILogManager logManager,
             IGoogleMusicWebService googleMusicWebService,
-            IGoogleMusicSessionService sessionService,
-            IGoogleAccountWebService googleAccountWebService,
-            IGoogleAccountService googleAccountService)
-            : base(googleAccountWebService, googleAccountService, googleMusicWebService, sessionService)
+            IGoogleMusicSessionService sessionService)
+            : base(googleMusicWebService)
         {
             this.logger = logManager.CreateLogger("SongWebService");
             this.googleMusicWebService = googleMusicWebService;
