@@ -127,12 +127,8 @@
     <Compile Include="Controls\AppBarToggleButton.cs" />
     <Compile Include="Controls\Rating.cs" />
     <Compile Include="Converters\AlbumArtUrlToImageConverter.cs" />
-    <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\DoubleToTimeConverter.cs" />
-    <Compile Include="Converters\InvertBooleanConverter.cs" />
-    <Compile Include="Converters\NullToVisibilityConverter.cs" />
     <Compile Include="Converters\StringFormatConverter.cs" />
-    <Compile Include="Converters\ValueToVisibilityConverter.cs" />
     <Compile Include="DelegateCommand.cs" />
     <Compile Include="DispatcherContainer.cs" />
     <Compile Include="INavigationService.cs" />

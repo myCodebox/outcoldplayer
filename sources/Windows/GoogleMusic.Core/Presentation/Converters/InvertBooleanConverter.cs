@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // Outcold Solutions (http://outcoldman.com)
 // --------------------------------------------------------------------------------------------------------------------
-namespace OutcoldSolutions.GoogleMusic.Converters
+namespace OutcoldSolutions.GoogleMusic.Presentation.Converters
 {
     using System;
     using System.Diagnostics;
@@ -17,25 +17,27 @@ namespace OutcoldSolutions.GoogleMusic.Converters
         /// <inheritdoc />
         public object Convert(object value, Type targetType, object parameter, string culture)
         {
-            if (value is bool)
-            {
-                return !(bool)value;
-            }
+            Debug.Assert(targetType == typeof(bool), "targetType == typeof(bool)");
 
-            Debug.Assert(false, "Value is not Boolean");
-            return DependencyProperty.UnsetValue;
+            return this.ConvertValue(value);
         }
 
         /// <inheritdoc />
         public object ConvertBack(object value, Type targetType, object parameter, string culture)
         {
-            if (value is bool)
+            Debug.Assert(targetType == typeof(bool), "targetType == typeof(bool)");
+
+            return this.ConvertValue(value);
+        }
+
+        private object ConvertValue(object value)
+        {
+            if (value == null || !(value is bool))
             {
-                return !(bool)value;
+                return DependencyProperty.UnsetValue;
             }
 
-            Debug.Assert(false, "Value is not Boolean");
-            return DependencyProperty.UnsetValue;
+            return !(bool)value;
         }
     }
 }
