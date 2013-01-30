@@ -119,7 +119,9 @@ namespace OutcoldSolutions.GoogleMusic.Web
         public async Task<List<GoogleMusicSong>> GetAllSongsAsync(IProgress<int> progress = null)
         {
             List<GoogleMusicSong> googleMusicSongs = new List<GoogleMusicSong>();
-            
+
+            this.lastStreamingRequest = DateTime.UtcNow;
+
             GoogleMusicPlaylist playlist = null;
             do
             {

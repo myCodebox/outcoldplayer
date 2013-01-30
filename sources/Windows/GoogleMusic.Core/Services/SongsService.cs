@@ -280,31 +280,32 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
             lock (this.playlistsRepository)
             {
-                foreach (var googleMusicPlaylist in googleMusicPlaylists.Playlists)
+                if (googleMusicPlaylists.Playlists != null)
                 {
-                    var dictionary =
-                        (googleMusicPlaylist.Playlist ?? Enumerable.Empty<GoogleMusicSong>()).ToDictionary(
-                            x => x.PlaylistEntryId, x => this.CreateSong(x));
-
-                    MusicPlaylist playlist;
-                    if (this.playlistsRepository.TryGetValue(googleMusicPlaylist.PlaylistId, out playlist))
+                    foreach (var googleMusicPlaylist in googleMusicPlaylists.Playlists)
                     {
-                        playlist.Songs.Clear();
-                        playlist.Title = googleMusicPlaylist.Title;
-                        playlist.EntriesIds.AddRange(dictionary.Keys.ToList());
-                        playlist.Songs.AddRange(dictionary.Values.ToList());
-                        playlist.CalculateFields();
-                    }
-                    else
-                    {
-                        playlist = new MusicPlaylist(
-                            googleMusicPlaylist.PlaylistId,
-                            googleMusicPlaylist.Title,
-                            dictionary.Values.ToList(),
-                            dictionary.Keys.ToList());
-                    }
+                        var dictionary = (googleMusicPlaylist.Playlist ?? Enumerable.Empty<GoogleMusicSong>()).ToDictionary(x => x.PlaylistEntryId, x => this.CreateSong(x));
 
-                    playlists.Add(playlist);
+                        MusicPlaylist playlist;
+                        if (this.playlistsRepository.TryGetValue(googleMusicPlaylist.PlaylistId, out playlist))
+                        {
+                            playlist.Songs.Clear();
+                            playlist.Title = googleMusicPlaylist.Title;
+                            playlist.EntriesIds.AddRange(dictionary.Keys.ToList());
+                            playlist.Songs.AddRange(dictionary.Values.ToList());
+                            playlist.CalculateFields();
+                        }
+                        else
+                        {
+                            playlist = new MusicPlaylist(
+                                googleMusicPlaylist.PlaylistId,
+                                googleMusicPlaylist.Title,
+                                dictionary.Values.ToList(),
+                                dictionary.Keys.ToList());
+                        }
+
+                        playlists.Add(playlist);
+                    }
                 }
 
                 var oldPlaylists = this.playlistsRepository.Where(x => googleMusicPlaylists.Playlists.All(np => string.Equals(np.PlaylistId, x.Key, StringComparison.OrdinalIgnoreCase))).ToList();
@@ -319,11 +320,10 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         private async Task<List<Song>> GetAllSongsTask(IProgress<int> progress = null)
         {
-            List<GoogleMusicSong> googleSongs = null;
-            try
-            {
-                googleSongs = await this.webService.StreamingLoadAllTracksAsync(progress);
+            List<GoogleMusicSong> googleSongs = await this.webService.GetAllSongsAsync(progress);
 
+            if (googleSongs != null)
+            {
                 this.timer = new DispatcherTimer
                                  {
                                      Interval = TimeSpan.FromMinutes(5)
@@ -331,18 +331,6 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
                 this.timer.Tick += this.SongsUpdate;
                 this.timer.Start();
-            }
-            catch (Exception exception)
-            {
-                this.logger.LogErrorException(exception);
-
-                googleSongs = null;
-            }
-
-            // Backup plan
-            if (googleSongs == null)
-            {
-                googleSongs = await this.webService.GetAllSongsAsync(progress);
             }
 
             return googleSongs.Select(x => this.CreateSong(x)).ToList();
