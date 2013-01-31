@@ -33,7 +33,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
         private void ClickOk(object sender, RoutedEventArgs e)
         {
-            App.Container.Resolve<ISettingsService>().SetRoamingValue("VersionHistory v1.1", true);
             App.Container.Resolve<ISearchService>().Register();
             App.Container.Resolve<INavigationService>().NavigateTo<IStartView>();
         }

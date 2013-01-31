@@ -21,7 +21,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private const string DoNotAskToReviewKey = "DoNotAskToReviewKey";
         private const string CountOfStartsBeforeReview = "CountOfStartsBeforeReview";
 
-        private const string CurrentVersion = "1.2";
+        private const string CurrentVersion = "1.2.1";
 
         private readonly ISongsService songsService;
         private readonly IPlaylistsWebService playlistsWebService;
@@ -141,13 +141,13 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                                                         StringComparison.OrdinalIgnoreCase) || !forceToShowUpdates)
                                                 {
                                                     this.searchService.Register();
+                                                    this.settingsService.SetValue("Version", CurrentVersion);
                                                     this.navigationService.NavigateTo<IStartView>();
                                                 }
                                                 else
                                                 {
                                                     this.settingsService.SetValue("Version", CurrentVersion);
-                                                    this.navigationService.NavigateTo<IWhatIsNewView>(
-                                                        keepInHistory: false);
+                                                    this.navigationService.NavigateTo<IWhatIsNewView>(keepInHistory: false);
                                                 }
                                             }
                                             else
