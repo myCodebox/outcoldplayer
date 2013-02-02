@@ -16,6 +16,14 @@ namespace OutcoldSolutions.GoogleMusic.Models
         private int playCount;
         private bool isPlaying;
 
+        private string title;
+
+        private double duration;
+
+        private string artist;
+
+        private string album;
+
         public Song(GoogleMusicSong googleMusicSong)
         {
             this.googleMusicSong = googleMusicSong;
@@ -27,13 +35,61 @@ namespace OutcoldSolutions.GoogleMusic.Models
             this.Rating = googleMusicSong.Rating;
         }
 
-        public string Title { get; set; }
+        public string Title
+        {
+            get
+            {
+                return this.title;
+            }
 
-        public double Duration { get; set; }
+            set
+            {
+                this.title = value;
+                this.RaiseCurrentPropertyChanged();
+            }
+        }
 
-        public string Artist { get; set; }
+        public double Duration
+        {
+            get
+            {
+                return this.duration;
+            }
 
-        public string Album { get; set; }
+            set
+            {
+                this.duration = value;
+                this.RaiseCurrentPropertyChanged();
+            }
+        }
+
+        public string Artist
+        {
+            get
+            {
+                return this.artist;
+            }
+
+            set
+            {
+                this.artist = value;
+                this.RaiseCurrentPropertyChanged();
+            }
+        }
+
+        public string Album
+        {
+            get
+            {
+                return this.album;
+            }
+
+            set
+            {
+                this.album = value;
+                this.RaiseCurrentPropertyChanged();
+            }
+        }
 
         public int PlayCount
         {
