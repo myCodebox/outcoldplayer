@@ -26,10 +26,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
         MediaElement GetMediaElement();
 
         void Activate();
-
-        void HideAd();
-
-        void ShowAd();
     }
 
     public interface IMainView : IView, IMediaElemenetContainerView
@@ -126,26 +122,23 @@ namespace OutcoldSolutions.GoogleMusic.Views
                                              Width = 160,
                                              Height = 600,
                                              VerticalAlignment = VerticalAlignment.Center,
-                                             Margin = new Thickness(0, 0, 10, 0)
+                                             Margin = new Thickness(0, 0, 10, 0),
+                                             UseStaticAnchor = true
                                          };
                     Grid.SetColumn(this.adControl, 1);
+                    Grid.SetRowSpan(this.adControl, 2);
                     this.MainGrid.Children.Add(this.adControl);
                 }
 
-                this.RemoveAdsButton.Visibility = Visibility.Visible;
-            }
-
-            var visible = this.Presenter<MainViewPresenter>().BindingModel.IsAuthenticated
+                var visible = this.Presenter<MainViewPresenter>().BindingModel.IsAuthenticated
                           && this.Presenter<MainViewPresenter>().HasHistory()
                           && ApplicationView.Value != ApplicationViewState.Snapped;
 
-            if (visible)
-            {
-                this.ShowAd();
-            }
-            else
-            {
-                this.HideAd();
+                if (this.adControl != null)
+                {
+                    this.RemoveAdsButton.Visibility = visible ? Visibility.Visible : Visibility.Collapsed;
+                    this.adControl.Visibility = visible ? Visibility.Visible : Visibility.Collapsed;
+                }
             }
         }
 
@@ -177,22 +170,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
         {
             Debug.Assert(this.BottomAppBar != null, "this.BottomAppBar != null");
             this.BottomAppBar.IsOpen = true;
-        }
-
-        public void HideAd()
-        {
-            if (this.adControl != null)
-            {
-                this.RemoveAdsButton.Visibility = this.adControl.Visibility = Visibility.Collapsed;
-            }
-        }
-
-        public void ShowAd()
-        {
-            if (this.adControl != null)
-            {
-                this.RemoveAdsButton.Visibility = this.adControl.Visibility = Visibility.Visible;
-            }
         }
 
         public void SetCommands(IEnumerable<UIElement> buttons)

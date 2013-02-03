@@ -61,7 +61,8 @@ namespace OutcoldSolutions.GoogleMusic.Views
                         AdUnitId = "111664",
                         Width = 292,
                         Height = 60,
-                        HorizontalAlignment = HorizontalAlignment.Center
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        UseStaticAnchor = true
                     };
                     Grid.SetRow(this.adControl, 6);
                     this.SnappedGrid.Children.Add(this.adControl);

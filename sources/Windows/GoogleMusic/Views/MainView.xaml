@@ -120,12 +120,14 @@
             <TextBlock Style="{StaticResource BasicTextStyle}" Margin="0, 10, 0, 0" Text="{Binding Path=Message, Mode=OneWay}">Loading...</TextBlock>
         </StackPanel>
         
-        <Border x:Name="BottomBorder" Grid.Row="1" Visibility="Collapsed" Height="105" />
+        <Border x:Name="BottomBorder" Grid.Row="1" Grid.Column="0" Visibility="Collapsed" Height="105" />
 
         <HyperlinkButton Grid.Column="1" 
+                         Grid.RowSpan="2"
                          x:Name="RemoveAdsButton" 
                          Click="RemoveAdsClick" 
-                         VerticalAlignment="Bottom" 
+                         VerticalAlignment="Center" 
+                         Margin="0, 630, 0, 0"
                          Visibility="Collapsed"
                          Content="Remove Ads"
                          HorizontalAlignment="Center"/>

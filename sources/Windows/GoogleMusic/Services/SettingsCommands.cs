@@ -111,8 +111,6 @@ namespace OutcoldSolutions.GoogleMusic.Services
             settingsPopup.SetValue(Canvas.TopProperty, 0);
             settingsPopup.IsOpen = true;
 
-            this.mediaElemenetContainerView.HideAd();
-
             this.settingsPopups.Add(settingsPopup, type);
         }
 
@@ -138,11 +136,6 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 Window.Current.Activated -= this.OnWindowActivated;
                 popup.Closed -= this.OnPopupClosed;
                 this.settingsPopups.Remove(popup);
-
-                if (this.settingsPopups.Count == 0)
-                {
-                    this.mediaElemenetContainerView.ShowAd();
-                }
             }
         }
     }
