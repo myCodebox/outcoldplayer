@@ -8,6 +8,8 @@ namespace OutcoldSolutions.GoogleMusic.Web
     using System.Net.Http;
     using System.Threading.Tasks;
 
+    using OutcoldSolutions.GoogleMusic.Web.Models;
+
     public interface IGoogleMusicWebService
     {
         string GetServiceUrl();
@@ -18,11 +20,22 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
         Task<HttpResponseMessage> GetAsync(
             string url, 
-            bool authenticated = true);
+            bool signUrl = true);
 
         Task<HttpResponseMessage> PostAsync(
             string url,
             IDictionary<string, string> formData = null, 
-            bool authenticated = true);
+            bool signUrl = true);
+
+        Task<TResult> GetAsync<TResult>(
+            string url,
+            bool signUrl = true) where TResult : CommonResponse;
+
+        Task<TResult> PostAsync<TResult>(
+            string url,
+            IDictionary<string, string> formData = null,
+            IDictionary<string, string> jsonProperties = null, 
+            bool forceJsonBody = true,
+            bool signUrl = true) where TResult : CommonResponse;
     }
 }

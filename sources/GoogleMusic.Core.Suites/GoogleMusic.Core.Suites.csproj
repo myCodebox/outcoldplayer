@@ -275,9 +275,6 @@
     </Compile>
     <Compile Include="CultureScope.cs" />
     <Compile Include="Presentation\BindingModelBaseSuites.cs" />
-    <Compile Include="..\Windows\GoogleMusic.Core\Web\WebServiceBase.cs">
-      <Link>_sources\Web\WebServiceBase.cs</Link>
-    </Compile>
     <Compile Include="Presentation\Converters\BooleanToVisibilityConverterSuites.cs" />
     <Compile Include="Presentation\Converters\InvertBooleanConverterSuites.cs" />
     <Compile Include="Presentation\Converters\ValueToVisibilityConverterSuites.cs" />

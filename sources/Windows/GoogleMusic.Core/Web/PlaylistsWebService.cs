@@ -37,7 +37,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
         Task<StatusResp> GetStatusAsync();
     }
 
-    public class PlaylistsWebService : WebServiceBase, IPlaylistsWebService
+    public class PlaylistsWebService : IPlaylistsWebService
     {
         private const string PlaylistsUrl = "music/services/loadplaylist";
         private const string AllSongsUrl = "music/services/loadalltracks";
@@ -58,7 +58,6 @@ namespace OutcoldSolutions.GoogleMusic.Web
         public PlaylistsWebService(
             IGoogleMusicWebService googleMusicWebService,
             IGoogleMusicSessionService sessionService)
-            : base(googleMusicWebService)
         {
             this.googleMusicWebService = googleMusicWebService;
             this.sessionService = sessionService;
@@ -71,47 +70,19 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
         public async Task<GoogleMusicPlaylists> GetAllPlaylistsAsync()
         {
-            var requestParameters = new Dictionary<string, string>
-                                        {
-                                            { "json", JsonConvert.SerializeObject(new { sessionId = this.sessionService.GetSession().SessionId }) }
-                                        };
-
-            var response = await this.googleMusicWebService.PostAsync(PlaylistsUrl, formData: requestParameters);
-            var googleMusicPlaylists = await response.Content.ReadAsJsonObject<GoogleMusicPlaylists>();
-
-            if (await this.NeedRetry(googleMusicPlaylists))
-            {
-                response = await this.googleMusicWebService.PostAsync(PlaylistsUrl, formData: requestParameters);
-                googleMusicPlaylists = await response.Content.ReadAsJsonObject<GoogleMusicPlaylists>();
-            }
-
-            return googleMusicPlaylists;
+            return await this.googleMusicWebService.PostAsync<GoogleMusicPlaylists>(PlaylistsUrl);
         }
 
         public async Task<GoogleMusicPlaylist> GetPlaylistAsync(string playlistId)
         {
-            var requestParameters = new Dictionary<string, string>
+            var jsonProperties = new Dictionary<string, string>
                                         {
                                             { 
-                                                "json", JsonConvert.SerializeObject(new
-                                                                                      {
-                                                                                          sessionId = this.sessionService.GetSession().SessionId,
-                                                                                          id = playlistId
-                                                                                      }) 
+                                                "id", JsonConvert.ToString(playlistId)
                                             }
                                         };
 
-            var response = await this.googleMusicWebService.PostAsync(PlaylistsUrl, formData: requestParameters);
-
-            var googleMusicPlaylist = await response.Content.ReadAsJsonObject<GoogleMusicPlaylist>();
-
-            if (await this.NeedRetry(googleMusicPlaylist))
-            {
-                response = await this.googleMusicWebService.PostAsync(PlaylistsUrl, formData: requestParameters);
-                googleMusicPlaylist = await response.Content.ReadAsJsonObject<GoogleMusicPlaylist>();
-            }
-
-            return googleMusicPlaylist;
+            return await this.googleMusicWebService.PostAsync<GoogleMusicPlaylist>(PlaylistsUrl, jsonProperties: jsonProperties);
         }
 
         public async Task<List<GoogleMusicSong>> GetAllSongsAsync(IProgress<int> progress = null)
@@ -123,24 +94,14 @@ namespace OutcoldSolutions.GoogleMusic.Web
             GoogleMusicPlaylist playlist = null;
             do
             {
-                string json = null;
+                var jsonProperties = new Dictionary<string, string>();
                 
                 if (playlist != null && !string.IsNullOrEmpty(playlist.ContinuationToken))
                 {
-                    json = JsonConvert.SerializeObject(new { sessionId = this.sessionService.GetSession().SessionId, continuationToken = playlist.ContinuationToken });
-                }
-                else
-                {
-                    json = JsonConvert.SerializeObject(new { sessionId = this.sessionService.GetSession().SessionId });
+                    jsonProperties.Add("continuationToken", JsonConvert.ToString(playlist.ContinuationToken));
                 }
 
-                var requestParameters = new Dictionary<string, string>
-                                        {
-                                            { "json", json }
-                                        };
-
-                var response = await this.googleMusicWebService.PostAsync(AllSongsUrl, formData: requestParameters);
-                playlist = await response.Content.ReadAsJsonObject<GoogleMusicPlaylist>();
+                playlist = await this.googleMusicWebService.PostAsync<GoogleMusicPlaylist>(AllSongsUrl, jsonProperties: jsonProperties);
                 if (playlist != null && playlist.Playlist != null)
                 {
                     googleMusicSongs.AddRange(playlist.Playlist);
@@ -220,188 +181,69 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
         public async Task<AddPlaylistResp> CreatePlaylistAsync(string name)
         {
-            var requestParameters = new Dictionary<string, string>
+            var jsonProperties = new Dictionary<string, string>
                                         {
-                                            { 
-                                                "json", JsonConvert.SerializeObject(new
-                                                                                      {
-                                                                                          sessionId = this.sessionService.GetSession().SessionId, 
-                                                                                          title = name,
-                                                                                          playlistType = "USER_GENERATED",
-                                                                                          songRefs = new string[] { }
-                                                                                      }) 
-                                            }
+                                            { "title", JsonConvert.ToString(name) },
+                                            { "playlistType", JsonConvert.ToString("USER_GENERATED") },
+                                            { "songRefs", JsonConvert.SerializeObject(new string[] { }) }
                                         };
 
-            var response = await this.googleMusicWebService.PostAsync(AddPlaylistUrl, formData: requestParameters);
-
-            if (response.StatusCode == HttpStatusCode.OK)
-            {
-                var addPlaylistResp = await response.Content.ReadAsJsonObject<AddPlaylistResp>();
-
-                if (await this.NeedRetry(addPlaylistResp))
-                {
-                    response = await this.googleMusicWebService.PostAsync(AddPlaylistUrl, formData: requestParameters);
-                    addPlaylistResp = await response.Content.ReadAsJsonObject<AddPlaylistResp>();
-                }
-
-                return addPlaylistResp;
-            }
-            else
-            {
-                return null;
-            }
+            return await this.googleMusicWebService.PostAsync<AddPlaylistResp>(AddPlaylistUrl, jsonProperties: jsonProperties);
         }
 
         public async Task<bool> DeletePlaylistAsync(string id)
         {
-            var requestParameters = new Dictionary<string, string>
+            var jsonProperties = new Dictionary<string, string>
                                         {
-                                            { 
-                                                "json", JsonConvert.SerializeObject(new
-                                                                                      {
-                                                                                          sessionId = this.sessionService.GetSession().SessionId, 
-                                                                                          id, 
-                                                                                          requestType = 1, 
-                                                                                          requestCause = 1
-                                                                                      }) 
-                                            }
+                                            { "id", JsonConvert.ToString(id) },
+                                            { "requestType", JsonConvert.ToString(1) },
+                                            { "requestCause", JsonConvert.ToString(1) }
                                         };
 
-            var response = await this.googleMusicWebService.PostAsync(DeletePlaylistUrl, formData: requestParameters);
+            var deletePlaylistResp = await this.googleMusicWebService.PostAsync<DeletePlaylistResp>(DeletePlaylistUrl, jsonProperties: jsonProperties);
 
-            if (response.StatusCode == HttpStatusCode.OK)
-            {
-                var deletePlaylistResp = await response.Content.ReadAsJsonObject<DeletePlaylistResp>();
-                if (await this.NeedRetry(deletePlaylistResp))
-                {
-                    response = await this.googleMusicWebService.PostAsync(DeletePlaylistUrl, formData: requestParameters);
-                    deletePlaylistResp = await response.Content.ReadAsJsonObject<DeletePlaylistResp>();
-                }
-
-                return response.StatusCode == HttpStatusCode.OK && string.Equals(deletePlaylistResp.DeleteId, id, StringComparison.OrdinalIgnoreCase);
-            }
-
-            return false;
+            return string.Equals(deletePlaylistResp.DeleteId, id, StringComparison.OrdinalIgnoreCase);
         }
 
         public async Task<bool> ChangePlaylistNameAsync(string id, string name)
         {
-            var requestParameters = new Dictionary<string, string>
+            var jsonProperties = new Dictionary<string, string>
                                         {
-                                            { 
-                                                "json", JsonConvert.SerializeObject(new
-                                                                                      {
-                                                                                          sessionId = this.sessionService.GetSession().SessionId, 
-                                                                                          playlistId = id, 
-                                                                                          playlistName = name
-                                                                                      }) 
-                                            }
+                                            { "playlistId", JsonConvert.ToString(id) },
+                                            { "playlistName", JsonConvert.ToString(name) }
                                         };
 
-            var response = await this.googleMusicWebService.PostAsync(ChangePlaylistNameUrl, formData: requestParameters);
-
-            if (response.StatusCode == HttpStatusCode.OK)
-            {
-                var objectResponse = await response.Content.ReadAsJsonObject<CommonResponse>();
-
-                if (await this.NeedRetry(objectResponse))
-                {
-                    response = await this.googleMusicWebService.PostAsync(ChangePlaylistNameUrl, formData: requestParameters);
-                }
-
-                return response.IsSuccessStatusCode;
-            }
-            else
-            {
-                return false;
-            }
+            var response = await this.googleMusicWebService.PostAsync<CommonResponse>(ChangePlaylistNameUrl, jsonProperties: jsonProperties);
+            return !response.Success.HasValue || response.Success.Value;
         }
 
         public async Task<AddSongResp> AddSongToPlaylistAsync(string playlistId, string songId)
         {
-            var requestParameters = new Dictionary<string, string>
+            var jsonProperties = new Dictionary<string, string>
                                         {
-                                            { 
-                                                "json", JsonConvert.SerializeObject(new
-                                                                                      {
-                                                                                          sessionId = this.sessionService.GetSession().SessionId,
-                                                                                          playlistId,
-                                                                                          songRefs = new[] { new { id = songId, type = 1 } }
-                                                                                      })
-                                            }
+                                            { "playlistId", JsonConvert.ToString(playlistId) },
+                                            { "songRefs", JsonConvert.SerializeObject(new[] { new { id = songId, type = 1 } }) }
                                         };
 
-            var response = await this.googleMusicWebService.PostAsync(AddToPlaylistUrl, formData: requestParameters);
-
-            if (response.StatusCode == HttpStatusCode.OK)
-            {
-                var addSongResp = await response.Content.ReadAsJsonObject<AddSongResp>();
-
-                if (await this.NeedRetry(addSongResp))
-                {
-                    response = await this.googleMusicWebService.PostAsync(AddToPlaylistUrl, formData: requestParameters);
-                    addSongResp = await response.Content.ReadAsJsonObject<AddSongResp>();
-                }
-
-                return addSongResp;
-            }
-            else
-            {
-                return null;
-            }
+            return await this.googleMusicWebService.PostAsync<AddSongResp>(AddToPlaylistUrl, jsonProperties: jsonProperties);
         }
 
         public async Task<bool> RemoveSongFromPlaylistAsync(string playlistId, string songId, string entryId)
         {
-            var requestParameters = new Dictionary<string, string>
+            var jsonProperties = new Dictionary<string, string>
                                         {
-                                            { 
-                                                "json", JsonConvert.SerializeObject(new
-                                                                                      {
-                                                                                          sessionId = this.sessionService.GetSession().SessionId,
-                                                                                          listId = playlistId,
-                                                                                          songIds = new[] { songId },
-                                                                                          entryIds = new[] { entryId } 
-                                                                                      })
-                                            }
+                                            { "listId", JsonConvert.ToString(playlistId) },
+                                            { "songIds", JsonConvert.SerializeObject(new[] { songId }) },
+                                            { "entryIds", JsonConvert.SerializeObject(new[] { entryId }) }
                                         };
 
-            var response = await this.googleMusicWebService.PostAsync(DeleteSongUrl, formData: requestParameters);
-
-            if (response.StatusCode == HttpStatusCode.OK)
-            {
-                var commonResponse = await response.Content.ReadAsJsonObject<CommonResponse>();
-
-                if (await this.NeedRetry(commonResponse))
-                {
-                    response = await this.googleMusicWebService.PostAsync(DeleteSongUrl, formData: requestParameters);
-                    commonResponse = await response.Content.ReadAsJsonObject<CommonResponse>();
-                }
-            }
-
-            return response.StatusCode == HttpStatusCode.OK;
+            var response = await this.googleMusicWebService.PostAsync<CommonResponse>(DeleteSongUrl, jsonProperties: jsonProperties);
+            return !response.Success.HasValue || response.Success.Value;
         }
 
         public async Task<StatusResp> GetStatusAsync()
         {
-            var responseMessage = await this.googleMusicWebService.PostAsync(GetStatusUrl);
-
-            if (responseMessage.StatusCode == HttpStatusCode.OK)
-            {
-                try
-                {
-                    return await responseMessage.Content.ReadAsJsonObject<StatusResp>();
-                }
-                catch (Exception)
-                {
-                    return null;
-                }
-            }
-            else
-            {
-                return null;
-            }
+            return await this.googleMusicWebService.PostAsync<StatusResp>(GetStatusUrl, forceJsonBody: false);
         }
     }
 }

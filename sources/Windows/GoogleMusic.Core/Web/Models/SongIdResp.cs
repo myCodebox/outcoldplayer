@@ -5,7 +5,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Models
 {
     public class SongIdResp
     {
-        public string PlaylisEntryId { get; set; }
+        public string PlaylistEntryId { get; set; }
 
         public string SongId { get; set; }
     }

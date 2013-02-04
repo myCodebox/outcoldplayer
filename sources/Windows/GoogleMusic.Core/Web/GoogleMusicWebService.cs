@@ -9,15 +9,20 @@ namespace OutcoldSolutions.GoogleMusic.Web
     using System.Linq;
     using System.Net;
     using System.Net.Http;
+    using System.Text;
     using System.Threading.Tasks;
+
+    using Newtonsoft.Json;
 
     using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Services;
+    using OutcoldSolutions.GoogleMusic.Web.Models;
 
     public class GoogleMusicWebService : IGoogleMusicWebService
     {
         private const string OriginUrl = "https://play.google.com";
         private const string PlayMusicUrl = "https://play.google.com/music/listen?u=0&hl=en";
+        private const string RefreshXtPath = "music/refreshxt";
 
         private readonly ILogger logger;
         private readonly IGoogleMusicSessionService sessionService;
@@ -73,14 +78,14 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
         public async Task<HttpResponseMessage> GetAsync(
             string url,
-            bool authenticated = true)
+            bool signUrl = true)
         {
             if (this.logger.IsDebugEnabled)
             {
                 this.logger.LogRequest(HttpMethod.Get, url, this.httpClientHandler.CookieContainer.GetCookies(new Uri(PlayMusicUrl)));
             }
 
-            if (authenticated)
+            if (signUrl)
             {
                 url = this.SignUrl(url);
             }
@@ -101,14 +106,14 @@ namespace OutcoldSolutions.GoogleMusic.Web
         public async Task<HttpResponseMessage> PostAsync(
             string url,
             IDictionary<string, string> formData = null, 
-            bool authenticated = true)
+            bool signUrl = true)
         {
             if (this.logger.IsDebugEnabled)
             {
                 this.logger.LogRequest(HttpMethod.Post, url, this.httpClientHandler.CookieContainer.GetCookies(new Uri(PlayMusicUrl)), formData);
             }
 
-            if (authenticated)
+            if (signUrl)
             {
                 url = this.SignUrl(url);
             }
@@ -130,6 +135,69 @@ namespace OutcoldSolutions.GoogleMusic.Web
             this.VerifyAuthorization(responseMessage);
 
             return responseMessage;
+        }
+
+        public async Task<TResult> GetAsync<TResult>(string url, bool signUrl = true) where TResult : CommonResponse
+        {
+            HttpResponseMessage responseMessage = await this.GetAsync(url, signUrl);
+            TResult result = await responseMessage.Content.ReadAsJsonObject<TResult>();
+
+            if (result.ReloadXsrf.HasValue && result.ReloadXsrf.Value)
+            {
+                this.logger.Debug("GetAsync :: Reload Xsrf requested. Reloading.");
+                await this.PostAsync(RefreshXtPath);
+
+                responseMessage = await this.GetAsync(url, signUrl);
+                result = await responseMessage.Content.ReadAsJsonObject<TResult>();
+            }
+
+            return result;
+        }
+
+        public async Task<TResult> PostAsync<TResult>(
+            string url, 
+            IDictionary<string, string> formData = null, 
+            IDictionary<string, string> jsonProperties = null,
+            bool forceJsonBody = true,
+            bool signUrl = true) where TResult : CommonResponse
+        {
+            if (forceJsonBody && (formData == null || !formData.ContainsKey("json")))
+            {
+                var jsonBody = new StringBuilder();
+
+                jsonBody.Append("{");
+                if (jsonProperties != null)
+                {
+                    foreach (var jsonProperty in jsonProperties)
+                    {
+                        jsonBody.AppendFormat("\"{0}\":{1},", jsonProperty.Key, jsonProperty.Value);
+                    }
+                }
+
+                jsonBody.AppendFormat("\"sessionId\":{0}", JsonConvert.ToString(this.sessionService.GetSession().SessionId));
+                jsonBody.Append("}");
+
+                if (formData == null)
+                {
+                    formData = new Dictionary<string, string>();
+                }
+
+                formData.Add("json", jsonBody.ToString());
+            }
+
+            HttpResponseMessage responseMessage = await this.PostAsync(url, formData, signUrl);
+            TResult result = await responseMessage.Content.ReadAsJsonObject<TResult>();
+
+            if (result.ReloadXsrf.HasValue && result.ReloadXsrf.Value)
+            {
+                this.logger.Debug("PostAsync :: Reload Xsrf requested. Reloading.");
+                await this.PostAsync(RefreshXtPath);
+
+                responseMessage = await this.PostAsync(url, formData, signUrl);
+                result = await responseMessage.Content.ReadAsJsonObject<TResult>();
+            }
+
+            return result;
         }
 
         private string SignUrl(string url)

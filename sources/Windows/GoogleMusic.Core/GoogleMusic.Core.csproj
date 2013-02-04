@@ -180,7 +180,6 @@
     <Compile Include="Web\Models\CommonResponse.cs" />
     <Compile Include="Web\PlaylistsWebService.cs" />
     <Compile Include="Web\SongWebService.cs" />
-    <Compile Include="Web\WebServiceBase.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">
