@@ -22,6 +22,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
         private readonly IGoogleAccountWebService googleAccountWebService;
         private readonly IGoogleMusicWebService googleMusicWebService;
         private readonly IPlaylistsWebService playlistsWebService;
+        private readonly ISongWebService songWebService;
 
         private readonly ResourceLoader resourceLoader = new ResourceLoader("CoreResources");
 
@@ -31,7 +32,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
             IGoogleMusicSessionService sessionService,
             IGoogleAccountWebService googleAccountWebService,
             IGoogleMusicWebService googleMusicWebService,
-            IPlaylistsWebService playlistsWebService)
+            IPlaylistsWebService playlistsWebService,
+            ISongWebService songWebService)
         {
             this.logger = logManager.CreateLogger("AuthentificationService");
             this.googleAccountService = googleAccountService;
@@ -39,6 +41,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             this.googleAccountWebService = googleAccountWebService;
             this.googleMusicWebService = googleMusicWebService;
             this.playlistsWebService = playlistsWebService;
+            this.songWebService = songWebService;
         }
 
         public async Task<AuthentificationResult> CheckAuthentificationAsync(UserInfo userInfo = null)
@@ -107,7 +110,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
         {
             this.googleMusicWebService.Initialize(cookieCollection);
 
-            var statusResp = await this.playlistsWebService.GetStatusAsync();
+            var statusResp = await this.songWebService.GetStatusAsync();
             if (statusResp != null
                 && (!statusResp.ReloadXsrf.HasValue || !statusResp.ReloadXsrf.Value)
                 && (!statusResp.Success.HasValue || statusResp.Success.Value))

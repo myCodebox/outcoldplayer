@@ -12,9 +12,11 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
     using OutcoldSolutions.GoogleMusic.Diagnostics;
 
+#if !DEBUG
     using Windows.Security.Cryptography;
     using Windows.Security.Cryptography.Core;
     using Windows.Storage.Streams;
+#endif
 
     public static class LoggerWebExtensions
     {

@@ -25,6 +25,9 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private readonly ISongsService songsService;
         private readonly IPlaylistsWebService playlistsWebService;
+
+        private readonly ISongWebService songWebService;
+
         private readonly INavigationService navigationService;
 
         private readonly ISearchService searchService;
@@ -38,7 +41,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             INavigationService navigationService,
             ISearchService searchService,
             ISettingsService settingsService,
-            IPlaylistsWebService playlistsWebService)
+            IPlaylistsWebService playlistsWebService,
+            ISongWebService songWebService)
             : base(container, view)
         {
             this.songsService = songsService;
@@ -46,6 +50,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.searchService = searchService;
             this.settingsService = settingsService;
             this.playlistsWebService = playlistsWebService;
+            this.songWebService = songWebService;
             this.BindingModel = new ProgressLoadingBindingModel();
         }
 
@@ -64,7 +69,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.BindingModel.Message = "Initializing...";
             this.BindingModel.IsFailed = false;
 
-            this.playlistsWebService.GetStatusAsync().ContinueWith(
+            this.songWebService.GetStatusAsync().ContinueWith(
                 tStatus =>
                 {
                     if (tStatus.IsCompleted && !tStatus.IsFaulted)

@@ -22,6 +22,7 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Web
         private IGoogleAccountWebService googleAccountWebService;
         private IGoogleMusicWebService musicWebService;
         private IPlaylistsWebService playlistsWebService;
+        private ISongWebService songsWebService;
 
         private Mock<IGoogleMusicSessionService> sessionService;
 
@@ -41,11 +42,13 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Web
                 registration.Register<IGoogleAccountWebService>().AsSingleton<GoogleAccountWebService>();
                 registration.Register<IGoogleMusicWebService>().AsSingleton<GoogleMusicWebService>();
                 registration.Register<IPlaylistsWebService>().AsSingleton<PlaylistsWebService>();
+                registration.Register<ISongWebService>().AsSingleton<SongWebService>();
             }
 
             this.googleAccountWebService = this.Container.Resolve<IGoogleAccountWebService>();
             this.musicWebService = this.Container.Resolve<IGoogleMusicWebService>();
             this.playlistsWebService = this.Container.Resolve<IPlaylistsWebService>();
+            this.songsWebService = this.Container.Resolve<ISongWebService>();
         }
 
         [Test]
@@ -53,7 +56,7 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Web
         {
             await this.AthenticateAsync();
 
-            var songs = await this.playlistsWebService.StreamingLoadAllTracksAsync(null);
+            var songs = await this.songsWebService.StreamingLoadAllTracksAsync(null);
 
             Assert.IsTrue(songs.Count > 0);
         }
@@ -63,7 +66,7 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Web
         {
             await this.AthenticateAsync();
 
-            var songs = await this.playlistsWebService.GetAllSongsAsync(null);
+            var songs = await this.songsWebService.GetAllSongsAsync(null);
 
             Assert.IsTrue(songs.Count > 0);
         }
@@ -73,56 +76,56 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Web
         {
             await this.AthenticateAsync();
 
-            var playlists = await this.playlistsWebService.GetAllPlaylistsAsync();
+            var playlists = await this.playlistsWebService.GetAllAsync();
 
             string playlistName = Guid.NewGuid().ToString();
 
             // Create new playlist
-            var playlistResp = await this.playlistsWebService.CreatePlaylistAsync(playlistName);
+            var playlistResp = await this.playlistsWebService.CreateAsync(playlistName);
             Assert.NotNull(playlistResp, "Playlist is null");
             Assert.AreEqual(playlistName, playlistResp.Title, "The name of playlist is not the same");
             Assert.NotNull(playlistResp.Id, "We do not have Id of playlist");
 
             // Verify that playlist has been created
-            var playlists2 = await this.playlistsWebService.GetAllPlaylistsAsync();
+            var playlists2 = await this.playlistsWebService.GetAllAsync();
             Assert.IsTrue((playlists2.Playlists.Count - playlists.Playlists.Count) == 1, "Playlist has been added");
             Assert.IsTrue(playlists2.Playlists.Any(p => Guid.Parse(p.PlaylistId) == playlistResp.Id && p.Title == playlistName), "Could not find playlist");
          
             // Changing the name of playlist
             string playlistName2 = Guid.NewGuid().ToString();
-            bool result = await this.playlistsWebService.ChangePlaylistNameAsync(playlistResp.Id, playlistName2);
+            bool result = await this.playlistsWebService.ChangeNameAsync(playlistResp.Id, playlistName2);
             Assert.IsTrue(result, "Name of playlist was not changed");
 
             // Verify that name has been changed.
-            var playlists3 = await this.playlistsWebService.GetAllPlaylistsAsync();
+            var playlists3 = await this.playlistsWebService.GetAllAsync();
             Assert.IsTrue((playlists3.Playlists.Count - playlists.Playlists.Count) == 1);
             Assert.IsFalse(playlists3.Playlists.Any(p => Guid.Parse(p.PlaylistId) == playlistResp.Id && p.Title == playlistName), "We still have playlist with old name.");
             Assert.IsTrue(playlists3.Playlists.Any(p => Guid.Parse(p.PlaylistId) == playlistResp.Id && p.Title == playlistName2), "Could not find playlist with new name.");
 
             // Adding songs to playlist
-            var songs = await this.playlistsWebService.GetAllSongsAsync();
+            var songs = await this.songsWebService.GetAllSongsAsync();
             var googleMusicSong = songs.First();
-            var resultAddSongs = await this.playlistsWebService.AddSongToPlaylistAsync(playlistResp.Id, googleMusicSong.Id);
+            var resultAddSongs = await this.playlistsWebService.AddSongAsync(playlistResp.Id, googleMusicSong.Id);
             Assert.IsTrue(resultAddSongs.SongIds[0].PlaylistEntryId != Guid.Empty, "Song has been added to playlist");
 
             // Verify that songs has been added to playlist
-            var playlist = await this.playlistsWebService.GetPlaylistAsync(playlistResp.Id);
+            var playlist = await this.playlistsWebService.GetAsync(playlistResp.Id);
             Assert.AreEqual(googleMusicSong.Id, playlist.Playlist[0].Id, "Playlist contains song.");
 
             // Remove song from playlist
-            var resultSongRemove = await this.playlistsWebService.RemoveSongFromPlaylistAsync(playlistResp.Id, playlist.Playlist[0].Id, playlist.Playlist[0].PlaylistEntryId);
+            var resultSongRemove = await this.playlistsWebService.RemoveSongAsync(playlistResp.Id, playlist.Playlist[0].Id, playlist.Playlist[0].PlaylistEntryId);
             Assert.IsTrue(resultSongRemove, "Song has been removed.");
 
             // Verify that song has been removed.
-            var playlist2 = await this.playlistsWebService.GetPlaylistAsync(playlistResp.Id);
+            var playlist2 = await this.playlistsWebService.GetAsync(playlistResp.Id);
             Assert.AreEqual(0, playlist2.Playlist.Count);
 
             // Delete playlist
-            bool resultDelete = await this.playlistsWebService.DeletePlaylistAsync(playlistResp.Id);
+            bool resultDelete = await this.playlistsWebService.DeleteAsync(playlistResp.Id);
             Assert.IsTrue(resultDelete, "Playlist has been deleted.");
 
             // Verify that playlist has been deleted.
-            var playlists4 = await this.playlistsWebService.GetAllPlaylistsAsync();
+            var playlists4 = await this.playlistsWebService.GetAllAsync();
             Assert.IsTrue(playlists.Playlists.Count == playlists4.Playlists.Count);
             Assert.IsFalse(playlists4.Playlists.Any(p => Guid.Parse(p.PlaylistId) == playlistResp.Id));
         }

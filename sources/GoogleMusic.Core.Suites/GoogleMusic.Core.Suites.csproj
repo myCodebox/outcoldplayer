@@ -189,6 +189,9 @@
     <Compile Include="..\Windows\GoogleMusic.Core\Web\INetworkRandomAccessStream.cs">
       <Link>_sources\Web\INetworkRandomAccessStream.cs</Link>
     </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Web\IPlaylistsWebService.cs">
+      <Link>_sources\Web\IPlaylistsWebService.cs</Link>
+    </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Web\ISongWebService.cs">
       <Link>_sources\Web\ISongWebService.cs</Link>
     </Compile>

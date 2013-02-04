@@ -156,7 +156,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
         public async Task<MusicPlaylist> CreatePlaylistAsync()
         {
             var name = string.Format(CultureInfo.CurrentCulture, "Playlist - {0}", DateTime.Now);
-            var resp = await this.webService.CreatePlaylistAsync(name);
+            var resp = await this.webService.CreateAsync(name);
             if (resp != null)
             {
                 this.lastPlaylistsLoad = null;
@@ -181,7 +181,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         public async Task<bool> DeletePlaylistAsync(MusicPlaylist playlist)
         {
-            bool result = await this.webService.DeletePlaylistAsync(playlist.Id);
+            bool result = await this.webService.DeleteAsync(playlist.Id);
 
             if (result)
             {
@@ -194,7 +194,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         public async Task<bool> ChangePlaylistNameAsync(MusicPlaylist playlist, string newName)
         {
-            var result = await this.webService.ChangePlaylistNameAsync(playlist.Id, newName);
+            var result = await this.webService.ChangeNameAsync(playlist.Id, newName);
 
             if (result)
             {
@@ -206,7 +206,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         public async Task<bool> RemoveSongFromPlaylistAsync(MusicPlaylist playlist, int index)
         {
-            bool result = await this.webService.RemoveSongFromPlaylistAsync(playlist.Id, playlist.Songs[index].GoogleMusicMetadata.Id, playlist.EntriesIds[index]);
+            bool result = await this.webService.RemoveSongAsync(playlist.Id, playlist.Songs[index].GoogleMusicMetadata.Id, playlist.EntriesIds[index]);
             if (result)
             {
                 playlist.EntriesIds.RemoveAt(index);
@@ -219,7 +219,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         public async Task<bool> AddSongToPlaylistAsync(MusicPlaylist playlist, Song song)
         {
-            var result = await this.webService.AddSongToPlaylistAsync(playlist.Id, song.GoogleMusicMetadata.Id);
+            var result = await this.webService.AddSongAsync(playlist.Id, song.GoogleMusicMetadata.Id);
             if (result != null && result.SongIds.Length == 1)
             {
                 playlist.Songs.Add(song);
@@ -274,7 +274,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         private async Task<List<MusicPlaylist>> GetAllPlaylistsTask()
         {
-            var googleMusicPlaylists = await this.webService.GetAllPlaylistsAsync();
+            var googleMusicPlaylists = await this.webService.GetAllAsync();
 
             List<MusicPlaylist> playlists = new List<MusicPlaylist>();
 
@@ -320,7 +320,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         private async Task<List<Song>> GetAllSongsTask(IProgress<int> progress = null)
         {
-            List<GoogleMusicSong> googleSongs = await this.webService.GetAllSongsAsync(progress);
+            List<GoogleMusicSong> googleSongs = await this.songWebService.GetAllSongsAsync(progress);
 
             if (googleSongs != null)
             {
@@ -338,7 +338,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         private async void SongsUpdate(object sender, object o)
         {
-            var updatedSongs = await this.webService.StreamingLoadAllTracksAsync(null);
+            var updatedSongs = await this.songWebService.StreamingLoadAllTracksAsync(null);
             if (updatedSongs.Count > 0)
             {
                 foreach (var s in updatedSongs)
