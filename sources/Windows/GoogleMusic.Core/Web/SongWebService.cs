@@ -3,6 +3,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Web
 {
+    using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
 
@@ -24,7 +25,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
             this.googleMusicWebService = googleMusicWebService;
         }
 
-        public async Task<GoogleMusicSongUrl> GetSongUrlAsync(string id)
+        public async Task<GoogleMusicSongUrl> GetSongUrlAsync(Guid id)
         {
             var url = string.Format(SongUrlFormat, id);
             return await this.googleMusicWebService.GetAsync<GoogleMusicSongUrl>(url, signUrl: false);

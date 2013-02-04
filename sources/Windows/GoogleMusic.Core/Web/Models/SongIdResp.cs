@@ -3,10 +3,12 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Web.Models
 {
+    using System;
+
     public class SongIdResp
     {
-        public string PlaylistEntryId { get; set; }
+        public Guid PlaylistEntryId { get; set; }
 
-        public string SongId { get; set; }
+        public Guid SongId { get; set; }
     }
 }

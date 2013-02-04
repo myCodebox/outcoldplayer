@@ -4,6 +4,8 @@
 
 namespace OutcoldSolutions.GoogleMusic.Web.Models
 {
+    using System;
+
     public class GoogleMusicSong
     {
         public string Genre { get; set; }
@@ -22,7 +24,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Models
 
         public int Disc { get; set; }
 
-        public string Id { get; set; }
+        public Guid Id { get; set; }
 
         public string Composer { get; set; }
 
@@ -64,6 +66,6 @@ namespace OutcoldSolutions.GoogleMusic.Web.Models
 
         public string AlbumArtUrl { get; set; }
 
-        public string PlaylistEntryId { get; set; }
+        public Guid PlaylistEntryId { get; set; }
     }
 }

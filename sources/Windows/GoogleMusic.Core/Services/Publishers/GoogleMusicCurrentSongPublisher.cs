@@ -50,7 +50,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
                 if (currentPlaylist is MusicPlaylist)
                 {
                     updateRecentPlaylist = true;
-                    playlistId = ((MusicPlaylist)currentPlaylist).Id;
+                    playlistId = ((MusicPlaylist)currentPlaylist).Id.ToString();
                 }
                 else if (currentPlaylist is Album || currentPlaylist is Genre || currentPlaylist is Artist || currentPlaylist is SystemPlaylist)
                 {

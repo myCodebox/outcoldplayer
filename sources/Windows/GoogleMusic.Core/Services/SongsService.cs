@@ -23,8 +23,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         private readonly object lockerTasks = new object();
 
-        private readonly Dictionary<string, Song> songsRepository = new Dictionary<string, Song>();
-        private readonly Dictionary<string, MusicPlaylist> playlistsRepository = new Dictionary<string, MusicPlaylist>();
+        private readonly Dictionary<Guid, Song> songsRepository = new Dictionary<Guid, Song>();
+        private readonly Dictionary<Guid, MusicPlaylist> playlistsRepository = new Dictionary<Guid, MusicPlaylist>();
 
         private readonly ILogger logger;
 
@@ -157,12 +157,12 @@ namespace OutcoldSolutions.GoogleMusic.Services
         {
             var name = string.Format(CultureInfo.CurrentCulture, "Playlist - {0}", DateTime.Now);
             var resp = await this.webService.CreatePlaylistAsync(name);
-            if (resp != null && !string.IsNullOrEmpty(resp.Id))
+            if (resp != null)
             {
                 this.lastPlaylistsLoad = null;
                 await this.GetAllGooglePlaylistsAsync(canReload: true);
 
-                var musicPlaylist = new MusicPlaylist(resp.Id, resp.Title, new List<Song>(), new List<string>());
+                var musicPlaylist = new MusicPlaylist(resp.Id, resp.Title, new List<Song>(), new List<Guid>());
                 return musicPlaylist;
             }
 
@@ -223,7 +223,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             if (result != null && result.SongIds.Length == 1)
             {
                 playlist.Songs.Add(song);
-                playlist.EntriesIds.Add(result.SongIds[0].PlaylisEntryId);
+                playlist.EntriesIds.Add(result.SongIds[0].PlaylistEntryId);
                 playlist.CalculateFields();
             }
 
@@ -287,7 +287,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                         var dictionary = (googleMusicPlaylist.Playlist ?? Enumerable.Empty<GoogleMusicSong>()).ToDictionary(x => x.PlaylistEntryId, x => this.CreateSong(x));
 
                         MusicPlaylist playlist;
-                        if (this.playlistsRepository.TryGetValue(googleMusicPlaylist.PlaylistId, out playlist))
+                        if (this.playlistsRepository.TryGetValue(Guid.Parse(googleMusicPlaylist.PlaylistId), out playlist))
                         {
                             playlist.Songs.Clear();
                             playlist.Title = googleMusicPlaylist.Title;
@@ -298,7 +298,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                         else
                         {
                             playlist = new MusicPlaylist(
-                                googleMusicPlaylist.PlaylistId,
+                                Guid.Parse(googleMusicPlaylist.PlaylistId),
                                 googleMusicPlaylist.Title,
                                 dictionary.Values.ToList(),
                                 dictionary.Keys.ToList());
@@ -308,7 +308,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     }
                 }
 
-                var oldPlaylists = this.playlistsRepository.Where(x => googleMusicPlaylists.Playlists.All(np => string.Equals(np.PlaylistId, x.Key, StringComparison.OrdinalIgnoreCase))).ToList();
+                var oldPlaylists = this.playlistsRepository.Where(x => googleMusicPlaylists.Playlists.All(np => Guid.Parse(np.PlaylistId) == x.Key)).ToList();
                 foreach (var oldPlaylist in oldPlaylists)
                 {
                     this.playlistsRepository.Remove(oldPlaylist.Key);

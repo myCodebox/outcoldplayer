@@ -3,9 +3,11 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Web.Models
 {
+    using System;
+
     public class AddSongResp : CommonResponse
     {
-        public string PlaylistId { get; set; }
+        public Guid PlaylistId { get; set; }
 
         public SongIdResp[] SongIds { get; set; }
     }

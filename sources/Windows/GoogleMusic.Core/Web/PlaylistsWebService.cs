@@ -18,7 +18,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
     {
         Task<GoogleMusicPlaylists> GetAllPlaylistsAsync();
 
-        Task<GoogleMusicPlaylist> GetPlaylistAsync(string playlistId);
+        Task<GoogleMusicPlaylist> GetPlaylistAsync(Guid playlistId);
 
         Task<List<GoogleMusicSong>> GetAllSongsAsync(IProgress<int> progress = null);
 
@@ -26,13 +26,13 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
         Task<AddPlaylistResp> CreatePlaylistAsync(string name);
 
-        Task<bool> DeletePlaylistAsync(string id);
+        Task<bool> DeletePlaylistAsync(Guid id);
 
-        Task<bool> ChangePlaylistNameAsync(string id, string name);
+        Task<bool> ChangePlaylistNameAsync(Guid id, string name);
 
-        Task<AddSongResp> AddSongToPlaylistAsync(string playlistId, string songId);
+        Task<AddSongResp> AddSongToPlaylistAsync(Guid playlistId, Guid songId);
 
-        Task<bool> RemoveSongFromPlaylistAsync(string playlistId, string songId, string entryId);
+        Task<bool> RemoveSongFromPlaylistAsync(Guid playlistId, Guid songId, Guid entryId);
 
         Task<StatusResp> GetStatusAsync();
     }
@@ -73,7 +73,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
             return await this.googleMusicWebService.PostAsync<GoogleMusicPlaylists>(PlaylistsUrl);
         }
 
-        public async Task<GoogleMusicPlaylist> GetPlaylistAsync(string playlistId)
+        public async Task<GoogleMusicPlaylist> GetPlaylistAsync(Guid playlistId)
         {
             var jsonProperties = new Dictionary<string, string>
                                         {
@@ -191,7 +191,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
             return await this.googleMusicWebService.PostAsync<AddPlaylistResp>(AddPlaylistUrl, jsonProperties: jsonProperties);
         }
 
-        public async Task<bool> DeletePlaylistAsync(string id)
+        public async Task<bool> DeletePlaylistAsync(Guid id)
         {
             var jsonProperties = new Dictionary<string, string>
                                         {
@@ -202,10 +202,10 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
             var deletePlaylistResp = await this.googleMusicWebService.PostAsync<DeletePlaylistResp>(DeletePlaylistUrl, jsonProperties: jsonProperties);
 
-            return string.Equals(deletePlaylistResp.DeleteId, id, StringComparison.OrdinalIgnoreCase);
+            return deletePlaylistResp.DeleteId == id;
         }
 
-        public async Task<bool> ChangePlaylistNameAsync(string id, string name)
+        public async Task<bool> ChangePlaylistNameAsync(Guid id, string name)
         {
             var jsonProperties = new Dictionary<string, string>
                                         {
@@ -217,7 +217,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
             return !response.Success.HasValue || response.Success.Value;
         }
 
-        public async Task<AddSongResp> AddSongToPlaylistAsync(string playlistId, string songId)
+        public async Task<AddSongResp> AddSongToPlaylistAsync(Guid playlistId, Guid songId)
         {
             var jsonProperties = new Dictionary<string, string>
                                         {
@@ -228,7 +228,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
             return await this.googleMusicWebService.PostAsync<AddSongResp>(AddToPlaylistUrl, jsonProperties: jsonProperties);
         }
 
-        public async Task<bool> RemoveSongFromPlaylistAsync(string playlistId, string songId, string entryId)
+        public async Task<bool> RemoveSongFromPlaylistAsync(Guid playlistId, Guid songId, Guid entryId)
         {
             var jsonProperties = new Dictionary<string, string>
                                         {
