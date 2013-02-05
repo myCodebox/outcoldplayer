@@ -138,6 +138,12 @@
     <Compile Include="..\Windows\GoogleMusic.Core\PropertyNameExtractor.cs">
       <Link>_sources\PropertyNameExtractor.cs</Link>
     </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Repositories\ISongsRepository.cs">
+      <Link>_sources\Repositories\ISongsRepository.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Repositories\SongsRepository.cs">
+      <Link>_sources\Repositories\SongsRepository.cs</Link>
+    </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Services\IGoogleAccountService.cs">
       <Link>_sources\Services\IGoogleAccountService.cs</Link>
     </Compile>
@@ -282,6 +288,7 @@
     <Compile Include="Presentation\Converters\InvertBooleanConverterSuites.cs" />
     <Compile Include="Presentation\Converters\ValueToVisibilityConverterSuites.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repositories\SongsRepositorySuites.cs" />
     <Compile Include="Services\Pubslishers\CurrentSongPublisherServiceSuites.cs" />
     <Compile Include="SuitesBase.cs" />
     <Compile Include="SuitesConstants.cs" />

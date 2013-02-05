@@ -5,13 +5,12 @@ namespace OutcoldSolutions.GoogleMusic.Services
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel;
     using System.Globalization;
     using System.Linq;
     using System.Threading.Tasks;
 
-    using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Models;
+    using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Web;
     using OutcoldSolutions.GoogleMusic.Web.Models;
 
@@ -23,15 +22,11 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         private readonly object lockerTasks = new object();
 
-        private readonly Dictionary<Guid, Song> songsRepository = new Dictionary<Guid, Song>();
         private readonly Dictionary<Guid, MusicPlaylist> playlistsRepository = new Dictionary<Guid, MusicPlaylist>();
 
-        private readonly ILogger logger;
-
         private readonly IPlaylistsWebService webService;
-
         private readonly IGoogleMusicSessionService sessionService;
-
+        private readonly ISongsRepository songsRepository;
         private readonly ISongWebService songWebService;
 
         private Task<List<Song>> taskAllSongsLoader = null;
@@ -45,12 +40,12 @@ namespace OutcoldSolutions.GoogleMusic.Services
             IPlaylistsWebService webService,
             IGoogleMusicSessionService sessionService,
             ISongWebService songWebService,
-            ILogManager logManager)
+            ISongsRepository songsRepository)
         {
             this.webService = webService;
             this.sessionService = sessionService;
             this.songWebService = songWebService;
-            this.logger = logManager.CreateLogger("SongsService");
+            this.songsRepository = songsRepository;
 
             this.sessionService.SessionCleared += (sender, args) =>
                 {
@@ -63,12 +58,6 @@ namespace OutcoldSolutions.GoogleMusic.Services
                         this.taskAllSongsLoader = null;
                     }
 
-                    foreach (var song in this.songsRepository)
-                    {
-                        var songValue = song.Value;
-                        song.Value.Unsubscribe(() => songValue.Rating, this.SongOnPropertyChanged);
-                    }
-
                     this.songsRepository.Clear();
                 };
         }
@@ -77,7 +66,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
         {
             return Task.Factory.StartNew(() =>
                 {
-                    var albums = this.songsRepository.Values
+                    var albums = this.songsRepository.GetAll()
                         .GroupBy(x => new
                                           {
                                               x.GoogleMusicMetadata.AlbumNorm, 
@@ -101,7 +90,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             return Task.Factory.StartNew(
                 () =>
                     {
-                        var genresCache = this.songsRepository.Values
+                        var genresCache = this.songsRepository.GetAll()
                                 .GroupBy(x => x.GoogleMusicMetadata.Genre)
                                 .OrderBy(x => x.Key)
                                 .Select(x => new Genre(x.Key, x.ToList()));
@@ -115,7 +104,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             return Task.Factory.StartNew(
                 () =>
                     {
-                        var artistsCache = this.songsRepository.Values
+                        var artistsCache = this.songsRepository.GetAll()
                             .GroupBy(x => string.IsNullOrWhiteSpace(x.GoogleMusicMetadata.AlbumArtistNorm) ? x.GoogleMusicMetadata.ArtistNorm : x.GoogleMusicMetadata.AlbumArtistNorm)
                             .OrderBy(x => x.Key)
                             .Select(x => new Artist(x.ToList()));
@@ -124,7 +113,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                         {
                             var artists = artistsCache.ToList();
 
-                            var groupBy = this.songsRepository.Values.GroupBy(x => x.GoogleMusicMetadata.ArtistNorm);
+                            var groupBy = this.songsRepository.GetAll().GroupBy(x => x.GoogleMusicMetadata.ArtistNorm);
                             foreach (var group in groupBy)
                             {
                                 var artist = artists.FirstOrDefault(
@@ -284,7 +273,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 {
                     foreach (var googleMusicPlaylist in googleMusicPlaylists.Playlists)
                     {
-                        var dictionary = (googleMusicPlaylist.Playlist ?? Enumerable.Empty<GoogleMusicSong>()).ToDictionary(x => x.PlaylistEntryId, x => this.CreateSong(x));
+                        var dictionary = (googleMusicPlaylist.Playlist ?? Enumerable.Empty<GoogleMusicSong>()).ToDictionary(x => x.PlaylistEntryId, x => this.songsRepository.AddOrUpdate(x));
 
                         MusicPlaylist playlist;
                         if (this.playlistsRepository.TryGetValue(Guid.Parse(googleMusicPlaylist.PlaylistId), out playlist))
@@ -331,9 +320,11 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
                 this.timer.Tick += this.SongsUpdate;
                 this.timer.Start();
+
+                this.songsRepository.AddRange(googleSongs);
             }
 
-            return googleSongs.Select(x => this.CreateSong(x)).ToList();
+            return this.songsRepository.GetAll().ToList();
         }
 
         private async void SongsUpdate(object sender, object o)
@@ -341,85 +332,12 @@ namespace OutcoldSolutions.GoogleMusic.Services
             var updatedSongs = await this.songWebService.StreamingLoadAllTracksAsync(null);
             if (updatedSongs.Count > 0)
             {
-                foreach (var s in updatedSongs)
+                foreach (var metadata in updatedSongs.Where(m => m.Deleted))
                 {
-                    this.CreateSong(s, updateSong: true);
+                    this.songsRepository.Remove(metadata.Id);
                 }
-            }
-        }
-
-        private Song CreateSong(GoogleMusicSong googleSong, bool updateSong = false)
-        {
-            Song song;
-            lock (this.songsRepository)
-            {
-                if (!this.songsRepository.TryGetValue(googleSong.Id, out song))
-                {
-                    song = new Song(googleSong);
-                    song.Subscribe(() => song.Rating, this.SongOnPropertyChanged);
-                    this.songsRepository.Add(googleSong.Id, song);
-                }
-                else if (updateSong)
-                {
-                    if (googleSong.Deleted)
-                    {
-                        this.songsRepository.Remove(googleSong.Id);
-                    }
-                    else
-                    {
-                        song.Unsubscribe(() => song.Rating, this.SongOnPropertyChanged);
-                        song.GoogleMusicMetadata = googleSong;
-                        song.Title = googleSong.Title;
-                        song.Duration = TimeSpan.FromMilliseconds(googleSong.DurationMillis).TotalSeconds;
-                        song.Artist = googleSong.Artist;
-                        song.Album = googleSong.Album;
-                        song.PlayCount = googleSong.PlayCount;
-                        song.Rating = googleSong.Rating;
-                        song.Subscribe(() => song.Rating, this.SongOnPropertyChanged);
-                    }
-                }
-            }
-
-            return song;
-        }
-
-        private void SongOnPropertyChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)
-        {
-            if (string.Equals(propertyChangedEventArgs.PropertyName, "Rating"))
-            {
-                var song = (Song)sender;
-
-                this.logger.Debug("Rating is changed for song '{0}'. Updating server.", song.GoogleMusicMetadata.Id);
-
-                if (song.Rating != song.GoogleMusicMetadata.Rating)
-                {
-                    this.songWebService.UpdateRatingAsync(song.GoogleMusicMetadata, song.Rating).ContinueWith(
-                        t =>
-                            {
-                                if (t.IsCompleted && !t.IsFaulted && t.Result != null)
-                                {
-                                    if (this.logger.IsDebugEnabled)
-                                    {
-                                        this.logger.Debug(
-                                            "Rating update completed for song: {0}.", song.GoogleMusicMetadata.Id);
-                                        foreach (var songUpdate in t.Result.Songs)
-                                        {
-                                            this.logger.Debug(
-                                                "Song updated: {0}, Rate: {1}.", songUpdate.Id, songUpdate.Rating);
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    this.logger.Debug(
-                                        "Failed to update rating for song: {0}.", song.GoogleMusicMetadata.Id);
-                                    if (t.IsFaulted && t.Exception != null)
-                                    {
-                                        this.logger.LogErrorException(t.Exception);
-                                    }
-                                }
-                            });
-                }
+                
+                this.songsRepository.AddRange(updatedSongs.Where(m => !m.Deleted));
             }
         }
     }

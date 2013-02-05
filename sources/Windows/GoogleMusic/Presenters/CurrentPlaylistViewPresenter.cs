@@ -6,9 +6,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
+    using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
+    using OutcoldSolutions.GoogleMusic.Web;
 
     public class CurrentPlaylistViewPresenter : ViewPresenterBase<ICurrentPlaylistView>
     {
@@ -16,15 +18,19 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private readonly ISongsService songsService;
 
+        private readonly ISongWebService songWebService;
+
         public CurrentPlaylistViewPresenter(
             IDependencyResolverContainer container, 
             ICurrentPlaylistView view,
             ICurrentPlaylistService currentPlaylistService,
-            ISongsService songsService)
+            ISongsService songsService,
+            ISongWebService songWebService)
             : base(container, view)
         {
             this.currentPlaylistService = currentPlaylistService;
             this.songsService = songsService;
+            this.songWebService = songWebService;
             this.BindingModel = new CurrentPlaylistBindingModel();
 
             this.currentPlaylistService.PlaylistChanged += (sender, args) => this.UpdateSongs();
@@ -43,6 +49,34 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         {
             var song = this.BindingModel.Songs[this.View.SelectedSongIndex];
             this.songsService.AddSongToPlaylistAsync(playlist, song);
+        }
+
+        public void UpdateRating(Song song, int newValue)
+        {
+            song.Rating = newValue;
+            this.songWebService.UpdateRatingAsync(song.GoogleMusicMetadata, newValue).ContinueWith(
+                        t =>
+                        {
+                            if (t.IsCompleted && !t.IsFaulted && t.Result != null)
+                            {
+                                if (this.Logger.IsDebugEnabled)
+                                {
+                                    this.Logger.Debug("Rating update completed for song: {0}.", song.GoogleMusicMetadata.Id);
+                                    foreach (var songUpdate in t.Result.Songs)
+                                    {
+                                        this.Logger.Debug("Song updated: {0}, Rate: {1}.", songUpdate.Id, songUpdate.Rating);
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                this.Logger.Debug("Failed to update rating for song: {0}.", song.GoogleMusicMetadata.Id);
+                                if (t.IsFaulted && t.Exception != null)
+                                {
+                                    this.Logger.LogErrorException(t.Exception);
+                                }
+                            }
+                        });
         }
 
         private void RemoveSelectedSong()

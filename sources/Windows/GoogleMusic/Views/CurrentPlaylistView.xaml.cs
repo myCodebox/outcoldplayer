@@ -6,6 +6,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
 {
     using System.Collections.Generic;
 
+    using OutcoldSolutions.GoogleMusic.Controls;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Presenters;
     using OutcoldSolutions.GoogleMusic.Services;
@@ -125,6 +126,11 @@ namespace OutcoldSolutions.GoogleMusic.Views
         private void ListDoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
         {
             this.Presenter<CurrentPlaylistViewPresenter>().BindingModel.PlaySelectedSong.Execute(null);
+        }
+
+        private void RatingOnValueChanged(object sender, ValueChangedEventArgs e)
+        {
+            this.Presenter<CurrentPlaylistViewPresenter>().UpdateRating((Song)((Rating)sender).DataContext, e.NewValue);
         }
     }
 }

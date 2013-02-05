@@ -7,9 +7,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
+    using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
+    using OutcoldSolutions.GoogleMusic.Web;
 
     public class PlaylistViewPresenter : ViewPresenterBase<IPlaylistView>
     {
@@ -17,17 +19,21 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private readonly ISongsService songsService;
 
+        private readonly ISongWebService songWebService;
+
         private PlaylistViewBindingModel bindingModel;
 
         public PlaylistViewPresenter(
             IDependencyResolverContainer container, 
             IPlaylistView view,
             ICurrentPlaylistService currentPlaylistService,
-            ISongsService songsService)
+            ISongsService songsService,
+            ISongWebService songWebService)
             : base(container, view)
         {
             this.currentPlaylistService = currentPlaylistService;
             this.songsService = songsService;
+            this.songWebService = songWebService;
             this.PlaySelectedSongCommand = new DelegateCommand(this.PlaySelectedSong);
             this.RemoveFromPlaylistCommand = new DelegateCommand(this.RemoveFromPlaylist);
             this.AddToPlaylistCommand = new DelegateCommand(this.AddToPlaylist);
@@ -105,6 +111,34 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                         }
                     },
                 TaskScheduler.FromCurrentSynchronizationContext());
+        }
+
+        public void UpdateRating(Song song, int newValue)
+        {
+            song.Rating = newValue;
+            this.songWebService.UpdateRatingAsync(song.GoogleMusicMetadata, newValue).ContinueWith(
+                        t =>
+                        {
+                            if (t.IsCompleted && !t.IsFaulted && t.Result != null)
+                            {
+                                if (this.Logger.IsDebugEnabled)
+                                {
+                                    this.Logger.Debug("Rating update completed for song: {0}.", song.GoogleMusicMetadata.Id);
+                                    foreach (var songUpdate in t.Result.Songs)
+                                    {
+                                        this.Logger.Debug("Song updated: {0}, Rate: {1}.", songUpdate.Id, songUpdate.Rating);
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                this.Logger.Debug("Failed to update rating for song: {0}.", song.GoogleMusicMetadata.Id);
+                                if (t.IsFaulted && t.Exception != null)
+                                {
+                                    this.Logger.LogErrorException(t.Exception);
+                                }
+                            }
+                        });
         }
 
         private async Task<Playlist> SearchAlbum(Song song)

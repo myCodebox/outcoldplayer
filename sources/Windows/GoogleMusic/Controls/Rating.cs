@@ -3,6 +3,8 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Controls
 {
+    using System;
+
     using Windows.UI;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
@@ -34,6 +36,8 @@ namespace OutcoldSolutions.GoogleMusic.Controls
 
         private readonly Button[] stars = new Button[5];
 
+        public event EventHandler<ValueChangedEventArgs> ValueChanged;
+
         public int Value
         {
             get { return (int)this.GetValue(ValueProperty); }
@@ -63,10 +67,20 @@ namespace OutcoldSolutions.GoogleMusic.Controls
                 this.stars[i].Click += (sender, args) =>
                     {
                         this.Value = value;
+                        this.RaiseValueChanged(new ValueChangedEventArgs(Value));
                     };
             }
 
             this.UpdateStars();
+        }
+
+        private void RaiseValueChanged(ValueChangedEventArgs e)
+        {
+            var handler = this.ValueChanged;
+            if (handler != null)
+            {
+                handler(this, e);
+            }
         }
 
         private void UpdateStars()
