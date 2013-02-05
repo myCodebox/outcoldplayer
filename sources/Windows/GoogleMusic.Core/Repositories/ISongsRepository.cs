@@ -11,6 +11,8 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
 
     public interface ISongsRepository
     {
+        event Action Updated;
+
         IEnumerable<Song> GetAll();
 
         Song AddOrUpdate(GoogleMusicSong songInfo);

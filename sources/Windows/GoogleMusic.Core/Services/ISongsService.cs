@@ -9,15 +9,6 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
     using OutcoldSolutions.GoogleMusic.Models;
 
-    public enum Order
-    {
-        None = 0,
-
-        Name = 1,
-
-        LastPlayed = 2
-    }
-
     public interface ISongsService
     {
         Task<List<Album>> GetAllAlbumsAsync(Order order = Order.None);

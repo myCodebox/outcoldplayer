@@ -37,7 +37,17 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
         {
             lock (this.songs)
             {
-                return this.AddOrUpdatePrivate(songInfo);
+                Song song;
+                if (this.songs.TryGetValue(songInfo.Id, out song))
+                {
+                    song.GoogleMusicMetadata = songInfo;
+                }
+                else
+                {
+                    this.songs.Add(songInfo.Id, song = new Song(songInfo));
+                }
+
+                return song;
             }
         }
 
@@ -51,7 +61,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
                 {
                     updated = true;
 
-                    this.AddOrUpdatePrivate(songInfo);
+                    this.AddOrUpdate(songInfo);
                 }
             }
 
@@ -79,21 +89,6 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
             {
                 return this.songs.Values.ToList();
             }
-        }
-
-        private Song AddOrUpdatePrivate(GoogleMusicSong songInfo)
-        {
-            Song song;
-            if (this.songs.TryGetValue(songInfo.Id, out song))
-            {
-                song.GoogleMusicMetadata = songInfo;
-            }
-            else
-            {
-                this.songs.Add(songInfo.Id, song = new Song(songInfo));
-            }
-
-            return song;
         }
 
         private void RaiseUpdated()
