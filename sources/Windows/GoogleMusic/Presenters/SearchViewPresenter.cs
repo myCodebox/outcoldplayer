@@ -72,7 +72,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         {
             var results = new List<SearchGroupBindingModel>();
 
-            var artists = (await this.collectionsService.GetArtistCollection().SearchAsync(query))
+            var artists = (await this.collectionsService.GetCollection<Artist>().SearchAsync(query))
                     .Select(x => new PlaylistResultBindingModel(query, x))
                     .Cast<SearchResultBindingModel>()
                     .ToList();
@@ -82,7 +82,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 results.Add(new SearchGroupBindingModel("Artists", artists));
             }
 
-            var albums = (await this.collectionsService.GetAlbumCollection().SearchAsync(query))
+            var albums = (await this.collectionsService.GetCollection<Album>().SearchAsync(query))
                     .Select(x => new PlaylistResultBindingModel(query, x))
                     .Cast<SearchResultBindingModel>()
                     .ToList();
@@ -92,7 +92,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 results.Add(new SearchGroupBindingModel("Albums", albums));
             }
 
-            var genres = (await this.collectionsService.GetGenreCollection().SearchAsync(query))
+            var genres = (await this.collectionsService.GetCollection<Genre>().SearchAsync(query))
                     .Select(x => new PlaylistResultBindingModel(query, x))
                     .Cast<SearchResultBindingModel>()
                     .ToList();

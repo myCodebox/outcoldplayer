@@ -18,8 +18,6 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
     public class SongsService : ISongsService
     {
-        private const int HighlyRatedValue = 4;
-
         private readonly object lockerTasks = new object();
 
         private readonly Dictionary<Guid, MusicPlaylist> playlistsRepository = new Dictionary<Guid, MusicPlaylist>();
@@ -82,17 +80,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
             return null;
         }
-
-        public async Task<List<SystemPlaylist>> GetSystemPlaylists()
-        {
-            var allSongs = await this.GetAllGoogleSongsAsync();
-
-            SystemPlaylist allSongsPlaylist = new SystemPlaylist("All songs", SystemPlaylist.SystemPlaylistType.AllSongs,  allSongs);
-            SystemPlaylist highlyRatedPlaylist = new SystemPlaylist("Highly rated", SystemPlaylist.SystemPlaylistType.HighlyRated, allSongs.Where(x => x.Rating >= HighlyRatedValue));
-
-            return new List<SystemPlaylist>() { allSongsPlaylist, highlyRatedPlaylist };
-        }
-
+        
         public async Task<bool> DeletePlaylistAsync(MusicPlaylist playlist)
         {
             bool result = await this.webService.DeleteAsync(playlist.Id);

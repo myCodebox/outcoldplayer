@@ -10,7 +10,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Repositories;
 
-    public class ArtistCollection : PlaylistCollectionBase<Artist>, IArtistCollection
+    public class ArtistCollection : PlaylistCollectionBase<Artist>
     {
         public ArtistCollection(ISongsRepository songsRepository)
             : base(songsRepository)

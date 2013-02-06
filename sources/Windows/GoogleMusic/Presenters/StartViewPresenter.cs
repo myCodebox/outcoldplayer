@@ -60,22 +60,28 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         {
             var groups = new List<PlaylistsGroupBindingModel>();
 
-            var systemPlaylists = await this.songsService.GetSystemPlaylists();
-            groups.Add(new PlaylistsGroupBindingModel(null, systemPlaylists.Count, systemPlaylists.Select(x => new PlaylistBindingModel(x))));
+            // TODO: PlaylistsRequest should be null
+            groups.Add(await this.GetGroupAsync<SystemPlaylist>(null, PlaylistsRequest.Albums));
 
             var playlists = await this.songsService.GetAllPlaylistsAsync(Order.LastPlayed, canReload: true);
             groups.Add(new PlaylistsGroupBindingModel("Playlists", playlists.Count, playlists.Take(MaxItems).Select(x => new PlaylistBindingModel(x)), PlaylistsRequest.Playlists));
 
-            var artists = (await this.collectionsService.GetArtistCollection().GetAllAsync(Order.LastPlayed)).ToList();
-            groups.Add(new PlaylistsGroupBindingModel("Artists", artists.Count, artists.Take(MaxItems).Select(x => new PlaylistBindingModel(x)), PlaylistsRequest.Artists));
-
-            var albums = (await this.collectionsService.GetAlbumCollection().GetAllAsync(Order.LastPlayed)).ToList();
-            groups.Add(new PlaylistsGroupBindingModel("Albums", albums.Count, albums.Take(MaxItems).Select(x => new PlaylistBindingModel(x)), PlaylistsRequest.Albums));
-
-            var genres = (await this.collectionsService.GetGenreCollection().GetAllAsync(Order.LastPlayed)).ToList();
-            groups.Add(new PlaylistsGroupBindingModel("Genres", genres.Count, genres.Take(MaxItems).Select(x => new PlaylistBindingModel(x)), PlaylistsRequest.Genres));
+            groups.Add(await this.GetGroupAsync<Artist>("Artists", PlaylistsRequest.Artists));
+            groups.Add(await this.GetGroupAsync<Album>("Albums", PlaylistsRequest.Albums));
+            groups.Add(await this.GetGroupAsync<Genre>("Genres", PlaylistsRequest.Genres));
 
             return groups;
+        }
+
+        private async Task<PlaylistsGroupBindingModel> GetGroupAsync<TPlaylist>(string title, PlaylistsRequest playlistsRequest) where TPlaylist : Playlist
+        {
+            var collection = this.collectionsService.GetCollection<TPlaylist>();
+            var playlists = (await collection.GetAllAsync(Order.LastPlayed, MaxItems)).ToList();
+            return new PlaylistsGroupBindingModel(
+                title,
+                await collection.CountAsync(),
+                playlists.Select(x => new PlaylistBindingModel(x)),
+                playlistsRequest);
         }
     }
 }

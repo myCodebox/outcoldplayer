@@ -3,12 +3,10 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Services
 {
+    using OutcoldSolutions.GoogleMusic.Models;
+
     public interface IPlaylistCollectionsService
     {
-        IAlbumCollection GetAlbumCollection();
-
-        IArtistCollection GetArtistCollection();
-
-        IGenreCollection GetGenreCollection();
+        IPlaylistCollection<TPlaylist> GetCollection<TPlaylist>() where TPlaylist : Playlist;
     }
 }

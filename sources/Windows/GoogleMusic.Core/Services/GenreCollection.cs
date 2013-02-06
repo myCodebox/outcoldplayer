@@ -9,7 +9,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Repositories;
 
-    public class GenreCollection : PlaylistCollectionBase<Genre>, IGenreCollection
+    public class GenreCollection : PlaylistCollectionBase<Genre>
     {
         public GenreCollection(ISongsRepository songsRepository)
             : base(songsRepository)

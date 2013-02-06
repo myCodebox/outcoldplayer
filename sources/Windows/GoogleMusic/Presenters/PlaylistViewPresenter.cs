@@ -147,7 +147,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private async Task<Playlist> SearchAlbum(Song song)
         {
-            var albums = await this.playlistCollectionsService.GetAlbumCollection().GetAllAsync();
+            var albums = await this.playlistCollectionsService.GetCollection<Album>().GetAllAsync();
 
             var album = albums.FirstOrDefault(x => x.Songs.Contains(song));
 

@@ -9,6 +9,7 @@ namespace OutcoldSolutions.GoogleMusic
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.Diagnostics;
+    using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Presenters;
     using OutcoldSolutions.GoogleMusic.Presenters.Popups;
     using OutcoldSolutions.GoogleMusic.Presenters.Settings;
@@ -147,9 +148,10 @@ namespace OutcoldSolutions.GoogleMusic
 
                     // Songs Repositories and Services
                     registration.Register<ISongsRepository>().AsSingleton<SongsRepository>();
-                    registration.Register<IAlbumCollection>().AsSingleton<AlbumCollection>();
-                    registration.Register<IArtistCollection>().AsSingleton<ArtistCollection>();
-                    registration.Register<IGenreCollection>().AsSingleton<GenreCollection>();
+                    registration.Register<IPlaylistCollection<Album>>().AsSingleton<AlbumCollection>();
+                    registration.Register<IPlaylistCollection<Artist>>().AsSingleton<ArtistCollection>();
+                    registration.Register<IPlaylistCollection<Genre>>().AsSingleton<GenreCollection>();
+                    registration.Register<IPlaylistCollection<SystemPlaylist>>().AsSingleton<SystemPlaylist>();
                     registration.Register<IPlaylistCollectionsService>().AsSingleton<PlaylistCollectionsService>();
                 }
 

@@ -97,19 +97,19 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     {
                         case Artists:
                             {
-                                playlists = await this.playlistCollectionsService.GetArtistCollection().SearchAsync(strings[1]);
+                                playlists = await this.playlistCollectionsService.GetCollection<Artist>().SearchAsync(strings[1]);
                                 break;
                             }
 
                         case Albums:
                             {
-                                playlists = await this.playlistCollectionsService.GetAlbumCollection().SearchAsync(strings[1]);
+                                playlists = await this.playlistCollectionsService.GetCollection<Album>().SearchAsync(strings[1]);
                                 break; 
                             }
 
                         case Genres:
                             {
-                                playlists = await this.playlistCollectionsService.GetGenreCollection().SearchAsync(strings[1]);
+                                playlists = await this.playlistCollectionsService.GetCollection<Genre>().SearchAsync(strings[1]);
                                 break;
                             }
 
@@ -156,7 +156,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         private async Task SearchAsync(SearchPaneSuggestionsRequestedEventArgs args, SearchPaneSuggestionsRequestDeferral deferral)
         {
-            var artistsSearch = (await this.playlistCollectionsService.GetArtistCollection().SearchAsync(args.QueryText, MaxResults)).ToList();
+            var artistsSearch = (await this.playlistCollectionsService.GetCollection<Artist>().SearchAsync(args.QueryText, MaxResults)).ToList();
 
             if (artistsSearch.Count > 0)
             {
@@ -168,7 +168,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 }
             }
 
-            var albumsSearch = (await this.playlistCollectionsService.GetAlbumCollection().SearchAsync(args.QueryText, MaxResults - artistsSearch.Count)).ToList();
+            var albumsSearch = (await this.playlistCollectionsService.GetCollection<Album>().SearchAsync(args.QueryText, MaxResults - artistsSearch.Count)).ToList();
 
             if (albumsSearch.Count > 0)
             {
@@ -180,7 +180,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 }
             }
 
-            var genresSearch = (await this.playlistCollectionsService.GetGenreCollection().SearchAsync(args.QueryText, MaxResults - (artistsSearch.Count + albumsSearch.Count))).ToList();
+            var genresSearch = (await this.playlistCollectionsService.GetCollection<Genre>().SearchAsync(args.QueryText, MaxResults - (artistsSearch.Count + albumsSearch.Count))).ToList();
 
             if (genresSearch.Count > 0)
             {

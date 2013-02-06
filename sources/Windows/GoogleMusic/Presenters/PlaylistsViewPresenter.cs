@@ -242,7 +242,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
             if (this.currentRequest == PlaylistsRequest.Albums)
             {
-                playlists = await this.playlistCollectionsService.GetAlbumCollection().GetAllAsync(Order.Name);
+                playlists = await this.playlistCollectionsService.GetCollection<Album>().GetAllAsync(Order.Name);
             }
             else if (this.currentRequest == PlaylistsRequest.Playlists)
             {
@@ -250,11 +250,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             }
             else if (this.currentRequest == PlaylistsRequest.Genres)
             {
-                playlists = await this.playlistCollectionsService.GetGenreCollection().GetAllAsync(Order.Name);
+                playlists = await this.playlistCollectionsService.GetCollection<Genre>().GetAllAsync(Order.Name);
             }
             else
             {
-                playlists = await this.playlistCollectionsService.GetArtistCollection().GetAllAsync(Order.Name);
+                playlists = await this.playlistCollectionsService.GetCollection<Artist>().GetAllAsync(Order.Name);
             }
 
             return playlists.GroupBy(x => string.IsNullOrEmpty(x.Title) ? ' ' : char.ToUpper(x.Title[0]))

@@ -16,17 +16,4 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         Task<IEnumerable<TPlaylist>> SearchAsync(string query, int takeCount = int.MaxValue);
     }
-
-    public interface IAlbumCollection : IPlaylistCollection<Album>
-    {
-    }
-
-    public interface IArtistCollection : IPlaylistCollection<Artist>
-    {
-        
-    }
-
-    public interface IGenreCollection : IPlaylistCollection<Genre>
-    {
-    }
 }

@@ -3,35 +3,21 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Services
 {
+    using OutcoldSolutions.GoogleMusic.Models;
+
     public class PlaylistCollectionsService : IPlaylistCollectionsService
     {
-        private readonly IAlbumCollection albumCollection;
-        private readonly IArtistCollection artistCollection;
-        private readonly IGenreCollection genreCollection;
+        private readonly IDependencyResolverContainer container;
 
         public PlaylistCollectionsService(
-            IAlbumCollection albumCollection,
-            IArtistCollection artistCollection,
-            IGenreCollection genreCollection)
+            IDependencyResolverContainer container)
         {
-            this.albumCollection = albumCollection;
-            this.artistCollection = artistCollection;
-            this.genreCollection = genreCollection;
+            this.container = container;
         }
 
-        public IAlbumCollection GetAlbumCollection()
+        public IPlaylistCollection<TPlaylist> GetCollection<TPlaylist>() where TPlaylist : Playlist
         {
-            return this.albumCollection;
-        }
-
-        public IArtistCollection GetArtistCollection()
-        {
-            return this.artistCollection;
-        }
-
-        public IGenreCollection GetGenreCollection()
-        {
-            return this.genreCollection;
+            return this.container.Resolve<IPlaylistCollection<TPlaylist>>();
         }
     }
 }

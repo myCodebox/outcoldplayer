@@ -17,8 +17,6 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         Task<List<Song>> GetAllGoogleSongsAsync(IProgress<int> progress = null);
 
-        Task<List<SystemPlaylist>> GetSystemPlaylists();
-
         Task<bool> DeletePlaylistAsync(MusicPlaylist playlist);
 
         Task<bool> RemoveSongFromPlaylistAsync(MusicPlaylist playlist, int index);
