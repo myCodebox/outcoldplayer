@@ -246,7 +246,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             }
             else if (this.currentRequest == PlaylistsRequest.Playlists)
             {
-                playlists = await this.songsService.GetAllPlaylistsAsync(Order.Name, canReload: true);
+                playlists = await this.playlistCollectionsService.GetCollection<MusicPlaylist>().GetAllAsync(Order.Name);
             }
             else if (this.currentRequest == PlaylistsRequest.Genres)
             {

@@ -3,6 +3,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Presenters
 {
+    using System.Linq;
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
@@ -20,17 +21,21 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private readonly ISongWebService songWebService;
 
+        private readonly IPlaylistCollectionsService playlistCollectionsService;
+
         public CurrentPlaylistViewPresenter(
             IDependencyResolverContainer container, 
             ICurrentPlaylistView view,
             ICurrentPlaylistService currentPlaylistService,
             ISongsService songsService,
-            ISongWebService songWebService)
+            ISongWebService songWebService,
+            IPlaylistCollectionsService playlistCollectionsService)
             : base(container, view)
         {
             this.currentPlaylistService = currentPlaylistService;
             this.songsService = songsService;
             this.songWebService = songWebService;
+            this.playlistCollectionsService = playlistCollectionsService;
             this.BindingModel = new CurrentPlaylistBindingModel();
 
             this.currentPlaylistService.PlaylistChanged += (sender, args) => this.UpdateSongs();
@@ -121,12 +126,12 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private void AddToPlaylist()
         {
-            this.songsService.GetAllPlaylistsAsync(Order.Name).ContinueWith(
+            this.playlistCollectionsService.GetCollection<MusicPlaylist>().GetAllAsync(Order.Name).ContinueWith(
                 t =>
                 {
                     if (t.IsCompleted && !t.IsFaulted)
                     {
-                        this.View.ShowPlaylists(t.Result);
+                        this.View.ShowPlaylists(t.Result.ToList());
                     }
                 },
                 TaskScheduler.FromCurrentSynchronizationContext());

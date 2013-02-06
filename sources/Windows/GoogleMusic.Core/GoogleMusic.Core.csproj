@@ -141,6 +141,7 @@
     <Compile Include="Services\ISongsService.cs" />
     <Compile Include="Services\IGoogleAccountService.cs" />
     <Compile Include="Services\IGoogleMusicSessionService.cs" />
+    <Compile Include="Services\MusicPlaylistCollection.cs" />
     <Compile Include="Services\Order.cs" />
     <Compile Include="Services\PlaylistCollectionBase.cs" />
     <Compile Include="Services\PlaylistCollectionsService.cs" />

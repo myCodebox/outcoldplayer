@@ -151,7 +151,8 @@ namespace OutcoldSolutions.GoogleMusic
                     registration.Register<IPlaylistCollection<Album>>().AsSingleton<AlbumCollection>();
                     registration.Register<IPlaylistCollection<Artist>>().AsSingleton<ArtistCollection>();
                     registration.Register<IPlaylistCollection<Genre>>().AsSingleton<GenreCollection>();
-                    registration.Register<IPlaylistCollection<SystemPlaylist>>().AsSingleton<SystemPlaylist>();
+                    registration.Register<IPlaylistCollection<SystemPlaylist>>().AsSingleton<SystemPlaylistCollection>();
+                    registration.Register<IPlaylistCollection<MusicPlaylist>>().AsSingleton<MusicPlaylistCollection>();
                     registration.Register<IPlaylistCollectionsService>().AsSingleton<PlaylistCollectionsService>();
                 }
 

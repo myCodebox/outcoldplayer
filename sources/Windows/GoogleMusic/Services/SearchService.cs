@@ -76,7 +76,44 @@ namespace OutcoldSolutions.GoogleMusic.Services
         {
             var searchPaneSuggestionsRequestDeferral = args.Request.GetDeferral();
             this.SearchAsync(args, searchPaneSuggestionsRequestDeferral)
-                .ContinueWith(x => searchPaneSuggestionsRequestDeferral.Complete());
+                .ContinueWith(
+                x =>
+                {
+                    foreach (var item in x.Result)
+                    {
+                        if (args.Request.IsCanceled)
+                        {
+                            break;
+                        }
+
+                        if (item.ItemType == SearchItemType.Title)
+                        {
+                            args.Request.SearchSuggestionCollection.AppendSearchSeparator(((SearchTitle)item).Title);
+                        }
+                        else
+                        {
+                            var searchResult = (SearchResult)item;
+
+                            IRandomAccessStreamReference randomAccessStreamReference = null;
+                            if (!string.IsNullOrEmpty(searchResult.AlbumArtUrl))
+                            {
+                                randomAccessStreamReference =
+                                    RandomAccessStreamReference.CreateFromUri(new Uri("http:" + searchResult.AlbumArtUrl));
+                            }
+                            else
+                            {
+                                randomAccessStreamReference =
+                                    RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx:///Assets/SmallLogo.png"));
+                            }
+
+                            args.Request.SearchSuggestionCollection.AppendResultSuggestion(
+                                searchResult.Title, searchResult.Details, searchResult.Tag, randomAccessStreamReference, "gMusic");
+                        }
+                    }
+
+                    searchPaneSuggestionsRequestDeferral.Complete();
+                },
+                TaskScheduler.FromCurrentSynchronizationContext());
         }
 
         private void SearchPaneOnResultSuggestionChosen(SearchPane sender, SearchPaneResultSuggestionChosenEventArgs args)
@@ -115,7 +152,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
                         case Playlists:
                             {
-                                playlists = await this.songsService.GetAllPlaylistsAsync();
+                                playlists = await this.playlistCollectionsService.GetCollection<MusicPlaylist>().SearchAsync(strings[1]);
                                 break;
                             }
 
@@ -154,89 +191,66 @@ namespace OutcoldSolutions.GoogleMusic.Services
             }
         }
 
-        private async Task SearchAsync(SearchPaneSuggestionsRequestedEventArgs args, SearchPaneSuggestionsRequestDeferral deferral)
+        private async Task<List<ISearchItem>> SearchAsync(SearchPaneSuggestionsRequestedEventArgs args, SearchPaneSuggestionsRequestDeferral deferral)
         {
-            var artistsSearch = (await this.playlistCollectionsService.GetCollection<Artist>().SearchAsync(args.QueryText, MaxResults)).ToList();
+            var result = new List<ISearchItem>();
 
+            var artistsSearch = (await this.playlistCollectionsService.GetCollection<Artist>().SearchAsync(args.QueryText, MaxResults)).ToList();
             if (artistsSearch.Count > 0)
             {
-                this.AddResults(args, artistsSearch, Artists);
+                this.AddResults(result, artistsSearch, Artists);
+            }
 
-                if (artistsSearch.Count >= MaxResults)
+            if (result.Count < MaxResults)
+            {
+                var albumsSearch = (await this.playlistCollectionsService.GetCollection<Album>().SearchAsync(args.QueryText, MaxResults - result.Count)).ToList();
+                if (albumsSearch.Count > 0)
                 {
-                    return;
+                    this.AddResults(result, albumsSearch, Albums);
                 }
             }
 
-            var albumsSearch = (await this.playlistCollectionsService.GetCollection<Album>().SearchAsync(args.QueryText, MaxResults - artistsSearch.Count)).ToList();
-
-            if (albumsSearch.Count > 0)
+            if (result.Count < MaxResults)
             {
-                this.AddResults(args, albumsSearch, Albums);
-
-                if (artistsSearch.Count + albumsSearch.Count >= MaxResults)
+                var genresSearch = (await this.playlistCollectionsService.GetCollection<Genre>().SearchAsync(args.QueryText, MaxResults - result.Count)).ToList();
+                if (genresSearch.Count > 0)
                 {
-                    return;
+                    this.AddResults(result, genresSearch, Genres);
                 }
             }
 
-            var genresSearch = (await this.playlistCollectionsService.GetCollection<Genre>().SearchAsync(args.QueryText, MaxResults - (artistsSearch.Count + albumsSearch.Count))).ToList();
-
-            if (genresSearch.Count > 0)
+            if (result.Count < MaxResults)
             {
-                this.AddResults(args, genresSearch, Genres);
-                
-                if (genresSearch.Count + artistsSearch.Count + albumsSearch.Count >= MaxResults)
+                var songs = await this.songsService.GetAllGoogleSongsAsync();
+                var songsSearch = songs.Where(x => Search.Contains(x.Title, args.QueryText)).Take(MaxResults - result.Count).ToList();
+
+                if (songsSearch.Count > 0)
                 {
-                    return;
-                }
-            }
-
-            var songs = await this.songsService.GetAllGoogleSongsAsync();
-            var songsSearch = songs.Where(x => Search.Contains(x.Title, args.QueryText)).Take(Math.Max(MaxResults - (genresSearch.Count + artistsSearch.Count + albumsSearch.Count), 0)).ToList();
-
-            if (songsSearch.Count > 0)
-            {
-                args.Request.SearchSuggestionCollection.AppendSearchSeparator(Songs);
-
-                foreach (var song in songsSearch)
-                {
-                    IRandomAccessStreamReference randomAccessStreamReference = null;
-                    if (!string.IsNullOrEmpty(song.GoogleMusicMetadata.AlbumArtUrl))
+                    result.Add(new SearchTitle(Songs));
+                    foreach (var song in songsSearch)
                     {
-                        randomAccessStreamReference =
-                            RandomAccessStreamReference.CreateFromUri(new Uri("http:" + song.GoogleMusicMetadata.AlbumArtUrl));
+                        result.Add(new SearchResult(
+                            song.Title,
+                            song.Artist,
+                            string.Format(CultureInfo.CurrentCulture, "{0}:{1} - {2}", Songs, song.Artist, song.Title),
+                            song.GoogleMusicMetadata.AlbumArtUrl));
                     }
-                    else
-                    {
-                        randomAccessStreamReference =
-                            RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx:///Assets/SmallLogo.png"));
-                    }
-
-                    args.Request.SearchSuggestionCollection.AppendResultSuggestion(
-                        song.Title,
-                        song.Artist,
-                        string.Format(CultureInfo.CurrentCulture, "{0}:{1} - {2}", Songs, song.Artist, song.Title),
-                        randomAccessStreamReference,
-                        "gMusic");
                 }
             }
 
-            var playlistsSearch = this.SearchPlaylists(
-                                await this.songsService.GetAllPlaylistsAsync(Order.Name), 
-                                args.QueryText,
-                                Math.Max(MaxResults - artistsSearch.Count - albumsSearch.Count - genresSearch.Count /* - songsSearch.Count */, 0))
-                                .ToList();
-
-            if (playlistsSearch.Count > 0)
+            if (result.Count < MaxResults)
             {
-                this.AddResults(args, playlistsSearch, Playlists);
+                var playlistsSearch = (await this.playlistCollectionsService.GetCollection<MusicPlaylist>().SearchAsync(args.QueryText, MaxResults - result.Count)).ToList();
+                if (playlistsSearch.Count > 0)
+                {
+                    this.AddResults(result, playlistsSearch, Playlists);
+                }
             }
 
-            deferral.Complete();
+            return result;
         }
 
-        private void AddResults(SearchPaneSuggestionsRequestedEventArgs args, IEnumerable<Playlist> playlists, string title)
+        private void AddResults(List<ISearchItem> result, IEnumerable<Playlist> playlists, string title)
         {
             bool titleAdded = false;
 
@@ -244,38 +258,73 @@ namespace OutcoldSolutions.GoogleMusic.Services
             {
                 if (!titleAdded)
                 {
-                    args.Request.SearchSuggestionCollection.AppendSearchSeparator(title);
+                    result.Add(new SearchTitle(title));
                     titleAdded = true;
                 }
 
-                IRandomAccessStreamReference randomAccessStreamReference = null;
-                if (!string.IsNullOrEmpty(playlist.AlbumArtUrl))
-                {
-                    randomAccessStreamReference =
-                        RandomAccessStreamReference.CreateFromUri(new Uri("http:" + playlist.AlbumArtUrl));
-                }
-                else
-                {
-                    randomAccessStreamReference =
-                        RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx:///Assets/SmallLogo.png"));
-                }
-
-                args.Request.SearchSuggestionCollection.AppendResultSuggestion(
+                result.Add(new SearchResult(
                     playlist.Title,
                     string.Format(CultureInfo.CurrentCulture, "{0} songs", playlist.Songs.Count),
                     string.Format(CultureInfo.CurrentCulture, "{0}:{1}", title, playlist.Title),
-                    randomAccessStreamReference,
-                    "gMusic");
+                    playlist.AlbumArtUrl));
             }
         }
 
-        private IEnumerable<Playlist> SearchPlaylists(IEnumerable<Playlist> playlists, string search, int take)
+        private enum SearchItemType
         {
-            return playlists.Select(x => Tuple.Create(Search.IndexOf(x.Title, search), x))
-                     .Where(x => x.Item1 >= 0)
-                     .OrderBy(x => x.Item1)
-                     .Take(take)
-                     .Select(x => x.Item2);
+            Title = 1,
+
+            Result = 2
+        }
+
+        private interface ISearchItem
+        {
+            SearchItemType ItemType { get; }
+        }
+
+        private class SearchTitle : ISearchItem
+        {
+            public SearchTitle(string title)
+            {
+                this.Title = title;
+            }
+
+            public string Title { get; private set; }
+
+            public SearchItemType ItemType
+            {
+                get
+                {
+                    return SearchItemType.Title;
+                }
+            }
+        }
+
+        private class SearchResult : ISearchItem
+        {
+            public SearchResult(string title, string details, string tag, string albumArtUrl)
+            {
+                this.Title = title;
+                this.Details = details;
+                this.Tag = tag;
+                this.AlbumArtUrl = albumArtUrl;
+            }
+
+            public string Title { get; private set; }
+
+            public string Details { get; private set; }
+
+            public string Tag { get; private set; }
+
+            public string AlbumArtUrl { get; private set; }
+
+            public SearchItemType ItemType
+            {
+                get
+                {
+                    return SearchItemType.Result;
+                }
+            }
         }
     }
 }

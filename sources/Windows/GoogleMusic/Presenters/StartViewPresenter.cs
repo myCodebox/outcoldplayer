@@ -62,10 +62,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
             // TODO: PlaylistsRequest should be null
             groups.Add(await this.GetGroupAsync<SystemPlaylist>(null, PlaylistsRequest.Albums));
-
-            var playlists = await this.songsService.GetAllPlaylistsAsync(Order.LastPlayed, canReload: true);
-            groups.Add(new PlaylistsGroupBindingModel("Playlists", playlists.Count, playlists.Take(MaxItems).Select(x => new PlaylistBindingModel(x)), PlaylistsRequest.Playlists));
-
+            groups.Add(await this.GetGroupAsync<MusicPlaylist>("Playlists", PlaylistsRequest.Playlists));
             groups.Add(await this.GetGroupAsync<Artist>("Artists", PlaylistsRequest.Artists));
             groups.Add(await this.GetGroupAsync<Album>("Albums", PlaylistsRequest.Albums));
             groups.Add(await this.GetGroupAsync<Genre>("Genres", PlaylistsRequest.Genres));

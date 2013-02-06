@@ -111,7 +111,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             }
 
             var playlists =
-                this.SearchPlaylists(await this.songsService.GetAllPlaylistsAsync(), query)
+                (await this.collectionsService.GetCollection<MusicPlaylist>().SearchAsync(query))
                     .Select(x => new PlaylistResultBindingModel(query, x))
                     .Cast<SearchResultBindingModel>()
                     .ToList();
@@ -122,11 +122,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             }
 
             return results;
-        }
-
-        private IEnumerable<Playlist> SearchPlaylists(IEnumerable<Playlist> playlists, string search)
-        {
-            return playlists.Where(x => Models.Search.Contains(x.Title, search));
         }
     }
 }

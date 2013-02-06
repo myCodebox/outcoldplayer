@@ -195,12 +195,12 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private void AddToPlaylist()
         {
-            this.songsService.GetAllPlaylistsAsync(Order.Name).ContinueWith(
+            this.playlistCollectionsService.GetCollection<MusicPlaylist>().GetAllAsync(Order.Name).ContinueWith(
                 t =>
                     {
                         if (t.IsCompleted && !t.IsFaulted)
                         {
-                            this.View.ShowPlaylists(t.Result);
+                            this.View.ShowPlaylists(t.Result.ToList());
                         }
                     },
                 TaskScheduler.FromCurrentSynchronizationContext());
