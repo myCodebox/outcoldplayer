@@ -5,6 +5,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 {
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Repositories;
@@ -18,14 +19,14 @@ namespace OutcoldSolutions.GoogleMusic.Services
         {
         }
 
-        protected override List<SystemPlaylist> Generate()
+        protected override Task<List<SystemPlaylist>> LoadCollectionAsync()
         {
             var allSongs = this.SongsRepository.GetAll().ToList();
 
             var allSongsPlaylist = new SystemPlaylist("All songs", SystemPlaylist.SystemPlaylistType.AllSongs, allSongs);
             var highlyRatedPlaylist = new SystemPlaylist("Highly rated", SystemPlaylist.SystemPlaylistType.HighlyRated, allSongs.Where(x => x.Rating >= HighlyRatedValue));
 
-            return new List<SystemPlaylist>() { allSongsPlaylist, highlyRatedPlaylist };
+            return Task.FromResult(new List<SystemPlaylist>() { allSongsPlaylist, highlyRatedPlaylist });
         }
     }
 }

@@ -4,6 +4,7 @@
 namespace OutcoldSolutions.GoogleMusic.Services
 {
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.Models;
@@ -11,22 +12,19 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
     public class MusicPlaylistCollection : PlaylistCollectionBase<MusicPlaylist>
     {
-        private readonly ISongsService songsService;
+        private readonly IMusicPlaylistRepository musicPlaylistRepository;
 
         public MusicPlaylistCollection(
-            ISongsService songsService,
+            IMusicPlaylistRepository musicPlaylistRepository,
             ISongsRepository songsRepository)
-            : base(songsRepository)
+            : base(songsRepository, useCache: false)
         {
-            this.songsService = songsService;
+            this.musicPlaylistRepository = musicPlaylistRepository;
         }
 
-        protected override List<MusicPlaylist> Generate()
+        protected async override Task<List<MusicPlaylist>> LoadCollectionAsync()
         {
-            // TODO: make async
-            var task = this.songsService.GetAllPlaylistsAsync();
-            Task.WaitAll(task);
-            return task.Result;
+            return (await this.musicPlaylistRepository.GetAllAsync()).ToList();
         }
     }
 }

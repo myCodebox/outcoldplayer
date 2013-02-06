@@ -10,6 +10,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.Models;
+    using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Views;
 
     using Windows.ApplicationModel.Search;
@@ -25,22 +26,23 @@ namespace OutcoldSolutions.GoogleMusic.Services
         private const string Playlists = "Playlists";
         private const string Songs = "Songs";
 
-        private readonly ISongsService songsService;
         private readonly INavigationService navigationService;
         private readonly IDispatcher dispatcher;
 
         private readonly IPlaylistCollectionsService playlistCollectionsService;
 
+        private readonly ISongsRepository songsRepository;
+
         public SearchService(
-            ISongsService songsService, 
             INavigationService navigationService, 
             IDispatcher dispatcher,
-            IPlaylistCollectionsService playlistCollectionsService)
+            IPlaylistCollectionsService playlistCollectionsService,
+            ISongsRepository songsRepository)
         {
-            this.songsService = songsService;
             this.navigationService = navigationService;
             this.dispatcher = dispatcher;
             this.playlistCollectionsService = playlistCollectionsService;
+            this.songsRepository = songsRepository;
         }
 
         public void Register()
@@ -158,7 +160,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
                         case Songs:
                             {
-                                var songs = await this.songsService.GetAllGoogleSongsAsync();
+                                var songs = this.songsRepository.GetAll();
                                 var song = songs.Where(
                                     x =>
                                     {
@@ -221,7 +223,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
             if (result.Count < MaxResults)
             {
-                var songs = await this.songsService.GetAllGoogleSongsAsync();
+                var songs = this.songsRepository.GetAll();
                 var songsSearch = songs.Where(x => Search.Contains(x.Title, args.QueryText)).Take(MaxResults - result.Count).ToList();
 
                 if (songsSearch.Count > 0)

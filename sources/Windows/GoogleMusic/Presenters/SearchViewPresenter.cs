@@ -10,23 +10,23 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
+    using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
 
     public class SearchViewPresenter : ViewPresenterBase<ISearchView>
     {
-        private readonly ISongsService songsService;
-
+        private readonly ISongsRepository songsRepository;
         private readonly IPlaylistCollectionsService collectionsService;
 
         public SearchViewPresenter(
             IDependencyResolverContainer container,
             ISearchView view,
-            ISongsService songsService,
+            ISongsRepository songsRepository,
             IPlaylistCollectionsService collectionsService)
             : base(container, view)
         {
-            this.songsService = songsService;
+            this.songsRepository = songsRepository;
             this.collectionsService = collectionsService;
             this.BindingModel = new SearchBindingModel();
         }
@@ -102,7 +102,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 results.Add(new SearchGroupBindingModel("Genres", genres));
             }
 
-            var songs = (await this.songsService.GetAllGoogleSongsAsync()).Where(
+            var songs = this.songsRepository.GetAll().Where(
                 x => Models.Search.Contains(x.Title, query)).Select(x => new SongResultBindingModel(query, x)).Cast<SearchResultBindingModel>().ToList();
 
             if (songs.Count > 0)

@@ -9,6 +9,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Models;
+    using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
     using OutcoldSolutions.GoogleMusic.Web;
@@ -17,25 +18,25 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     {
         private readonly ICurrentPlaylistService currentPlaylistService;
 
-        private readonly ISongsService songsService;
-
         private readonly ISongWebService songWebService;
 
         private readonly IPlaylistCollectionsService playlistCollectionsService;
+
+        private readonly IMusicPlaylistRepository musicPlaylistRepository;
 
         public CurrentPlaylistViewPresenter(
             IDependencyResolverContainer container, 
             ICurrentPlaylistView view,
             ICurrentPlaylistService currentPlaylistService,
-            ISongsService songsService,
             ISongWebService songWebService,
-            IPlaylistCollectionsService playlistCollectionsService)
+            IPlaylistCollectionsService playlistCollectionsService,
+            IMusicPlaylistRepository musicPlaylistRepository)
             : base(container, view)
         {
             this.currentPlaylistService = currentPlaylistService;
-            this.songsService = songsService;
             this.songWebService = songWebService;
             this.playlistCollectionsService = playlistCollectionsService;
+            this.musicPlaylistRepository = musicPlaylistRepository;
             this.BindingModel = new CurrentPlaylistBindingModel();
 
             this.currentPlaylistService.PlaylistChanged += (sender, args) => this.UpdateSongs();
@@ -53,7 +54,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         public void AddSelectedSongToPlaylist(MusicPlaylist playlist)
         {
             var song = this.BindingModel.Songs[this.View.SelectedSongIndex];
-            this.songsService.AddSongToPlaylistAsync(playlist, song);
+            this.musicPlaylistRepository.AddEntry(playlist.Id, song);
         }
 
         public void UpdateRating(Song song, int newValue)

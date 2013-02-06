@@ -6,10 +6,14 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Repositories
     using System;
     using System.Linq;
 
+    using Moq;
+
     using NUnit.Framework;
 
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Repositories;
+    using OutcoldSolutions.GoogleMusic.Services;
+    using OutcoldSolutions.GoogleMusic.Web;
     using OutcoldSolutions.GoogleMusic.Web.Models;
 
     public class SongsRepositorySuites : SuitesBase
@@ -23,7 +27,7 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Repositories
         {
             base.SetUp();
 
-            this.repository = new SongsRepository(this.LogManager);
+            this.repository = new SongsRepository(this.LogManager, Mock.Of<ISongWebService>(), Mock.Of<IGoogleMusicSessionService>());
         }
 
         [Test]

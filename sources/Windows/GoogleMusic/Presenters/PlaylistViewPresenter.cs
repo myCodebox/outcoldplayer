@@ -9,6 +9,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Models;
+    using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
     using OutcoldSolutions.GoogleMusic.Web;
@@ -17,11 +18,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     {
         private readonly ICurrentPlaylistService currentPlaylistService;
 
-        private readonly ISongsService songsService;
-
         private readonly ISongWebService songWebService;
 
         private readonly IPlaylistCollectionsService playlistCollectionsService;
+
+        private readonly IMusicPlaylistRepository musicPlaylistRepository;
 
         private PlaylistViewBindingModel bindingModel;
 
@@ -29,15 +30,15 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             IDependencyResolverContainer container, 
             IPlaylistView view,
             ICurrentPlaylistService currentPlaylistService,
-            ISongsService songsService,
             ISongWebService songWebService,
-            IPlaylistCollectionsService playlistCollectionsService)
+            IPlaylistCollectionsService playlistCollectionsService,
+            IMusicPlaylistRepository musicPlaylistRepository)
             : base(container, view)
         {
             this.currentPlaylistService = currentPlaylistService;
-            this.songsService = songsService;
             this.songWebService = songWebService;
             this.playlistCollectionsService = playlistCollectionsService;
+            this.musicPlaylistRepository = musicPlaylistRepository;
             this.PlaySelectedSongCommand = new DelegateCommand(this.PlaySelectedSong);
             this.RemoveFromPlaylistCommand = new DelegateCommand(this.RemoveFromPlaylist);
             this.AddToPlaylistCommand = new DelegateCommand(this.AddToPlaylist);
@@ -103,7 +104,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         public void AddSelectedSongToPlaylist(MusicPlaylist playlist)
         {
             var song = this.BindingModel.Songs[this.View.SelectedIndex];
-            this.songsService.AddSongToPlaylistAsync(playlist, song).ContinueWith(
+            this.musicPlaylistRepository.AddEntry(playlist.Id, song).ContinueWith(
                 t =>
                     {
                         if (t.IsCompleted && !t.IsFaulted && t.Result)
@@ -173,8 +174,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 var selectedIndex = this.View.SelectedIndex;
                 var musicPlaylist = (MusicPlaylist)this.BindingModel.Playlist;
 
-                this.songsService.RemoveSongFromPlaylistAsync(
-                    musicPlaylist, selectedIndex).ContinueWith(
+                this.musicPlaylistRepository.RemoveEntry(
+                    musicPlaylist.Id, musicPlaylist.EntriesIds[selectedIndex]).ContinueWith(
                         t =>
                             {
                                 this.BindingModel.Songs.RemoveAt(selectedIndex);

@@ -6,6 +6,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Repositories;
@@ -17,9 +18,9 @@ namespace OutcoldSolutions.GoogleMusic.Services
         {
         }
 
-        protected override IEnumerable<Artist> GetForSearch()
+        protected async override Task<List<Artist>> GetForSearchAsync()
         {
-            var artists = base.GetForSearch().ToList();
+            var artists = await base.GetForSearchAsync();
 
             var groupBy = this.SongsRepository.GetAll().GroupBy(x => x.GoogleMusicMetadata.ArtistNorm);
             foreach (var group in groupBy)
@@ -43,15 +44,15 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 }
             }
 
-            return this.OrderCollection(artists, Order.Name);
+            return this.OrderCollection(artists, Order.Name).ToList();
         }
 
-        protected override List<Artist> Generate()
+        protected override Task<List<Artist>> LoadCollectionAsync()
         {
-            return this.SongsRepository.GetAll()
+            return Task.FromResult(this.SongsRepository.GetAll()
                 .GroupBy(x => string.IsNullOrWhiteSpace(x.GoogleMusicMetadata.AlbumArtistNorm) ? x.GoogleMusicMetadata.ArtistNorm : x.GoogleMusicMetadata.AlbumArtistNorm)
                 .OrderBy(x => x.Key)
-                .Select(x => new Artist(x.ToList())).ToList();
+                .Select(x => new Artist(x.ToList())).ToList());
         }
     }
 }

@@ -7,6 +7,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
+    using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
     using OutcoldSolutions.GoogleMusic.Web;
@@ -23,10 +24,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private const string CurrentVersion = "1.2.1";
 
-        private readonly ISongsService songsService;
-        private readonly IPlaylistsWebService playlistsWebService;
-
         private readonly ISongWebService songWebService;
+
+        private readonly IMusicPlaylistRepository musicPlaylistRepository;
+
+        private readonly ISongsRepository songsRepository;
 
         private readonly INavigationService navigationService;
 
@@ -37,20 +39,20 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         public ProgressLoadingPresenter(
             IDependencyResolverContainer container, 
             IView view,
-            ISongsService songsService,
             INavigationService navigationService,
             ISearchService searchService,
             ISettingsService settingsService,
-            IPlaylistsWebService playlistsWebService,
-            ISongWebService songWebService)
+            ISongWebService songWebService,
+            IMusicPlaylistRepository musicPlaylistRepository,
+            ISongsRepository songsRepository)
             : base(container, view)
         {
-            this.songsService = songsService;
             this.navigationService = navigationService;
             this.searchService = searchService;
             this.settingsService = settingsService;
-            this.playlistsWebService = playlistsWebService;
             this.songWebService = songWebService;
+            this.musicPlaylistRepository = musicPlaylistRepository;
+            this.songsRepository = songsRepository;
             this.BindingModel = new ProgressLoadingBindingModel();
         }
 
@@ -77,7 +79,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                         this.BindingModel.Maximum = tStatus.Result.AvailableTracks * 2;
                         this.BindingModel.Message = "Loading playlists...";
 
-                        this.songsService.GetAllPlaylistsAsync().ContinueWith(
+                        this.musicPlaylistRepository.InitializeAsync(new Progress<int>()).ContinueWith(
                             tPlaylists =>
                             {
                                 this.BindingModel.Progress = tStatus.Result.AvailableTracks;
@@ -96,7 +98,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                                                     });
                                         };
 
-                                    this.songsService.GetAllGoogleSongsAsync(progress).ContinueWith(
+                                    this.songsRepository.InitializeAsync(progress).ContinueWith(
                                         tSongs =>
                                         {
                                             if (tSongs.IsCompleted && !tSongs.IsFaulted)

@@ -16,18 +16,14 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     {
         private const int MaxItems = 12;
 
-        private readonly ISongsService songsService;
-
         private readonly IPlaylistCollectionsService collectionsService;
 
         public StartViewPresenter(
             IDependencyResolverContainer container, 
             IStartView view,
-            ISongsService songsService,
             IPlaylistCollectionsService collectionsService)
             : base(container, view)
         {
-            this.songsService = songsService;
             this.collectionsService = collectionsService;
 
             this.BindingModel = new StartViewBindingModel();

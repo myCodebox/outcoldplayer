@@ -3,12 +3,15 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Presenters
 {
+    using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
+    using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
 
@@ -18,9 +21,9 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
     public class PlaylistsViewPresenter : PlaylistsViewPresenterBase<IPlaylistsView>
     {
-        private readonly ISongsService songsService;
-
         private readonly IPlaylistCollectionsService playlistCollectionsService;
+
+        private readonly IMusicPlaylistRepository musicPlaylistRepository;
 
         private PlaylistsRequest currentRequest;
 
@@ -29,12 +32,12 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         public PlaylistsViewPresenter(
             IDependencyResolverContainer container,
             IPlaylistsView view,
-            ISongsService songsService,
-            IPlaylistCollectionsService playlistCollectionsService)
+            IPlaylistCollectionsService playlistCollectionsService,
+            IMusicPlaylistRepository musicPlaylistRepository)
             : base(container, view)
         {
-            this.songsService = songsService;
             this.playlistCollectionsService = playlistCollectionsService;
+            this.musicPlaylistRepository = musicPlaylistRepository;
             this.BindingModel = new PlaylistsViewBindingModel();
 
             this.AddPlaylistCommand = new DelegateCommand(this.AddPlaylist, () => !this.BindingModel.IsLoading && this.BindingModel.IsEditable);
@@ -129,7 +132,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 {
                     var playlist = (MusicPlaylist)playlistBindingModel.Playlist;
 
-                    this.songsService.ChangePlaylistNameAsync(playlist, newName).ContinueWith(
+                    this.musicPlaylistRepository.ChangeName(playlist.Id, newName).ContinueWith(
                         t =>
                         {
                             this.BindingModel.IsLoading = false;
@@ -153,7 +156,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 this.BindingModel.IsLoading = true;
                 this.BindingModel.IsEditable = false;
 
-                this.songsService.CreatePlaylistAsync().ContinueWith(
+                this.musicPlaylistRepository.CreateAsync(string.Format(CultureInfo.CurrentCulture, "Playlist - {0}", DateTime.Now)).ContinueWith(
                     async t =>
                         {
                             if (t.Result != null)
@@ -194,7 +197,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     dialog.Commands.Add(
                         new UICommand(
                             "Yes",
-                            command => this.songsService.DeletePlaylistAsync((MusicPlaylist)playlist).ContinueWith(
+                            command => this.musicPlaylistRepository.DeleteAsync(((MusicPlaylist)playlist).Id).ContinueWith(
                                 async t =>
                                     {
                                         if (t.IsCompleted && !t.IsFaulted && t.Result)

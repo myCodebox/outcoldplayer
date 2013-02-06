@@ -5,6 +5,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 {
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Repositories;
@@ -16,12 +17,12 @@ namespace OutcoldSolutions.GoogleMusic.Services
         {
         }
 
-        protected override List<Genre> Generate()
+        protected override Task<List<Genre>> LoadCollectionAsync()
         {
-            return this.SongsRepository.GetAll()
+            return Task.FromResult(this.SongsRepository.GetAll()
                     .GroupBy(x => x.GoogleMusicMetadata.Genre)
                     .OrderBy(x => x.Key)
-                    .Select(x => new Genre(x.Key, x.ToList())).ToList();
+                    .Select(x => new Genre(x.Key, x.ToList())).ToList());
         }
     }
 }

@@ -6,6 +6,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.Models;
@@ -15,48 +16,58 @@ namespace OutcoldSolutions.GoogleMusic.Services
         where TPlaylist : Playlist
     {
         private readonly object locker = new object();
+        private readonly bool useCache = false;
+
         private List<TPlaylist> playlists;
 
-        protected PlaylistCollectionBase(ISongsRepository songsRepository)
+        protected PlaylistCollectionBase(
+            ISongsRepository songsRepository, 
+            bool useCache = true)
         {
+            this.useCache = useCache;
             this.SongsRepository = songsRepository;
             this.SongsRepository.Updated += () =>
                 {
-                    lock (locker)
+                    if (this.useCache)
                     {
-                        this.playlists = null;
+                        lock (locker)
+                        {
+                            this.playlists = null;
+                        }
                     }
                 };
         }
 
         protected ISongsRepository SongsRepository { get; private set; }
 
-        public Task<int> CountAsync()
+        public async Task<int> CountAsync()
         {
-            return Task.Factory.StartNew(() => this.GetAll().Count);
+            var collection = await this.GetCollectionAsync();
+            return collection.Count;
         }
 
-        public Task<IEnumerable<TPlaylist>> GetAllAsync(Order order = Order.Name, int takeCount = int.MaxValue)
+        public async Task<IEnumerable<TPlaylist>> GetAllAsync(Order order = Order.Name, int takeCount = int.MaxValue)
         {
-            return Task.Factory.StartNew(() => this.OrderCollection(this.GetAll(), order).Take(takeCount));
+            var collection = await this.GetCollectionAsync();
+            return this.OrderCollection(collection, order).Take(takeCount);
         }
 
-        public Task<IEnumerable<TPlaylist>> SearchAsync(string query, int takeCount = Int32.MaxValue)
+        public async Task<IEnumerable<TPlaylist>> SearchAsync(string query, int takeCount = Int32.MaxValue)
         {
-            return Task.Factory.StartNew(() => this.GetForSearch()
-                                                   .Select(x => Tuple.Create(Search.IndexOf(x.Title, query), x))
-                                                   .Where(x => x.Item1 >= 0)
-                                                   .OrderBy(x => x.Item1)
-                                                   .Take(takeCount)
-                                                   .Select(x => x.Item2));
+            var collection = await this.GetForSearchAsync();
+            return collection.Select(x => Tuple.Create(Search.IndexOf(x.Title, query), x))
+                          .Where(x => x.Item1 >= 0)
+                          .OrderBy(x => x.Item1)
+                          .Take(takeCount)
+                          .Select(x => x.Item2);
         }
 
-        protected virtual IEnumerable<TPlaylist> GetForSearch()
+        protected async virtual Task<List<TPlaylist>> GetForSearchAsync()
         {
-            return this.GetAll();
+            return await this.GetCollectionAsync();
         }
 
-        protected abstract List<TPlaylist> Generate();
+        protected abstract Task<List<TPlaylist>> LoadCollectionAsync();
 
         protected IEnumerable<TPlaylist> OrderCollection(IEnumerable<TPlaylist> enumerable, Order order)
         {
@@ -72,16 +83,36 @@ namespace OutcoldSolutions.GoogleMusic.Services
             return enumerable;
         }
 
-        private List<TPlaylist> GetAll()
+        private async Task<List<TPlaylist>> GetCollectionAsync()
         {
-            lock (this.locker)
+            try
             {
-                if (this.playlists == null)
+                if (this.useCache)
                 {
-                    this.playlists = this.Generate();
+                    Monitor.Enter(this.locker);
                 }
 
-                return this.playlists.ToList();
+                if (this.playlists != null)
+                {
+                    return this.playlists.ToList();
+                }
+                else
+                {
+                    var result = await this.LoadCollectionAsync();
+                    if (this.useCache)
+                    {
+                        this.playlists = result;
+                    }
+
+                    return result.ToList();
+                }
+            }
+            finally 
+            {
+                if (this.useCache)
+                {
+                    Monitor.Exit(this.locker);
+                }
             }
         }
     }

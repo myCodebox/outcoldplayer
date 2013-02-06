@@ -8,22 +8,21 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.Models;
-    using OutcoldSolutions.GoogleMusic.Web.Models;
 
-    public interface ISongsRepository
+    public interface IMusicPlaylistRepository
     {
-        event Action Updated;
-
         Task InitializeAsync(IProgress<int> progress);
 
-        IEnumerable<Song> GetAll();
+        Task<IEnumerable<MusicPlaylist>> GetAllAsync();
 
-        Song AddOrUpdate(GoogleMusicSong songInfo);
+        Task<MusicPlaylist> CreateAsync(string name);
 
-        void AddRange(IEnumerable<GoogleMusicSong> songInfos);
+        Task<bool> DeleteAsync(Guid playlistId);
 
-        void Remove(Guid id);
+        Task<bool> ChangeName(Guid playlistId, string name);
 
-        void Clear();
+        Task<bool> RemoveEntry(Guid playlistId, Guid entryId);
+
+        Task<bool> AddEntry(Guid playlistId, Song song);
     }
 }

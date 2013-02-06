@@ -6,6 +6,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Repositories;
@@ -17,9 +18,9 @@ namespace OutcoldSolutions.GoogleMusic.Services
         {
         }
 
-        protected override List<Album> Generate()
+        protected override Task<List<Album>> LoadCollectionAsync()
         {
-            return this.SongsRepository.GetAll()
+            return Task.FromResult(this.SongsRepository.GetAll()
                 .GroupBy(
                     x =>
                     new
@@ -35,7 +36,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                         x.OrderBy(s => Math.Max(s.GoogleMusicMetadata.Disc, 1))
                          .ThenBy(s => s.GoogleMusicMetadata.Track)
                          .ToList()))
-                .ToList();
+                .ToList());
         }
     }
 }
