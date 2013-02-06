@@ -17,13 +17,17 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     {
         private readonly ISongsService songsService;
 
+        private readonly IPlaylistCollectionsService collectionsService;
+
         public SearchViewPresenter(
             IDependencyResolverContainer container,
             ISearchView view,
-            ISongsService songsService)
+            ISongsService songsService,
+            IPlaylistCollectionsService collectionsService)
             : base(container, view)
         {
             this.songsService = songsService;
+            this.collectionsService = collectionsService;
             this.BindingModel = new SearchBindingModel();
         }
 
@@ -68,8 +72,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         {
             var results = new List<SearchGroupBindingModel>();
 
-            var artists =
-                this.SearchPlaylists(await this.songsService.GetAllArtistsAsync(includeNotAlbums: true), query)
+            var artists = (await this.collectionsService.GetArtistCollection().SearchAsync(query))
                     .Select(x => new PlaylistResultBindingModel(query, x))
                     .Cast<SearchResultBindingModel>()
                     .ToList();
@@ -79,8 +82,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 results.Add(new SearchGroupBindingModel("Artists", artists));
             }
 
-            var albums =
-                this.SearchPlaylists(await this.songsService.GetAllAlbumsAsync(), query)
+            var albums = (await this.collectionsService.GetAlbumCollection().SearchAsync(query))
                     .Select(x => new PlaylistResultBindingModel(query, x))
                     .Cast<SearchResultBindingModel>()
                     .ToList();
@@ -90,8 +92,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 results.Add(new SearchGroupBindingModel("Albums", albums));
             }
 
-            var genres =
-                this.SearchPlaylists(await this.songsService.GetAllGenresAsync(), query)
+            var genres = (await this.collectionsService.GetGenreCollection().SearchAsync(query))
                     .Select(x => new PlaylistResultBindingModel(query, x))
                     .Cast<SearchResultBindingModel>()
                     .ToList();

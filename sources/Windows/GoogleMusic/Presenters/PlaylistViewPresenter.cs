@@ -21,6 +21,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private readonly ISongWebService songWebService;
 
+        private readonly IPlaylistCollectionsService playlistCollectionsService;
+
         private PlaylistViewBindingModel bindingModel;
 
         public PlaylistViewPresenter(
@@ -28,12 +30,14 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             IPlaylistView view,
             ICurrentPlaylistService currentPlaylistService,
             ISongsService songsService,
-            ISongWebService songWebService)
+            ISongWebService songWebService,
+            IPlaylistCollectionsService playlistCollectionsService)
             : base(container, view)
         {
             this.currentPlaylistService = currentPlaylistService;
             this.songsService = songsService;
             this.songWebService = songWebService;
+            this.playlistCollectionsService = playlistCollectionsService;
             this.PlaySelectedSongCommand = new DelegateCommand(this.PlaySelectedSong);
             this.RemoveFromPlaylistCommand = new DelegateCommand(this.RemoveFromPlaylist);
             this.AddToPlaylistCommand = new DelegateCommand(this.AddToPlaylist);
@@ -143,7 +147,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private async Task<Playlist> SearchAlbum(Song song)
         {
-            var albums = await this.songsService.GetAllAlbumsAsync();
+            var albums = await this.playlistCollectionsService.GetAlbumCollection().GetAllAsync();
 
             var album = albums.FirstOrDefault(x => x.Songs.Contains(song));
 

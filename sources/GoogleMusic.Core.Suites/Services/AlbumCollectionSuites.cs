@@ -12,10 +12,10 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Services
     using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Services;
 
-    public class AlbumsServiceSuites : SuitesBase
+    public class AlbumCollectionSuites : SuitesBase
     {
         private Mock<ISongsRepository> songsRepository;
-        private AlbumsService albumsService;
+        private AlbumCollection albumCollection;
 
         public override void SetUp()
         {
@@ -24,14 +24,14 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Services
             this.songsRepository = new Mock<ISongsRepository>();
             this.songsRepository.Setup(x => x.GetAll()).Returns(SongStubs.GetAllSongs);
 
-            this.albumsService = new AlbumsService(this.songsRepository.Object);
+            this.albumCollection = new AlbumCollection(this.songsRepository.Object);
         }
 
         [Test]
-        public void GetAll_SetSongsRepository_ReturnsAllAlbums()
+        public async void GetAll_SetSongsRepository_ReturnsAllAlbums()
         {
             // Act
-            var albums = this.albumsService.GetAll().ToList();
+            var albums = (await this.albumCollection.GetAllAsync()).ToList();
 
             // Assert
             Assert.AreEqual(3, albums.Count);
@@ -41,10 +41,25 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Services
         }
 
         [Test]
-        public void GetCount_SetSongsRepository_ReturnsCountOfAllAlbums()
+        public async void GetAll_OrderByLastPlayed_CollectionOrderedByName()
         {
             // Act
-            var albumsCount = this.albumsService.Count();
+            var albums = (await this.albumCollection.GetAllAsync(Order.LastPlayed)).ToList();
+
+            // Assert
+            Assert.AreEqual(3, albums.Count);
+            var albumsOrdered = albums.OrderByDescending(a => a.Songs.Max(s => s.GoogleMusicMetadata.LastPlayed)).ToList();
+
+            Assert.AreSame(albumsOrdered[0], albums[0]);
+            Assert.AreSame(albumsOrdered[1], albums[1]);
+            Assert.AreSame(albumsOrdered[2], albums[2]);
+        }
+
+        [Test]
+        public async void GetCount_SetSongsRepository_ReturnsCountOfAllAlbums()
+        {
+            // Act
+            var albumsCount = await this.albumCollection.CountAsync();
 
             // Assert
             Assert.AreEqual(3, albumsCount);

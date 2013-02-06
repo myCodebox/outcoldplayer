@@ -19,6 +19,9 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     public class PlaylistsViewPresenter : PlaylistsViewPresenterBase<IPlaylistsView>
     {
         private readonly ISongsService songsService;
+
+        private readonly IPlaylistCollectionsService playlistCollectionsService;
+
         private PlaylistsRequest currentRequest;
 
         private Playlist clickedPlaylist = null;
@@ -26,10 +29,12 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         public PlaylistsViewPresenter(
             IDependencyResolverContainer container,
             IPlaylistsView view,
-            ISongsService songsService)
+            ISongsService songsService,
+            IPlaylistCollectionsService playlistCollectionsService)
             : base(container, view)
         {
             this.songsService = songsService;
+            this.playlistCollectionsService = playlistCollectionsService;
             this.BindingModel = new PlaylistsViewBindingModel();
 
             this.AddPlaylistCommand = new DelegateCommand(this.AddPlaylist, () => !this.BindingModel.IsLoading && this.BindingModel.IsEditable);
@@ -237,7 +242,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
             if (this.currentRequest == PlaylistsRequest.Albums)
             {
-                playlists = await this.songsService.GetAllAlbumsAsync(Order.Name);
+                playlists = await this.playlistCollectionsService.GetAlbumCollection().GetAllAsync(Order.Name);
             }
             else if (this.currentRequest == PlaylistsRequest.Playlists)
             {
@@ -245,11 +250,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             }
             else if (this.currentRequest == PlaylistsRequest.Genres)
             {
-                playlists = await this.songsService.GetAllGenresAsync(Order.Name);
+                playlists = await this.playlistCollectionsService.GetGenreCollection().GetAllAsync(Order.Name);
             }
             else
             {
-                playlists = await this.songsService.GetAllArtistsAsync(Order.Name);
+                playlists = await this.playlistCollectionsService.GetArtistCollection().GetAllAsync(Order.Name);
             }
 
             return playlists.GroupBy(x => string.IsNullOrEmpty(x.Title) ? ' ' : char.ToUpper(x.Title[0]))

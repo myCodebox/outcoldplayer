@@ -62,84 +62,9 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 };
         }
 
-        public Task<List<Album>> GetAllAlbumsAsync(Order order = Order.Name)
-        {
-            return Task.Factory.StartNew(() =>
-                {
-                    var albums = this.songsRepository.GetAll()
-                        .GroupBy(x => new
-                                          {
-                                              x.GoogleMusicMetadata.AlbumNorm, 
-                                              ArtistNorm = string.IsNullOrWhiteSpace(x.GoogleMusicMetadata.AlbumArtistNorm) 
-                                                                    ? x.GoogleMusicMetadata.ArtistNorm 
-                                                                    : x.GoogleMusicMetadata.AlbumArtistNorm
-                                          })
-                        .Select(x => new Album(x.ToList()));
-
-                    return OrderCollection(albums, order).ToList();
-                });
-        }
-
         public async Task<List<MusicPlaylist>> GetAllPlaylistsAsync(Order order = Order.Name, bool canReload = false)
         {
             return OrderCollection(await this.GetAllGooglePlaylistsAsync(canReload), order).ToList();
-        }
-
-        public Task<List<Genre>> GetAllGenresAsync(Order order = Order.Name)
-        {
-            return Task.Factory.StartNew(
-                () =>
-                    {
-                        var genresCache = this.songsRepository.GetAll()
-                                .GroupBy(x => x.GoogleMusicMetadata.Genre)
-                                .OrderBy(x => x.Key)
-                                .Select(x => new Genre(x.Key, x.ToList()));
-
-                        return OrderCollection(genresCache, order).ToList();
-                    });
-        }
-
-        public Task<List<Artist>> GetAllArtistsAsync(Order order = Order.Name, bool includeNotAlbums = false)
-        {
-            return Task.Factory.StartNew(
-                () =>
-                    {
-                        var artistsCache = this.songsRepository.GetAll()
-                            .GroupBy(x => string.IsNullOrWhiteSpace(x.GoogleMusicMetadata.AlbumArtistNorm) ? x.GoogleMusicMetadata.ArtistNorm : x.GoogleMusicMetadata.AlbumArtistNorm)
-                            .OrderBy(x => x.Key)
-                            .Select(x => new Artist(x.ToList()));
-
-                        if (includeNotAlbums)
-                        {
-                            var artists = artistsCache.ToList();
-
-                            var groupBy = this.songsRepository.GetAll().GroupBy(x => x.GoogleMusicMetadata.ArtistNorm);
-                            foreach (var group in groupBy)
-                            {
-                                var artist = artists.FirstOrDefault(
-                                    x => string.Equals(group.Key, x.Title, StringComparison.CurrentCultureIgnoreCase));
-
-                                if (artist != null)
-                                {
-                                    foreach (Song song in group)
-                                    {
-                                        if (!artist.Songs.Contains(song))
-                                        {
-                                            artist.Songs.Add(song);
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    artists.Add(new Artist(group.ToList(), useArtist: true));
-                                }
-                            }
-                            
-                            artistsCache = artists;
-                        }
-
-                        return OrderCollection(artistsCache, order).ToList();
-                    });
         }
 
         public async Task<MusicPlaylist> CreatePlaylistAsync()

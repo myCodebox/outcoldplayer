@@ -18,13 +18,17 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private readonly ISongsService songsService;
 
+        private readonly IPlaylistCollectionsService collectionsService;
+
         public StartViewPresenter(
             IDependencyResolverContainer container, 
             IStartView view,
-            ISongsService songsService)
+            ISongsService songsService,
+            IPlaylistCollectionsService collectionsService)
             : base(container, view)
         {
             this.songsService = songsService;
+            this.collectionsService = collectionsService;
 
             this.BindingModel = new StartViewBindingModel();
         }
@@ -62,13 +66,13 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             var playlists = await this.songsService.GetAllPlaylistsAsync(Order.LastPlayed, canReload: true);
             groups.Add(new PlaylistsGroupBindingModel("Playlists", playlists.Count, playlists.Take(MaxItems).Select(x => new PlaylistBindingModel(x)), PlaylistsRequest.Playlists));
 
-            var artists = await this.songsService.GetAllArtistsAsync(Order.LastPlayed);
+            var artists = (await this.collectionsService.GetArtistCollection().GetAllAsync(Order.LastPlayed)).ToList();
             groups.Add(new PlaylistsGroupBindingModel("Artists", artists.Count, artists.Take(MaxItems).Select(x => new PlaylistBindingModel(x)), PlaylistsRequest.Artists));
 
-            var albums = await this.songsService.GetAllAlbumsAsync(Order.LastPlayed);
+            var albums = (await this.collectionsService.GetAlbumCollection().GetAllAsync(Order.LastPlayed)).ToList();
             groups.Add(new PlaylistsGroupBindingModel("Albums", albums.Count, albums.Take(MaxItems).Select(x => new PlaylistBindingModel(x)), PlaylistsRequest.Albums));
 
-            var genres = await this.songsService.GetAllGenresAsync(Order.LastPlayed);
+            var genres = (await this.collectionsService.GetGenreCollection().GetAllAsync(Order.LastPlayed)).ToList();
             groups.Add(new PlaylistsGroupBindingModel("Genres", genres.Count, genres.Take(MaxItems).Select(x => new PlaylistBindingModel(x)), PlaylistsRequest.Genres));
 
             return groups;

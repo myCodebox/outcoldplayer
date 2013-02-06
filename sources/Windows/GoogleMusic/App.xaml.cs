@@ -12,6 +12,7 @@ namespace OutcoldSolutions.GoogleMusic
     using OutcoldSolutions.GoogleMusic.Presenters;
     using OutcoldSolutions.GoogleMusic.Presenters.Popups;
     using OutcoldSolutions.GoogleMusic.Presenters.Settings;
+    using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Services.Publishers;
     using OutcoldSolutions.GoogleMusic.Views;
@@ -143,6 +144,13 @@ namespace OutcoldSolutions.GoogleMusic
                     registration.Register<MediaControlCurrentSongPublisher>().AsSingleton();
                     registration.Register<TileCurrentSongPublisher>().AsSingleton();
                     registration.Register<LastFmCurrentSongPublisher>().AsSingleton();
+
+                    // Songs Repositories and Services
+                    registration.Register<ISongsRepository>().AsSingleton<SongsRepository>();
+                    registration.Register<IAlbumCollection>().AsSingleton<AlbumCollection>();
+                    registration.Register<IArtistCollection>().AsSingleton<ArtistCollection>();
+                    registration.Register<IGenreCollection>().AsSingleton<GenreCollection>();
+                    registration.Register<IPlaylistCollectionsService>().AsSingleton<PlaylistCollectionsService>();
                 }
 
                 this.logManager = Container.Resolve<ILogManager>();

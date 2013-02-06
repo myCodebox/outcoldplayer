@@ -134,7 +134,6 @@
     <Compile Include="DispatcherContainer.cs" />
     <Compile Include="INavigationService.cs" />
     <Compile Include="Models\PlaylistsRequest.cs" />
-    <Compile Include="Models\Search.cs" />
     <Compile Include="Models\TimeSpanEx.cs" />
     <Compile Include="Presenters\AuthentificationPresenter.cs" />
     <Compile Include="Presenters\CurrentPlaylistViewPresenter.cs" />

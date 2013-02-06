@@ -24,7 +24,8 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Services
             ArtistNorm = Artist1,
             Album = Artist1Album1,
             AlbumNorm = Artist1Album1,
-            Title = "Song 1 Artist 1 Album 1"
+            Title = "Song 1 Artist 1 Album 1",
+            LastPlayed = 1
         });
 
         public static readonly Song Song2Artist1Album1 = new Song(new GoogleMusicSong()
@@ -34,7 +35,8 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Services
             ArtistNorm = Artist1,
             Album = Artist1Album1,
             AlbumNorm = Artist1Album1,
-            Title = "Song 2 Artist 1 Album 1"
+            Title = "Song 2 Artist 1 Album 1",
+            LastPlayed = 2
         });
 
         public static readonly Song Song1Artist1Album2 = new Song(new GoogleMusicSong()
@@ -44,7 +46,8 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Services
             ArtistNorm = Artist1,
             Album = Artist1Album2,
             AlbumNorm = Artist1Album2,
-            Title = "Song 1 Artist 1 Album 2"
+            Title = "Song 1 Artist 1 Album 2",
+            LastPlayed = 3
         });
 
         public static readonly Song Song2Artist1Album2 = new Song(new GoogleMusicSong()
@@ -54,7 +57,8 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Services
             ArtistNorm = Artist1,
             Album = Artist1Album2,
             AlbumNorm = Artist1Album2,
-            Title = "Song 2 Artist 1 Album 2"
+            Title = "Song 2 Artist 1 Album 2",
+            LastPlayed = 4
         });
 
         public static readonly Song Song1Artist2Album1 = new Song(new GoogleMusicSong()
@@ -64,7 +68,8 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Services
             ArtistNorm = Artist2,
             Album = Artist2Album1,
             AlbumNorm = Artist2Album1,
-            Title = "Song 1 Artist 2 Album 1"
+            Title = "Song 1 Artist 2 Album 1",
+            LastPlayed = 5
         });
 
         public static readonly Song Song2Artist2Album1 = new Song(new GoogleMusicSong()
@@ -74,7 +79,8 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Services
             ArtistNorm = Artist2,
             Album = Artist2Album1,
             AlbumNorm = Artist2Album1,
-            Title = "Song 2 Artist 2 Album 1"
+            Title = "Song 2 Artist 2 Album 1",
+            LastPlayed = 6
         });
 
         public static IEnumerable<Song> GetAllSongs()

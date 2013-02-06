@@ -108,6 +108,9 @@
     <Compile Include="..\Windows\GoogleMusic.Core\Models\Playlist.cs">
       <Link>_sources\Models\Playlist.cs</Link>
     </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Models\Search.cs">
+      <Link>_sources\Models\Search.cs</Link>
+    </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Models\Song.cs">
       <Link>_sources\Models\Song.cs</Link>
     </Compile>
@@ -144,8 +147,8 @@
     <Compile Include="..\Windows\GoogleMusic.Core\Repositories\SongsRepository.cs">
       <Link>_sources\Repositories\SongsRepository.cs</Link>
     </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Services\AlbumsService.cs">
-      <Link>_sources\Services\AlbumsService.cs</Link>
+    <Compile Include="..\Windows\GoogleMusic.Core\Services\AlbumCollection.cs">
+      <Link>_sources\Services\AlbumCollection.cs</Link>
     </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Services\IGoogleAccountService.cs">
       <Link>_sources\Services\IGoogleAccountService.cs</Link>
@@ -153,8 +156,11 @@
     <Compile Include="..\Windows\GoogleMusic.Core\Services\IGoogleMusicSessionService.cs">
       <Link>_sources\Services\IGoogleMusicSessionService.cs</Link>
     </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Services\IPlaylistsService.cs">
-      <Link>_sources\Services\IPlaylistsService.cs</Link>
+    <Compile Include="..\Windows\GoogleMusic.Core\Services\IPlaylistCollection.cs">
+      <Link>_sources\Services\IPlaylistCollection.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Services\IPlaylistCollectionsService.cs">
+      <Link>_sources\Services\IPlaylistCollectionsService.cs</Link>
     </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Services\ISettingsService.cs">
       <Link>_sources\Services\ISettingsService.cs</Link>
@@ -162,8 +168,11 @@
     <Compile Include="..\Windows\GoogleMusic.Core\Services\Order.cs">
       <Link>_sources\Services\Order.cs</Link>
     </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Services\PlaylistsServiceBase.cs">
-      <Link>_sources\Services\PlaylistsServiceBase.cs</Link>
+    <Compile Include="..\Windows\GoogleMusic.Core\Services\PlaylistCollectionBase.cs">
+      <Link>_sources\Services\PlaylistCollectionBase.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Services\PlaylistCollectionsService.cs">
+      <Link>_sources\Services\PlaylistCollectionsService.cs</Link>
     </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Services\Publishers\CurrentSongPublisherService.cs">
       <Link>_sources\Services\Publishers\CurrentSongPublisherService.cs</Link>
@@ -302,7 +311,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\SongsRepositorySuites.cs" />
     <Compile Include="Services\SongStubs.cs" />
-    <Compile Include="Services\AlbumsServiceSuites.cs" />
+    <Compile Include="Services\AlbumCollectionSuites.cs" />
     <Compile Include="Services\Pubslishers\CurrentSongPublisherServiceSuites.cs" />
     <Compile Include="SuitesBase.cs" />
     <Compile Include="SuitesConstants.cs" />
