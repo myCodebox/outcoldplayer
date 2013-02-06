@@ -141,14 +141,41 @@
     <Compile Include="..\Windows\GoogleMusic.Core\PropertyNameExtractor.cs">
       <Link>_sources\PropertyNameExtractor.cs</Link>
     </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Repositories\AlbumCollection.cs">
+      <Link>_sources\Repositories\AlbumCollection.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Repositories\ArtistCollection.cs">
+      <Link>_sources\Repositories\ArtistCollection.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Repositories\GenreCollection.cs">
+      <Link>_sources\Repositories\GenreCollection.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Repositories\IMusicPlaylistRepository.cs">
+      <Link>_sources\Repositories\IMusicPlaylistRepository.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Repositories\IPlaylistCollection.cs">
+      <Link>_sources\Repositories\IPlaylistCollection.cs</Link>
+    </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Repositories\ISongsRepository.cs">
       <Link>_sources\Repositories\ISongsRepository.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Repositories\MusicPlaylistCollection.cs">
+      <Link>_sources\Repositories\MusicPlaylistCollection.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Repositories\MusicPlaylistRepository.cs">
+      <Link>_sources\Repositories\MusicPlaylistRepository.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Repositories\Order.cs">
+      <Link>_sources\Repositories\Order.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Repositories\PlaylistCollectionBase.cs">
+      <Link>_sources\Repositories\PlaylistCollectionBase.cs</Link>
     </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Repositories\SongsRepository.cs">
       <Link>_sources\Repositories\SongsRepository.cs</Link>
     </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Services\AlbumCollection.cs">
-      <Link>_sources\Services\AlbumCollection.cs</Link>
+    <Compile Include="..\Windows\GoogleMusic.Core\Repositories\SystemPlaylistCollection.cs">
+      <Link>_sources\Repositories\SystemPlaylistCollection.cs</Link>
     </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Services\IGoogleAccountService.cs">
       <Link>_sources\Services\IGoogleAccountService.cs</Link>
@@ -156,20 +183,11 @@
     <Compile Include="..\Windows\GoogleMusic.Core\Services\IGoogleMusicSessionService.cs">
       <Link>_sources\Services\IGoogleMusicSessionService.cs</Link>
     </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Services\IPlaylistCollection.cs">
-      <Link>_sources\Services\IPlaylistCollection.cs</Link>
-    </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Services\IPlaylistCollectionsService.cs">
       <Link>_sources\Services\IPlaylistCollectionsService.cs</Link>
     </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Services\ISettingsService.cs">
       <Link>_sources\Services\ISettingsService.cs</Link>
-    </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Services\Order.cs">
-      <Link>_sources\Services\Order.cs</Link>
-    </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Services\PlaylistCollectionBase.cs">
-      <Link>_sources\Services\PlaylistCollectionBase.cs</Link>
     </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Services\PlaylistCollectionsService.cs">
       <Link>_sources\Services\PlaylistCollectionsService.cs</Link>
@@ -311,7 +329,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\SongsRepositorySuites.cs" />
     <Compile Include="Services\SongStubs.cs" />
-    <Compile Include="Services\AlbumCollectionSuites.cs" />
+    <Compile Include="Repositories\AlbumCollectionSuites.cs" />
     <Compile Include="Services\Pubslishers\CurrentSongPublisherServiceSuites.cs" />
     <Compile Include="SuitesBase.cs" />
     <Compile Include="SuitesConstants.cs" />

@@ -4,6 +4,7 @@
 namespace OutcoldSolutions.GoogleMusic.Services
 {
     using OutcoldSolutions.GoogleMusic.Models;
+    using OutcoldSolutions.GoogleMusic.Repositories;
 
     public class PlaylistCollectionsService : IPlaylistCollectionsService
     {

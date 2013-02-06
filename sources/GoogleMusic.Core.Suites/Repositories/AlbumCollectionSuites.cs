@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // Outcold Solutions (http://outcoldman.com)
 // --------------------------------------------------------------------------------------------------------------------
-namespace OutcoldSolutions.GoogleMusic.Suites.Services
+namespace OutcoldSolutions.GoogleMusic.Suites.Repositories
 {
     using System.Linq;
 
@@ -10,7 +10,7 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Services
     using NUnit.Framework;
 
     using OutcoldSolutions.GoogleMusic.Repositories;
-    using OutcoldSolutions.GoogleMusic.Services;
+    using OutcoldSolutions.GoogleMusic.Suites.Services;
 
     public class AlbumCollectionSuites : SuitesBase
     {

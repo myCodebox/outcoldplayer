@@ -58,7 +58,9 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
             this.logger.Debug("Initialized. Creating dispatcher timer.");
 
             this.dispatcherTimer = new DispatcherTimer { Interval = TimeSpan.FromMinutes(10) };
+#if NETFX_CORE
             this.dispatcherTimer.Tick += async (sender, o) => await this.UpdatePlaylistsAsync();
+#endif
             this.dispatcherTimer.Start();
         }
 

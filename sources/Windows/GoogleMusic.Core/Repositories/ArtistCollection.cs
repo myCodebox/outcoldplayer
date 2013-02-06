@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // Outcold Solutions (http://outcoldman.com)
 // --------------------------------------------------------------------------------------------------------------------
-namespace OutcoldSolutions.GoogleMusic.Services
+namespace OutcoldSolutions.GoogleMusic.Repositories
 {
     using System;
     using System.Collections.Generic;
@@ -9,7 +9,6 @@ namespace OutcoldSolutions.GoogleMusic.Services
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.Models;
-    using OutcoldSolutions.GoogleMusic.Repositories;
 
     public class ArtistCollection : PlaylistCollectionBase<Artist>
     {

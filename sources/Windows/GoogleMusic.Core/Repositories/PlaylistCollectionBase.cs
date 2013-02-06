@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // Outcold Solutions (http://outcoldman.com)
 // --------------------------------------------------------------------------------------------------------------------
-namespace OutcoldSolutions.GoogleMusic.Services
+namespace OutcoldSolutions.GoogleMusic.Repositories
 {
     using System;
     using System.Collections.Generic;
@@ -10,7 +10,6 @@ namespace OutcoldSolutions.GoogleMusic.Services
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.Models;
-    using OutcoldSolutions.GoogleMusic.Repositories;
 
     public abstract class PlaylistCollectionBase<TPlaylist> : IPlaylistCollection<TPlaylist>
         where TPlaylist : Playlist
@@ -30,7 +29,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 {
                     if (this.useCache)
                     {
-                        lock (locker)
+                        lock (this.locker)
                         {
                             this.playlists = null;
                         }
