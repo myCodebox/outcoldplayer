@@ -5,7 +5,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 {
     using System;
 
-    using OutcoldSolutions.GoogleMusic.Diagnostics;
+    using OutcoldSolutions.Diagnostics;
 
     using Windows.Storage;
 

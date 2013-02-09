@@ -3,8 +3,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Presenters
 {
-    using OutcoldSolutions.GoogleMusic.Diagnostics;
-    using OutcoldSolutions.GoogleMusic.Presentation;
+    using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Views;
 
     public class PresenterBase : BindingModelBase

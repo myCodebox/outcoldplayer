@@ -6,8 +6,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
     using System.Collections.ObjectModel;
 
     using OutcoldSolutions.GoogleMusic.Models;
-    using OutcoldSolutions.GoogleMusic.Presentation;
-
+    
     public abstract class SongsBindingModelBase : BindingModelBase
     {
         protected SongsBindingModelBase()

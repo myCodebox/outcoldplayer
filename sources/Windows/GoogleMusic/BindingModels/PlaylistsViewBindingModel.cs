@@ -3,8 +3,6 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.BindingModels
 {
-    using OutcoldSolutions.GoogleMusic.Presentation;
-
     public class PlaylistsViewBindingModel : BindingModelBase
     {
         private int count;

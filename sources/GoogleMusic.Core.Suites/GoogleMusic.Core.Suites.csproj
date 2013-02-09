@@ -41,9 +41,12 @@
     <Reference Include="nunit.framework">
       <HintPath>..\packages\NUnit.2.6.2\lib\nunit.framework.dll</HintPath>
     </Reference>
-    <Reference Include="OutcoldSolutions.Framework, Version=1.0.21209.40220, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
+    <Reference Include="OutcoldSolutions.Framework, Version=1.0.30208.42435, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\OutcoldSolutions.Framework.1.0.21209.40220\lib\portable-win+net45+sl40+wp71\OutcoldSolutions.Framework.dll</HintPath>
+      <HintPath>..\packages\OutcoldSolutions.Framework.1.0.30208.42435\lib\portable-win+net45+sl40+wp71\OutcoldSolutions.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="OutcoldSolutions.SuitesBase">
+      <HintPath>..\packages\OutcoldSolutions.SuitesBase.1.0.30208.42610\lib\net45\OutcoldSolutions.SuitesBase.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -66,30 +69,6 @@
     <Reference Include="Windows" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Windows\GoogleMusic.Core\Diagnostics\DebugLogWriter.cs">
-      <Link>_sources\Diagnostics\DebugLogWriter.cs</Link>
-    </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Diagnostics\ILogger.cs">
-      <Link>_sources\Diagnostics\ILogger.cs</Link>
-    </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Diagnostics\ILogManager.cs">
-      <Link>_sources\Diagnostics\ILogManager.cs</Link>
-    </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Diagnostics\ILogWriter.cs">
-      <Link>_sources\Diagnostics\ILogWriter.cs</Link>
-    </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Diagnostics\Logger.cs">
-      <Link>_sources\Diagnostics\Logger.cs</Link>
-    </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Diagnostics\LoggerEx.cs">
-      <Link>_sources\Diagnostics\LoggerEx.cs</Link>
-    </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Diagnostics\LogLevel.cs">
-      <Link>_sources\Diagnostics\LogLevel.cs</Link>
-    </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Diagnostics\LogManager.cs">
-      <Link>_sources\Diagnostics\LogManager.cs</Link>
-    </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\IDispatcher.cs">
       <Link>_sources\IDispatcher.cs</Link>
     </Compile>
@@ -122,24 +101,6 @@
     </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Models\UserSession.cs">
       <Link>_sources\Models\UserSession.cs</Link>
-    </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Presentation\BindingModelBase.cs">
-      <Link>_sources\Presentation\BindingModelBase.cs</Link>
-    </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Presentation\Converters\BooleanToVisibilityConverter.cs">
-      <Link>_sources\Presentation\Converters\BooleanToVisibilityConverter.cs</Link>
-    </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Presentation\Converters\InvertBooleanConverter.cs">
-      <Link>_sources\Presentation\Converters\InvertBooleanConverter.cs</Link>
-    </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Presentation\Converters\ValueToVisibilityConverter.cs">
-      <Link>_sources\Presentation\Converters\ValueToVisibilityConverter.cs</Link>
-    </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Presentation\Converters\VisibilityConverterBase.cs">
-      <Link>_sources\Presentation\Converters\VisibilityConverterBase.cs</Link>
-    </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\PropertyNameExtractor.cs">
-      <Link>_sources\PropertyNameExtractor.cs</Link>
     </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Repositories\AlbumCollection.cs">
       <Link>_sources\Repositories\AlbumCollection.cs</Link>
@@ -206,9 +167,6 @@
     </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Services\SettingsValueChangedEventArgs.cs">
       <Link>_sources\Services\SettingsValueChangedEventArgs.cs</Link>
-    </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\TaskEx.cs">
-      <Link>_sources\TaskEx.cs</Link>
     </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Web\GoogleAccountWebService.cs">
       <Link>_sources\Web\GoogleAccountWebService.cs</Link>
@@ -321,17 +279,11 @@
     <Compile Include="..\Windows\GoogleMusic.Core\Web\SongWebService.cs">
       <Link>_sources\Web\SongWebService.cs</Link>
     </Compile>
-    <Compile Include="CultureScope.cs" />
-    <Compile Include="Presentation\BindingModelBaseSuites.cs" />
-    <Compile Include="Presentation\Converters\BooleanToVisibilityConverterSuites.cs" />
-    <Compile Include="Presentation\Converters\InvertBooleanConverterSuites.cs" />
-    <Compile Include="Presentation\Converters\ValueToVisibilityConverterSuites.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\SongsRepositorySuites.cs" />
     <Compile Include="Services\SongStubs.cs" />
     <Compile Include="Repositories\AlbumCollectionSuites.cs" />
     <Compile Include="Services\Pubslishers\CurrentSongPublisherServiceSuites.cs" />
-    <Compile Include="SuitesBase.cs" />
     <Compile Include="SuitesConstants.cs" />
     <Compile Include="Web\GoogleAccountWebServiceSuites.cs" />
     <Compile Include="Web\PlaylistsWebServiceSuites.cs" />

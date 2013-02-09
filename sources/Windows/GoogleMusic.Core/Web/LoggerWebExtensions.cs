@@ -10,7 +10,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
     using System.Text;
     using System.Threading.Tasks;
 
-    using OutcoldSolutions.GoogleMusic.Diagnostics;
+    using OutcoldSolutions.Diagnostics;
 
 #if !DEBUG
     using Windows.Security.Cryptography;

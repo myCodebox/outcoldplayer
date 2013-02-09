@@ -4,7 +4,6 @@
 namespace OutcoldSolutions.GoogleMusic.BindingModels
 {
     using OutcoldSolutions.GoogleMusic.Models;
-    using OutcoldSolutions.GoogleMusic.Presentation;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
 

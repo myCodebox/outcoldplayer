@@ -5,8 +5,6 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 {
     using System;
 
-    using OutcoldSolutions.GoogleMusic.Presentation;
-
     public class UserAuthentificationBindingModel : BindingModelBase
     {
         private string email;

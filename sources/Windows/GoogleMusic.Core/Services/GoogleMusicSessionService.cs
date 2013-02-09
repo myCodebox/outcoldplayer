@@ -10,7 +10,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
     using Newtonsoft.Json;
 
-    using OutcoldSolutions.GoogleMusic.Diagnostics;
+    using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Web;
 

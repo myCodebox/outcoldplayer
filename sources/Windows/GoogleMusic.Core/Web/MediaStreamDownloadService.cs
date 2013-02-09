@@ -11,7 +11,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
     using System.Threading;
     using System.Threading.Tasks;
 
-    using OutcoldSolutions.GoogleMusic.Diagnostics;
+    using OutcoldSolutions.Diagnostics;
 
     using Windows.Foundation;
     using Windows.Storage.Streams;
