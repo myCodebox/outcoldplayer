@@ -202,7 +202,15 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
         private string SignUrl(string url)
         {
-            var cookieCollection = this.httpClientHandler.CookieContainer.GetCookies(new Uri(PlayMusicUrl));
+            Uri uri;
+            if (!Uri.TryCreate(url, UriKind.Absolute, out uri)
+                && !Uri.TryCreate(this.httpClient.BaseAddress, url, out uri))
+            {
+                this.logger.Warning("Cannot generate uri from url '{0}'", url);
+                uri = new Uri(PlayMusicUrl);
+            }
+
+            var cookieCollection = this.httpClientHandler.CookieContainer.GetCookies(uri);
 
             var cookie = cookieCollection.Cast<Cookie>().FirstOrDefault(x => string.Equals(x.Name, "xt", StringComparison.OrdinalIgnoreCase));
             if (cookie != null)

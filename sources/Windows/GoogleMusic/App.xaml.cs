@@ -21,12 +21,14 @@ namespace OutcoldSolutions.GoogleMusic
     using OutcoldSolutions.GoogleMusic.Views.Settings;
     using OutcoldSolutions.GoogleMusic.Web;
     using OutcoldSolutions.GoogleMusic.Web.Lastfm;
-
+    
     using Windows.ApplicationModel;
     using Windows.ApplicationModel.Activation;
     using Windows.UI.Core;
     using Windows.UI.Notifications;
     using Windows.UI.Xaml;
+
+    using DebugLogWriter = OutcoldSolutions.GoogleMusic.Diagnostics.DebugLogWriter;
 
     public sealed partial class App : Application
     {

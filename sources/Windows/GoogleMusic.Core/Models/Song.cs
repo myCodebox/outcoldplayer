@@ -60,6 +60,7 @@ namespace OutcoldSolutions.GoogleMusic.Models
             set
             {
                 this.GoogleMusicMetadata.PlayCount = value;
+                this.RaiseCurrentPropertyChanged();
             }
         }
 

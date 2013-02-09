@@ -99,6 +99,7 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Diagnostics\DebugLogWriter.cs" />
     <Compile Include="Models\Search.cs" />
     <Compile Include="IDispatcher.cs" />
     <Compile Include="Models\Album.cs" />
