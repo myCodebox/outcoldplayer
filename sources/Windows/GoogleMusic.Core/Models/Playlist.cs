@@ -34,7 +34,7 @@ namespace OutcoldSolutions.GoogleMusic.Models
 
         public double Duration { get; private set; }
 
-        public string AlbumArtUrl { get; protected set; }
+        public Uri AlbumArtUrl { get; protected set; }
 
         public List<Song> Songs { get; private set; }
 
@@ -42,10 +42,10 @@ namespace OutcoldSolutions.GoogleMusic.Models
         {
             this.Duration = TimeSpan.FromSeconds(this.Songs.Sum(x => x.Duration)).TotalSeconds;
 
-            var song = this.Songs.FirstOrDefault(x => !string.IsNullOrEmpty(x.GoogleMusicMetadata.AlbumArtUrl));
+            var song = this.Songs.FirstOrDefault(x => x.Metadata.AlbumArtUrl != null);
             if (song != null)
             {
-                this.AlbumArtUrl = song.GoogleMusicMetadata.AlbumArtUrl;
+                this.AlbumArtUrl = song.Metadata.AlbumArtUrl;
             }
         }
     }

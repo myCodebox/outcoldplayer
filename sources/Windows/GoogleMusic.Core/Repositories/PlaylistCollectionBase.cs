@@ -72,7 +72,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
         {
             if (order == Order.LastPlayed)
             {
-                enumerable = enumerable.OrderByDescending(x => x.Songs.Count > 0 ? x.Songs.Max(s => s.GoogleMusicMetadata.LastPlayed) : double.MinValue);
+                enumerable = enumerable.OrderByDescending(x => x.Songs.Count > 0 ? x.Songs.Max(s => s.Metadata.LastPlayed) : DateTime.MinValue);
             }
             else if (order == Order.Name)
             {

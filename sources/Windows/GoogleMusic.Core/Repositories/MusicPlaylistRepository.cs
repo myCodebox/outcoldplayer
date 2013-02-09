@@ -176,7 +176,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
             var index = musicPlaylist.EntriesIds.IndexOf(entryId);
             var song = musicPlaylist.Songs[index];
 
-            var result = await this.playlistsWebService.RemoveSongAsync(playlistId, song.GoogleMusicMetadata.Id, entryId);
+            var result = await this.playlistsWebService.RemoveSongAsync(playlistId, song.Metadata.Id, entryId);
 
             if (this.logger.IsDebugEnabled)
             {
@@ -197,24 +197,24 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
         {
             if (this.logger.IsDebugEnabled)
             {
-                this.logger.Debug("Adding song Id '{0}' to playlist '{1}'.", song.GoogleMusicMetadata.Id, playlistId);
+                this.logger.Debug("Adding song Id '{0}' to playlist '{1}'.", song.Metadata.Id, playlistId);
             }
 
             MusicPlaylist musicPlaylist;
             if (!this.musicPlaylists.TryGetValue(playlistId, out musicPlaylist))
             {
-                this.logger.Warning("Cannot find playlist with id '{0}', could not add entry {1}.", playlistId, song.GoogleMusicMetadata.Id);
+                this.logger.Warning("Cannot find playlist with id '{0}', could not add entry {1}.", playlistId, song.Metadata.Id);
                 return false;
             }
 
-            var result = await this.playlistsWebService.AddSongAsync(playlistId, song.GoogleMusicMetadata.Id);
+            var result = await this.playlistsWebService.AddSongAsync(playlistId, song.Metadata.Id);
             if (result != null && result.SongIds.Length == 1)
             {
                 if (this.logger.IsDebugEnabled)
                 {
                     this.logger.Debug(
                         "Successfully added entry '{0}' to playlist {1}.",
-                        song.GoogleMusicMetadata.Id,
+                        song.Metadata.Id,
                         playlistId);
                 }
 
@@ -225,7 +225,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
                 return true;
             }
 
-            this.logger.Warning("Result of adding entry '{0}' to playlist {1} was unsuccesefull.", song.GoogleMusicMetadata.Id, playlistId);
+            this.logger.Warning("Result of adding entry '{0}' to playlist {1} was unsuccesefull.", song.Metadata.Id, playlistId);
             return false;
         }
 
@@ -316,7 +316,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
             {
                 var googlePlaylistSong = googleMusicPlaylist.Playlist[i];
 
-                if (googlePlaylistSong.Id != musicPlaylist.Songs[i].GoogleMusicMetadata.Id
+                if (googlePlaylistSong.Id != musicPlaylist.Songs[i].Metadata.Id
                     || googlePlaylistSong.PlaylistEntryId != musicPlaylist.EntriesIds[i])
                 {
                     return false;

@@ -36,14 +36,14 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
                                      { "artist", song.Artist },
                                      { "track", song.Title },
                                      { "album", song.Album },
-                                     { "trackNumber", song.GoogleMusicMetadata.Track.ToString("D") },
+                                     { "trackNumber", song.Metadata.Track.ToString("D") },
                                      { "duration", ((int)song.Duration).ToString("D") }
                                  };
 
-            if (!string.IsNullOrEmpty(song.GoogleMusicMetadata.AlbumArtist)
-                && string.Equals(song.GoogleMusicMetadata.AlbumArtist, song.Artist, StringComparison.OrdinalIgnoreCase))
+            if (!string.IsNullOrEmpty(song.Metadata.AlbumArtist)
+                && string.Equals(song.Metadata.AlbumArtist, song.Artist, StringComparison.OrdinalIgnoreCase))
             {
-                parameters.Add("albumArtist", song.GoogleMusicMetadata.AlbumArtist);
+                parameters.Add("albumArtist", song.Metadata.AlbumArtist);
             }
 
             Task nowPlayingTask = this.webService.CallAsync("track.updateNowPlaying", new Dictionary<string, string>(parameters));

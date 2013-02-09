@@ -14,10 +14,10 @@ namespace OutcoldSolutions.GoogleMusic.Controls
     {
         public static readonly DependencyProperty ValueProperty = 
             DependencyProperty.Register(
-            "Value", 
+            "Value",
             typeof(int), 
             typeof(Rating), 
-            new PropertyMetadata(0, (o, args) => ((Rating)o).UpdateStars()));
+            new PropertyMetadata((int)0, (o, args) => ((Rating)o).UpdateStars()));
 
         public static readonly DependencyProperty FillBrushProperty = 
             DependencyProperty.Register(
@@ -62,7 +62,7 @@ namespace OutcoldSolutions.GoogleMusic.Controls
 
             for (int i = 0; i < this.stars.Length; i++)
             {
-                var value = i + 1;
+                int value = i + 1;
                 this.stars[i] = (Button)this.GetTemplateChild("Star" + value);
                 this.stars[i].Click += (sender, args) =>
                     {

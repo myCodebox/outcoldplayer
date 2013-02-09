@@ -51,7 +51,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
         {
             this.logger.Debug("Initializing.");
 
-            this.AddRange(await this.songWebService.GetAllSongsAsync(progress));
+            this.AddRange((await this.songWebService.GetAllSongsAsync(progress)).Select(x => (SongMetadata)x));
 
             this.logger.Debug("Initialized. Creating dispatcher timer.");
 
@@ -70,14 +70,14 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
             }
         }
 
-        public Song AddOrUpdate(GoogleMusicSong songInfo)
+        public Song AddOrUpdate(SongMetadata songInfo)
         {
             lock (this.songs)
             {
                 Song song;
                 if (this.songs.TryGetValue(songInfo.Id, out song))
                 {
-                    song.GoogleMusicMetadata = songInfo;
+                    song.Metadata = songInfo;
                 }
                 else
                 {
@@ -88,7 +88,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
             }
         }
 
-        public void AddRange(IEnumerable<GoogleMusicSong> songInfos)
+        public void AddRange(IEnumerable<SongMetadata> songInfos)
         {
             bool updated = false;
 
@@ -147,7 +147,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
                     this.Remove(metadata.Id);
                 }
 
-                this.AddRange(updatedSongs.Where(m => !m.Deleted));
+                this.AddRange(updatedSongs.Where(m => !m.Deleted).Select(x => (SongMetadata)x));
             }
         }
     }

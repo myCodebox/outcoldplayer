@@ -69,6 +69,9 @@
     <Reference Include="Windows" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\Windows\GoogleMusic.Core\DateTimeExtensions.cs">
+      <Link>_sources\DateTimeExtensions.cs</Link>
+    </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\IDispatcher.cs">
       <Link>_sources\IDispatcher.cs</Link>
     </Compile>
@@ -92,6 +95,12 @@
     </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Models\Song.cs">
       <Link>_sources\Models\Song.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Models\SongMetadata.cs">
+      <Link>_sources\Models\SongMetadata.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Models\StreamType.cs">
+      <Link>_sources\Models\StreamType.cs</Link>
     </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Models\SystemPlaylist.cs">
       <Link>_sources\Models\SystemPlaylist.cs</Link>

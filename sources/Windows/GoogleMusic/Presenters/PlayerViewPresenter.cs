@@ -404,10 +404,10 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     this.Logger.Debug("Found current song.");
                     var song = songBindingModel;
 
-                    this.Logger.Debug("Getting url for song '{0}'.", song.GoogleMusicMetadata.Id);
+                    this.Logger.Debug("Getting url for song '{0}'.", song.Metadata.Id);
 
                     this.BindingModel.IsBusy = true;
-                    this.songWebService.GetSongUrlAsync(song.GoogleMusicMetadata.Id).ContinueWith(
+                    this.songWebService.GetSongUrlAsync(song.Metadata.Id).ContinueWith(
                         async (t) =>
                             {
                                 if (t.IsCompleted && !t.IsFaulted && t.Result != null)
@@ -475,7 +475,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                                             {
                                                 this.BindingModel.IsBusy = false;
                                                 this.Logger.Debug(
-                                                    "Could not find url for song {0}.", song.GoogleMusicMetadata.Id);
+                                                    "Could not find url for song {0}.", song.Metadata.Id);
                                                 var tResult = (new MessageDialog(
                                                     "Cannot play right now. Make sure that you don't use current account on different device at the same time. Try after couple minutes."))
                                                     .ShowAsync();

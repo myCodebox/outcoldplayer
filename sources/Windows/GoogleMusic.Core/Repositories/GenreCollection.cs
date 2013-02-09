@@ -19,7 +19,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
         protected override Task<List<Genre>> LoadCollectionAsync()
         {
             return Task.FromResult(this.SongsRepository.GetAll()
-                    .GroupBy(x => x.GoogleMusicMetadata.Genre)
+                    .GroupBy(x => x.Metadata.Genre)
                     .OrderBy(x => x.Key)
                     .Select(x => new Genre(x.Key, x.ToList())).ToList());
         }

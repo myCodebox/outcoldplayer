@@ -3,6 +3,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.BindingModels
 {
+    using System;
     using System.Globalization;
 
     using OutcoldSolutions.GoogleMusic.Models;
@@ -61,7 +62,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             }
         }
 
-        public override string ImageUrl
+        public override Uri ImageUrl
         {
             get
             {

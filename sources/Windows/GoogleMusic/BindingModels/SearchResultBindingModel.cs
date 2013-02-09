@@ -3,6 +3,8 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.BindingModels
 {
+    using System;
+
     using OutcoldSolutions.GoogleMusic.Models;
 
     public abstract class SearchResultBindingModel
@@ -41,6 +43,6 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
         public abstract string Description { get; }
 
-        public abstract string ImageUrl { get; }
+        public abstract Uri ImageUrl { get; }
     }
 }

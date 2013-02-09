@@ -5,6 +5,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
     using System.Threading.Tasks;
 
@@ -21,7 +22,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
         {
             var artists = await base.GetForSearchAsync();
 
-            var groupBy = this.SongsRepository.GetAll().GroupBy(x => x.GoogleMusicMetadata.ArtistNorm);
+            var groupBy = this.SongsRepository.GetAll().GroupBy(x => x.Metadata.Artist, StringComparer.CurrentCultureIgnoreCase);
             foreach (var group in groupBy)
             {
                 var artist = artists.FirstOrDefault(
@@ -49,8 +50,8 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
         protected override Task<List<Artist>> LoadCollectionAsync()
         {
             return Task.FromResult(this.SongsRepository.GetAll()
-                .GroupBy(x => string.IsNullOrWhiteSpace(x.GoogleMusicMetadata.AlbumArtistNorm) ? x.GoogleMusicMetadata.ArtistNorm : x.GoogleMusicMetadata.AlbumArtistNorm)
-                .OrderBy(x => x.Key)
+                .GroupBy(x => string.IsNullOrWhiteSpace(x.Metadata.AlbumArtist) ? x.Metadata.Artist : x.Metadata.AlbumArtist, StringComparer.CurrentCultureIgnoreCase)
+                .OrderBy(x => x.Key, StringComparer.CurrentCultureIgnoreCase)
                 .Select(x => new Artist(x.ToList())).ToList());
         }
     }

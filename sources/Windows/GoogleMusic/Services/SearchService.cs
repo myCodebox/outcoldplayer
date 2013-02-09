@@ -97,10 +97,10 @@ namespace OutcoldSolutions.GoogleMusic.Services
                             var searchResult = (SearchResult)item;
 
                             IRandomAccessStreamReference randomAccessStreamReference = null;
-                            if (!string.IsNullOrEmpty(searchResult.AlbumArtUrl))
+                            if (searchResult.AlbumArtUrl != null)
                             {
                                 randomAccessStreamReference =
-                                    RandomAccessStreamReference.CreateFromUri(new Uri("http:" + searchResult.AlbumArtUrl));
+                                    RandomAccessStreamReference.CreateFromUri(searchResult.AlbumArtUrl);
                             }
                             else
                             {
@@ -235,7 +235,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                             song.Title,
                             song.Artist,
                             string.Format(CultureInfo.CurrentCulture, "{0}:{1} - {2}", Songs, song.Artist, song.Title),
-                            song.GoogleMusicMetadata.AlbumArtUrl));
+                            song.Metadata.AlbumArtUrl));
                     }
                 }
             }
@@ -304,7 +304,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         private class SearchResult : ISearchItem
         {
-            public SearchResult(string title, string details, string tag, string albumArtUrl)
+            public SearchResult(string title, string details, string tag, Uri albumArtUrl)
             {
                 this.Title = title;
                 this.Details = details;
@@ -318,7 +318,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
             public string Tag { get; private set; }
 
-            public string AlbumArtUrl { get; private set; }
+            public Uri AlbumArtUrl { get; private set; }
 
             public SearchItemType ItemType
             {

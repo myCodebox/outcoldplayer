@@ -173,12 +173,12 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Services.Pubslishers
 
             service.AddPublisher<CurrentSongPublisher1>();
 
-            this.song.GoogleMusicMetadata.DurationMillis = 100;
+            this.song.Metadata.Duration = TimeSpan.FromMilliseconds(100);
 
             // Act
             await Task.WhenAny(
                 service.PublishAsync(this.song, this.playlist),
-                Task.Delay((int)this.song.GoogleMusicMetadata.DurationMillis));
+                Task.Delay((int)this.song.Metadata.Duration.TotalMilliseconds));
 
             // Assert
             delayPublisher.Verify(p => p.PublishAsync(this.song, this.playlist, It.IsAny<Uri>(), It.IsAny<CancellationToken>()), Times.Once());

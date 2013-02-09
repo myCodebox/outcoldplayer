@@ -3,6 +3,8 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.BindingModels
 {
+    using System;
+
     using OutcoldSolutions.GoogleMusic.Models;
 
     public class SongResultBindingModel : SearchResultBindingModel
@@ -39,11 +41,11 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             }
         }
 
-        public override string ImageUrl
+        public override Uri ImageUrl
         {
             get
             {
-                return this.result.GoogleMusicMetadata.AlbumArtUrl;
+                return this.result.Metadata.AlbumArtUrl;
             }
         }
     }

@@ -10,7 +10,12 @@ namespace OutcoldSolutions.GoogleMusic.Models
     public class SystemPlaylist : Playlist
     {
         public SystemPlaylist(string name, SystemPlaylistType type, IEnumerable<Song> songs)
-            : base(name, songs.OrderBy(s => s.GoogleMusicMetadata.ArtistNorm).ThenBy(s => s.GoogleMusicMetadata.AlbumNorm).ThenBy(s => Math.Max(s.GoogleMusicMetadata.Disc, 1)).ThenBy(s => s.GoogleMusicMetadata.Track).ToList())
+            : base(
+            name, 
+            songs.OrderBy(s => s.Metadata.Artist, StringComparer.CurrentCultureIgnoreCase)
+                .ThenBy(s => s.Metadata.Album, StringComparer.CurrentCultureIgnoreCase)
+                .ThenBy(s => Math.Max(s.Metadata.Disc, (byte)1))
+                .ThenBy(s => s.Metadata.Track).ToList())
         {
             this.Type = type;
             this.AlbumArtUrl = null;

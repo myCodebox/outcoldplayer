@@ -130,7 +130,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
         private void RatingOnValueChanged(object sender, ValueChangedEventArgs e)
         {
-            this.Presenter<CurrentPlaylistViewPresenter>().UpdateRating((Song)((Rating)sender).DataContext, e.NewValue);
+            this.Presenter<CurrentPlaylistViewPresenter>().UpdateRating((Song)((Rating)sender).DataContext, (byte)e.NewValue);
         }
     }
 }

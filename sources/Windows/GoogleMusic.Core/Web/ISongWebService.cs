@@ -19,8 +19,8 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
         Task<GoogleMusicSongUrl> GetSongUrlAsync(Guid id);
 
-        Task<bool> RecordPlayingAsync(GoogleMusicSong song, string playlistId, bool updateRecentAlbum, bool updateRecentPlaylist, int playCount);
+        Task<bool> RecordPlayingAsync(Guid songId, string playlistId, bool updateRecentAlbum, bool updateRecentPlaylist, int playCount);
 
-        Task<RatingResp> UpdateRatingAsync(GoogleMusicSong song, int rating);
+        Task<RatingResp> UpdateRatingAsync(Guid songId, int rating);
     }
 }

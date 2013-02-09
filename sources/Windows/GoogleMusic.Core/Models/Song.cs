@@ -3,26 +3,22 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Models
 {
-    using System;
-
-    using OutcoldSolutions.GoogleMusic.Web.Models;
-
     public class Song : BindingModelBase
     {
-        private GoogleMusicSong googleMusicSong;
+        private SongMetadata metadata;
 
         private bool isPlaying;
 
-        public Song(GoogleMusicSong googleMusicSong)
+        public Song(SongMetadata metadata)
         {
-            this.googleMusicSong = googleMusicSong;
+            this.metadata = metadata;
         }
 
         public string Title
         {
             get
             {
-                return this.GoogleMusicMetadata.Title;
+                return this.Metadata.Title;
             }
         }
 
@@ -30,7 +26,7 @@ namespace OutcoldSolutions.GoogleMusic.Models
         {
             get
             {
-                return TimeSpan.FromMilliseconds(this.GoogleMusicMetadata.DurationMillis).TotalSeconds;
+                return this.Metadata.Duration.TotalSeconds;
             }
         }
 
@@ -38,7 +34,7 @@ namespace OutcoldSolutions.GoogleMusic.Models
         {
             get
             {
-                return this.GoogleMusicMetadata.Artist;
+                return this.Metadata.Artist;
             }
         }
 
@@ -46,7 +42,7 @@ namespace OutcoldSolutions.GoogleMusic.Models
         {
             get
             {
-                return this.GoogleMusicMetadata.Album;
+                return this.Metadata.Album;
             }
         }
 
@@ -54,12 +50,12 @@ namespace OutcoldSolutions.GoogleMusic.Models
         {
             get
             {
-                return this.GoogleMusicMetadata.PlayCount;
+                return this.Metadata.PlayCount;
             }
 
             set
             {
-                this.GoogleMusicMetadata.PlayCount = value;
+                this.Metadata.PlayCount = value;
                 this.RaiseCurrentPropertyChanged();
             }
         }
@@ -68,25 +64,25 @@ namespace OutcoldSolutions.GoogleMusic.Models
         {
             get
             {
-                return this.GoogleMusicMetadata.Rating;
+                return this.Metadata.Rating;
             }
 
             set
             {
-                this.GoogleMusicMetadata.Rating = value;
+                this.Metadata.Rating = (byte)value;
             }
         }
 
-        public GoogleMusicSong GoogleMusicMetadata
+        public SongMetadata Metadata
         {
             get
             {
-                return this.googleMusicSong;
+                return this.metadata;
             }
 
             set
             {
-                this.googleMusicSong = value;
+                this.metadata = value;
                 this.RaisePropertyChanged(() => this.Title);
                 this.RaisePropertyChanged(() => this.Duration);
                 this.RaisePropertyChanged(() => this.Artist);

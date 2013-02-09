@@ -118,17 +118,17 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 TaskScheduler.FromCurrentSynchronizationContext());
         }
 
-        public void UpdateRating(Song song, int newValue)
+        public void UpdateRating(Song song, byte newValue)
         {
             song.Rating = newValue;
-            this.songWebService.UpdateRatingAsync(song.GoogleMusicMetadata, newValue).ContinueWith(
+            this.songWebService.UpdateRatingAsync(song.Metadata.Id, newValue).ContinueWith(
                         t =>
                         {
                             if (t.IsCompleted && !t.IsFaulted && t.Result != null)
                             {
                                 if (this.Logger.IsDebugEnabled)
                                 {
-                                    this.Logger.Debug("Rating update completed for song: {0}.", song.GoogleMusicMetadata.Id);
+                                    this.Logger.Debug("Rating update completed for song: {0}.", song.Metadata.Id);
                                     foreach (var songUpdate in t.Result.Songs)
                                     {
                                         this.Logger.Debug("Song updated: {0}, Rate: {1}.", songUpdate.Id, songUpdate.Rating);
@@ -137,7 +137,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                             }
                             else
                             {
-                                this.Logger.Debug("Failed to update rating for song: {0}.", song.GoogleMusicMetadata.Id);
+                                this.Logger.Debug("Failed to update rating for song: {0}.", song.Metadata.Id);
                                 if (t.IsFaulted && t.Exception != null)
                                 {
                                     this.Logger.LogErrorException(t.Exception);

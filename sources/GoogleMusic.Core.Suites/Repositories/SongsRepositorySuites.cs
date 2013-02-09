@@ -18,8 +18,8 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Repositories
 
     public class SongsRepositorySuites : SuitesBase
     {
-        private readonly GoogleMusicSong song1 = new GoogleMusicSong() { Id = Guid.NewGuid() };
-        private readonly GoogleMusicSong song2 = new GoogleMusicSong() { Id = Guid.NewGuid() };
+        private readonly SongMetadata song1 = new SongMetadata() { Id = Guid.NewGuid() };
+        private readonly SongMetadata song2 = new SongMetadata() { Id = Guid.NewGuid() };
 
         private SongsRepository repository;
 
@@ -39,8 +39,8 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Repositories
             // Assert
             var songs = this.repository.GetAll().ToList();
             Assert.AreEqual(2, songs.Count);
-            Assert.IsTrue(songs.Any(x => x.GoogleMusicMetadata.Id == this.song1.Id));
-            Assert.IsTrue(songs.Any(x => x.GoogleMusicMetadata.Id == this.song2.Id));
+            Assert.IsTrue(songs.Any(x => x.Metadata.Id == this.song1.Id));
+            Assert.IsTrue(songs.Any(x => x.Metadata.Id == this.song2.Id));
         }
 
         [Test]
@@ -64,7 +64,7 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Repositories
 
             // Assert
             Assert.NotNull(song);
-            Assert.IsTrue(this.repository.GetAll().Any(x => x.GoogleMusicMetadata.Id == this.song1.Id));
+            Assert.IsTrue(this.repository.GetAll().Any(x => x.Metadata.Id == this.song1.Id));
         }
 
         [Test]
@@ -77,7 +77,7 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Repositories
 
             // Assert
             Assert.NotNull(song);
-            Assert.IsTrue(this.repository.GetAll().Any(x => x.GoogleMusicMetadata.Id == this.song1.Id));
+            Assert.IsTrue(this.repository.GetAll().Any(x => x.Metadata.Id == this.song1.Id));
             Assert.AreEqual(1, this.repository.GetAll().Count());
         }
     }

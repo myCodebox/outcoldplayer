@@ -19,8 +19,8 @@ namespace OutcoldSolutions.GoogleMusic.Converters
 
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            var url = value as string;
-            if (string.IsNullOrEmpty(url))
+            var uri = value as Uri;
+            if (uri == null)
             {
                 if (parameter != null)
                 {
@@ -37,23 +37,22 @@ namespace OutcoldSolutions.GoogleMusic.Converters
 
                 return this.unknownAlbumArt116.Value;
             }
-            else
-            {
-                if (parameter != null)
-                {
-                    if (url.LastIndexOf(AlbumArtUrlParameter, StringComparison.OrdinalIgnoreCase) == (url.Length - AlbumArtUrlParameter.Length))
-                    {
-                        url = string.Format(
-                            CultureInfo.InvariantCulture,
-                            "{0}=s{1}-c-e100",
-                            url.Substring(0, url.Length - AlbumArtUrlParameter.Length),
-                            parameter);
-                    }
-                }
 
-                // TODO: Use converter parameter to set image size
-                return new BitmapImage(new Uri("http:" + url));
+            string url = uri.ToString();
+
+            if (parameter != null)
+            {
+                if (url.LastIndexOf(AlbumArtUrlParameter, StringComparison.OrdinalIgnoreCase) == (url.Length - AlbumArtUrlParameter.Length))
+                {
+                    url = string.Format(
+                        CultureInfo.InvariantCulture,
+                        "{0}=s{1}-c-e100",
+                        url.Substring(0, url.Length - AlbumArtUrlParameter.Length),
+                        parameter);
+                }
             }
+
+            return new BitmapImage(new Uri(url));
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)

@@ -8,7 +8,6 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.Models;
-    using OutcoldSolutions.GoogleMusic.Web.Models;
 
     public interface ISongsRepository
     {
@@ -18,9 +17,9 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
 
         IEnumerable<Song> GetAll();
 
-        Song AddOrUpdate(GoogleMusicSong songInfo);
+        Song AddOrUpdate(SongMetadata songInfo);
 
-        void AddRange(IEnumerable<GoogleMusicSong> songInfos);
+        void AddRange(IEnumerable<SongMetadata> songInfos);
 
         void Remove(Guid id);
 

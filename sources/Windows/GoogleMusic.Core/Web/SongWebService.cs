@@ -147,11 +147,11 @@ namespace OutcoldSolutions.GoogleMusic.Web
             return await this.googleMusicWebService.GetAsync<GoogleMusicSongUrl>(url, signUrl: false);
         }
 
-        public async Task<bool> RecordPlayingAsync(GoogleMusicSong song, string playlistId, bool updateRecentAlbum, bool updateRecentPlaylist, int playCount)
+        public async Task<bool> RecordPlayingAsync(Guid songId, string playlistId, bool updateRecentAlbum, bool updateRecentPlaylist, int playCount)
         {
             var jsonProperties = new Dictionary<string, string>
                                      {
-                                         { "songId", JsonConvert.ToString(song.Id) },
+                                         { "songId", JsonConvert.ToString(songId) },
                                          { "playCount", JsonConvert.ToString(playCount) },
                                          { "updateRecentAlbum", JsonConvert.ToString(updateRecentAlbum) },
                                          { "updateRecentPlaylist", JsonConvert.ToString(updateRecentPlaylist) },
@@ -163,11 +163,11 @@ namespace OutcoldSolutions.GoogleMusic.Web
             return response.Success.HasValue && response.Success.Value;
         }
 
-        public async Task<RatingResp> UpdateRatingAsync(GoogleMusicSong song, int rating)
+        public async Task<RatingResp> UpdateRatingAsync(Guid songId, int rating)
         {
             var jsonProperties = new Dictionary<string, string>
                                      {
-                                         { "id", JsonConvert.ToString(song.Id) },
+                                         { "id", JsonConvert.ToString(songId) },
                                          { "rating", JsonConvert.ToString(rating) }
                                      };
 

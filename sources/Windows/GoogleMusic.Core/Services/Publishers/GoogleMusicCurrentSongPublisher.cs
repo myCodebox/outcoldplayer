@@ -35,13 +35,13 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
 
         public async Task PublishAsync(Song song, Playlist currentPlaylist, Uri albumArtUri, CancellationToken cancellationToken)
         {
-            this.logger.Debug("PublishAsync: Publishing song playing to GoogleMusic services. SongId: {0}.", song.GoogleMusicMetadata.Id);
+            this.logger.Debug("PublishAsync: Publishing song playing to GoogleMusic services. SongId: {0}.", song.Metadata.Id);
 
             cancellationToken.ThrowIfCancellationRequested();
 
             int playCount = song.PlayCount + 1;
 
-            string playlistId = song.GoogleMusicMetadata.Title;
+            string playlistId = song.Metadata.Title;
             bool updateRecentAlbum = false;
             bool updateRecentPlaylist = false;
 
@@ -55,7 +55,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
                 else if (currentPlaylist is Album || currentPlaylist is Genre || currentPlaylist is Artist || currentPlaylist is SystemPlaylist)
                 {
                     updateRecentAlbum = true;
-                    playlistId = string.Format("{0} - {1}", song.GoogleMusicMetadata.Artist, song.GoogleMusicMetadata.Album);
+                    playlistId = string.Format("{0} - {1}", song.Metadata.Artist, song.Metadata.Album);
                 }
                 else
                 {
@@ -67,19 +67,17 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
                 this.dispatcher.RunAsync(() =>
                     { 
                         song.PlayCount = playCount;
-
-                        // This is UNIX format, I guess Google use it.
-                        song.GoogleMusicMetadata.LastPlayed = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalMilliseconds;
+                        song.Metadata.LastPlayed = DateTime.Now;
                     }),
                 Task.Run(async () =>
                     {
-                        if (!(await this.songWebService.RecordPlayingAsync(song.GoogleMusicMetadata, playlistId, updateRecentAlbum, updateRecentPlaylist, playCount)))
+                        if (!(await this.songWebService.RecordPlayingAsync(song.Metadata.Id, playlistId, updateRecentAlbum, updateRecentPlaylist, playCount)))
                         {
-                            this.logger.Warning("PublishAsync: Could not update GoogleMusic services for SongId: {0}.", song.GoogleMusicMetadata.Id);
+                            this.logger.Warning("PublishAsync: Could not update GoogleMusic services for SongId: {0}.", song.Metadata.Id);
                         }
                     }));
 
-            this.logger.Debug("PublishAsync: Song playing published to GoogleMusic services. SongId: {0}. Plays count: {1}.", song.GoogleMusicMetadata.Id, playCount);
+            this.logger.Debug("PublishAsync: Song playing published to GoogleMusic services. SongId: {0}. Plays count: {1}.", song.Metadata.Id, playCount);
         }
     }
 }

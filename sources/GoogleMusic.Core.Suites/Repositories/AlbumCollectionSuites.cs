@@ -48,7 +48,7 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Repositories
 
             // Assert
             Assert.AreEqual(3, albums.Count);
-            var albumsOrdered = albums.OrderByDescending(a => a.Songs.Max(s => s.GoogleMusicMetadata.LastPlayed)).ToList();
+            var albumsOrdered = albums.OrderByDescending(a => a.Songs.Max(s => s.Metadata.LastPlayed)).ToList();
 
             Assert.AreSame(albumsOrdered[0], albums[0]);
             Assert.AreSame(albumsOrdered[1], albums[1]);

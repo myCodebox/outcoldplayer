@@ -99,6 +99,7 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="DateTimeExtensions.cs" />
     <Compile Include="Diagnostics\DebugLogWriter.cs" />
     <Compile Include="Models\Search.cs" />
     <Compile Include="IDispatcher.cs" />
@@ -108,6 +109,8 @@
     <Compile Include="Models\MusicPlaylist.cs" />
     <Compile Include="Models\Playlist.cs" />
     <Compile Include="Models\Song.cs" />
+    <Compile Include="Models\SongMetadata.cs" />
+    <Compile Include="Models\StreamType.cs" />
     <Compile Include="Models\SystemPlaylist.cs" />
     <Compile Include="Models\UserInfo.cs" />
     <Compile Include="Models\UserSession.cs" />
