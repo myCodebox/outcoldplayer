@@ -23,8 +23,6 @@ namespace OutcoldSolutions.GoogleMusic.Services
         private readonly IGoogleMusicSessionService sessionService;
         private readonly IGoogleAccountWebService googleAccountWebService;
         private readonly IGoogleMusicWebService googleMusicWebService;
-        private readonly IPlaylistsWebService playlistsWebService;
-        private readonly ISongWebService songWebService;
 
         private readonly ResourceLoader resourceLoader = new ResourceLoader("CoreResources");
 
@@ -33,17 +31,13 @@ namespace OutcoldSolutions.GoogleMusic.Services
             IGoogleAccountService googleAccountService,
             IGoogleMusicSessionService sessionService,
             IGoogleAccountWebService googleAccountWebService,
-            IGoogleMusicWebService googleMusicWebService,
-            IPlaylistsWebService playlistsWebService,
-            ISongWebService songWebService)
+            IGoogleMusicWebService googleMusicWebService)
         {
             this.logger = logManager.CreateLogger("AuthentificationService");
             this.googleAccountService = googleAccountService;
             this.sessionService = sessionService;
             this.googleAccountWebService = googleAccountWebService;
             this.googleMusicWebService = googleMusicWebService;
-            this.playlistsWebService = playlistsWebService;
-            this.songWebService = songWebService;
         }
 
         public async Task<AuthentificationResult> CheckAuthentificationAsync(UserInfo userInfo = null)
@@ -60,11 +54,9 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     if (cookieCollection != null)
                     {
                         this.logger.Debug("CheckAuthentificationAsync: cookie collection is not null. Initializing web services.");
-                        if (await this.InitializeWebServices(cookieCollection))
-                        {
-                            userSession.IsAuthenticated = true;
-                            return AuthentificationResult.SucceedResult();
-                        }
+                        this.googleMusicWebService.Initialize(cookieCollection.Cast<Cookie>());
+                        userSession.IsAuthenticated = true; 
+                        return AuthentificationResult.SucceedResult();
                     }
                 }
             }
@@ -90,11 +82,9 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
                 if (cookieCollection != null && cookieCollection.Count > 0)
                 {
-                    if (await this.InitializeWebServices(cookieCollection.Cast<Cookie>()))
-                    {
-                        this.sessionService.GetSession().IsAuthenticated = true;
-                        return AuthentificationResult.SucceedResult();
-                    }
+                    this.googleMusicWebService.Initialize(cookieCollection.Cast<Cookie>());
+                    this.sessionService.GetSession().IsAuthenticated = true;
+                    return AuthentificationResult.SucceedResult();
                 }
             }
             else if (loginResponse.Error.HasValue)
@@ -106,24 +96,6 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
             this.logger.Error("CheckAuthentificationAsync: showing 'Login_Unknown'.");
             return AuthentificationResult.FailedResult(this.resourceLoader.GetString("Login_Unknown"));
-        }
-
-        private async Task<bool> InitializeWebServices(IEnumerable<Cookie> cookieCollection)
-        {
-            this.googleMusicWebService.Initialize(cookieCollection);
-
-            var statusResp = await this.songWebService.GetStatusAsync();
-            if (statusResp != null
-                && (!statusResp.ReloadXsrf.HasValue || !statusResp.ReloadXsrf.Value)
-                && (!statusResp.Success.HasValue || statusResp.Success.Value))
-            {
-                this.logger.Debug("InitializeWebServices: GetStatusAsync returns for us success result.");
-                return true;
-            }
-
-            this.logger.Debug("InitializeWebServices: GetStatusAsync returns for us unsuccess result.");
-
-            return false;
         }
 
         private string GetErrorMessage(GoogleLoginResponse.ErrorResponseCode errorResponseCode)

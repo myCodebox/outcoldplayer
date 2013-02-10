@@ -49,7 +49,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
                 };
         }
 
-        public async Task InitializeAsync(IProgress<int> progress)
+        public async Task InitializeAsync()
         {
             this.logger.Debug("Initializing.");
 
@@ -277,7 +277,19 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
                         }
 
                         var playlistSongs = (googlePlaylist.Playlist ?? Enumerable.Empty<GoogleMusicSong>())
-                            .ToDictionary(s => s.PlaylistEntryId, s => this.songsRepository.AddOrUpdate(s));
+                            .Select(s => new { EntryId = s.PlaylistEntryId, Song = this.songsRepository.GetSong(s.Id) })
+                            .Where(s => s.Song != null)
+                            .ToDictionary(s => s.EntryId, s => s.Song);
+
+                        if (googlePlaylist.Playlist != null && playlistSongs.Count != googlePlaylist.Playlist.Count)
+                        {
+                            this.logger.Warning(
+                                "We could not get all songs for playlist '{0}' from repository. Playlist count: {1}. Loaded songs: {2}..",
+                                playlistId,
+                                googlePlaylist.Playlist.Count,
+                                playlistSongs.Count);
+                        }
+
                         playlist = new MusicPlaylist(playlistId, googlePlaylist.Title, playlistSongs.Values.ToList(), playlistSongs.Keys.ToList());
                         this.musicPlaylists.AddOrUpdate(playlistId, guid => playlist, (guid, musicPlaylist) => playlist);
                     }

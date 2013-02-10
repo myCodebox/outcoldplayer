@@ -17,11 +17,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
 
         IEnumerable<Song> GetAll();
 
-        Song AddOrUpdate(SongMetadata songInfo);
-
-        void AddRange(IEnumerable<SongMetadata> songInfos);
-
-        void Remove(Guid id);
+        Song GetSong(Guid songId);
 
         void Clear();
     }

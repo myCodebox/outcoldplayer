@@ -100,53 +100,17 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
             }
         }
 
-        public Song AddOrUpdate(SongMetadata songInfo)
+        public Song GetSong(Guid songId)
         {
+            if (this.lastUpdate == null)
+            {
+                throw new NotSupportedException("Songs Repository is not initialized yet.");
+            }
+
             lock (this.songs)
             {
                 Song song;
-                if (this.songs.TryGetValue(songInfo.Id, out song))
-                {
-                    song.Metadata = songInfo;
-                }
-                else
-                {
-                    this.songs.Add(songInfo.Id, song = new Song(songInfo));
-                }
-
-                return song;
-            }
-        }
-
-        public void AddRange(IEnumerable<SongMetadata> songInfos)
-        {
-            bool updated = false;
-
-            lock (this.songs)
-            {
-                foreach (var songInfo in songInfos)
-                {
-                    updated = true;
-
-                    this.AddOrUpdate(songInfo);
-                }
-            }
-
-            if (updated)
-            {
-                this.RaiseUpdated();
-            }
-        }
-
-        public void Remove(Guid id)
-        {
-            lock (this.songs)
-            {
-                Song song;
-                if (this.songs.TryGetValue(id, out song))
-                {
-                    this.songs.Remove(id);
-                }
+                return this.songs.TryGetValue(songId, out song) ? song : null;
             }
         }
 
@@ -174,12 +138,41 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
             var updatedSongs = await this.songWebService.StreamingLoadAllTracksAsync(this.lastUpdate, null);
             if (updatedSongs.Count > 0)
             {
-                foreach (var metadata in updatedSongs.Where(m => m.Deleted))
-                {
-                    this.Remove(metadata.Id);
-                }
+                bool updated = false;
 
-                this.AddRange(updatedSongs.Where(m => !m.Deleted).Select(x => (SongMetadata)x));
+                lock (this.songs)
+                {
+                    foreach (var songInfo in updatedSongs)
+                    {
+                        updated = true;
+
+                        Song song;
+                        bool containsSong = this.songs.TryGetValue(songInfo.Id, out song);
+                        if (songInfo.Deleted)
+                        {
+                            if (containsSong)
+                            {
+                                this.songs.Remove(songInfo.Id);
+                            }
+                        }
+                        else
+                        {
+                            if (containsSong)
+                            {
+                                song.Metadata = songInfo;
+                            }
+                            else
+                            {
+                                this.songs.Add(songInfo.Id, new Song(songInfo));
+                            }
+                        }
+                    }
+
+                    if (updated)
+                    {
+                        this.RaiseUpdated();
+                    }
+                }
             }
             
             this.lastUpdate = updateStart;
@@ -191,6 +184,34 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
             else
             {
                 this.songsCacheService.UpdateCacheFreshness(this.lastUpdate.Value);
+            }
+        }
+
+        private void AddRange(IEnumerable<SongMetadata> songInfos)
+        {
+            bool updated = false;
+
+            lock (this.songs)
+            {
+                foreach (var songInfo in songInfos)
+                {
+                    updated = true;
+
+                    Song song;
+                    if (this.songs.TryGetValue(songInfo.Id, out song))
+                    {
+                        song.Metadata = songInfo;
+                    }
+                    else
+                    {
+                        this.songs.Add(songInfo.Id, new Song(songInfo));
+                    }
+                }
+            }
+
+            if (updated)
+            {
+                this.RaiseUpdated();
             }
         }
 

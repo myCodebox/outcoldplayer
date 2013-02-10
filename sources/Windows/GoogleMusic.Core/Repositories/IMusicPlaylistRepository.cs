@@ -11,7 +11,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
 
     public interface IMusicPlaylistRepository
     {
-        Task InitializeAsync(IProgress<int> progress);
+        Task InitializeAsync();
 
         Task<IEnumerable<MusicPlaylist>> GetAllAsync();
 
