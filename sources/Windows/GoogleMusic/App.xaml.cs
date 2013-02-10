@@ -156,6 +156,8 @@ namespace OutcoldSolutions.GoogleMusic
                     registration.Register<IPlaylistCollection<SystemPlaylist>>().AsSingleton<SystemPlaylistCollection>();
                     registration.Register<IPlaylistCollection<MusicPlaylist>>().AsSingleton<MusicPlaylistCollection>();
                     registration.Register<IPlaylistCollectionsService>().AsSingleton<PlaylistCollectionsService>();
+
+                    registration.Register<ISongsCacheService>().AsSingleton<SongsCacheService>();
                 }
 
                 this.logManager = Container.Resolve<ILogManager>();

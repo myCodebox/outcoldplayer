@@ -162,6 +162,9 @@
     <Compile Include="..\Windows\GoogleMusic.Core\Services\ISettingsService.cs">
       <Link>_sources\Services\ISettingsService.cs</Link>
     </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Services\ISongsCacheService.cs">
+      <Link>_sources\Services\ISongsCacheService.cs</Link>
+    </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Services\PlaylistCollectionsService.cs">
       <Link>_sources\Services\PlaylistCollectionsService.cs</Link>
     </Compile>
@@ -179,6 +182,12 @@
     </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Services\SettingsValueChangedEventArgs.cs">
       <Link>_sources\Services\SettingsValueChangedEventArgs.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Services\SongsCache.cs">
+      <Link>_sources\Services\SongsCache.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Services\SongsCacheService.cs">
+      <Link>_sources\Services\SongsCacheService.cs</Link>
     </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Web\GoogleAccountWebService.cs">
       <Link>_sources\Web\GoogleAccountWebService.cs</Link>

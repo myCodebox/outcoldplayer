@@ -56,7 +56,7 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Web
         {
             await this.AuthenticateAsync();
 
-            var songs = await this.songsWebService.StreamingLoadAllTracksAsync(null);
+            var songs = await this.songsWebService.StreamingLoadAllTracksAsync(null, null);
 
             Assert.IsTrue(songs.Count > 0);
         }

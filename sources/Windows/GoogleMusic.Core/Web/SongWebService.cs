@@ -27,19 +27,12 @@ namespace OutcoldSolutions.GoogleMusic.Web
         private readonly IGoogleMusicWebService googleMusicWebService;
         private readonly IGoogleMusicSessionService sessionService;
 
-        private DateTime? lastStreamingRequest;
-
         public SongWebService(
             IGoogleMusicWebService googleMusicWebService,
             IGoogleMusicSessionService sessionService)
         {
             this.googleMusicWebService = googleMusicWebService;
             this.sessionService = sessionService;
-
-            this.sessionService.SessionCleared += (sender, args) =>
-            {
-                this.lastStreamingRequest = null;
-            };
         }
 
         public async Task<StatusResp> GetStatusAsync()
@@ -50,8 +43,6 @@ namespace OutcoldSolutions.GoogleMusic.Web
         public async Task<List<GoogleMusicSong>> GetAllSongsAsync(IProgress<int> progress = null)
         {
             List<GoogleMusicSong> googleMusicSongs = new List<GoogleMusicSong>();
-
-            this.lastStreamingRequest = DateTime.UtcNow;
 
             GoogleMusicPlaylist playlist = null;
             do
@@ -79,13 +70,13 @@ namespace OutcoldSolutions.GoogleMusic.Web
             return googleMusicSongs;
         }
 
-        public async Task<List<GoogleMusicSong>> StreamingLoadAllTracksAsync(IProgress<int> progress)
+        public async Task<List<GoogleMusicSong>> StreamingLoadAllTracksAsync(DateTime? lastUpdate, IProgress<int> progress)
         {
             List<GoogleMusicSong> googleMusicSongs = new List<GoogleMusicSong>();
 
             string json;
 
-            if (this.lastStreamingRequest == null)
+            if (lastUpdate == null)
             {
                 json = JsonConvert.SerializeObject(
                         new
@@ -94,8 +85,6 @@ namespace OutcoldSolutions.GoogleMusic.Web
                             requestCause = 3,
                             requestType = 1
                         });
-
-                this.lastStreamingRequest = DateTime.UtcNow;
             }
             else
             {
@@ -105,10 +94,8 @@ namespace OutcoldSolutions.GoogleMusic.Web
                             sessionId = this.sessionService.GetSession().SessionId,
                             requestCause = 2,
                             requestType = 1,
-                            lastUpdated = (long)((this.lastStreamingRequest.Value - new DateTime(1970, 1, 1, 0, 0, 0)).TotalMilliseconds * 1000)
+                            lastUpdated = (long)((lastUpdate.Value - new DateTime(1970, 1, 1, 0, 0, 0)).TotalMilliseconds * 1000)
                         });
-
-                this.lastStreamingRequest = DateTime.UtcNow;
             }
 
             var response = await this.googleMusicWebService.GetAsync(StreamingLoadAllTracks + WebUtility.UrlEncode(json));

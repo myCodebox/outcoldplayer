@@ -26,7 +26,7 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Repositories
         {
             base.SetUp();
 
-            this.repository = new SongsRepository(this.LogManager, Mock.Of<ISongWebService>(), Mock.Of<IGoogleMusicSessionService>());
+            this.repository = new SongsRepository(this.LogManager, Mock.Of<ISongWebService>(), Mock.Of<IGoogleMusicSessionService>(), Mock.Of<ISongsCacheService>());
         }
 
         [Test]

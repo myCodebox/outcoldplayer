@@ -13,6 +13,9 @@ namespace OutcoldSolutions.GoogleMusic.Services
     {
         private const string SettingsContainerKey = "Settings";
         private const string RoamingSettingsContainerKey = "RoamingSettings";
+
+        private static readonly Type DateTimeType = typeof(DateTime);
+
         private readonly ApplicationDataContainer settingsContainer;
         private readonly ApplicationDataContainer roamingSettingsContainer;
         
@@ -50,8 +53,18 @@ namespace OutcoldSolutions.GoogleMusic.Services
         public void SetValue<T>(string key, T value)
         {
             this.logger.Debug("Setting value of key '{0}' to '{1}.'", key, value);
-            this.settingsContainer.Values[key] = value;
+            this.settingsContainer.Values[key] = this.ToObject(value);
             this.RaiseValueChanged(key);
+        }
+
+        public void RemoveValue(string key)
+        {
+            this.logger.Debug("Remove value of key '{0}'", key);
+            if (this.settingsContainer.Values.ContainsKey(key))
+            {
+                this.settingsContainer.Values.Remove(key);
+                this.RaiseValueChanged(key);
+            }
         }
 
         public T GetValue<T>(string key, T defaultValue = default(T))
@@ -61,7 +74,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             {
                 try
                 {
-                    return (T)this.settingsContainer.Values[key];
+                    return this.ParseValue<T>(this.settingsContainer.Values[key]);
                 }
                 catch (Exception e)
                 {
@@ -75,7 +88,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
         public void SetRoamingValue<T>(string key, T value)
         {
             this.logger.Debug("Setting roaming value of key '{0}' to '{1}.'", key, value);
-            this.roamingSettingsContainer.Values[key] = value;
+            this.roamingSettingsContainer.Values[key] = this.ToObject(value);
             this.RaiseValueChanged(key);
         }
 
@@ -86,7 +99,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             {
                 try
                 {
-                    return (T)this.roamingSettingsContainer.Values[key];
+                    return this.ParseValue<T>(this.roamingSettingsContainer.Values[key]);
                 }
                 catch (Exception e)
                 {
@@ -113,6 +126,31 @@ namespace OutcoldSolutions.GoogleMusic.Services
             if (handler != null)
             {
                 handler(this, new SettingsValueChangedEventArgs(key));
+            }
+        }
+
+        private T ParseValue<T>(object value)
+        {
+            if (typeof(T) == DateTimeType)
+            {
+                return (T)(object)DateTime.FromBinary((long)value);
+            }
+            else
+            {
+                return (T)value;
+            }
+        }
+
+        private object ToObject<T>(T value)
+        {
+            if (typeof(T) == DateTimeType)
+            {
+                long binaryValue = ((DateTime)(object)value).ToBinary();
+                return binaryValue;
+            }
+            else
+            {
+                return value;
             }
         }
     }

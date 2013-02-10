@@ -12,34 +12,41 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Web;
-    using OutcoldSolutions.GoogleMusic.Web.Models;
 
     using Windows.UI.Xaml;
 
     public class SongsRepository : ISongsRepository
     {
         private readonly ISongWebService songWebService;
-
+        private readonly ISongsCacheService songsCacheService;
         private readonly ILogger logger;
 
         private readonly Dictionary<Guid, Song> songs = new Dictionary<Guid, Song>();
         private DispatcherTimer dispatcherTimer;
 
+        private DateTime? lastUpdate;
+
         public SongsRepository(
             ILogManager logManager,
             ISongWebService songWebService,
-            IGoogleMusicSessionService googleMusicSessionService)
+            IGoogleMusicSessionService googleMusicSessionService,
+            ISongsCacheService songsCacheService)
         {
             this.songWebService = songWebService;
+            this.songsCacheService = songsCacheService;
             this.logger = logManager.CreateLogger("SongsRepository");
 
-            googleMusicSessionService.SessionCleared += (sender, args) =>
+            googleMusicSessionService.SessionCleared += async (sender, args) =>
                 {
                     this.logger.Debug("Session cleared. Stopping the dispatcher and clearing the cache of songs.");
 
                     this.dispatcherTimer.Stop();
                     this.dispatcherTimer = null;
                     this.songs.Clear();
+
+                    this.lastUpdate = null;
+
+                    await this.songsCacheService.ClearCacheAsync();
 
                     this.RaiseUpdated();
                 };
@@ -51,7 +58,30 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
         {
             this.logger.Debug("Initializing.");
 
-            this.AddRange((await this.songWebService.GetAllSongsAsync(progress)).Select(x => (SongMetadata)x));
+            var cache = await this.songsCacheService.ReadFromFileAsync();
+            if (cache != null)
+            {
+                if (this.logger.IsDebugEnabled)
+                {
+                    this.logger.Debug(
+                        "Loaded {0} songs from cache. Last update: {1}.", cache.Songs.Length, cache.LastUpdate);
+                }
+
+                this.AddRange(cache.Songs);
+                this.lastUpdate = cache.LastUpdate;
+
+                progress.Report(cache.Songs.Length);
+
+                await this.UpdateSongsAsync();
+            }
+            else
+            {
+                var updateStart = DateTime.UtcNow;
+                this.AddRange((await this.songWebService.GetAllSongsAsync(progress)).Select(x => (SongMetadata)x));
+                this.lastUpdate = updateStart;
+
+                await this.SaveToCacheAsync();
+            }
 
             this.logger.Debug("Initialized. Creating dispatcher timer.");
 
@@ -139,7 +169,9 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
 
         private async Task UpdateSongsAsync()
         {
-            var updatedSongs = await this.songWebService.StreamingLoadAllTracksAsync(null);
+            var updateStart = DateTime.UtcNow;
+            
+            var updatedSongs = await this.songWebService.StreamingLoadAllTracksAsync(this.lastUpdate, null);
             if (updatedSongs.Count > 0)
             {
                 foreach (var metadata in updatedSongs.Where(m => m.Deleted))
@@ -148,6 +180,26 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
                 }
 
                 this.AddRange(updatedSongs.Where(m => !m.Deleted).Select(x => (SongMetadata)x));
+            }
+            
+            this.lastUpdate = updateStart;
+
+            if (updatedSongs.Count > 0)
+            {
+                await this.SaveToCacheAsync();
+            }
+            else
+            {
+                this.songsCacheService.UpdateCacheFreshness(this.lastUpdate.Value);
+            }
+        }
+
+        private async Task SaveToCacheAsync()
+        {
+            if (this.lastUpdate != null)
+            {
+                await this.songsCacheService.SaveToFileAsync(
+                    this.lastUpdate.Value, this.songs.Values.Select(x => x.Metadata).ToList());
             }
         }
     }

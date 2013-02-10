@@ -13,6 +13,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         T GetValue<T>(string key, T defaultValue = default(T));
 
+        void RemoveValue(string key);
+
         void SetRoamingValue<T>(string key, T value);
 
         T GetRoamingValue<T>(string key, T defaultValue = default(T));

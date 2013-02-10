@@ -15,7 +15,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
         Task<List<GoogleMusicSong>> GetAllSongsAsync(IProgress<int> progress = null);
 
-        Task<List<GoogleMusicSong>> StreamingLoadAllTracksAsync(IProgress<int> progress);
+        Task<List<GoogleMusicSong>> StreamingLoadAllTracksAsync(DateTime? lastUpdate, IProgress<int> progress);
 
         Task<GoogleMusicSongUrl> GetSongUrlAsync(Guid id);
 
