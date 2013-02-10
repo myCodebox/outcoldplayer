@@ -60,10 +60,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
 
                 var scrobbleParameters = new Dictionary<string, string>(parameters)
                                              {
-                                                 {
-                                                     "timestamp",
-                                                     ((int)(startPlaying - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds).ToString("D")
-                                                 }
+                                                 { "timestamp", ((int)(startPlaying.ToUnixFileTime() / 1000)).ToString("D") }
                                              };
 
                 await this.webService.CallAsync("track.scrobble", scrobbleParameters);

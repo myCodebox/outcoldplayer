@@ -6,7 +6,7 @@ namespace OutcoldSolutions.GoogleMusic.Models
     using System;
 
     [Flags]
-    public enum StreamType
+    public enum StreamType : byte
     {
         None = 0,
 

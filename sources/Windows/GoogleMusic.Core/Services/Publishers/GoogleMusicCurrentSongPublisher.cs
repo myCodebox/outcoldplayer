@@ -39,7 +39,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            int playCount = song.PlayCount + 1;
+            ushort playCount = (ushort)(song.PlayCount + 1);
 
             string playlistId = song.Metadata.Title;
             bool updateRecentAlbum = false;

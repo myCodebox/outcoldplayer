@@ -21,7 +21,7 @@ namespace OutcoldSolutions.GoogleMusic.Models
 
         public string AlbumArtist { get; set; }
 
-        public int PlayCount { get; set; }
+        public ushort PlayCount { get; set; }
 
         public byte Rating { get; set; }
 
@@ -29,11 +29,11 @@ namespace OutcoldSolutions.GoogleMusic.Models
 
         public byte TotalDiscs { get; set; }
 
-        public short Track { get; set; }
+        public ushort Track { get; set; }
 
-        public short TotalTracks { get; set; }
+        public ushort TotalTracks { get; set; }
 
-        public short Year { get; set; }
+        public ushort Year { get; set; }
 
         public string Genre { get; set; }
 

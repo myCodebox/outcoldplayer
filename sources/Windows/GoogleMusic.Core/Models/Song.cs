@@ -46,7 +46,7 @@ namespace OutcoldSolutions.GoogleMusic.Models
             }
         }
 
-        public int PlayCount
+        public ushort PlayCount
         {
             get
             {

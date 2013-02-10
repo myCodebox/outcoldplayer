@@ -34,13 +34,13 @@ namespace OutcoldSolutions.GoogleMusic.Web.Models
 
         public string AlbumArtist { get; set; }
 
-        public short TotalTracks { get; set; }
+        public ushort TotalTracks { get; set; }
 
         public string Name { get; set; }
 
         public byte TotalDiscs { get; set; }
 
-        public short Year { get; set; }
+        public ushort Year { get; set; }
 
         public string TitleNorm { get; set; }
 
@@ -48,7 +48,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Models
 
         public string AlbumNorm { get; set; }
 
-        public short Track { get; set; }
+        public ushort Track { get; set; }
 
         public long DurationMillis { get; set; }
 
@@ -60,7 +60,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Models
 
         public double CreationDate { get; set; }
 
-        public int PlayCount { get; set; }
+        public ushort PlayCount { get; set; }
 
         public byte Rating { get; set; }
 
