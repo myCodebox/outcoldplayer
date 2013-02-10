@@ -14,9 +14,8 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Repositories
     using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Web;
-    using OutcoldSolutions.GoogleMusic.Web.Models;
 
-    public class SongsRepositorySuites : SuitesBase
+    public class SongsRepositorySuites : GoogleMusicSuitesBase
     {
         private readonly SongMetadata song1 = new SongMetadata() { Id = Guid.NewGuid() };
         private readonly SongMetadata song2 = new SongMetadata() { Id = Guid.NewGuid() };

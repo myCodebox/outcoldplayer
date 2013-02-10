@@ -17,7 +17,7 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Web
     using OutcoldSolutions.GoogleMusic.Web;
 
     [Category("Integration")]
-    public class PlaylistsWebServiceSuites : SuitesBase
+    public class PlaylistsWebServiceSuites : GoogleMusicSuitesBase
     {
         private IGoogleAccountWebService googleAccountWebService;
         private IGoogleMusicWebService musicWebService;
@@ -54,7 +54,7 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Web
         [Test]
         public async Task StreamingLoadAllTracksAsync_AuthentificateAndExecute_ListOfSongs()
         {
-            await this.AthenticateAsync();
+            await this.AuthenticateAsync();
 
             var songs = await this.songsWebService.StreamingLoadAllTracksAsync(null);
 
@@ -64,7 +64,7 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Web
         [Test]
         public async Task GetAllSongsAsync_AuthentificateAndExecute_ListOfSongs()
         {
-            await this.AthenticateAsync();
+            await this.AuthenticateAsync();
 
             var songs = await this.songsWebService.GetAllSongsAsync(null);
 
@@ -74,7 +74,7 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Web
         [Test]
         public async Task PlaylistsManipulations_AddModifyDelete()
         {
-            await this.AthenticateAsync();
+            await this.AuthenticateAsync();
 
             var playlists = await this.playlistsWebService.GetAllAsync();
 
@@ -130,7 +130,7 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Web
             Assert.IsFalse(playlists4.Playlists.Any(p => Guid.Parse(p.PlaylistId) == playlistResp.Id));
         }
 
-        private async Task AthenticateAsync()
+        private async Task AuthenticateAsync()
         {
             await this.googleAccountWebService.AuthenticateAsync(SuitesConstants.GoogleAccountName, SuitesConstants.GoogleAccountPassword);
             var cookies = await this.googleAccountWebService.GetCookiesAsync(this.musicWebService.GetServiceUrl());

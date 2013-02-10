@@ -18,6 +18,8 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
         CookieCollection GetCurrentCookies();
 
+        Task RefreshXtAsync();
+
         Task<HttpResponseMessage> GetAsync(
             string url, 
             bool signUrl = true);

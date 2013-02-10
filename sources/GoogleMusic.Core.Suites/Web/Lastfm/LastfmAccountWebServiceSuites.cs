@@ -7,7 +7,7 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Web.Lastfm
 
     using OutcoldSolutions.GoogleMusic.Web.Lastfm;
 
-    public class LastfmAccountWebServiceSuites : SuitesBase
+    public class LastfmAccountWebServiceSuites : GoogleMusicSuitesBase
     {
         private LastfmAccountWebService service;
         private LastfmWebService webService;

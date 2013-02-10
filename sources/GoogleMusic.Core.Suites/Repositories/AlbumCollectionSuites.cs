@@ -12,7 +12,7 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Repositories
     using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Suites.Services;
 
-    public class AlbumCollectionSuites : SuitesBase
+    public class AlbumCollectionSuites : GoogleMusicSuitesBase
     {
         private Mock<ISongsRepository> songsRepository;
         private AlbumCollection albumCollection;

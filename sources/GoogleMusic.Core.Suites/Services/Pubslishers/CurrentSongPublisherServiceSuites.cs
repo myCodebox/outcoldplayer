@@ -18,7 +18,7 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Services.Pubslishers
     using OutcoldSolutions.GoogleMusic.Services.Publishers;
     using OutcoldSolutions.GoogleMusic.Web.Models;
 
-    public class CurrentSongPublisherServiceSuites : SuitesBase
+    public class CurrentSongPublisherServiceSuites : GoogleMusicSuitesBase
     {
         private Song song;
         private Playlist playlist;

@@ -82,7 +82,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
         {
             if (this.logger.IsDebugEnabled)
             {
-                this.logger.LogRequest(HttpMethod.Get, url, this.httpClientHandler.CookieContainer.GetCookies(new Uri(PlayMusicUrl)));
+                this.logger.LogRequest(HttpMethod.Get, url, this.httpClientHandler.CookieContainer.GetCookies(new Uri(this.httpClient.BaseAddress, PlayMusicUrl)));
             }
 
             if (signUrl)
@@ -110,7 +110,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
         {
             if (this.logger.IsDebugEnabled)
             {
-                this.logger.LogRequest(HttpMethod.Post, url, this.httpClientHandler.CookieContainer.GetCookies(new Uri(PlayMusicUrl)), formData);
+                this.logger.LogRequest(HttpMethod.Post, url, this.httpClientHandler.CookieContainer.GetCookies(new Uri(this.httpClient.BaseAddress, PlayMusicUrl)), formData);
             }
 
             if (signUrl)
@@ -144,8 +144,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
             if (result.ReloadXsrf.HasValue && result.ReloadXsrf.Value)
             {
-                this.logger.Debug("GetAsync :: Reload Xsrf requested. Reloading.");
-                await this.PostAsync(RefreshXtPath);
+                await this.RefreshXtAsync();
 
                 responseMessage = await this.GetAsync(url, signUrl);
                 result = await responseMessage.Content.ReadAsJsonObject<TResult>();
@@ -190,14 +189,19 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
             if (result.ReloadXsrf.HasValue && result.ReloadXsrf.Value)
             {
-                this.logger.Debug("PostAsync :: Reload Xsrf requested. Reloading.");
-                await this.PostAsync(RefreshXtPath);
+                await this.RefreshXtAsync();
 
                 responseMessage = await this.PostAsync(url, formData, signUrl);
                 result = await responseMessage.Content.ReadAsJsonObject<TResult>();
             }
 
             return result;
+        }
+
+        public async Task RefreshXtAsync()
+        {
+            this.logger.Debug("PostAsync :: Reload Xsrf requested. Reloading.");
+            await this.PostAsync(RefreshXtPath);
         }
 
         private string SignUrl(string url)
@@ -211,8 +215,15 @@ namespace OutcoldSolutions.GoogleMusic.Web
             }
 
             var cookieCollection = this.httpClientHandler.CookieContainer.GetCookies(uri);
-
             var cookie = cookieCollection.Cast<Cookie>().FirstOrDefault(x => string.Equals(x.Name, "xt", StringComparison.OrdinalIgnoreCase));
+
+            // When we get XT cookies first time it is issued for PlayMusicUrl url.
+            if (cookie == null)
+            {
+                cookieCollection = this.httpClientHandler.CookieContainer.GetCookies(new Uri(PlayMusicUrl));
+                cookie = cookieCollection.Cast<Cookie>().FirstOrDefault(x => string.Equals(x.Name, "xt", StringComparison.OrdinalIgnoreCase));
+            }
+
             if (cookie != null)
             {
                 if (url.IndexOf("?", StringComparison.OrdinalIgnoreCase) < 0)

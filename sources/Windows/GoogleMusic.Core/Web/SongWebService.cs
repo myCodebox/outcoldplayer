@@ -113,26 +113,39 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
             var response = await this.googleMusicWebService.GetAsync(StreamingLoadAllTracks + WebUtility.UrlEncode(json));
 
-            var stream = await response.Content.ReadAsStreamAsync();
-            using (StreamReader streamReader = new StreamReader(stream))
+            if (response.Content.IsPlainText())
             {
-                while (!streamReader.EndOfStream)
+                var oResponse = await response.Content.ReadAsJsonObject<CommonResponse>();
+                if (oResponse.ReloadXsrf.HasValue && oResponse.ReloadXsrf.Value)
                 {
-                    var line = streamReader.ReadLine();
-                    if (line == null)
-                    {
-                        break;
-                    }
+                    await this.googleMusicWebService.RefreshXtAsync();
+                    response = await this.googleMusicWebService.GetAsync(StreamingLoadAllTracks + WebUtility.UrlEncode(json));
+                }
+            }
 
-                    if (line.StartsWith("window.parent['slat_process']("))
+            if (response.Content.IsHtmlText())
+            {
+                var stream = await response.Content.ReadAsStreamAsync();
+                using (StreamReader streamReader = new StreamReader(stream))
+                {
+                    while (!streamReader.EndOfStream)
                     {
-                        string str = line.Substring("window.parent['slat_process'](".Length, line.Length - ("window.parent['slat_process'](".Length + 2));
-                        var googleMusicPlaylist = JsonConvert.DeserializeObject<GoogleMusicPlaylist>(str);
-                        googleMusicSongs.AddRange(googleMusicPlaylist.Playlist);
-
-                        if (progress != null)
+                        var line = streamReader.ReadLine();
+                        if (line == null)
                         {
-                            progress.Report(googleMusicSongs.Count);
+                            break;
+                        }
+
+                        if (line.StartsWith("window.parent['slat_process']("))
+                        {
+                            string str = line.Substring("window.parent['slat_process'](".Length, line.Length - ("window.parent['slat_process'](".Length + 2));
+                            var googleMusicPlaylist = JsonConvert.DeserializeObject<GoogleMusicPlaylist>(str);
+                            googleMusicSongs.AddRange(googleMusicPlaylist.Playlist);
+
+                            if (progress != null)
+                            {
+                                progress.Report(googleMusicSongs.Count);
+                            }
                         }
                     }
                 }

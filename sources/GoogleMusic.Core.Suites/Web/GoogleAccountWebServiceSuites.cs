@@ -15,7 +15,7 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Web
     using OutcoldSolutions.GoogleMusic.Web.Models;
 
     [Category("Integration")]
-    public class GoogleAccountWebServiceSuites : SuitesBase
+    public class GoogleAccountWebServiceSuites : GoogleMusicSuitesBase
     {
         private GoogleAccountWebService googleAccountWebService;
         private Mock<IGoogleMusicSessionService> sessionService;

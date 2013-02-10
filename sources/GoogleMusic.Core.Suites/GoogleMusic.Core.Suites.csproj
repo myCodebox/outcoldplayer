@@ -72,6 +72,9 @@
     <Compile Include="..\Windows\GoogleMusic.Core\DateTimeExtensions.cs">
       <Link>_sources\DateTimeExtensions.cs</Link>
     </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Diagnostics\DebugLogWriter.cs">
+      <Link>_sources\Diagnostics\DebugLogWriter.cs</Link>
+    </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\IDispatcher.cs">
       <Link>_sources\IDispatcher.cs</Link>
     </Compile>
@@ -288,6 +291,7 @@
     <Compile Include="..\Windows\GoogleMusic.Core\Web\SongWebService.cs">
       <Link>_sources\Web\SongWebService.cs</Link>
     </Compile>
+    <Compile Include="GoogleMusicSuitesBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\SongsRepositorySuites.cs" />
     <Compile Include="Services\SongStubs.cs" />
