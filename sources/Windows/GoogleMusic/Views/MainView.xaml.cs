@@ -121,8 +121,8 @@ namespace OutcoldSolutions.GoogleMusic.Views
                                              AdUnitId = "111663",
                                              Width = 160,
                                              Height = 600,
-                                             VerticalAlignment = VerticalAlignment.Center,
-                                             Margin = new Thickness(0, 0, 10, 0),
+                                             VerticalAlignment = VerticalAlignment.Top,
+                                             Margin = new Thickness(0, 20, 10, 0),
                                              UseStaticAnchor = true
                                          };
                     Grid.SetColumn(this.adControl, 1);

@@ -126,8 +126,8 @@
                          Grid.RowSpan="2"
                          x:Name="RemoveAdsButton" 
                          Click="RemoveAdsClick" 
-                         VerticalAlignment="Center" 
-                         Margin="0, 630, 0, 0"
+                         VerticalAlignment="Top" 
+                         Margin="0, 620, 0, 0"
                          Visibility="Collapsed"
                          Content="Remove Ads"
                          HorizontalAlignment="Center"/>
