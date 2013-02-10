@@ -4,6 +4,7 @@
 namespace OutcoldSolutions.GoogleMusic.Services
 {
     using System;
+    using System.Collections.Generic;
     using System.Net;
     using System.Threading.Tasks;
 
@@ -17,9 +18,9 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         void LoadSession();
 
-        Task SaveCurrentSessionAsync(CookieCollection cookieCollection);
+        Task SaveCurrentSessionAsync(IEnumerable<Cookie> cookieCollection);
 
-        Task<CookieCollection> GetSavedCookiesAsync();
+        Task<IEnumerable<Cookie>> GetSavedCookiesAsync();
 
         void ClearSession();
     }

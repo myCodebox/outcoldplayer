@@ -14,9 +14,9 @@ namespace OutcoldSolutions.GoogleMusic.Web
     {
         string GetServiceUrl();
 
-        void Initialize(CookieCollection cookieCollection);
+        void Initialize(IEnumerable<Cookie> cookieCollection);
 
-        CookieCollection GetCurrentCookies();
+        IEnumerable<Cookie> GetCurrentCookies();
 
         Task RefreshXtAsync();
 

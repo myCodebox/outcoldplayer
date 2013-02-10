@@ -4,6 +4,7 @@
 namespace OutcoldSolutions.GoogleMusic.Web
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
@@ -20,15 +21,20 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
     public class GoogleMusicWebService : IGoogleMusicWebService
     {
-        private const string OriginUrl = "https://play.google.com";
+        private const string OriginUrl = "https://play.google.com/music/";
         private const string PlayMusicUrl = "https://play.google.com/music/listen?u=0&hl=en";
-        private const string RefreshXtPath = "music/refreshxt";
+        private const string RefreshXtPath = "refreshxt";
+
+        private const string SetCookieHeader = "Set-Cookie";
+        private const string CookieHeader = "Cookie";
 
         private readonly ILogger logger;
         private readonly IGoogleMusicSessionService sessionService;
 
         private HttpClient httpClient;
         private HttpClientHandler httpClientHandler;
+
+        private CookieContainerWrapper cookieContainer;
 
         public GoogleMusicWebService(
             ILogManager logManager,
@@ -39,9 +45,10 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 {
                     this.httpClientHandler = null;
                     this.httpClient = null;
+                    this.cookieContainer = null;
                 };
 
-            this.logger = logManager.CreateLogger("GoogleAccountWebService");
+            this.logger = logManager.CreateLogger("GoogleMusicWebService");
         }
 
         public string GetServiceUrl()
@@ -49,7 +56,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
             return PlayMusicUrl;
         }
 
-        public void Initialize(CookieCollection cookieCollection)
+        public void Initialize(IEnumerable<Cookie> cookieCollection)
         {
             if (cookieCollection == null)
             {
@@ -58,8 +65,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
             this.httpClientHandler = new HttpClientHandler
             {
-                CookieContainer = new CookieContainer(),
-                UseCookies = true
+                UseCookies = false,
             };
 
             this.httpClient = new HttpClient(this.httpClientHandler)
@@ -68,12 +74,19 @@ namespace OutcoldSolutions.GoogleMusic.Web
                                       Timeout = TimeSpan.FromSeconds(30)
                                   };
 
-            this.httpClientHandler.CookieContainer.Add(new Uri(this.GetServiceUrl()), cookieCollection);
+            this.cookieContainer = new CookieContainerWrapper(this.httpClient.BaseAddress);
+
+            this.cookieContainer.AddCookies(cookieCollection);
         }
 
-        public CookieCollection GetCurrentCookies()
+        public IEnumerable<Cookie> GetCurrentCookies()
         {
-            return this.httpClientHandler.CookieContainer.GetCookies(new Uri(this.GetServiceUrl()));
+            if (this.cookieContainer == null)
+            {
+                return null;
+            }
+
+            return this.cookieContainer.GetCookies();
         }
 
         public async Task<HttpResponseMessage> GetAsync(
@@ -82,7 +95,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
         {
             if (this.logger.IsDebugEnabled)
             {
-                this.logger.LogRequest(HttpMethod.Get, url, this.httpClientHandler.CookieContainer.GetCookies(new Uri(this.httpClient.BaseAddress, PlayMusicUrl)));
+                this.logger.LogRequest(HttpMethod.Get, url, this.cookieContainer.GetCookies().Cast<Cookie>());
             }
 
             if (signUrl)
@@ -90,12 +103,19 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 url = this.SignUrl(url);
             }
 
-            var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, url);
-            var responseMessage = await this.httpClient.SendAsync(httpRequestMessage, HttpCompletionOption.ResponseHeadersRead);
+            var requestMessage = new HttpRequestMessage(HttpMethod.Get, url);
+            requestMessage.Headers.Add(CookieHeader, this.cookieContainer.GetCookieHeader());
+            var responseMessage = await this.httpClient.SendAsync(requestMessage, HttpCompletionOption.ResponseHeadersRead);
 
             if (this.logger.IsDebugEnabled)
             {
                 await this.logger.LogResponseAsync(url, responseMessage);
+            }
+
+            IEnumerable<string> responseCookies;
+            if (responseMessage.Headers.TryGetValues(SetCookieHeader, out responseCookies))
+            {
+                this.cookieContainer.SetCookies(responseCookies);
             }
 
             this.VerifyAuthorization(responseMessage);
@@ -110,7 +130,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
         {
             if (this.logger.IsDebugEnabled)
             {
-                this.logger.LogRequest(HttpMethod.Post, url, this.httpClientHandler.CookieContainer.GetCookies(new Uri(this.httpClient.BaseAddress, PlayMusicUrl)), formData);
+                this.logger.LogRequest(HttpMethod.Post, url, this.cookieContainer.GetCookies().Cast<Cookie>(), formData);
             }
 
             if (signUrl)
@@ -125,6 +145,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 requestMessage.Content = new FormUrlEncodedContent(formData);
             }
 
+            requestMessage.Headers.Add(CookieHeader, this.cookieContainer.GetCookieHeader());
             var responseMessage = await this.httpClient.SendAsync(requestMessage, HttpCompletionOption.ResponseContentRead);
 
             if (this.logger.IsDebugEnabled)
@@ -132,6 +153,12 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 await this.logger.LogResponseAsync(url, responseMessage);
             }
 
+            IEnumerable<string> responseCookies;
+            if (responseMessage.Headers.TryGetValues(SetCookieHeader, out responseCookies))
+            {
+                this.cookieContainer.SetCookies(responseCookies);
+            }
+            
             this.VerifyAuthorization(responseMessage);
 
             return responseMessage;
@@ -206,23 +233,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
         private string SignUrl(string url)
         {
-            Uri uri;
-            if (!Uri.TryCreate(url, UriKind.Absolute, out uri)
-                && !Uri.TryCreate(this.httpClient.BaseAddress, url, out uri))
-            {
-                this.logger.Warning("Cannot generate uri from url '{0}'", url);
-                uri = new Uri(PlayMusicUrl);
-            }
-
-            var cookieCollection = this.httpClientHandler.CookieContainer.GetCookies(uri);
-            var cookie = cookieCollection.Cast<Cookie>().FirstOrDefault(x => string.Equals(x.Name, "xt", StringComparison.OrdinalIgnoreCase));
-
-            // When we get XT cookies first time it is issued for PlayMusicUrl url.
-            if (cookie == null)
-            {
-                cookieCollection = this.httpClientHandler.CookieContainer.GetCookies(new Uri(PlayMusicUrl));
-                cookie = cookieCollection.Cast<Cookie>().FirstOrDefault(x => string.Equals(x.Name, "xt", StringComparison.OrdinalIgnoreCase));
-            }
+            var cookie = this.cookieContainer.FindCookie("xt");
 
             if (cookie != null)
             {

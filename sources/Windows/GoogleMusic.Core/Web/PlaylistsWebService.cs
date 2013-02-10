@@ -13,12 +13,12 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
     public class PlaylistsWebService : IPlaylistsWebService
     {
-        private const string PlaylistsUrl = "music/services/loadplaylist";
-        private const string AddPlaylistUrl = "music/services/addplaylist";
-        private const string DeletePlaylistUrl = "music/services/deleteplaylist";
-        private const string ChangePlaylistNameUrl = "music/services/modifyplaylist";
-        private const string AddToPlaylistUrl = "music/services/addtoplaylist";
-        private const string DeleteSongUrl = "music/services/deletesong";
+        private const string PlaylistsUrl = "services/loadplaylist";
+        private const string AddPlaylistUrl = "services/addplaylist";
+        private const string DeletePlaylistUrl = "services/deleteplaylist";
+        private const string ChangePlaylistNameUrl = "services/modifyplaylist";
+        private const string AddToPlaylistUrl = "services/addtoplaylist";
+        private const string DeleteSongUrl = "services/deletesong";
 
         private readonly IGoogleMusicWebService googleMusicWebService;
 

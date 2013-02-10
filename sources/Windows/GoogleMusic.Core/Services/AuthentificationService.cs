@@ -4,6 +4,8 @@
 namespace OutcoldSolutions.GoogleMusic.Services
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Net;
     using System.Threading.Tasks;
 
@@ -88,7 +90,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
                 if (cookieCollection != null && cookieCollection.Count > 0)
                 {
-                    if (await this.InitializeWebServices(cookieCollection))
+                    if (await this.InitializeWebServices(cookieCollection.Cast<Cookie>()))
                     {
                         this.sessionService.GetSession().IsAuthenticated = true;
                         return AuthentificationResult.SucceedResult();
@@ -106,7 +108,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             return AuthentificationResult.FailedResult(this.resourceLoader.GetString("Login_Unknown"));
         }
 
-        private async Task<bool> InitializeWebServices(CookieCollection cookieCollection)
+        private async Task<bool> InitializeWebServices(IEnumerable<Cookie> cookieCollection)
         {
             this.googleMusicWebService.Initialize(cookieCollection);
 

@@ -16,13 +16,13 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
     public class SongWebService : ISongWebService
     {
-        private const string SongUrlFormat = "music/play?u=0&songid={0}";
-        private const string RecordPlayingUrl = "music/services/recordplaying";
-        private const string ModifyEntriesUrl = "music/services/modifyentries";
-        private const string AllSongsUrl = "music/services/loadalltracks";
-        private const string GetStatusUrl = "music/services/getstatus";
+        private const string SongUrlFormat = "play?u=0&songid={0}";
+        private const string RecordPlayingUrl = "services/recordplaying";
+        private const string ModifyEntriesUrl = "services/modifyentries";
+        private const string AllSongsUrl = "services/loadalltracks";
+        private const string GetStatusUrl = "services/getstatus";
 
-        private const string StreamingLoadAllTracks = "music/services/streamingloadalltracks?json=";
+        private const string StreamingLoadAllTracks = "services/streamingloadalltracks?json=";
 
         private readonly IGoogleMusicWebService googleMusicWebService;
         private readonly IGoogleMusicSessionService sessionService;

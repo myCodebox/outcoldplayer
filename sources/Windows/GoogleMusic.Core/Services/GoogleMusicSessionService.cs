@@ -4,6 +4,7 @@
 namespace OutcoldSolutions.GoogleMusic.Services
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Net;
     using System.Threading.Tasks;
@@ -47,7 +48,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             return this.userSession;
         }
 
-        public async Task SaveCurrentSessionAsync(CookieCollection cookieCollection)
+        public async Task SaveCurrentSessionAsync(IEnumerable<Cookie> cookieCollection)
         {
             if (cookieCollection == null)
             {
@@ -65,9 +66,11 @@ namespace OutcoldSolutions.GoogleMusic.Services
             {
                 applicationDataContainer.Values[SessionIdKey] = this.userSession.SessionId;
 
-                string cookies = JsonConvert.SerializeObject(cookieCollection.Cast<Cookie>().ToArray());
+                var cookies = cookieCollection.ToArray();
 
-                string protectedCookies = await this.dataProtectService.ProtectStringAsync(cookies);
+                string cookiesJson = JsonConvert.SerializeObject(cookies);
+
+                string protectedCookies = await this.dataProtectService.ProtectStringAsync(cookiesJson);
 
                 applicationDataContainer.Values[CookiesKey] = protectedCookies;
                 
@@ -76,7 +79,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     this.logger.Debug("Cookies and sessionId were saved. SessionId: {0}.", this.userSession.SessionId);
                     this.logger.Debug("---------------------------------");
                     this.logger.Debug("Saved cookies:");
-                    this.logger.LogCookies(cookieCollection);
+                    this.logger.LogCookies(cookies);
                     this.logger.Debug("---------------------------------");
                 }
             }
@@ -86,7 +89,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             }
         }
 
-        public async Task<CookieCollection> GetSavedCookiesAsync()
+        public async Task<IEnumerable<Cookie>> GetSavedCookiesAsync()
         {
             var applicationDataContainer = this.GetSessionContainer();
             if (applicationDataContainer != null)
@@ -102,21 +105,15 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
                         if (cookiesArray != null)
                         {
-                            CookieCollection result = new CookieCollection();
-                            foreach (var cookie in cookiesArray)
-                            {
-                                result.Add(cookie);
-                            }
-
                             if (this.logger.IsDebugEnabled)
                             {
                                 this.logger.Debug("---------------------------------");
                                 this.logger.Debug("Loaded cookies:");
-                                this.logger.LogCookies(result);
+                                this.logger.LogCookies(cookiesArray);
                                 this.logger.Debug("---------------------------------");
                             }
 
-                            return result;
+                            return cookiesArray;
                         }
                     }
                     catch (Exception e)

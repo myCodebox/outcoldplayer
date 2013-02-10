@@ -189,6 +189,9 @@
     <Compile Include="..\Windows\GoogleMusic.Core\Services\SongsCacheService.cs">
       <Link>_sources\Services\SongsCacheService.cs</Link>
     </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Web\CookieContainerWrapper.cs">
+      <Link>_sources\Web\CookieContainerWrapper.cs</Link>
+    </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Web\GoogleAccountWebService.cs">
       <Link>_sources\Web\GoogleAccountWebService.cs</Link>
     </Compile>
@@ -307,6 +310,7 @@
     <Compile Include="Repositories\AlbumCollectionSuites.cs" />
     <Compile Include="Services\Pubslishers\CurrentSongPublisherServiceSuites.cs" />
     <Compile Include="SuitesConstants.cs" />
+    <Compile Include="Web\CookieContainerWrapperSuites.cs" />
     <Compile Include="Web\GoogleAccountWebServiceSuites.cs" />
     <Compile Include="Web\PlaylistsWebServiceSuites.cs" />
     <Compile Include="Web\HttpContentExtensionsSuites.cs" />

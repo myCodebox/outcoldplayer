@@ -6,6 +6,7 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Web
 {
     using System;
     using System.Linq;
+    using System.Net;
     using System.Threading.Tasks;
 
     using Moq;
@@ -134,7 +135,7 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Web
         {
             await this.googleAccountWebService.AuthenticateAsync(SuitesConstants.GoogleAccountName, SuitesConstants.GoogleAccountPassword);
             var cookies = await this.googleAccountWebService.GetCookiesAsync(this.musicWebService.GetServiceUrl());
-            this.musicWebService.Initialize(cookies);
+            this.musicWebService.Initialize(cookies.Cast<Cookie>());
         }
     }
 }

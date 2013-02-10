@@ -5,6 +5,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Net;
     using System.Net.Http;
     using System.Text;
@@ -24,7 +25,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
             this ILogger @this,
             HttpMethod method,
             string requestUrl, 
-            CookieCollection cookieCollection = null,
+            IEnumerable<Cookie> cookieCollection = null,
             IDictionary<string, string> formData = null)
         {
             if (@this == null)
@@ -58,7 +59,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
             }
         }
 
-        public static void LogCookies(this ILogger @this, CookieCollection cookieCollection)
+        public static void LogCookies(this ILogger @this, IEnumerable<Cookie> cookieCollection)
         {
             if (@this.IsDebugEnabled)
             {
@@ -137,14 +138,15 @@ namespace OutcoldSolutions.GoogleMusic.Web
             }
         }
 
-        private static void LogCookies(StringBuilder log, CookieCollection cookieCollection)
+        private static void LogCookies(StringBuilder log, IEnumerable<Cookie> cookieCollection)
         {
             if (cookieCollection != null)
             {
-                log.AppendFormat("    COOKIES({0}):", cookieCollection.Count);
+                var cookies = cookieCollection.ToList();
+                log.AppendFormat("    COOKIES({0}):", cookies.Count);
                 log.AppendLine();
 
-                foreach (Cookie cookieLog in cookieCollection)
+                foreach (Cookie cookieLog in cookies)
                 {
 #if DEBUG
                     log.AppendFormat("        {0}={1}, Expires={2}", cookieLog.Name, cookieLog.Value, cookieLog.Expires);
