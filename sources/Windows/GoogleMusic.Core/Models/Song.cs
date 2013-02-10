@@ -70,6 +70,7 @@ namespace OutcoldSolutions.GoogleMusic.Models
             set
             {
                 this.Metadata.Rating = (byte)value;
+                this.RaiseCurrentPropertyChanged();
             }
         }
 
