@@ -5,6 +5,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.Linq;
     using System.Threading.Tasks;
 
@@ -92,14 +93,6 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
             this.dispatcherTimer.Start();
         }
 
-        public void Clear()
-        {
-            lock (this.songs)
-            {
-                this.songs.Clear();
-            }
-        }
-
         public Song GetSong(Guid songId)
         {
             if (this.lastUpdate == null)
@@ -119,6 +112,15 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
             lock (this.songs)
             {
                 return this.songs.Values.ToList();
+            }
+        }
+
+        public async Task SaveToCacheAsync()
+        {
+            if (this.lastUpdate != null)
+            {
+                await this.songsCacheService.SaveToFileAsync(
+                    this.lastUpdate.Value, this.songs.Values.Select(x => x.Metadata).ToList());
             }
         }
 
@@ -152,6 +154,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
                         {
                             if (containsSong)
                             {
+                                song.PropertyChanged -= this.SongOnPropertyChanged;
                                 this.songs.Remove(songInfo.Id);
                             }
                         }
@@ -159,11 +162,13 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
                         {
                             if (containsSong)
                             {
+                                song.PropertyChanged -= this.SongOnPropertyChanged;
                                 song.Metadata = songInfo;
+                                song.PropertyChanged += this.SongOnPropertyChanged;
                             }
                             else
                             {
-                                this.songs.Add(songInfo.Id, new Song(songInfo));
+                                this.songs.Add(songInfo.Id, this.CreateSong(songInfo));
                             }
                         }
                     }
@@ -200,11 +205,13 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
                     Song song;
                     if (this.songs.TryGetValue(songInfo.Id, out song))
                     {
+                        song.PropertyChanged -= this.SongOnPropertyChanged;
                         song.Metadata = songInfo;
+                        song.PropertyChanged += this.SongOnPropertyChanged;
                     }
                     else
                     {
-                        this.songs.Add(songInfo.Id, new Song(songInfo));
+                        this.songs.Add(songInfo.Id, this.CreateSong(songInfo));
                     }
                 }
             }
@@ -215,12 +222,25 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
             }
         }
 
-        private async Task SaveToCacheAsync()
+        private Song CreateSong(SongMetadata metadata)
         {
-            if (this.lastUpdate != null)
+            var song = new Song(metadata);
+            song.PropertyChanged += this.SongOnPropertyChanged;
+            return song;
+        }
+
+        private void SongOnPropertyChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)
+        {
+            var song = sender as Song;
+            if (song != null)
             {
-                await this.songsCacheService.SaveToFileAsync(
-                    this.lastUpdate.Value, this.songs.Values.Select(x => x.Metadata).ToList());
+                if (!string.Equals(
+                    propertyChangedEventArgs.PropertyName,
+                    PropertyNameExtractor.GetPropertyName(() => song.IsPlaying),
+                    StringComparison.OrdinalIgnoreCase))
+                {
+                    this.songsCacheService.UpdateSongMedatadaAsync(song.Metadata);
+                }
             }
         }
     }

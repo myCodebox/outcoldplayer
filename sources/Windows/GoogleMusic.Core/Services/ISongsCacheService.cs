@@ -18,5 +18,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
         Task ClearCacheAsync();
 
         void UpdateCacheFreshness(DateTime lastUpdate);
+
+        Task UpdateSongMedatadaAsync(SongMetadata metadata);
     }
 }

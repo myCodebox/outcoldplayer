@@ -19,6 +19,6 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
 
         Song GetSong(Guid songId);
 
-        void Clear();
+        Task SaveToCacheAsync();
     }
 }

@@ -255,6 +255,7 @@ namespace OutcoldSolutions.GoogleMusic
                         }
 
                         Container.Resolve<ILastfmWebService>().SaveCurrentSession();
+                        await Container.Resolve<ISongsRepository>().SaveToCacheAsync();
 
                         TileUpdateManager.CreateTileUpdaterForApplication().Clear();
                     });
