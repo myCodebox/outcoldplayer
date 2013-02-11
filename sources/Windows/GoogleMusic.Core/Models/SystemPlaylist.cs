@@ -3,7 +3,6 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Models
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -11,11 +10,8 @@ namespace OutcoldSolutions.GoogleMusic.Models
     {
         public SystemPlaylist(string name, SystemPlaylistType type, IEnumerable<Song> songs)
             : base(
-            name, 
-            songs.OrderBy(s => s.Metadata.Artist, StringComparer.CurrentCultureIgnoreCase)
-                .ThenBy(s => s.Metadata.Album, StringComparer.CurrentCultureIgnoreCase)
-                .ThenBy(s => Math.Max(s.Metadata.Disc, (byte)1))
-                .ThenBy(s => s.Metadata.Track).ToList())
+            name,
+            songs.ToList())
         {
             this.Type = type;
             this.AlbumArtUrl = null;
@@ -25,7 +21,9 @@ namespace OutcoldSolutions.GoogleMusic.Models
         {
             AllSongs,
 
-            HighlyRated
+            HighlyRated,
+
+            LastAdded
         }
 
         public SystemPlaylistType Type { get; set; }
