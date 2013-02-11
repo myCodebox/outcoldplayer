@@ -11,7 +11,7 @@ namespace OutcoldSolutions.GoogleMusic
 
         void RegisterRegionProvider(IViewRegionProvider regionProvider);
 
-        TView NavigateTo<TView>(object parameter = null, bool keepInHistory = true) where TView : IView;
+        TView NavigateTo<TView>(object parameter = null, bool keepInHistory = true) where TView : IPageView;
 
         void GoBack();
 

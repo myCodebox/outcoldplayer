@@ -195,7 +195,6 @@
     <Compile Include="Views\Settings\AccountView.xaml.cs">
       <DependentUpon>AccountView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Settings\ISettingsView.cs" />
     <Compile Include="Views\Settings\PrivacyView.xaml.cs">
       <DependentUpon>PrivacyView.xaml</DependentUpon>
     </Compile>

@@ -5,7 +5,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
 {
     using System;
 
-    public interface IAuthentificationView : IView
+    public interface IAuthentificationView : IPageView
     {
         event EventHandler Succeed;
     }

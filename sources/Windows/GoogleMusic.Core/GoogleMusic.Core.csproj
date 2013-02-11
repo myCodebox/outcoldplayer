@@ -102,6 +102,8 @@
     <Compile Include="DateTimeExtensions.cs" />
     <Compile Include="Diagnostics\DebugLogWriter.cs" />
     <Compile Include="INavigationService.cs" />
+    <Compile Include="IPageView.cs" />
+    <Compile Include="IPopupView.cs" />
     <Compile Include="IView.cs" />
     <Compile Include="IViewRegionProvider.cs" />
     <Compile Include="Models\Search.cs" />

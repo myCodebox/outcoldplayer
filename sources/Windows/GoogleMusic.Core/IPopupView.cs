@@ -1,9 +1,9 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // Outcold Solutions (http://outcoldman.com)
 // --------------------------------------------------------------------------------------------------------------------
-namespace OutcoldSolutions.GoogleMusic.Views.Settings
+namespace OutcoldSolutions.GoogleMusic
 {
-    public interface ISettingsView : IView
+    public interface IPopupView : IView
     {
         void Hide();
     }

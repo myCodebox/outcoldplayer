@@ -9,7 +9,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
     using OutcoldSolutions.GoogleMusic.Views.Settings;
     using OutcoldSolutions.GoogleMusic.Web.Lastfm;
 
-    public class AccountViewPresenter : ViewPresenterBase<ISettingsView>
+    public class AccountViewPresenter : ViewPresenterBase<IPopupView>
     {
         private readonly IGoogleAccountService googleAccountService;
         private readonly IGoogleMusicSessionService sessionService;
@@ -19,7 +19,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
 
         public AccountViewPresenter(
             IDependencyResolverContainer container,
-            ISettingsView view,
+            IPopupView view,
             IGoogleAccountService googleAccountService,
             IGoogleMusicSessionService sessionService,
             ILastfmWebService lastfmWebService,

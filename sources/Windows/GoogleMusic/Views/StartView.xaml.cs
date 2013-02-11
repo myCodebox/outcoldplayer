@@ -14,7 +14,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
 
-    public interface IStartView : IView
+    public interface IStartView : IPageView
     {
         void SetGroups(List<PlaylistsGroupBindingModel> groups);
     }

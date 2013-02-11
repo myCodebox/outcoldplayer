@@ -16,7 +16,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Input;
 
-    public interface ICurrentPlaylistView : IView
+    public interface ICurrentPlaylistView : IPageView
     {
         int SelectedSongIndex { get; set; }
 

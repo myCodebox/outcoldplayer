@@ -264,7 +264,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
             this.Navigate<IPlaylistsView>(PlaylistsRequest.Artists);
         }
 
-        private void Navigate<TView>(object parameter = null) where TView : IView
+        private void Navigate<TView>(object parameter = null) where TView : IPageView
         {
             Debug.Assert(this.TopAppBar != null, "this.TopAppBar != null");
             this.TopAppBar.IsOpen = false;

@@ -10,7 +10,7 @@ namespace OutcoldSolutions.GoogleMusic.Views.Settings
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls.Primitives;
 
-    public sealed partial class AccountView : ViewBase, ISettingsView
+    public sealed partial class AccountView : ViewBase, IPopupView
     {
         public AccountView()
         {

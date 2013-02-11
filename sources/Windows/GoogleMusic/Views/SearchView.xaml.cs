@@ -8,7 +8,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
     using Windows.UI.Xaml.Controls;
 
-    public interface ISearchView : IView
+    public interface ISearchView : IPageView
     {
         int SelectedFilterIndex { set; }
     }

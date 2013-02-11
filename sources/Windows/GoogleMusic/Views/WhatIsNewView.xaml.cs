@@ -12,7 +12,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
 
-    public interface IWhatIsNewView : IView
+    public interface IWhatIsNewView : IPageView
     {
     }
 

@@ -37,7 +37,7 @@ namespace OutcoldSolutions.GoogleMusic
             this.viewRegionProvider = regionProvider;
         }
 
-        public TView NavigateTo<TView>(object parameter = null, bool keepInHistory = true) where TView : IView
+        public TView NavigateTo<TView>(object parameter = null, bool keepInHistory = true) where TView : IPageView
         {
             if (this.viewRegionProvider == null)
             {
@@ -136,7 +136,7 @@ namespace OutcoldSolutions.GoogleMusic
 
         private class HistoryItem
         {
-            public HistoryItem(IView view, Type viewType, object parameter)
+            public HistoryItem(IPageView view, Type viewType, object parameter)
             {
                 this.View = view;
                 this.ViewType = viewType;
@@ -144,7 +144,7 @@ namespace OutcoldSolutions.GoogleMusic
                 this.State = new Dictionary<string, object>();
             }
 
-            public IView View { get; private set; }
+            public IPageView View { get; private set; }
 
             public Type ViewType { get; private set; }
 

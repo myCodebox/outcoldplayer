@@ -1,9 +1,12 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // Outcold Solutions (http://outcoldman.com)
 // --------------------------------------------------------------------------------------------------------------------
-namespace OutcoldSolutions.GoogleMusic.Views
+namespace OutcoldSolutions.GoogleMusic
 {
-    public interface IProgressLoadingView : IPageView
+    public interface IPageView : IView
     {
+        void OnNavigatedTo(NavigatedToEventArgs eventArgs);
+
+        void OnNavigatingFrom(NavigatingFromEventArgs eventArgs); 
     }
 }
