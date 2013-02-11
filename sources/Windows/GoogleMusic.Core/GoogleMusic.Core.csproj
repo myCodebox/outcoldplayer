@@ -102,6 +102,7 @@
     <Compile Include="ApplicationBase.cs" />
     <Compile Include="DateTimeExtensions.cs" />
     <Compile Include="Diagnostics\DebugLogWriter.cs" />
+    <Compile Include="DispatcherContainer.cs" />
     <Compile Include="INavigationService.cs" />
     <Compile Include="IPagePresenterBase.cs" />
     <Compile Include="IPageView.cs" />
