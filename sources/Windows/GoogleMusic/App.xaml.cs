@@ -77,11 +77,14 @@ namespace OutcoldSolutions.GoogleMusic
                 {
                     registration.Register<ILogManager>().AsSingleton<LogManager>();
 
+                    registration.Register<INavigationService>().AsSingleton<NavigationService>();
+
                     registration.Register<IMainView>()
                                 .And<IMediaElemenetContainerView>()
                                 .And<ICurrentContextCommands>()
                                 .AsSingleton<MainView>();
-                    registration.Register<INavigationService>().And<MainViewPresenter>().AsSingleton<MainViewPresenter>();
+
+                    registration.Register<MainViewPresenter>();
 
                     registration.Register<IAuthentificationView>().As<AuthentificationView>();
                     registration.Register<AuthentificationPresenter>();
@@ -176,6 +179,8 @@ namespace OutcoldSolutions.GoogleMusic
 
                 // Create a Frame to act as the navigation context and navigate to the first page
                 mainView = (MainView)Container.Resolve<IMainView>();
+
+                Container.Resolve<INavigationService>().RegisterRegionProvider(mainView);
 
                 this.sessionService.LoadSession();
 

@@ -90,7 +90,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                             {
                                 this.View.SetGroups(t.Result);
 
-                                if (eventArgs.IsBack)
+                                if (eventArgs.IsNavigationBack)
                                 {
                                     object lastPlaylist;
                                     if (eventArgs.State.TryGetValue("LastViewedPlaylist", out lastPlaylist)

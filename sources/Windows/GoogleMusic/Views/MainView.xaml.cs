@@ -28,11 +28,8 @@ namespace OutcoldSolutions.GoogleMusic.Views
         void Activate();
     }
 
-    public interface IMainView : IView, IMediaElemenetContainerView
+    public interface IMainView : IView, IMediaElemenetContainerView, IViewRegionProvider
     {
-        void ShowView(IView view);
-
-        void HideView();
     }
 
     public sealed partial class MainView : PageBase, IMainView, IMediaElemenetContainerView, ICurrentContextCommands
@@ -142,7 +139,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
             }
         }
 
-        public void ShowView(IView view)
+        public void Show(IView view)
         {
             var visible = this.Presenter<MainViewPresenter>().BindingModel.IsAuthenticated
                           && this.Presenter<MainViewPresenter>().HasHistory()
@@ -153,12 +150,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
             this.ClearContext();
             this.MainContent.Content = view;
-        }
-
-        public void HideView()
-        {
-            this.ClearContext();
-            this.MainContent.Content = null;
         }
 
         public MediaElement GetMediaElement()
@@ -240,10 +231,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
         private void GoBackClick(object sender, RoutedEventArgs e)
         {
             var mainViewPresenter = this.Presenter<MainViewPresenter>();
-            if (mainViewPresenter.CanGoBack())
-            {
-                mainViewPresenter.GoBack();
-            }
+            mainViewPresenter.GoBack();
         }
         
         private void HomeNavigate(object sender, RoutedEventArgs e)

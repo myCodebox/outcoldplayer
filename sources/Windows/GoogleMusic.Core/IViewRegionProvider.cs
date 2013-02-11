@@ -3,14 +3,8 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic
 {
-    using OutcoldSolutions.GoogleMusic.Views;
-
-    public interface INavigationService
+    public interface IViewRegionProvider
     {
-        TView NavigateTo<TView>(object parameter = null, bool keepInHistory = true) where TView : IView;
-
-        void GoBack();
-
-        bool CanGoBack();
+        void Show(IView view);
     }
 }
