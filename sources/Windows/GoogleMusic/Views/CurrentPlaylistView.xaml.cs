@@ -25,28 +25,30 @@ namespace OutcoldSolutions.GoogleMusic.Views
         void SelectCurrentSong();
     }
 
-    public sealed partial class CurrentPlaylistView : ViewBase, ICurrentPlaylistView
+    public sealed partial class CurrentPlaylistPageView : PageViewBase, ICurrentPlaylistView
     {
         private readonly List<UIElement> contextButtons = new List<UIElement>();
         private readonly ICurrentContextCommands currentContextCommands;
 
-        public CurrentPlaylistView()
+        private CurrentPlaylistViewPresenter presenter;
+
+        public CurrentPlaylistPageView()
         {
             this.InitializeComponent();
-            this.InitializePresenter<CurrentPlaylistViewPresenter>();
+            this.presenter = this.InitializePresenter<CurrentPlaylistViewPresenter>();
 
             this.currentContextCommands = App.Container.Resolve<ICurrentContextCommands>();
 
             this.contextButtons.Add(new Button()
                                         {
                                             Style = (Style)Application.Current.Resources["PlayAppBarButtonStyle"],
-                                            Command = this.Presenter<CurrentPlaylistViewPresenter>().BindingModel.PlaySelectedSong
+                                            Command = this.presenter.BindingModel.PlaySelectedSong
                                         });
 
             var addToPlaylistButton = new Button()
             {
                 Style = (Style)Application.Current.Resources["AddAppBarButtonStyle"],
-                Command = this.Presenter<CurrentPlaylistViewPresenter>().AddToPlaylistCommand
+                Command = this.presenter.AddToPlaylistCommand
             };
 
             addToPlaylistButton.SetValue(AutomationProperties.NameProperty, "Playlist");
@@ -58,7 +60,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
             this.contextButtons.Add(new Button()
                                         {
                                             Style = (Style)Application.Current.Resources["RemoveAppBarButtonStyle"],
-                                            Command = this.Presenter<CurrentPlaylistViewPresenter>().BindingModel.RemoveSelectedSong
+                                            Command = this.presenter.BindingModel.RemoveSelectedSong
                                         });
         }
 
@@ -118,19 +120,19 @@ namespace OutcoldSolutions.GoogleMusic.Views
         {
             if (this.PlaylistsPopup.IsOpen)
             {
-                this.Presenter<CurrentPlaylistViewPresenter>().AddSelectedSongToPlaylist((MusicPlaylist)e.ClickedItem);
+                this.presenter.AddSelectedSongToPlaylist((MusicPlaylist)e.ClickedItem);
                 this.PlaylistsPopup.IsOpen = false;
             }
         }
 
         private void ListDoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
         {
-            this.Presenter<CurrentPlaylistViewPresenter>().BindingModel.PlaySelectedSong.Execute(null);
+            this.presenter.BindingModel.PlaySelectedSong.Execute(null);
         }
 
         private void RatingOnValueChanged(object sender, ValueChangedEventArgs e)
         {
-            this.Presenter<CurrentPlaylistViewPresenter>().UpdateRating((Song)((Rating)sender).DataContext, (byte)e.NewValue);
+            this.presenter.UpdateRating((Song)((Rating)sender).DataContext, (byte)e.NewValue);
         }
     }
 }

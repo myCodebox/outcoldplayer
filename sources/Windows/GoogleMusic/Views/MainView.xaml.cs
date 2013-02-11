@@ -34,15 +34,17 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
     public sealed partial class MainView : PageBase, IMainView, IMediaElemenetContainerView, ICurrentContextCommands
     {
+        private readonly MainViewPresenter presenter;
+
         private AdControl adControl;
 
         public MainView()
         {
             this.InitializeComponent();
-            this.InitializePresenter<MainViewPresenter>();
+            this.presenter = this.InitializePresenter<MainViewPresenter>();
 
-            this.PlayerView.DataContext = this.Presenter<MainViewPresenter>().PlayerViewPresenter;
-            this.SnappedPlayerView.DataContext = this.Presenter<MainViewPresenter>().PlayerViewPresenter;
+            this.PlayerView.DataContext = this.presenter.PlayerViewPresenter;
+            this.SnappedPlayerView.DataContext = this.presenter.PlayerViewPresenter;
 
             Debug.Assert(this.BottomAppBar != null, "this.BottomAppBar != null");
             this.BottomAppBar.Opened += (sender, o) =>
@@ -127,8 +129,8 @@ namespace OutcoldSolutions.GoogleMusic.Views
                     this.MainGrid.Children.Add(this.adControl);
                 }
 
-                var visible = this.Presenter<MainViewPresenter>().BindingModel.IsAuthenticated
-                          && this.Presenter<MainViewPresenter>().HasHistory()
+                var visible = this.presenter.BindingModel.IsAuthenticated
+                          && this.presenter.HasHistory()
                           && ApplicationView.Value != ApplicationViewState.Snapped;
 
                 if (this.adControl != null)
@@ -141,8 +143,8 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
         public void Show(IView view)
         {
-            var visible = this.Presenter<MainViewPresenter>().BindingModel.IsAuthenticated
-                          && this.Presenter<MainViewPresenter>().HasHistory()
+            var visible = this.presenter.BindingModel.IsAuthenticated
+                          && this.presenter.HasHistory()
                           && ApplicationView.Value != ApplicationViewState.Snapped;
 
             this.UpdateAppBars(visible);
@@ -230,8 +232,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
         private void GoBackClick(object sender, RoutedEventArgs e)
         {
-            var mainViewPresenter = this.Presenter<MainViewPresenter>();
-            mainViewPresenter.GoBack();
+            this.presenter.GoBack();
         }
         
         private void HomeNavigate(object sender, RoutedEventArgs e)

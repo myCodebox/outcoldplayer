@@ -143,12 +143,10 @@
     <Compile Include="BindingModels\PlaylistViewBindingModel.cs" />
     <Compile Include="Presenters\PlaylistViewPresenter.cs" />
     <Compile Include="Presenters\PlaylistsViewPresenterBase.cs" />
-    <Compile Include="Presenters\PresenterBase.cs" />
     <Compile Include="Presenters\ProgressLoadingPresenter.cs" />
     <Compile Include="Presenters\SearchViewPresenter.cs" />
     <Compile Include="Presenters\Settings\AccountViewPresenter.cs" />
     <Compile Include="Presenters\StartViewPresenter.cs" />
-    <Compile Include="Presenters\ViewPresenterBase.cs" />
     <Compile Include="Services\ICurrentContextCommands.cs" />
     <Compile Include="Services\ICurrentPlaylistService.cs" />
     <Compile Include="Services\ISearchService.cs" />
@@ -210,7 +208,6 @@
     <Compile Include="Views\StartView.xaml.cs">
       <DependentUpon>StartView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\ViewBase.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">

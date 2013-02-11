@@ -22,15 +22,13 @@ namespace OutcoldSolutions.GoogleMusic
     using OutcoldSolutions.GoogleMusic.Web;
     using OutcoldSolutions.GoogleMusic.Web.Lastfm;
     
-    using Windows.ApplicationModel;
-    using Windows.ApplicationModel.Activation;
     using Windows.UI.Core;
     using Windows.UI.Notifications;
     using Windows.UI.Xaml;
 
     using DebugLogWriter = OutcoldSolutions.GoogleMusic.Diagnostics.DebugLogWriter;
 
-    public sealed partial class App : Application
+    public sealed partial class App : ApplicationBase
     {
         private ILogManager logManager;
         private ISettingsService settingsService;
@@ -40,30 +38,9 @@ namespace OutcoldSolutions.GoogleMusic
         public App()
         {
             this.InitializeComponent();
-            this.Suspending += this.OnSuspending;
         }
 
-        public static IDependencyResolverContainer Container { get; private set; }
-
-        protected override void OnSearchActivated(SearchActivatedEventArgs args)
-        {
-            this.EnsureMainViewActivated();
-
-            base.OnSearchActivated(args);
-        }
-
-        /// <summary>
-        /// Invoked when the application is launched normally by the end user.  Other entry points
-        /// will be used when the application is launched to open a specific file, to display
-        /// search results, and so forth.
-        /// </summary>
-        /// <param name="args">Details about the launch request and process.</param>
-        protected override void OnLaunched(LaunchActivatedEventArgs args)
-        {
-            this.EnsureMainViewActivated();
-        }
-
-        private void EnsureMainViewActivated()
+        protected override void InitializeApplication()
         {
             MainView mainView = Window.Current.Content as MainView;
 
@@ -71,8 +48,6 @@ namespace OutcoldSolutions.GoogleMusic
             // just ensure that the window is active
             if (mainView == null)
             {
-                Container = new DependencyResolverContainer();
-
                 using (var registration = Container.Registration())
                 {
                     registration.Register<ILogManager>().AsSingleton<LogManager>();
@@ -86,25 +61,25 @@ namespace OutcoldSolutions.GoogleMusic
 
                     registration.Register<MainViewPresenter>();
 
-                    registration.Register<IAuthentificationView>().As<AuthentificationView>();
+                    registration.Register<IAuthentificationView>().As<AuthentificationPageView>();
                     registration.Register<AuthentificationPresenter>();
 
-                    registration.Register<IStartView>().AsSingleton<StartView>();
+                    registration.Register<IStartView>().AsSingleton<StartPageView>();
                     registration.Register<StartViewPresenter>().AsSingleton();
 
-                    registration.Register<IPlaylistsView>().AsSingleton<PlaylistsView>();
+                    registration.Register<IPlaylistsView>().AsSingleton<PlaylistsPageView>();
                     registration.Register<PlaylistsViewPresenter>().AsSingleton();
 
-                    registration.Register<IPlaylistView>().AsSingleton<PlaylistView>();
+                    registration.Register<IPlaylistView>().AsSingleton<PlaylistPageView>();
                     registration.Register<PlaylistViewPresenter>().AsSingleton();
 
-                    registration.Register<ICurrentPlaylistView>().AsSingleton<CurrentPlaylistView>();
+                    registration.Register<ICurrentPlaylistView>().AsSingleton<CurrentPlaylistPageView>();
                     registration.Register<CurrentPlaylistViewPresenter>().AsSingleton();
 
-                    registration.Register<IProgressLoadingView>().As<ProgressLoadingView>();
+                    registration.Register<IProgressLoadingView>().As<ProgressLoadingPageView>();
                     registration.Register<ProgressLoadingPresenter>();
 
-                    registration.Register<ISearchView>().AsSingleton<SearchView>();
+                    registration.Register<ISearchView>().AsSingleton<SearchPageView>();
                     registration.Register<SearchViewPresenter>();
 
                     registration.Register<ICurrentPlaylistService>()
@@ -118,10 +93,10 @@ namespace OutcoldSolutions.GoogleMusic
                     registration.Register<ISearchService>().AsSingleton<SearchService>();
 
                     // Settings views
-                    registration.Register<AccountView>();
+                    registration.Register<AccountPageView>();
                     registration.Register<AccountViewPresenter>();
 
-                    registration.Register<ILastfmAuthentificationView>().As<LastfmAuthentificationView>();
+                    registration.Register<ILastfmAuthentificationView>().As<LastfmAuthentificationPageView>();
                     registration.Register<LastfmAuthentificationPresenter>();
 
                     // Services
@@ -207,6 +182,23 @@ namespace OutcoldSolutions.GoogleMusic
             Window.Current.Activate();
         }
 
+        protected override async Task OnSuspendingAsync()
+        {
+            if (this.sessionService != null)
+            {
+                var cookieCollection = this.webService.GetCurrentCookies();
+                if (cookieCollection != null)
+                {
+                    await this.sessionService.SaveCurrentSessionAsync(cookieCollection);
+                }
+            }
+
+            Container.Resolve<ILastfmWebService>().SaveCurrentSession();
+            await Container.Resolve<ISongsRepository>().SaveToCacheAsync();
+
+            TileUpdateManager.CreateTileUpdaterForApplication().Clear();
+        }
+
         private void UpdateLogLevel()
         {
             var isLoggingOn = this.settingsService.GetValue("IsLoggingOn", defaultValue: false);
@@ -229,41 +221,6 @@ namespace OutcoldSolutions.GoogleMusic
             }
 
             this.logManager.LogLevel = this.logManager.Writers.Count > 0 ? LogLevel.Info : LogLevel.None;
-        }
-
-        /// <summary>
-        /// Invoked when application execution is being suspended.  Application state is saved
-        /// without knowing whether the application will be terminated or resumed with the contents
-        /// of memory still intact.
-        /// </summary>
-        /// <param name="sender">The source of the suspend request.</param>
-        /// <param name="e">Details about the suspend request.</param>
-        private void OnSuspending(object sender, SuspendingEventArgs e)
-        {
-            var deferral = e.SuspendingOperation.GetDeferral();
-
-            this.OnSuspendingAsync().ContinueWith((t) => deferral.Complete());
-        }
-
-        private Task OnSuspendingAsync()
-        {
-            return Task.Factory.StartNew(
-                async () =>
-                    {
-                        if (this.sessionService != null)
-                        {
-                            var cookieCollection = this.webService.GetCurrentCookies();
-                            if (cookieCollection != null)
-                            {
-                                await this.sessionService.SaveCurrentSessionAsync(cookieCollection);
-                            }
-                        }
-
-                        Container.Resolve<ILastfmWebService>().SaveCurrentSession();
-                        await Container.Resolve<ISongsRepository>().SaveToCacheAsync();
-
-                        TileUpdateManager.CreateTileUpdaterForApplication().Clear();
-                    });
         }
     }
 }

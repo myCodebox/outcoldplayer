@@ -14,7 +14,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using OutcoldSolutions.GoogleMusic.Views;
     using OutcoldSolutions.GoogleMusic.Web;
 
-    public class CurrentPlaylistViewPresenter : ViewPresenterBase<ICurrentPlaylistView>
+    public class CurrentPlaylistViewPresenter : PagePresenterBase<ICurrentPlaylistView>
     {
         private readonly ICurrentPlaylistService currentPlaylistService;
 

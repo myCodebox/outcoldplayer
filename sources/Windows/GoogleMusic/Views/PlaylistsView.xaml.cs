@@ -27,35 +27,37 @@ namespace OutcoldSolutions.GoogleMusic.Views
         void ShowPlaylist(PlaylistBindingModel playlistBindingModel);
     }
 
-    public sealed partial class PlaylistsView : ViewBase, IPlaylistsView
+    public sealed partial class PlaylistsPageView : PageViewBase, IPlaylistsView
     {
         private readonly Button addPlaylistButton;
         private readonly Button editPlaylistButton;
         private readonly Button deletePlaylistButton;
         private readonly Border separator;
 
-        public PlaylistsView()
+        private PlaylistsViewPresenter presenter;
+
+        public PlaylistsPageView()
         {
-            this.InitializePresenter<PlaylistsViewPresenter>();
+            this.presenter = this.InitializePresenter<PlaylistsViewPresenter>();
             this.InitializeComponent();
 
             this.addPlaylistButton = new Button()
                                          {
                                              Style = (Style)Application.Current.Resources["AddAppBarButtonStyle"],
-                                             Command = this.Presenter<PlaylistsViewPresenter>().AddPlaylistCommand
+                                             Command = this.presenter.AddPlaylistCommand
                                          };
 
             this.editPlaylistButton = new Button()
                                          {
                                              Style = (Style)Application.Current.Resources["EditAppBarButtonStyle"],
-                                             Command = this.Presenter<PlaylistsViewPresenter>().EditPlaylistCommand
+                                             Command = this.presenter.EditPlaylistCommand
                                          };
             this.editPlaylistButton.SetValue(AutomationProperties.NameProperty, "Rename");
 
             this.deletePlaylistButton = new Button()
                                          {
                                              Style = (Style)Application.Current.Resources["DeleteAppBarButtonStyle"],
-                                             Command = this.Presenter<PlaylistsViewPresenter>().DeletePlaylistCommand
+                                             Command = this.presenter.DeletePlaylistCommand
                                          };
 
             this.separator = new Border() { Style = (Style)Application.Current.Resources["AppBarSeparator"] };
@@ -121,14 +123,14 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
         private void PlaylistItemClick(object sender, ItemClickEventArgs e)
         {
-            this.Presenter<PlaylistsViewPresenter>().ItemClick(e.ClickedItem as PlaylistBindingModel);
+            this.presenter.ItemClick(e.ClickedItem as PlaylistBindingModel);
         }
 
         private void ListViewOnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var uiElements = new List<UIElement>();
             var currentContextCommands = App.Container.Resolve<ICurrentContextCommands>();
-            if (this.Presenter<PlaylistsViewPresenter>().BindingModel.IsEditable)
+            if (this.presenter.BindingModel.IsEditable)
             {
                 uiElements.Add(this.addPlaylistButton);
 
@@ -145,7 +147,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
         private void SaveNameClick(object sender, RoutedEventArgs e)
         {
-            this.Presenter<PlaylistsViewPresenter>().ChangePlaylistName(this.TextBoxPlaylistName.Text);
+            this.presenter.ChangePlaylistName(this.TextBoxPlaylistName.Text);
             this.PlaylistNamePopup.IsOpen = false;
         }
 

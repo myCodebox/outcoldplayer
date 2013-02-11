@@ -19,11 +19,13 @@ namespace OutcoldSolutions.GoogleMusic.Views
         void SetGroups(List<PlaylistsGroupBindingModel> groups);
     }
 
-    public sealed partial class StartView : ViewBase, IStartView
+    public sealed partial class StartPageView : PageViewBase, IStartView
     {
-        public StartView()
+        private readonly StartViewPresenter presenter;
+
+        public StartPageView()
         {
-            this.InitializePresenter<StartViewPresenter>();
+            this.presenter = this.InitializePresenter<StartViewPresenter>();
             this.InitializeComponent();
         }
 
@@ -34,7 +36,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
         private void PlaylistItemClick(object sender, ItemClickEventArgs e)
         {
-            this.Presenter<StartViewPresenter>().ItemClick(e.ClickedItem as PlaylistBindingModel);
+            this.presenter.ItemClick(e.ClickedItem as PlaylistBindingModel);
         }
 
         private void NavigateTo(object sender, RoutedEventArgs e)

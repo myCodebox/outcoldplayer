@@ -17,12 +17,14 @@ namespace OutcoldSolutions.GoogleMusic.Views.Popups
         void Close();
     }
 
-    public sealed partial class LastfmAuthentificationView : ViewBase, ILastfmAuthentificationView
+    public sealed partial class LastfmAuthentificationPageView : PageViewBase, ILastfmAuthentificationView
     {
-        public LastfmAuthentificationView()
+        private LastfmAuthentificationPresenter presenter;
+
+        public LastfmAuthentificationPageView()
         {
             this.InitializeComponent();
-            this.InitializePresenter<LastfmAuthentificationPresenter>();
+            this.presenter = this.InitializePresenter<LastfmAuthentificationPresenter>();
 
             Window.Current.Activated += this.CurrentOnActivated;
         }
@@ -47,15 +49,15 @@ namespace OutcoldSolutions.GoogleMusic.Views.Popups
         {
             if (windowActivatedEventArgs.WindowActivationState != CoreWindowActivationState.Deactivated)
             {
-                Window.Current.Activated -= this.CurrentOnActivated; 
-                this.Presenter<LastfmAuthentificationPresenter>().GetSession();
+                Window.Current.Activated -= this.CurrentOnActivated;
+                this.presenter.GetSession();
             }
         }
 
         private void NavigateToLastfm(object sender, RoutedEventArgs e)
         {
-            Window.Current.Activated += this.CurrentOnActivated; 
-            var task = Launcher.LaunchUriAsync(new Uri(this.Presenter<LastfmAuthentificationPresenter>().BindingModel.LinkUrl));
+            Window.Current.Activated += this.CurrentOnActivated;
+            var task = Launcher.LaunchUriAsync(new Uri(this.presenter.BindingModel.LinkUrl));
         }
     }
 }

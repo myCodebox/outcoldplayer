@@ -11,12 +11,14 @@ namespace OutcoldSolutions.GoogleMusic.Views
     using Windows.System;
     using Windows.UI.Xaml;
 
-    public sealed partial class AuthentificationView : ViewBase, IAuthentificationView
+    public sealed partial class AuthentificationPageView : PageViewBase, IAuthentificationView
     {
-        public AuthentificationView()
+        private AuthentificationPresenter presenter;
+
+        public AuthentificationPageView()
         {
             this.InitializeComponent();
-            this.InitializePresenter<AuthentificationPresenter>();
+            this.presenter = this.InitializePresenter<AuthentificationPresenter>();
         }
 
         public event EventHandler Succeed;
@@ -27,7 +29,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
             {
                 this.SetLoginLayoutIsEnabled(isEnabled: false);
                 this.ProgressRing.IsActive = true;
-                this.Presenter<AuthentificationPresenter>().LogInAsync().ContinueWith(
+                this.presenter.LogInAsync().ContinueWith(
                     t =>
                         {
                             if (!t.IsCompleted || t.IsFaulted || !t.Result)

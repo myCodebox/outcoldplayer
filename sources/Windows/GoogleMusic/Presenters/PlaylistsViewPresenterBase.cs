@@ -6,7 +6,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Views;
 
-    public abstract class PlaylistsViewPresenterBase<TView> : ViewPresenterBase<TView> where TView : IView
+    public abstract class PlaylistsViewPresenterBase<TView> : PagePresenterBase<TView> where TView : IPageView
     {
         private readonly INavigationService navigationService;
 

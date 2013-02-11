@@ -1,10 +1,9 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // Outcold Solutions (http://outcoldman.com)
 // --------------------------------------------------------------------------------------------------------------------
-namespace OutcoldSolutions.GoogleMusic.Presenters
+namespace OutcoldSolutions.GoogleMusic
 {
     using OutcoldSolutions.Diagnostics;
-    using OutcoldSolutions.GoogleMusic.Views;
 
     public class PresenterBase : BindingModelBase
     {
@@ -16,17 +15,9 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.Logger = this.container.Resolve<ILogManager>().CreateLogger(this.GetType().Name);
             this.Dispatcher = container.Resolve<IDispatcher>();
         }
-
+        
         protected ILogger Logger { get; private set; }
 
         protected IDispatcher Dispatcher { get; private set; }
-
-        public virtual void OnNavigatedTo(NavigatedToEventArgs parameter)
-        {
-        }
-
-        public virtual void OnNavigatingFrom(NavigatingFromEventArgs eventArgs)
-        {
-        }
     }
 }

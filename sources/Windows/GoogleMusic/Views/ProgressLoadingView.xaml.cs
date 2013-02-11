@@ -10,19 +10,21 @@ namespace OutcoldSolutions.GoogleMusic.Views
     using Windows.System;
     using Windows.UI.Xaml;
 
-    public sealed partial class ProgressLoadingView : ViewBase, IProgressLoadingView
+    public sealed partial class ProgressLoadingPageView : PageViewBase, IProgressLoadingView
     {
-        public ProgressLoadingView()
+        private readonly ProgressLoadingPresenter presenter;
+
+        public ProgressLoadingPageView()
         {
             this.InitializeComponent();
-            this.InitializePresenter<ProgressLoadingPresenter>();
+            this.presenter = this.InitializePresenter<ProgressLoadingPresenter>();
         }
 
         private void TryAgainClick(object sender, RoutedEventArgs e)
         {
-            if (this.Presenter<ProgressLoadingPresenter>().BindingModel.IsFailed)
+            if (this.presenter.BindingModel.IsFailed)
             {
-                this.Presenter<ProgressLoadingPresenter>().LoadSongs();
+                this.presenter.LoadSongs();
             }
         }
 

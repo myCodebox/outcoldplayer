@@ -13,9 +13,9 @@ namespace OutcoldSolutions.GoogleMusic.Views
         int SelectedFilterIndex { set; }
     }
 
-    public sealed partial class SearchView : ViewBase, ISearchView
+    public sealed partial class SearchPageView : PageViewBase, ISearchView
     {
-        public SearchView()
+        public SearchPageView()
         {
             this.InitializePresenter<SearchViewPresenter>();
             this.InitializeComponent();

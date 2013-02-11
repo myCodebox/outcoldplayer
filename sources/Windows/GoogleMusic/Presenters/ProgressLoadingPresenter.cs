@@ -16,7 +16,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using Windows.UI.Core;
     using Windows.UI.Popups;
 
-    public class ProgressLoadingPresenter : ViewPresenterBase<IView>
+    public class ProgressLoadingPresenter : PagePresenterBase<IPageView>
     {
         private const int AskForReviewStarts = 10;
         private const string DoNotAskToReviewKey = "DoNotAskToReviewKey";
@@ -38,7 +38,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         public ProgressLoadingPresenter(
             IDependencyResolverContainer container, 
-            IView view,
+            IPageView view,
             INavigationService navigationService,
             ISearchService searchService,
             ISettingsService settingsService,

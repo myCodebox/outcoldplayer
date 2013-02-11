@@ -1,10 +1,8 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // Outcold Solutions (http://outcoldman.com)
 // --------------------------------------------------------------------------------------------------------------------
-namespace OutcoldSolutions.GoogleMusic.Presenters
+namespace OutcoldSolutions.GoogleMusic
 {
-    using OutcoldSolutions.GoogleMusic.Views;
-
     public class ViewPresenterBase<TView> : PresenterBase
         where TView : IView
     {

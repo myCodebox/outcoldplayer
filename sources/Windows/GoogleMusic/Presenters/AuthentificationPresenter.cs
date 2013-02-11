@@ -10,7 +10,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
 
-    public class AuthentificationPresenter : ViewPresenterBase<IAuthentificationView>
+    public class AuthentificationPresenter : PagePresenterBase<IAuthentificationView>
     {
         private readonly IGoogleAccountService googleAccountService;
         private readonly IAuthentificationService authentificationService;
