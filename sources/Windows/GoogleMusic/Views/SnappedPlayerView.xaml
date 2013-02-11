@@ -9,9 +9,10 @@
     d:DesignHeight="700"
     d:DesignWidth="320">
 
-    <Grid DataContext="{Binding Path=BindingModel, Mode=OneTime}" x:Name="SnappedGrid" Margin="0, 0, 0, 20">
+    <Grid DataContext="{Binding Path=BindingModel, Mode=OneTime}" x:Name="SnappedGrid" Margin="0, 0, 0, 10">
 
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -30,10 +31,10 @@
 
         <StackPanel Grid.Row="1" Margin="32, 0" Visibility="{Binding Path=CurrentSong, Mode=OneWay, Converter={StaticResource NullToInvisibilityConverter}}">
             <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Style="{StaticResource TitleTextStyle}" Text="{Binding Path=CurrentSong.Title, Mode=OneWay}" TextWrapping="NoWrap" TextTrimming="WordEllipsis"/>
-            <TextBlock Grid.Row="2" Grid.ColumnSpan="2"  Style="{StaticResource SubtitleTextStyle}" Text="{Binding Path=CurrentSong.Artist, Mode=OneWay}" TextWrapping="NoWrap" TextTrimming="WordEllipsis"/>
+            <TextBlock Grid.Row="2" Grid.ColumnSpan="2" Style="{StaticResource SubtitleTextStyle}" Text="{Binding Path=CurrentSong.Artist, Mode=OneWay}" TextWrapping="NoWrap" TextTrimming="WordEllipsis"/>
         </StackPanel>
        
-        <StackPanel Margin="0, 32" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Top" Grid.Row="2" Visibility="{Binding Path=CurrentSong, Mode=OneWay, Converter={StaticResource NullToInvisibilityConverter}}">
+        <StackPanel Margin="0, 20" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Top" Grid.Row="2" Visibility="{Binding Path=CurrentSong, Mode=OneWay, Converter={StaticResource NullToInvisibilityConverter}}">
 
             <controls:AppBarToggleButton Style="{StaticResource ShuffleAppBarButtonStyle}" 
                                                      IsChecked="{Binding Path=IsShuffleEnabled, Mode=OneWay}"
@@ -47,7 +48,21 @@
 
         </StackPanel>
 
-        <Grid Grid.Row="3" Margin="32, 0" Visibility="{Binding Path=CurrentSong, Mode=OneWay, Converter={StaticResource NullToInvisibilityConverter}}">
+        <Grid Grid.Row="3" 
+                    Margin="32, 0, 32, 20" 
+                    Visibility="{Binding Path=CurrentSong, Mode=OneWay, Converter={StaticResource NullToInvisibilityConverter}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Column="0" Style="{StaticResource TitleTextStyle}" VerticalAlignment="Center" HorizontalAlignment="Left">Plays:</TextBlock>
+            <TextBlock Grid.Column="1" Style="{StaticResource SubtitleTextStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="7, 0, 0, 0" Text="{Binding Path=CurrentSong.PlayCount, Mode=OneWay}"  />
+
+            <controls:Rating  Grid.Column="1" Value="{Binding Path=CurrentSong.Rating, Mode=OneWay}" HorizontalAlignment="Right" ValueChanged="RatingOnValueChanged"/>
+        </Grid>
+
+        <Grid Grid.Row="4" Margin="32, 0" Visibility="{Binding Path=CurrentSong, Mode=OneWay, Converter={StaticResource NullToInvisibilityConverter}}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
@@ -75,7 +90,7 @@
             </StackPanel>
         </Grid>
 
-        <Slider Grid.Row="4" 
+        <Slider Grid.Row="5" 
                 Width="Auto"
                 Margin="32, 20"
                 ThumbToolTipValueConverter="{StaticResource DoubleToTimeConverter}"
@@ -84,7 +99,7 @@
                 Maximum="{Binding Path=TotalSeconds, Mode=OneWay}"
                 Visibility="{Binding Path=CurrentSong, Mode=OneWay, Converter={StaticResource NullToInvisibilityConverter}}" />
         
-        <StackPanel Margin="0, 0, 0, 0" Orientation="Horizontal" HorizontalAlignment="Center" Grid.Row="5" Visibility="{Binding Path=CurrentSong, Mode=OneWay, Converter={StaticResource NullToInvisibilityConverter}}">
+        <StackPanel Margin="0, 0, 0, 0" Orientation="Horizontal" HorizontalAlignment="Center" Grid.Row="6" Visibility="{Binding Path=CurrentSong, Mode=OneWay, Converter={StaticResource NullToInvisibilityConverter}}">
 
             <Button Style="{StaticResource SkipBackAppBarButtonStyle}" 
                     Command="{Binding Path=SkipBackCommand, Mode=OneTime}"
@@ -102,7 +117,7 @@
                     VerticalAlignment="Top"/>
         </StackPanel>
 
-        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Grid.RowSpan="6" Visibility="{Binding Path=CurrentSong, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}">
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Grid.RowSpan="7" Visibility="{Binding Path=CurrentSong, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}">
             <TextBlock Style="{StaticResource BodyTextStyle}">Queue is empty</TextBlock>
             <Button Style="{StaticResource AddAppBarButtonStyle}" Click="AddToQueue" />
         </StackPanel>

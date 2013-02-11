@@ -122,25 +122,40 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         {
             song.Rating = newValue;
             this.songWebService.UpdateRatingAsync(song.Metadata.Id, newValue).ContinueWith(
-                        t =>
+                        async t =>
                         {
-                            if (t.IsCompleted && !t.IsFaulted && t.Result != null)
+                            if (song.Rating != newValue)
                             {
-                                if (this.Logger.IsDebugEnabled)
+                                if (t.IsCompleted && !t.IsFaulted && t.Result != null)
                                 {
-                                    this.Logger.Debug("Rating update completed for song: {0}.", song.Metadata.Id);
+                                    if (this.Logger.IsDebugEnabled)
+                                    {
+                                        this.Logger.Debug("Rating update completed for song: {0}.", song.Metadata.Id);
+                                    }
+
                                     foreach (var songUpdate in t.Result.Songs)
                                     {
-                                        this.Logger.Debug("Song updated: {0}, Rate: {1}.", songUpdate.Id, songUpdate.Rating);
+                                        var songRatingResp = songUpdate;
+
+                                        if (songUpdate.Id == song.Metadata.Id)
+                                        {
+                                            await this.Dispatcher.RunAsync(() => { song.Rating = songRatingResp.Rating; });
+                                        }
+
+                                        if (this.Logger.IsDebugEnabled)
+                                        {
+                                            this.Logger.Debug(
+                                                "Song updated: {0}, Rate: {1}.", songUpdate.Id, songUpdate.Rating);
+                                        }
                                     }
                                 }
-                            }
-                            else
-                            {
-                                this.Logger.Debug("Failed to update rating for song: {0}.", song.Metadata.Id);
-                                if (t.IsFaulted && t.Exception != null)
+                                else
                                 {
-                                    this.Logger.LogErrorException(t.Exception);
+                                    this.Logger.Debug("Failed to update rating for song: {0}.", song.Metadata.Id);
+                                    if (t.IsFaulted && t.Exception != null)
+                                    {
+                                        this.Logger.LogErrorException(t.Exception);
+                                    }
                                 }
                             }
                         });

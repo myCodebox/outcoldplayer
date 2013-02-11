@@ -167,8 +167,9 @@ namespace OutcoldSolutions.GoogleMusic.Web
         {
             var jsonProperties = new Dictionary<string, string>
                                      {
-                                         { "id", JsonConvert.ToString(songId) },
-                                         { "rating", JsonConvert.ToString(rating) }
+                                         {
+                                             "entries", JsonConvert.SerializeObject(new[] { new { id = songId, rating = rating } })
+                                         },
                                      };
 
             return await this.googleMusicWebService.PostAsync<RatingResp>(ModifyEntriesUrl, jsonProperties: jsonProperties);

@@ -6,6 +6,12 @@ namespace OutcoldSolutions.GoogleMusic.Views
 {
     using Microsoft.Advertising.WinRT.UI;
 
+    using OutcoldSolutions.Diagnostics;
+    using OutcoldSolutions.GoogleMusic.BindingModels;
+    using OutcoldSolutions.GoogleMusic.Controls;
+    using OutcoldSolutions.GoogleMusic.Presenters;
+    using OutcoldSolutions.GoogleMusic.Web;
+
     using Windows.ApplicationModel.Store;
     using Windows.UI.ViewManagement;
     using Windows.UI.Xaml;
@@ -13,11 +19,16 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
     public sealed partial class SnappedPlayerView : UserControl
     {
+        private readonly ILogger logger;
+
         private AdControl adControl;
 
         public SnappedPlayerView()
         {
             this.InitializeComponent();
+
+            this.logger = ApplicationBase.Container.Resolve<ILogManager>().CreateLogger("SnappedPlayerView");
+
 #if DEBUG
             CurrentAppSimulator.LicenseInformation.LicenseChanged += this.UpdateAdControl;
 #else
@@ -64,7 +75,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
                         HorizontalAlignment = HorizontalAlignment.Center,
                         UseStaticAnchor = true
                     };
-                    Grid.SetRow(this.adControl, 6);
+                    Grid.SetRow(this.adControl, 7);
                     this.SnappedGrid.Children.Add(this.adControl);
                 }
             }
@@ -74,7 +85,56 @@ namespace OutcoldSolutions.GoogleMusic.Views
         {
             if (ApplicationView.TryUnsnap())
             {
-                App.Container.Resolve<INavigationService>().NavigateTo<IStartView>();
+                ApplicationBase.Container.Resolve<INavigationService>().NavigateTo<IStartView>();
+            }
+        }
+
+        private void RatingOnValueChanged(object sender, ValueChangedEventArgs e)
+        {
+            var playerViewPresenter = this.DataContext as PlayerViewPresenter;
+            if (playerViewPresenter != null)
+            {
+                var currentSong = playerViewPresenter.BindingModel.CurrentSong;
+                if (currentSong != null)
+                {
+                    if (currentSong.Rating != e.NewValue)
+                    {
+                        ApplicationBase.Container.Resolve<ISongWebService>()
+                                       .UpdateRatingAsync(currentSong.Metadata.Id, e.NewValue).ContinueWith(
+                            async t =>
+                            {
+                                if (t.IsCompleted && !t.IsFaulted && t.Result != null)
+                                {
+                                    if (this.logger.IsDebugEnabled)
+                                    {
+                                        this.logger.Debug("Rating update completed for song: {0}.", currentSong.Metadata.Id);
+                                    }
+
+                                    foreach (var songUpdate in t.Result.Songs)
+                                    {
+                                        if (this.logger.IsDebugEnabled)
+                                        {
+                                            this.logger.Debug("Song updated: {0}, Rate: {1}.", songUpdate.Id, songUpdate.Rating);
+                                        }
+
+                                        if (songUpdate.Id == currentSong.Metadata.Id)
+                                        {
+                                            var songRatingResp = songUpdate;
+                                            await ApplicationBase.Container.Resolve<IDispatcher>().RunAsync(() => { currentSong.Rating = songRatingResp.Rating; });
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    this.logger.Debug("Failed to update rating for song: {0}.", currentSong.Metadata.Id);
+                                    if (t.IsFaulted && t.Exception != null)
+                                    {
+                                        this.logger.LogErrorException(t.Exception);
+                                    }
+                                }
+                            });
+                    }
+                }
             }
         }
     }
