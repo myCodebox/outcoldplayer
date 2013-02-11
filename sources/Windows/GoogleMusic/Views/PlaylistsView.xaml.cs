@@ -5,6 +5,7 @@
 namespace OutcoldSolutions.GoogleMusic.Views
 {
     using System.Collections.Generic;
+    using System.Linq;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
@@ -25,6 +26,10 @@ namespace OutcoldSolutions.GoogleMusic.Views
         void SetGroups(List<PlaylistsGroupBindingModel> playlistsGroupBindingModels);
 
         void ShowPlaylist(PlaylistBindingModel playlistBindingModel);
+
+        double GetHorizontalOffset();
+
+        void ScrollToHorizontalOffset(double horizontalOffset);
     }
 
     public sealed partial class PlaylistsPageView : PageViewBase, IPlaylistsView
@@ -34,7 +39,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
         private readonly Button deletePlaylistButton;
         private readonly Border separator;
 
-        private PlaylistsViewPresenter presenter;
+        private readonly PlaylistsViewPresenter presenter;
 
         public PlaylistsPageView()
         {
@@ -68,12 +73,12 @@ namespace OutcoldSolutions.GoogleMusic.Views
             this.ListView.SelectedIndex = -1;
             if (this.ListView.Items != null && this.ListView.Items.Count > 0)
             {
-                this.ListView.ScrollIntoView(this.ListView.Items[0]);
+                this.ScrollToHorizontalOffset(0d);
             }
 
             base.OnNavigatedTo(eventArgs);
 
-            var currentContextCommands = App.Container.Resolve<ICurrentContextCommands>();
+            var currentContextCommands = this.Container.Resolve<ICurrentContextCommands>();
             
             if (eventArgs.Parameter is PlaylistsRequest && ((PlaylistsRequest)eventArgs.Parameter) == PlaylistsRequest.Playlists)
             {
@@ -89,7 +94,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
         public void EditPlaylist(PlaylistBindingModel selectedItem)
         {
-            App.Container.Resolve<ISearchService>().SetShowOnKeyboardInput(false);
+            this.Container.Resolve<ISearchService>().SetShowOnKeyboardInput(false);
             this.PlaylistNamePopup.VerticalOffset = this.ActualHeight - 240;
             this.TextBoxPlaylistName.Text = selectedItem.Playlist.Title;
             this.SaveNameButton.IsEnabled = !string.IsNullOrEmpty(this.TextBoxPlaylistName.Text);
@@ -99,14 +104,15 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
         public void SetGroups(List<PlaylistsGroupBindingModel> playlistsGroupBindingModels)
         {
-            this.Groups.Source = playlistsGroupBindingModels;
-            if (Groups.View == null)
+            if (playlistsGroupBindingModels == null)
             {
-                ((ListViewBase)SemanticZoom.ZoomedOutView).ItemsSource = null;
+                this.ListViewGroups.ItemsSource = null;
+                this.ListView.ItemsSource = null;
             }
             else
             {
-                ((ListViewBase)SemanticZoom.ZoomedOutView).ItemsSource = Groups.View.CollectionGroups;
+                this.ListViewGroups.ItemsSource = playlistsGroupBindingModels;
+                this.ListView.ItemsSource = playlistsGroupBindingModels.SelectMany(x => x.Playlists).ToList();
             }
             
             this.ListView.SelectedIndex = -1;
@@ -121,6 +127,17 @@ namespace OutcoldSolutions.GoogleMusic.Views
             }
         }
 
+        public double GetHorizontalOffset()
+        {
+            return VisualTreeHelperEx.GetVisualChild<ScrollViewer>(this.ListView).HorizontalOffset;
+        }
+
+        public void ScrollToHorizontalOffset(double horizontalOffset)
+        {
+            var scrollViewer = VisualTreeHelperEx.GetVisualChild<ScrollViewer>(this.ListView);
+            scrollViewer.ScrollToHorizontalOffset(horizontalOffset);
+        }
+
         private void PlaylistItemClick(object sender, ItemClickEventArgs e)
         {
             this.presenter.ItemClick(e.ClickedItem as PlaylistBindingModel);
@@ -129,7 +146,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
         private void ListViewOnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var uiElements = new List<UIElement>();
-            var currentContextCommands = App.Container.Resolve<ICurrentContextCommands>();
+            var currentContextCommands = this.Container.Resolve<ICurrentContextCommands>();
             if (this.presenter.BindingModel.IsEditable)
             {
                 uiElements.Add(this.addPlaylistButton);
@@ -170,14 +187,22 @@ namespace OutcoldSolutions.GoogleMusic.Views
             }
         }
 
-        private void ZoomOutClick(object sender, RoutedEventArgs e)
-        {
-            this.SemanticZoom.IsZoomedInViewActive = false;
-        }
-
         private void PlaylistNamePopupOnClosed(object sender, object e)
         {
-            App.Container.Resolve<ISearchService>().SetShowOnKeyboardInput(true);
+            this.Container.Resolve<ISearchService>().SetShowOnKeyboardInput(true);
+        }
+        
+        private void SemanticZoom_OnViewChangeStarted(object sender, SemanticZoomViewChangedEventArgs e)
+        {
+            if (e.IsSourceZoomedInView)
+            {
+                e.DestinationItem.Item = ((List<PlaylistsGroupBindingModel>)this.ListViewGroups.ItemsSource)
+                    .FirstOrDefault(x => x.Playlists.Contains(e.SourceItem.Item));
+            }
+            else
+            {
+                e.DestinationItem.Item = ((PlaylistsGroupBindingModel)e.SourceItem.Item).Playlists.FirstOrDefault();
+            }
         }
     }
 }

@@ -163,6 +163,7 @@
     <Compile Include="Repositories\SystemPlaylistCollection.cs" />
     <Compile Include="ViewBase.cs" />
     <Compile Include="ViewPresenterBase.cs" />
+    <Compile Include="VisualTreeHelperEx.cs" />
     <Compile Include="Web\CookieContainerWrapper.cs" />
     <Compile Include="Web\GoogleAccountWebService.cs" />
     <Compile Include="Web\GoogleMusicWebService.cs" />

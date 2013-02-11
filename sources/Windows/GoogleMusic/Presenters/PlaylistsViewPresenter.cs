@@ -45,11 +45,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.EditPlaylistCommand = new DelegateCommand(this.EditPlaylist);
 
             this.BindingModel.PropertyChanged += (sender, args) =>
-                {
-                    this.AddPlaylistCommand.RaiseCanExecuteChanged();
-                    this.DeletePlaylistCommand.RaiseCanExecuteChanged();
-                    this.EditPlaylistCommand.RaiseCanExecuteChanged();
-                };
+            {
+                this.AddPlaylistCommand.RaiseCanExecuteChanged();
+                this.DeletePlaylistCommand.RaiseCanExecuteChanged();
+                this.EditPlaylistCommand.RaiseCanExecuteChanged();
+            };
         }
 
         public PlaylistsViewBindingModel BindingModel { get; private set; }
@@ -63,7 +63,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         public override void OnNavigatingFrom(NavigatingFromEventArgs eventArgs)
         {
             base.OnNavigatingFrom(eventArgs);
-            eventArgs.State["LastViewedPlaylist"] = this.clickedPlaylist;
+            eventArgs.State["ListViewHorizontalOffset"] = this.View.GetHorizontalOffset();
             this.clickedPlaylist = null;
         }
 
@@ -84,38 +84,39 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 this.LoadPlaylistsAsync().ContinueWith(
                     async (t) =>
                         {
-                            this.BindingModel.IsEditable = this.currentRequest == PlaylistsRequest.Playlists;
+                            await this.Dispatcher.RunAsync(
+                                CoreDispatcherPriority.High,
+                                () =>
+                                    {
+                                        this.BindingModel.IsEditable = this.currentRequest == PlaylistsRequest.Playlists;
+                                        this.BindingModel.IsLoading = false;
+                                    });
+
+
+                            await Task.Delay(100);
 
                             if (t.IsCompleted && !t.IsFaulted)
                             {
-                                this.View.SetGroups(t.Result);
+                                await this.Dispatcher.RunAsync(
+                                    CoreDispatcherPriority.High,
+                                    () =>
+                                        {
+                                            this.View.SetGroups(t.Result);
+                                            this.BindingModel.Count = t.Result.Sum(x => x.Playlists.Count);
+                                        });
 
                                 if (eventArgs.IsNavigationBack)
                                 {
                                     object lastPlaylist;
-                                    if (eventArgs.State.TryGetValue("LastViewedPlaylist", out lastPlaylist)
-                                        && lastPlaylist is Playlist)
+                                    if (eventArgs.State.TryGetValue("ListViewHorizontalOffset", out lastPlaylist)
+                                        && lastPlaylist is double)
                                     {
-                                        foreach (var group in t.Result)
-                                        {
-                                            foreach (var playlist in group.Playlists)
-                                            {
-                                                if (playlist.Playlist.Equals(lastPlaylist))
-                                                {
-                                                    await this.Dispatcher.RunAsync(() => this.View.ShowPlaylist(playlist));
-                                                    break;
-                                                }
-                                            }
-                                        }
+                                        await Task.Delay(100);
+                                        await this.Dispatcher.RunAsync(CoreDispatcherPriority.High, () => this.View.ScrollToHorizontalOffset((double)lastPlaylist));
                                     }
                                 }
-
-                                this.BindingModel.Count = t.Result.Sum(x => x.Playlists.Count);
                             }
-
-                            this.BindingModel.IsLoading = false;
-                        },
-                    TaskScheduler.FromCurrentSynchronizationContext());
+                        });
             }
         }
 
@@ -158,24 +159,24 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
                 this.musicPlaylistRepository.CreateAsync(string.Format(CultureInfo.CurrentCulture, "Playlist - {0}", DateTime.Now)).ContinueWith(
                     async t =>
+                    {
+                        if (t.Result != null)
                         {
-                            if (t.Result != null)
-                            {
-                                var playlists = await this.LoadPlaylistsAsync();
+                            var playlists = await this.LoadPlaylistsAsync();
 
-                                await this.Dispatcher.RunAsync(
-                                    () =>
-                                        {
-                                            this.BindingModel.IsEditable = true;
-                                            this.View.SetGroups(playlists);
-                                            var playlistBindingModel =
-                                                playlists.SelectMany(x => x.Playlists)
-                                                         .FirstOrDefault(x => x.Playlist == t.Result);
-                                            this.View.ShowPlaylist(playlistBindingModel);
-                                            this.BindingModel.IsLoading = false;
-                                        });
-                            }
-                        });
+                            await this.Dispatcher.RunAsync(
+                                () =>
+                                {
+                                    this.BindingModel.IsEditable = true;
+                                    this.View.SetGroups(playlists);
+                                    var playlistBindingModel =
+                                        playlists.SelectMany(x => x.Playlists)
+                                                 .FirstOrDefault(x => x.Playlist == t.Result);
+                                    this.View.ShowPlaylist(playlistBindingModel);
+                                    this.BindingModel.IsLoading = false;
+                                });
+                        }
+                    });
             }
         }
 
@@ -199,29 +200,29 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                             "Yes",
                             command => this.musicPlaylistRepository.DeleteAsync(((MusicPlaylist)playlist).Id).ContinueWith(
                                 async t =>
+                                {
+                                    if (t.IsCompleted && !t.IsFaulted && t.Result)
                                     {
-                                        if (t.IsCompleted && !t.IsFaulted && t.Result)
-                                        {
-                                            var playlists = await this.LoadPlaylistsAsync();
-                                            await this.Dispatcher.RunAsync(
-                                                           () =>
-                                                           {
-                                                               this.BindingModel.IsEditable = true;
-                                                               this.View.SetGroups(playlists);
-                                                               this.BindingModel.IsLoading = false;
-                                                           });
-                                        }
-                                    })));
+                                        var playlists = await this.LoadPlaylistsAsync();
+                                        await this.Dispatcher.RunAsync(
+                                                       () =>
+                                                       {
+                                                           this.BindingModel.IsEditable = true;
+                                                           this.View.SetGroups(playlists);
+                                                           this.BindingModel.IsLoading = false;
+                                                       });
+                                    }
+                                })));
 
                     dialog.Commands.Add(
                         new UICommand(
                             "No",
                             command => this.Dispatcher.RunAsync(
                                 () =>
-                                    {
-                                        this.BindingModel.IsLoading = false;
-                                        this.BindingModel.IsEditable = true;
-                                    })));
+                                {
+                                    this.BindingModel.IsLoading = false;
+                                    this.BindingModel.IsEditable = true;
+                                })));
 
                     dialog.DefaultCommandIndex = 0;
                     dialog.CancelCommandIndex = 1;
