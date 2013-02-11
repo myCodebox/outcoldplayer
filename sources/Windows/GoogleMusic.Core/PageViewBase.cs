@@ -7,6 +7,13 @@ namespace OutcoldSolutions.GoogleMusic
 
     public class PageViewBase : ViewBase, IPageView
     {
+        public PageViewBase()
+        {
+            this.NavigationService = this.Container.Resolve<INavigationService>();
+        }
+
+        protected INavigationService NavigationService { get; private set; }
+
         public virtual void OnNavigatedTo(NavigatedToEventArgs eventArgs)
         {
             if (!this.PresenterInitialized)

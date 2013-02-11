@@ -33,8 +33,8 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
         private void ClickOk(object sender, RoutedEventArgs e)
         {
-            App.Container.Resolve<ISearchService>().Register();
-            App.Container.Resolve<INavigationService>().NavigateTo<IStartView>();
+            ApplicationBase.Container.Resolve<ISearchService>().Register();
+            ApplicationBase.Container.Resolve<INavigationService>().NavigateTo<IStartView>();
         }
 
         private void UserVoiceClick(object sender, RoutedEventArgs e)

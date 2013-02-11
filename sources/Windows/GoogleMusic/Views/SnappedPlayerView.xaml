@@ -25,7 +25,7 @@
                Margin="32" 
                Height="256" 
                Width="256" 
-               Source="{Binding Path=CurrentSong.GoogleMusicMetadata.AlbumArtUrl, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=256, Mode=OneWay}"
+               Source="{Binding Path=CurrentSong.Metadata.AlbumArtUrl, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=256, Mode=OneWay}"
                Stretch="None"/>
 
         <StackPanel Grid.Row="1" Margin="32, 0" Visibility="{Binding Path=CurrentSong, Mode=OneWay, Converter={StaticResource NullToInvisibilityConverter}}">

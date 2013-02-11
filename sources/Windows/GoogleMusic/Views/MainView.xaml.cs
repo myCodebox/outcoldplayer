@@ -198,12 +198,14 @@ namespace OutcoldSolutions.GoogleMusic.Views
                 this.MainContent.Visibility = Visibility.Collapsed;
                 this.BackButton.Visibility = Visibility.Collapsed;
                 this.SnappedPlayerView.Visibility = Visibility.Visible;
+                this.LinksPanel.Visibility = Visibility.Collapsed;
             }
             else
             {
                 this.MainContent.Visibility = Visibility.Visible;
                 this.BackButton.Visibility = Visibility.Visible;
                 this.SnappedPlayerView.Visibility = Visibility.Collapsed;
+                this.LinksPanel.Visibility = Visibility.Visible;
             }
 
             this.UpdateAppBars(ApplicationView.Value != ApplicationViewState.Snapped);

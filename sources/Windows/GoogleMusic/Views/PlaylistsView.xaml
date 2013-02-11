@@ -30,13 +30,13 @@
 
         <ProgressRing Grid.Row="1" IsActive="{Binding Path=IsLoading, Mode=OneWay}"  Grid.Column="1"/>
 
-        <SemanticZoom VerticalAlignment="Bottom" x:Name="SemanticZoom" Grid.Row="1"  Grid.Column="0" Grid.ColumnSpan="2"
+        <SemanticZoom VerticalAlignment="Top" x:Name="SemanticZoom" Grid.Row="1"  Grid.Column="0" Grid.ColumnSpan="2"
                       Visibility="{Binding Path=IsLoading, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}" 
                       IsZoomOutButtonEnabled="True" ViewChangeStarted="SemanticZoom_OnViewChangeStarted" >
             <SemanticZoom.ZoomedInView>
                 <ListView 
                   x:Name="ListView"
-                  Margin="0, 20, 0, 0" 
+                  Margin="0, 40, 0, 0" 
                   SelectionMode="None"
                   ScrollViewer.VerticalScrollBarVisibility="Disabled"
                   ScrollViewer.HorizontalScrollBarVisibility="Auto"

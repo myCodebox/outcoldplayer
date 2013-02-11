@@ -47,19 +47,9 @@ namespace OutcoldSolutions.GoogleMusic.Views
                 var groupBindingModel = frameworkElement.DataContext as PlaylistsGroupBindingModel;
                 if (groupBindingModel != null)
                 {
-                    App.Container.Resolve<INavigationService>().NavigateTo<IPlaylistsView>(groupBindingModel.Request);
+                    this.NavigationService.NavigateTo<IPlaylistsView>(groupBindingModel.Request);
                 }
             }
-        }
-
-        private void UserVoiceClick(object sender, RoutedEventArgs e)
-        {
-            var taskResult = Launcher.LaunchUriAsync(new Uri("https://gmusic.uservoice.com"));
-        }
-
-        private void TwitterFollowClick(object sender, RoutedEventArgs e)
-        {
-            var taskResult = Launcher.LaunchUriAsync(new Uri("https://twitter.com/gMusicW"));
         }
     }
 }
