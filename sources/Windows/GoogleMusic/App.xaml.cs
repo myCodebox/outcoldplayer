@@ -21,7 +21,7 @@ namespace OutcoldSolutions.GoogleMusic
     using OutcoldSolutions.GoogleMusic.Views.Settings;
     using OutcoldSolutions.GoogleMusic.Web;
     using OutcoldSolutions.GoogleMusic.Web.Lastfm;
-    
+
     using Windows.UI.Core;
     using Windows.UI.Notifications;
     using Windows.UI.Xaml;
@@ -32,8 +32,6 @@ namespace OutcoldSolutions.GoogleMusic
     {
         private ILogManager logManager;
         private ISettingsService settingsService;
-        private IGoogleMusicSessionService sessionService;
-        private IGoogleMusicWebService webService;
 
         public App()
         {
@@ -140,8 +138,6 @@ namespace OutcoldSolutions.GoogleMusic
 
                 this.logManager = Container.Resolve<ILogManager>();
                 this.settingsService = Container.Resolve<ISettingsService>();
-                this.sessionService = Container.Resolve<IGoogleMusicSessionService>();
-                this.webService = Container.Resolve<IGoogleMusicWebService>();
 
                 this.UpdateLogLevel();
                 this.settingsService.ValueChanged += (sender, eventArgs) =>
@@ -157,14 +153,10 @@ namespace OutcoldSolutions.GoogleMusic
 
                 Container.Resolve<INavigationService>().RegisterRegionProvider(mainView);
 
-                this.sessionService.LoadSession();
+                Container.Resolve<IGoogleMusicSessionService>().LoadSession();
 
                 // Place the frame in the current Window
                 Window.Current.Content = mainView;
-
-                // Initialize settings and search views
-                Container.Resolve<ISettingsCommands>();
-                Container.Resolve<ISearchService>();
 
                 // Publishers
                 var currentSongPublisherService = Container.Resolve<ICurrentSongPublisherService>();
@@ -184,13 +176,12 @@ namespace OutcoldSolutions.GoogleMusic
 
         protected override async Task OnSuspendingAsync()
         {
-            if (this.sessionService != null)
+            var sessionService = Container.Resolve<IGoogleMusicSessionService>();
+
+            var cookieCollection = Container.Resolve<IGoogleMusicWebService>().GetCurrentCookies();
+            if (cookieCollection != null)
             {
-                var cookieCollection = this.webService.GetCurrentCookies();
-                if (cookieCollection != null)
-                {
-                    await this.sessionService.SaveCurrentSessionAsync(cookieCollection);
-                }
+                await sessionService.SaveCurrentSessionAsync(cookieCollection);
             }
 
             Container.Resolve<ILastfmWebService>().SaveCurrentSession();

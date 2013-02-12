@@ -60,6 +60,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 () =>
                     {
                         App.Container.Resolve<ISearchService>().Unregister();
+                        App.Container.Resolve<ISettingsCommands>().Unregister();
                         if (this.BindingModel.IsAuthenticated)
                         {
                             this.BindingModel.IsAuthenticated = false;
