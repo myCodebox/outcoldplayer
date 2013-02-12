@@ -27,7 +27,6 @@ namespace OutcoldSolutions.GoogleMusic.Services
         public SettingsCommands(IMediaElemenetContainerView mediaElemenetContainerView)
         {
             this.mediaElemenetContainerView = mediaElemenetContainerView;
-            SettingsPane.GetForCurrentView().CommandsRequested += this.CommandsRequested;
         }
 
         private enum PopupType
@@ -35,6 +34,16 @@ namespace OutcoldSolutions.GoogleMusic.Services
             Settings,
             LargeSettings,
             Full
+        }
+
+        public void Register()
+        {
+            SettingsPane.GetForCurrentView().CommandsRequested += this.CommandsRequested;
+        }
+
+        public void Unregister()
+        {
+            SettingsPane.GetForCurrentView().CommandsRequested -= this.CommandsRequested;
         }
 
         public void ActivateSettings(string name)

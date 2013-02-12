@@ -28,6 +28,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private readonly INavigationService navigationService;
 
         private readonly ISearchService searchService;
+        private readonly ISettingsCommands settingsCommands;
 
         private readonly ISettingsService settingsService;
 
@@ -38,9 +39,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             INavigationService navigationService,
             ISearchService searchService,
             ISettingsService settingsService,
-            IPlaylistsWebService playlistsWebService)
+            IPlaylistsWebService playlistsWebService,
+            ISettingsCommands settingsCommands)
             : base(container, view)
         {
+            this.settingsCommands = settingsCommands;
             this.songsService = songsService;
             this.navigationService = navigationService;
             this.searchService = searchService;
@@ -140,6 +143,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                                                         CurrentVersion,
                                                         StringComparison.OrdinalIgnoreCase) || !forceToShowUpdates)
                                                 {
+                                                    this.settingsCommands.Register();
                                                     this.searchService.Register();
                                                     this.settingsService.SetValue("Version", CurrentVersion);
                                                     this.navigationService.NavigateTo<IStartView>();
