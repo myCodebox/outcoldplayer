@@ -4,7 +4,6 @@
 namespace OutcoldSolutions.GoogleMusic.Web
 {
     using System;
-    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
@@ -167,6 +166,11 @@ namespace OutcoldSolutions.GoogleMusic.Web
         public async Task<TResult> GetAsync<TResult>(string url, bool signUrl = true) where TResult : CommonResponse
         {
             HttpResponseMessage responseMessage = await this.GetAsync(url, signUrl);
+            if (!responseMessage.IsSuccessStatusCode)
+            {
+                throw new HttpException(responseMessage.StatusCode, responseMessage.ReasonPhrase);
+            }
+
             TResult result = await responseMessage.Content.ReadAsJsonObject<TResult>();
 
             if (result.ReloadXsrf.HasValue && result.ReloadXsrf.Value)
@@ -212,6 +216,11 @@ namespace OutcoldSolutions.GoogleMusic.Web
             }
 
             HttpResponseMessage responseMessage = await this.PostAsync(url, formData, signUrl);
+            if (!responseMessage.IsSuccessStatusCode)
+            {
+                throw new HttpException(responseMessage.StatusCode, responseMessage.ReasonPhrase);
+            }
+
             TResult result = await responseMessage.Content.ReadAsJsonObject<TResult>();
 
             if (result.ReloadXsrf.HasValue && result.ReloadXsrf.Value)

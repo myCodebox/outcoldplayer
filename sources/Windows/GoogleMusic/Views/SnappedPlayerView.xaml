@@ -50,14 +50,15 @@
 
         <Grid Grid.Row="3" 
                     Margin="32, 0, 32, 20" 
-                    Visibility="{Binding Path=CurrentSong, Mode=OneWay, Converter={StaticResource NullToInvisibilityConverter}}">
+                    Visibility="{Binding Path=CurrentSong, Mode=OneWay, Converter={StaticResource NullToInvisibilityConverter}}"
+                    VerticalAlignment="Bottom">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <TextBlock Grid.Column="0" Style="{StaticResource TitleTextStyle}" VerticalAlignment="Center" HorizontalAlignment="Left">Plays:</TextBlock>
-            <TextBlock Grid.Column="1" Style="{StaticResource SubtitleTextStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="7, 0, 0, 0" Text="{Binding Path=CurrentSong.PlayCount, Mode=OneWay}"  />
+            <TextBlock Grid.Column="0" Style="{StaticResource SmallTextStyle}" VerticalAlignment="Center" HorizontalAlignment="Left">Plays:</TextBlock>
+            <TextBlock Grid.Column="1" Style="{StaticResource SmallTextStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="7, 0, 0, 0" Text="{Binding Path=CurrentSong.PlayCount, Mode=OneWay}"  />
 
             <controls:Rating  Grid.Column="1" Value="{Binding Path=CurrentSong.Rating, Mode=OneWay}" HorizontalAlignment="Right" ValueChanged="RatingOnValueChanged"/>
         </Grid>

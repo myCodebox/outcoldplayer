@@ -17,7 +17,12 @@ namespace OutcoldSolutions.GoogleMusic.Controls
             "Value",
             typeof(int), 
             typeof(Rating), 
-            new PropertyMetadata((int)0, (o, args) => ((Rating)o).UpdateStars()));
+            new PropertyMetadata(
+                (int)0, 
+                (o, args) =>
+                {
+                    ((Rating)o).UpdateStars((int?)args.NewValue);
+                }));
 
         public static readonly DependencyProperty FillBrushProperty = 
             DependencyProperty.Register(
@@ -71,7 +76,7 @@ namespace OutcoldSolutions.GoogleMusic.Controls
                     };
             }
 
-            this.UpdateStars();
+            this.UpdateStars(this.Value);
         }
 
         private void RaiseValueChanged(ValueChangedEventArgs e)
@@ -83,13 +88,18 @@ namespace OutcoldSolutions.GoogleMusic.Controls
             }
         }
 
-        private void UpdateStars()
+        private void UpdateStars(int? newValue)
         {
+            if (!newValue.HasValue)
+            {
+                newValue = 0;
+            }
+
             for (int i = 0; i < this.stars.Length; i++)
             {
                 if (this.stars[i] != null)
                 {
-                    if (i < this.Value)
+                    if (i < newValue.Value)
                     {
                         this.stars[i].Foreground = this.FillBrush;
                     }
