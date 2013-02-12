@@ -225,7 +225,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         public async Task PlayAsync(int songIndex = -1)
         {
-            if (songIndex <= 0 && this.playOrder.Count > 0)
+            if (songIndex < 0 && this.playOrder.Count > 0)
             {
                 songIndex = this.playOrder[0];
             }
@@ -412,23 +412,24 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                             {
                                 if (t.IsCompleted && !t.IsFaulted && t.Result != null)
                                 {
+                                    if (this.currentSongStream != null)
+                                    {
+                                        this.Logger.Debug("Current song is not null .Stopping medial element.");
+
+                                        await this.Dispatcher.RunAsync(() => this.mediaElement.Stop());
+
+                                        this.Logger.Debug("Disposing current song.");
+                                        this.currentSongStream.DownloadProgressChanged -= CurrentSongStreamOnDownloadProgressChanged;
+                                        this.currentSongStream.Dispose();
+                                        this.currentSongStream = null;
+                                    }
+
                                     this.Logger.Debug("Request completed. Trying to get stream by url '{0}'.", t.Result.Url);
                                     var stream = await mediaStreamDownloadService.GetStreamAsync(t.Result.Url);
 
                                     await this.Dispatcher.RunAsync(
                                         () =>
                                             {
-                                                if (this.currentSongStream != null)
-                                                {
-                                                    this.Logger.Debug("Current song is not null .Stopping medial element.");
-
-                                                    this.mediaElement.Stop();
-
-                                                    this.Logger.Debug("Disposing current song.");
-                                                    this.currentSongStream.DownloadProgressChanged -= CurrentSongStreamOnDownloadProgressChanged;
-                                                    this.currentSongStream.Dispose();
-                                                }
-
                                                 this.Logger.Debug("Setting current song.");
                                                 this.currentSongStream = stream;
                                                 this.currentSongStream.DownloadProgressChanged += CurrentSongStreamOnDownloadProgressChanged;

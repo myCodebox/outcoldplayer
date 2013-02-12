@@ -21,7 +21,9 @@ namespace OutcoldSolutions.GoogleMusic.Web
         private const int DefaultBufferSize = 0x10000;
 
         private readonly ILogger logger;
-        private readonly HttpClient client = new HttpClient();
+        private readonly HttpClient client = new HttpClient() { Timeout = TimeSpan.FromSeconds(20) };
+
+        private volatile CancellationTokenSource cancellationTokenSource;
 
         public MediaStreamDownloadService(ILogManager logManager)
         {
@@ -35,7 +37,17 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 this.logger.Debug("Stream requested at url '{0}'.", url);
             }
 
-            var response = await this.client.SendAsync(new HttpRequestMessage(HttpMethod.Get, url), HttpCompletionOption.ResponseHeadersRead);
+            var source = this.cancellationTokenSource;
+            if (source != null)
+            {
+                this.client.CancelPendingRequests();
+                source.Cancel();
+            }
+
+            source = this.cancellationTokenSource = new CancellationTokenSource();
+            var cancellationToken = source.Token;
+
+            var response = await this.client.SendAsync(new HttpRequestMessage(HttpMethod.Get, url), HttpCompletionOption.ResponseHeadersRead, cancellationToken);
 
             if (this.logger.IsDebugEnabled)
             {
@@ -61,15 +73,19 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, url);
             request.Headers.Range = new RangeHeaderValue(start, contentLength);
-            var streamResponse = await this.client.SendAsync(request);
+            var streamResponse = await this.client.SendAsync(request, cancellationToken);
+            
+            cancellationToken.ThrowIfCancellationRequested();
 
             var data = new byte[contentLength];
             int read;
 
             using (var audioStreamEnd = await streamResponse.Content.ReadAsStreamAsync())
             {
-                read = await audioStreamEnd.ReadAsync(data, (int)start, readCount);
+                read = await audioStreamEnd.ReadAsync(data, (int)start, readCount, cancellationToken);
             }
+
+            cancellationToken.ThrowIfCancellationRequested();
 
             if (this.logger.IsDebugEnabled || this.logger.IsWarningEnabled)
             {
@@ -82,6 +98,8 @@ namespace OutcoldSolutions.GoogleMusic.Web
                     this.logger.Warning("Got end of the stream. Unexpected read count from stream {0}.", read);
                 }
             }
+
+            this.cancellationTokenSource = null;
 
             return new MemoryRandomAccessStream(await response.Content.ReadAsStreamAsync(), data, response.Content.Headers.ContentType.MediaType, read);
         }

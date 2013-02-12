@@ -15,7 +15,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
 
-    using Windows.Foundation;
     using Windows.UI.Core;
     using Windows.UI.Popups;
 
@@ -26,8 +25,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private readonly IMusicPlaylistRepository musicPlaylistRepository;
 
         private PlaylistsRequest currentRequest;
-
-        private Playlist clickedPlaylist = null;
 
         public PlaylistsViewPresenter(
             IDependencyResolverContainer container,
@@ -64,7 +61,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         {
             base.OnNavigatingFrom(eventArgs);
             eventArgs.State["ListViewHorizontalOffset"] = this.View.GetHorizontalOffset();
-            this.clickedPlaylist = null;
         }
 
         public override void OnNavigatedTo(NavigatedToEventArgs eventArgs)
@@ -144,12 +140,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             }
         }
 
-        public override void ItemClick(PlaylistBindingModel playlistBindingModel)
-        {
-            this.clickedPlaylist = playlistBindingModel.Playlist;
-            base.ItemClick(playlistBindingModel);
-        }
-
         private void AddPlaylist()
         {
             if (!this.BindingModel.IsLoading && this.BindingModel.IsEditable)
@@ -193,8 +183,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 {
                     var playlist = playlistBindingModel.Playlist;
 
-                    CoreWindowDialog dialog = new CoreWindowDialog("Are you sure want to delete playlist?");
-                    dialog.Showing += (sender, args) => args.SetDesiredSize(new Size(sender.Bounds.Width, 0));
+                    MessageDialog dialog = new MessageDialog("Are you sure want to delete playlist?");
                     dialog.Commands.Add(
                         new UICommand(
                             "Yes",

@@ -76,7 +76,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
             }
             else if (order == Order.Name)
             {
-                enumerable = enumerable.OrderBy(x => (x.Title ?? string.Empty).ToUpper());
+                enumerable = enumerable.OrderBy(x => x.Title, StringComparer.CurrentCultureIgnoreCase);
             }
 
             return enumerable;

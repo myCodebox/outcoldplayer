@@ -6,6 +6,7 @@ namespace OutcoldSolutions.GoogleMusic.Controls
     using System;
 
     using Windows.UI;
+    using Windows.UI.Core;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Media;
@@ -18,11 +19,20 @@ namespace OutcoldSolutions.GoogleMusic.Controls
             typeof(int), 
             typeof(Rating), 
             new PropertyMetadata(
-                (int)0, 
-                (o, args) =>
-                {
-                    ((Rating)o).UpdateStars((int?)args.NewValue);
-                }));
+                0, 
+                async (o, args) =>
+                    {
+                        int newValue = 0;
+                        if (args.NewValue is int)
+                        {
+                            newValue = (int)args.NewValue;
+                        }
+
+                        var rating = (Rating)o;
+                        await rating.Dispatcher.RunAsync(
+                            CoreDispatcherPriority.High,
+                            () => rating.UpdateStars(newValue));
+                    }));
 
         public static readonly DependencyProperty FillBrushProperty = 
             DependencyProperty.Register(
@@ -88,18 +98,13 @@ namespace OutcoldSolutions.GoogleMusic.Controls
             }
         }
 
-        private void UpdateStars(int? newValue)
+        private void UpdateStars(int newValue)
         {
-            if (!newValue.HasValue)
-            {
-                newValue = 0;
-            }
-
             for (int i = 0; i < this.stars.Length; i++)
             {
                 if (this.stars[i] != null)
                 {
-                    if (i < newValue.Value)
+                    if (i < newValue)
                     {
                         this.stars[i].Foreground = this.FillBrush;
                     }
