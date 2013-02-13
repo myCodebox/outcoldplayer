@@ -104,15 +104,14 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
         public void SetGroups(List<PlaylistsGroupBindingModel> playlistsGroupBindingModels)
         {
-            if (playlistsGroupBindingModels == null)
+            this.Groups.Source = playlistsGroupBindingModels;
+            if (Groups.View == null)
             {
-                this.ListViewGroups.ItemsSource = null;
-                this.ListView.ItemsSource = null;
+                ((ListViewBase)SemanticZoom.ZoomedOutView).ItemsSource = null;
             }
             else
             {
-                this.ListViewGroups.ItemsSource = playlistsGroupBindingModels;
-                this.ListView.ItemsSource = playlistsGroupBindingModels.SelectMany(x => x.Playlists).ToList();
+                ((ListViewBase)SemanticZoom.ZoomedOutView).ItemsSource = Groups.View.CollectionGroups;
             }
             
             this.ListView.SelectedIndex = -1;
@@ -191,18 +190,23 @@ namespace OutcoldSolutions.GoogleMusic.Views
         {
             this.Container.Resolve<ISearchService>().SetShowOnKeyboardInput(true);
         }
-        
-        private void SemanticZoom_OnViewChangeStarted(object sender, SemanticZoomViewChangedEventArgs e)
+
+        private void ZoomOutClick(object sender, RoutedEventArgs e)
         {
-            if (e.IsSourceZoomedInView)
-            {
-                e.DestinationItem.Item = ((List<PlaylistsGroupBindingModel>)this.ListViewGroups.ItemsSource)
-                    .FirstOrDefault(x => x.Playlists.Contains(e.SourceItem.Item));
-            }
-            else
-            {
-                e.DestinationItem.Item = ((PlaylistsGroupBindingModel)e.SourceItem.Item).Playlists.FirstOrDefault();
-            }
+            this.SemanticZoom.IsZoomedInViewActive = false;
         }
+        
+        //private void SemanticZoom_OnViewChangeStarted(object sender, SemanticZoomViewChangedEventArgs e)
+        //{
+        //    if (e.IsSourceZoomedInView)
+        //    {
+        //        e.DestinationItem.Item = ((List<PlaylistsGroupBindingModel>)this.ListViewGroups.ItemsSource)
+        //            .FirstOrDefault(x => x.Playlists.Contains(e.SourceItem.Item));
+        //    }
+        //    else
+        //    {
+        //        e.DestinationItem.Item = ((PlaylistsGroupBindingModel)e.SourceItem.Item).Playlists.FirstOrDefault();
+        //    }
+        //}
     }
 }
