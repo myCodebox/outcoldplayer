@@ -109,6 +109,7 @@
     <Compile Include="IPopupView.cs" />
     <Compile Include="IView.cs" />
     <Compile Include="IViewRegionProvider.cs" />
+    <Compile Include="Models\SongsGrouping.cs" />
     <Compile Include="Models\Search.cs" />
     <Compile Include="IDispatcher.cs" />
     <Compile Include="Models\Album.cs" />

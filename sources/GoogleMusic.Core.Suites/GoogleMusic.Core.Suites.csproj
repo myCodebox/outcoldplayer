@@ -102,6 +102,9 @@
     <Compile Include="..\Windows\GoogleMusic.Core\Models\SongMetadata.cs">
       <Link>_sources\Models\SongMetadata.cs</Link>
     </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Models\SongsGrouping.cs">
+      <Link>_sources\Models\SongsGrouping.cs</Link>
+    </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Models\StreamType.cs">
       <Link>_sources\Models\StreamType.cs</Link>
     </Compile>
