@@ -3,7 +3,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Suites
 {
-    using DebugLogWriter = OutcoldSolutions.GoogleMusic.Diagnostics.DebugLogWriter;
+    using OutcoldSolutions.GoogleMusic.Diagnostics;
 
     public class GoogleMusicSuitesBase : SuitesBase
     {

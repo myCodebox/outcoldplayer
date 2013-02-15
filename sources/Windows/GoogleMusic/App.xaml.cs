@@ -9,6 +9,7 @@ namespace OutcoldSolutions.GoogleMusic
     using System.Threading.Tasks;
 
     using OutcoldSolutions.Diagnostics;
+    using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Presenters;
     using OutcoldSolutions.GoogleMusic.Presenters.Popups;
@@ -25,8 +26,6 @@ namespace OutcoldSolutions.GoogleMusic
     using Windows.UI.Core;
     using Windows.UI.Notifications;
     using Windows.UI.Xaml;
-
-    using DebugLogWriter = OutcoldSolutions.GoogleMusic.Diagnostics.DebugLogWriter;
 
     public sealed partial class App : ApplicationBase
     {

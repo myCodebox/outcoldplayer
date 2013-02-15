@@ -21,6 +21,7 @@ namespace OutcoldSolutions.GoogleMusic
 
         protected IDependencyResolverContainer Container { get; private set; }
 
+        [Inject]
         protected TPresenter InitializePresenter<TPresenter>() where TPresenter : PresenterBase
         {
             this.PresenterInitialized = true;
