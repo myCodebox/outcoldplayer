@@ -22,10 +22,9 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
 
         public LastfmAuthentificationPresenter(
             IDependencyResolverContainer container,
-            ILastfmAuthentificationView view,
             ILastfmAccountWebService accountWebService,
             ICurrentSongPublisherService publisherService)
-            : base(container, view)
+            : base(container)
         {
             this.accountWebService = accountWebService;
             this.publisherService = publisherService;

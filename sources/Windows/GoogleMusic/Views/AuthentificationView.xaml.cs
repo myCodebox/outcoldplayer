@@ -18,10 +18,16 @@ namespace OutcoldSolutions.GoogleMusic.Views
         public AuthentificationPageView()
         {
             this.InitializeComponent();
-            this.presenter = this.InitializePresenter<AuthentificationPresenter>();
         }
 
         public event EventHandler Succeed;
+
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+
+            this.presenter = this.GetPresenter<AuthentificationPresenter>();
+        }
 
         private void SignInClick(object sender, RoutedEventArgs e)
         {

@@ -17,10 +17,9 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         public AuthentificationPresenter(
             IDependencyResolverContainer container, 
-            IAuthentificationView view,
             IGoogleAccountService googleAccountService,
             IAuthentificationService authentificationService)
-            : base(container, view)
+            : base(container)
         {
             this.googleAccountService = googleAccountService;
             this.authentificationService = authentificationService;

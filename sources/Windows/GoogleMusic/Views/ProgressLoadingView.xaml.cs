@@ -9,12 +9,18 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
     public sealed partial class ProgressLoadingPageView : PageViewBase, IProgressLoadingView
     {
-        private readonly ProgressLoadingPresenter presenter;
+        private ProgressLoadingPresenter presenter;
 
         public ProgressLoadingPageView()
         {
             this.InitializeComponent();
-            this.presenter = this.InitializePresenter<ProgressLoadingPresenter>();
+        }
+
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+
+            this.presenter = this.GetPresenter<ProgressLoadingPresenter>();
         }
 
         private void TryAgainClick(object sender, RoutedEventArgs e)

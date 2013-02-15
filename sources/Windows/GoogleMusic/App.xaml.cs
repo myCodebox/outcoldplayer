@@ -54,29 +54,44 @@ namespace OutcoldSolutions.GoogleMusic
                     registration.Register<IMainView>()
                                 .And<IMediaElemenetContainerView>()
                                 .And<ICurrentContextCommands>()
+                                .InjectionRule<PresenterBase, MainViewPresenter>()
                                 .AsSingleton<MainView>();
 
                     registration.Register<MainViewPresenter>();
 
-                    registration.Register<IAuthentificationView>().As<AuthentificationPageView>();
+                    registration.Register<IAuthentificationView>()
+                                .InjectionRule<PresenterBase, AuthentificationPresenter>()
+                                .As<AuthentificationPageView>();
                     registration.Register<AuthentificationPresenter>();
 
-                    registration.Register<IStartView>().AsSingleton<StartPageView>();
+                    registration.Register<IStartView>()
+                                .InjectionRule<PresenterBase, StartViewPresenter>()
+                                .AsSingleton<StartPageView>();
                     registration.Register<StartViewPresenter>().AsSingleton();
 
-                    registration.Register<IPlaylistsView>().AsSingleton<PlaylistsPageView>();
+                    registration.Register<IPlaylistsView>()
+                                .InjectionRule<PresenterBase, PlaylistsViewPresenter>()
+                                .AsSingleton<PlaylistsPageView>();
                     registration.Register<PlaylistsViewPresenter>().AsSingleton();
 
-                    registration.Register<IPlaylistView>().AsSingleton<PlaylistPageView>();
+                    registration.Register<IPlaylistView>()
+                                .InjectionRule<PresenterBase, PlaylistViewPresenter>()
+                                .AsSingleton<PlaylistPageView>();
                     registration.Register<PlaylistViewPresenter>().AsSingleton();
 
-                    registration.Register<ICurrentPlaylistView>().AsSingleton<CurrentPlaylistPageView>();
+                    registration.Register<ICurrentPlaylistView>()
+                                .InjectionRule<PresenterBase, CurrentPlaylistViewPresenter>()
+                                .AsSingleton<CurrentPlaylistPageView>();
                     registration.Register<CurrentPlaylistViewPresenter>().AsSingleton();
 
-                    registration.Register<IProgressLoadingView>().As<ProgressLoadingPageView>();
+                    registration.Register<IProgressLoadingView>()
+                                .InjectionRule<PresenterBase, ProgressLoadingPresenter>()
+                                .As<ProgressLoadingPageView>();
                     registration.Register<ProgressLoadingPresenter>();
 
-                    registration.Register<ISearchView>().AsSingleton<SearchPageView>();
+                    registration.Register<ISearchView>()
+                                .InjectionRule<PresenterBase, SearchViewPresenter>()
+                                .AsSingleton<SearchPageView>();
                     registration.Register<SearchViewPresenter>();
 
                     registration.Register<ICurrentPlaylistService>()

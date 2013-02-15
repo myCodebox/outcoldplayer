@@ -34,30 +34,36 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
     public sealed partial class MainView : PageBase, IMainView, IMediaElemenetContainerView, ICurrentContextCommands
     {
-        private readonly MainViewPresenter presenter;
+        private MainViewPresenter presenter;
 
         private AdControl adControl;
 
         public MainView()
         {
             this.InitializeComponent();
-            this.presenter = this.InitializePresenter<MainViewPresenter>();
+        }
+
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+
+            this.presenter = this.GetPresenter<MainViewPresenter>();
 
             this.PlayerView.DataContext = this.presenter.PlayerViewPresenter;
             this.SnappedPlayerView.DataContext = this.presenter.PlayerViewPresenter;
 
             Debug.Assert(this.BottomAppBar != null, "this.BottomAppBar != null");
             this.BottomAppBar.Opened += (sender, o) =>
+            {
+                if (this.BottomAppBar.Visibility == Visibility.Collapsed)
                 {
-                    if (this.BottomAppBar.Visibility == Visibility.Collapsed)
-                    {
-                        this.BottomAppBar.IsOpen = false;
-                    }
-                    else
-                    {
-                        this.BottomBorder.Visibility = Visibility.Visible;
-                    }
-                };
+                    this.BottomAppBar.IsOpen = false;
+                }
+                else
+                {
+                    this.BottomBorder.Visibility = Visibility.Visible;
+                }
+            };
 
             this.BottomAppBar.Closed += (sender, o) => { this.BottomBorder.Visibility = Visibility.Collapsed; };
 

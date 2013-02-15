@@ -21,10 +21,9 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         public SearchViewPresenter(
             IDependencyResolverContainer container,
-            ISearchView view,
             ISongsRepository songsRepository,
             IPlaylistCollectionsService collectionsService)
-            : base(container, view)
+            : base(container)
         {
             this.songsRepository = songsRepository;
             this.collectionsService = collectionsService;

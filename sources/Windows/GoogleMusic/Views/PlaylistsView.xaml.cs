@@ -34,38 +34,16 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
     public sealed partial class PlaylistsPageView : PageViewBase, IPlaylistsView
     {
-        private readonly Button addPlaylistButton;
-        private readonly Button editPlaylistButton;
-        private readonly Button deletePlaylistButton;
-        private readonly Border separator;
+        private Button addPlaylistButton;
+        private Button editPlaylistButton;
+        private Button deletePlaylistButton;
+        private Border separator;
 
-        private readonly PlaylistsViewPresenter presenter;
+        private PlaylistsViewPresenter presenter;
 
         public PlaylistsPageView()
         {
-            this.presenter = this.InitializePresenter<PlaylistsViewPresenter>();
             this.InitializeComponent();
-
-            this.addPlaylistButton = new Button()
-                                         {
-                                             Style = (Style)Application.Current.Resources["AddAppBarButtonStyle"],
-                                             Command = this.presenter.AddPlaylistCommand
-                                         };
-
-            this.editPlaylistButton = new Button()
-                                         {
-                                             Style = (Style)Application.Current.Resources["EditAppBarButtonStyle"],
-                                             Command = this.presenter.EditPlaylistCommand
-                                         };
-            this.editPlaylistButton.SetValue(AutomationProperties.NameProperty, "Rename");
-
-            this.deletePlaylistButton = new Button()
-                                         {
-                                             Style = (Style)Application.Current.Resources["DeleteAppBarButtonStyle"],
-                                             Command = this.presenter.DeletePlaylistCommand
-                                         };
-
-            this.separator = new Border() { Style = (Style)Application.Current.Resources["AppBarSeparator"] };
         }
 
         public override void OnNavigatedTo(NavigatedToEventArgs eventArgs)
@@ -135,6 +113,34 @@ namespace OutcoldSolutions.GoogleMusic.Views
         {
             var scrollViewer = VisualTreeHelperEx.GetVisualChild<ScrollViewer>(this.ListView);
             scrollViewer.ScrollToHorizontalOffset(horizontalOffset);
+        }
+
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+
+            this.presenter = this.GetPresenter<PlaylistsViewPresenter>();
+
+            this.addPlaylistButton = new Button()
+            {
+                Style = (Style)Application.Current.Resources["AddAppBarButtonStyle"],
+                Command = this.presenter.AddPlaylistCommand
+            };
+
+            this.editPlaylistButton = new Button()
+            {
+                Style = (Style)Application.Current.Resources["EditAppBarButtonStyle"],
+                Command = this.presenter.EditPlaylistCommand
+            };
+            this.editPlaylistButton.SetValue(AutomationProperties.NameProperty, "Rename");
+
+            this.deletePlaylistButton = new Button()
+            {
+                Style = (Style)Application.Current.Resources["DeleteAppBarButtonStyle"],
+                Command = this.presenter.DeletePlaylistCommand
+            };
+
+            this.separator = new Border() { Style = (Style)Application.Current.Resources["AppBarSeparator"] };
         }
 
         private void PlaylistItemClick(object sender, ItemClickEventArgs e)

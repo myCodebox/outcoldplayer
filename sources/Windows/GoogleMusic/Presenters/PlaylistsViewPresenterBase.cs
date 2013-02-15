@@ -11,9 +11,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private readonly INavigationService navigationService;
 
         protected PlaylistsViewPresenterBase(
-            IDependencyResolverContainer container, 
-            TView view)
-            : base(container, view)
+            IDependencyResolverContainer container)
+            : base(container)
         {
             this.navigationService = container.Resolve<INavigationService>();
         }

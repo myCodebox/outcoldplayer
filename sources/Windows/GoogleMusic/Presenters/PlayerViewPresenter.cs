@@ -33,7 +33,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private readonly ICurrentSongPublisherService publisherService;
 
-        private readonly MediaElement mediaElement;
+        private MediaElement mediaElement;
 
         private readonly List<int> playOrder = new List<int>();
         private int playIndex = 0;
@@ -46,13 +46,12 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         public PlayerViewPresenter(
             IDependencyResolverContainer container,
-            IMediaElemenetContainerView view,
             ISongWebService songWebService,
             IGoogleMusicSessionService sessionService,
             ISettingsService settingsService,
             IMediaStreamDownloadService mediaStreamDownloadService,
             ICurrentSongPublisherService publisherService)
-            : base(container, view)
+            : base(container)
         {
             this.songWebService = songWebService;
             this.sessionService = sessionService;
@@ -125,30 +124,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                         this.settingsService.SetValue("IsLockScreenEnabled", this.BindingModel.IsLockScreenEnabled);
                     }
                 };
-
-            this.mediaElement = this.View.GetMediaElement();
-
-            this.mediaElement.MediaOpened += (sender, args) =>
-            {
-                this.Logger.Info("Media opened. Duration: {0}.", this.mediaElement.NaturalDuration.TimeSpan);
-
-                this.BindingModel.CurrentPosition = 0;
-                this.BindingModel.TotalSeconds = this.mediaElement.NaturalDuration.TimeSpan.TotalSeconds;
-            };
-
-            this.mediaElement.MediaEnded += (sender, args) =>
-            {
-                this.Logger.Info("Media Ended");
-                this.OnMediaEnded();
-            };
-
-            this.mediaElement.MediaFailed += (sender, args) =>
-            {
-                this.Logger.Error("Media Failed: {0}", args.ErrorMessage);
-                this.Logger.Debug("Media Failed - trying to handle this like MediaEnded");
-                this.OnMediaEnded();
-            };
-
+           
             this.timer.Tick += (sender, o) =>
             {
                 if (this.BindingModel.IsPlaying)
@@ -311,6 +287,34 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             {
                 return this.BindingModel.CurrentSongIndex;
             }
+        }
+        
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+
+            this.mediaElement = this.View.GetMediaElement();
+
+            this.mediaElement.MediaOpened += (sender, args) =>
+            {
+                this.Logger.Info("Media opened. Duration: {0}.", this.mediaElement.NaturalDuration.TimeSpan);
+
+                this.BindingModel.CurrentPosition = 0;
+                this.BindingModel.TotalSeconds = this.mediaElement.NaturalDuration.TimeSpan.TotalSeconds;
+            };
+
+            this.mediaElement.MediaEnded += (sender, args) =>
+            {
+                this.Logger.Info("Media Ended");
+                this.OnMediaEnded();
+            };
+
+            this.mediaElement.MediaFailed += (sender, args) =>
+            {
+                this.Logger.Error("Media Failed: {0}", args.ErrorMessage);
+                this.Logger.Debug("Media Failed - trying to handle this like MediaEnded");
+                this.OnMediaEnded();
+            };
         }
 
         private void NextSong()

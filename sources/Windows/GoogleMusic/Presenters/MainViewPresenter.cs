@@ -20,11 +20,10 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         public MainViewPresenter(
             IDependencyResolverContainer container, 
-            IMainView view,
             IAuthentificationService authentificationService,
             IGoogleMusicSessionService sessionService,
             INavigationService navigationService)
-            : base(container, view)
+            : base(container)
         {
             this.container = container;
             this.authentificationService = authentificationService;
@@ -53,8 +52,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                        }
                    },
                TaskScheduler.FromCurrentSynchronizationContext());
-
-            this.PlayerViewPresenter = this.container.Resolve<PlayerViewPresenter>(new object[] { view });
 
             this.sessionService.SessionCleared += (sender, args) => this.Dispatcher.RunAsync(
                 () =>
@@ -92,6 +89,15 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             {
                 this.navigationService.GoBack();
             }
+        }
+
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+
+            var playerViewPresenter = this.container.Resolve<PlayerViewPresenter>(new object[] { this.View });
+            ((IViewPresenterBase)playerViewPresenter).Initialize(this.View);
+            this.PlayerViewPresenter = playerViewPresenter;
         }
 
         private void UpdateCanGoBack()

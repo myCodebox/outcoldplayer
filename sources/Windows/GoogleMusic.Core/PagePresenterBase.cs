@@ -7,9 +7,8 @@ namespace OutcoldSolutions.GoogleMusic
         where TView : IPageView
     {
         public PagePresenterBase(
-            IDependencyResolverContainer container,
-            TView view)
-            : base(container, view)
+            IDependencyResolverContainer container)
+            : base(container)
         {
         }
 

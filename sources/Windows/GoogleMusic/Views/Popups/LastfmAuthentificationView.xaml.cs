@@ -24,7 +24,6 @@ namespace OutcoldSolutions.GoogleMusic.Views.Popups
         public LastfmAuthentificationPageView()
         {
             this.InitializeComponent();
-            this.presenter = this.InitializePresenter<LastfmAuthentificationPresenter>();
 
             Window.Current.Activated += this.CurrentOnActivated;
         }
@@ -38,6 +37,13 @@ namespace OutcoldSolutions.GoogleMusic.Views.Popups
             {
                 popup.IsOpen = false;
             }
+        }
+
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+
+            this.presenter = this.GetPresenter<LastfmAuthentificationPresenter>();
         }
 
         private void CancelButtonClick(object sender, RoutedEventArgs e)

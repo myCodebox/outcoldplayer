@@ -3,22 +3,49 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Views
 {
+    using OutcoldSolutions.Diagnostics;
+
     using Windows.UI.Xaml.Controls;
 
-    public class PageBase : Page
+    public class PageBase : Page, IView
     {
-        private readonly IDependencyResolverContainer container;
-
         public PageBase()
         {
-            this.container = ApplicationBase.Container;
         }
 
-        protected TPresenter InitializePresenter<TPresenter>() where TPresenter : PresenterBase
+        protected ILogger Logger { get; private set; }
+
+        protected IDependencyResolverContainer Container { get; private set; }
+
+        protected PresenterBase Presenter { get; private set; }
+
+        protected TPresenter GetPresenter<TPresenter>() where TPresenter : PresenterBase
         {
-            var presenter = this.container.Resolve<TPresenter>(new object[] { this });
-            this.DataContext = presenter;
-            return presenter;
+            return (TPresenter)this.Presenter;
+        }
+
+        [Inject]
+        protected void Initialize(
+            IDependencyResolverContainer container,
+            ILogManager logManager,
+            PresenterBase presenterBase)
+        {
+            this.Container = container;
+            this.Presenter = presenterBase;
+            this.Logger = this.Container.Resolve<ILogManager>().CreateLogger(this.GetType().Name);
+            this.DataContext = presenterBase;
+
+            var viewPresenterBase = presenterBase as IViewPresenterBase;
+            if (viewPresenterBase != null)
+            {
+                viewPresenterBase.Initialize(this);
+            }
+
+            this.OnInitialized();
+        }
+
+        protected virtual void OnInitialized()
+        {
         }
     }
 }

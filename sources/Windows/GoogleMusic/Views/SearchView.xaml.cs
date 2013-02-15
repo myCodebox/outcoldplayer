@@ -17,7 +17,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
     {
         public SearchPageView()
         {
-            this.InitializePresenter<SearchViewPresenter>();
             this.InitializeComponent();
         }
 

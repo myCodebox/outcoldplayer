@@ -19,13 +19,12 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
 
         public AccountViewPresenter(
             IDependencyResolverContainer container,
-            IPopupView view,
             IGoogleAccountService googleAccountService,
             IGoogleMusicSessionService sessionService,
             ILastfmWebService lastfmWebService,
             ICurrentSongPublisherService publisherService,
             ISettingsCommands settingsCommands)
-            : base(container, view)
+            : base(container)
         {
             this.googleAccountService = googleAccountService;
             this.sessionService = sessionService;

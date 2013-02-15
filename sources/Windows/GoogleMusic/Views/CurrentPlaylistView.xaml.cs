@@ -28,40 +28,13 @@ namespace OutcoldSolutions.GoogleMusic.Views
     public sealed partial class CurrentPlaylistPageView : PageViewBase, ICurrentPlaylistView
     {
         private readonly List<UIElement> contextButtons = new List<UIElement>();
-        private readonly ICurrentContextCommands currentContextCommands;
+        private ICurrentContextCommands currentContextCommands;
 
         private CurrentPlaylistViewPresenter presenter;
 
         public CurrentPlaylistPageView()
         {
             this.InitializeComponent();
-            this.presenter = this.InitializePresenter<CurrentPlaylistViewPresenter>();
-
-            this.currentContextCommands = App.Container.Resolve<ICurrentContextCommands>();
-
-            this.contextButtons.Add(new Button()
-                                        {
-                                            Style = (Style)Application.Current.Resources["PlayAppBarButtonStyle"],
-                                            Command = this.presenter.BindingModel.PlaySelectedSong
-                                        });
-
-            var addToPlaylistButton = new Button()
-            {
-                Style = (Style)Application.Current.Resources["AddAppBarButtonStyle"],
-                Command = this.presenter.AddToPlaylistCommand
-            };
-
-            addToPlaylistButton.SetValue(AutomationProperties.NameProperty, "Playlist");
-
-            this.contextButtons.Add(addToPlaylistButton);
-
-            this.contextButtons.Add(new Border() { Style = (Style)Application.Current.Resources["AppBarSeparator"] });
-
-            this.contextButtons.Add(new Button()
-                                        {
-                                            Style = (Style)Application.Current.Resources["RemoveAppBarButtonStyle"],
-                                            Command = this.presenter.BindingModel.RemoveSelectedSong
-                                        });
         }
 
         public int SelectedSongIndex
@@ -102,6 +75,39 @@ namespace OutcoldSolutions.GoogleMusic.Views
             int currentSongIndex = App.Container.Resolve<ICurrentPlaylistService>().CurrentSongIndex;
             this.ListView.SelectedIndex = currentSongIndex;
             this.ListView.ScrollIntoView(this.ListView.SelectedItem);
+        }
+
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+
+            this.presenter = this.GetPresenter<CurrentPlaylistViewPresenter>();
+
+            this.currentContextCommands = this.Container.Resolve<ICurrentContextCommands>();
+
+            this.contextButtons.Add(new Button()
+                                        {
+                                            Style = (Style)Application.Current.Resources["PlayAppBarButtonStyle"],
+                                            Command = this.presenter.BindingModel.PlaySelectedSong
+                                        });
+
+            var addToPlaylistButton = new Button()
+                                          {
+                                              Style = (Style)Application.Current.Resources["AddAppBarButtonStyle"],
+                                              Command = this.presenter.AddToPlaylistCommand
+                                          };
+
+            addToPlaylistButton.SetValue(AutomationProperties.NameProperty, "Playlist");
+
+            this.contextButtons.Add(addToPlaylistButton);
+
+            this.contextButtons.Add(new Border() { Style = (Style)Application.Current.Resources["AppBarSeparator"] });
+
+            this.contextButtons.Add(new Button()
+                                        {
+                                            Style = (Style)Application.Current.Resources["RemoveAppBarButtonStyle"],
+                                            Command = this.presenter.BindingModel.RemoveSelectedSong
+                                        });
         }
 
         private void ListOnSelectionChanged(object sender, SelectionChangedEventArgs e)

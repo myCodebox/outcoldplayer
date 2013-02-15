@@ -4,8 +4,6 @@
 
 namespace OutcoldSolutions.GoogleMusic.Views.Settings
 {
-    using OutcoldSolutions.GoogleMusic.Presenters.Settings;
-
     using Windows.UI.ApplicationSettings;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls.Primitives;
@@ -14,7 +12,6 @@ namespace OutcoldSolutions.GoogleMusic.Views.Settings
     {
         public AccountPageView()
         {
-            this.InitializePresenter<AccountViewPresenter>();
             this.InitializeComponent();
         }
 

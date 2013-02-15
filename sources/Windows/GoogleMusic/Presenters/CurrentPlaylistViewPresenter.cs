@@ -26,12 +26,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         public CurrentPlaylistViewPresenter(
             IDependencyResolverContainer container, 
-            ICurrentPlaylistView view,
             ICurrentPlaylistService currentPlaylistService,
             ISongWebService songWebService,
             IPlaylistCollectionsService playlistCollectionsService,
             IMusicPlaylistRepository musicPlaylistRepository)
-            : base(container, view)
+            : base(container)
         {
             this.currentPlaylistService = currentPlaylistService;
             this.songWebService = songWebService;

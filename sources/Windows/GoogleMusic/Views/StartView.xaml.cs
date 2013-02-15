@@ -4,13 +4,11 @@
 
 namespace OutcoldSolutions.GoogleMusic.Views
 {
-    using System;
     using System.Collections.Generic;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Presenters;
 
-    using Windows.System;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
 
@@ -21,17 +19,23 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
     public sealed partial class StartPageView : PageViewBase, IStartView
     {
-        private readonly StartViewPresenter presenter;
+        private StartViewPresenter presenter;
 
         public StartPageView()
         {
-            this.presenter = this.InitializePresenter<StartViewPresenter>();
             this.InitializeComponent();
         }
 
         public void SetGroups(List<PlaylistsGroupBindingModel> groups)
         {
             this.Groups.Source = groups;
+        }
+
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+
+            this.presenter = this.GetPresenter<StartViewPresenter>();
         }
 
         private void PlaylistItemClick(object sender, ItemClickEventArgs e)
