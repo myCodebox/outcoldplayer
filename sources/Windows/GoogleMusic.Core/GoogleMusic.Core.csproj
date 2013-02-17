@@ -101,6 +101,7 @@
   <ItemGroup>
     <Compile Include="ApplicationBase.cs" />
     <Compile Include="DateTimeExtensions.cs" />
+    <Compile Include="DelegateCommand.cs" />
     <Compile Include="Diagnostics\DebugLogWriter.cs" />
     <Compile Include="DispatcherContainer.cs" />
     <Compile Include="INavigationService.cs" />
@@ -126,6 +127,7 @@
     <Compile Include="NavigatedToEventArgs.cs" />
     <Compile Include="NavigatingFromEventArgs.cs" />
     <Compile Include="NavigationService.cs" />
+    <Compile Include="PageBase.cs" />
     <Compile Include="PagePresenterBase.cs" />
     <Compile Include="PageViewBase.cs" />
     <Compile Include="PresenterBase.cs" />

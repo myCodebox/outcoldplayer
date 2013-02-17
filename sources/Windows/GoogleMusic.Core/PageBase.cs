@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // Outcold Solutions (http://outcoldman.com)
 // --------------------------------------------------------------------------------------------------------------------
-namespace OutcoldSolutions.GoogleMusic.Views
+namespace OutcoldSolutions.GoogleMusic
 {
     using OutcoldSolutions.Diagnostics;
 
