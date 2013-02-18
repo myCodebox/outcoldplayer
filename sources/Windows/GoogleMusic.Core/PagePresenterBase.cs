@@ -9,6 +9,8 @@ namespace OutcoldSolutions.GoogleMusic
 
     using OutcoldSolutions.Diagnostics;
 
+    using Windows.UI.Core;
+
     public class PagePresenterBase<TView> : ViewPresenterBase<TView>, IPagePresenterBase
         where TView : IPageView
     {
@@ -79,8 +81,7 @@ namespace OutcoldSolutions.GoogleMusic
             base.OnNavigatedTo(parameter);
 
             this.IsDataLoading = true;
-            this.OnDataLoading();
-            this.View.OnDataLoading();
+            this.View.OnDataLoading(parameter);
             this.BindingModel.FreezeNotifications();
 
             Task.Factory.StartNew(() => this.LoadData(parameter)).ContinueWith(
@@ -98,19 +99,18 @@ namespace OutcoldSolutions.GoogleMusic
                         else
                         {
                             this.Logger.Debug("Data loaded.");
-                            await this.Dispatcher.RunAsync(() =>
-                                {
-                                    this.toolBar.SetViewCommands(this.GetViewCommands());
-                                    this.View.OnDataLoaded();
-                                });
+                            await this.Dispatcher.RunAsync(() => this.toolBar.SetViewCommands(this.GetViewCommands()));
                         }
 
                         // TODO: We need to show some error message here if error happens
                         await this.Dispatcher.RunAsync(() =>
-                            {
-                                this.IsDataLoading = false;
+                            { 
                                 this.BindingModel.UnfreezeNotifications();
+                                this.IsDataLoading = false;
                             });
+                        // TODO: We need to find better way to do this
+                        await Task.Delay(100);
+                        await this.Dispatcher.RunAsync(() => this.View.OnDataLoaded(parameter));
                     });
         }
 
@@ -119,10 +119,6 @@ namespace OutcoldSolutions.GoogleMusic
             base.OnInitialized();
 
             this.BindingModel = this.container.Resolve<TBindingModel>();
-        }
-
-        protected virtual void OnDataLoading()
-        {
         }
 
         protected abstract void LoadData(NavigatedToEventArgs navigatedToEventArgs);

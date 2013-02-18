@@ -102,11 +102,14 @@
     <Compile Include="ApplicationBase.cs" />
     <Compile Include="CommandIcon.cs" />
     <Compile Include="CommandMetadata.cs" />
+    <Compile Include="Controls\ListViewBaseEx.cs" />
+    <Compile Include="DataPageViewBase.cs" />
     <Compile Include="DateTimeExtensions.cs" />
     <Compile Include="DelegateCommand.cs" />
     <Compile Include="Diagnostics\DebugLogWriter.cs" />
     <Compile Include="DispatcherContainer.cs" />
     <Compile Include="IApplicationToolbar.cs" />
+    <Compile Include="IDataPageView.cs" />
     <Compile Include="INavigationService.cs" />
     <Compile Include="IPagePresenterBase.cs" />
     <Compile Include="IPageView.cs" />

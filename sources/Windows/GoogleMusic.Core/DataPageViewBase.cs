@@ -3,10 +3,14 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic
 {
-    public interface IPageView : IView
+    public class DataPageViewBase : PageViewBase, IDataPageView
     {
-        void OnNavigatedTo(NavigatedToEventArgs eventArgs);
+        public virtual void OnDataLoading(NavigatedToEventArgs eventArgs)
+        {
+        }
 
-        void OnNavigatingFrom(NavigatingFromEventArgs eventArgs); 
+        public virtual void OnDataLoaded(NavigatedToEventArgs eventArgs)
+        {
+        }
     }
 }

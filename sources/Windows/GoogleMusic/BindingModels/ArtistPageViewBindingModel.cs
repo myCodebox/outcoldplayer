@@ -7,7 +7,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
     using OutcoldSolutions.GoogleMusic.Models;
 
-    public class ArtistViewBindingModel : BindingModelBase
+    public class ArtistPageViewBindingModel : BindingModelBase
     {
         private Artist artist;
 

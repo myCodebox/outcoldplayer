@@ -8,6 +8,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
     using System.Linq;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
+    using OutcoldSolutions.GoogleMusic.Controls;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Presenters;
     using OutcoldSolutions.GoogleMusic.Services;
@@ -111,8 +112,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
         public void ScrollToHorizontalOffset(double horizontalOffset)
         {
-            var scrollViewer = VisualTreeHelperEx.GetVisualChild<ScrollViewer>(this.ListView);
-            scrollViewer.ScrollToHorizontalOffset(horizontalOffset);
+            this.ListView.ScrollToHorizontalOffset(horizontalOffset);
         }
 
         protected override void OnInitialized()
