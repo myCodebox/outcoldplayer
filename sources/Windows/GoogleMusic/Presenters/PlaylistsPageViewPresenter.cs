@@ -5,6 +5,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.Globalization;
     using System.Linq;
     using System.Threading.Tasks;
@@ -15,10 +16,9 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
 
-    using Windows.UI.Core;
     using Windows.UI.Popups;
 
-    public class PlaylistsViewPresenter : PlaylistsViewPresenterBase<IPlaylistsView>
+    public class PlaylistsPageViewPresenter : PagePresenterBase<IPlaylistsPageView, PlaylistsPageViewBindingModel>
     {
         private readonly IPlaylistCollectionsService playlistCollectionsService;
 
@@ -26,7 +26,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private PlaylistsRequest currentRequest;
 
-        public PlaylistsViewPresenter(
+        public PlaylistsPageViewPresenter(
             IDependencyResolverContainer container,
             IPlaylistCollectionsService playlistCollectionsService,
             IMusicPlaylistRepository musicPlaylistRepository)
@@ -34,21 +34,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         {
             this.playlistCollectionsService = playlistCollectionsService;
             this.musicPlaylistRepository = musicPlaylistRepository;
-            this.BindingModel = new PlaylistsViewBindingModel();
 
-            this.AddPlaylistCommand = new DelegateCommand(this.AddPlaylist, () => !this.BindingModel.IsLoading && this.BindingModel.IsEditable);
-            this.DeletePlaylistCommand = new DelegateCommand(this.DetelePlaylist);
-            this.EditPlaylistCommand = new DelegateCommand(this.EditPlaylist);
-
-            this.BindingModel.PropertyChanged += (sender, args) =>
-            {
-                this.AddPlaylistCommand.RaiseCanExecuteChanged();
-                this.DeletePlaylistCommand.RaiseCanExecuteChanged();
-                this.EditPlaylistCommand.RaiseCanExecuteChanged();
-            };
+            this.AddPlaylistCommand = new DelegateCommand(this.AddPlaylist);
+            this.DeletePlaylistCommand = new DelegateCommand(this.DetelePlaylist, () => this.BindingModel.SelectedItem != null);
+            this.EditPlaylistCommand = new DelegateCommand(this.EditPlaylist, () => this.BindingModel.SelectedItem != null);
         }
-
-        public PlaylistsViewBindingModel BindingModel { get; private set; }
 
         public DelegateCommand AddPlaylistCommand { get; private set; }
 
@@ -56,70 +46,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         public DelegateCommand EditPlaylistCommand { get; private set; }
 
-        public override void OnNavigatingFrom(NavigatingFromEventArgs eventArgs)
-        {
-            base.OnNavigatingFrom(eventArgs);
-            eventArgs.State["ListViewHorizontalOffset"] = this.View.GetHorizontalOffset();
-        }
-
-        public override void OnNavigatedTo(NavigatedToEventArgs eventArgs)
-        {
-            base.OnNavigatedTo(eventArgs);
-
-            this.View.SetGroups(null);
-            this.BindingModel.Count = 0;
-            this.BindingModel.IsEditable = false;
-
-            if (eventArgs.Parameter is PlaylistsRequest)
-            {
-                this.currentRequest = (PlaylistsRequest)eventArgs.Parameter;
-                this.BindingModel.IsLoading = true;
-                this.BindingModel.Title = this.currentRequest.ToString();
-
-                this.LoadPlaylistsAsync().ContinueWith(
-                    async (t) =>
-                        {
-                            await this.Dispatcher.RunAsync(
-                                CoreDispatcherPriority.High,
-                                () =>
-                                    {
-                                        this.BindingModel.IsEditable = this.currentRequest == PlaylistsRequest.Playlists;
-                                        this.BindingModel.IsLoading = false;
-                                    });
-
-
-                            await Task.Delay(100);
-
-                            if (t.IsCompleted && !t.IsFaulted)
-                            {
-                                await this.Dispatcher.RunAsync(
-                                    CoreDispatcherPriority.High,
-                                    () =>
-                                        {
-                                            this.View.SetGroups(t.Result);
-                                            this.BindingModel.Count = t.Result.Sum(x => x.Playlists.Count);
-                                        });
-
-                                if (eventArgs.IsNavigationBack)
-                                {
-                                    object lastPlaylist;
-                                    if (eventArgs.State.TryGetValue("ListViewHorizontalOffset", out lastPlaylist)
-                                        && lastPlaylist is double)
-                                    {
-                                        await Task.Delay(100);
-                                        await this.Dispatcher.RunAsync(CoreDispatcherPriority.High, () => this.View.ScrollToHorizontalOffset((double)lastPlaylist));
-                                    }
-                                }
-                            }
-                        });
-            }
-        }
-
         public void ChangePlaylistName(string newName)
         {
-            if (!this.BindingModel.IsLoading && this.BindingModel.IsEditable)
+            if (!this.IsDataLoading && this.BindingModel.IsEditable)
             {
-                this.BindingModel.IsLoading = true;
+                this.IsDataLoading = true;
                 this.BindingModel.IsEditable = false;
 
                 var playlistBindingModel = this.BindingModel.SelectedItem;
@@ -130,20 +61,70 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
                     this.musicPlaylistRepository.ChangeName(playlist.Id, newName).ContinueWith(
                         t =>
-                        {
-                            this.BindingModel.IsLoading = false;
-                            this.BindingModel.IsEditable = true;
-                        },
+                            {
+                                this.IsDataLoading = false;
+                                this.BindingModel.IsEditable = true;
+                            },
                         TaskScheduler.FromCurrentSynchronizationContext());
                 }
             }
         }
 
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+
+            this.BindingModel.Subscribe(() => this.BindingModel.SelectedItem, this.SelectedItemChanged);
+        }
+
+        protected override void LoadData(NavigatedToEventArgs navigatedToEventArgs)
+        {
+            this.currentRequest = (PlaylistsRequest)navigatedToEventArgs.Parameter;
+            this.BindingModel.Title = this.currentRequest.ToString();
+
+            this.RefreshPlaylists();
+
+            this.BindingModel.IsEditable = this.currentRequest == PlaylistsRequest.Playlists;
+        }
+
+        protected override IEnumerable<CommandMetadata> GetViewCommands()
+        {
+            if (this.currentRequest == PlaylistsRequest.Playlists)
+            {
+                yield return new CommandMetadata(CommandIcon.Add, "Add", this.AddPlaylistCommand);
+            }
+        }
+
+        private IEnumerable<CommandMetadata> GetContextCommands()
+        {
+            if (this.currentRequest == PlaylistsRequest.Playlists)
+            {
+                yield return new CommandMetadata(CommandIcon.Edit, "Rename", this.EditPlaylistCommand);
+                yield return new CommandMetadata(CommandIcon.Delete, "Delete", this.DeletePlaylistCommand);
+            }
+        }
+
+        private void SelectedItemChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)
+        {
+            this.AddPlaylistCommand.RaiseCanExecuteChanged();
+            this.DeletePlaylistCommand.RaiseCanExecuteChanged();
+            this.EditPlaylistCommand.RaiseCanExecuteChanged();
+
+            if (this.BindingModel.IsEditable && this.BindingModel.SelectedItem != null)
+            {
+                this.Toolbar.SetContextCommands(this.GetContextCommands());
+            }
+            else
+            {
+                this.Toolbar.ClearContextCommands();
+            }
+        }
+
         private void AddPlaylist()
         {
-            if (!this.BindingModel.IsLoading && this.BindingModel.IsEditable)
+            if (!this.IsDataLoading && this.BindingModel.IsEditable)
             {
-                this.BindingModel.IsLoading = true;
+                this.IsDataLoading = true;
                 this.BindingModel.IsEditable = false;
 
                 this.musicPlaylistRepository.CreateAsync(string.Format(CultureInfo.CurrentCulture, "Playlist - {0}", DateTime.Now)).ContinueWith(
@@ -151,29 +132,40 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     {
                         if (t.Result != null)
                         {
-                            var playlists = await this.LoadPlaylistsAsync();
+                            this.BindingModel.FreezeNotifications();
+
+                            this.RefreshPlaylists();
+
+                            this.BindingModel.UnfreezeNotifications();
 
                             await this.Dispatcher.RunAsync(
                                 () =>
                                 {
                                     this.BindingModel.IsEditable = true;
-                                    this.View.SetGroups(playlists);
+                                    this.View.Refresh();
                                     var playlistBindingModel =
-                                        playlists.SelectMany(x => x.Playlists)
+                                        this.BindingModel.Groups.SelectMany(x => x.Playlists)
                                                  .FirstOrDefault(x => x.Playlist == t.Result);
                                     this.View.ShowPlaylist(playlistBindingModel);
-                                    this.BindingModel.IsLoading = false;
+                                    this.IsDataLoading = false;
                                 });
                         }
                     });
             }
         }
 
+        private async void RefreshPlaylists()
+        {
+            var playlists = await this.LoadPlaylistsAsync();
+            this.BindingModel.Groups = playlists;
+            this.BindingModel.Count = this.BindingModel.Groups.Sum(x => x.Playlists.Count);
+        }
+
         private void DetelePlaylist()
         {
-            if (!this.BindingModel.IsLoading && this.BindingModel.IsEditable)
+            if (!this.IsDataLoading && this.BindingModel.IsEditable)
             {
-                this.BindingModel.IsLoading = true;
+                this.IsDataLoading = true;
                 this.BindingModel.IsEditable = false;
 
                 var playlistBindingModel = this.BindingModel.SelectedItem;
@@ -191,13 +183,16 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                                 {
                                     if (t.IsCompleted && !t.IsFaulted && t.Result)
                                     {
-                                        var playlists = await this.LoadPlaylistsAsync();
+                                        this.BindingModel.FreezeNotifications();
+                                        this.RefreshPlaylists();
+                                        this.BindingModel.UnfreezeNotifications();
+
                                         await this.Dispatcher.RunAsync(
                                                        () =>
                                                        {
                                                            this.BindingModel.IsEditable = true;
-                                                           this.View.SetGroups(playlists);
-                                                           this.BindingModel.IsLoading = false;
+                                                           this.View.Refresh();
+                                                           this.IsDataLoading = false;
                                                        });
                                     }
                                 })));
@@ -208,7 +203,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                             command => this.Dispatcher.RunAsync(
                                 () =>
                                 {
-                                    this.BindingModel.IsLoading = false;
+                                    this.IsDataLoading = false;
                                     this.BindingModel.IsEditable = true;
                                 })));
 

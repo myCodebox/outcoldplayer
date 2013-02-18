@@ -114,7 +114,7 @@
     <Compile Include="BindingModels\MainViewBindingModel.cs" />
     <Compile Include="BindingModels\PlayerBindingModel.cs" />
     <Compile Include="BindingModels\PlaylistBindingModel.cs" />
-    <Compile Include="BindingModels\PlaylistsViewBindingModel.cs" />
+    <Compile Include="BindingModels\PlaylistsPageViewBindingModel.cs" />
     <Compile Include="BindingModels\Popups\LastfmAuthentificationBindingModel.cs" />
     <Compile Include="BindingModels\ProgressLoadingBindingModel.cs" />
     <Compile Include="BindingModels\SearchBindingModel.cs" />
@@ -144,10 +144,9 @@
     <Compile Include="Presenters\Popups\LastfmAuthentificationPresenter.cs" />
     <Compile Include="Presenters\MainViewPresenter.cs" />
     <Compile Include="Presenters\PlayerViewPresenter.cs" />
-    <Compile Include="Presenters\PlaylistsViewPresenter.cs" />
+    <Compile Include="Presenters\PlaylistsPageViewPresenter.cs" />
     <Compile Include="BindingModels\PlaylistViewBindingModel.cs" />
     <Compile Include="Presenters\PlaylistViewPresenter.cs" />
-    <Compile Include="Presenters\PlaylistsViewPresenterBase.cs" />
     <Compile Include="Presenters\ProgressLoadingPresenter.cs" />
     <Compile Include="Presenters\SearchViewPresenter.cs" />
     <Compile Include="Presenters\Settings\AccountViewPresenter.cs" />
@@ -188,8 +187,8 @@
     <Compile Include="Views\PlayerView.xaml.cs">
       <DependentUpon>PlayerView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\PlaylistsView.xaml.cs">
-      <DependentUpon>PlaylistsView.xaml</DependentUpon>
+    <Compile Include="Views\PlaylistsPageView.xaml.cs">
+      <DependentUpon>PlaylistsPageView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PlaylistView.xaml.cs">
       <DependentUpon>PlaylistView.xaml</DependentUpon>
@@ -318,7 +317,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\PlaylistsView.xaml">
+    <Page Include="Views\PlaylistsPageView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

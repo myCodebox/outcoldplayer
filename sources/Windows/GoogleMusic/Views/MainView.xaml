@@ -13,24 +13,23 @@
 
             <Grid>
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
-                <StackPanel x:Name="ViewCommandsPanel" Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Left" Height="85">
+                <StackPanel Grid.Column="0" x:Name="ViewCommandsPanel" Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Left" Height="85">
 
                 </StackPanel>
 
-                <Border Visibility="{Binding Path=Children.Count, ElementName=ViewCommandsPanel, Converter={StaticResource ValueToInvisibilityConverter}, ConverterParameter=0}">
-                    <Border Style="{StaticResource AppBarSeparator}" 
-                            Visibility="{Binding Path=Children.Count, ElementName=ContextCommandsPanel, Converter={StaticResource ValueToInvisibilityConverter}, ConverterParameter=0}" />
-                </Border>
-
-                <StackPanel x:Name="ContextCommandsPanel" Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Left" Height="85">
+                <Border Grid.Column="1" Style="{StaticResource AppBarSeparator}" x:Name="AppToolbarSeparator" />
+                
+                <StackPanel Grid.Column="2" x:Name="ContextCommandsPanel" Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Left" Height="85">
 
                 </StackPanel>
 
-                <views:PlayerView Grid.Column="1" x:Name="PlayerView" />
+                <views:PlayerView Grid.Column="3" x:Name="PlayerView" />
 
             </Grid>
         </AppBar>

@@ -150,6 +150,8 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
         public void Show(IView view)
         {
+            this.ClearViewCommands();
+
             var visible = this.presenter.BindingModel.IsAuthenticated
                           && this.presenter.HasHistory()
                           && ApplicationView.Value != ApplicationViewState.Snapped;
@@ -256,22 +258,22 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
         private void PlaylistsNavigate(object sender, RoutedEventArgs e)
         {
-            this.Navigate<IPlaylistsView>(PlaylistsRequest.Playlists);
+            this.Navigate<IPlaylistsPageView>(PlaylistsRequest.Playlists);
         }
 
         private void AlbumsNavigate(object sender, RoutedEventArgs e)
         {
-            this.Navigate<IPlaylistsView>(PlaylistsRequest.Albums);
+            this.Navigate<IPlaylistsPageView>(PlaylistsRequest.Albums);
         }
 
         private void GenresNavigate(object sender, RoutedEventArgs e)
         {
-            this.Navigate<IPlaylistsView>(PlaylistsRequest.Genres);
+            this.Navigate<IPlaylistsPageView>(PlaylistsRequest.Genres);
         }
 
         private void ArtistsNavigate(object sender, RoutedEventArgs e)
         {
-            this.Navigate<IPlaylistsView>(PlaylistsRequest.Artists);
+            this.Navigate<IPlaylistsPageView>(PlaylistsRequest.Artists);
         }
 
         private void Navigate<TView>(object parameter = null) where TView : IPageView
@@ -296,12 +298,16 @@ namespace OutcoldSolutions.GoogleMusic.Views
             {
                 this.Activate();
             }
+
+            this.UpdateSeparator();
         }
 
         public void ClearViewCommands()
         {
             this.ViewCommandsPanel.Children.Clear();
-            this.ClearContextCommands(); 
+            this.ClearContextCommands();
+
+            this.UpdateSeparator();
         }
 
         public void SetContextCommands(IEnumerable<CommandMetadata> commands)
@@ -314,11 +320,14 @@ namespace OutcoldSolutions.GoogleMusic.Views
             {
                 this.Activate();
             }
+
+            this.UpdateSeparator();
         }
 
         public void ClearContextCommands()
         {
-            this.ContextCommandsPanel.Children.Clear(); 
+            this.ContextCommandsPanel.Children.Clear();
+            this.UpdateSeparator();
         }
 
         public void ShowPopup<TPopup>(params object[] arguments) where TPopup : IPopupView
@@ -346,6 +355,13 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
                 container.Children.Add(button);
             }
+        }
+
+        private void UpdateSeparator()
+        {
+            this.AppToolbarSeparator.Visibility = (this.ContextCommandsPanel.Children.Count > 0 && this.ViewCommandsPanel.Children.Count > 0)
+                                                      ? Visibility.Visible
+                                                      : Visibility.Collapsed;
         }
 
         private void PopupViewClosed(object sender, object e)

@@ -7,7 +7,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
     using System.Diagnostics;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
-    using OutcoldSolutions.GoogleMusic.Controls;
     using OutcoldSolutions.GoogleMusic.Presenters;
 
     using Windows.UI.Xaml;
@@ -58,7 +57,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
                 var groupBindingModel = frameworkElement.DataContext as PlaylistsGroupBindingModel;
                 if (groupBindingModel != null)
                 {
-                    this.NavigationService.NavigateTo<IPlaylistsView>(groupBindingModel.Request);
+                    this.NavigationService.NavigateTo<IPlaylistsPageView>(groupBindingModel.Request);
                 }
             }
         }

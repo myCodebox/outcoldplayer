@@ -52,7 +52,7 @@ namespace OutcoldSolutions.GoogleMusic
                 return this.isDataLoading;
             }
 
-            private set
+            protected set
             {
                 this.isDataLoading = value;
                 this.RaiseCurrentPropertyChanged();

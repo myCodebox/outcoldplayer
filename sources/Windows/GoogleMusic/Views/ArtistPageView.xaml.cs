@@ -6,8 +6,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
     using System.Diagnostics;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
-    using OutcoldSolutions.GoogleMusic.Controls;
-    using OutcoldSolutions.GoogleMusic.Presenters;
 
     using Windows.UI.Xaml.Controls;
 

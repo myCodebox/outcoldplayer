@@ -3,6 +3,9 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic
 {
+    using System;
+    using System.Diagnostics;
+
     using OutcoldSolutions.GoogleMusic.Controls;
 
     using Windows.UI.Xaml.Controls;
@@ -52,6 +55,12 @@ namespace OutcoldSolutions.GoogleMusic
 
         protected void TrackListViewBase(ListViewBase listViewBase)
         {
+            if (listViewBase == null)
+            {
+                throw new ArgumentNullException("listViewBase");
+            }
+
+            Debug.Assert(this.trackingListView == null, "this.trackingListView == null. Only one list view tracking supported.");
             this.trackingListView = listViewBase;
         }
     }

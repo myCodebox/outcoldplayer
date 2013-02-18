@@ -3,30 +3,14 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.BindingModels
 {
-    public class PlaylistsViewBindingModel : BindingModelBase
+    using System.Collections.Generic;
+
+    public class PlaylistsPageViewBindingModel : BindingModelBase
     {
         private int count;
         private string title;
-        private bool isLoading;
         private bool isEditable;
         private PlaylistBindingModel selectedItem;
-
-        public bool IsLoading
-        {
-            get
-            {
-                return this.isLoading;
-            }
-
-            set
-            {
-                if (this.isLoading != value)
-                {
-                    this.isLoading = value;
-                    this.RaiseCurrentPropertyChanged();
-                }
-            }
-        }
 
         public int Count
         {
@@ -89,5 +73,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
                 this.RaiseCurrentPropertyChanged();
             }
         }
+
+        public List<PlaylistsGroupBindingModel> Groups { get; set; }
     }
 }
