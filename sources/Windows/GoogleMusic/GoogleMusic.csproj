@@ -106,6 +106,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="BindingModels\AlbumPageViewBindingModel.cs" />
     <Compile Include="BindingModels\ArtistViewBindingModel.cs" />
     <Compile Include="BindingModels\CurrentPlaylistBindingModel.cs" />
     <Compile Include="BindingModels\PlaylistResultBindingModel.cs" />
@@ -134,6 +135,7 @@
     <Compile Include="Models\PlaylistsRequest.cs" />
     <Compile Include="Models\TimeSpanEx.cs" />
     <Compile Include="PlaylistViewResolver.cs" />
+    <Compile Include="Presenters\AlbumPageViewPresenter.cs" />
     <Compile Include="Presenters\ArtistPageViewPresenter.cs" />
     <Compile Include="Presenters\AuthentificationPresenter.cs" />
     <Compile Include="Presenters\CurrentPlaylistViewPresenter.cs" />
@@ -157,6 +159,9 @@
     <Compile Include="Services\SettingsCommands.cs" />
     <Compile Include="Services\SettingsService.cs" />
     <Compile Include="Services\GoogleAccountService.cs" />
+    <Compile Include="Views\AlbumPageView.xaml.cs">
+      <DependentUpon>AlbumPageView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ArtistPageView.xaml.cs">
       <DependentUpon>ArtistPageView.xaml</DependentUpon>
     </Compile>
@@ -275,6 +280,10 @@
     <Page Include="Common\StandardStyles.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\AlbumPageView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ArtistPageView.xaml">
       <SubType>Designer</SubType>

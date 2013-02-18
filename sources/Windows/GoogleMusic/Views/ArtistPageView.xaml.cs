@@ -11,11 +11,11 @@ namespace OutcoldSolutions.GoogleMusic.Views
     {
     }
 
-    public sealed partial class ArtistPagePageView : DataPageViewBase, IArtistPageView
+    public sealed partial class ArtistPageView : DataPageViewBase, IArtistPageView
     {
         private ArtistPageViewPresenter presenter;
 
-        public ArtistPagePageView()
+        public ArtistPageView()
         {
             this.InitializeComponent();
         }
