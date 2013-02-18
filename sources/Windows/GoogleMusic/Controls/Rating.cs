@@ -4,6 +4,7 @@
 namespace OutcoldSolutions.GoogleMusic.Controls
 {
     using System;
+    using System.Windows.Input;
 
     using Windows.UI;
     using Windows.UI.Core;
@@ -48,6 +49,19 @@ namespace OutcoldSolutions.GoogleMusic.Controls
             typeof(Rating),
             new PropertyMetadata(new SolidColorBrush(Color.FromArgb(0xFF, 0x55, 0x55, 0x55))));
 
+        public static readonly DependencyProperty CommandProperty = 
+            DependencyProperty.Register(
+            "Command", 
+            typeof(ICommand), 
+            typeof(Rating), 
+            new PropertyMetadata(null));
+
+        public static readonly DependencyProperty CommandParameterProperty =
+            DependencyProperty.Register(
+            "CommandParameter", 
+            typeof(object), 
+            typeof(Rating), 
+            new PropertyMetadata(null));
 
         private readonly Button[] stars = new Button[5];
 
@@ -71,6 +85,18 @@ namespace OutcoldSolutions.GoogleMusic.Controls
             set { this.SetValue(EmptyBrushProperty, value); }
         }
 
+        public ICommand Command
+        {
+            get { return (ICommand)this.GetValue(CommandProperty); }
+            set { this.SetValue(CommandProperty, value); }
+        }
+
+        public object CommandParameter
+        {
+            get { return this.GetValue(CommandParameterProperty); }
+            set { this.SetValue(CommandParameterProperty, value); }
+        }
+
         protected override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
@@ -81,8 +107,19 @@ namespace OutcoldSolutions.GoogleMusic.Controls
                 this.stars[i] = (Button)this.GetTemplateChild("Star" + value);
                 this.stars[i].Click += (sender, args) =>
                     {
+                        var command = this.Command;
+
                         this.Value = value;
                         this.RaiseValueChanged(new ValueChangedEventArgs(Value));
+
+                        if (command != null)
+                        {
+                            var eventArgs = new RatingEventArgs(this.CommandParameter, value);
+                            if (command.CanExecute(eventArgs))
+                            {
+                                command.Execute(eventArgs);
+                            }
+                        }
                     };
             }
 

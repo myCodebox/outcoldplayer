@@ -128,6 +128,7 @@
     <Compile Include="BindingModels\UserAuthentificationBindingModel.cs" />
     <Compile Include="Controls\AppBarToggleButton.cs" />
     <Compile Include="Controls\Rating.cs" />
+    <Compile Include="Controls\RatingEventArgs.cs" />
     <Compile Include="Controls\ValueChangedEventArgs.cs" />
     <Compile Include="Converters\AlbumArtUrlToImageConverter.cs" />
     <Compile Include="Converters\DoubleToTimeConverter.cs" />

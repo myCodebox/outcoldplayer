@@ -107,6 +107,7 @@
     <Compile Include="DateTimeExtensions.cs" />
     <Compile Include="DelegateCommand.cs" />
     <Compile Include="Diagnostics\DebugLogWriter.cs" />
+    <Compile Include="Diagnostics\TaskLogger.cs" />
     <Compile Include="DispatcherContainer.cs" />
     <Compile Include="IApplicationToolbar.cs" />
     <Compile Include="IDataPageView.cs" />
@@ -141,6 +142,7 @@
     <Compile Include="Repositories\IMusicPlaylistRepository.cs" />
     <Compile Include="Repositories\ISongsRepository.cs" />
     <Compile Include="Services\ISongsCacheService.cs" />
+    <Compile Include="Services\SongMetadataEditService.cs" />
     <Compile Include="Services\SongsCache.cs" />
     <Compile Include="Services\SongsCacheService.cs" />
     <Compile Include="Repositories\SongsRepository.cs" />

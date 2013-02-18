@@ -6,8 +6,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using System;
     using System.Collections.Generic;
     using System.ComponentModel;
+    using System.Diagnostics;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
+    using OutcoldSolutions.GoogleMusic.Controls;
+    using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
@@ -16,19 +19,26 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     {
         private readonly ICurrentPlaylistService currentPlaylistService;
 
+        private readonly ISongMetadataEditService metadataEditService;
+
         public AlbumPageViewPresenter(
             IDependencyResolverContainer container, 
-            ICurrentPlaylistService currentPlaylistService)
+            ICurrentPlaylistService currentPlaylistService,
+            ISongMetadataEditService metadataEditService)
             : base(container)
         {
             this.currentPlaylistService = currentPlaylistService;
+            this.metadataEditService = metadataEditService;
             this.PlayCommand = new DelegateCommand(this.Play, () => this.BindingModel != null && this.BindingModel.SelectedSong != null);
             this.AddToPlaylistCommand = new DelegateCommand(this.AddToPlaylist, () => this.BindingModel != null && this.BindingModel.SelectedSong != null);
+            this.RateSongCommand = new DelegateCommand(this.RateSong);
         }
 
         public DelegateCommand PlayCommand { get; set; }
 
         public DelegateCommand AddToPlaylistCommand { get; set; }
+
+        public DelegateCommand RateSongCommand { get; set; }
 
         protected override void OnInitialized()
         {
@@ -62,6 +72,17 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private void AddToPlaylist()
         {
+        }
+
+        private void RateSong(object parameter)
+        {
+            var ratingEventArgs = parameter as RatingEventArgs;
+            Debug.Assert(ratingEventArgs != null, "ratingEventArgs != null");
+            if (ratingEventArgs != null)
+            {
+                this.Logger.LogTask(this.metadataEditService.UpdateRatingAsync(
+                        (Song)ratingEventArgs.CommandParameter, (byte)ratingEventArgs.Value));
+            }
         }
 
         private void SelectedSongChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)

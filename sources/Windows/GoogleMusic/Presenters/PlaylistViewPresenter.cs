@@ -8,6 +8,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
     using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.BindingModels;
+    using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Services;
@@ -24,6 +25,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private readonly IMusicPlaylistRepository musicPlaylistRepository;
 
+        private readonly ISongMetadataEditService songMetadataEditService;
+
         private PlaylistViewBindingModel bindingModel;
 
         public PlaylistViewPresenter(
@@ -31,13 +34,15 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             ICurrentPlaylistService currentPlaylistService,
             ISongWebService songWebService,
             IPlaylistCollectionsService playlistCollectionsService,
-            IMusicPlaylistRepository musicPlaylistRepository)
+            IMusicPlaylistRepository musicPlaylistRepository,
+            ISongMetadataEditService songMetadataEditService)
             : base(container)
         {
             this.currentPlaylistService = currentPlaylistService;
             this.songWebService = songWebService;
             this.playlistCollectionsService = playlistCollectionsService;
             this.musicPlaylistRepository = musicPlaylistRepository;
+            this.songMetadataEditService = songMetadataEditService;
             this.PlaySelectedSongCommand = new DelegateCommand(this.PlaySelectedSong);
             this.RemoveFromPlaylistCommand = new DelegateCommand(this.RemoveFromPlaylist);
             this.AddToPlaylistCommand = new DelegateCommand(this.AddToPlaylist);
@@ -119,45 +124,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         public void UpdateRating(Song song, byte newValue)
         {
-            song.Rating = newValue;
-            this.songWebService.UpdateRatingAsync(song.Metadata.Id, newValue).ContinueWith(
-                        async t =>
-                        {
-                            if (song.Rating != newValue)
-                            {
-                                if (t.IsCompleted && !t.IsFaulted && t.Result != null)
-                                {
-                                    if (this.Logger.IsDebugEnabled)
-                                    {
-                                        this.Logger.Debug("Rating update completed for song: {0}.", song.Metadata.Id);
-                                    }
-
-                                    foreach (var songUpdate in t.Result.Songs)
-                                    {
-                                        var songRatingResp = songUpdate;
-
-                                        if (songUpdate.Id == song.Metadata.Id)
-                                        {
-                                            await this.Dispatcher.RunAsync(() => { song.Rating = songRatingResp.Rating; });
-                                        }
-
-                                        if (this.Logger.IsDebugEnabled)
-                                        {
-                                            this.Logger.Debug(
-                                                "Song updated: {0}, Rate: {1}.", songUpdate.Id, songUpdate.Rating);
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    this.Logger.Debug("Failed to update rating for song: {0}.", song.Metadata.Id);
-                                    if (t.IsFaulted && t.Exception != null)
-                                    {
-                                        this.Logger.LogErrorException(t.Exception);
-                                    }
-                                }
-                            }
-                        });
+            this.Logger.LogTask(this.songMetadataEditService.UpdateRatingAsync(song, newValue));
         }
 
         private async Task<Playlist> SearchAlbum(Song song)
