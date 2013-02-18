@@ -13,6 +13,8 @@ namespace OutcoldSolutions.GoogleMusic
 
         TView NavigateTo<TView>(object parameter = null, bool keepInHistory = true) where TView : IPageView;
 
+        IPageView NavigateToView<TViewResolver>(object parameter, bool keepInHistory = true) where TViewResolver : IViewResolver;
+
         void GoBack();
 
         bool CanGoBack();

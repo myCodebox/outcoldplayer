@@ -174,7 +174,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
                                 if (song != null)
                                 {
-                                    await this.dispatcher.RunAsync(() => this.navigationService.NavigateTo<IPlaylistView>(song));
+                                    await this.dispatcher.RunAsync(() => this.navigationService.NavigateTo<IPlaylistPageView>(song));
                                 }
 
                                 return;
@@ -186,7 +186,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                         var playlist = playlists.FirstOrDefault(x => string.Equals(x.Title, strings[1], StringComparison.CurrentCultureIgnoreCase));
                         if (playlist != null)
                         {
-                            await this.dispatcher.RunAsync(() => this.navigationService.NavigateTo<IPlaylistView>(playlist));
+                            await this.dispatcher.RunAsync(() => this.navigationService.NavigateTo<IPlaylistPageView>(playlist));
                         }
                     }
                 }

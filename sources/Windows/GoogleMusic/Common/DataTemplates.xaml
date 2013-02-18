@@ -33,7 +33,8 @@
                         AutomationProperties.Name=""
                         VerticalAlignment="Bottom"
                         HorizontalAlignment="Right"
-                        Command="{Binding Path=PlayCommand, Mode=OneTime}" />
+                        Command="{Binding Path=PlayCommand, Mode=OneTime}"
+                        CommandParameter="{Binding Path=Playlist, Mode=OneTime}"/>
             </Grid>
         </Border>
     </DataTemplate>

@@ -15,7 +15,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Input;
 
-    public interface IPlaylistView : IPageView
+    public interface IPlaylistPageView : IPageView
     {
         int SelectedIndex { get; set; }
 
@@ -24,7 +24,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
         void SetIsLoading(bool value);
     }
 
-    public sealed partial class PlaylistPageView : PageViewBase, IPlaylistView
+    public sealed partial class PlaylistPageView : PageViewBase, IPlaylistPageView
     {
         private ICurrentContextCommands currentContextCommands;
 

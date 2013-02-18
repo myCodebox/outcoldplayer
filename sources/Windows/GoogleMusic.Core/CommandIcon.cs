@@ -3,17 +3,10 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic
 {
-    public interface IPageView : IView
+    public static class CommandIcon
     {
-        void OnNavigatedTo(NavigatedToEventArgs eventArgs);
+        public const string List = "ListAppBarButtonStyle";
 
-        void OnNavigatingFrom(NavigatingFromEventArgs eventArgs); 
-    }
-
-    public interface IDataPageView : IPageView
-    {
-        void OnDataLoading();
-
-        void OnDataLoaded();
+        public const string Play = "PlayAppBarButtonStyle";
     }
 }

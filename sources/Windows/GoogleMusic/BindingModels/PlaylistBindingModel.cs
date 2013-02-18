@@ -25,11 +25,11 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
                         currentPlaylistService.PlayAsync();
                     }
 
-                    App.Container.Resolve<INavigationService>().NavigateTo<IPlaylistView>(playlist);
+                    App.Container.Resolve<INavigationService>().NavigateTo<IPlaylistPageView>(playlist);
                 });
         }
 
-        public DelegateCommand PlayCommand { get; private set; }
+        public DelegateCommand PlayCommand { get; set; }
 
         public bool IsAlbum
         {

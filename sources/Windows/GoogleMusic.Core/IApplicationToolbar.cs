@@ -3,17 +3,16 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic
 {
-    public interface IPageView : IView
+    using System.Collections.Generic;
+
+    public interface IApplicationToolbar
     {
-        void OnNavigatedTo(NavigatedToEventArgs eventArgs);
+        void SetViewCommands(IEnumerable<CommandMetadata> commands);
 
-        void OnNavigatingFrom(NavigatingFromEventArgs eventArgs); 
-    }
+        void ClearViewCommands();
 
-    public interface IDataPageView : IPageView
-    {
-        void OnDataLoading();
+        void SetContextCommands(IEnumerable<CommandMetadata> commands);
 
-        void OnDataLoaded();
+        void ClearContextCommands();
     }
 }

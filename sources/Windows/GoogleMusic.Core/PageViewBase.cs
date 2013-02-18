@@ -24,4 +24,15 @@ namespace OutcoldSolutions.GoogleMusic
             this.NavigationService = this.Container.Resolve<INavigationService>();
         }
     }
+
+    public class DataPageViewBase : PageViewBase, IDataPageView
+    {
+        public virtual void OnDataLoading()
+        {
+        }
+
+        public virtual void OnDataLoaded()
+        {
+        }
+    }
 }

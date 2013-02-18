@@ -32,11 +32,11 @@ namespace OutcoldSolutions.GoogleMusic.Views
         {
             if (e.ClickedItem is SongResultBindingModel)
             {
-                this.NavigationService.NavigateTo<IPlaylistView>(((SongResultBindingModel)e.ClickedItem).Result);
+                this.NavigationService.NavigateTo<IPlaylistPageView>(((SongResultBindingModel)e.ClickedItem).Result);
             }
             else if (e.ClickedItem is PlaylistResultBindingModel)
             {
-                this.NavigationService.NavigateTo<IPlaylistView>(((PlaylistResultBindingModel)e.ClickedItem).Result);
+                this.NavigationService.NavigateTo<IPlaylistPageView>(((PlaylistResultBindingModel)e.ClickedItem).Result);
             }
         }
 

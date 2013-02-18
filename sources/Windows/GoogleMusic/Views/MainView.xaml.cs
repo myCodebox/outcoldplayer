@@ -19,6 +19,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
     using Windows.Storage;
     using Windows.UI.ViewManagement;
     using Windows.UI.Xaml;
+    using Windows.UI.Xaml.Automation;
     using Windows.UI.Xaml.Controls;
 
     public interface IMediaElemenetContainerView : IView
@@ -32,7 +33,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
     {
     }
 
-    public sealed partial class MainView : PageBase, IMainView, IMediaElemenetContainerView, ICurrentContextCommands
+    public sealed partial class MainView : PageBase, IMainView, IMediaElemenetContainerView, ICurrentContextCommands, IApplicationToolbar
     {
         private MainViewPresenter presenter;
 
@@ -283,6 +284,47 @@ namespace OutcoldSolutions.GoogleMusic.Views
         private void RemoveAdsClick(object sender, RoutedEventArgs e)
         {
             App.Container.Resolve<ISettingsCommands>().ActivateSettings("upgrade");
+        }
+
+        public void SetViewCommands(IEnumerable<CommandMetadata> commands)
+        {
+            this.ClearViewCommands();
+
+            foreach (var commandMetadata in commands)
+            {
+                var button = new Button()
+                                 {
+                                     Style = (Style)Application.Current.Resources[commandMetadata.IconName],
+                                     Command = commandMetadata.Command
+                                 };
+
+                if (commandMetadata.Title != null)
+                {
+                    AutomationProperties.SetName(button, commandMetadata.Title);
+                }
+
+                this.ContextCommands.Children.Add(button);
+            }
+
+            if (this.ContextCommands.Children.Count > 0)
+            {
+                this.Activate();
+            }
+        }
+
+        public void ClearViewCommands()
+        {
+            this.ContextCommands.Children.Clear(); 
+        }
+
+        public void SetContextCommands(IEnumerable<CommandMetadata> commands)
+        {
+            this.ContextCommands.Children.Clear(); 
+        }
+
+        public void ClearContextCommands()
+        {
+            this.ContextCommands.Children.Clear(); 
         }
     }
 }

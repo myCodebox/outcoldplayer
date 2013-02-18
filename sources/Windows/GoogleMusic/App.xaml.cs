@@ -9,6 +9,7 @@ namespace OutcoldSolutions.GoogleMusic
     using System.Threading.Tasks;
 
     using OutcoldSolutions.Diagnostics;
+    using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Presenters;
@@ -51,9 +52,12 @@ namespace OutcoldSolutions.GoogleMusic
 
                     registration.Register<INavigationService>().AsSingleton<NavigationService>();
 
+                    registration.Register<PlaylistViewResolver>();
+
                     registration.Register<IMainView>()
                                 .And<IMediaElemenetContainerView>()
                                 .And<ICurrentContextCommands>()
+                                .And<IApplicationToolbar>()
                                 .InjectionRule<PresenterBase, MainViewPresenter>()
                                 .AsSingleton<MainView>();
 
@@ -74,7 +78,7 @@ namespace OutcoldSolutions.GoogleMusic
                                 .AsSingleton<PlaylistsPageView>();
                     registration.Register<PlaylistsViewPresenter>().AsSingleton();
 
-                    registration.Register<IPlaylistView>()
+                    registration.Register<IPlaylistPageView>()
                                 .InjectionRule<PresenterBase, PlaylistViewPresenter>()
                                 .AsSingleton<PlaylistPageView>();
                     registration.Register<PlaylistViewPresenter>().AsSingleton();
@@ -93,6 +97,12 @@ namespace OutcoldSolutions.GoogleMusic
                                 .InjectionRule<PresenterBase, SearchViewPresenter>()
                                 .AsSingleton<SearchPageView>();
                     registration.Register<SearchViewPresenter>();
+
+                    registration.Register<IArtistPageView>()
+                                .InjectionRule<PresenterBase, ArtistPageViewPresenter>()
+                                .AsSingleton<ArtistPagePageView>();
+                    registration.Register<ArtistPageViewPresenter>();
+                    registration.Register<ArtistViewBindingModel>();
 
                     registration.Register<ICurrentPlaylistService>()
                                 .And<PlayerViewPresenter>()

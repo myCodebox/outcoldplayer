@@ -100,10 +100,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="ApplicationBase.cs" />
+    <Compile Include="CommandIcon.cs" />
+    <Compile Include="CommandMetadata.cs" />
     <Compile Include="DateTimeExtensions.cs" />
     <Compile Include="DelegateCommand.cs" />
     <Compile Include="Diagnostics\DebugLogWriter.cs" />
     <Compile Include="DispatcherContainer.cs" />
+    <Compile Include="IApplicationToolbar.cs" />
     <Compile Include="INavigationService.cs" />
     <Compile Include="IPagePresenterBase.cs" />
     <Compile Include="IPageView.cs" />
@@ -212,13 +215,13 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\..\packages\Newtonsoft.Json.4.5.11\lib\winrt45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="OutcoldSolutions.Framework, Version=1.0.30214.40949, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
+    <Reference Include="OutcoldSolutions.Framework, Version=1.0.30217.29236, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\OutcoldSolutions.Framework.1.0.30214.40949\lib\portable-win+net45+sl40+wp71\OutcoldSolutions.Framework.dll</HintPath>
+      <HintPath>..\..\packages\OutcoldSolutions.Framework.1.0.30217.29236\lib\portable-win+net45+sl40+wp71\OutcoldSolutions.Framework.dll</HintPath>
     </Reference>
-    <Reference Include="OutcoldSolutions.Presentation, Version=1.0.30214.40949, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
+    <Reference Include="OutcoldSolutions.Presentation, Version=1.0.30217.29423, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\OutcoldSolutions.Presentation.1.0.30214.40949\lib\win\OutcoldSolutions.Presentation.dll</HintPath>
+      <HintPath>..\..\packages\OutcoldSolutions.Presentation.1.0.30217.29423\lib\win\OutcoldSolutions.Presentation.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

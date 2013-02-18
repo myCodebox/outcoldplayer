@@ -106,6 +106,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="BindingModels\ArtistViewBindingModel.cs" />
     <Compile Include="BindingModels\CurrentPlaylistBindingModel.cs" />
     <Compile Include="BindingModels\PlaylistResultBindingModel.cs" />
     <Compile Include="BindingModels\PlaylistsGroupBindingModel.cs" />
@@ -132,6 +133,8 @@
     <Compile Include="Converters\StringFormatConverter.cs" />
     <Compile Include="Models\PlaylistsRequest.cs" />
     <Compile Include="Models\TimeSpanEx.cs" />
+    <Compile Include="PlaylistViewResolver.cs" />
+    <Compile Include="Presenters\ArtistPageViewPresenter.cs" />
     <Compile Include="Presenters\AuthentificationPresenter.cs" />
     <Compile Include="Presenters\CurrentPlaylistViewPresenter.cs" />
     <Compile Include="Presenters\Popups\LastfmAuthentificationPresenter.cs" />
@@ -154,6 +157,9 @@
     <Compile Include="Services\SettingsCommands.cs" />
     <Compile Include="Services\SettingsService.cs" />
     <Compile Include="Services\GoogleAccountService.cs" />
+    <Compile Include="Views\ArtistPageView.xaml.cs">
+      <DependentUpon>ArtistPageView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\CurrentPlaylistView.xaml.cs">
       <DependentUpon>CurrentPlaylistView.xaml</DependentUpon>
     </Compile>
@@ -270,6 +276,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\ArtistPageView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\CurrentPlaylistView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -339,13 +349,13 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\..\packages\Newtonsoft.Json.4.5.11\lib\winrt45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="OutcoldSolutions.Framework, Version=1.0.30214.40949, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
+    <Reference Include="OutcoldSolutions.Framework, Version=1.0.30217.29236, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\OutcoldSolutions.Framework.1.0.30214.40949\lib\portable-win+net45+sl40+wp71\OutcoldSolutions.Framework.dll</HintPath>
+      <HintPath>..\..\packages\OutcoldSolutions.Framework.1.0.30217.29236\lib\portable-win+net45+sl40+wp71\OutcoldSolutions.Framework.dll</HintPath>
     </Reference>
-    <Reference Include="OutcoldSolutions.Presentation, Version=1.0.30214.40949, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
+    <Reference Include="OutcoldSolutions.Presentation, Version=1.0.30217.29423, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\OutcoldSolutions.Presentation.1.0.30214.40949\lib\win\OutcoldSolutions.Presentation.dll</HintPath>
+      <HintPath>..\..\packages\OutcoldSolutions.Presentation.1.0.30217.29423\lib\win\OutcoldSolutions.Presentation.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

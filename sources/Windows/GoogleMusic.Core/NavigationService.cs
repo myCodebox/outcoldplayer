@@ -37,56 +37,16 @@ namespace OutcoldSolutions.GoogleMusic
             this.viewRegionProvider = regionProvider;
         }
 
+        public IPageView NavigateToView<TViewResolver>(object parameter, bool keepInHistory = true) where TViewResolver : IViewResolver
+        {
+            var viewResolver = this.container.Resolve<TViewResolver>();
+            var pageViewType = viewResolver.GetViewType(parameter);
+            return this.NavigateTo(pageViewType, parameter, keepInHistory);
+        }
+
         public TView NavigateTo<TView>(object parameter = null, bool keepInHistory = true) where TView : IPageView
         {
-            if (this.viewRegionProvider == null)
-            {
-                throw new NotSupportedException("Register region provider first.");
-            }
-
-            var viewType = typeof(TView);
-            this.logger.Debug("Navigating to {0}. Parameter {1}.", viewType, parameter);
-
-            IView currentView = null;
-
-            if (this.viewsHistory.Count > 0)
-            {
-                var value = this.viewsHistory.Last.Value;
-                if (object.Equals(value.Parameter, parameter)
-                    && value.ViewType == viewType)
-                {
-                    this.logger.Warning("Double click found. Ignoring...");
-                    return (TView)value.View;
-                }
-
-                currentView = this.viewsHistory.Last.Value.View;
-
-                this.viewsHistory.Last.Value.View.OnNavigatingFrom(new NavigatingFromEventArgs(this.viewsHistory.Last.Value.State));
-            }
-
-            var view = this.container.Resolve<TView>();
-
-            HistoryItem historyItem = null;
-            if (keepInHistory)
-            {
-                historyItem = new HistoryItem(view, viewType, parameter);
-                this.viewsHistory.AddLast(historyItem);
-            }
-
-            if (currentView == null || !currentView.Equals(view))
-            {
-                this.viewRegionProvider.Show(view);
-            }
-            else
-            {
-                this.logger.Debug("View the same: {0}.", typeof(TView));
-            }
-
-            var navigatedToEventArgs = new NavigatedToEventArgs(view, historyItem == null ? null : historyItem.State, parameter, isBack: false);
-            view.OnNavigatedTo(navigatedToEventArgs);
-            this.RaiseNavigatedTo(navigatedToEventArgs);
-
-            return view;
+            return (TView)this.NavigateTo(typeof(TView), parameter, keepInHistory);
         }
 
         public void GoBack()
@@ -125,6 +85,57 @@ namespace OutcoldSolutions.GoogleMusic
             this.viewsHistory.Clear();
         }
 
+        private IPageView NavigateTo(Type pageViewType, object parameter = null, bool keepInHistory = true)
+        {
+            if (this.viewRegionProvider == null)
+            {
+                throw new NotSupportedException("Register region provider first.");
+            }
+
+            this.logger.Debug("Navigating to {0}. Parameter {1}.", pageViewType, parameter);
+
+            IView currentView = null;
+
+            if (this.viewsHistory.Count > 0)
+            {
+                var value = this.viewsHistory.Last.Value;
+                if (object.Equals(value.Parameter, parameter)
+                    && value.ViewType == pageViewType)
+                {
+                    this.logger.Warning("Double click found. Ignoring...");
+                    return value.View;
+                }
+
+                currentView = this.viewsHistory.Last.Value.View;
+
+                this.viewsHistory.Last.Value.View.OnNavigatingFrom(new NavigatingFromEventArgs(this.viewsHistory.Last.Value.State));
+            }
+
+            var view = (IPageView)this.container.Resolve(pageViewType);
+
+            HistoryItem historyItem = null;
+            if (keepInHistory)
+            {
+                historyItem = new HistoryItem(view, pageViewType, parameter);
+                this.viewsHistory.AddLast(historyItem);
+            }
+
+            if (currentView == null || !currentView.Equals(view))
+            {
+                this.viewRegionProvider.Show(view);
+            }
+            else
+            {
+                this.logger.Debug("View the same: {0}.", pageViewType);
+            }
+
+            var navigatedToEventArgs = new NavigatedToEventArgs(view, historyItem == null ? null : historyItem.State, parameter, isBack: false);
+            view.OnNavigatedTo(navigatedToEventArgs);
+            this.RaiseNavigatedTo(navigatedToEventArgs);
+
+            return view;
+        }
+
         private void RaiseNavigatedTo(NavigatedToEventArgs eventArgs)
         {
             var handler = this.NavigatedTo;
@@ -152,5 +163,10 @@ namespace OutcoldSolutions.GoogleMusic
 
             public IDictionary<string, object> State { get; private set; }
         }
+    }
+
+    public interface IViewResolver
+    {
+        Type GetViewType(object parameter);
     }
 }
