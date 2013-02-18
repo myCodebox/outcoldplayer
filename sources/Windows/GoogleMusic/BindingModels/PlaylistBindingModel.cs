@@ -5,7 +5,6 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 {
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services;
-    using OutcoldSolutions.GoogleMusic.Views;
 
     public class PlaylistBindingModel : BindingModelBase
     {
@@ -25,7 +24,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
                         currentPlaylistService.PlayAsync();
                     }
 
-                    App.Container.Resolve<INavigationService>().NavigateTo<IPlaylistPageView>(playlist);
+                    App.Container.Resolve<INavigationService>().NavigateToView<PlaylistViewResolver>(playlist);
                 });
         }
 

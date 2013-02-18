@@ -77,7 +77,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
         private void OnSuggestionsRequested(SearchPane sender, SearchPaneSuggestionsRequestedEventArgs args)
         {
             var searchPaneSuggestionsRequestDeferral = args.Request.GetDeferral();
-            this.SearchAsync(args, searchPaneSuggestionsRequestDeferral)
+            this.SearchAsync(args)
                 .ContinueWith(
                 x =>
                 {
@@ -186,14 +186,14 @@ namespace OutcoldSolutions.GoogleMusic.Services
                         var playlist = playlists.FirstOrDefault(x => string.Equals(x.Title, strings[1], StringComparison.CurrentCultureIgnoreCase));
                         if (playlist != null)
                         {
-                            await this.dispatcher.RunAsync(() => this.navigationService.NavigateTo<IPlaylistPageView>(playlist));
+                            await this.dispatcher.RunAsync(() => this.navigationService.NavigateToView<PlaylistViewResolver>(playlist));
                         }
                     }
                 }
             }
         }
 
-        private async Task<List<ISearchItem>> SearchAsync(SearchPaneSuggestionsRequestedEventArgs args, SearchPaneSuggestionsRequestDeferral deferral)
+        private async Task<List<ISearchItem>> SearchAsync(SearchPaneSuggestionsRequestedEventArgs args)
         {
             var result = new List<ISearchItem>();
 
