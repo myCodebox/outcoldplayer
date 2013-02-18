@@ -136,11 +136,10 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
                             this.RefreshPlaylists();
 
-                            this.BindingModel.UnfreezeNotifications();
-
                             await this.Dispatcher.RunAsync(
                                 () =>
                                 {
+                                    this.BindingModel.UnfreezeNotifications();
                                     this.BindingModel.IsEditable = true;
                                     this.View.Refresh();
                                     var playlistBindingModel =
@@ -185,11 +184,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                                     {
                                         this.BindingModel.FreezeNotifications();
                                         this.RefreshPlaylists();
-                                        this.BindingModel.UnfreezeNotifications();
-
+                                        
                                         await this.Dispatcher.RunAsync(
                                                        () =>
                                                        {
+                                                           this.BindingModel.UnfreezeNotifications();
                                                            this.BindingModel.IsEditable = true;
                                                            this.View.Refresh();
                                                            this.IsDataLoading = false;
