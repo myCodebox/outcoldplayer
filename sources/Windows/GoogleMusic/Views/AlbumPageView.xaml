@@ -96,6 +96,8 @@
                   IsTapEnabled="False"
                   Margin="40, 0, 0, 20" 
                   ManipulationMode="None"
+                  SelectedItem="{Binding Path=BindingModel.SelectedSong, Mode=TwoWay}"
+                  DoubleTapped="ListDoubleTapped"
                   x:Name="ListView">
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">

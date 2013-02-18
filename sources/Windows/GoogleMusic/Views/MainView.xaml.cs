@@ -179,7 +179,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
             {
                 foreach (var buttonBase in buttons)
                 {
-                    this.ContextCommands.Children.Add(buttonBase);
+                    this.ViewCommandsPanel.Children.Add(buttonBase);
                 }
 
                 this.Activate();
@@ -188,7 +188,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
         public void ClearContext()
         {
-            this.ContextCommands.Children.Clear(); 
+            this.ViewCommandsPanel.Children.Clear(); 
         }
 
         private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
@@ -289,24 +289,10 @@ namespace OutcoldSolutions.GoogleMusic.Views
         public void SetViewCommands(IEnumerable<CommandMetadata> commands)
         {
             this.ClearViewCommands();
+            
+            this.SetCommands(this.ViewCommandsPanel, commands);
 
-            foreach (var commandMetadata in commands)
-            {
-                var button = new Button()
-                                 {
-                                     Style = (Style)Application.Current.Resources[commandMetadata.IconName],
-                                     Command = commandMetadata.Command
-                                 };
-
-                if (commandMetadata.Title != null)
-                {
-                    AutomationProperties.SetName(button, commandMetadata.Title);
-                }
-
-                this.ContextCommands.Children.Add(button);
-            }
-
-            if (this.ContextCommands.Children.Count > 0)
+            if (this.ViewCommandsPanel.Children.Count > 0)
             {
                 this.Activate();
             }
@@ -314,17 +300,44 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
         public void ClearViewCommands()
         {
-            this.ContextCommands.Children.Clear(); 
+            this.ViewCommandsPanel.Children.Clear();
+            this.ClearContextCommands(); 
         }
 
         public void SetContextCommands(IEnumerable<CommandMetadata> commands)
         {
-            this.ContextCommands.Children.Clear(); 
+            this.ClearContextCommands();
+
+            this.SetCommands(this.ContextCommandsPanel, commands);
+
+            if (this.ContextCommandsPanel.Children.Count > 0)
+            {
+                this.Activate();
+            }
         }
 
         public void ClearContextCommands()
         {
-            this.ContextCommands.Children.Clear(); 
+            this.ContextCommandsPanel.Children.Clear(); 
+        }
+
+        private void SetCommands(Panel container, IEnumerable<CommandMetadata> commands)
+        {
+            foreach (var commandMetadata in commands)
+            {
+                var button = new Button()
+                {
+                    Style = (Style)Application.Current.Resources[commandMetadata.IconName],
+                    Command = commandMetadata.Command
+                };
+
+                if (commandMetadata.Title != null)
+                {
+                    AutomationProperties.SetName(button, commandMetadata.Title);
+                }
+
+                container.Children.Add(button);
+            }
         }
     }
 }

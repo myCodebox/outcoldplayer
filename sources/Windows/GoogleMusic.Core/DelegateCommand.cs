@@ -68,9 +68,9 @@ namespace OutcoldSolutions.GoogleMusic
         }
 
         /// <inheritdoc />
-        public void Execute(object parameter)
+        public void Execute(object parameter = null)
         {
-            if (this.CanExecute(null))
+            if (this.CanExecute(parameter))
             {
                 this.execute(parameter);
             }

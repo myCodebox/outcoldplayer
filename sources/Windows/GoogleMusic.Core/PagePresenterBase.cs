@@ -9,8 +9,6 @@ namespace OutcoldSolutions.GoogleMusic
 
     using OutcoldSolutions.Diagnostics;
 
-    using Windows.UI.Core;
-
     public class PagePresenterBase<TView> : ViewPresenterBase<TView>, IPagePresenterBase
         where TView : IPageView
     {
@@ -35,7 +33,6 @@ namespace OutcoldSolutions.GoogleMusic
         where TBindingModel : BindingModelBase
     {
         private readonly IDependencyResolverContainer container;
-        private readonly IApplicationToolbar toolBar;
 
         private TBindingModel bindingModel;
 
@@ -45,7 +42,7 @@ namespace OutcoldSolutions.GoogleMusic
             : base(container)
         {
             this.container = container;
-            this.toolBar = container.Resolve<IApplicationToolbar>();
+            this.Toolbar = container.Resolve<IApplicationToolbar>();
         }
 
         public bool IsDataLoading
@@ -76,6 +73,8 @@ namespace OutcoldSolutions.GoogleMusic
             }
         }
 
+        protected IApplicationToolbar Toolbar { get; private set; }
+
         public override void OnNavigatedTo(NavigatedToEventArgs parameter)
         {
             base.OnNavigatedTo(parameter);
@@ -99,7 +98,7 @@ namespace OutcoldSolutions.GoogleMusic
                         else
                         {
                             this.Logger.Debug("Data loaded.");
-                            await this.Dispatcher.RunAsync(() => this.toolBar.SetViewCommands(this.GetViewCommands()));
+                            await this.Dispatcher.RunAsync(() => this.Toolbar.SetViewCommands(this.GetViewCommands()));
                         }
 
                         // TODO: We need to show some error message here if error happens

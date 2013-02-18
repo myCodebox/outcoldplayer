@@ -8,6 +8,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
     public class AlbumPageViewBindingModel : BindingModelBase
     {
         private Album album;
+        private Song song;
 
         public Album Album
         {
@@ -19,6 +20,20 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             set
             {
                 this.album = value;
+                this.RaiseCurrentPropertyChanged();
+            }
+        }
+
+        public Song SelectedSong
+        {
+            get
+            {
+                return this.song;
+            }
+
+            set
+            {
+                this.song = value;
                 this.RaiseCurrentPropertyChanged();
             }
         }
