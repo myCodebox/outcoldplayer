@@ -321,6 +321,14 @@ namespace OutcoldSolutions.GoogleMusic.Views
             this.ContextCommandsPanel.Children.Clear(); 
         }
 
+        public void ShowPopup<TPopup>(params object[] arguments) where TPopup : IPopupView
+        {
+            TPopup popupView = this.Container.Resolve<TPopup>(arguments);
+            var uiElement = (UIElement)(object)popupView;
+            this.PopupView.Child = uiElement;
+            this.PopupView.IsOpen = true;
+        }
+
         private void SetCommands(Panel container, IEnumerable<CommandMetadata> commands)
         {
             foreach (var commandMetadata in commands)
@@ -338,6 +346,11 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
                 container.Children.Add(button);
             }
+        }
+
+        private void PopupViewClosed(object sender, object e)
+        {
+            this.PopupView.Child = null;
         }
     }
 }

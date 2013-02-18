@@ -53,7 +53,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         public void AddSelectedSongToPlaylist(MusicPlaylist playlist)
         {
             var song = this.BindingModel.Songs[this.View.SelectedSongIndex];
-            this.musicPlaylistRepository.AddEntry(playlist.Id, song);
+            this.musicPlaylistRepository.AddEntryAsync(playlist.Id, song);
         }
 
         public void UpdateRating(Song song, byte newValue)

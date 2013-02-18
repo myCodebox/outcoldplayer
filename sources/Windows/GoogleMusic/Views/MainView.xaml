@@ -162,7 +162,15 @@
                          Visibility="Collapsed"
                          Content="Remove Ads"
                          HorizontalAlignment="Center"/>
-        
+
+        <Popup IsLightDismissEnabled="True" 
+               x:Name="PopupView" 
+               HorizontalAlignment="Left" 
+               VerticalAlignment="Bottom" 
+               Height="300" 
+               Closed="PopupViewClosed"
+               Grid.Row="0"
+               Grid.ColumnSpan="2" />
     </Grid>
     
 </googleMusic:PageBase>

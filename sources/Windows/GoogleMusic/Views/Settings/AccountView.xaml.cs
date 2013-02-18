@@ -15,7 +15,7 @@ namespace OutcoldSolutions.GoogleMusic.Views.Settings
             this.InitializeComponent();
         }
 
-        public void Hide()
+        public void Close()
         {
             var popup = this.Parent as Popup;
             if (popup != null)

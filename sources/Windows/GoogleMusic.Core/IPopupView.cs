@@ -5,6 +5,6 @@ namespace OutcoldSolutions.GoogleMusic
 {
     public interface IPopupView : IView
     {
-        void Hide();
+        void Close();
     }
 }

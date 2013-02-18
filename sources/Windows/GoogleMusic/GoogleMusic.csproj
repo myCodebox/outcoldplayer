@@ -140,6 +140,7 @@
     <Compile Include="Presenters\ArtistPageViewPresenter.cs" />
     <Compile Include="Presenters\AuthentificationPresenter.cs" />
     <Compile Include="Presenters\CurrentPlaylistViewPresenter.cs" />
+    <Compile Include="Presenters\Popups\AddToPlaylistPopupViewPresenter.cs" />
     <Compile Include="Presenters\Popups\LastfmAuthentificationPresenter.cs" />
     <Compile Include="Presenters\MainViewPresenter.cs" />
     <Compile Include="Presenters\PlayerViewPresenter.cs" />
@@ -171,6 +172,9 @@
     </Compile>
     <Compile Include="Views\IAuthentificationView.cs" />
     <Compile Include="Views\IProgressLoadingView.cs" />
+    <Compile Include="Views\Popups\AddToPlaylistPopupView.xaml.cs">
+      <DependentUpon>AddToPlaylistPopupView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Popups\LastfmAuthentificationView.xaml.cs">
       <DependentUpon>LastfmAuthentificationView.xaml</DependentUpon>
     </Compile>
@@ -291,6 +295,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\CurrentPlaylistView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Popups\AddToPlaylistPopupView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

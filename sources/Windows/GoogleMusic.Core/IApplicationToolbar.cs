@@ -14,5 +14,7 @@ namespace OutcoldSolutions.GoogleMusic
         void SetContextCommands(IEnumerable<CommandMetadata> commands);
 
         void ClearContextCommands();
+
+        void ShowPopup<TPopup>(params object[] arguments) where TPopup : IPopupView;
     }
 }

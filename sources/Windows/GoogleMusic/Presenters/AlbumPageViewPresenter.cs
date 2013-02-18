@@ -14,11 +14,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
+    using OutcoldSolutions.GoogleMusic.Views.Popups;
 
     public class AlbumPageViewPresenter : PagePresenterBase<IAlbumPageView, AlbumPageViewBindingModel>
     {
         private readonly ICurrentPlaylistService currentPlaylistService;
-
         private readonly ISongMetadataEditService metadataEditService;
 
         public AlbumPageViewPresenter(
@@ -72,6 +72,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private void AddToPlaylist()
         {
+            var selectedSong = this.BindingModel.SelectedSong;
+            if (selectedSong != null)
+            {
+                this.Toolbar.ShowPopup<IAddToPlaylistPopupView>(selectedSong);
+            }
         }
 
         private void RateSong(object parameter)

@@ -82,19 +82,19 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
         private void SignOutAccount()
         {
             this.sessionService.ClearSession();
-            this.View.Hide();
+            this.View.Close();
         }
 
         private void LastfmUnlink()
         {
             this.lastfmWebService.ForgetAccount();
             this.publisherService.RemovePublishers<LastFmCurrentSongPublisher>();
-            this.View.Hide();
+            this.View.Close();
         }
 
         private void LastfmLink()
         {
-            this.View.Hide();
+            this.View.Close();
             this.settingsCommands.ActivateSettings("link-lastfm");
         }
     }

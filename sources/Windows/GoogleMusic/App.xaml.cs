@@ -116,6 +116,11 @@ namespace OutcoldSolutions.GoogleMusic
 
                     registration.Register<IWhatIsNewView>().As<WhatIsNewView>();
 
+                    registration.Register<IAddToPlaylistPopupView>()
+                                .InjectionRule<PresenterBase, AddToPlaylistPopupViewPresenter>()
+                                .As<AddToPlaylistPopupView>();
+                    registration.Register<AddToPlaylistPopupViewPresenter>();
+
                     // Settings
                     registration.Register<ISettingsCommands>().AsSingleton<SettingsCommands>();
                     registration.Register<ISearchService>().AsSingleton<SearchService>();

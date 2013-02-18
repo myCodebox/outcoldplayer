@@ -23,6 +23,6 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
 
         Task<bool> RemoveEntry(Guid playlistId, Guid entryId);
 
-        Task<bool> AddEntry(Guid playlistId, Song song);
+        Task<bool> AddEntryAsync(Guid playlistId, Song song);
     }
 }

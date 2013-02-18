@@ -108,7 +108,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         public void AddSelectedSongToPlaylist(MusicPlaylist playlist)
         {
             var song = this.BindingModel.Songs[this.View.SelectedIndex];
-            this.musicPlaylistRepository.AddEntry(playlist.Id, song).ContinueWith(
+            this.musicPlaylistRepository.AddEntryAsync(playlist.Id, song).ContinueWith(
                 t =>
                     {
                         if (t.IsCompleted && !t.IsFaulted && t.Result)

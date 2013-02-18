@@ -193,7 +193,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
             return result;
         }
 
-        public async Task<bool> AddEntry(Guid playlistId, Song song)
+        public async Task<bool> AddEntryAsync(Guid playlistId, Song song)
         {
             if (this.logger.IsDebugEnabled)
             {

@@ -137,6 +137,7 @@
     <Compile Include="PageBase.cs" />
     <Compile Include="PagePresenterBase.cs" />
     <Compile Include="PageViewBase.cs" />
+    <Compile Include="PopupViewBase.cs" />
     <Compile Include="PresenterBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\IMusicPlaylistRepository.cs" />
