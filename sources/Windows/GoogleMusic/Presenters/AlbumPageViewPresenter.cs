@@ -46,6 +46,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             }
 
             this.BindingModel.Album = album;
+            this.BindingModel.SelectedSong = null;
         }
 
         private void Play()
