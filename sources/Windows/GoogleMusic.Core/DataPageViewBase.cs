@@ -9,6 +9,10 @@ namespace OutcoldSolutions.GoogleMusic
         {
         }
 
+        public virtual void OnUnfreeze(NavigatedToEventArgs eventArgs)
+        {
+        }
+
         public virtual void OnDataLoaded(NavigatedToEventArgs eventArgs)
         {
         }

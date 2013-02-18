@@ -85,7 +85,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
         {
             if (ApplicationView.TryUnsnap())
             {
-                ApplicationBase.Container.Resolve<INavigationService>().NavigateTo<IStartView>();
+                ApplicationBase.Container.Resolve<INavigationService>().NavigateTo<IStartPageView>();
             }
         }
 

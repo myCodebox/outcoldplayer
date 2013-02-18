@@ -13,46 +13,33 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
 
-    public class StartViewPresenter : PlaylistsViewPresenterBase<IStartView>
+    public class StartPageViewPresenter : PagePresenterBase<IStartPageView, StartViewBindingModel>
     {
         private const int MaxItems = 12;
 
+        private readonly ICurrentPlaylistService currentPlaylistService;
+
         private readonly IPlaylistCollectionsService collectionsService;
 
-        public StartViewPresenter(
+        private readonly INavigationService navigationService;
+
+        public StartPageViewPresenter(
             IDependencyResolverContainer container, 
+            ICurrentPlaylistService currentPlaylistService,
             IPlaylistCollectionsService collectionsService)
             : base(container)
         {
+            this.currentPlaylistService = currentPlaylistService;
             this.collectionsService = collectionsService;
 
-            this.BindingModel = new StartViewBindingModel();
+            this.navigationService = container.Resolve<INavigationService>();
+
+            this.PlayCommand = new DelegateCommand(this.Play);
         }
 
-        public StartViewBindingModel BindingModel { get; private set; }
+        public DelegateCommand PlayCommand { get; set; }
 
-        public override void OnNavigatedTo(NavigatedToEventArgs eventArgs)
-        {
-            base.OnNavigatedTo(eventArgs);
-
-            this.View.SetGroups(null);
-            this.BindingModel.IsLoading = true;
-
-            this.Logger.Debug("Loading playlists.");
-            this.GetGroupsAsync().ContinueWith(
-                task =>
-                    {
-                        if (task.IsCompleted && !task.IsFaulted)
-                        {
-                            this.View.SetGroups(task.Result);
-                        }
-
-                        this.BindingModel.IsLoading = false;
-                    },
-                TaskScheduler.FromCurrentSynchronizationContext());
-        }
-
-        public async Task<List<PlaylistsGroupBindingModel>> GetGroupsAsync()
+        protected override async void LoadData(NavigatedToEventArgs navigatedToEventArgs)
         {
             var groups = new List<PlaylistsGroupBindingModel>();
 
@@ -60,14 +47,14 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             groups.Add(new PlaylistsGroupBindingModel(
                 null,
                 await this.collectionsService.GetCollection<SystemPlaylist>().CountAsync(),
-                (await this.collectionsService.GetCollection<SystemPlaylist>().GetAllAsync(Order.None)).Select(x => new PlaylistBindingModel(x)),
+                (await this.collectionsService.GetCollection<SystemPlaylist>().GetAllAsync(Order.None)).Select(x => new PlaylistBindingModel(x) { PlayCommand = this.PlayCommand }),
                 PlaylistsRequest.Albums));
             groups.Add(await this.GetGroupAsync<MusicPlaylist>("Playlists", PlaylistsRequest.Playlists));
             groups.Add(await this.GetGroupAsync<Artist>("Artists", PlaylistsRequest.Artists));
             groups.Add(await this.GetGroupAsync<Album>("Albums", PlaylistsRequest.Albums));
             groups.Add(await this.GetGroupAsync<Genre>("Genres", PlaylistsRequest.Genres));
 
-            return groups;
+            this.BindingModel.Groups = groups;
         }
 
         private async Task<PlaylistsGroupBindingModel> GetGroupAsync<TPlaylist>(string title, PlaylistsRequest playlistsRequest) where TPlaylist : Playlist
@@ -77,8 +64,24 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             return new PlaylistsGroupBindingModel(
                 title,
                 await collection.CountAsync(),
-                playlists.Select(x => new PlaylistBindingModel(x)),
+                playlists.Select(x => new PlaylistBindingModel(x) { PlayCommand = this.PlayCommand }),
                 playlistsRequest);
+        }
+
+        private void Play(object commandParameter)
+        {
+            Playlist playlist = commandParameter as Playlist;
+            if (playlist != null)
+            {
+                this.currentPlaylistService.ClearPlaylist();
+                if (playlist.Songs.Count > 0)
+                {
+                    this.currentPlaylistService.SetPlaylist(playlist);
+                    this.currentPlaylistService.PlayAsync();
+                }
+
+                this.navigationService.NavigateToView<PlaylistViewResolver>(playlist);
+            }
         }
     }
 }

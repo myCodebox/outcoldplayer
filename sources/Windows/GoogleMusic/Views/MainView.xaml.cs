@@ -246,7 +246,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
         
         private void HomeNavigate(object sender, RoutedEventArgs e)
         {
-            this.Navigate<IStartView>();
+            this.Navigate<IStartPageView>();
         }
 
         private void QueueNavigate(object sender, RoutedEventArgs e)

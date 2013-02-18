@@ -4,7 +4,7 @@
 
 namespace OutcoldSolutions.GoogleMusic.Views
 {
-    using System.Collections.Generic;
+    using System.Diagnostics;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Presenters;
@@ -12,37 +12,42 @@ namespace OutcoldSolutions.GoogleMusic.Views
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
 
-    public interface IStartView : IPageView
+    public interface IStartPageView : IDataPageView
     {
-        void SetGroups(List<PlaylistsGroupBindingModel> groups);
     }
 
-    public sealed partial class StartPageView : PageViewBase, IStartView
+    public sealed partial class StartPageView : DataPageViewBase, IStartPageView
     {
-        private StartViewPresenter presenter;
+        private StartPageViewPresenter presenter;
 
         public StartPageView()
         {
             this.InitializeComponent();
         }
 
-        public void SetGroups(List<PlaylistsGroupBindingModel> groups)
+        public override void OnUnfreeze(NavigatedToEventArgs eventArgs)
         {
-            this.Groups.Source = groups;
+            this.Groups.Source = this.presenter.BindingModel.Groups;
         }
 
         protected override void OnInitialized()
         {
             base.OnInitialized();
 
-            this.presenter = this.GetPresenter<StartViewPresenter>();
+            this.presenter = this.GetPresenter<StartPageViewPresenter>();
         }
 
         private void PlaylistItemClick(object sender, ItemClickEventArgs e)
         {
-            this.presenter.ItemClick(e.ClickedItem as PlaylistBindingModel);
-        }
+            var album = e.ClickedItem as PlaylistBindingModel;
 
+            Debug.Assert(album != null, "album != null");
+            if (album != null)
+            {
+                this.NavigationService.NavigateToView<PlaylistViewResolver>(album.Playlist);
+            }
+        }
+        
         private void NavigateTo(object sender, RoutedEventArgs e)
         {
             var frameworkElement = sender as FrameworkElement;

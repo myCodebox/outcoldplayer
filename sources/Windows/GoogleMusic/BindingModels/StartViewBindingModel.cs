@@ -3,29 +3,10 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.BindingModels
 {
+    using System.Collections.Generic;
+
     public class StartViewBindingModel : BindingModelBase
     {
-        private bool isLoading;
-        
-        public StartViewBindingModel()
-        {
-        }
-
-        public bool IsLoading
-        {
-            get
-            {
-                return this.isLoading;
-            }
-
-            set
-            {
-                if (this.isLoading != value)
-                {
-                    this.isLoading = value;
-                    this.RaiseCurrentPropertyChanged();
-                }
-            }
-        }
+        public List<PlaylistsGroupBindingModel> Groups { get; set; }
     }
 }

@@ -35,7 +35,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
         {
             ApplicationBase.Container.Resolve<ISearchService>().Register();
             ApplicationBase.Container.Resolve<ISettingsCommands>().Register();
-            ApplicationBase.Container.Resolve<INavigationService>().NavigateTo<IStartView>();
+            ApplicationBase.Container.Resolve<INavigationService>().NavigateTo<IStartPageView>();
         }
 
         private void UserVoiceClick(object sender, RoutedEventArgs e)

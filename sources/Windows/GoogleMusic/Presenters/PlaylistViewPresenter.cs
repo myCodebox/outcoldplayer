@@ -6,20 +6,16 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using System.Linq;
     using System.Threading.Tasks;
 
-    using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
-    using OutcoldSolutions.GoogleMusic.Web;
 
     public class PlaylistViewPresenter : PagePresenterBase<IPlaylistPageView>
     {
         private readonly ICurrentPlaylistService currentPlaylistService;
-
-        private readonly ISongWebService songWebService;
 
         private readonly IPlaylistCollectionsService playlistCollectionsService;
 
@@ -32,14 +28,12 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         public PlaylistViewPresenter(
             IDependencyResolverContainer container, 
             ICurrentPlaylistService currentPlaylistService,
-            ISongWebService songWebService,
             IPlaylistCollectionsService playlistCollectionsService,
             IMusicPlaylistRepository musicPlaylistRepository,
             ISongMetadataEditService songMetadataEditService)
             : base(container)
         {
             this.currentPlaylistService = currentPlaylistService;
-            this.songWebService = songWebService;
             this.playlistCollectionsService = playlistCollectionsService;
             this.musicPlaylistRepository = musicPlaylistRepository;
             this.songMetadataEditService = songMetadataEditService;

@@ -7,6 +7,8 @@ namespace OutcoldSolutions.GoogleMusic
     {
         void OnDataLoading(NavigatedToEventArgs eventArgs);
 
+        void OnUnfreeze(NavigatedToEventArgs eventArgs);
+
         void OnDataLoaded(NavigatedToEventArgs eventArgs);
     }
 }

@@ -103,12 +103,14 @@ namespace OutcoldSolutions.GoogleMusic
 
                         // TODO: We need to show some error message here if error happens
                         await this.Dispatcher.RunAsync(() =>
-                            { 
+                            {
+                                this.View.OnUnfreeze(parameter);
                                 this.BindingModel.UnfreezeNotifications();
                                 this.IsDataLoading = false;
                             });
+
                         // TODO: We need to find better way to do this
-                        await Task.Delay(100);
+                        await Task.Delay(10);
                         await this.Dispatcher.RunAsync(() => this.View.OnDataLoaded(parameter));
                     });
         }

@@ -151,7 +151,7 @@
     <Compile Include="Presenters\ProgressLoadingPresenter.cs" />
     <Compile Include="Presenters\SearchViewPresenter.cs" />
     <Compile Include="Presenters\Settings\AccountViewPresenter.cs" />
-    <Compile Include="Presenters\StartViewPresenter.cs" />
+    <Compile Include="Presenters\StartPageViewPresenter.cs" />
     <Compile Include="Services\ICurrentContextCommands.cs" />
     <Compile Include="Services\ICurrentPlaylistService.cs" />
     <Compile Include="Services\ISearchService.cs" />
@@ -218,8 +218,8 @@
     <Compile Include="Views\SnappedPlayerView.xaml.cs">
       <DependentUpon>SnappedPlayerView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\StartView.xaml.cs">
-      <DependentUpon>StartView.xaml</DependentUpon>
+    <Compile Include="Views\StartPageView.xaml.cs">
+      <DependentUpon>StartPageView.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -358,7 +358,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\StartView.xaml">
+    <Page Include="Views\StartPageView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

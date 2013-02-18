@@ -130,7 +130,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                                                     this.settingsCommands.Register();
                                                     this.searchService.Register();
                                                     this.settingsService.SetValue("Version", CurrentVersion);
-                                                    this.navigationService.NavigateTo<IStartView>();
+                                                    this.navigationService.NavigateTo<IStartPageView>();
                                                 }
                                                 else
                                                 {
