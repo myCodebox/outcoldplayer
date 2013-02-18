@@ -43,7 +43,7 @@ namespace OutcoldSolutions.GoogleMusic.Views.Settings
 
         private void SendEmailClick(object sender, RoutedEventArgs e)
         {
-            var taskResult = Launcher.LaunchUriAsync(new Uri("mailto:gMusic@outcoldman.com"));
+            var taskResult = Launcher.LaunchUriAsync(new Uri("mailto:gMusic@OutcoldSolutions.com"));
         }
 
         private void LogFolderGotFocus(object sender, RoutedEventArgs e)
