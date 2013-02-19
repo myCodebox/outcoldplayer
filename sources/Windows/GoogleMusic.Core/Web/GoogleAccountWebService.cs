@@ -38,7 +38,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
             this.httpClient = new HttpClient(this.httpClientHandler)
                                   {
                                       BaseAddress = new Uri("https://www.google.com"),
-                                      Timeout = TimeSpan.FromSeconds(10)
+                                      Timeout = TimeSpan.FromSeconds(20)
                                   };
 
             this.httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Music Manager (1, 0, 54, 4672 - Windows)");
