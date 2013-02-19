@@ -39,7 +39,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         public DelegateCommand PlayCommand { get; set; }
 
-        protected override async void LoadData(NavigatedToEventArgs navigatedToEventArgs)
+        protected override async Task LoadDataAsync(NavigatedToEventArgs navigatedToEventArgs)
         {
             var groups = new List<PlaylistsGroupBindingModel>();
 

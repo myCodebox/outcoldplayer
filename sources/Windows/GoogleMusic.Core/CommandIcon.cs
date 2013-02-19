@@ -14,5 +14,7 @@ namespace OutcoldSolutions.GoogleMusic
         public const string Edit = "EditAppBarButtonStyle";
 
         public const string Delete = "DeleteAppBarButtonStyle";
+
+        public const string Remove = "RemoveAppBarButtonStyle";
     }
 }

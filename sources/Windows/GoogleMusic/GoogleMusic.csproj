@@ -106,9 +106,9 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BindingModels\AlbumPageViewBindingModel.cs" />
     <Compile Include="BindingModels\ArtistPageViewBindingModel.cs" />
     <Compile Include="BindingModels\CurrentPlaylistBindingModel.cs" />
+    <Compile Include="BindingModels\PlaylistPageViewBindingModel.cs" />
     <Compile Include="BindingModels\PlaylistResultBindingModel.cs" />
     <Compile Include="BindingModels\PlaylistsGroupBindingModel.cs" />
     <Compile Include="BindingModels\MainViewBindingModel.cs" />
@@ -140,13 +140,13 @@
     <Compile Include="Presenters\ArtistPageViewPresenter.cs" />
     <Compile Include="Presenters\AuthentificationPresenter.cs" />
     <Compile Include="Presenters\CurrentPlaylistViewPresenter.cs" />
+    <Compile Include="Presenters\PlaylistPageViewPresenterBase.cs" />
     <Compile Include="Presenters\Popups\AddToPlaylistPopupViewPresenter.cs" />
     <Compile Include="Presenters\Popups\LastfmAuthentificationPresenter.cs" />
     <Compile Include="Presenters\MainViewPresenter.cs" />
     <Compile Include="Presenters\PlayerViewPresenter.cs" />
     <Compile Include="Presenters\PlaylistsPageViewPresenter.cs" />
-    <Compile Include="BindingModels\PlaylistViewBindingModel.cs" />
-    <Compile Include="Presenters\PlaylistViewPresenter.cs" />
+    <Compile Include="Presenters\PlaylistPageViewPresenter.cs" />
     <Compile Include="Presenters\ProgressLoadingPresenter.cs" />
     <Compile Include="Presenters\SearchViewPresenter.cs" />
     <Compile Include="Presenters\Settings\AccountViewPresenter.cs" />
@@ -190,8 +190,8 @@
     <Compile Include="Views\PlaylistsPageView.xaml.cs">
       <DependentUpon>PlaylistsPageView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\PlaylistView.xaml.cs">
-      <DependentUpon>PlaylistView.xaml</DependentUpon>
+    <Compile Include="Views\PlaylistPageView.xaml.cs">
+      <DependentUpon>PlaylistPageView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\WhatIsNewView.xaml.cs">
       <DependentUpon>WhatIsNewView.xaml</DependentUpon>
@@ -321,7 +321,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\PlaylistView.xaml">
+    <Page Include="Views\PlaylistPageView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

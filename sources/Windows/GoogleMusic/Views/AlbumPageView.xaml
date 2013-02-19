@@ -28,7 +28,7 @@
             </Grid.ColumnDefinitions>
 
             <TextBlock Style="{StaticResource HeaderTextStyle}" 
-                       Text="{Binding Path=BindingModel.Album.Title, Mode=OneWay}" 
+                       Text="{Binding Path=BindingModel.Playlist.Title, Mode=OneWay}" 
                        VerticalAlignment="Bottom" 
                        TextWrapping="NoWrap" 
                        TextTrimming="WordEllipsis" />
@@ -45,22 +45,22 @@
                Margin="12, 32, 12, 32" 
                Height="116" 
                Width="116" 
-               Source="{Binding Path=BindingModel.Album.AlbumArtUrl, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=116, Mode=OneWay}"
+               Source="{Binding Path=BindingModel.Playlist.AlbumArtUrl, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=116, Mode=OneWay}"
                Stretch="None"/>
 
-            <TextBlock Style="{StaticResource TitleTextStyle}" Text="{Binding Path=BindingModel.Album.Title, Mode=OneWay}" TextWrapping="Wrap" TextTrimming="WordEllipsis" />
-            <TextBlock Style="{StaticResource SubtitleTextStyle}" Margin="0, 7, 0, 0" Text="{Binding Path=BindingModel.Album.Artist, Mode=OneWay}"  TextWrapping="Wrap" TextTrimming="WordEllipsis" />
-            <TextBlock Style="{StaticResource SubtitleTextStyle}" Margin="0, 14, 0, 0" Text="{Binding Path=BindingModel.Album.Year, Mode=OneWay}" />
-            <TextBlock Style="{StaticResource SubtitleTextStyle}" Margin="0, 7, 0, 0" Text="{Binding Path=BindingModel.Album.Genre, Mode=OneWay}" />
+            <TextBlock Style="{StaticResource TitleTextStyle}" Text="{Binding Path=BindingModel.Playlist.Title, Mode=OneWay}" TextWrapping="Wrap" TextTrimming="WordEllipsis" />
+            <TextBlock Style="{StaticResource SubtitleTextStyle}" Margin="0, 7, 0, 0" Text="{Binding Path=BindingModel.Playlist.Artist, Mode=OneWay}"  TextWrapping="Wrap" TextTrimming="WordEllipsis" />
+            <TextBlock Style="{StaticResource SubtitleTextStyle}" Margin="0, 14, 0, 0" Text="{Binding Path=BindingModel.Playlist.Year, Mode=OneWay}" />
+            <TextBlock Style="{StaticResource SubtitleTextStyle}" Margin="0, 7, 0, 0" Text="{Binding Path=BindingModel.Playlist.Genre, Mode=OneWay}" />
 
             <StackPanel Orientation="Horizontal" Margin="0, 7, 0, 0">
                 <TextBlock Style="{StaticResource TitleTextStyle}" Text="Songs: " />
-                <TextBlock Style="{StaticResource SubtitleTextStyle}" Margin="7, 0, 0, 0" Text="{Binding Path=BindingModel.Album.Songs.Count, Mode=OneWay}" />
+                <TextBlock Style="{StaticResource SubtitleTextStyle}" Margin="7, 0, 0, 0" Text="{Binding Path=BindingModel.Playlist.Songs.Count, Mode=OneWay}" />
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" Margin="0, 7, 0, 0">
                 <TextBlock Style="{StaticResource TitleTextStyle}" Text="Duration: " />
-                <TextBlock Style="{StaticResource SubtitleTextStyle}" Margin="7, 0, 0, 0" Text="{Binding Path=BindingModel.Album.Duration, Converter={StaticResource DoubleToTimeConverter}, Mode=OneWay}" />
+                <TextBlock Style="{StaticResource SubtitleTextStyle}" Margin="7, 0, 0, 0" Text="{Binding Path=BindingModel.Playlist.Duration, Converter={StaticResource DoubleToTimeConverter}, Mode=OneWay}" />
             </StackPanel>
 
         </StackPanel>
@@ -89,15 +89,14 @@
             </Grid>
 
             <ListView Grid.Row="1"
-                  ItemsSource="{Binding Path=BindingModel.Album.Songs, Mode=OneWay}"
                   SelectionMode="Single"
                   HorizontalAlignment="Stretch"
                   HorizontalContentAlignment="Stretch"
                   IsTapEnabled="False"
                   Margin="40, 0, 0, 20" 
                   ManipulationMode="None"
-                  SelectedItem="{Binding Path=BindingModel.SelectedSong, Mode=TwoWay}"
                   DoubleTapped="ListDoubleTapped"
+                      SelectionChanged="ListViewSelectionChanged"
                   x:Name="ListView">
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">

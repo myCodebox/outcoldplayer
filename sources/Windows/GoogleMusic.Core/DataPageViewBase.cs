@@ -13,6 +13,8 @@ namespace OutcoldSolutions.GoogleMusic
     public class DataPageViewBase : PageViewBase, IDataPageView
     {
         private const string HorizontalScrollOffset = "ListView_HorizontalScrollOffset";
+        private const string VerticalScrollOffset = "ListView_VerticalScrollOffset";
+
         private ListViewBase trackingListView;
 
         public override void OnNavigatingFrom(NavigatingFromEventArgs eventArgs)
@@ -23,6 +25,8 @@ namespace OutcoldSolutions.GoogleMusic
             {
                 eventArgs.State[HorizontalScrollOffset] = 
                     this.trackingListView.GetScrollViewerHorizontalOffset();
+                eventArgs.State[VerticalScrollOffset] =
+                    this.trackingListView.GetScrollViewerVerticalOffset();
             }
         }
 
@@ -31,6 +35,7 @@ namespace OutcoldSolutions.GoogleMusic
             if (this.trackingListView != null)
             {
                 this.trackingListView.ScrollToHorizontalZero();
+                this.trackingListView.ScrollToVerticalZero();
             }
         }
 
@@ -48,6 +53,11 @@ namespace OutcoldSolutions.GoogleMusic
                     if (eventArgs.State.TryGetValue(HorizontalScrollOffset, out offset))
                     {
                         this.trackingListView.ScrollToHorizontalOffset((double)offset);
+                    }
+
+                    if (eventArgs.State.TryGetValue(VerticalScrollOffset, out offset))
+                    {
+                        this.trackingListView.ScrollToVerticalOffset((double)offset);
                     }
                 }
             }

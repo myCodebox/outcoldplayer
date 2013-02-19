@@ -6,6 +6,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
@@ -33,7 +34,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         public DelegateCommand ShowAllCommand { get; set; }
 
-        protected override void LoadData(NavigatedToEventArgs navigatedToEventArgs)
+        protected override async Task LoadDataAsync(NavigatedToEventArgs navigatedToEventArgs)
         {
             var artist = navigatedToEventArgs.Parameter as Artist;
             if (artist == null)

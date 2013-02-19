@@ -75,7 +75,7 @@ namespace OutcoldSolutions.GoogleMusic
 
         protected IApplicationToolbar Toolbar { get; private set; }
 
-        public override void OnNavigatedTo(NavigatedToEventArgs parameter)
+        public override async void OnNavigatedTo(NavigatedToEventArgs parameter)
         {
             base.OnNavigatedTo(parameter);
 
@@ -83,36 +83,20 @@ namespace OutcoldSolutions.GoogleMusic
             this.View.OnDataLoading(parameter);
             this.BindingModel.FreezeNotifications();
 
-            Task.Factory.StartNew(() => this.LoadData(parameter)).ContinueWith(
-                    async t =>
+            await this.LoadDataAsync(parameter);
+
+            await this.Dispatcher.RunAsync(
+                () =>
                     {
-                        if (t.IsCanceled)
-                        {
-                            this.Logger.Warning("Task is cancelled.");
-                        }
-                        else if (t.IsFaulted)
-                        {
-                            this.Logger.Error("Task is fauled");
-                            this.Logger.LogErrorException(t.Exception);
-                        }
-                        else
-                        {
-                            this.Logger.Debug("Data loaded.");
-                            await this.Dispatcher.RunAsync(() => this.Toolbar.SetViewCommands(this.GetViewCommands()));
-                        }
-
-                        // TODO: We need to show some error message here if error happens
-                        await this.Dispatcher.RunAsync(() =>
-                            {
-                                this.View.OnUnfreeze(parameter);
-                                this.BindingModel.UnfreezeNotifications();
-                                this.IsDataLoading = false;
-                            });
-
-                        // TODO: We need to find better way to do this
-                        await Task.Delay(10);
-                        await this.Dispatcher.RunAsync(() => this.View.OnDataLoaded(parameter));
+                        this.Toolbar.SetViewCommands(this.GetViewCommands());
+                        this.View.OnUnfreeze(parameter);
+                        this.BindingModel.UnfreezeNotifications();
+                        this.IsDataLoading = false;
                     });
+
+            // TODO: We need to find better way to do this
+            await Task.Delay(100);
+            await this.Dispatcher.RunAsync(() => this.View.OnDataLoaded(parameter));
         }
 
         protected override void OnInitialized()
@@ -122,7 +106,7 @@ namespace OutcoldSolutions.GoogleMusic
             this.BindingModel = this.container.Resolve<TBindingModel>();
         }
 
-        protected abstract void LoadData(NavigatedToEventArgs navigatedToEventArgs);
+        protected abstract Task LoadDataAsync(NavigatedToEventArgs navigatedToEventArgs);
 
         protected virtual IEnumerable<CommandMetadata> GetViewCommands()
         {

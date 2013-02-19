@@ -5,24 +5,23 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 {
     using OutcoldSolutions.GoogleMusic.Models;
 
-    public class PlaylistViewBindingModel : SongsBindingModelBase
+    public class PlaylistPageViewBindingModel<TPlaylist> : BindingModelBase where TPlaylist : Playlist
     {
-        private readonly Playlist playlist;
-        private bool isBusy = false;
-        private bool isLoading = false;
+        private TPlaylist playlist;
+        private int selectedSongIndex = -1;
 
-        public PlaylistViewBindingModel(Playlist playlist)
-        {
-            this.playlist = playlist;
-
-            this.ReloadSongs();
-        }
-
-        public string Title
+        public TPlaylist Playlist
         {
             get
             {
-                return this.playlist.Title;
+                return this.playlist;
+            }
+
+            set
+            {
+                this.playlist = value;
+                this.RaiseCurrentPropertyChanged();
+                this.SelectedSongIndex = -1;
             }
         }
 
@@ -54,52 +53,31 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             }
         }
 
-        public bool IsBusy
+        public Song SelectedSong
         {
             get
             {
-                return this.isBusy;
-            }
-
-            set
-            {
-                this.isBusy = value;
-                this.RaiseCurrentPropertyChanged();
-            }
-        }
-
-        public bool IsLoading
-        {
-            get
-            {
-                return this.isLoading;
-            }
-
-            set
-            {
-                this.isLoading = value;
-                this.RaiseCurrentPropertyChanged();
-            }
-        }
-
-
-        public Playlist Playlist
-        {
-            get
-            {
-                return this.playlist;
-            }
-        }
-
-        public void ReloadSongs()
-        {
-            if (this.playlist.Songs != null)
-            {
-                this.Songs.Clear();
-                foreach (var song in this.playlist.Songs)
+                if (this.playlist.Songs.Count > this.SelectedSongIndex && this.SelectedSongIndex > 0)
                 {
-                    this.Songs.Add(song);
+                    return this.playlist.Songs[this.SelectedSongIndex];
                 }
+
+                return null;
+            }
+        }
+
+        public int SelectedSongIndex
+        {
+            get
+            {
+                return this.selectedSongIndex;
+            }
+
+            set
+            {
+                this.selectedSongIndex = value;
+                this.RaiseCurrentPropertyChanged();
+                this.RaisePropertyChanged(() => this.SelectedSong);
             }
         }
     }

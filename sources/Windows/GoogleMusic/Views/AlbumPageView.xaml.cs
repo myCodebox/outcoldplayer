@@ -3,8 +3,12 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Views
 {
+    using System.Linq;
+
+    using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Presenters;
 
+    using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Input;
 
     public interface IAlbumPageView : IDataPageView
@@ -18,8 +22,33 @@ namespace OutcoldSolutions.GoogleMusic.Views
         public AlbumPageView()
         {
             this.InitializeComponent();
+            this.TrackListViewBase(this.ListView);
         }
 
+        public override void OnDataLoading(NavigatedToEventArgs eventArgs)
+        {
+            base.OnDataLoading(eventArgs);
+
+            this.ListView.ItemsSource = null;
+        }
+
+        public override void OnDataLoaded(NavigatedToEventArgs eventArgs)
+        {
+            base.OnDataLoaded(eventArgs);
+
+            if (this.presenter.BindingModel.Playlist != null)
+            {
+                this.ListView.ItemsSource = this.presenter.BindingModel.Playlist.Songs;
+
+                var selectedSongIndex = this.presenter.BindingModel.SelectedSongIndex;
+                if (selectedSongIndex >= 0)
+                {
+                    this.ListView.ScrollIntoView(this.presenter.BindingModel.SelectedSong);
+                    this.ListView.SelectedIndex = selectedSongIndex;
+                }
+            }
+        }
+        
         protected override void OnInitialized()
         {
             base.OnInitialized();
@@ -29,9 +58,22 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
         private void ListDoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
         {
-            if (this.presenter.PlayCommand.CanExecute())
+            if (this.presenter.PlaySongCommand.CanExecute())
             {
-                this.presenter.PlayCommand.Execute();
+                this.presenter.PlaySongCommand.Execute();
+            }
+        }
+
+        private void ListViewSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (e.AddedItems.Count == 0)
+            {
+                this.presenter.BindingModel.SelectedSongIndex = -1;
+            }
+            else
+            {
+                this.presenter.BindingModel.SelectedSongIndex =
+                    this.presenter.BindingModel.Playlist.Songs.IndexOf((Song)e.AddedItems.First());
             }
         }
     }

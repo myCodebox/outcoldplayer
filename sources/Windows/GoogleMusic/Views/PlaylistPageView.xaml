@@ -1,4 +1,4 @@
-﻿<googleMusic:PageViewBase
+﻿<googleMusic:DataPageViewBase
     x:Class="OutcoldSolutions.GoogleMusic.Views.PlaylistPageView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -9,7 +9,7 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <Grid DataContext="{Binding Path=BindingModel, Mode=OneWay}">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="100" />
             <RowDefinition Height="Auto" />
@@ -23,12 +23,12 @@
             </Grid.ColumnDefinitions>
 
             <TextBlock Style="{StaticResource HeaderTextStyle}" 
-                       Text="{Binding Path=Title, Mode=OneWay}" 
+                       Text="{Binding Path=BindingModel.Playlist.Title, Mode=OneWay}" 
                        VerticalAlignment="Bottom" 
                        TextWrapping="NoWrap" 
                        TextTrimming="WordEllipsis" />
 
-            <TextBlock Style="{StaticResource SubheaderTextStyle}" Grid.Column="1" VerticalAlignment="Bottom" Margin="20, 0, 0, 0" Text="{Binding Path=Type, Mode=OneWay}"/>
+            <TextBlock Style="{StaticResource SubheaderTextStyle}" Grid.Column="1" VerticalAlignment="Bottom" Margin="20, 0, 0, 0" Text="{Binding Path=BindingModel.Type, Mode=OneWay}"/>
             
         </Grid>
  
@@ -50,17 +50,17 @@
             <TextBlock Grid.Column="6" VerticalAlignment="Center" Margin="20, 0, 25, 0" Text="rating" HorizontalAlignment="Left" Style="{StaticResource TitleTextStyle}"/>
         </Grid>
 
-        <ProgressRing Grid.Row="2" IsActive="{Binding Path=IsLoading, Mode=OneWay}" x:Name="ProgressRing"  />
+        <ProgressRing Grid.Row="2" IsActive="{Binding Path=IsDataLoading, Mode=OneWay}"   />
         
         <ListView Grid.Row="2"
-                  Visibility="{Binding Path=IsLoading, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}"
-                  ItemsSource="{Binding Path=Songs, Mode=OneTime}"
+                  Visibility="{Binding Path=IsDataLoading, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}"
+                  ItemsSource="{Binding Path=BindingModel.Playlist.Songs, Mode=OneWay}"
+                  SelectedIndex="{Binding Path=BindingModel.SelectedSongIndex, Mode=TwoWay}"
                   SelectionMode="Single"
                   HorizontalAlignment="Stretch"
                   HorizontalContentAlignment="Stretch"
                   IsTapEnabled="False"
                   Margin="40, 0, 0, 20" 
-                  SelectionChanged="ListOnSelectionChanged"
                   DoubleTapped="ListDoubleTapped"
                   ManipulationMode="None"
                   x:Name="ListView">
@@ -90,24 +90,13 @@
                         <TextBlock Grid.Column="3" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="{Binding Path=Artist, Mode=OneWay}" TextTrimming="WordEllipsis" />
                         <TextBlock Grid.Column="4" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="{Binding Path=Album, Mode=OneWay}" TextTrimming="WordEllipsis" />
                         <TextBlock Grid.Column="5" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="{Binding Path=PlayCount, Mode=OneWay}" HorizontalAlignment="Right" />
-                        <controls:Rating Grid.Column="6" VerticalAlignment="Center" Margin="20, -3, 40, 0" Value="{Binding Path=Rating, Mode=OneWay}" HorizontalAlignment="Right" ValueChanged="RatingOnValueChanged"/>
+                        <controls:Rating Grid.Column="6" VerticalAlignment="Center" Margin="20, -3, 40, 0" Value="{Binding Path=Rating, Mode=OneWay}" HorizontalAlignment="Right" 
+                                         Command="{Binding Path=DataContext.RateSongCommand, ElementName=ListView, Mode=OneTime}"
+                                         CommandParameter="{Binding Mode=OneTime}"/>
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-
-        <Popup IsLightDismissEnabled="True" x:Name="PlaylistsPopup" HorizontalAlignment="Left" VerticalAlignment="Bottom">
-
-            <Border Padding="20" Background="{StaticResource AppBarBackgroundThemeBrush}" Width="Auto" Height="300">
-                <ListView x:Name="PlaylistsView"
-                    DisplayMemberPath="Title"
-                    IsItemClickEnabled="True"
-                    SelectionMode="None"
-                    Width="Auto"
-                    ItemClick="PlaylistItemClick"  />
-            </Border>
-
-        </Popup>
         
     </Grid>
-</googleMusic:PageViewBase>
+</googleMusic:DataPageViewBase>

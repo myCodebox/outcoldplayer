@@ -4,7 +4,6 @@
 namespace OutcoldSolutions.GoogleMusic.Views
 {
     using OutcoldSolutions.GoogleMusic.BindingModels;
-    using OutcoldSolutions.GoogleMusic.Presenters;
 
     using Windows.UI.Xaml.Controls;
 
@@ -32,7 +31,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
         {
             if (e.ClickedItem is SongResultBindingModel)
             {
-                this.NavigationService.NavigateTo<IPlaylistPageView>(((SongResultBindingModel)e.ClickedItem).Result);
+                this.NavigationService.NavigateTo<IAlbumPageView>(((SongResultBindingModel)e.ClickedItem).Result);
             }
             else if (e.ClickedItem is PlaylistResultBindingModel)
             {

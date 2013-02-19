@@ -86,7 +86,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.BindingModel.Subscribe(() => this.BindingModel.SelectedItem, this.SelectedItemChanged);
         }
 
-        protected override void LoadData(NavigatedToEventArgs navigatedToEventArgs)
+        protected override async Task LoadDataAsync(NavigatedToEventArgs navigatedToEventArgs)
         {
             this.currentRequest = (PlaylistsRequest)navigatedToEventArgs.Parameter;
             this.BindingModel.Title = this.currentRequest.ToString();
