@@ -3,8 +3,9 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.BindingModels
 {
+    using System;
+
     using OutcoldSolutions.GoogleMusic.Models;
-    using OutcoldSolutions.GoogleMusic.Services;
 
     public class PlaylistBindingModel : BindingModelBase
     {
@@ -12,20 +13,12 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
         public PlaylistBindingModel(Playlist playlist)
         {
+            if (playlist == null)
+            {
+                throw new ArgumentNullException("playlist");
+            }
+
             this.playlist = playlist;
-            this.PlayCommand = new DelegateCommand(() =>
-                {
-                    var currentPlaylistService = App.Container.Resolve<ICurrentPlaylistService>();
-
-                    currentPlaylistService.ClearPlaylist();
-                    if (playlist.Songs.Count > 0)
-                    {
-                        currentPlaylistService.SetPlaylist(playlist);
-                        currentPlaylistService.PlayAsync();
-                    }
-
-                    App.Container.Resolve<INavigationService>().NavigateToView<PlaylistViewResolver>(playlist);
-                });
         }
 
         public DelegateCommand PlayCommand { get; set; }

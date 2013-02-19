@@ -11,6 +11,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
+    using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Services;
@@ -21,23 +22,29 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     public class PlaylistsPageViewPresenter : PagePresenterBase<IPlaylistsPageView, PlaylistsPageViewBindingModel>
     {
         private readonly IPlaylistCollectionsService playlistCollectionsService;
-
         private readonly IMusicPlaylistRepository musicPlaylistRepository;
+        private readonly INavigationService navigationService;
+        private readonly ICurrentPlaylistService currentPlaylistService;
 
         private PlaylistsRequest currentRequest;
 
         public PlaylistsPageViewPresenter(
             IDependencyResolverContainer container,
             IPlaylistCollectionsService playlistCollectionsService,
-            IMusicPlaylistRepository musicPlaylistRepository)
+            IMusicPlaylistRepository musicPlaylistRepository,
+            INavigationService navigationService,
+            ICurrentPlaylistService currentPlaylistService)
             : base(container)
         {
             this.playlistCollectionsService = playlistCollectionsService;
             this.musicPlaylistRepository = musicPlaylistRepository;
+            this.navigationService = navigationService;
+            this.currentPlaylistService = currentPlaylistService;
 
             this.AddPlaylistCommand = new DelegateCommand(this.AddPlaylist);
             this.DeletePlaylistCommand = new DelegateCommand(this.DetelePlaylist, () => this.BindingModel.SelectedItem != null);
             this.EditPlaylistCommand = new DelegateCommand(this.EditPlaylist, () => this.BindingModel.SelectedItem != null);
+            this.PlayCommand = new DelegateCommand(this.Play);
         }
 
         public DelegateCommand AddPlaylistCommand { get; private set; }
@@ -45,6 +52,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         public DelegateCommand DeletePlaylistCommand { get; private set; }
 
         public DelegateCommand EditPlaylistCommand { get; private set; }
+
+        public DelegateCommand PlayCommand { get; private set; }
 
         public void ChangePlaylistName(string newName)
         {
@@ -208,7 +217,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
                     dialog.DefaultCommandIndex = 0;
                     dialog.CancelCommandIndex = 1;
-                    var taskResult = dialog.ShowAsync();
+                    this.Logger.LogTask(dialog.ShowAsync().AsTask());
                 }
             }
         }
@@ -224,28 +233,46 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private async Task<List<PlaylistsGroupBindingModel>> LoadPlaylistsAsync()
         {
-            IEnumerable<Playlist> playlists = null;
-
-            if (this.currentRequest == PlaylistsRequest.Albums)
+            IEnumerable<Playlist> queue = null;
+            switch (this.currentRequest)
             {
-                playlists = await this.playlistCollectionsService.GetCollection<Album>().GetAllAsync(Order.Name);
-            }
-            else if (this.currentRequest == PlaylistsRequest.Playlists)
-            {
-                playlists = await this.playlistCollectionsService.GetCollection<MusicPlaylist>().GetAllAsync(Order.Name);
-            }
-            else if (this.currentRequest == PlaylistsRequest.Genres)
-            {
-                playlists = await this.playlistCollectionsService.GetCollection<Genre>().GetAllAsync(Order.Name);
-            }
-            else
-            {
-                playlists = await this.playlistCollectionsService.GetCollection<Artist>().GetAllAsync(Order.Name);
+                case PlaylistsRequest.Albums:
+                    queue = await this.playlistCollectionsService.GetCollection<Album>().GetAllAsync(Order.Name);
+                    break;
+                case PlaylistsRequest.Playlists:
+                    queue = await this.playlistCollectionsService.GetCollection<MusicPlaylist>().GetAllAsync(Order.Name);
+                    break;
+                case PlaylistsRequest.Genres:
+                    queue = await this.playlistCollectionsService.GetCollection<Genre>().GetAllAsync(Order.Name);
+                    break;
+                case PlaylistsRequest.Artists:
+                    queue = await this.playlistCollectionsService.GetCollection<Artist>().GetAllAsync(Order.Name);
+                    break;
             }
 
-            return playlists.GroupBy(x => string.IsNullOrEmpty(x.Title) ? ' ' : char.ToUpper(x.Title[0]))
-                         .OrderBy(x => x.Key)
-                         .Select(x => new PlaylistsGroupBindingModel(x.Key.ToString(), 0, x.Select(p => new PlaylistBindingModel(p)))).ToList();
+            List<PlaylistsGroupBindingModel> groups = new List<PlaylistsGroupBindingModel>();
+
+            if (queue != null)
+            {
+                foreach (var group in queue.GroupBy(x => string.IsNullOrEmpty(x.Title) ? string.Empty : x.Title.Substring(0, 1), StringComparer.CurrentCultureIgnoreCase))
+                {
+                    var playlistBindingModels = group.Select(p => new PlaylistBindingModel(p) { PlayCommand = this.PlayCommand });
+                    groups.Add(new PlaylistsGroupBindingModel(group.Key, 0, playlistBindingModels));
+                }
+            }
+
+            return groups;
+        }
+
+        private void Play(object commandParameter)
+        {
+            Playlist playlist = commandParameter as Playlist;
+            if (playlist != null)
+            {
+                this.navigationService.NavigateToView<PlaylistViewResolver>(playlist);
+                this.currentPlaylistService.SetPlaylist(playlist);
+                this.currentPlaylistService.PlayAsync();
+            }
         }
     }
 }
