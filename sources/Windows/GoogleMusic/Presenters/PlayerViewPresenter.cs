@@ -33,9 +33,10 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private readonly ICurrentSongPublisherService publisherService;
 
+        private readonly List<int> playOrder = new List<int>();
+
         private MediaElement mediaElement;
 
-        private readonly List<int> playOrder = new List<int>();
         private int playIndex = 0;
 
         private DisplayRequest request;
@@ -450,25 +451,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
                                                 this.BindingModel.IsBusy = false;
 
-                                                if (this.BindingModel.SkipAheadCommand.CanExecute())
-                                                {
-                                                    MediaControl.NextTrackPressed -= this.MediaControlOnNextTrackPressed;
-                                                    MediaControl.NextTrackPressed += this.MediaControlOnNextTrackPressed;
-                                                }
-                                                else
-                                                {
-                                                    MediaControl.NextTrackPressed -= this.MediaControlOnNextTrackPressed;
-                                                }
-
-                                                if (this.BindingModel.SkipBackCommand.CanExecute())
-                                                {
-                                                    MediaControl.PreviousTrackPressed -= this.MediaControlOnPreviousTrackPressed;
-                                                    MediaControl.PreviousTrackPressed += this.MediaControlOnPreviousTrackPressed;
-                                                }
-                                                else
-                                                {
-                                                    MediaControl.PreviousTrackPressed -= this.MediaControlOnPreviousTrackPressed;
-                                                }
+                                                this.UpdateMediaButtons();
 
                                                 this.publisherService.PublishAsync(this.BindingModel.CurrentSong, this.currentPlaylist);
                                             });
@@ -488,6 +471,29 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                                 }
                             });
                 }
+            }
+        }
+
+        private void UpdateMediaButtons()
+        {
+            if (this.BindingModel.SkipAheadCommand.CanExecute())
+            {
+                MediaControl.NextTrackPressed -= this.MediaControlOnNextTrackPressed;
+                MediaControl.NextTrackPressed += this.MediaControlOnNextTrackPressed;
+            }
+            else
+            {
+                MediaControl.NextTrackPressed -= this.MediaControlOnNextTrackPressed;
+            }
+
+            if (this.BindingModel.SkipBackCommand.CanExecute())
+            {
+                MediaControl.PreviousTrackPressed -= this.MediaControlOnPreviousTrackPressed;
+                MediaControl.PreviousTrackPressed += this.MediaControlOnPreviousTrackPressed;
+            }
+            else
+            {
+                MediaControl.PreviousTrackPressed -= this.MediaControlOnPreviousTrackPressed;
             }
         }
 
@@ -604,6 +610,9 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     this.playIndex = 0;
                 }
             }
+
+            this.BindingModel.UpdateBindingModel();
+            this.UpdateMediaButtons();
         }
 
         private void OnMediaEnded()
