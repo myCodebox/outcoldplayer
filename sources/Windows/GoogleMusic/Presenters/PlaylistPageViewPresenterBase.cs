@@ -50,21 +50,26 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         protected override async Task LoadDataAsync(NavigatedToEventArgs navigatedToEventArgs)
         {
-            var playlist = navigatedToEventArgs.Parameter as TPlaylist;
-            if (playlist == null)
-            {
-                throw new NotSupportedException(string.Format("Current view supports only {0}-playlists.", typeof(TPlaylist)));
-            }
+            await Task.Run(
+                () =>
+                    {
+                        var playlist = navigatedToEventArgs.Parameter as TPlaylist;
+                        if (playlist == null)
+                        {
+                            throw new NotSupportedException(
+                                string.Format("Current view supports only {0}-playlists.", typeof(TPlaylist)));
+                        }
 
-            // TODO: We need to refresh playlist before set it here.
-            this.BindingModel.Playlist = playlist;
-            this.BindingModel.SelectedSongIndex = -1;
+                        // TODO: We need to refresh playlist before set it here.
+                        this.BindingModel.Playlist = playlist;
+                        this.BindingModel.SelectedSongIndex = -1;
+                    });
         }
 
         protected virtual IEnumerable<CommandMetadata> GetContextCommands()
         {
             yield return new CommandMetadata(CommandIcon.Play, "Play", this.PlaySongCommand);
-            yield return new CommandMetadata(CommandIcon.Add, "Add To Playlist", this.AddToPlaylistCommand);
+            yield return new CommandMetadata(CommandIcon.Add, "Playlist", this.AddToPlaylistCommand);
         }
 
         private void Play()

@@ -56,7 +56,6 @@ namespace OutcoldSolutions.GoogleMusic
 
                     registration.Register<IMainView>()
                                 .And<IMediaElemenetContainerView>()
-                                .And<ICurrentContextCommands>()
                                 .And<IApplicationToolbar>()
                                 .InjectionRule<PresenterBase, MainViewPresenter>()
                                 .AsSingleton<MainView>();
@@ -86,10 +85,11 @@ namespace OutcoldSolutions.GoogleMusic
                     registration.Register<PlaylistPageViewPresenter>().AsSingleton();
                     registration.Register<PlaylistPageViewBindingModel<Playlist>>().AsSingleton();
 
-                    registration.Register<ICurrentPlaylistView>()
-                                .InjectionRule<PresenterBase, CurrentPlaylistViewPresenter>()
+                    registration.Register<ICurrentPlaylistPageView>()
+                                .InjectionRule<PresenterBase, CurrentPlaylistPageViewPresenter>()
                                 .AsSingleton<CurrentPlaylistPageView>();
-                    registration.Register<CurrentPlaylistViewPresenter>().AsSingleton();
+                    registration.Register<CurrentPlaylistPageViewPresenter>().AsSingleton();
+                    registration.Register<CurrentPlaylistPageViewBindingModel>().AsSingleton();
 
                     registration.Register<IProgressLoadingView>()
                                 .InjectionRule<PresenterBase, ProgressLoadingPresenter>()

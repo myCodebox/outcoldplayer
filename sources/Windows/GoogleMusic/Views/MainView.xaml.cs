@@ -33,7 +33,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
     {
     }
 
-    public sealed partial class MainView : PageBase, IMainView, IMediaElemenetContainerView, ICurrentContextCommands, IApplicationToolbar
+    public sealed partial class MainView : PageBase, IMainView, IMediaElemenetContainerView, IApplicationToolbar
     {
         private MainViewPresenter presenter;
 
@@ -174,20 +174,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
             this.BottomAppBar.IsOpen = true;
         }
 
-        public void SetCommands(IEnumerable<UIElement> buttons)
-        {
-            this.ClearContext();
-            if (buttons != null)
-            {
-                foreach (var buttonBase in buttons)
-                {
-                    this.ViewCommandsPanel.Children.Add(buttonBase);
-                }
-
-                this.Activate();
-            }
-        }
-
         public void ClearContext()
         {
             this.ViewCommandsPanel.Children.Clear(); 
@@ -253,7 +239,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
         private void QueueNavigate(object sender, RoutedEventArgs e)
         {
-            this.Navigate<ICurrentPlaylistView>();
+            this.Navigate<ICurrentPlaylistPageView>();
         }
 
         private void PlaylistsNavigate(object sender, RoutedEventArgs e)

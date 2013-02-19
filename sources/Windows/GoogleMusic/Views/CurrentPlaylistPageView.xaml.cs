@@ -1,6 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // Outcold Solutions (http://outcoldman.com)
 // --------------------------------------------------------------------------------------------------------------------
+
 namespace OutcoldSolutions.GoogleMusic.Views
 {
     using System.Linq;
@@ -11,15 +12,16 @@ namespace OutcoldSolutions.GoogleMusic.Views
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Input;
 
-    public interface IAlbumPageView : IDataPageView
+    public interface ICurrentPlaylistPageView : IDataPageView
     {
+        void SelectPlayingSong();
     }
 
-    public sealed partial class AlbumPageView : DataPageViewBase, IAlbumPageView
+    public sealed partial class CurrentPlaylistPageView : DataPageViewBase, ICurrentPlaylistPageView
     {
-        private AlbumPageViewPresenter presenter;
+        private CurrentPlaylistPageViewPresenter presenter;
 
-        public AlbumPageView()
+        public CurrentPlaylistPageView()
         {
             this.InitializeComponent();
             this.TrackListViewBase(this.ListView);
@@ -36,28 +38,30 @@ namespace OutcoldSolutions.GoogleMusic.Views
         {
             base.OnDataLoaded(eventArgs);
 
-            if (this.presenter.BindingModel.Playlist != null)
-            {
-                this.ListView.ItemsSource = this.presenter.BindingModel.Playlist.Songs;
-                this.UpdateSelectedSong();
-            }
+            this.ListView.ItemsSource = this.presenter.BindingModel.Songs;
+            this.UpdateSelectedSong();
         }
-        
+
+        public void SelectPlayingSong()
+        {
+            this.presenter.SelectPlayingSong();
+        }
+
         protected override void OnInitialized()
         {
             base.OnInitialized();
 
-            this.presenter = this.GetPresenter<AlbumPageViewPresenter>();
+            this.presenter = this.GetPresenter<CurrentPlaylistPageViewPresenter>();
             this.presenter.BindingModel.Subscribe(
-                () => this.presenter.BindingModel.SelectedSongIndex, 
+                () => this.presenter.BindingModel.SelectedSongIndex,
                 (sender, args) => this.UpdateSelectedSong());
         }
 
         private void ListDoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
         {
-            if (this.presenter.PlaySongCommand.CanExecute())
+            if (this.presenter.PlaySelectedSongCommand.CanExecute())
             {
-                this.presenter.PlaySongCommand.Execute();
+                this.presenter.PlaySelectedSongCommand.Execute();
             }
         }
 
@@ -70,14 +74,14 @@ namespace OutcoldSolutions.GoogleMusic.Views
             else
             {
                 this.presenter.BindingModel.SelectedSongIndex =
-                    this.presenter.BindingModel.Playlist.Songs.IndexOf((Song)e.AddedItems.First());
+                    this.presenter.BindingModel.Songs.IndexOf((Song)e.AddedItems.First());
             }
         }
 
         private void UpdateSelectedSong()
         {
             var selectedSongIndex = this.presenter.BindingModel.SelectedSongIndex;
-            if (this.ListView.SelectedIndex != selectedSongIndex)
+            if (this.ListView.Items != null && this.ListView.Items.Count > selectedSongIndex)
             {
                 this.ListView.ScrollIntoView(this.presenter.BindingModel.SelectedSong);
                 this.ListView.SelectedIndex = selectedSongIndex;

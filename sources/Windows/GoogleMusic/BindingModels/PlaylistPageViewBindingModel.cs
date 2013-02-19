@@ -21,6 +21,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             {
                 this.playlist = value;
                 this.RaiseCurrentPropertyChanged();
+                this.RaisePropertyChanged(() => this.Type);
                 this.SelectedSongIndex = -1;
             }
         }
@@ -57,7 +58,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         {
             get
             {
-                if (this.playlist.Songs.Count > this.SelectedSongIndex && this.SelectedSongIndex > 0)
+                if (this.SelectedSongIndex >= 0 && this.SelectedSongIndex < this.playlist.Songs.Count)
                 {
                     return this.playlist.Songs[this.SelectedSongIndex];
                 }

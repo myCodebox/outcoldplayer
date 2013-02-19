@@ -4,7 +4,6 @@
 namespace OutcoldSolutions.GoogleMusic.Controls
 {
     using System;
-    using System.Diagnostics;
 
     using Windows.UI.Xaml.Controls;
 
@@ -18,8 +17,6 @@ namespace OutcoldSolutions.GoogleMusic.Controls
             }
 
             var scrollViewer = VisualTreeHelperEx.GetVisualChild<ScrollViewer>(listViewBase);
-            Debug.Assert(scrollViewer != null, "scrollViewer != null");
-
             if (scrollViewer != null)
             {
                 if (scrollViewer.HorizontalScrollMode != ScrollMode.Disabled)
@@ -37,8 +34,6 @@ namespace OutcoldSolutions.GoogleMusic.Controls
             }
 
             var scrollViewer = VisualTreeHelperEx.GetVisualChild<ScrollViewer>(listViewBase);
-            Debug.Assert(scrollViewer != null, "scrollViewer != null");
-
             if (scrollViewer != null)
             {
                 if (scrollViewer.VerticalScrollMode != ScrollMode.Disabled)
@@ -66,8 +61,6 @@ namespace OutcoldSolutions.GoogleMusic.Controls
             }
 
             var scrollViewer = VisualTreeHelperEx.GetVisualChild<ScrollViewer>(listViewBase);
-            
-            Debug.Assert(scrollViewer != null, "scrollViewer != null");
             if (scrollViewer != null)
             {
                 return scrollViewer.HorizontalOffset;
@@ -84,8 +77,6 @@ namespace OutcoldSolutions.GoogleMusic.Controls
             }
 
             var scrollViewer = VisualTreeHelperEx.GetVisualChild<ScrollViewer>(listViewBase);
-
-            Debug.Assert(scrollViewer != null, "scrollViewer != null");
             if (scrollViewer != null)
             {
                 return scrollViewer.VerticalOffset;

@@ -91,7 +91,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.currentRequest = (PlaylistsRequest)navigatedToEventArgs.Parameter;
             this.BindingModel.Title = this.currentRequest.ToString();
 
-            this.RefreshPlaylists();
+            await Task.Run(() => this.RefreshPlaylists());
 
             this.BindingModel.IsEditable = this.currentRequest == PlaylistsRequest.Playlists;
         }

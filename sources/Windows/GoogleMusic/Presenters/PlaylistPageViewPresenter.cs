@@ -32,7 +32,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             {
                 commandMetadatas = new List<CommandMetadata>(commandMetadatas)
                                        {
-                                           new CommandMetadata(CommandIcon.Remove, "Remove from playlist", this.RemoveFromPlaylistCommand)
+                                           new CommandMetadata(CommandIcon.Remove, "Playlist", this.RemoveFromPlaylistCommand)
                                        };
             }
 

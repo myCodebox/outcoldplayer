@@ -42,10 +42,15 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 throw new NotSupportedException("Current view cannot show not-artists playlists.");
             }
 
-            this.BindingModel.Artist = artist;
-            this.BindingModel.Albums = SongsGrouping.GroupByAlbums(artist.Songs)
-                .Select(x => new PlaylistBindingModel(x) { PlayCommand = this.PlayCommand })
-                .ToList();
+            await Task.Run(
+                () =>
+                    {
+                        this.BindingModel.Artist = artist;
+                        this.BindingModel.Albums =
+                            SongsGrouping.GroupByAlbums(artist.Songs)
+                                         .Select(x => new PlaylistBindingModel(x) { PlayCommand = this.PlayCommand })
+                                         .ToList();
+                    });
         }
 
         protected override IEnumerable<CommandMetadata> GetViewCommands()
