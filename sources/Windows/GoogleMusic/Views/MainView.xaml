@@ -117,8 +117,8 @@
                         HorizontalContentAlignment="Stretch" 
                         VerticalContentAlignment="Stretch" />
 
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0, 20, 20, 0" x:Name="LinksPanel">
-            <HyperlinkButton NavigateUri="https://twitter.com/gMusicW">
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0, 20, 0, 0" x:Name="LinksPanel">
+            <HyperlinkButton NavigateUri="https://twitter.com/gMusicW" VerticalAlignment="Top">
                 <HyperlinkButton.Template>
                     <ControlTemplate>
                         <StackPanel Height="28" Width="118" Orientation="Horizontal" >
@@ -129,13 +129,18 @@
                 </HyperlinkButton.Template>
             </HyperlinkButton>
 
-            <HyperlinkButton Margin="10, 0, 0, 0" NavigateUri="https://gmusic.uservoice.com">
+            <HyperlinkButton Margin="10, 0, 20, 0" NavigateUri="https://gmusic.uservoice.com" VerticalAlignment="Top">
                 <HyperlinkButton.Template>
                     <ControlTemplate>
                         <Image Source="ms-appx:///Resources/uservoice.png" Height="28" Width="118" Margin="0, 0, 0, 0"  />
                     </ControlTemplate>
                 </HyperlinkButton.Template>
             </HyperlinkButton>
+
+            <Button Margin="0, -15, 0, 0" Style="{StaticResource SearchPopupMenuButtonStyle}" 
+                    AutomationProperties.Name=""
+                    x:Name="SearchButton"
+                    Click="ShowSearch" VerticalAlignment="Center" />
         </StackPanel>
         
         <views:SnappedPlayerView x:Name="SnappedPlayerView" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="Collapsed" />

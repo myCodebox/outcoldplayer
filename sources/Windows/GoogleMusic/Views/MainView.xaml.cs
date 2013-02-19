@@ -15,6 +15,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
     using OutcoldSolutions.GoogleMusic.Services;
 
     using Windows.ApplicationModel;
+    using Windows.ApplicationModel.Search;
     using Windows.ApplicationModel.Store;
     using Windows.Storage;
     using Windows.UI.ViewManagement;
@@ -182,7 +183,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
         private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
         {
             this.Loaded -= this.OnLoaded;
-            this.UpdateCurrentView();
             this.SizeChanged += (s, args) => this.UpdateCurrentView();
         }
 
@@ -215,6 +215,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
                 this.TopAppBar.IsEnabled = true;
                 this.BottomAppBar.Visibility = Visibility.Visible;
                 this.TopAppBar.Visibility = Visibility.Visible;
+                this.SearchButton.Visibility = Visibility.Visible;
             }
             else
             {
@@ -224,6 +225,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
                 this.TopAppBar.IsOpen = false;
                 this.BottomAppBar.Visibility = Visibility.Collapsed;
                 this.TopAppBar.Visibility = Visibility.Collapsed;
+                this.SearchButton.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -353,6 +355,11 @@ namespace OutcoldSolutions.GoogleMusic.Views
         private void PopupViewClosed(object sender, object e)
         {
             this.PopupView.Child = null;
+        }
+
+        private void ShowSearch(object sender, RoutedEventArgs e)
+        {
+            SearchPane.GetForCurrentView().Show();
         }
     }
 }
