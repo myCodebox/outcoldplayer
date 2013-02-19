@@ -10,7 +10,14 @@ namespace OutcoldSolutions.GoogleMusic.Controls
     {
         public AppBarToggleButton()
         {
-            this.Click += (sender, args) => VisualStateManager.GoToState(this, this.IsChecked.HasValue && this.IsChecked.Value ? "Checked" : "Unchecked", false);
+            this.Click += (sender, args) => this.UpdateState();
+            this.LayoutUpdated += (sender, o) => this.UpdateState();
+        }
+
+        private void UpdateState()
+        {
+            VisualStateManager.GoToState(
+                this, this.IsChecked.HasValue && this.IsChecked.Value ? "Checked" : "Unchecked", false);
         }
     }
 }

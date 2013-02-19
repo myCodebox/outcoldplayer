@@ -269,7 +269,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             Playlist playlist = commandParameter as Playlist;
             if (playlist != null)
             {
-                this.navigationService.NavigateToView<PlaylistViewResolver>(playlist);
+                this.navigationService.NavigateTo<IPlaylistPageView>(playlist);
                 this.currentPlaylistService.SetPlaylist(playlist);
                 this.currentPlaylistService.PlayAsync();
             }

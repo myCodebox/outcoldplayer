@@ -80,7 +80,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     this.currentPlaylistService.PlayAsync();
                 }
 
-                this.navigationService.NavigateToView<PlaylistViewResolver>(playlist);
+                this.navigationService.NavigateTo<IPlaylistPageView>(playlist);
             }
         }
     }

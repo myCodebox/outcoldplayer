@@ -4,13 +4,17 @@
 
 namespace OutcoldSolutions.GoogleMusic.Views
 {
+    using System;
+    using System.ComponentModel;
+
     using Microsoft.Advertising.WinRT.UI;
 
     using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Controls;
+    using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Presenters;
-    using OutcoldSolutions.GoogleMusic.Web;
+    using OutcoldSolutions.GoogleMusic.Services;
 
     using Windows.ApplicationModel.Store;
     using Windows.UI.ViewManagement;
@@ -22,6 +26,8 @@ namespace OutcoldSolutions.GoogleMusic.Views
         private readonly ILogger logger;
 
         private AdControl adControl;
+
+        private PlayerBindingModel playerBindingModel;
 
         public SnappedPlayerView()
         {
@@ -35,6 +41,25 @@ namespace OutcoldSolutions.GoogleMusic.Views
             CurrentApp.LicenseInformation.LicenseChanged += this.UpdateAdControl;
 #endif
             this.UpdateAdControl();
+
+            this.Loaded += this.OnLoaded;
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            this.Loaded -= this.OnLoaded;
+            var playerViewPresenter = this.DataContext as PlayerViewPresenter;
+            if (playerViewPresenter != null)
+            {
+                this.playerBindingModel = playerViewPresenter.BindingModel;
+                this.playerBindingModel.Subscribe(() => this.playerBindingModel.CurrentSong, this.SongChanged);
+            }
+        }
+
+        private void SongChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)
+        {
+            var currentSong = this.playerBindingModel.CurrentSong;
+            this.Rating.Value = (currentSong != null) ? currentSong.Rating : 0;
         }
 
         private bool IsAdFree()
@@ -99,40 +124,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
                 {
                     if (currentSong.Rating != e.NewValue)
                     {
-                        ApplicationBase.Container.Resolve<ISongWebService>()
-                                       .UpdateRatingAsync(currentSong.Metadata.Id, e.NewValue).ContinueWith(
-                            async t =>
-                            {
-                                if (t.IsCompleted && !t.IsFaulted && t.Result != null)
-                                {
-                                    if (this.logger.IsDebugEnabled)
-                                    {
-                                        this.logger.Debug("Rating update completed for song: {0}.", currentSong.Metadata.Id);
-                                    }
-
-                                    foreach (var songUpdate in t.Result.Songs)
-                                    {
-                                        if (this.logger.IsDebugEnabled)
-                                        {
-                                            this.logger.Debug("Song updated: {0}, Rate: {1}.", songUpdate.Id, songUpdate.Rating);
-                                        }
-
-                                        if (songUpdate.Id == currentSong.Metadata.Id)
-                                        {
-                                            var songRatingResp = songUpdate;
-                                            await ApplicationBase.Container.Resolve<IDispatcher>().RunAsync(() => { currentSong.Rating = songRatingResp.Rating; });
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    this.logger.Debug("Failed to update rating for song: {0}.", currentSong.Metadata.Id);
-                                    if (t.IsFaulted && t.Exception != null)
-                                    {
-                                        this.logger.LogErrorException(t.Exception);
-                                    }
-                                }
-                            });
+                        this.logger.LogTask(ApplicationBase.Container.Resolve<ISongMetadataEditService>().UpdateRatingAsync(currentSong, (byte)e.NewValue));
                     }
                 }
             }

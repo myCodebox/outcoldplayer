@@ -49,6 +49,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                         this.BindingModel.Albums =
                             SongsGrouping.GroupByAlbums(artist.Songs)
                                          .Select(x => new PlaylistBindingModel(x) { PlayCommand = this.PlayCommand })
+                                         .OrderBy(x => x.Playlist.Title, StringComparer.CurrentCultureIgnoreCase)
                                          .ToList();
                     });
         }

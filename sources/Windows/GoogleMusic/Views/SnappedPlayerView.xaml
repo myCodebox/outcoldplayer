@@ -60,7 +60,7 @@
             <TextBlock Grid.Column="0" Style="{StaticResource SmallTextStyle}" VerticalAlignment="Center" HorizontalAlignment="Left">Plays:</TextBlock>
             <TextBlock Grid.Column="1" Style="{StaticResource SmallTextStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="7, 0, 0, 0" Text="{Binding Path=CurrentSong.PlayCount, Mode=OneWay}"  />
 
-            <controls:Rating  Grid.Column="1" Value="{Binding Path=CurrentSong.Rating, Mode=OneWay}" HorizontalAlignment="Right" ValueChanged="RatingOnValueChanged"/>
+            <controls:Rating Grid.Column="1" x:Name="Rating" HorizontalAlignment="Right" ValueChanged="RatingOnValueChanged"/>
         </Grid>
 
         <Grid Grid.Row="4" Margin="32, 0" Visibility="{Binding Path=CurrentSong, Mode=OneWay, Converter={StaticResource NullToInvisibilityConverter}}">
