@@ -28,6 +28,8 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
         public override void OnUnfreeze(NavigatedToEventArgs eventArgs)
         {
+            base.OnUnfreeze(eventArgs);
+
             this.Groups.Source = this.presenter.BindingModel.Groups;
         }
 

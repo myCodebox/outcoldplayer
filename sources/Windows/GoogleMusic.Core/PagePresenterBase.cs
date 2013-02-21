@@ -8,6 +8,7 @@ namespace OutcoldSolutions.GoogleMusic
     using System.Threading.Tasks;
 
     using OutcoldSolutions.Diagnostics;
+    using OutcoldSolutions.GoogleMusic.Diagnostics;
 
     public class PagePresenterBase<TView> : ViewPresenterBase<TView>, IPagePresenterBase
         where TView : IPageView
@@ -75,7 +76,7 @@ namespace OutcoldSolutions.GoogleMusic
 
         protected IApplicationToolbar Toolbar { get; private set; }
 
-        public override async void OnNavigatedTo(NavigatedToEventArgs parameter)
+        public override void OnNavigatedTo(NavigatedToEventArgs parameter)
         {
             base.OnNavigatedTo(parameter);
 
@@ -83,20 +84,23 @@ namespace OutcoldSolutions.GoogleMusic
             this.View.OnDataLoading(parameter);
             this.BindingModel.FreezeNotifications();
 
-            await this.LoadDataAsync(parameter);
-
-            await this.Dispatcher.RunAsync(
-                () =>
+            this.Logger.LogTask(Task.Factory.StartNew(
+                async () =>
                     {
-                        this.Toolbar.SetViewCommands(this.GetViewCommands());
-                        this.View.OnUnfreeze(parameter);
-                        this.BindingModel.UnfreezeNotifications();
-                        this.IsDataLoading = false;
-                    });
+                        await this.LoadDataAsync(parameter);
 
-            // TODO: We need to find better way to do this
-            await Task.Delay(100);
-            await this.Dispatcher.RunAsync(() => this.View.OnDataLoaded(parameter));
+                        await this.Dispatcher.RunAsync(
+                            () =>
+                                {
+                                    this.Toolbar.SetViewCommands(this.GetViewCommands());
+                                    this.View.OnUnfreeze(parameter);
+                                    this.BindingModel.UnfreezeNotifications();
+                                    this.IsDataLoading = false;
+                                });
+                        
+                        await Task.Delay(10);
+                        await this.Dispatcher.RunAsync(() => this.View.OnDataLoaded(parameter));
+                    }));
         }
 
         protected override void OnInitialized()

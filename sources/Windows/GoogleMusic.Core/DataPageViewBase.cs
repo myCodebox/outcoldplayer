@@ -9,6 +9,7 @@ namespace OutcoldSolutions.GoogleMusic
     using OutcoldSolutions.GoogleMusic.Controls;
 
     using Windows.UI.Xaml.Controls;
+    using Windows.UI.Xaml.Media.Animation;
 
     public class DataPageViewBase : PageViewBase, IDataPageView
     {
@@ -16,6 +17,7 @@ namespace OutcoldSolutions.GoogleMusic
         private const string VerticalScrollOffset = "ListView_VerticalScrollOffset";
 
         private ListViewBase trackingListView;
+        private Storyboard trackingListStoryboard;
 
         public override void OnNavigatingFrom(NavigatingFromEventArgs eventArgs)
         {
@@ -27,6 +29,8 @@ namespace OutcoldSolutions.GoogleMusic
                     this.trackingListView.GetScrollViewerHorizontalOffset();
                 eventArgs.State[VerticalScrollOffset] =
                     this.trackingListView.GetScrollViewerVerticalOffset();
+
+                this.trackingListView.Opacity = 0;
             }
         }
 
@@ -60,6 +64,8 @@ namespace OutcoldSolutions.GoogleMusic
                         this.trackingListView.ScrollToVerticalOffset((double)offset);
                     }
                 }
+
+                this.trackingListStoryboard.Begin();
             }
         }
 
@@ -72,6 +78,22 @@ namespace OutcoldSolutions.GoogleMusic
 
             Debug.Assert(this.trackingListView == null, "this.trackingListView == null. Only one list view tracking supported.");
             this.trackingListView = listViewBase;
+            if (this.trackingListView.Transitions != null)
+            {
+                this.trackingListView.Transitions.Clear();
+            }
+
+            this.trackingListView.Opacity = 0;
+
+            this.trackingListStoryboard = new Storyboard();
+            DoubleAnimationUsingKeyFrames doubleAnimationUsingKeyFrames = new DoubleAnimationUsingKeyFrames();
+            Storyboard.SetTarget(doubleAnimationUsingKeyFrames, this.trackingListView);
+            Storyboard.SetTargetProperty(doubleAnimationUsingKeyFrames, "Opacity");
+            doubleAnimationUsingKeyFrames.KeyFrames.Add(new LinearDoubleKeyFrame() { KeyTime = KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(0)), Value = 0 });
+            doubleAnimationUsingKeyFrames.KeyFrames.Add(new LinearDoubleKeyFrame() { KeyTime = KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(100)), Value = 0 });
+            doubleAnimationUsingKeyFrames.KeyFrames.Add(new LinearDoubleKeyFrame() { KeyTime = KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(300)), Value = 1 });
+            this.trackingListStoryboard.Children.Add(doubleAnimationUsingKeyFrames);
+            this.Resources.Add("TrackingListStoryboard", this.trackingListStoryboard);
         }
     }
 }

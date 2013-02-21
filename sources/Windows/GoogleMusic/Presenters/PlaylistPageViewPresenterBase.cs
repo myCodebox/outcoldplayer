@@ -41,6 +41,13 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         public DelegateCommand RateSongCommand { get; set; }
 
+        public override void OnNavigatedTo(NavigatedToEventArgs parameter)
+        {
+            this.BindingModel.Playlist = null;
+
+            base.OnNavigatedTo(parameter);
+        }
+
         protected override void OnInitialized()
         {
             base.OnInitialized();

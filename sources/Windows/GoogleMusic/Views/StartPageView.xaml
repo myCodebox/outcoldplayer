@@ -26,9 +26,10 @@
         </StackPanel>
         
         <ProgressRing Grid.Row="1" IsActive="{Binding Path=IsDataLoading, Mode=OneWay}" Margin="120, 0, 0, 0" />
-                
+
         <GridView Grid.Row="1" 
                   Margin="0, 40, 0, 0"
+                  Opacity="0"
                   Visibility="{Binding Path=IsDataLoading, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}"
                   ItemsSource="{Binding Source={StaticResource Groups}}"
                   ItemTemplate="{StaticResource PlaylistDataTemplate}"
@@ -38,6 +39,9 @@
                   Padding="120, 0, 0, 0"
                   x:Name="GridView"
                   ManipulationMode="None">
+            <GridView.Transitions>
+                <TransitionCollection/>
+            </GridView.Transitions>
             
             <GridView.ItemsPanel>
                 <ItemsPanelTemplate>
