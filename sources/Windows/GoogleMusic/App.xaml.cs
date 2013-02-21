@@ -130,10 +130,12 @@ namespace OutcoldSolutions.GoogleMusic
 
                     // Settings views
                     registration.Register<AccountPageView>()
-                        .InjectionRule<PresenterBase, AccountPageViewPresenter>();
+                                .InjectionRule<PresenterBase, AccountPageViewPresenter>();
                     registration.Register<AccountPageViewPresenter>();
 
-                    registration.Register<ILastfmAuthentificationView>().As<LastfmAuthentificationPageView>();
+                    registration.Register<ILastfmAuthentificationView>()
+                                .InjectionRule<PresenterBase, LastfmAuthentificationPresenter>()
+                                .As<LastfmAuthentificationPageView>();
                     registration.Register<LastfmAuthentificationPresenter>();
 
                     // Services

@@ -54,7 +54,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             }
             else if (name == "link-lastfm")
             {
-                this.CreatePopup(new LastfmAuthentificationPageView(), PopupType.Full);
+                this.CreatePopup((UserControl)this.container.Resolve<ILastfmAuthentificationView>(), PopupType.Full);
             }
         }
 
