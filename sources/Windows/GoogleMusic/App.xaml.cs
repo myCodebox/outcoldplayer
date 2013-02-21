@@ -208,6 +208,8 @@ namespace OutcoldSolutions.GoogleMusic
                 {
                     currentSongPublisherService.AddPublisher<LastFmCurrentSongPublisher>();
                 }
+
+                Container.Resolve<ISettingsCommands>().Register();
             }
 
             // Ensure the current window is active

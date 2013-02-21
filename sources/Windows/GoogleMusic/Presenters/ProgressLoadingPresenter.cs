@@ -127,7 +127,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                                                         CurrentVersion,
                                                         StringComparison.OrdinalIgnoreCase) || !forceToShowUpdates)
                                                 {
-                                                    this.settingsCommands.Register();
                                                     this.searchService.Register();
                                                     this.settingsService.SetValue("Version", CurrentVersion);
                                                     this.navigationService.NavigateTo<IStartPageView>();

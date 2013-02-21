@@ -19,14 +19,14 @@ namespace OutcoldSolutions.GoogleMusic.Services
     {
         private const double SettingsWidth = 346;
         private const double LargeSettingsWidth = 646;
-
-        private readonly IMediaElemenetContainerView mediaElemenetContainerView;
-
+        
         private readonly Dictionary<Popup, PopupType> settingsPopups = new Dictionary<Popup, PopupType>();
 
-        public SettingsCommands(IMediaElemenetContainerView mediaElemenetContainerView)
+        private IGoogleAccountService googleAccountService;
+
+        public SettingsCommands(IGoogleAccountService googleAccountService)
         {
-            this.mediaElemenetContainerView = mediaElemenetContainerView;
+            this.googleAccountService = googleAccountService;
         }
 
         private enum PopupType

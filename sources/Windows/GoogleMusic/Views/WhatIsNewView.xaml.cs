@@ -34,7 +34,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
         private void ClickOk(object sender, RoutedEventArgs e)
         {
             ApplicationBase.Container.Resolve<ISearchService>().Register();
-            ApplicationBase.Container.Resolve<ISettingsCommands>().Register();
             ApplicationBase.Container.Resolve<INavigationService>().NavigateTo<IStartPageView>();
         }
 
