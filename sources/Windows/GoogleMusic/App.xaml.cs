@@ -97,9 +97,9 @@ namespace OutcoldSolutions.GoogleMusic
                     registration.Register<ProgressLoadingPresenter>();
 
                     registration.Register<ISearchView>()
-                                .InjectionRule<PresenterBase, SearchViewPresenter>()
+                                .InjectionRule<PresenterBase, SearchPageViewPresenter>()
                                 .AsSingleton<SearchPageView>();
-                    registration.Register<SearchViewPresenter>();
+                    registration.Register<SearchPageViewPresenter>();
 
                     registration.Register<IArtistPageView>()
                                 .InjectionRule<PresenterBase, ArtistPageViewPresenter>()

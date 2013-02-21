@@ -77,7 +77,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
         private void UpdateSelectedSong()
         {
             var selectedSongIndex = this.presenter.BindingModel.SelectedSongIndex;
-            if (this.ListView.SelectedIndex != selectedSongIndex)
+            if (this.ListView.SelectedIndex != selectedSongIndex && this.ListView.Items != null && this.ListView.Items.Count > selectedSongIndex)
             {
                 this.ListView.ScrollIntoView(this.presenter.BindingModel.SelectedSong);
                 this.ListView.SelectedIndex = selectedSongIndex;
