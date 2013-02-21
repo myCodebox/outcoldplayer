@@ -129,8 +129,9 @@ namespace OutcoldSolutions.GoogleMusic
                     registration.Register<ISearchService>().AsSingleton<SearchService>();
 
                     // Settings views
-                    registration.Register<AccountPageView>();
-                    registration.Register<AccountViewPresenter>();
+                    registration.Register<AccountPageView>()
+                        .InjectionRule<PresenterBase, AccountPageViewPresenter>();
+                    registration.Register<AccountPageViewPresenter>();
 
                     registration.Register<ILastfmAuthentificationView>().As<LastfmAuthentificationPageView>();
                     registration.Register<LastfmAuthentificationPresenter>();

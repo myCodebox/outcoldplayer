@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:views="using:OutcoldSolutions.GoogleMusic.Views" xmlns:googleMusic="using:OutcoldSolutions.GoogleMusic"
+    xmlns:googleMusic="using:OutcoldSolutions.GoogleMusic"
     mc:Ignorable="d"
     d:DesignHeight="480"
     d:DesignWidth="600">
@@ -54,7 +54,7 @@
 
                 <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
                     <ProgressRing IsActive="False" x:Name="ProgressRing" />
-                    <Button Width="80" Margin="10, 0, 0, 0"
+                    <Button Width="80" Margin="10, 0, 0, 0" 
                             x:Name="SignInButton"
                         Click="SignInClick">
                         Sign in

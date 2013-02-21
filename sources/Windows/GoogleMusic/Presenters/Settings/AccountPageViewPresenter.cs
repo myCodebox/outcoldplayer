@@ -6,10 +6,9 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
     using OutcoldSolutions.GoogleMusic.BindingModels.Settings;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Services.Publishers;
-    using OutcoldSolutions.GoogleMusic.Views.Settings;
     using OutcoldSolutions.GoogleMusic.Web.Lastfm;
 
-    public class AccountViewPresenter : ViewPresenterBase<IPopupView>
+    public class AccountPageViewPresenter : ViewPresenterBase<IPopupView>
     {
         private readonly IGoogleAccountService googleAccountService;
         private readonly IGoogleMusicSessionService sessionService;
@@ -17,7 +16,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
         private readonly ICurrentSongPublisherService publisherService;
         private readonly ISettingsCommands settingsCommands;
 
-        public AccountViewPresenter(
+        public AccountPageViewPresenter(
             IDependencyResolverContainer container,
             IGoogleAccountService googleAccountService,
             IGoogleMusicSessionService sessionService,
@@ -77,6 +76,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
             {
                 this.BindingModel.Message = "Username and password were cleared.";
             }
+
+            this.BindingModel.IsRemembered = false;
         }
 
         private void SignOutAccount()

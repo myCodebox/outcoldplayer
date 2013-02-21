@@ -19,14 +19,14 @@ namespace OutcoldSolutions.GoogleMusic.Services
     {
         private const double SettingsWidth = 346;
         private const double LargeSettingsWidth = 646;
-        
+
         private readonly Dictionary<Popup, PopupType> settingsPopups = new Dictionary<Popup, PopupType>();
 
-        private IGoogleAccountService googleAccountService;
+        private readonly IDependencyResolverContainer container;
 
-        public SettingsCommands(IGoogleAccountService googleAccountService)
+        public SettingsCommands(IDependencyResolverContainer container)
         {
-            this.googleAccountService = googleAccountService;
+            this.container = container;
         }
 
         private enum PopupType
@@ -63,7 +63,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             var cmd = new SettingsCommand(
                 "accounts",
                 "Accounts",
-                (x) => this.CreatePopup(new AccountPageView()));
+                (x) => this.CreatePopup(this.container.Resolve<AccountPageView>()));
 
             args.Request.ApplicationCommands.Add(cmd);
 
