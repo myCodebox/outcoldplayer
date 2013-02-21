@@ -10,6 +10,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
     using Microsoft.Advertising.WinRT.UI;
 
+    using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Presenters;
     using OutcoldSolutions.GoogleMusic.Services;
@@ -113,6 +114,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
                 if (this.adControl != null)
                 {
                     this.MainGrid.Children.Remove(this.adControl);
+                    this.adControl.ErrorOccurred -= AdControlOnErrorOccurred;
                     this.adControl = null;
                 }
 
@@ -132,6 +134,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
                                              Margin = new Thickness(0, 20, 10, 0),
                                              UseStaticAnchor = true
                                          };
+                    this.adControl.ErrorOccurred += AdControlOnErrorOccurred;
                     Grid.SetColumn(this.adControl, 1);
                     Grid.SetRowSpan(this.adControl, 2);
                     this.MainGrid.Children.Add(this.adControl);
@@ -147,6 +150,11 @@ namespace OutcoldSolutions.GoogleMusic.Views
                     this.adControl.Visibility = visible ? Visibility.Visible : Visibility.Collapsed;
                 }
             }
+        }
+
+        private void AdControlOnErrorOccurred(object sender, AdErrorEventArgs adErrorEventArgs)
+        {
+            this.Logger.LogErrorException(adErrorEventArgs.Error);
         }
 
         public void Show(IView view)

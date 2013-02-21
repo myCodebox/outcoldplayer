@@ -4,7 +4,6 @@
 
 namespace OutcoldSolutions.GoogleMusic.Views
 {
-    using System;
     using System.ComponentModel;
 
     using Microsoft.Advertising.WinRT.UI;
@@ -84,6 +83,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
                 if (this.adControl != null)
                 {
                     this.SnappedGrid.Children.Remove(this.adControl);
+                    this.adControl.ErrorOccurred -= AdControlOnErrorOccurred;
                     this.adControl = null;
                 }
             }
@@ -100,10 +100,16 @@ namespace OutcoldSolutions.GoogleMusic.Views
                         HorizontalAlignment = HorizontalAlignment.Center,
                         UseStaticAnchor = true
                     };
+                    this.adControl.ErrorOccurred += AdControlOnErrorOccurred;
                     Grid.SetRow(this.adControl, 7);
                     this.SnappedGrid.Children.Add(this.adControl);
                 }
             }
+        }
+
+        private void AdControlOnErrorOccurred(object sender, AdErrorEventArgs adErrorEventArgs)
+        {
+            this.logger.LogErrorException(adErrorEventArgs.Error);
         }
 
         private void AddToQueue(object sender, RoutedEventArgs e)
