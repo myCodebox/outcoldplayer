@@ -18,7 +18,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Web.Models;
 
-    public class GoogleMusicWebService : IGoogleMusicWebService
+    public class GoogleMusicWebService : WebServiceBase, IGoogleMusicWebService
     {
         private const string OriginUrl = "https://play.google.com/music/";
         private const string PlayMusicUrl = "https://play.google.com/music/listen?u=0&hl=en";
@@ -27,27 +27,59 @@ namespace OutcoldSolutions.GoogleMusic.Web
         private const string SetCookieHeader = "Set-Cookie";
         private const string CookieHeader = "Cookie";
 
-        private readonly ILogger logger;
-        private readonly IGoogleMusicSessionService sessionService;
+        private readonly IDependencyResolverContainer container;
 
-        private HttpClient httpClient;
-        private HttpClientHandler httpClientHandler;
+        private readonly IGoogleMusicSessionService sessionService;
+        private readonly ILogger logger;
+        private readonly HttpClient httpClient;
 
         private CookieContainerWrapper cookieContainer;
 
         public GoogleMusicWebService(
+            IDependencyResolverContainer container,
             ILogManager logManager,
             IGoogleMusicSessionService sessionService)
         {
+            var httpClientHandler = new HttpClientHandler
+            {
+                UseCookies = false,
+                AllowAutoRedirect = false
+            };
+
+            this.httpClient = new HttpClient(httpClientHandler)
+            {
+                BaseAddress = new Uri(OriginUrl),
+                Timeout = TimeSpan.FromSeconds(30),
+                DefaultRequestHeaders =
+                    {
+                        { HttpRequestHeader.UserAgent.ToString(), "Music Manager (1, 0, 54, 4672 - Windows)" }
+                    }
+            };
+
+            this.container = container;
             this.sessionService = sessionService;
             this.sessionService.SessionCleared += (sender, args) =>
                 {
-                    this.httpClientHandler = null;
-                    this.httpClient = null;
                     this.cookieContainer = null;
                 };
 
             this.logger = logManager.CreateLogger("GoogleMusicWebService");
+        }
+
+        protected override ILogger Logger
+        {
+            get
+            {
+                return this.logger;
+            }
+        }
+
+        protected override HttpClient HttpClient
+        {
+            get
+            {
+                return this.httpClient;
+            }
         }
 
         public string GetServiceUrl()
@@ -62,19 +94,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 throw new ArgumentNullException("cookieCollection");
             }
 
-            this.httpClientHandler = new HttpClientHandler
-            {
-                UseCookies = false,
-            };
-
-            this.httpClient = new HttpClient(this.httpClientHandler)
-                                  {
-                                      BaseAddress = new Uri(OriginUrl),
-                                      Timeout = TimeSpan.FromSeconds(30)
-                                  };
-
-            this.cookieContainer = new CookieContainerWrapper(this.httpClient.BaseAddress);
-
+            this.cookieContainer = new CookieContainerWrapper(this.HttpClient.BaseAddress);
             this.cookieContainer.AddCookies(cookieCollection);
         }
 
@@ -92,9 +112,9 @@ namespace OutcoldSolutions.GoogleMusic.Web
             string url,
             bool signUrl = true)
         {
-            if (this.logger.IsDebugEnabled)
+            if (this.Logger.IsDebugEnabled)
             {
-                this.logger.LogRequest(HttpMethod.Get, url, this.cookieContainer.GetCookies().Cast<Cookie>());
+                this.Logger.LogRequest(HttpMethod.Get, url, this.cookieContainer.GetCookies());
             }
 
             if (signUrl)
@@ -104,12 +124,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
             var requestMessage = new HttpRequestMessage(HttpMethod.Get, url);
             requestMessage.Headers.Add(CookieHeader, this.cookieContainer.GetCookieHeader());
-            var responseMessage = await this.httpClient.SendAsync(requestMessage, HttpCompletionOption.ResponseHeadersRead);
-
-            if (this.logger.IsDebugEnabled)
-            {
-                await this.logger.LogResponseAsync(url, responseMessage);
-            }
+            var responseMessage = await this.SendAsync(requestMessage, HttpCompletionOption.ResponseHeadersRead);
 
             IEnumerable<string> responseCookies;
             if (responseMessage.Headers.TryGetValues(SetCookieHeader, out responseCookies))
@@ -117,7 +132,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 this.cookieContainer.SetCookies(responseCookies);
             }
 
-            this.VerifyAuthorization(responseMessage);
+            await this.VerifyAuthorization(responseMessage);
 
             return responseMessage;
         }
@@ -127,9 +142,9 @@ namespace OutcoldSolutions.GoogleMusic.Web
             IDictionary<string, string> formData = null, 
             bool signUrl = true)
         {
-            if (this.logger.IsDebugEnabled)
+            if (this.Logger.IsDebugEnabled)
             {
-                this.logger.LogRequest(HttpMethod.Post, url, this.cookieContainer.GetCookies().Cast<Cookie>(), formData);
+                this.Logger.LogRequest(HttpMethod.Post, url, this.cookieContainer.GetCookies(), formData);
             }
 
             if (signUrl)
@@ -145,12 +160,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
             }
 
             requestMessage.Headers.Add(CookieHeader, this.cookieContainer.GetCookieHeader());
-            var responseMessage = await this.httpClient.SendAsync(requestMessage, HttpCompletionOption.ResponseContentRead);
-
-            if (this.logger.IsDebugEnabled)
-            {
-                await this.logger.LogResponseAsync(url, responseMessage);
-            }
+            var responseMessage = await this.SendAsync(requestMessage, HttpCompletionOption.ResponseContentRead);
 
             IEnumerable<string> responseCookies;
             if (responseMessage.Headers.TryGetValues(SetCookieHeader, out responseCookies))
@@ -158,7 +168,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 this.cookieContainer.SetCookies(responseCookies);
             }
             
-            this.VerifyAuthorization(responseMessage);
+            await this.VerifyAuthorization(responseMessage);
 
             return responseMessage;
         }
@@ -166,10 +176,14 @@ namespace OutcoldSolutions.GoogleMusic.Web
         public async Task<TResult> GetAsync<TResult>(string url, bool signUrl = true) where TResult : CommonResponse
         {
             HttpResponseMessage responseMessage = await this.GetAsync(url, signUrl);
-            if (!responseMessage.IsSuccessStatusCode)
+
+            // This means that google asked us to relogin. Let's try again this request.
+            if (responseMessage.StatusCode == HttpStatusCode.Found)
             {
-                throw new HttpException(responseMessage.StatusCode, responseMessage.ReasonPhrase);
+                responseMessage = await this.GetAsync(url, signUrl);
             }
+
+            responseMessage.EnsureSuccessStatusCode();
 
             TResult result = await responseMessage.Content.ReadAsJsonObject<TResult>();
 
@@ -216,10 +230,14 @@ namespace OutcoldSolutions.GoogleMusic.Web
             }
 
             HttpResponseMessage responseMessage = await this.PostAsync(url, formData, signUrl);
-            if (!responseMessage.IsSuccessStatusCode)
+            
+            // This means that google asked us to relogin. Let's try again this request.
+            if (responseMessage.StatusCode == HttpStatusCode.Found)
             {
-                throw new HttpException(responseMessage.StatusCode, responseMessage.ReasonPhrase);
+                responseMessage = await this.PostAsync(url, formData, signUrl);
             }
+
+            responseMessage.EnsureSuccessStatusCode();
 
             TResult result = await responseMessage.Content.ReadAsJsonObject<TResult>();
 
@@ -236,7 +254,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
         public async Task RefreshXtAsync()
         {
-            this.logger.Debug("PostAsync :: Reload Xsrf requested. Reloading.");
+            this.Logger.Debug("PostAsync :: Reload Xsrf requested. Reloading.");
             await this.PostAsync(RefreshXtPath);
         }
 
@@ -257,26 +275,49 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
                 url += string.Format(CultureInfo.InvariantCulture, "u=0&xt={0}", cookie.Value);
 
-                this.logger.Debug("Found XT cookie, transforming url to '{0}'.", url);
+                this.Logger.Debug("Found XT cookie, transforming url to '{0}'.", url);
             }
             else
             {
-                this.logger.Debug("Could not find XT cookie.");
+                this.Logger.Debug("Could not find XT cookie.");
             }
 
             return url;
         }
 
-        private void VerifyAuthorization(HttpResponseMessage responseMessage)
+        private async Task VerifyAuthorization(HttpResponseMessage responseMessage)
         {
             if (!responseMessage.IsSuccessStatusCode)
             {
                 if (responseMessage.StatusCode == HttpStatusCode.Unauthorized)
                 {
-                    this.logger.Warning("Got the Unauthorized http status code. Going to clear session.");
+                    this.Logger.Warning("Got the Unauthorized http status code. Going to clear session.");
 
                     this.sessionService.ClearSession();
                     responseMessage.EnsureSuccessStatusCode();
+                }
+                else if (responseMessage.StatusCode == HttpStatusCode.Found)
+                {
+                    if (string.Equals(responseMessage.Headers.Location.LocalPath, "/accounts/ServiceLogin", StringComparison.OrdinalIgnoreCase))
+                    {
+                        this.Logger.Warning("We been asked to re-authentification");
+                        
+                        var googleAccountService = this.container.Resolve<IGoogleAccountService>();
+                        var userInfo = googleAccountService.GetUserInfo(retrievePassword: true);
+                        if (userInfo != null)
+                        {
+                            var googleAccountWebService = this.container.Resolve<IGoogleAccountWebService>();
+                            var result = await googleAccountWebService.AuthenticateAsync(new Uri(this.GetServiceUrl()), userInfo.Email, userInfo.Password);
+                            if (result.Success)
+                            {
+                                this.Initialize(result.CookieCollection.Cast<Cookie>());
+                                return;
+                            }
+                        }
+
+                        this.sessionService.ClearSession();
+                        responseMessage.EnsureSuccessStatusCode();
+                    }
                 }
             }
         }

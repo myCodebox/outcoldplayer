@@ -71,6 +71,11 @@ namespace OutcoldSolutions.GoogleMusic.Web
             return IsContentType(@this, "application/json");
         }
 
+        internal static bool IsFormUrlEncoded(this HttpContent @this)
+        {
+            return IsContentType(@this, "application/x-www-form-urlencoded");
+        }
+
         private static bool IsContentType(HttpContent @this, string contentType)
         {
             if (@this == null)

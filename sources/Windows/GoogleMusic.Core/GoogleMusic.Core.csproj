@@ -204,7 +204,7 @@
     <Compile Include="Web\Models\AddSongResp.cs" />
     <Compile Include="Web\Models\DeletePlaylistResp.cs" />
     <Compile Include="Web\Models\DeleteSongResp.cs" />
-    <Compile Include="Web\Models\GoogleLoginResponse.cs" />
+    <Compile Include="Web\Models\GoogleAuthResponse.cs" />
     <Compile Include="Web\Models\GoogleMusicPlaylist.cs" />
     <Compile Include="Web\Models\GoogleMusicPlaylists.cs" />
     <Compile Include="Web\Models\GoogleMusicSong.cs" />
@@ -216,6 +216,7 @@
     <Compile Include="Web\Models\CommonResponse.cs" />
     <Compile Include="Web\PlaylistsWebService.cs" />
     <Compile Include="Web\SongWebService.cs" />
+    <Compile Include="Web\WebServiceBase.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">

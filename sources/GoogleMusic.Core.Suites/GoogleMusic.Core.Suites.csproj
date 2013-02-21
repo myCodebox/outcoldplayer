@@ -277,8 +277,8 @@
     <Compile Include="..\Windows\GoogleMusic.Core\Web\Models\DeleteSongResp.cs">
       <Link>_sources\Web\Models\DeleteSongResp.cs</Link>
     </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Web\Models\GoogleLoginResponse.cs">
-      <Link>_sources\Web\Models\GoogleLoginResponse.cs</Link>
+    <Compile Include="..\Windows\GoogleMusic.Core\Web\Models\GoogleAuthResponse.cs">
+      <Link>_sources\Web\Models\GoogleAuthResponse.cs</Link>
     </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Web\Models\GoogleMusicPlaylist.cs">
       <Link>_sources\Web\Models\GoogleMusicPlaylist.cs</Link>
@@ -309,6 +309,9 @@
     </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Web\SongWebService.cs">
       <Link>_sources\Web\SongWebService.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Web\WebServiceBase.cs">
+      <Link>_sources\Web\WebServiceBase.cs</Link>
     </Compile>
     <Compile Include="GoogleMusicSuitesBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

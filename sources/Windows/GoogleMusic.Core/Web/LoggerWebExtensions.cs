@@ -8,6 +8,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
     using System.Linq;
     using System.Net;
     using System.Net.Http;
+    using System.Net.Http.Headers;
     using System.Text;
     using System.Threading.Tasks;
 
@@ -37,6 +38,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
             {
                 var log = new StringBuilder();
 
+                log.AppendLine();
                 log.AppendFormat("{0} REQUEST: {1}.", method, requestUrl);
                 log.AppendLine();
 
@@ -76,65 +78,81 @@ namespace OutcoldSolutions.GoogleMusic.Web
         public static async Task LogResponseAsync(
             this ILogger @this, 
             string requestUrl, 
-            HttpResponseMessage httpResponseMessage)
+            HttpResponseMessage responseMessage)
         {
             if (@this == null)
             {
                 throw new ArgumentNullException("this");
             }
 
-            if (httpResponseMessage == null)
+            if (responseMessage == null)
             {
-                throw new ArgumentNullException("httpResponseMessage");
+                throw new ArgumentNullException("responseMessage");
             }
 
             if (@this.IsDebugEnabled)
             {
                 var log = new StringBuilder();
 
-                log.AppendFormat("Request '{0}' completed, Status code: {1}.", requestUrl, httpResponseMessage.StatusCode);
                 log.AppendLine();
-                log.AppendFormat("RequestUri: {0}.", httpResponseMessage.RequestMessage.RequestUri);
+                log.AppendFormat("RESPONSE FROM '{0}' COMPLETED, STATUS CODE: {1}.", responseMessage.RequestMessage.RequestUri, responseMessage.StatusCode);
+                log.AppendLine();
+                if (!string.IsNullOrEmpty(responseMessage.ReasonPhrase))
+                {
+                    log.AppendFormat("  REASON PHRASE '{0}'", responseMessage.ReasonPhrase);
+                    log.AppendLine();
+                }
+                
+                log.AppendFormat("  ORIGINAL URI: {0}.", requestUrl);
                 log.AppendLine();
 
                 log.AppendLine("    RESPONSE HEADERS: ");
+                LogHeaders(log, responseMessage.Headers);
 
-                foreach (var httpResponseHeader in httpResponseMessage.Headers)
-                {
-                    log.AppendFormat("        {0}={1}", httpResponseHeader.Key, string.Join("&&&", httpResponseHeader.Value));
-                    log.AppendLine();
-                }
-
-                if (httpResponseMessage.Content != null)
-                {
-                    log.AppendLine("    RESPONSE CONTENT HEADERS: ");
-
-                    foreach (var header in httpResponseMessage.Content.Headers)
-                    {
-                        log.AppendFormat("        {0}={1}", header.Key, string.Join("&&&", header.Value));
-                        log.AppendLine();
-                    }
-
-                    if (httpResponseMessage.Content.IsPlainText()
-                        || httpResponseMessage.Content.IsHtmlText()
-                        || httpResponseMessage.Content.IsJson())
-                    {
-                        var content = await httpResponseMessage.Content.ReadAsStringAsync();
-
-                        log.AppendFormat("    RESPONSE CONTENT:{0}{1}", Environment.NewLine, content.Substring(0, Math.Min(4096, content.Length)));
-                        log.AppendLine();
-                        log.AppendFormat("    RESPONSE ENDCONTENT.");
-                        log.AppendLine();
-                    }
-                }
-                else
-                {
-                    log.AppendLine("CONTENT is null.");
-                }
+                await LogContentAsync(log, responseMessage.Content);
 
                 log.AppendLine();
 
                 @this.Debug(log.ToString());
+            }
+        }
+
+        private static async Task LogContentAsync(StringBuilder log, HttpContent httpContent)
+        {
+            if (httpContent != null)
+            {
+                log.AppendLine("    CONTENT HEADERS: ");
+
+                LogHeaders(log, httpContent.Headers);
+
+                if (httpContent.IsPlainText()
+                    || httpContent.IsHtmlText()
+                    || httpContent.IsJson()
+                    || httpContent.IsFormUrlEncoded())
+                {
+                    var content = await httpContent.ReadAsStringAsync();
+
+                    log.AppendFormat("    CONTENT:{0}{1}", Environment.NewLine, content.Substring(0, Math.Min(4096, content.Length)));
+                    log.AppendLine();
+                    log.AppendFormat("    ENDCONTENT.");
+                    log.AppendLine();
+                }
+            }
+            else
+            {
+                log.AppendLine("    CONTENT IS NULL.");
+            }
+        }
+
+        private static void LogHeaders(StringBuilder log, HttpHeaders headers)
+        {
+            if (headers != null)
+            {
+                foreach (var httpResponseHeader in headers)
+                {
+                    log.AppendFormat("        {0}={1}", httpResponseHeader.Key, string.Join("&&&", httpResponseHeader.Value));
+                    log.AppendLine();
+                }
             }
         }
 

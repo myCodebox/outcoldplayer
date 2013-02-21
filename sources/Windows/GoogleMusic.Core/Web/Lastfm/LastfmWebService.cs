@@ -19,7 +19,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Lastfm
     using Windows.Security.Cryptography.Core;
     using Windows.Storage.Streams;
 
-    public class LastfmWebService : ILastfmWebService
+    public class LastfmWebService : WebServiceBase, ILastfmWebService
     {
         public const string ApiKey = "92fa0e285e2204582fbb359321567658";
         private const string LastFmSessionResource = "OutcoldSolutions.LastFm";
@@ -37,6 +37,16 @@ namespace OutcoldSolutions.GoogleMusic.Web.Lastfm
         public LastfmWebService(ILogManager logManager)
         {
             this.logger = logManager.CreateLogger("LastfmWebService");
+        }
+
+        protected override ILogger Logger
+        {
+            get { return this.logger; }
+        }
+
+        protected override HttpClient HttpClient
+        {
+            get { return this.httpClient; }
         }
 
         public async Task<HttpResponseMessage> CallAsync(string methodName, IDictionary<string, string> parameters = null)
@@ -69,11 +79,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Lastfm
             
             string url = urlBuilder.ToString();
 
-            HttpResponseMessage response = await this.httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Post, url), HttpCompletionOption.ResponseContentRead);
-
-            await this.logger.LogResponseAsync(url, response);
-
-            return response;
+            return await this.SendAsync(new HttpRequestMessage(HttpMethod.Post, url), HttpCompletionOption.ResponseContentRead);
         }
 
         public void SetToken(string token)
@@ -88,18 +94,21 @@ namespace OutcoldSolutions.GoogleMusic.Web.Lastfm
 
         public void SaveCurrentSession()
         {
-            PasswordVault vault = new PasswordVault();
+            if (this.currentSession != null)
+            {
+                PasswordVault vault = new PasswordVault();
 
-            this.ClearAllPasswordCredentials(vault);
+                this.ClearAllPasswordCredentials(vault);
 
-            this.logger.Debug("SaveCurrentSessionAsync: Adding new passwrod credentials.");
+                this.logger.Debug("SaveCurrentSessionAsync: Adding new passwrod credentials.");
 
-            var session = new PasswordCredential(
-                LastFmSessionResource,
-                this.currentSession.Name,
-                string.Format("{0}:::{1}", this.sessionToken, this.currentSession.Key));
+                var session = new PasswordCredential(
+                    LastFmSessionResource,
+                    this.currentSession.Name,
+                    string.Format("{0}:::{1}", this.sessionToken, this.currentSession.Key));
 
-            vault.Add(session);
+                vault.Add(session);
+            }
         }
 
         public bool RestoreSession()

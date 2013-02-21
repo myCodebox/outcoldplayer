@@ -34,10 +34,20 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
         public string GetCookieHeader()
         {
-            return this.cookieContainer.GetCookieHeader(this.baseUri);
+            return this.GetCookieHeader(this.baseUri);
+        }
+
+        public string GetCookieHeader(Uri uri)
+        {
+            return this.cookieContainer.GetCookieHeader(uri);
         }
 
         public IEnumerable<Cookie> GetCookies()
+        {
+            return this.GetCookies(this.baseUri);
+        }
+
+        public IEnumerable<Cookie> GetCookies(Uri uri)
         {
             return this.cookieContainer.GetCookies(this.baseUri).Cast<Cookie>();
         }

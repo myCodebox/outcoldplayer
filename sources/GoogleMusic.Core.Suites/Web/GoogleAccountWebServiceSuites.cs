@@ -3,6 +3,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Suites.Web
 {
+    using System;
     using System.Threading.Tasks;
 
     using Moq;
@@ -44,23 +45,27 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Web
         public async Task Authenticate_RightCredentials_Success()
         {
             var googleLoginResponse = await this.googleAccountWebService.AuthenticateAsync(
+                                                new Uri("https://play.google.com/music"), 
                                                 SuitesConstants.GoogleAccountName, 
                                                 SuitesConstants.GoogleAccountPassword);
 
             Assert.IsTrue(googleLoginResponse.Success);
             Assert.IsNull(googleLoginResponse.Error);
+            Assert.IsNotNull(googleLoginResponse.CookieCollection);
         }
 
         [Test]
         public async Task Authenticate_WrongCredentials_NotSuccess()
         {
             var googleLoginResponse = await this.googleAccountWebService.AuthenticateAsync(
+                                                new Uri("https://play.google.com/music"), 
                                                 SuitesConstants.GoogleAccountName,
                                                 "WrongPassword");
 
             Assert.IsFalse(googleLoginResponse.Success);
             Assert.IsNotNull(googleLoginResponse.Error);
-            Assert.AreEqual(GoogleLoginResponse.ErrorResponseCode.BadAuthentication, googleLoginResponse.Error.Value);
+            Assert.IsNull(googleLoginResponse.CookieCollection);
+            Assert.AreEqual(GoogleAuthResponse.ErrorResponseCode.BadAuthentication, googleLoginResponse.Error.Value);
         }
     }
 }

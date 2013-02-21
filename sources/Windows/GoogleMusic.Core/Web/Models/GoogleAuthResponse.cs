@@ -3,7 +3,10 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Web.Models
 {
-    public class GoogleLoginResponse
+    using System;
+    using System.Net;
+
+    public class GoogleAuthResponse
     {
         public enum ErrorResponseCode
         {
@@ -22,17 +25,25 @@ namespace OutcoldSolutions.GoogleMusic.Web.Models
 
         public ErrorResponseCode? Error { get; private set; }
 
-        public static GoogleLoginResponse SuccessResponse()
+        public CookieCollection CookieCollection { get; private set; }
+
+        public static GoogleAuthResponse SuccessResponse(CookieCollection cookieCollection)
         {
-            return new GoogleLoginResponse()
+            if (cookieCollection == null)
+            {
+                throw new ArgumentNullException("cookieCollection");
+            }
+
+            return new GoogleAuthResponse()
                        {
-                           Success = true
+                           Success = true,
+                           CookieCollection = cookieCollection
                        };
         }
 
-        public static GoogleLoginResponse ErrorResponse(ErrorResponseCode error)
+        public static GoogleAuthResponse ErrorResponse(ErrorResponseCode error)
         {
-            return new GoogleLoginResponse()
+            return new GoogleAuthResponse()
                        {
                            Success = false,
                            Error = error

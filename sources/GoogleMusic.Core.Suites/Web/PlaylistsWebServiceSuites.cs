@@ -133,9 +133,9 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Web
 
         private async Task AuthenticateAsync()
         {
-            await this.googleAccountWebService.AuthenticateAsync(SuitesConstants.GoogleAccountName, SuitesConstants.GoogleAccountPassword);
-            var cookies = await this.googleAccountWebService.GetCookiesAsync(this.musicWebService.GetServiceUrl());
-            this.musicWebService.Initialize(cookies.Cast<Cookie>());
+            var googleLoginResponse = await this.googleAccountWebService.AuthenticateAsync(new Uri(this.musicWebService.GetServiceUrl()), SuitesConstants.GoogleAccountName, SuitesConstants.GoogleAccountPassword);
+            this.musicWebService.Initialize(googleLoginResponse.CookieCollection.Cast<Cookie>());
+            // await this.musicWebService.AuthenticateAsync(SuitesConstants.GoogleAccountName, SuitesConstants.GoogleAccountPassword);
         }
     }
 }
