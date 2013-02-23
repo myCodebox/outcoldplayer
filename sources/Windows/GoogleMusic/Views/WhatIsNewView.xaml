@@ -55,7 +55,7 @@
                 [b] Moving search button to the top right corner.
             </TextBlock>
             <TextBlock Style="{StaticResource BodyTextStyle}" Margin="0, 0, 0, 0">
-                [b] Stability improvements in communication with Google Web Services.
+                [b] Stability improvements in communication with Google Web Services (you should not see that account is used on some other device so often).
             </TextBlock>
             <TextBlock Style="{StaticResource BodyTextStyle}" Margin="0, 0, 0, 0">
                 [b] When Shuffle is On, when you double clicking on the first song from Album view - it will start playing not from first song.
