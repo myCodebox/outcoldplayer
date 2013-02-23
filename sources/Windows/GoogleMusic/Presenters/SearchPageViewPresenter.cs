@@ -13,7 +13,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
 
-    public class SearchPageViewPresenter : PagePresenterBase<ISearchView>
+    public class SearchPageViewPresenter : PagePresenterBase<ISearchView, SearchPageViewBindingModel>
     {
         private readonly ISongsRepository songsRepository;
         private readonly IPlaylistCollectionsService collectionsService;
@@ -26,44 +26,17 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         {
             this.songsRepository = songsRepository;
             this.collectionsService = collectionsService;
-            this.BindingModel = new SearchBindingModel();
         }
 
-        public SearchBindingModel BindingModel { get; private set; }
-
-        public override void OnNavigatedTo(NavigatedToEventArgs eventArgs)
+        protected override async Task LoadDataAsync(NavigatedToEventArgs navigatedToEventArgs)
         {
-            base.OnNavigatedTo(eventArgs);
+            var query = navigatedToEventArgs.Parameter as string;
 
-            var query = eventArgs.Parameter as string;
-
-            this.BindingModel.Groups.Clear();
             this.BindingModel.Query = query;
-            
 
-            if (!string.IsNullOrEmpty(query))
-            {
-                this.BindingModel.IsLoading = true;
-
-                this.Search(query).ContinueWith(
-                    t =>
-                        {
-                            this.BindingModel.IsLoading = false; 
-                            this.BindingModel.Groups.Add(new SearchGroupBindingModel("All", t.Result.SelectMany(x => x.Results).ToList()));
-                            foreach (var searchGroupBindingModel in t.Result)
-                            {
-                                this.BindingModel.Groups.Add(searchGroupBindingModel);   
-                            }
-
-                            this.View.SelectedFilterIndex = 0;
-                        },
-                    TaskScheduler.FromCurrentSynchronizationContext());
-            }
-            else
-            {
-                this.BindingModel.Groups.Add(new SearchGroupBindingModel("All", new List<SearchResultBindingModel>()));
-                this.View.SelectedFilterIndex = 0;
-            }
+            var searchGroupBindingModels = string.IsNullOrEmpty(query) ? new List<SearchGroupBindingModel>() : await this.Search(query);
+            searchGroupBindingModels.Insert(0, new SearchGroupBindingModel("All", searchGroupBindingModels.SelectMany(x => x.Results).ToList()));
+            this.BindingModel.Groups = searchGroupBindingModels;
         }
 
         public async Task<List<SearchGroupBindingModel>> Search(string query)

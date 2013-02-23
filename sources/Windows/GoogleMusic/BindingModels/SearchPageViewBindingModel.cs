@@ -3,34 +3,13 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.BindingModels
 {
-    using System.Collections.ObjectModel;
+    using System.Collections.Generic;
 
-    public class SearchBindingModel : BindingModelBase
+    public class SearchPageViewBindingModel : BindingModelBase
     {
-        private readonly ObservableCollection<SearchGroupBindingModel> groups;
-
-        private bool isLoading;
+        private List<SearchGroupBindingModel> groups;
 
         private string query;
-
-        public SearchBindingModel()
-        {
-            this.groups = new ObservableCollection<SearchGroupBindingModel>();
-        }
-
-        public bool IsLoading
-        {
-            get
-            {
-                return this.isLoading;
-            }
-
-            set
-            {
-                this.isLoading = value;
-                this.RaiseCurrentPropertyChanged();
-            }
-        }
 
         public string Query
         {
@@ -46,11 +25,17 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             }
         }
 
-        public ObservableCollection<SearchGroupBindingModel> Groups
+        public List<SearchGroupBindingModel> Groups
         {
             get
             {
                 return this.groups;
+            }
+            
+            set
+            {
+                this.groups = value;
+                this.RaiseCurrentPropertyChanged();
             }
         }
     }

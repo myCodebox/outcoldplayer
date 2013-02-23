@@ -117,7 +117,7 @@
     <Compile Include="BindingModels\PlaylistsPageViewBindingModel.cs" />
     <Compile Include="BindingModels\Popups\LastfmAuthentificationBindingModel.cs" />
     <Compile Include="BindingModels\ProgressLoadingBindingModel.cs" />
-    <Compile Include="BindingModels\SearchBindingModel.cs" />
+    <Compile Include="BindingModels\SearchPageViewBindingModel.cs" />
     <Compile Include="BindingModels\SearchGroupBindingModel.cs" />
     <Compile Include="BindingModels\SearchResultBindingModel.cs" />
     <Compile Include="BindingModels\Settings\AccountViewBindingModel.cs" />

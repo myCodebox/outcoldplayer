@@ -99,7 +99,8 @@ namespace OutcoldSolutions.GoogleMusic
                     registration.Register<ISearchView>()
                                 .InjectionRule<PresenterBase, SearchPageViewPresenter>()
                                 .AsSingleton<SearchPageView>();
-                    registration.Register<SearchPageViewPresenter>();
+                    registration.Register<SearchPageViewPresenter>().AsSingleton();
+                    registration.Register<SearchPageViewBindingModel>().AsSingleton();
 
                     registration.Register<IArtistPageView>()
                                 .InjectionRule<PresenterBase, ArtistPageViewPresenter>()
