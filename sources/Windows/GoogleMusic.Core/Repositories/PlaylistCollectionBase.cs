@@ -57,6 +57,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
             return collection.Select(x => Tuple.Create(Search.IndexOf(x.Title, query), x))
                           .Where(x => x.Item1 >= 0)
                           .OrderBy(x => x.Item1)
+                          .ThenBy(x => x.Item2.Title, StringComparer.CurrentCultureIgnoreCase)
                           .Take(takeCount)
                           .Select(x => x.Item2);
         }
