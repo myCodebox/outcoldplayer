@@ -22,7 +22,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private const string DoNotAskToReviewKey = "DoNotAskToReviewKey";
         private const string CountOfStartsBeforeReview = "CountOfStartsBeforeReview";
 
-        private const string CurrentVersion = "1.2.1";
+        private const string CurrentVersion = "1.3";
 
         private readonly ISongWebService songWebService;
 
@@ -33,7 +33,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private readonly INavigationService navigationService;
 
         private readonly ISearchService searchService;
-        private readonly ISettingsCommands settingsCommands;
 
         private readonly ISettingsService settingsService;
 
@@ -44,11 +43,9 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             ISettingsService settingsService,
             ISongWebService songWebService,
             IMusicPlaylistRepository musicPlaylistRepository,
-            ISongsRepository songsRepository,
-            ISettingsCommands settingsCommands)
+            ISongsRepository songsRepository)
             : base(container)
         {
-            this.settingsCommands = settingsCommands;
             this.navigationService = navigationService;
             this.searchService = searchService;
             this.settingsService = settingsService;
@@ -115,17 +112,9 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                                                     }
                                                 }
 
-                                                bool forceToShowUpdates = false;
-                                                if (this.settingsService.GetRoamingValue<bool>("VersionHistory v1.1", defaultValue: false))
-                                                {
-                                                    forceToShowUpdates = true;
-                                                    this.settingsService.RemoveRoamingValue("VersionHistory v1.1");
-                                                }
-
-                                                if (string.Equals(
-                                                        this.settingsService.GetValue<string>("Version", CurrentVersion),
+                                                if (string.Equals(this.settingsService.GetValue<string>("Version", CurrentVersion),
                                                         CurrentVersion,
-                                                        StringComparison.OrdinalIgnoreCase) || !forceToShowUpdates)
+                                                        StringComparison.OrdinalIgnoreCase))
                                                 {
                                                     this.searchService.Register();
                                                     this.settingsService.SetValue("Version", CurrentVersion);
