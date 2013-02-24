@@ -72,7 +72,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             var selectedSong = this.BindingModel.Songs[this.BindingModel.SelectedSongIndex];
             if (selectedSong != null)
             {
-                this.Toolbar.ShowPopup<IAddToPlaylistPopupView>(selectedSong);
+                this.Toolbar.ShowPopup<IAddToPlaylistPopupView>(new List<Song>{ selectedSong });
             }
         }
 

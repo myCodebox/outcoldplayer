@@ -31,7 +31,7 @@ namespace OutcoldSolutions.GoogleMusic.Views.Popups
 
         private void PlaylistItemClick(object sender, ItemClickEventArgs e)
         {
-            var playlist = e.ClickedItem as MusicPlaylist;
+            var playlist = e.ClickedItem as AddToPlaylistPopupViewPresenter.AddToSongMusicPlaylist;
             if (playlist != null)
             {
                 this.presenter.AddToPlaylist(playlist);

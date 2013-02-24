@@ -5,6 +5,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
 
     using Newtonsoft.Json;
@@ -83,12 +84,17 @@ namespace OutcoldSolutions.GoogleMusic.Web
             return !response.Success.HasValue || response.Success.Value;
         }
 
-        public async Task<AddSongResp> AddSongAsync(Guid playlistId, Guid songId)
+        public async Task<AddSongResp> AddSongAsync(Guid playlistId, IEnumerable<Guid> songIds)
         {
+            if (songIds == null)
+            {
+                throw new ArgumentNullException("songIds");
+            }
+
             var jsonProperties = new Dictionary<string, string>
                                         {
                                             { "playlistId", JsonConvert.ToString(playlistId) },
-                                            { "songRefs", JsonConvert.SerializeObject(new[] { new { id = songId, type = 1 } }) }
+                                            { "songRefs", JsonConvert.SerializeObject(songIds.Select(x => new { id = x, type = 1 } ).ToArray()) }
                                         };
 
             return await this.googleMusicWebService.PostAsync<AddSongResp>(AddToPlaylistUrl, jsonProperties: jsonProperties);
