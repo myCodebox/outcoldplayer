@@ -181,7 +181,6 @@
     <Compile Include="Web\GoogleAccountWebService.cs" />
     <Compile Include="Web\GoogleMusicWebService.cs" />
     <Compile Include="Web\HttpContentExtensions.cs" />
-    <Compile Include="Web\HttpException.cs" />
     <Compile Include="Web\IGoogleAccountWebService.cs" />
     <Compile Include="Web\ICookieManager.cs" />
     <Compile Include="Web\IGoogleMusicWebService.cs" />
