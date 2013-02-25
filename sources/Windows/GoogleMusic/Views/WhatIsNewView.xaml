@@ -44,6 +44,9 @@
             <TextBlock Style="{StaticResource BodyTextStyle}">
                 [+] "Last Added" system playlist shows ~600 last added songs (the value depends on the list of albums).
             </TextBlock>
+            <TextBlock Style="{StaticResource BodyTextStyle}">
+                [+] On "Add to playlist" list show if selected song already in playlist.
+            </TextBlock>
 
             <TextBlock Style="{StaticResource TitleTextStyle}" Margin="0, 10, 0, 0" >
                 <Run>Bug fixes:</Run>
