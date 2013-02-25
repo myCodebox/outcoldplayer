@@ -270,6 +270,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             if (playlist != null)
             {
                 this.navigationService.NavigateTo<IPlaylistPageView>(playlist);
+                this.currentPlaylistService.ClearPlaylist();
                 this.currentPlaylistService.SetPlaylist(playlist);
                 this.currentPlaylistService.PlayAsync();
             }

@@ -85,6 +85,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     this.navigationService.NavigateToView<PlaylistViewResolver>(playlist);
                 }
 
+                this.currentPlaylistService.ClearPlaylist();
                 this.currentPlaylistService.SetPlaylist(playlist);
                 this.currentPlaylistService.PlayAsync();
             }
