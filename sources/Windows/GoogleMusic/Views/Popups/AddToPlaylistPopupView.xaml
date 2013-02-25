@@ -39,7 +39,8 @@
 
                         <StackPanel Orientation="Horizontal" 
                                     VerticalAlignment="Top"
-                                    Margin="5, -5, 0, 0">
+                                    Margin="5, -5, 0, 0"
+                                    Visibility="{Binding Path=SongContainsCount, Converter={StaticResource ValueToInvisibilityConverter}, ConverterParameter=0}">
                             <TextBlock Text="{Binding Path=SongContainsCount, Mode=OneTime}" Style="{StaticResource SmallTextStyle}" />
                             <TextBlock Text="/" Style="{StaticResource SmallTextStyle}" />
                             <TextBlock Text="{Binding Path=DataContext.Songs.Count, ElementName=ListView, Mode=OneTime}" Style="{StaticResource SmallTextStyle}" />
