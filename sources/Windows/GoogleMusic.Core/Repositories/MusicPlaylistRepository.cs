@@ -252,6 +252,13 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
             return false;
         }
 
+        public void ClearRepository()
+        {
+            this.dispatcherTimer.Stop();
+            this.dispatcherTimer = null;
+            this.musicPlaylists.Clear();
+        }
+
         private async Task UpdatePlaylistsAsync()
         {
             this.logger.Debug("Updating playlists.");
