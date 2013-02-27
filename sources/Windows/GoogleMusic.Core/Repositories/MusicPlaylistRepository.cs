@@ -193,40 +193,70 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
             return result;
         }
 
-        public async Task<bool> AddEntryAsync(Guid playlistId, Song song)
+        public async Task<bool> AddEntriesAsync(Guid playlistId, List<Song> songs)
         {
+            if (songs == null)
+            {
+                throw new ArgumentNullException("songs");
+            }
+
             if (this.logger.IsDebugEnabled)
             {
-                this.logger.Debug("Adding song Id '{0}' to playlist '{1}'.", song.Metadata.Id, playlistId);
+                this.logger.Debug("Adding song Ids '{0}' to playlist '{1}'.", string.Join(",", songs.Select(x => x.Metadata.Id.ToString())), playlistId);
             }
 
             MusicPlaylist musicPlaylist;
             if (!this.musicPlaylists.TryGetValue(playlistId, out musicPlaylist))
             {
-                this.logger.Warning("Cannot find playlist with id '{0}', could not add entry {1}.", playlistId, song.Metadata.Id);
+                this.logger.Warning("Cannot find playlist with id '{0}', could not add entries.", playlistId);
                 return false;
             }
 
-            var result = await this.playlistsWebService.AddSongAsync(playlistId, song.Metadata.Id);
+            var result = await this.playlistsWebService.AddSongAsync(playlistId, songs.Select(s => s.Metadata.Id));
             if (result != null && result.SongIds.Length == 1)
             {
                 if (this.logger.IsDebugEnabled)
                 {
                     this.logger.Debug(
-                        "Successfully added entry '{0}' to playlist {1}.",
-                        song.Metadata.Id,
+                        "Successfully added entries '{0}' to playlist {1}.",
+                        string.Join(",", songs.Select(x => x.Metadata.Id.ToString())),
                         playlistId);
                 }
 
-                musicPlaylist.Songs.Add(song);
-                musicPlaylist.EntriesIds.Add(result.SongIds[0].PlaylistEntryId);
+                foreach (var songIdResp in result.SongIds)
+                {
+                    Song song = songs.FirstOrDefault(x => x.Metadata.Id == songIdResp.SongId);
+                    
+                    if (song != null)
+                    {
+                        musicPlaylist.Songs.Add(song);
+                        musicPlaylist.EntriesIds.Add(songIdResp.PlaylistEntryId);
+                    }
+                    else
+                    {
+                        this.logger.Warning("Could not find song with Id '{0}'.", songIdResp.SongId);
+                    }
+                }
+
                 musicPlaylist.CalculateFields();
 
                 return true;
             }
 
-            this.logger.Warning("Result of adding entry '{0}' to playlist {1} was unsuccesefull.", song.Metadata.Id, playlistId);
+            if (this.logger.IsWarningEnabled)
+            {
+                this.logger.Warning(
+                    "Result of adding entries '{0}' to playlist {1} was unsuccesefull.", string.Join(",", songs.Select(x => x.Metadata.Id.ToString())), playlistId);
+            }
+
             return false;
+        }
+
+        public void ClearRepository()
+        {
+            this.dispatcherTimer.Stop();
+            this.dispatcherTimer = null;
+            this.musicPlaylists.Clear();
         }
 
         private async Task UpdatePlaylistsAsync()

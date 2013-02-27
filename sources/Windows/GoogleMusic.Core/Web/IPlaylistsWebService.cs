@@ -5,6 +5,7 @@
 namespace OutcoldSolutions.GoogleMusic.Web
 {
     using System;
+    using System.Collections.Generic;
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.Web.Models;
@@ -21,7 +22,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
         Task<bool> ChangeNameAsync(Guid id, string name);
 
-        Task<AddSongResp> AddSongAsync(Guid playlistId, Guid songId);
+        Task<AddSongResp> AddSongAsync(Guid playlistId, IEnumerable<Guid> songIds);
 
         Task<bool> RemoveSongAsync(Guid playlistId, Guid songId, Guid entryId);
     }

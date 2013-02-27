@@ -205,9 +205,6 @@
     <Compile Include="..\Windows\GoogleMusic.Core\Web\HttpContentExtensions.cs">
       <Link>_sources\Web\HttpContentExtensions.cs</Link>
     </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Web\HttpException.cs">
-      <Link>Web\HttpException.cs</Link>
-    </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Web\ICookieManager.cs">
       <Link>_sources\Web\ICookieManager.cs</Link>
     </Compile>

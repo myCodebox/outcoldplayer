@@ -106,7 +106,7 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Web
             // Adding songs to playlist
             var songs = await this.songsWebService.GetAllSongsAsync();
             var googleMusicSong = songs.First();
-            var resultAddSongs = await this.playlistsWebService.AddSongAsync(playlistResp.Id, googleMusicSong.Id);
+            var resultAddSongs = await this.playlistsWebService.AddSongAsync(playlistResp.Id, new [] { googleMusicSong.Id });
             Assert.IsTrue(resultAddSongs.SongIds[0].PlaylistEntryId != Guid.Empty, "Song has been added to playlist");
 
             // Verify that songs has been added to playlist

@@ -41,15 +41,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
                 {
                     this.logger.Debug("Session cleared. Stopping the dispatcher and clearing the cache of songs.");
 
-                    this.dispatcherTimer.Stop();
-                    this.dispatcherTimer = null;
-                    this.songs.Clear();
-
-                    this.lastUpdate = null;
-
-                    await this.songsCacheService.ClearCacheAsync();
-
-                    this.RaiseUpdated();
+                    await this.ClearRepositoryAsync();
                 };
         }
 
@@ -122,6 +114,19 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
                 await this.songsCacheService.SaveToFileAsync(
                     this.lastUpdate.Value, this.songs.Values.Select(x => x.Metadata).ToList());
             }
+        }
+
+        public async Task ClearRepositoryAsync()
+        {
+            this.dispatcherTimer.Stop();
+            this.dispatcherTimer = null;
+            this.songs.Clear();
+
+            this.lastUpdate = null;
+
+            await this.songsCacheService.ClearCacheAsync();
+
+            this.RaiseUpdated();
         }
 
         private void RaiseUpdated()
