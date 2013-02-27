@@ -72,7 +72,18 @@
                             Visibility="{Binding Path=BindingModel.HasSession, Converter={StaticResource BooleanToVisibilityConverter}}"
                             Content="Sign out" 
                             Margin="0, 20, 0, 0"/>
-                
+
+                    <TextBlock Style="{StaticResource BodyTextStyle}"
+                               Margin="0, 40, 0, 0"
+                               Visibility="{Binding Path=BindingModel.HasSession, Converter={StaticResource NullToInvisibilityConverter}}">
+                        Refresh music from Google Play:
+                    </TextBlock>
+                    
+                    <Button Command="{Binding Path=ReloadSongsCommand}" 
+                            Visibility="{Binding Path=BindingModel.HasSession, Converter={StaticResource BooleanToVisibilityConverter}}"
+                            Content="Refresh" 
+                            Margin="0, 20, 0, 0"/>
+
                     <TextBlock Style="{StaticResource BodyTextStyle}" 
                                Margin="0, 40, 0, 0"
                                Visibility="{Binding Path=BindingModel.IsRemembered, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}">
@@ -121,7 +132,7 @@
                             Margin="0, 20, 0, 0"
                             Visibility="{Binding Path=BindingModel.LastfmAccountName, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"/>
 
-                    <TextBlock Style="{StaticResource BodyTextStyle}" Margin="0, 10, 0, 0">
+                    <TextBlock Style="{StaticResource BodyTextStyle}" Margin="0, 10, 0, 40">
                         *Last.fm scrobbing available to all users, while this feature is in beta version.
                     </TextBlock>
                     
