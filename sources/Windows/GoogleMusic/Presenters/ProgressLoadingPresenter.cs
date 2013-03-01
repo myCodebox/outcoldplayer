@@ -23,7 +23,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private const string DoNotAskToReviewKey = "DoNotAskToReviewKey";
         private const string CountOfStartsBeforeReview = "CountOfStartsBeforeReview";
 
-        private const string CurrentVersion = "1.3";
+        private const string CurrentVersion = "1.3.1";
 
         private readonly ISongWebService songWebService;
 
