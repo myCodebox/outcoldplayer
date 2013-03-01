@@ -74,6 +74,14 @@ namespace OutcoldSolutions.GoogleMusic.Models
             }
         }
 
+        public ushort Track
+        {
+            get
+            {
+                return this.Metadata.Track;
+            }
+        }
+
         public SongMetadata Metadata
         {
             get

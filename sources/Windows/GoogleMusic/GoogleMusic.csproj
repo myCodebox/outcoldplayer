@@ -373,6 +373,24 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\OutcoldSolutions.Presentation.1.0.30217.29423\lib\win\OutcoldSolutions.Presentation.dll</HintPath>
     </Reference>
+    <Reference Include="Telerik.Core">
+      <HintPath>..\..\packages\RadControls.for.Windows.8.Xaml.2013.1.219\lib\windows8\Core\Telerik.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.UI.Xaml.Chart">
+      <HintPath>..\..\packages\RadControls.for.Windows.8.Xaml.2013.1.219\lib\windows8\Chart\Telerik.UI.Xaml.Chart.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.UI.Xaml.DataVisualization">
+      <HintPath>..\..\packages\RadControls.for.Windows.8.Xaml.2013.1.219\lib\windows8\DataVisualization\Telerik.UI.Xaml.DataVisualization.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.UI.Xaml.Grid">
+      <HintPath>..\..\packages\RadControls.for.Windows.8.Xaml.2013.1.219\lib\windows8\Grid\Telerik.UI.Xaml.Grid.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.UI.Xaml.Input">
+      <HintPath>..\..\packages\RadControls.for.Windows.8.Xaml.2013.1.219\lib\windows8\Input\Telerik.UI.Xaml.Input.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.UI.Xaml.Primitives">
+      <HintPath>..\..\packages\RadControls.for.Windows.8.Xaml.2013.1.219\lib\windows8\Primitives\Telerik.UI.Xaml.Primitives.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <SDKReference Include="MSAdvertisingXaml, Version=6.1">

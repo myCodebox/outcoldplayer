@@ -68,13 +68,86 @@
                 <Style TargetType="ListViewItem">
                     <Setter Property="HorizontalAlignment" Value="Stretch" />
                     <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    <Setter Property="Height" Value="35" />
                     <Setter Property="Margin" Value="0"/>
                     <Setter Property="Padding" Value="0"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ListViewItem">
+                                <Border x:Name="ItemBorder">
+                                    <VisualStateManager.VisualStateGroups>
+                                        <VisualStateGroup x:Name="CommonStates">
+                                            <VisualState x:Name="Normal"/>
+                                            <VisualState x:Name="PointerOver" />
+                                            <VisualState x:Name="Pressed">
+                                                <Storyboard>
+                                                    <PointerDownThemeAnimation TargetName="ContentContainer" />
+                                                </Storyboard>
+                                            </VisualState>
+                                            <VisualState x:Name="PointerOverPressed" />
+                                            <VisualState x:Name="Disabled" />
+                                        </VisualStateGroup>
+                                        <VisualStateGroup x:Name="FocusStates">
+                                            <VisualState x:Name="Focused" />
+                                            <VisualState x:Name="Unfocused"/>
+                                            <VisualState x:Name="PointerFocused"/>
+                                        </VisualStateGroup>
+                                        <VisualStateGroup x:Name="SelectionHintStates" >
+                                            <VisualState x:Name="VerticalSelectionHint"/>
+                                            <VisualState x:Name="HorizontalSelectionHint" />
+                                            <VisualState x:Name="NoSelectionHint" />
+                                        </VisualStateGroup>
+                                        <VisualStateGroup x:Name="SelectionStates">
+                                            <VisualState x:Name="Unselecting" />
+                                            <VisualState x:Name="Unselected" />
+                                            <VisualState x:Name="UnselectedPointerOver" />
+                                            <VisualState x:Name="UnselectedSwiping" />
+                                            <VisualState x:Name="Selecting" >
+                                                <Storyboard TargetName="ItemBorder" TargetProperty="BorderBrush">
+                                                    <ColorAnimation From="Transparent" To="Gray"  />
+                                                </Storyboard>
+                                            </VisualState>
+                                            <VisualState x:Name="Selected" />
+                                            <VisualState x:Name="SelectedSwiping" />
+                                            <VisualState x:Name="SelectedUnfocused" />
+                                        </VisualStateGroup>
+                                        <VisualStateGroup x:Name="DragStates">
+                                            <VisualState x:Name="NotDragging" />
+                                            <VisualState x:Name="Dragging" />
+                                            <VisualState x:Name="DraggingTarget" />
+                                            <VisualState x:Name="MultipleDraggingPrimary"/> 
+                                            <VisualState x:Name="MultipleDraggingSecondary" />
+                                        </VisualStateGroup>
+                                        <VisualStateGroup x:Name="ReorderHintStates">
+                                            <VisualState x:Name="NoReorderHint"/>
+                                            <VisualState x:Name="BottomReorderHint" />
+                                            <VisualState x:Name="TopReorderHint" />
+                                            <VisualState x:Name="RightReorderHint" />
+                                            <VisualState x:Name="LeftReorderHint" />
+                                        </VisualStateGroup>
+                                        <VisualStateGroup x:Name="DataVirtualizationStates">
+                                            <VisualState x:Name="DataAvailable"/>
+                                            <VisualState x:Name="DataPlaceholder"/>
+                                        </VisualStateGroup>
+                                    </VisualStateManager.VisualStateGroups>
+
+                                    <ContentPresenter x:Name="ContentContainer"
+                                                      ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                      ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                      Content="{TemplateBinding Content}"
+                                                      HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                      VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                      Margin="{TemplateBinding Padding}" />
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
                 </Style>
             </ListView.ItemContainerStyle>
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <Grid VerticalAlignment="Center" Margin="0, 10, 0, 0">
+                    
+                    <Grid VerticalAlignment="Center" Margin="0, 0, 0, 0" >
                         <Grid.ColumnDefinitions >
                             <ColumnDefinition Width="40" />
                             <ColumnDefinition Width="2*" />
@@ -84,15 +157,22 @@
                             <ColumnDefinition Width="60" />
                             <ColumnDefinition Width="170" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Margin="20, 0, 0, 0" Text="{StaticResource PlayingGlyph}" FontFamily="Segoe UI Symbol" Visibility="{Binding Path=IsPlaying, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                        <TextBlock Grid.Column="1" Margin="20, 0, 0, 0" Text="{Binding Path=Title, Mode=OneWay}" HorizontalAlignment="Left" VerticalAlignment="Center" TextTrimming="WordEllipsis" />
+                        <TextBlock Grid.Column="0" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="{StaticResource PlayingGlyph}" FontFamily="Segoe UI Symbol" Visibility="{Binding Path=IsPlaying, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                        <TextBlock Grid.Column="1" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="{Binding Path=Title, Mode=OneWay}" HorizontalAlignment="Left" TextTrimming="WordEllipsis" />
                         <TextBlock Grid.Column="2" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="{Binding Path=Duration, Converter={StaticResource DoubleToTimeConverter}, Mode=OneWay}" HorizontalAlignment="Right"/>
                         <TextBlock Grid.Column="3" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="{Binding Path=Artist, Mode=OneWay}" TextTrimming="WordEllipsis" />
                         <TextBlock Grid.Column="4" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="{Binding Path=Album, Mode=OneWay}" TextTrimming="WordEllipsis" />
                         <TextBlock Grid.Column="5" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="{Binding Path=PlayCount, Mode=OneWay}" HorizontalAlignment="Right" />
                         <controls:Rating Grid.Column="6" VerticalAlignment="Center" Margin="20, -3, 40, 0" Value="{Binding Path=Rating, Mode=OneWay}" HorizontalAlignment="Right" 
-                                         Command="{Binding Path=DataContext.RateSongCommand, ElementName=ListView, Mode=OneTime}"
-                                         CommandParameter="{Binding Mode=OneTime}"/>
+                                            Command="{Binding Path=DataContext.RateSongCommand, ElementName=ListView, Mode=OneTime}"
+                                            CommandParameter="{Binding Mode=OneTime}"/>
+
+                        <Border BorderThickness="0, 0, 0, 2" 
+                                Grid.ColumnSpan="7"
+                                BorderBrush="{StaticResource ListViewItemPlaceholderBackgroundThemeBrush}" 
+                                VerticalAlignment="Bottom"
+                                Margin="30, 0"/> 
+                        
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
