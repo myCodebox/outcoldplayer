@@ -33,6 +33,32 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 UseCookies = true
             };
 
+            // Log information about Proxy settings
+            if (this.logger.IsDebugEnabled)
+            {
+                try
+                {
+                    this.logger.Debug("Supports Proxy: {0}", this.httpClientHandler.SupportsProxy);
+                    this.logger.Debug("UseProxy: {0}", this.httpClientHandler.UseProxy);
+                    this.logger.Debug("Proxy: {0}", this.httpClientHandler.Proxy);
+                    if (this.httpClientHandler.Proxy != null)
+                    {
+                        this.logger.Debug("Proxy: {0}", this.httpClientHandler.Proxy);
+                    }
+
+                    if (WebRequest.DefaultWebProxy != null)
+                    {
+                        this.logger.Debug("DefaultWebProxy: {0}", WebRequest.DefaultWebProxy);
+                        this.logger.Debug("DefaultWebProxy.IsBypassed: {0}", WebRequest.DefaultWebProxy.IsBypassed(new Uri("https://www.google.com")));
+                        this.logger.Debug("DefaultWebProxy.GetProxy: {0}", WebRequest.DefaultWebProxy.GetProxy(new Uri("https://www.google.com")));
+                    }
+                }
+                catch (Exception e)
+                {
+                    this.logger.LogErrorException(e);
+                }
+            }
+
             this.httpClient = new HttpClient(this.httpClientHandler)
                                   {
                                       BaseAddress = new Uri("https://www.google.com"),
