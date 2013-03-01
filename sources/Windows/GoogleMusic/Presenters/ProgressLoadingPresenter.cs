@@ -7,6 +7,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
+    using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
@@ -128,6 +129,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                                             }
                                             else
                                             {
+                                                this.Logger.LogTask(tSongs);
+                                                
                                                 this.BindingModel.Message = "Cannot load data...";
                                                 this.BindingModel.IsFailed = true;
                                             }
