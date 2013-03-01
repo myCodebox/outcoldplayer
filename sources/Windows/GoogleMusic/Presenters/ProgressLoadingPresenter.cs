@@ -7,6 +7,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
+    using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
@@ -22,7 +23,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private const string DoNotAskToReviewKey = "DoNotAskToReviewKey";
         private const string CountOfStartsBeforeReview = "CountOfStartsBeforeReview";
 
-        private const string CurrentVersion = "1.3";
+        private const string CurrentVersion = "1.3.1";
 
         private readonly ISongWebService songWebService;
 
@@ -128,6 +129,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                                             }
                                             else
                                             {
+                                                this.Logger.LogTask(tSongs);
+                                                
                                                 this.BindingModel.Message = "Cannot load data...";
                                                 this.BindingModel.IsFailed = true;
                                             }

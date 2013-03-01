@@ -24,7 +24,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Models
 
         public int Type { get; set; }
 
-        public byte Disc { get; set; }
+        public ushort Disc { get; set; }
 
         public Guid Id { get; set; }
 
@@ -38,7 +38,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Models
 
         public string Name { get; set; }
 
-        public byte TotalDiscs { get; set; }
+        public ushort TotalDiscs { get; set; }
 
         public ushort Year { get; set; }
 
@@ -70,7 +70,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Models
 
         public Guid PlaylistEntryId { get; set; }
 
-        public short Bitrate { get; set; }
+        public ushort Bitrate { get; set; }
 
         public double RecentTimestamp { get; set; }
 

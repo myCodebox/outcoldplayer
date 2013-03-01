@@ -25,9 +25,9 @@ namespace OutcoldSolutions.GoogleMusic.Models
 
         public byte Rating { get; set; }
 
-        public byte Disc { get; set; }
+        public ushort Disc { get; set; }
 
-        public byte TotalDiscs { get; set; }
+        public ushort TotalDiscs { get; set; }
 
         public ushort Track { get; set; }
 
