@@ -19,15 +19,22 @@
         <StackPanel>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                 <Image Source="ms-appx:///Assets/SmallLogo.png" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,0,10,0" Width="30" Height="30"></Image>
-                <TextBlock Style="{StaticResource SubheaderTextStyle}" HorizontalAlignment="Center" Margin="0,-5,0,0">gMusic v1.3</TextBlock>
+                <TextBlock Style="{StaticResource SubheaderTextStyle}" HorizontalAlignment="Center" Margin="0,-5,0,0">gMusic v1.3.1</TextBlock>
             </StackPanel>
 
             <TextBlock Style="{StaticResource BodyTextStyle}"  Margin="0, 20, 0, 0" >
-                You just installed version 1.3. 
+                You just installed version 1.3.1 
             </TextBlock>
-            
+
+            <TextBlock Style="{StaticResource TitleTextStyle}" Margin="0, 10, 0, 0" >
+                <Run>Bug fixes (v1.3.1):</Run>
+            </TextBlock>
+            <TextBlock Style="{StaticResource BodyTextStyle}"  Margin="0, 5, 0, 0">
+                [b] Cannot serialize song, if disc contains value greater than 255.
+            </TextBlock>
+
             <TextBlock Style="{StaticResource TitleTextStyle}" Margin="0, 20, 0, 0" >
-                <Run>New features:</Run>
+                <Run>New features (v1.3):</Run>
             </TextBlock>
             <TextBlock Style="{StaticResource BodyTextStyle}">
                 [+] New view with showing Albums of selected Artist.
@@ -49,7 +56,7 @@
             </TextBlock>
 
             <TextBlock Style="{StaticResource TitleTextStyle}" Margin="0, 10, 0, 0" >
-                <Run>Bug fixes:</Run>
+                <Run>Bug fixes (v1.3):</Run>
             </TextBlock>
             <TextBlock Style="{StaticResource BodyTextStyle}"  Margin="0, 5, 0, 0">
                 [b] Back navigation - restoring the position on the List.
