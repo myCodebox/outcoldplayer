@@ -53,7 +53,7 @@
                   HorizontalAlignment="Stretch"
                   HorizontalContentAlignment="Stretch"
                   IsTapEnabled="False"
-                  Margin="40, 0, 0, 20" 
+                  Margin="40, 0, 20, 20" 
                   DoubleTapped="ListDoubleTapped"
                   SelectionChanged="ListViewSelectionChanged"
                   x:Name="ListView">
