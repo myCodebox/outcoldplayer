@@ -1,0 +1,9 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:models="using:OutcoldSolutions.GoogleMusic.Models">
+
+    <models:SongState x:Key="StatePaused">Paused</models:SongState>
+    <models:SongState x:Key="StateNone">None</models:SongState>
+
+</ResourceDictionary>

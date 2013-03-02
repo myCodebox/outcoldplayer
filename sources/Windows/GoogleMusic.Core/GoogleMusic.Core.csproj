@@ -127,6 +127,7 @@
     <Compile Include="Models\Playlist.cs" />
     <Compile Include="Models\Song.cs" />
     <Compile Include="Models\SongMetadata.cs" />
+    <Compile Include="Models\SongState.cs" />
     <Compile Include="Models\StreamType.cs" />
     <Compile Include="Models\SystemPlaylist.cs" />
     <Compile Include="Models\UserInfo.cs" />

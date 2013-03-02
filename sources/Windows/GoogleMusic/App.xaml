@@ -11,7 +11,7 @@
                 <ResourceDictionary Source="Common/Converters.xaml"/>
                 <ResourceDictionary Source="Common/Buttons.xaml"/>
                 <ResourceDictionary Source="Common/DataTemplates.xaml"/>
-                
+                <ResourceDictionary Source="Common/Models.xaml"/>
                 
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>

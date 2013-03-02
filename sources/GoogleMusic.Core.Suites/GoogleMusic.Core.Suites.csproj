@@ -106,6 +106,9 @@
     <Compile Include="..\Windows\GoogleMusic.Core\Models\SongsGrouping.cs">
       <Link>_sources\Models\SongsGrouping.cs</Link>
     </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Models\SongState.cs">
+      <Link>_sources\Models\SongState.cs</Link>
+    </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Models\StreamType.cs">
       <Link>_sources\Models\StreamType.cs</Link>
     </Compile>

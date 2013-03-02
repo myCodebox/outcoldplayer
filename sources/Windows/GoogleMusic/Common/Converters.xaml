@@ -9,6 +9,7 @@
     <baseConverters:InvertBooleanConverter x:Key="InvertBooleanConverter" />
     <baseConverters:ValueToVisibilityConverter x:Key="ValueToVisibilityConverter" />
     <baseConverters:ValueToVisibilityConverter x:Key="ValueToInvisibilityConverter" Invert="True"/>
+    <converters:ValueToBooleanConverter x:Key="ValueToBooleanConverter" />
     <converters:StringFormatConverter x:Key="StringFormatConverter"/>
     <converters:DoubleToTimeConverter x:Key="DoubleToTimeConverter"/>
     <baseConverters:ValueToVisibilityConverter x:Key="NullToVisibilityConverter"/>

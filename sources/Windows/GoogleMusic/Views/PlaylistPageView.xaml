@@ -90,7 +90,8 @@
                             Grid.Column="0" 
                             HorizontalAlignment="Center" 
                             VerticalAlignment="Center" 
-                            Visibility="{Binding Path=IsPlaying, Converter={StaticResource BooleanToVisibilityConverter}}"  />
+                            Visibility="{Binding Path=IsPlaying, Converter={StaticResource BooleanToVisibilityConverter}}" 
+                            IsPaused="{Binding Path=State, Converter={StaticResource ValueToBooleanConverter}, ConverterParameter={StaticResource StatePaused}}" />
                         
                         <TextBlock Grid.Column="1" Style="{StaticResource BasicTextStyle}" VerticalAlignment="Center" Margin="5, 0, 0, 0" Text="{Binding Path=Title, Mode=OneWay}" HorizontalAlignment="Left" TextTrimming="WordEllipsis" />
                         <TextBlock Grid.Column="2" Style="{StaticResource BasicTextStyle}" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="{Binding Path=Duration, Converter={StaticResource DoubleToTimeConverter}, Mode=OneWay}" HorizontalAlignment="Right"/>

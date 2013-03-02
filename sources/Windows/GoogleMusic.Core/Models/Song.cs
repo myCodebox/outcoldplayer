@@ -6,8 +6,7 @@ namespace OutcoldSolutions.GoogleMusic.Models
     public class Song : BindingModelBase
     {
         private SongMetadata metadata;
-
-        private bool isPlaying;
+        private SongState songState = SongState.None;
 
         public Song(SongMetadata metadata)
         {
@@ -101,17 +100,26 @@ namespace OutcoldSolutions.GoogleMusic.Models
             }
         }
 
-        public bool IsPlaying
+        public SongState State
         {
             get
             {
-                return this.isPlaying;
+                return this.songState;
             }
 
             set
             {
-                this.isPlaying = value;
+                this.songState = value;
                 this.RaiseCurrentPropertyChanged();
+                this.RaisePropertyChanged(() => this.IsPlaying);
+            }
+        }
+
+        public bool IsPlaying
+        {
+            get
+            {
+                return this.songState == SongState.Playing;
             }
         }
     }

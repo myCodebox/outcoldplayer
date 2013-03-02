@@ -123,6 +123,7 @@
                                 Grid.Column="0" 
                                 HorizontalAlignment="Center" 
                                 VerticalAlignment="Center" 
+                                IsPaused="{Binding Path=State, Converter={StaticResource ValueToBooleanConverter}, ConverterParameter={StaticResource StatePaused}}"
                                 Visibility="{Binding Path=IsPlaying, Converter={StaticResource BooleanToVisibilityConverter}}"  />
                             
                             <TextBlock Grid.Column="1" Style="{StaticResource BasicTextStyle}" Margin="5, 0, 0, 0" Text="{Binding Path=Track, Mode=OneWay}" HorizontalAlignment="Right" VerticalAlignment="Center" />

@@ -134,6 +134,7 @@
     <Compile Include="Converters\AlbumArtUrlToImageConverter.cs" />
     <Compile Include="Converters\DoubleToTimeConverter.cs" />
     <Compile Include="Converters\StringFormatConverter.cs" />
+    <Compile Include="Converters\ValueToBooleanConverter.cs" />
     <Compile Include="Models\PlaylistsRequest.cs" />
     <Compile Include="Models\TimeSpanEx.cs" />
     <Compile Include="PlaylistViewResolver.cs" />
@@ -277,6 +278,11 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Page>
     <Page Include="Common\DataTemplates.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Page>
+    <Page Include="Common\Models.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

@@ -909,11 +909,11 @@
 
                             <Rectangle x:Name="HorizontalTrackRect"
                                    Fill="{TemplateBinding Background}"
-                                   Height="2"
+                                   Height="4"
                                    Grid.Row="1"
                                    Grid.ColumnSpan="3" />
                             <Rectangle x:Name="HorizontalDecreaseRect"
-                                   Height="2"
+                                   Height="4"
                                    Fill="{TemplateBinding Foreground}"
                                    Grid.Row="1" />
                             <TickBar x:Name="TopTickBar"
