@@ -50,7 +50,7 @@
 
             <TextBlock Style="{StaticResource TitleTextStyle}" Text="{Binding Path=BindingModel.Playlist.Title, Mode=OneWay}" TextWrapping="Wrap" TextTrimming="WordEllipsis" />
             <TextBlock Style="{StaticResource SubtitleTextStyle}" Margin="0, 7, 0, 0" Text="{Binding Path=BindingModel.Playlist.Artist, Mode=OneWay}"  TextWrapping="Wrap" TextTrimming="WordEllipsis" />
-            <TextBlock Style="{StaticResource SubtitleTextStyle}" Margin="0, 14, 0, 0" Text="{Binding Path=BindingModel.Playlist.Year, Mode=OneWay}" />
+            <TextBlock Style="{StaticResource SubtitleTextStyle}" Margin="0, 14, 0, 0" Text="{Binding Path=BindingModel.Playlist.Year, Mode=OneWay}" Visibility="{Binding Path=BindingModel.Playlist.Year, Converter={StaticResource ValueToInvisibilityConverter}, ConverterParameter=0}" />
             <TextBlock Style="{StaticResource SubtitleTextStyle}" Margin="0, 7, 0, 0" Text="{Binding Path=BindingModel.Playlist.Genre, Mode=OneWay}" />
 
             <StackPanel Orientation="Horizontal" Margin="0, 7, 0, 0">
