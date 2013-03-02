@@ -35,9 +35,8 @@
         <Slider Grid.Row="0" Grid.ColumnSpan="2" Grid.Column="1"
                 Width="610"
                 ThumbToolTipValueConverter="{StaticResource DoubleToTimeConverter}"
-                Padding="0"
                 Value="{Binding Path=CurrentPosition, Mode=TwoWay}"
-                Maximum="{Binding Path=TotalSeconds, Mode=OneWay}"
+                Maximum="{Binding Path=TotalSeconds, Mode=OneWay}" 
                 Visibility="{Binding Path=CurrentSong, Mode=OneWay, Converter={StaticResource NullToInvisibilityConverter}}" />
 
         <Button Click="NavigateToCurrentPlaylist" Grid.Row="1" Grid.Column="1" Margin="0, 5" Width="200" 

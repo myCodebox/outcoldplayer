@@ -69,7 +69,13 @@
                             <ColumnDefinition Width="60" />
                             <ColumnDefinition Width="170" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Style="{StaticResource BasicTextStyle}" VerticalAlignment="Center" Margin="10, 0, 0, 0" Text="{StaticResource PlayingGlyph}" FontFamily="Segoe UI Symbol"  Visibility="{Binding Path=IsPlaying, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                        <controls:FakeEqualizerControl 
+                            Grid.Column="0" 
+                            HorizontalAlignment="Center" 
+                            VerticalAlignment="Center" 
+                            Visibility="{Binding Path=IsPlaying, Converter={StaticResource BooleanToVisibilityConverter}}"  />
+
                         <TextBlock Grid.Column="1" Style="{StaticResource BasicTextStyle}" VerticalAlignment="Center" Margin="5, 0, 0, 0" Text="{Binding Path=Title, Mode=OneWay}" HorizontalAlignment="Left" TextTrimming="WordEllipsis" />
                         <TextBlock Grid.Column="2" Style="{StaticResource BasicTextStyle}" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="{Binding Path=Duration, Converter={StaticResource DoubleToTimeConverter}, Mode=OneWay}" HorizontalAlignment="Right"/>
                         <TextBlock Grid.Column="3" Style="{StaticResource BasicTextStyle}" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="{Binding Path=Artist, Mode=OneWay}" TextTrimming="WordEllipsis" />
