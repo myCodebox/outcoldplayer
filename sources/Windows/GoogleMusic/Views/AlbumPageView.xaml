@@ -4,25 +4,22 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:googleMusic="using:OutcoldSolutions.GoogleMusic" 
-    xmlns:controls="using:OutcoldSolutions.GoogleMusic.Controls"
-    xmlns:telerikGrid="using:Telerik.UI.Xaml.Controls.Grid"
-    xmlns:gridPrimitives="using:Telerik.UI.Xaml.Controls.Grid.Primitives"
+    xmlns:googleMusic="using:OutcoldSolutions.GoogleMusic" xmlns:controls="using:OutcoldSolutions.GoogleMusic.Controls"
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400">
-    
+
     <Grid Margin="120, 0, 20, 0">
         <Grid.RowDefinitions>
             <RowDefinition Height="100" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        
+
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="140" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
-        
+
         <Grid VerticalAlignment="Bottom" HorizontalAlignment="Left" Grid.ColumnSpan="2"
               Visibility="{Binding Path=IsDataLoading, Converter={StaticResource BooleanToInvisibilityConverter}}" >
             <Grid.ColumnDefinitions>
@@ -68,93 +65,69 @@
 
         </StackPanel>
 
-        <telerikGrid:RadDataGrid Grid.Row="1" 
-                                 Grid.Column="1"
-                                 Visibility="{Binding Path=IsDataLoading, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}"
-                                 x:Name="DataGrid"
-                                 AutoGenerateColumns="False"
-                                 HorizontalAlignment="Stretch"
-                                 VerticalAlignment="Top"
-                                 UserSortMode="Single"
-                                 SelectionMode="Single"
-                                 SelectionChanged="DataGrid_OnSelectionChanged"
-                                 DoubleTapped="DataGrid_OnDoubleTapped"
-                                 Margin="40, 20, 20, 20"
-                                 GridLinesVisibility="Horizontal"
-                                 HorizontalContentAlignment="Stretch"
-                                 VerticalContentAlignment="Center"
-                                 BorderThickness="0">
-            <telerikGrid:RadDataGrid.Columns>
-                <telerikGrid:DataGridTemplateColumn Width="45" SizeMode="Fixed" >
-                    <telerikGrid:DataGridTemplateColumn.CellContentTemplate>
-                        <DataTemplate>
-                            <TextBlock VerticalAlignment="Center"
-                                       TextAlignment="Center"
-                                       Text="{StaticResource PlayingGlyph}" 
-                                       FontFamily="Segoe UI Symbol" 
-                                       Visibility="{Binding Path=IsPlaying, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                       Width="45"/>
-                        </DataTemplate>
-                    </telerikGrid:DataGridTemplateColumn.CellContentTemplate>
-                </telerikGrid:DataGridTemplateColumn>
-                <telerikGrid:DataGridTextColumn PropertyName="Track" Header=" " SizeMode="Fixed" Width="40" >
-                    <telerikGrid:DataGridTextColumn.CellContentStyle>
-                        <Style TargetType="TextBlock">
-                            <Setter Property="TextAlignment" Value="Right" />
-                            <Setter Property="VerticalAlignment" Value="Center" />
-                        </Style>
-                    </telerikGrid:DataGridTextColumn.CellContentStyle>
-                </telerikGrid:DataGridTextColumn>
-                <telerikGrid:DataGridTextColumn PropertyName="Title" Header="name" SizeMode="Stretch"  >
-                    <telerikGrid:DataGridTextColumn.CellContentStyle>
-                        <Style TargetType="TextBlock">
-                            <Setter Property="HorizontalAlignment" Value="Left" />
-                            <Setter Property="VerticalAlignment" Value="Center" />
-                            <Setter Property="Margin" Value="10, 0, 0, 0" />
-                        </Style>
-                    </telerikGrid:DataGridTextColumn.CellContentStyle>
-                </telerikGrid:DataGridTextColumn>
-                <telerikGrid:DataGridTemplateColumn Header="     time" SizeMode="Fixed" Width="80" >
-                    <telerikGrid:DataGridTemplateColumn.CellContentTemplate>
-                        <DataTemplate>
-                            <TextBlock VerticalAlignment="Center"
-                                       TextAlignment="Right"
-                                       Text="{Binding Path=Duration, Mode=OneTime, Converter={StaticResource DoubleToTimeConverter}}" 
-                                       Width="60"/>
-                        </DataTemplate>
-                    </telerikGrid:DataGridTemplateColumn.CellContentTemplate>
-                </telerikGrid:DataGridTemplateColumn>
-                <telerikGrid:DataGridTextColumn PropertyName="Artist" Header="artist" SizeMode="Stretch" >
-                    <telerikGrid:DataGridTextColumn.CellContentStyle>
-                        <Style TargetType="TextBlock">
-                            <Setter Property="HorizontalAlignment" Value="Left" />
-                            <Setter Property="VerticalAlignment" Value="Center" />
-                            <Setter Property="Margin" Value="10, 0, 0, 0" />
-                        </Style>
-                    </telerikGrid:DataGridTextColumn.CellContentStyle>
-                </telerikGrid:DataGridTextColumn>
-                <telerikGrid:DataGridTextColumn PropertyName="PlayCount" Header="plays" SizeMode="Fixed" Width="60" >
-                    <telerikGrid:DataGridTextColumn.CellContentStyle>
-                        <Style TargetType="TextBlock">
-                            <Setter Property="HorizontalAlignment" Value="Right" />
-                            <Setter Property="VerticalAlignment" Value="Center" />
-                            <Setter Property="TextAlignment" Value="Right" />
-                            <Setter Property="Width" Value="40" />
-                        </Style>
-                    </telerikGrid:DataGridTextColumn.CellContentStyle>
-                </telerikGrid:DataGridTextColumn>
-                <telerikGrid:DataGridTemplateColumn Header="rating" Width="130" SizeMode="Fixed"  >
-                    <telerikGrid:DataGridTemplateColumn.CellContentTemplate>
-                        <DataTemplate>
-                            <controls:Rating Margin="10, 0, 0, 0" VerticalAlignment="Center" Value="{Binding Path=Rating, Mode=OneWay}" HorizontalAlignment="Right"
-                                             Command="{Binding Path=DataContext.RateSongCommand, ElementName=ListView, Mode=OneTime}"
-                                             CommandParameter="{Binding Mode=OneTime}"
-                                             Height="35"/>
-                        </DataTemplate>
-                    </telerikGrid:DataGridTemplateColumn.CellContentTemplate>
-                </telerikGrid:DataGridTemplateColumn>
-            </telerikGrid:RadDataGrid.Columns>
+        <Grid Grid.Row="1" Grid.Column="1"
+              Visibility="{Binding Path=IsDataLoading, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
 
-        </telerikGrid:RadDataGrid>
+            <Border Grid.Row="0" 
+                HorizontalAlignment="Stretch"
+                Margin="40, 20, 0, 0" 
+                Padding="0, 0, 0, 7"
+                Height="35"
+                Background="{StaticResource ListViewItemBorder}">
+                <Grid Margin="0, 0, 20, 0">
+                    <Grid.ColumnDefinitions >
+                        <ColumnDefinition Width="45" />
+                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="80" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="60" />
+                        <ColumnDefinition Width="150" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="1" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="name" TextTrimming="WordEllipsis" Style="{StaticResource TitleTextStyle}" />
+                    <TextBlock Grid.Column="2" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="time" HorizontalAlignment="Right" Style="{StaticResource TitleTextStyle}"/>
+                    <TextBlock Grid.Column="3" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="artist" TextTrimming="WordEllipsis" Style="{StaticResource TitleTextStyle}"/>
+                    <TextBlock Grid.Column="4" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="plays" HorizontalAlignment="Right" Style="{StaticResource TitleTextStyle}"/>
+                    <TextBlock Grid.Column="5" VerticalAlignment="Center" Margin="20, 0, 25, 0" Text="rating" HorizontalAlignment="Left" Style="{StaticResource TitleTextStyle}"/>
+                </Grid>
+            </Border>
+
+            <ListView Grid.Row="1"
+                  SelectionMode="Single"
+                  HorizontalAlignment="Stretch"
+                  HorizontalContentAlignment="Stretch"
+                  IsTapEnabled="False"
+                  Margin="40, 0, 0, 20" 
+                  ManipulationMode="None"
+                  DoubleTapped="ListDoubleTapped"
+                  SelectionChanged="ListViewSelectionChanged"
+                  x:Name="ListView">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Height="33">
+                            <Grid.ColumnDefinitions >
+                                <ColumnDefinition Width="40" />
+                                <ColumnDefinition Width="2*" />
+                                <ColumnDefinition Width="80" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="60" />
+                                <ColumnDefinition Width="170" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Style="{StaticResource BasicTextStyle}" Margin="20, 0, 0, 0" Text="{StaticResource PlayingGlyph}" FontFamily="Segoe UI Symbol" Visibility="{Binding Path=IsPlaying, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                            <TextBlock Grid.Column="1" Style="{StaticResource BasicTextStyle}" Margin="20, 0, 0, 0" Text="{Binding Path=Title, Mode=OneWay}" HorizontalAlignment="Left" VerticalAlignment="Center" TextTrimming="WordEllipsis" />
+                            <TextBlock Grid.Column="2" Style="{StaticResource BasicTextStyle}" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="{Binding Path=Duration, Converter={StaticResource DoubleToTimeConverter}, Mode=OneWay}" HorizontalAlignment="Right"/>
+                            <TextBlock Grid.Column="3" Style="{StaticResource BasicTextStyle}" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="{Binding Path=Artist, Mode=OneWay}" TextTrimming="WordEllipsis" />
+                            <TextBlock Grid.Column="4" Style="{StaticResource BasicTextStyle}" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="{Binding Path=PlayCount, Mode=OneWay}" HorizontalAlignment="Right" />
+                            <controls:Rating Grid.Column="5" VerticalAlignment="Center" Margin="20, 0, 40, 0" Value="{Binding Path=Rating, Mode=OneWay}" HorizontalAlignment="Right"
+                                             Command="{Binding Path=DataContext.RateSongCommand, ElementName=ListView, Mode=OneTime}"
+                                             CommandParameter="{Binding Mode=OneTime}"/>
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Grid>
     </Grid>
 </googleMusic:DataPageViewBase>

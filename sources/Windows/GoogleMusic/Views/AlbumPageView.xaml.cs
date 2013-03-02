@@ -8,8 +8,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Presenters;
 
-    using Telerik.UI.Xaml.Controls.Grid;
-
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Input;
 
@@ -24,14 +22,14 @@ namespace OutcoldSolutions.GoogleMusic.Views
         public AlbumPageView()
         {
             this.InitializeComponent();
-            //this.TrackListViewBase(this.ListView);
+            this.TrackListViewBase(this.ListView);
         }
 
         public override void OnDataLoading(NavigatedToEventArgs eventArgs)
         {
             base.OnDataLoading(eventArgs);
 
-            this.DataGrid.ItemsSource = null;
+            this.ListView.ItemsSource = null;
         }
 
         public override void OnDataLoaded(NavigatedToEventArgs eventArgs)
@@ -40,51 +38,49 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
             if (this.presenter.BindingModel.Playlist != null)
             {
-                this.DataGrid.ItemsSource = this.presenter.BindingModel.Playlist.Songs;
+                this.ListView.ItemsSource = this.presenter.BindingModel.Playlist.Songs;
                 this.UpdateSelectedSong();
             }
         }
-        
+
         protected override void OnInitialized()
         {
             base.OnInitialized();
 
             this.presenter = this.GetPresenter<AlbumPageViewPresenter>();
             this.presenter.BindingModel.Subscribe(
-                () => this.presenter.BindingModel.SelectedSongIndex, 
+                () => this.presenter.BindingModel.SelectedSongIndex,
                 (sender, args) => this.UpdateSelectedSong());
         }
 
-        private void UpdateSelectedSong()
+        private void ListDoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
         {
-            var selectedSong = this.presenter.BindingModel.SelectedSong;
-
-            if (this.DataGrid.SelectedItem != selectedSong && this.DataGrid.ItemsSource != null)
+            if (this.presenter.PlaySongCommand.CanExecute())
             {
-                this.DataGrid.ScrollItemIntoView(selectedSong);
-                this.DataGrid.SelectedItem = selectedSong;
+                this.presenter.PlaySongCommand.Execute();
             }
         }
 
-        private void DataGrid_OnSelectionChanged(object sender, DataGridSelectionChangedEventArgs e)
+        private void ListViewSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var addedItems = e.AddedItems.ToList();
-            if (addedItems.Count == 0)
+            if (e.AddedItems.Count == 0)
             {
                 this.presenter.BindingModel.SelectedSongIndex = -1;
             }
             else
             {
                 this.presenter.BindingModel.SelectedSongIndex =
-                    this.presenter.BindingModel.Playlist.Songs.IndexOf((Song)addedItems.First());
+                    this.presenter.BindingModel.Playlist.Songs.IndexOf((Song)e.AddedItems.First());
             }
         }
 
-        private void DataGrid_OnDoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+        private void UpdateSelectedSong()
         {
-            if (this.presenter.PlaySongCommand.CanExecute())
+            var selectedSongIndex = this.presenter.BindingModel.SelectedSongIndex;
+            if (this.ListView.SelectedIndex != selectedSongIndex && this.ListView.Items != null && this.ListView.Items.Count > selectedSongIndex)
             {
-                this.presenter.PlaySongCommand.Execute();
+                this.ListView.ScrollIntoView(this.presenter.BindingModel.SelectedSong);
+                this.ListView.SelectedIndex = selectedSongIndex;
             }
         }
     }
