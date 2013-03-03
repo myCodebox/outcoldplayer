@@ -27,14 +27,22 @@
                 Please make sure that you have subscribed to Google Music service. For more details go to the Google Music site.
                 </TextBlock>
 
-                <StackPanel Width="400" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" DataContext="{Binding Path=BindingModel, Mode=OneTime}">
+                <StackPanel Width="400" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" >
                     <TextBlock Style="{StaticResource BasicTextStyle}" >Email:</TextBlock>
-                    <TextBox Text="{Binding Path=Email, Mode=TwoWay}" InputScope="EmailSmtpAddress" x:Name="EmailTextBox"/>
+                    <TextBox Text="{Binding Path=BindingModel.Email, Mode=TwoWay}" 
+                             InputScope="EmailSmtpAddress" 
+                             IsEnabled="{Binding Path=BindingModel.IsSigningIn, Mode=OneWay, Converter={StaticResource InvertBooleanConverter}}"/>
 
                     <TextBlock Margin="0, 20, 0, 0"  Style="{StaticResource BasicTextStyle}">Password:</TextBlock>
-                    <PasswordBox Password="{Binding Path=Password, Mode=TwoWay}"  x:Name="PasswordTextBox" IsPasswordRevealButtonEnabled="True"/>
+                    <PasswordBox Password="{Binding Path=BindingModel.Password, Mode=TwoWay}" 
+                                 IsPasswordRevealButtonEnabled="True"
+                                 IsEnabled="{Binding Path=BindingModel.IsSigningIn, Mode=OneWay, Converter={StaticResource InvertBooleanConverter}}"/>
 
-                    <CheckBox HorizontalAlignment="Right" Margin="0, 7 ,0 ,0" IsChecked="{Binding Path=RememberAccount, Mode=TwoWay}" x:Name="RememberCheckBox">Remember account</CheckBox>
+                    <CheckBox HorizontalAlignment="Right" Margin="0, 7 ,0 ,0" 
+                              IsChecked="{Binding Path=RememberAccount, Mode=TwoWay}" 
+                              IsEnabled="{Binding Path=BindingModel.IsSigningIn, Mode=OneWay, Converter={StaticResource InvertBooleanConverter}}">
+                        Remember account
+                    </CheckBox>
                 </StackPanel>
 
                 <TextBlock Grid.Row="2" Margin="0, -90, 0, 0" TextWrapping="Wrap" Width="400" TextAlignment="Right"
@@ -46,7 +54,7 @@
                            Text="{Binding Path=BindingModel.ErrorMessage, Mode=OneWay}"
                            Style="{StaticResource SmallTextStyle}" />
 
-                <HyperlinkButton Grid.Row="2" HorizontalAlignment="Left" Click="GotoGoogleMusic">
+                <HyperlinkButton Grid.Row="2" HorizontalAlignment="Left" NavigateUri="https://play.google.com/music">
                     <StackPanel>
                         <TextBlock FontSize="14">Go to Google Music</TextBlock>
                         <TextBlock FontSize="12">https://play.google.com/music</TextBlock>
@@ -54,10 +62,8 @@
                 </HyperlinkButton>
 
                 <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
-                    <ProgressRing IsActive="False" x:Name="ProgressRing" />
-                    <Button Width="80" Margin="10, 0, 0, 0" 
-                            x:Name="SignInButton"
-                        Click="SignInClick">
+                    <ProgressRing IsActive="{Binding Path=BindingModel.IsSigningIn, Mode=OneWay}" />
+                    <Button Width="80" Margin="10, 0, 0, 0" Command="{Binding Path=SignInCommand, Mode=OneTime}">
                         Sign in
                     </Button>
                 </StackPanel>

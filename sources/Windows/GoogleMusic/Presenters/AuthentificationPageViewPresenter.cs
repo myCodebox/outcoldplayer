@@ -3,28 +3,36 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Presenters
 {
-    using System.Threading.Tasks;
+    using System;
 
+    using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
     using OutcoldSolutions.Presenters;
 
-    public class AuthentificationPresenter : PagePresenterBase<IAuthentificationView>
+    public class AuthentificationPageViewPresenter : PagePresenterBase<IAuthentificationPageView>
     {
+        private readonly INavigationService navigationService;
         private readonly IGoogleAccountService googleAccountService;
         private readonly IAuthentificationService authentificationService;
 
-        public AuthentificationPresenter(
+        public AuthentificationPageViewPresenter(
             IDependencyResolverContainer container, 
+            INavigationService navigationService,
             IGoogleAccountService googleAccountService,
             IAuthentificationService authentificationService)
             : base(container)
         {
+            this.navigationService = navigationService;
             this.googleAccountService = googleAccountService;
             this.authentificationService = authentificationService;
-            this.BindingModel = new UserAuthentificationBindingModel();
+            this.BindingModel = new AuthentificationPageViewBindingModel();
+
+            this.SignInCommand = new DelegateCommand(this.SignIn, () => !this.BindingModel.IsSigningIn);
+
+            this.BindingModel.Subscribe(() => this.BindingModel.IsSigningIn, (sender, args) => this.SignInCommand.RaiseCanExecuteChanged());
 
             var userInfo = this.googleAccountService.GetUserInfo();
             if (userInfo != null)
@@ -35,23 +43,24 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             }
         }
 
-        public UserAuthentificationBindingModel BindingModel { get; private set; }
+        public AuthentificationPageViewBindingModel BindingModel { get; private set; }
 
-        public async Task<bool> LogInAsync()
+        public DelegateCommand SignInCommand { get; private set; }
+
+        private async void SignIn()
         {
+            this.BindingModel.IsSigningIn = true;
+
             this.BindingModel.ErrorMessage = null;
 
             var email = this.BindingModel.Email;
             var password = this.BindingModel.Password;
             var rememberPassword = this.BindingModel.RememberAccount;
 
-            // TODO: Implement captcha
-            if (string.IsNullOrEmpty(email) 
-                || string.IsNullOrEmpty(password))
+            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
             {
-                this.Logger.Warning("Cannot login. Email or password is not provided.");
-                this.BindingModel.ErrorMessage = "Please provide email and password first.";// CoreResources.Login_UserNameAndPassword;
-                return false;
+                this.Logger.Warning("Cannot login. Email or password are not provided.");
+                this.BindingModel.ErrorMessage = "Please provide email and password first.";
             }
             else
             {
@@ -59,9 +68,18 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
                 this.Logger.Debug("Trying to proceed authentification.");
 
-                var result = await this.authentificationService.CheckAuthentificationAsync(userInfo);
+                AuthentificationService.AuthentificationResult result = null;
 
-                if (result.Succeed)
+                try
+                {
+                    result = await this.authentificationService.CheckAuthentificationAsync(userInfo);
+                }
+                catch (Exception exception)
+                {
+                    this.Logger.LogErrorException(exception);
+                }
+
+                if (result != null && result.Succeed)
                 {
                     this.Logger.Debug("Authentification succeded.");
 
@@ -73,15 +91,24 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
                     this.Logger.Debug("Saving user info and password.");
                     this.googleAccountService.SetUserInfo(userInfo);
+
+                    this.navigationService.NavigateTo<IProgressLoadingView>();
                 }
                 else
                 {
-                    this.Logger.Debug("Authentification is not succeded. {0}.", result.ErrorMessage);
-                    this.BindingModel.ErrorMessage = result.ErrorMessage;
+                    if (result != null)
+                    {
+                        this.Logger.Debug("Authentification is not succeded. {0}.", result.ErrorMessage);
+                        this.BindingModel.ErrorMessage = result.ErrorMessage;
+                    }
+                    else
+                    {
+                        this.BindingModel.ErrorMessage = "Could not authentificate. Please check network connection.";
+                    }
                 }
-
-                return result.Succeed;
             }
+
+            this.BindingModel.IsSigningIn = false;
         }
     }
 }

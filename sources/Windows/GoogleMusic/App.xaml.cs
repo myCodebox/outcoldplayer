@@ -47,7 +47,9 @@ namespace OutcoldSolutions.GoogleMusic
         {
             using (var registration = Container.Registration())
             {
+#if DEBUG
                 registration.Register<IDebugConsole>().AsSingleton<DebugConsole>();
+#endif
 
                 registration.Register<PlaylistViewResolver>();
 
@@ -63,10 +65,10 @@ namespace OutcoldSolutions.GoogleMusic
                             .And<PlayerViewPresenter>()
                             .AsSingleton<PlayerViewPresenter>();
 
-                registration.Register<IAuthentificationView>()
-                            .InjectionRule<PresenterBase, AuthentificationPresenter>()
+                registration.Register<IAuthentificationPageView>()
+                            .InjectionRule<PresenterBase, AuthentificationPageViewPresenter>()
                             .As<AuthentificationPageView>();
-                registration.Register<AuthentificationPresenter>();
+                registration.Register<AuthentificationPageViewPresenter>();
 
                 registration.Register<IStartPageView>()
                             .InjectionRule<PresenterBase, StartPageViewPresenter>()

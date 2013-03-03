@@ -8,6 +8,10 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
     using Windows.UI.Xaml;
 
+    public interface IProgressLoadingView : IPageView
+    {
+    }
+
     public sealed partial class ProgressLoadingPageView : PageViewBase, IProgressLoadingView
     {
         private ProgressLoadingPresenter presenter;

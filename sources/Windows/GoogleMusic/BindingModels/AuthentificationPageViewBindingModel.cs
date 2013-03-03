@@ -3,16 +3,15 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.BindingModels
 {
-    using System;
-
     using OutcoldSolutions.BindingModels;
 
-    public class UserAuthentificationBindingModel : BindingModelBase
+    public class AuthentificationPageViewBindingModel : BindingModelBase
     {
         private string email;
         private string password;
         private bool rememberAccount;
         private string errorMessage;
+        private bool isSigningIn;
 
         public string Email
         {
@@ -23,11 +22,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
             set
             {
-                if (!string.Equals(this.email, value, StringComparison.CurrentCulture))
-                {
-                    this.email = value;
-                    this.RaiseCurrentPropertyChanged();
-                }
+                this.SetValue(ref this.email, value);
             }
         }
 
@@ -40,11 +35,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
             set
             {
-                if (!string.Equals(this.password, value, StringComparison.CurrentCulture))
-                {
-                    this.password = value;
-                    this.RaiseCurrentPropertyChanged();
-                }
+                this.SetValue(ref this.password, value);
             }
         }
 
@@ -57,11 +48,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
             set
             {
-                if (this.rememberAccount != value)
-                {
-                    this.rememberAccount = value;
-                    this.RaiseCurrentPropertyChanged();
-                }
+                this.SetValue(ref this.rememberAccount, value);
             }
         }
 
@@ -74,11 +61,20 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
             set
             {
-                if (!string.Equals(this.errorMessage, value, StringComparison.CurrentCulture))
-                {
-                    this.errorMessage = value;
-                    this.RaiseCurrentPropertyChanged();
-                }
+                this.SetValue(ref this.errorMessage, value);
+            }
+        }
+
+        public bool IsSigningIn
+        {
+            get
+            {
+                return this.isSigningIn;
+            }
+
+            set
+            {
+                this.SetValue(ref this.isSigningIn, value);
             }
         }
     }

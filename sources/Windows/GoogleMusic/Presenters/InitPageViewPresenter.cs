@@ -3,9 +3,9 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Presenters
 {
-    using System.Threading.Tasks;
+    using System;
 
-    using OutcoldSolutions.GoogleMusic.BindingModels;
+    using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
     using OutcoldSolutions.Presenters;
@@ -26,7 +26,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.authentificationService = authentificationService;
             this.navigationService = navigationService;
             this.sessionService = sessionService;
-            this.BindingModel = new InitPageViewBindingModel();
 
             this.sessionService.SessionCleared += (sender, args) => this.Dispatcher.RunAsync(
                 () =>
@@ -35,34 +34,41 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     container.Resolve<ISettingsCommands>().Unregister();
 
                     this.navigationService.ClearHistory();
-                    this.navigationService.NavigateTo<IAuthentificationView>(keepInHistory: false);
+                    this.navigationService.NavigateTo<IAuthentificationPageView>(keepInHistory: false);
                 });
         }
 
-        public InitPageViewBindingModel BindingModel { get; private set; }
-
-        public override void OnNavigatedTo(NavigatedToEventArgs parameter)
+        public override async void OnNavigatedTo(NavigatedToEventArgs parameter)
         {
             base.OnNavigatedTo(parameter);
+            
+            AuthentificationService.AuthentificationResult result = null;
 
-            this.BindingModel.Message = "Signing in...";
+            try
+            {
+                this.Logger.Debug("Verifying authentification.");
+                result = await this.authentificationService.CheckAuthentificationAsync();
+            }
+            catch (Exception e)
+            {
+                this.Logger.LogErrorException(e);
+            }
 
-            this.Logger.Debug("Checking authentification.");
-            this.authentificationService.CheckAuthentificationAsync().ContinueWith(
-                task =>
-                    {
-                        if (task.IsCompleted && !task.IsFaulted && task.Result.Succeed)
-                        {
-                            this.Logger.Debug("User is logged in. Going to start view and showing player.");
-                            this.navigationService.NavigateTo<IProgressLoadingView>(keepInHistory: false);
-                        }
-                        else
-                        {
-                            this.Logger.Debug("User is not logged in. Showing authentification view.");
-                            this.navigationService.NavigateTo<IAuthentificationView>(keepInHistory: false);
-                        }
-                    },
-                TaskScheduler.FromCurrentSynchronizationContext());
+            if (result != null && result.Succeed)
+            {
+                this.Logger.Debug("User is logged in. Going to IProgressLoadingView.");
+                this.navigationService.NavigateTo<IProgressLoadingView>(keepInHistory: false);
+            }
+            else
+            {
+                if (result != null)
+                {
+                    this.Logger.Debug("We got an error message from google services: '{0}'.", result.ErrorMessage);
+                }
+
+                this.Logger.Debug("User is not logged in. Going to IAuthentificationPageView.");
+                this.navigationService.NavigateTo<IAuthentificationPageView>(keepInHistory: false);
+            }
         }
     }
 }

@@ -38,7 +38,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
             this.navigationService.NavigatedTo += (sender, args) =>
                 {
-                    var isVisible = !(args.View is IAuthentificationView) 
+                    var isVisible = !(args.View is IAuthentificationPageView) 
                                     && !(args.View is IInitPageView)
                                     && !(args.View is IProgressLoadingView);
 
