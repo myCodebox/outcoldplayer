@@ -4,7 +4,8 @@
 
 namespace OutcoldSolutions.GoogleMusic.Views.Settings
 {
-    using Windows.ApplicationModel.Store;
+    using OutcoldSolutions.GoogleMusic.Services;
+
     using Windows.UI.ApplicationSettings;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
@@ -16,19 +17,8 @@ namespace OutcoldSolutions.GoogleMusic.Views.Settings
         {
             this.InitializeComponent();
 
-#if DEBUG
-            this.AdFreePackageButton.IsEnabled =
-                !CurrentAppSimulator.LicenseInformation.ProductLicenses["AdFreeUnlimited"].IsActive;
-
-            this.UltimatePackageButton.IsEnabled =
-                !CurrentAppSimulator.LicenseInformation.ProductLicenses["Ultimate"].IsActive;
-#else
-            this.AdFreePackageButton.IsEnabled =
-                !CurrentApp.LicenseInformation.ProductLicenses["AdFreeUnlimited"].IsActive;
-
-            this.UltimatePackageButton.IsEnabled =
-                !CurrentApp.LicenseInformation.ProductLicenses["Ultimate"].IsActive;
-#endif
+            this.AdFreePackageButton.IsEnabled = !InAppPurchases.IsActive(InAppPurchases.AdFreeUnlimitedInAppPurchase);
+            this.UltimatePackageButton.IsEnabled = !InAppPurchases.IsActive(InAppPurchases.UltimateInAppPurchase);
         }
 
         private void BackButtonClick(object sender, RoutedEventArgs e)
@@ -43,11 +33,9 @@ namespace OutcoldSolutions.GoogleMusic.Views.Settings
             if (this.AdFreePackageButton.IsEnabled)
             {
                 this.AdFreePackageButton.IsEnabled = false;
-#if DEBUG
-                var taskResult = CurrentAppSimulator.RequestProductPurchaseAsync("AdFreeUnlimited", false);
-#else
-                CurrentApp.RequestProductPurchaseAsync("AdFreeUnlimited", false);
-#endif
+
+                // TODO: Log result
+                InAppPurchases.RequestPurchase(InAppPurchases.AdFreeUnlimitedInAppPurchase);
                 this.Close();
             }
         }
@@ -57,11 +45,9 @@ namespace OutcoldSolutions.GoogleMusic.Views.Settings
             if (this.UltimatePackageButton.IsEnabled)
             {
                 this.UltimatePackageButton.IsEnabled = false;
-#if DEBUG
-                var taskResult = CurrentAppSimulator.RequestProductPurchaseAsync("Ultimate", false);
-#else
-                CurrentApp.RequestProductPurchaseAsync("Ultimate", false);
-#endif
+
+                // TODO: Log result
+                InAppPurchases.RequestPurchase(InAppPurchases.UltimateInAppPurchase);
                 this.Close();
             }
         }

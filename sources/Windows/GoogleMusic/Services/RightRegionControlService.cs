@@ -3,17 +3,12 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Services
 {
-    using System;
-
     using Microsoft.Advertising.WinRT.UI;
 
     using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Views;
     using OutcoldSolutions.Views;
 
-    using Windows.ApplicationModel;
-    using Windows.ApplicationModel.Store;
-    using Windows.Storage;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
 
@@ -38,12 +33,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
             this.navigationService = navigationService;
             this.regionProvider = regionProvider;
             this.settingsCommands = settingsCommands;
-#if DEBUG
-            this.LoadFakeAdds();
-            CurrentAppSimulator.LicenseInformation.LicenseChanged += this.UpdateAdControl;
-#else
-            CurrentApp.LicenseInformation.LicenseChanged += this.UpdateAdControl;
-#endif
+
+            InAppPurchases.LicenseChanged += this.UpdateAdControl;
 
             this.navigationService.NavigatedTo += (sender, args) =>
                 {
@@ -55,34 +46,9 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 };
         }
 
-#if DEBUG
-        private async void LoadFakeAdds()
-        {
-            StorageFolder proxyDataFolder = await Package.Current.InstalledLocation.GetFolderAsync("Resources");
-            StorageFile proxyFile = await proxyDataFolder.GetFileAsync("in-app-purchase.xml");
-
-            await CurrentAppSimulator.ReloadSimulatorAsync(proxyFile);
-        }
-#endif
-
-        private bool IsAdFree()
-        {
-#if DEBUG
-            return (CurrentAppSimulator.LicenseInformation.ProductLicenses.ContainsKey("AdFreeUnlimited")
-                && CurrentAppSimulator.LicenseInformation.ProductLicenses["AdFreeUnlimited"].IsActive)
-                || (CurrentAppSimulator.LicenseInformation.ProductLicenses.ContainsKey("Ultimate")
-                && CurrentAppSimulator.LicenseInformation.ProductLicenses["Ultimate"].IsActive);
-#else
-            return (CurrentApp.LicenseInformation.ProductLicenses.ContainsKey("AdFreeUnlimited")
-                && CurrentApp.LicenseInformation.ProductLicenses["AdFreeUnlimited"].IsActive)
-                || (CurrentApp.LicenseInformation.ProductLicenses.ContainsKey("Ultimate")
-                && CurrentApp.LicenseInformation.ProductLicenses["Ultimate"].IsActive);
-#endif
-        }
-
         private void UpdateAdControl()
         {
-            if (this.IsAdFree())
+            if (InAppPurchases.HasFeature(GoogleMusicFeatures.AdFree))
             {
                 if (this.adControl != null)
                 {

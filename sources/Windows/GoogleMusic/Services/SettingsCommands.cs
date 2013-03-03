@@ -67,7 +67,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
             args.Request.ApplicationCommands.Add(cmd);
 
-            if (!this.AllPurchased())
+            if (!InAppPurchases.HasFeature(GoogleMusicFeatures.All))
             {
                 cmd = new SettingsCommand("upgrade", "Upgrade", (x) => this.CreatePopup(new UpgradeView())); 
                 args.Request.ApplicationCommands.Add(cmd);
@@ -86,17 +86,6 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 (x) => this.CreatePopup(new PrivacyView()));
 
             args.Request.ApplicationCommands.Add(cmd);
-        }
-
-        private bool AllPurchased()
-        {
-#if DEBUG
-            return CurrentAppSimulator.LicenseInformation.ProductLicenses.ContainsKey("Ultimate")
-                && CurrentAppSimulator.LicenseInformation.ProductLicenses["Ultimate"].IsActive;
-#else
-            return CurrentApp.LicenseInformation.ProductLicenses.ContainsKey("Ultimate")
-                && CurrentApp.LicenseInformation.ProductLicenses["Ultimate"].IsActive;
-#endif
         }
 
         private void CreatePopup(UserControl view, PopupType type = PopupType.Settings)

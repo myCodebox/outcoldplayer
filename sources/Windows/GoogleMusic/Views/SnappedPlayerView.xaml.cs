@@ -33,11 +33,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
             this.logger = ApplicationBase.Container.Resolve<ILogManager>().CreateLogger("SnappedPlayerView");
 
-#if DEBUG
-            CurrentAppSimulator.LicenseInformation.LicenseChanged += this.UpdateAdControl;
-#else
-            CurrentApp.LicenseInformation.LicenseChanged += this.UpdateAdControl;
-#endif
+            InAppPurchases.LicenseChanged += this.UpdateAdControl;
             this.UpdateAdControl();
 
             this.Loaded += this.OnLoaded;
@@ -60,29 +56,14 @@ namespace OutcoldSolutions.GoogleMusic.Views
             this.Rating.Value = (currentSong != null) ? currentSong.Rating : 0;
         }
 
-        private bool IsAdFree()
-        {
-#if DEBUG
-            return (CurrentAppSimulator.LicenseInformation.ProductLicenses.ContainsKey("AdFreeUnlimited")
-                && CurrentAppSimulator.LicenseInformation.ProductLicenses["AdFreeUnlimited"].IsActive)
-                || (CurrentAppSimulator.LicenseInformation.ProductLicenses.ContainsKey("Ultimate")
-                && CurrentAppSimulator.LicenseInformation.ProductLicenses["Ultimate"].IsActive);
-#else
-            return (CurrentApp.LicenseInformation.ProductLicenses.ContainsKey("AdFreeUnlimited")
-                && CurrentApp.LicenseInformation.ProductLicenses["AdFreeUnlimited"].IsActive)
-                || (CurrentApp.LicenseInformation.ProductLicenses.ContainsKey("Ultimate")
-                && CurrentApp.LicenseInformation.ProductLicenses["Ultimate"].IsActive);
-#endif
-        }
-
         private void UpdateAdControl()
         {
-            if (this.IsAdFree())
+            if (InAppPurchases.HasFeature(GoogleMusicFeatures.AdFree))
             {
                 if (this.adControl != null)
                 {
                     this.SnappedGrid.Children.Remove(this.adControl);
-                    this.adControl.ErrorOccurred -= AdControlOnErrorOccurred;
+                    this.adControl.ErrorOccurred -= this.AdControlOnErrorOccurred;
                     this.adControl = null;
                 }
             }
@@ -99,7 +80,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
                         HorizontalAlignment = HorizontalAlignment.Center,
                         UseStaticAnchor = true
                     };
-                    this.adControl.ErrorOccurred += AdControlOnErrorOccurred;
+                    this.adControl.ErrorOccurred += this.AdControlOnErrorOccurred;
                     Grid.SetRow(this.adControl, 7);
                     this.SnappedGrid.Children.Add(this.adControl);
                 }

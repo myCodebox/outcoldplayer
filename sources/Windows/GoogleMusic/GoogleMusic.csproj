@@ -152,6 +152,7 @@
     <Compile Include="Presenters\SearchPageViewPresenter.cs" />
     <Compile Include="Presenters\Settings\AccountPageViewPresenter.cs" />
     <Compile Include="Presenters\StartPageViewPresenter.cs" />
+    <Compile Include="Services\InAppPurchases.cs" />
     <Compile Include="Services\RightRegionControlService.cs" />
     <Compile Include="Services\ICurrentPlaylistService.cs" />
     <Compile Include="Services\ISearchService.cs" />

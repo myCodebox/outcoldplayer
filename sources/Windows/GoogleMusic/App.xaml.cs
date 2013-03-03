@@ -251,6 +251,10 @@ namespace OutcoldSolutions.GoogleMusic
                                                                           MenuItemMetadata.FromViewType<IPlaylistsPageView>("Genres", PlaylistsRequest.Genres)
                                                                       });
 
+#if DEBUG
+           InAppPurchases.SimulatorInAppPurchasesInitialization();
+#endif
+
             Container.Resolve<INavigationService>().NavigateTo<IInitPageView>(keepInHistory: false);
         }
 
