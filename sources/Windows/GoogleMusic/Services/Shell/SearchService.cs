@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // Outcold Solutions (http://outcoldman.com)
 // --------------------------------------------------------------------------------------------------------------------
-namespace OutcoldSolutions.GoogleMusic.Services
+namespace OutcoldSolutions.GoogleMusic.Services.Shell
 {
     using System;
     using System.Collections.Generic;
@@ -28,10 +28,10 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         private readonly INavigationService navigationService;
         private readonly IDispatcher dispatcher;
-
         private readonly IPlaylistCollectionsService playlistCollectionsService;
-
         private readonly ISongsRepository songsRepository;
+
+        private bool isRegistered = false;
 
         public SearchService(
             INavigationService navigationService, 
@@ -43,9 +43,46 @@ namespace OutcoldSolutions.GoogleMusic.Services
             this.dispatcher = dispatcher;
             this.playlistCollectionsService = playlistCollectionsService;
             this.songsRepository = songsRepository;
+
+            this.navigationService.NavigatedTo += this.OnNavigatedTo;
         }
 
-        public void Register()
+        public void Activate()
+        {
+            var searchPane = SearchPane.GetForCurrentView();
+            searchPane.Show();
+        }
+
+        public void SetShowOnKeyboardInput(bool value)
+        {
+            var searchPane = SearchPane.GetForCurrentView();
+            searchPane.ShowOnKeyboardInput = value;
+        }
+
+        private void OnNavigatedTo(object sender, NavigatedToEventArgs navigatedToEventArgs)
+        {
+            if (navigatedToEventArgs.View is IAuthentificationPageView
+                || navigatedToEventArgs.View is IProgressLoadingView
+                || navigatedToEventArgs.View is IReleasesHistoryPageView
+                || navigatedToEventArgs.View is IInitPageView)
+            {
+                if (this.isRegistered)
+                {
+                    this.Unregister();
+                    this.isRegistered = false;
+                }
+            }
+            else
+            {
+                if (!this.isRegistered)
+                {
+                    this.Register();
+                    this.isRegistered = true;
+                }
+            }
+        }
+
+        private void Register()
         {
             var searchPane = SearchPane.GetForCurrentView();
             searchPane.ShowOnKeyboardInput = true;
@@ -54,19 +91,13 @@ namespace OutcoldSolutions.GoogleMusic.Services
             searchPane.QuerySubmitted += this.SearchPaneOnQuerySubmitted;
         }
 
-        public void Unregister()
+        private void Unregister()
         {
             var searchPane = SearchPane.GetForCurrentView();
             searchPane.ShowOnKeyboardInput = false;
             searchPane.SuggestionsRequested -= this.OnSuggestionsRequested;
             searchPane.ResultSuggestionChosen -= this.SearchPaneOnResultSuggestionChosen;
             searchPane.QuerySubmitted -= this.SearchPaneOnQuerySubmitted;
-        }
-
-        public void SetShowOnKeyboardInput(bool value)
-        {
-            var searchPane = SearchPane.GetForCurrentView();
-            searchPane.ShowOnKeyboardInput = value;
         }
 
         private async void SearchPaneOnQuerySubmitted(SearchPane sender, SearchPaneQuerySubmittedEventArgs args)

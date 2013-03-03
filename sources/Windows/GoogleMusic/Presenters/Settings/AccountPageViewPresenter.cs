@@ -7,6 +7,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
     using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Services.Publishers;
+    using OutcoldSolutions.GoogleMusic.Services.Shell;
     using OutcoldSolutions.GoogleMusic.Views;
     using OutcoldSolutions.GoogleMusic.Web.Lastfm;
     using OutcoldSolutions.Presenters;
@@ -18,7 +19,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
         private readonly IGoogleMusicSessionService sessionService;
         private readonly ILastfmWebService lastfmWebService;
         private readonly ICurrentSongPublisherService publisherService;
-        private readonly ISettingsCommands settingsCommands;
+        private readonly IApplicationSettingViewsService settingsCommands;
         private readonly ISongsRepository songsRepository;
         private readonly IMusicPlaylistRepository musicPlaylistRepository;
         private readonly INavigationService navigationService;
@@ -29,7 +30,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
             IGoogleMusicSessionService sessionService,
             ILastfmWebService lastfmWebService,
             ICurrentSongPublisherService publisherService,
-            ISettingsCommands settingsCommands,
+            IApplicationSettingViewsService settingsCommands,
             ISongsRepository songsRepository,
             IMusicPlaylistRepository musicPlaylistRepository,
             INavigationService navigationService)

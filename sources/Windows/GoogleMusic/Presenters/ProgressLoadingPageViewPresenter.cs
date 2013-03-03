@@ -10,6 +10,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Services;
+    using OutcoldSolutions.GoogleMusic.Services.Shell;
     using OutcoldSolutions.GoogleMusic.Views;
     using OutcoldSolutions.GoogleMusic.Web;
     using OutcoldSolutions.Presenters;
@@ -31,13 +32,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private readonly IMusicPlaylistRepository musicPlaylistRepository;
         private readonly ISongsRepository songsRepository;
         private readonly INavigationService navigationService;
-        private readonly ISearchService searchService;
         private readonly ISettingsService settingsService;
 
         public ProgressLoadingPageViewPresenter(
             IDependencyResolverContainer container,
             INavigationService navigationService,
-            ISearchService searchService,
             ISettingsService settingsService,
             ISongWebService songWebService,
             IMusicPlaylistRepository musicPlaylistRepository,
@@ -45,7 +44,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             : base(container)
         {
             this.navigationService = navigationService;
-            this.searchService = searchService;
             this.settingsService = settingsService;
             this.songWebService = songWebService;
             this.musicPlaylistRepository = musicPlaylistRepository;
@@ -91,7 +89,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             var currentVersion = this.settingsService.GetValue<string>("Version", CurrentVersion);
             if (string.Equals(currentVersion, CurrentVersion, StringComparison.OrdinalIgnoreCase))
             {
-                this.searchService.Register();
                 this.navigationService.NavigateTo<IStartPageView>();
             }
             else

@@ -8,6 +8,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Presenters;
     using OutcoldSolutions.GoogleMusic.Services;
+    using OutcoldSolutions.GoogleMusic.Services.Shell;
     using OutcoldSolutions.Views;
 
     using Windows.System;

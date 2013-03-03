@@ -6,6 +6,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
     using Microsoft.Advertising.WinRT.UI;
 
     using OutcoldSolutions.Diagnostics;
+    using OutcoldSolutions.GoogleMusic.Services.Shell;
     using OutcoldSolutions.GoogleMusic.Views;
     using OutcoldSolutions.Views;
 
@@ -16,7 +17,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
     {
         private readonly INavigationService navigationService;
         private readonly IMainFrameRegionProvider regionProvider;
-        private readonly ISettingsCommands settingsCommands;
+        private readonly IApplicationSettingViewsService settingsCommands;
         private readonly ILogger logger;
 
         private AdControl adControl;
@@ -27,7 +28,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             INavigationService navigationService,
             ILogManager logManager,
             IMainFrameRegionProvider regionProvider,
-            ISettingsCommands settingsCommands)
+            IApplicationSettingViewsService settingsCommands)
         {
             this.logger = logManager.CreateLogger("RightRegionControlService");
             this.navigationService = navigationService;

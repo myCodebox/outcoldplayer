@@ -19,6 +19,7 @@ namespace OutcoldSolutions.GoogleMusic
     using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Services.Publishers;
+    using OutcoldSolutions.GoogleMusic.Services.Shell;
     using OutcoldSolutions.GoogleMusic.Views;
     using OutcoldSolutions.GoogleMusic.Views.Popups;
     using OutcoldSolutions.GoogleMusic.Views.Settings;
@@ -128,7 +129,7 @@ namespace OutcoldSolutions.GoogleMusic
                 registration.Register<AddToPlaylistPopupViewPresenter>();
 
                 // Settings
-                registration.Register<ISettingsCommands>().AsSingleton<SettingsCommands>();
+                registration.Register<IApplicationSettingViewsService>().AsSingleton<ApplicationSettingViewsService>();
                 registration.Register<ISearchService>().AsSingleton<SearchService>();
 
                 // Settings views
@@ -215,7 +216,8 @@ namespace OutcoldSolutions.GoogleMusic
                 currentSongPublisherService.AddPublisher<LastFmCurrentSongPublisher>();
             }
 
-            Container.Resolve<ISettingsCommands>().Register();
+            Container.Resolve<IApplicationSettingViewsService>();
+            Container.Resolve<ISearchService>();
         }
 
         protected override void OnActivated()

@@ -155,11 +155,11 @@
     <Compile Include="Services\InAppPurchases.cs" />
     <Compile Include="Services\RightRegionControlService.cs" />
     <Compile Include="Services\ICurrentPlaylistService.cs" />
-    <Compile Include="Services\ISearchService.cs" />
-    <Compile Include="Services\ISettingsCommands.cs" />
+    <Compile Include="Services\Shell\ISearchService.cs" />
+    <Compile Include="Services\Shell\IApplicationSettingViewsService.cs" />
     <Compile Include="Services\Publishers\TileCurrentSongPublisher.cs" />
-    <Compile Include="Services\SearchService.cs" />
-    <Compile Include="Services\SettingsCommands.cs" />
+    <Compile Include="Services\Shell\SearchService.cs" />
+    <Compile Include="Services\Shell\ApplicationSettingViewsService.cs" />
     <Compile Include="Services\SettingsService.cs" />
     <Compile Include="Services\GoogleAccountService.cs" />
     <Compile Include="Views\AlbumPageView.xaml.cs">

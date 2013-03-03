@@ -1,32 +1,32 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // Outcold Solutions (http://outcoldman.com)
 // --------------------------------------------------------------------------------------------------------------------
-namespace OutcoldSolutions.GoogleMusic.Services
+namespace OutcoldSolutions.GoogleMusic.Services.Shell
 {
     using System.Collections.Generic;
 
-    using OutcoldSolutions.GoogleMusic.Views;
     using OutcoldSolutions.GoogleMusic.Views.Popups;
     using OutcoldSolutions.GoogleMusic.Views.Settings;
 
-    using Windows.ApplicationModel.Store;
     using Windows.UI.ApplicationSettings;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Controls.Primitives;
 
-    public class SettingsCommands : ISettingsCommands
+    public class ApplicationSettingViewsService : IApplicationSettingViewsService
     {
         private const double SettingsWidth = 346;
         private const double LargeSettingsWidth = 646;
 
         private readonly Dictionary<Popup, PopupType> settingsPopups = new Dictionary<Popup, PopupType>();
-
+        
         private readonly IDependencyResolverContainer container;
 
-        public SettingsCommands(IDependencyResolverContainer container)
+        public ApplicationSettingViewsService(IDependencyResolverContainer container)
         {
             this.container = container;
+
+            SettingsPane.GetForCurrentView().CommandsRequested += this.CommandsRequested;
         }
 
         private enum PopupType
@@ -34,16 +34,6 @@ namespace OutcoldSolutions.GoogleMusic.Services
             Settings,
             LargeSettings,
             Full
-        }
-
-        public void Register()
-        {
-            SettingsPane.GetForCurrentView().CommandsRequested += this.CommandsRequested;
-        }
-
-        public void Unregister()
-        {
-            SettingsPane.GetForCurrentView().CommandsRequested -= this.CommandsRequested;
         }
 
         public void ActivateSettings(string name)

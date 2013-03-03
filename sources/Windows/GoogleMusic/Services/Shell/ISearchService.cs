@@ -1,14 +1,12 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // Outcold Solutions (http://outcoldman.com)
 // --------------------------------------------------------------------------------------------------------------------
-namespace OutcoldSolutions.GoogleMusic.Services
+namespace OutcoldSolutions.GoogleMusic.Services.Shell
 {
-    public interface ISettingsCommands
+    public interface ISearchService
     {
-        void Register();
+        void Activate();
 
-        void Unregister();
-
-        void ActivateSettings(string name);
+        void SetShowOnKeyboardInput(bool value);
     }
 }

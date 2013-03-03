@@ -30,9 +30,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.sessionService.SessionCleared += (sender, args) => this.Dispatcher.RunAsync(
                 () =>
                 {
-                    container.Resolve<ISearchService>().Unregister();
-                    container.Resolve<ISettingsCommands>().Unregister();
-
                     this.navigationService.ClearHistory();
                     this.navigationService.NavigateTo<IAuthentificationPageView>(keepInHistory: false);
                 });
