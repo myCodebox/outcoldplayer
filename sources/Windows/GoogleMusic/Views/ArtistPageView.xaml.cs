@@ -6,6 +6,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
     using System.Diagnostics;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
+    using OutcoldSolutions.Views;
 
     using Windows.UI.Xaml.Controls;
 
@@ -18,7 +19,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
         public ArtistPageView()
         {
             this.InitializeComponent();
-            this.TrackListViewBase(this.GridView);
+            this.TrackItemsControl(this.GridView);
         }
 
         private void PlaylistItemClick(object sender, ItemClickEventArgs e)
@@ -28,7 +29,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
             Debug.Assert(album != null, "album != null");
             if (album != null)
             {
-                this.NavigationService.NavigateToView<PlaylistViewResolver>(album.Playlist);
+                this.NavigationService.ResolveAndNavigateTo<PlaylistViewResolver>(album.Playlist);
             }
         }
     }

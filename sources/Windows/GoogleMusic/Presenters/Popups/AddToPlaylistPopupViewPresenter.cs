@@ -7,11 +7,12 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
     using System.Linq;
     using System.Threading.Tasks;
 
-    using OutcoldSolutions.GoogleMusic.Diagnostics;
+    using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views.Popups;
+    using OutcoldSolutions.Presenters;
 
     public class AddToPlaylistPopupViewPresenter : ViewPresenterBase<IAddToPlaylistPopupView>
     {

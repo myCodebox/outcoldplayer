@@ -10,16 +10,17 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using System.Linq;
     using System.Threading.Tasks;
 
+    using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.BindingModels;
-    using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
+    using OutcoldSolutions.Presenters;
 
     using Windows.UI.Popups;
 
-    public class PlaylistsPageViewPresenter : PagePresenterBase<IPlaylistsPageView, PlaylistsPageViewBindingModel>
+    public class PlaylistsPageViewPresenter : DataPagePresenterBase<IPlaylistsPageView, PlaylistsPageViewBindingModel>
     {
         private readonly IPlaylistCollectionsService playlistCollectionsService;
         private readonly IMusicPlaylistRepository musicPlaylistRepository;
@@ -89,7 +90,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         protected override async Task LoadDataAsync(NavigatedToEventArgs navigatedToEventArgs)
         {
             this.currentRequest = (PlaylistsRequest)navigatedToEventArgs.Parameter;
-            this.BindingModel.Title = this.currentRequest.ToString();
 
             await Task.Run(() => this.RefreshPlaylists());
 
@@ -166,7 +166,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         {
             var playlists = await this.LoadPlaylistsAsync();
             this.BindingModel.Groups = playlists;
-            this.BindingModel.Count = this.BindingModel.Groups.Sum(x => x.Playlists.Count);
+            this.BindingModel.Title = string.Format("{0} ({1})", this.currentRequest.ToString(), this.BindingModel.Groups.Sum(x => x.Playlists.Count));
         }
 
         private void DetelePlaylist()

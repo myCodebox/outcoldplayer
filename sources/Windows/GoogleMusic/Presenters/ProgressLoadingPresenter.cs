@@ -6,12 +6,14 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using System;
     using System.Threading.Tasks;
 
+    using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.BindingModels;
-    using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
     using OutcoldSolutions.GoogleMusic.Web;
+    using OutcoldSolutions.Presenters;
+    using OutcoldSolutions.Views;
 
     using Windows.System;
     using Windows.UI.Core;
@@ -38,7 +40,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private readonly ISettingsService settingsService;
 
         public ProgressLoadingPresenter(
-            IDependencyResolverContainer container, 
+            IDependencyResolverContainer container,
             INavigationService navigationService,
             ISearchService searchService,
             ISettingsService settingsService,
@@ -78,38 +80,37 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                                                     int startsCount = this.settingsService.GetRoamingValue<int>(CountOfStartsBeforeReview);
                                                     if (startsCount >= AskForReviewStarts)
                                                     {
-                                    var dialog =
-                                        new MessageDialog(
-                                            "If you are enjoy using gMusic appication, would you mind taking a moment to rate it? Good ratings help us a lot. It won't take more than a minute. Thanks for your support!");
+                                                        var dialog =
+                                                            new MessageDialog(
+                                                                "If you are enjoy using gMusic appication, would you mind taking a moment to rate it? Good ratings help us a lot. It won't take more than a minute. Thanks for your support!");
                                                         dialog.Commands.Add(
                                                             new UICommand(
                                                                 "Rate",
                                                                 (cmd) =>
                                                                 {
-                                                    this.settingsService.SetRoamingValue<bool>(
-                                                        DoNotAskToReviewKey, true);
-                                                    var tLauncher =
-                                                        Launcher.LaunchUriAsync(
-                                                            new Uri(
-                                                                "ms-windows-store:REVIEW?PFN=47286outcoldman.gMusic_z1q2m7teapq4y"));
+                                                                    this.settingsService.SetRoamingValue<bool>(
+                                                                        DoNotAskToReviewKey, true);
+                                                                    this.Logger.LogTask(Launcher.LaunchUriAsync(
+                                                                            new Uri("ms-windows-store:REVIEW?PFN=47286outcoldman.gMusic_z1q2m7teapq4y")).AsTask());
                                                                 }));
                                                         dialog.Commands.Add(
                                                             new UICommand(
                                                                 "No, thanks",
-                                            (cmd) =>
-                                            this.settingsService.SetRoamingValue<bool>(DoNotAskToReviewKey, true)));
+                                                                (cmd) =>
+                                                                this.settingsService.SetRoamingValue<bool>(
+                                                                    DoNotAskToReviewKey, true)));
                                                         dialog.Commands.Add(
                                                             new UICommand(
                                                                 "Remind me later",
-                                            (cmd) =>
-                                            this.settingsService.SetRoamingValue<int>(CountOfStartsBeforeReview, 0)));
+                                                                (cmd) =>
+                                                                this.settingsService.SetRoamingValue<int>(
+                                                                    CountOfStartsBeforeReview, 0)));
 
-                                                        var tResult = dialog.ShowAsync();
+                                                        this.Logger.LogTask(dialog.ShowAsync().AsTask());
                                                     }
                                                     else
                                                     {
-                                    this.settingsService.SetRoamingValue<int>(
-                                        CountOfStartsBeforeReview, startsCount + 1);
+                                                        this.settingsService.SetRoamingValue<int>(CountOfStartsBeforeReview, startsCount + 1);
                                                     }
                                                 }
 
@@ -130,32 +131,32 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                                             else
                                             {
                                                 this.Logger.LogTask(tSongs);
-                                                
+
                                                 this.BindingModel.Message = "Cannot load data...";
                                                 this.BindingModel.IsFailed = true;
                                             }
                                         },
                                         TaskScheduler.FromCurrentSynchronizationContext());
-                                }
+        }
 
         private async Task InitializeRepositories()
         {
             await this.Dispatcher.RunAsync(
                 () =>
-                    {
-                        this.BindingModel.Progress = 0;
-                        this.BindingModel.Message = "Initializing...";
-                        this.BindingModel.IsFailed = false;
-                    });
+                {
+                    this.BindingModel.Progress = 0;
+                    this.BindingModel.Message = "Initializing...";
+                    this.BindingModel.IsFailed = false;
+                });
 
             var status = await this.songWebService.GetStatusAsync();
 
             await this.Dispatcher.RunAsync(
                 () =>
-                    {
-                        this.BindingModel.Maximum = status.AvailableTracks * 1.5;
-                        this.BindingModel.Message = "Loading songs...";
-                    });
+                {
+                    this.BindingModel.Maximum = status.AvailableTracks * 1.5;
+                    this.BindingModel.Message = "Loading songs...";
+                });
 
             Progress<int> progress = new Progress<int>();
             progress.ProgressChanged += async (sender, i) =>
@@ -163,7 +164,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 await this.Dispatcher.RunAsync(
                     CoreDispatcherPriority.High,
                     () =>
-                                {
+                    {
                         this.BindingModel.Progress = i;
                     });
             };
@@ -172,7 +173,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
             await this.Dispatcher.RunAsync(
                () =>
-                    {
+               {
                    this.BindingModel.Progress = status.AvailableTracks * 1.3;
                    this.BindingModel.Message = "Loading playlists...";
                });

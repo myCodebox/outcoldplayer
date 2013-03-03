@@ -9,6 +9,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
     using OutcoldSolutions.GoogleMusic.Services.Publishers;
     using OutcoldSolutions.GoogleMusic.Views;
     using OutcoldSolutions.GoogleMusic.Web.Lastfm;
+    using OutcoldSolutions.Presenters;
+    using OutcoldSolutions.Views;
 
     public class AccountPageViewPresenter : ViewPresenterBase<IPopupView>
     {

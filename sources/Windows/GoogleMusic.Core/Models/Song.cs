@@ -3,6 +3,8 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Models
 {
+    using OutcoldSolutions.BindingModels;
+
     public class Song : BindingModelBase
     {
         private SongMetadata metadata;

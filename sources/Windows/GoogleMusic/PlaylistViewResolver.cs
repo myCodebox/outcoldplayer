@@ -8,7 +8,7 @@ namespace OutcoldSolutions.GoogleMusic
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Views;
 
-    public class PlaylistViewResolver : IViewResolver
+    public class PlaylistViewResolver : IPageViewResolver
     {
         public Type GetViewType(object parameter)
         {

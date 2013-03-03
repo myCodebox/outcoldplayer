@@ -99,27 +99,9 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="ApplicationBase.cs" />
     <Compile Include="CommandIcon.cs" />
-    <Compile Include="CommandMetadata.cs" />
-    <Compile Include="Controls\ListViewBaseEx.cs" />
-    <Compile Include="DataPageViewBase.cs" />
-    <Compile Include="DateTimeExtensions.cs" />
-    <Compile Include="DelegateCommand.cs" />
-    <Compile Include="Diagnostics\DebugLogWriter.cs" />
-    <Compile Include="Diagnostics\TaskLogger.cs" />
-    <Compile Include="DispatcherContainer.cs" />
-    <Compile Include="IApplicationToolbar.cs" />
-    <Compile Include="IDataPageView.cs" />
-    <Compile Include="INavigationService.cs" />
-    <Compile Include="IPagePresenterBase.cs" />
-    <Compile Include="IPageView.cs" />
-    <Compile Include="IPopupView.cs" />
-    <Compile Include="IView.cs" />
-    <Compile Include="IViewRegionProvider.cs" />
     <Compile Include="Models\SongsGrouping.cs" />
     <Compile Include="Models\Search.cs" />
-    <Compile Include="IDispatcher.cs" />
     <Compile Include="Models\Album.cs" />
     <Compile Include="Models\Artist.cs" />
     <Compile Include="Models\Genre.cs" />
@@ -132,14 +114,6 @@
     <Compile Include="Models\SystemPlaylist.cs" />
     <Compile Include="Models\UserInfo.cs" />
     <Compile Include="Models\UserSession.cs" />
-    <Compile Include="NavigatedToEventArgs.cs" />
-    <Compile Include="NavigatingFromEventArgs.cs" />
-    <Compile Include="NavigationService.cs" />
-    <Compile Include="PageBase.cs" />
-    <Compile Include="PagePresenterBase.cs" />
-    <Compile Include="PageViewBase.cs" />
-    <Compile Include="PopupViewBase.cs" />
-    <Compile Include="PresenterBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\IMusicPlaylistRepository.cs" />
     <Compile Include="Repositories\ISongsRepository.cs" />
@@ -175,13 +149,9 @@
     <Compile Include="Services\SettingsValueChangedEventArgs.cs" />
     <Compile Include="Services\GoogleMusicSessionService.cs" />
     <Compile Include="Repositories\SystemPlaylistCollection.cs" />
-    <Compile Include="ViewBase.cs" />
-    <Compile Include="ViewPresenterBase.cs" />
-    <Compile Include="VisualTreeHelperEx.cs" />
     <Compile Include="Web\CookieContainerWrapper.cs" />
     <Compile Include="Web\GoogleAccountWebService.cs" />
     <Compile Include="Web\GoogleMusicWebService.cs" />
-    <Compile Include="Web\HttpContentExtensions.cs" />
     <Compile Include="Web\IGoogleAccountWebService.cs" />
     <Compile Include="Web\ICookieManager.cs" />
     <Compile Include="Web\IGoogleMusicWebService.cs" />
@@ -198,7 +168,6 @@
     <Compile Include="Web\Lastfm\LastfmSessionResponse.cs" />
     <Compile Include="Web\Lastfm\LastfmWebService.cs" />
     <Compile Include="Web\Lastfm\TokenResp.cs" />
-    <Compile Include="Web\LoggerWebExtensions.cs" />
     <Compile Include="Web\MediaStreamDownloadService.cs" />
     <Compile Include="Web\Models\AddPlaylistResp.cs" />
     <Compile Include="Web\Models\AddSongResp.cs" />
@@ -216,19 +185,18 @@
     <Compile Include="Web\Models\CommonResponse.cs" />
     <Compile Include="Web\PlaylistsWebService.cs" />
     <Compile Include="Web\SongWebService.cs" />
-    <Compile Include="Web\WebServiceBase.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\..\packages\Newtonsoft.Json.4.5.11\lib\winrt45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="OutcoldSolutions.Framework, Version=1.0.30217.29236, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
+    <Reference Include="OutcoldSolutions.Framework, Version=1.0.30302.28544, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\OutcoldSolutions.Framework.1.0.30217.29236\lib\portable-win+net45+sl40+wp71\OutcoldSolutions.Framework.dll</HintPath>
+      <HintPath>..\..\packages\OutcoldSolutions.Framework.1.0.30302.28544\lib\portable-win+net45+sl40+wp71\OutcoldSolutions.Framework.dll</HintPath>
     </Reference>
-    <Reference Include="OutcoldSolutions.Presentation, Version=1.0.30217.29423, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
+    <Reference Include="OutcoldSolutions.Presentation, Version=1.0.30302.34155, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\OutcoldSolutions.Presentation.1.0.30217.29423\lib\win\OutcoldSolutions.Presentation.dll</HintPath>
+      <HintPath>..\..\packages\OutcoldSolutions.Presentation.1.0.30302.34155\lib\win\OutcoldSolutions.Presentation.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

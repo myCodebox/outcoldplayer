@@ -4,10 +4,15 @@
 
 namespace OutcoldSolutions.GoogleMusic.Views
 {
-    using Windows.UI.Xaml;
-    using Windows.UI.Xaml.Controls;
+    using OutcoldSolutions.Views;
 
-    public sealed partial class PlayerView : UserControl
+    using Windows.UI.Xaml;
+
+    public interface IPlayerView : IView
+    {
+    }
+
+    public sealed partial class PlayerView : ViewBase, IPlayerView
     {
         public PlayerView()
         {

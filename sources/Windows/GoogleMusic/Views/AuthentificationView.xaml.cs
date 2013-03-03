@@ -6,12 +6,12 @@ namespace OutcoldSolutions.GoogleMusic.Views
     using System;
     using System.Threading.Tasks;
 
+    using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Presenters;
+    using OutcoldSolutions.Views;
 
     using Windows.System;
     using Windows.UI.Xaml;
-    using Windows.UI.Xaml.Controls;
-    using Windows.UI.Xaml.Input;
 
     public sealed partial class AuthentificationPageView : PageViewBase, IAuthentificationView
     {
@@ -21,8 +21,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
         {
             this.InitializeComponent();
         }
-
-        public event EventHandler Succeed;
 
         protected override void OnInitialized()
         {
@@ -42,12 +40,14 @@ namespace OutcoldSolutions.GoogleMusic.Views
                         {
                             if (!t.IsCompleted || t.IsFaulted || !t.Result)
                             {
+                                this.Logger.LogTask(t);
+
                                 this.ProgressRing.IsActive = false;
                                 this.SetLoginLayoutIsEnabled(isEnabled: true);
                             }
                             else
                             {
-                                this.RaiseSucceed();
+                                this.NavigationService.NavigateTo<IProgressLoadingView>();
                             }
                         },
                     TaskScheduler.FromCurrentSynchronizationContext());
@@ -64,16 +64,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
         private void GotoGoogleMusic(object sender, RoutedEventArgs e)
         {
-            var tResult = Launcher.LaunchUriAsync(new Uri("https://play.google.com/music"));
-        }
-
-        private void RaiseSucceed()
-        {
-            var handler = this.Succeed;
-            if (handler != null)
-            {
-                handler(this, EventArgs.Empty);
-            }
+            this.Logger.LogTask(Launcher.LaunchUriAsync(new Uri("https://play.google.com/music")).AsTask());
         }
     }
 }

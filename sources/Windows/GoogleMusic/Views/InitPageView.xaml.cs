@@ -5,7 +5,15 @@ namespace OutcoldSolutions.GoogleMusic.Views
 {
     using OutcoldSolutions.Views;
 
-    public interface IAuthentificationView : IPageView
+    public interface IInitPageView : IPageView
     {
+    }
+
+    public sealed partial class InitPageView : PageViewBase, IInitPageView
+    {
+        public InitPageView()
+        {
+            this.InitializeComponent();
+        }
     }
 }

@@ -4,6 +4,8 @@
 
 namespace OutcoldSolutions.GoogleMusic.Views.Settings
 {
+    using OutcoldSolutions.Views;
+
     using Windows.UI.ApplicationSettings;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls.Primitives;

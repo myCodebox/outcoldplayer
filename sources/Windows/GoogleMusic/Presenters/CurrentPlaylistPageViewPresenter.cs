@@ -8,15 +8,16 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using System.Diagnostics;
     using System.Threading.Tasks;
 
+    using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Controls;
-    using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
     using OutcoldSolutions.GoogleMusic.Views.Popups;
+    using OutcoldSolutions.Presenters;
 
-    public class CurrentPlaylistPageViewPresenter : PagePresenterBase<ICurrentPlaylistPageView, CurrentPlaylistPageViewBindingModel>
+    public class CurrentPlaylistPageViewPresenter : DataPagePresenterBase<ICurrentPlaylistPageView, CurrentPlaylistPageViewBindingModel>
     {
         private readonly ICurrentPlaylistService currentPlaylistService;
         private readonly ISongMetadataEditService metadataEditService;

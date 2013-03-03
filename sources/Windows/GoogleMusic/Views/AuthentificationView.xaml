@@ -1,13 +1,14 @@
-﻿<googleMusic:PageViewBase 
+﻿<views:PageViewBase 
     x:Class="OutcoldSolutions.GoogleMusic.Views.AuthentificationPageView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:googleMusic="using:OutcoldSolutions.GoogleMusic"
+    xmlns:views="using:OutcoldSolutions.Views"
     mc:Ignorable="d"
     d:DesignHeight="480"
-    d:DesignWidth="600">
+    d:DesignWidth="600"
+    IsTitleVisible="False">
     
     <Border Padding="10"  Width="600" Height="480">
         <Grid>
@@ -64,4 +65,4 @@
             </Grid>
         </Grid>
     </Border>
-</googleMusic:PageViewBase>
+</views:PageViewBase>

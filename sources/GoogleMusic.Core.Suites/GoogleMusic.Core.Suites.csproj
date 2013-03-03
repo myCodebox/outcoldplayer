@@ -41,13 +41,13 @@
     <Reference Include="nunit.framework">
       <HintPath>..\packages\NUnit.2.6.2\lib\nunit.framework.dll</HintPath>
     </Reference>
-    <Reference Include="OutcoldSolutions.Framework, Version=1.0.30217.29236, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
+    <Reference Include="OutcoldSolutions.Framework, Version=1.0.30302.28544, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\OutcoldSolutions.Framework.1.0.30217.29236\lib\portable-win+net45+sl40+wp71\OutcoldSolutions.Framework.dll</HintPath>
+      <HintPath>..\packages\OutcoldSolutions.Framework.1.0.30302.28544\lib\portable-win+net45+sl40+wp71\OutcoldSolutions.Framework.dll</HintPath>
     </Reference>
-    <Reference Include="OutcoldSolutions.SuitesBase, Version=1.0.30217.29423, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
+    <Reference Include="OutcoldSolutions.SuitesBase, Version=1.0.30302.29914, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\OutcoldSolutions.SuitesBase.1.0.30217.29423\lib\net45\OutcoldSolutions.SuitesBase.dll</HintPath>
+      <HintPath>..\packages\OutcoldSolutions.SuitesBase.1.0.30302.29914\lib\net45\OutcoldSolutions.SuitesBase.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -70,15 +70,6 @@
     <Reference Include="Windows" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Windows\GoogleMusic.Core\DateTimeExtensions.cs">
-      <Link>_sources\DateTimeExtensions.cs</Link>
-    </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Diagnostics\DebugLogWriter.cs">
-      <Link>_sources\Diagnostics\DebugLogWriter.cs</Link>
-    </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\IDispatcher.cs">
-      <Link>_sources\IDispatcher.cs</Link>
-    </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Models\Album.cs">
       <Link>_sources\Models\Album.cs</Link>
     </Compile>
@@ -205,9 +196,6 @@
     <Compile Include="..\Windows\GoogleMusic.Core\Web\GoogleMusicWebService.cs">
       <Link>_sources\Web\GoogleMusicWebService.cs</Link>
     </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Web\HttpContentExtensions.cs">
-      <Link>_sources\Web\HttpContentExtensions.cs</Link>
-    </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Web\ICookieManager.cs">
       <Link>_sources\Web\ICookieManager.cs</Link>
     </Compile>
@@ -255,9 +243,6 @@
     </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Web\Lastfm\TokenResp.cs">
       <Link>_sources\Web\Lastfm\TokenResp.cs</Link>
-    </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Web\LoggerWebExtensions.cs">
-      <Link>_sources\Web\LoggerWebExtensions.cs</Link>
     </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Web\MediaStreamDownloadService.cs">
       <Link>_sources\Web\MediaStreamDownloadService.cs</Link>
@@ -310,9 +295,6 @@
     <Compile Include="..\Windows\GoogleMusic.Core\Web\SongWebService.cs">
       <Link>_sources\Web\SongWebService.cs</Link>
     </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Web\WebServiceBase.cs">
-      <Link>_sources\Web\WebServiceBase.cs</Link>
-    </Compile>
     <Compile Include="GoogleMusicSuitesBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\SongsRepositorySuites.cs" />
@@ -323,7 +305,6 @@
     <Compile Include="Web\CookieContainerWrapperSuites.cs" />
     <Compile Include="Web\GoogleAccountWebServiceSuites.cs" />
     <Compile Include="Web\PlaylistsWebServiceSuites.cs" />
-    <Compile Include="Web\HttpContentExtensionsSuites.cs" />
     <Compile Include="Web\Lastfm\LastfmAccountWebServiceSuites.cs" />
   </ItemGroup>
   <ItemGroup>

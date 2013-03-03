@@ -4,6 +4,7 @@
 namespace OutcoldSolutions.GoogleMusic.Views
 {
     using OutcoldSolutions.GoogleMusic.Presenters;
+    using OutcoldSolutions.Views;
 
     using Windows.UI.Xaml.Input;
 
@@ -18,7 +19,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
         public PlaylistPageView()
         {
             this.InitializeComponent();
-            this.TrackListViewBase(this.ListView);
+            this.TrackItemsControl(this.ListView);
         }
         
         protected override void OnInitialized()

@@ -3,12 +3,23 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.BindingModels
 {
-    using System.Collections.Generic;
-
     using OutcoldSolutions.BindingModels;
 
-    public class StartViewBindingModel : BindingModelBase
+    public class InitPageViewBindingModel : BindingModelBase
     {
-        public List<PlaylistsGroupBindingModel> Groups { get; set; }
+        private string message;
+
+        public string Message
+        {
+            get
+            {
+                return this.message;
+            }
+
+            set
+            {
+                this.SetValue(ref this.message, value);
+            }
+        }
     }
 }

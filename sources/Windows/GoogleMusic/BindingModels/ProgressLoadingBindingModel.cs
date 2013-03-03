@@ -3,6 +3,8 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.BindingModels
 {
+    using OutcoldSolutions.BindingModels;
+
     public class ProgressLoadingBindingModel : BindingModelBase
     {
         private string message;

@@ -12,8 +12,9 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
+    using OutcoldSolutions.Presenters;
 
-    public class StartPageViewPresenter : PagePresenterBase<IStartPageView, StartViewBindingModel>
+    public class StartPageViewPresenter : DataPagePresenterBase<IStartPageView, StartViewBindingModel>
     {
         private const int MaxItems = 12;
 

@@ -10,6 +10,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
     using OutcoldSolutions.GoogleMusic.Services.Publishers;
     using OutcoldSolutions.GoogleMusic.Views.Popups;
     using OutcoldSolutions.GoogleMusic.Web.Lastfm;
+    using OutcoldSolutions.Presenters;
 
     using Windows.System;
 

@@ -11,7 +11,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
     using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Controls;
-    using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Presenters;
     using OutcoldSolutions.GoogleMusic.Services;
 

@@ -108,10 +108,10 @@
     </Compile>
     <Compile Include="BindingModels\ArtistPageViewBindingModel.cs" />
     <Compile Include="BindingModels\CurrentPlaylistPageViewBindingModel.cs" />
+    <Compile Include="BindingModels\InitPageViewBindingModel.cs" />
     <Compile Include="BindingModels\PlaylistPageViewBindingModel.cs" />
     <Compile Include="BindingModels\PlaylistResultBindingModel.cs" />
     <Compile Include="BindingModels\PlaylistsGroupBindingModel.cs" />
-    <Compile Include="BindingModels\MainViewBindingModel.cs" />
     <Compile Include="BindingModels\PlayerBindingModel.cs" />
     <Compile Include="BindingModels\PlaylistBindingModel.cs" />
     <Compile Include="BindingModels\PlaylistsPageViewBindingModel.cs" />
@@ -134,7 +134,6 @@
     <Compile Include="Converters\AlbumArtUrlToImageConverter.cs" />
     <Compile Include="Converters\DoubleToTimeConverter.cs" />
     <Compile Include="Converters\StringFormatConverter.cs" />
-    <Compile Include="Converters\ValueToBooleanConverter.cs" />
     <Compile Include="Models\PlaylistsRequest.cs" />
     <Compile Include="Models\TimeSpanEx.cs" />
     <Compile Include="PlaylistViewResolver.cs" />
@@ -142,10 +141,10 @@
     <Compile Include="Presenters\ArtistPageViewPresenter.cs" />
     <Compile Include="Presenters\AuthentificationPresenter.cs" />
     <Compile Include="Presenters\CurrentPlaylistPageViewPresenter.cs" />
+    <Compile Include="Presenters\InitPageViewPresenter.cs" />
     <Compile Include="Presenters\PlaylistPageViewPresenterBase.cs" />
     <Compile Include="Presenters\Popups\AddToPlaylistPopupViewPresenter.cs" />
     <Compile Include="Presenters\Popups\LastfmAuthentificationPresenter.cs" />
-    <Compile Include="Presenters\MainViewPresenter.cs" />
     <Compile Include="Presenters\PlayerViewPresenter.cs" />
     <Compile Include="Presenters\PlaylistsPageViewPresenter.cs" />
     <Compile Include="Presenters\PlaylistPageViewPresenter.cs" />
@@ -153,6 +152,7 @@
     <Compile Include="Presenters\SearchPageViewPresenter.cs" />
     <Compile Include="Presenters\Settings\AccountPageViewPresenter.cs" />
     <Compile Include="Presenters\StartPageViewPresenter.cs" />
+    <Compile Include="Services\RightRegionControlService.cs" />
     <Compile Include="Services\ICurrentPlaylistService.cs" />
     <Compile Include="Services\ISearchService.cs" />
     <Compile Include="Services\ISettingsCommands.cs" />
@@ -171,15 +171,18 @@
       <DependentUpon>CurrentPlaylistPageView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\IAuthentificationView.cs" />
+    <Compile Include="Views\InitPageView.xaml.cs">
+      <DependentUpon>InitPageView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\IProgressLoadingView.cs" />
+    <Compile Include="Views\LinksRegionContent.xaml.cs">
+      <DependentUpon>LinksRegionContent.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Popups\AddToPlaylistPopupView.xaml.cs">
       <DependentUpon>AddToPlaylistPopupView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Popups\LastfmAuthentificationView.xaml.cs">
       <DependentUpon>LastfmAuthentificationView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\MainView.xaml.cs">
-      <DependentUpon>MainView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Views\AuthentificationView.xaml.cs">
@@ -303,6 +306,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\InitPageView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\LinksRegionContent.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Popups\AddToPlaylistPopupView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -310,10 +321,6 @@
     <Page Include="Views\Popups\LastfmAuthentificationView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\MainView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\AuthentificationView.xaml">
       <SubType>Designer</SubType>
@@ -372,13 +379,13 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\..\packages\Newtonsoft.Json.4.5.11\lib\winrt45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="OutcoldSolutions.Framework, Version=1.0.30217.29236, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
+    <Reference Include="OutcoldSolutions.Framework, Version=1.0.30302.28544, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\OutcoldSolutions.Framework.1.0.30217.29236\lib\portable-win+net45+sl40+wp71\OutcoldSolutions.Framework.dll</HintPath>
+      <HintPath>..\..\packages\OutcoldSolutions.Framework.1.0.30302.28544\lib\portable-win+net45+sl40+wp71\OutcoldSolutions.Framework.dll</HintPath>
     </Reference>
-    <Reference Include="OutcoldSolutions.Presentation, Version=1.0.30217.29423, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
+    <Reference Include="OutcoldSolutions.Presentation, Version=1.0.30302.34155, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\OutcoldSolutions.Presentation.1.0.30217.29423\lib\win\OutcoldSolutions.Presentation.dll</HintPath>
+      <HintPath>..\..\packages\OutcoldSolutions.Presentation.1.0.30302.34155\lib\win\OutcoldSolutions.Presentation.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

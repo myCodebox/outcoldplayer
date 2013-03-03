@@ -3,6 +3,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.BindingModels
 {
+    using OutcoldSolutions.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
 
     public class PlaylistPageViewBindingModel<TPlaylist> : BindingModelBase where TPlaylist : Playlist

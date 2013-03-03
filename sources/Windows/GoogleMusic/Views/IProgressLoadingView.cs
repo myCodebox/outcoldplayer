@@ -3,6 +3,8 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Views
 {
+    using OutcoldSolutions.Views;
+
     public interface IProgressLoadingView : IPageView
     {
     }

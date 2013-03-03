@@ -5,29 +5,13 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 {
     using System.Collections.Generic;
 
+    using OutcoldSolutions.BindingModels;
+
     public class PlaylistsPageViewBindingModel : BindingModelBase
     {
-        private int count;
         private string title;
         private bool isEditable;
         private PlaylistBindingModel selectedItem;
-
-        public int Count
-        {
-            get
-            {
-                return this.count;
-            }
-
-            set
-            {
-                if (this.count != value)
-                {
-                    this.count = value;
-                    this.RaiseCurrentPropertyChanged();
-                }
-            }
-        }
 
         public string Title
         {

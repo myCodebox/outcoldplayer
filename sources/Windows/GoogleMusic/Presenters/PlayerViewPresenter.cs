@@ -14,6 +14,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using OutcoldSolutions.GoogleMusic.Services.Publishers;
     using OutcoldSolutions.GoogleMusic.Views;
     using OutcoldSolutions.GoogleMusic.Web;
+    using OutcoldSolutions.Presenters;
 
     using Windows.Media;
     using Windows.System.Display;
@@ -21,7 +22,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
 
-    public class PlayerViewPresenter : ViewPresenterBase<IMediaElemenetContainerView>, ICurrentPlaylistService, IDisposable
+    public class PlayerViewPresenter : ViewPresenterBase<IPlayerView>, ICurrentPlaylistService, IDisposable
     {
         private readonly DispatcherTimer timer = new DispatcherTimer();
 
@@ -46,6 +47,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private Playlist currentPlaylist;
 
         public PlayerViewPresenter(
+            MediaElement mediaElement,
             IDependencyResolverContainer container,
             ISongWebService songWebService,
             IGoogleMusicSessionService sessionService,
@@ -54,6 +56,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             ICurrentSongPublisherService publisherService)
             : base(container)
         {
+            this.mediaElement = mediaElement;
             this.songWebService = songWebService;
             this.sessionService = sessionService;
             this.settingsService = settingsService;
@@ -190,7 +193,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             }
 
             this.UpdateOrder();
-            this.Dispatcher.RunAsync(() => this.View.Activate());
+            // TODO: this.Dispatcher.RunAsync(() => this.View.Activate());
 
             this.RaisePlaylistChanged();
         }
@@ -223,7 +226,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                                 this.PlayCurrentSong();
                             });
 
-                    this.View.Activate();
+                    // TODO:  this.View.Activate();
                 }
             }
         }
@@ -293,9 +296,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         protected override void OnInitialized()
         {
             base.OnInitialized();
-
-            this.mediaElement = this.View.GetMediaElement();
-
+            
             this.mediaElement.MediaOpened += (sender, args) =>
             {
                 this.Logger.Info("Media opened. Duration: {0}.", this.mediaElement.NaturalDuration.TimeSpan);

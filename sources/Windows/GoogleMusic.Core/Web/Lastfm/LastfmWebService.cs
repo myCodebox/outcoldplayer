@@ -13,6 +13,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Lastfm
     using System.Threading.Tasks;
 
     using OutcoldSolutions.Diagnostics;
+    using OutcoldSolutions.Web;
 
     using Windows.Security.Credentials;
     using Windows.Security.Cryptography;

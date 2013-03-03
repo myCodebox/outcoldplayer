@@ -9,15 +9,17 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using System.Diagnostics;
     using System.Threading.Tasks;
 
+    using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Controls;
-    using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views.Popups;
+    using OutcoldSolutions.Presenters;
+    using OutcoldSolutions.Views;
 
     public class PlaylistPageViewPresenterBase<TView, TPlaylist> 
-        : PagePresenterBase<TView, PlaylistPageViewBindingModel<TPlaylist>>
+        : DataPagePresenterBase<TView, PlaylistPageViewBindingModel<TPlaylist>>
         where TPlaylist : Playlist 
         where TView : IDataPageView
     {

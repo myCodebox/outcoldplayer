@@ -7,6 +7,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Models
     using System;
 
     using OutcoldSolutions.GoogleMusic.Models;
+    using OutcoldSolutions.Models;
 
     public class GoogleMusicSong
     {

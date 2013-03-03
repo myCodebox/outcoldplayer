@@ -6,6 +6,7 @@ namespace OutcoldSolutions.GoogleMusic.Views.Popups
     using System;
 
     using OutcoldSolutions.GoogleMusic.Presenters.Popups;
+    using OutcoldSolutions.Views;
 
     using Windows.System;
     using Windows.UI.Core;

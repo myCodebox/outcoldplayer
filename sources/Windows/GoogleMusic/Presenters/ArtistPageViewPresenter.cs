@@ -12,8 +12,9 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
+    using OutcoldSolutions.Presenters;
 
-    public class ArtistPageViewPresenter : PagePresenterBase<IArtistPageView, ArtistPageViewBindingModel>
+    public class ArtistPageViewPresenter : DataPagePresenterBase<IArtistPageView, ArtistPageViewBindingModel>
     {
         private readonly ICurrentPlaylistService currentPlaylistService;
         private readonly INavigationService navigationService;
@@ -82,7 +83,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 }
                 else
                 {
-                    this.navigationService.NavigateToView<PlaylistViewResolver>(playlist);
+                    this.navigationService.ResolveAndNavigateTo<PlaylistViewResolver>(playlist);
                 }
 
                 this.currentPlaylistService.ClearPlaylist();
