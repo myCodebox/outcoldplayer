@@ -148,6 +148,7 @@
     <Compile Include="Presenters\PlaylistsPageViewPresenter.cs" />
     <Compile Include="Presenters\PlaylistPageViewPresenter.cs" />
     <Compile Include="Presenters\ProgressLoadingPageViewPresenter.cs" />
+    <Compile Include="Presenters\ReleasesHistoryPageViewPresenter.cs" />
     <Compile Include="Presenters\SearchPageViewPresenter.cs" />
     <Compile Include="Presenters\Settings\AccountPageViewPresenter.cs" />
     <Compile Include="Presenters\StartPageViewPresenter.cs" />
@@ -195,8 +196,8 @@
     <Compile Include="Views\PlaylistPageView.xaml.cs">
       <DependentUpon>PlaylistPageView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\WhatIsNewView.xaml.cs">
-      <DependentUpon>WhatIsNewView.xaml</DependentUpon>
+    <Compile Include="Views\ReleasesHistoryPageView.xaml.cs">
+      <DependentUpon>ReleasesHistoryPageView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ProgressLoadingPageView.xaml.cs">
       <DependentUpon>ProgressLoadingPageView.xaml</DependentUpon>
@@ -336,7 +337,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\WhatIsNewView.xaml">
+    <Page Include="Views\ReleasesHistoryPageView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -97,7 +97,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             else
             {
                 this.settingsService.SetValue("Version", CurrentVersion);
-                this.navigationService.NavigateTo<IWhatIsNewView>(keepInHistory: false);
+                this.navigationService.NavigateTo<IReleasesHistoryPageView>(keepInHistory: false);
             }
         }
 

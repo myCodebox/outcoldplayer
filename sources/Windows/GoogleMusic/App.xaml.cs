@@ -117,7 +117,10 @@ namespace OutcoldSolutions.GoogleMusic
                 registration.Register<AlbumPageViewPresenter>().AsSingleton();
                 registration.Register<PlaylistPageViewBindingModel<Album>>().AsSingleton();
                 
-                registration.Register<IWhatIsNewView>().As<WhatIsNewView>();
+                registration.Register<IReleasesHistoryPageView>()
+                            .InjectionRule<PresenterBase, ReleasesHistoryPageViewPresenter>()
+                            .As<ReleasesHistoryPageView>();
+                registration.Register<ReleasesHistoryPageViewPresenter>();
 
                 registration.Register<IAddToPlaylistPopupView>()
                             .InjectionRule<PresenterBase, AddToPlaylistPopupViewPresenter>()
