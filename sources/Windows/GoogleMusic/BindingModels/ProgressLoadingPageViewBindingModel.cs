@@ -5,7 +5,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 {
     using OutcoldSolutions.BindingModels;
 
-    public class ProgressLoadingBindingModel : BindingModelBase
+    public class ProgressLoadingPageViewBindingModel : BindingModelBase
     {
         private string message;
         private double progress = 0;
@@ -21,8 +21,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
             set
             {
-                this.message = value;
-                this.RaiseCurrentPropertyChanged();
+                this.SetValue(ref this.message, value);
             }
         }
 
@@ -35,8 +34,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
             set
             {
-                this.progress = value;
-                this.RaiseCurrentPropertyChanged();
+                this.SetValue(ref this.progress, value);
             }
         }
 
@@ -49,8 +47,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
             set
             {
-                this.maximum = value;
-                this.RaiseCurrentPropertyChanged();
+                this.SetValue(ref this.maximum, value);
             }
         }
 
@@ -63,8 +60,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
             set
             {
-                this.isFailed = value;
-                this.RaiseCurrentPropertyChanged();
+                this.SetValue(ref this.isFailed, value);
             }
         }
     }

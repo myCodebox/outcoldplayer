@@ -115,7 +115,7 @@
     <Compile Include="BindingModels\PlaylistBindingModel.cs" />
     <Compile Include="BindingModels\PlaylistsPageViewBindingModel.cs" />
     <Compile Include="BindingModels\Popups\LastfmAuthentificationBindingModel.cs" />
-    <Compile Include="BindingModels\ProgressLoadingBindingModel.cs" />
+    <Compile Include="BindingModels\ProgressLoadingPageViewBindingModel.cs" />
     <Compile Include="BindingModels\SearchPageViewBindingModel.cs" />
     <Compile Include="BindingModels\SearchGroupBindingModel.cs" />
     <Compile Include="BindingModels\SearchResultBindingModel.cs" />
@@ -147,7 +147,7 @@
     <Compile Include="Presenters\PlayerViewPresenter.cs" />
     <Compile Include="Presenters\PlaylistsPageViewPresenter.cs" />
     <Compile Include="Presenters\PlaylistPageViewPresenter.cs" />
-    <Compile Include="Presenters\ProgressLoadingPresenter.cs" />
+    <Compile Include="Presenters\ProgressLoadingPageViewPresenter.cs" />
     <Compile Include="Presenters\SearchPageViewPresenter.cs" />
     <Compile Include="Presenters\Settings\AccountPageViewPresenter.cs" />
     <Compile Include="Presenters\StartPageViewPresenter.cs" />
@@ -198,8 +198,8 @@
     <Compile Include="Views\WhatIsNewView.xaml.cs">
       <DependentUpon>WhatIsNewView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\ProgressLoadingView.xaml.cs">
-      <DependentUpon>ProgressLoadingView.xaml</DependentUpon>
+    <Compile Include="Views\ProgressLoadingPageView.xaml.cs">
+      <DependentUpon>ProgressLoadingPageView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SearchPageView.xaml.cs">
       <DependentUpon>SearchPageView.xaml</DependentUpon>
@@ -340,7 +340,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\ProgressLoadingView.xaml">
+    <Page Include="Views\ProgressLoadingPageView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
