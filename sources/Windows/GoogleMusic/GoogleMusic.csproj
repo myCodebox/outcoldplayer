@@ -135,7 +135,8 @@
     <Compile Include="Converters\StringFormatConverter.cs" />
     <Compile Include="Models\PlaylistsRequest.cs" />
     <Compile Include="Models\TimeSpanEx.cs" />
-    <Compile Include="PlaylistViewResolver.cs" />
+    <Compile Include="Presenters\Settings\UpgradeViewPresenter.cs" />
+    <Compile Include="Views\PlaylistViewResolver.cs" />
     <Compile Include="Presenters\AlbumPageViewPresenter.cs" />
     <Compile Include="Presenters\ArtistPageViewPresenter.cs" />
     <Compile Include="Presenters\AuthentificationPageViewPresenter.cs" />
@@ -150,16 +151,15 @@
     <Compile Include="Presenters\ProgressLoadingPageViewPresenter.cs" />
     <Compile Include="Presenters\ReleasesHistoryPageViewPresenter.cs" />
     <Compile Include="Presenters\SearchPageViewPresenter.cs" />
-    <Compile Include="Presenters\Settings\AccountPageViewPresenter.cs" />
+    <Compile Include="Presenters\Settings\AccountsViewPresenter.cs" />
     <Compile Include="Presenters\StartPageViewPresenter.cs" />
     <Compile Include="Services\InAppPurchases.cs" />
     <Compile Include="Services\RightRegionControlService.cs" />
     <Compile Include="Services\ICurrentPlaylistService.cs" />
     <Compile Include="Services\Shell\ISearchService.cs" />
-    <Compile Include="Services\Shell\IApplicationSettingViewsService.cs" />
     <Compile Include="Services\Publishers\TileCurrentSongPublisher.cs" />
     <Compile Include="Services\Shell\SearchService.cs" />
-    <Compile Include="Services\Shell\ApplicationSettingViewsService.cs" />
+    <Compile Include="Views\Popups\LastFmConnectionService.cs" />
     <Compile Include="Services\SettingsService.cs" />
     <Compile Include="Services\GoogleAccountService.cs" />
     <Compile Include="Views\AlbumPageView.xaml.cs">
@@ -205,8 +205,8 @@
     <Compile Include="Views\SearchPageView.xaml.cs">
       <DependentUpon>SearchPageView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Settings\AccountPageView.xaml.cs">
-      <DependentUpon>AccountPageView.xaml</DependentUpon>
+    <Compile Include="Views\Settings\AccountsView.xaml.cs">
+      <DependentUpon>AccountsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\PrivacyView.xaml.cs">
       <DependentUpon>PrivacyView.xaml</DependentUpon>
@@ -349,7 +349,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Settings\AccountPageView.xaml">
+    <Page Include="Views\Settings\AccountsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -378,13 +378,13 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\..\packages\Newtonsoft.Json.4.5.11\lib\winrt45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="OutcoldSolutions.Framework, Version=1.0.30302.28544, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
+    <Reference Include="OutcoldSolutions.Framework, Version=1.0.30303.20010, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\OutcoldSolutions.Framework.1.0.30302.28544\lib\portable-win+net45+sl40+wp71\OutcoldSolutions.Framework.dll</HintPath>
+      <HintPath>..\..\packages\OutcoldSolutions.Framework.1.0.30303.20010\lib\portable-win+net45+sl40+wp71\OutcoldSolutions.Framework.dll</HintPath>
     </Reference>
-    <Reference Include="OutcoldSolutions.Presentation, Version=1.0.30302.34155, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
+    <Reference Include="OutcoldSolutions.Presentation, Version=1.0.30303.20812, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\OutcoldSolutions.Presentation.1.0.30302.34155\lib\win\OutcoldSolutions.Presentation.dll</HintPath>
+      <HintPath>..\..\packages\OutcoldSolutions.Presentation.1.0.30303.20812\lib\win\OutcoldSolutions.Presentation.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

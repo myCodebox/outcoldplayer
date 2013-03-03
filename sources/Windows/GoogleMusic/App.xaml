@@ -8,6 +8,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
 
+                <ResourceDictionary Source="OutcoldSolutions.Presentation/Common/Base.xaml"/>
                 <ResourceDictionary Source="OutcoldSolutions.Presentation/Common/Buttons.xaml"/>
                 <ResourceDictionary Source="OutcoldSolutions.Presentation/Common/Converters.xaml"/>
 

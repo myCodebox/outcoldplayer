@@ -26,6 +26,7 @@ namespace OutcoldSolutions.GoogleMusic
     using OutcoldSolutions.GoogleMusic.Web;
     using OutcoldSolutions.GoogleMusic.Web.Lastfm;
     using OutcoldSolutions.Presenters;
+    using OutcoldSolutions.Shell;
     using OutcoldSolutions.Views;
 
     using Windows.UI.Notifications;
@@ -129,13 +130,19 @@ namespace OutcoldSolutions.GoogleMusic
                 registration.Register<AddToPlaylistPopupViewPresenter>();
 
                 // Settings
-                registration.Register<IApplicationSettingViewsService>().AsSingleton<ApplicationSettingViewsService>();
                 registration.Register<ISearchService>().AsSingleton<SearchService>();
 
                 // Settings views
-                registration.Register<AccountPageView>()
-                            .InjectionRule<PresenterBase, AccountPageViewPresenter>();
-                registration.Register<AccountPageViewPresenter>();
+                registration.Register<AccountsView>()
+                            .InjectionRule<PresenterBase, AccountsViewPresenter>();
+                registration.Register<AccountsViewPresenter>();
+
+                registration.Register<UpgradeView>()
+                            .InjectionRule<PresenterBase, UpgradeViewPresenter>();
+                registration.Register<UpgradeViewPresenter>();
+
+                registration.Register<PrivacyView>();
+                registration.Register<SupportView>();
 
                 registration.Register<ILastfmAuthentificationView>()
                             .InjectionRule<PresenterBase, LastfmAuthentificationPresenter>()
@@ -157,6 +164,7 @@ namespace OutcoldSolutions.GoogleMusic
 
                 registration.Register<ILastfmWebService>().AsSingleton<LastfmWebService>();
                 registration.Register<ILastfmAccountWebService>().As<LastfmAccountWebService>();
+                registration.Register<ILastFmConnectionService>().As<LastFmConnectionService>();
 
                 // Publishers
                 registration.Register<ICurrentSongPublisherService>().AsSingleton<CurrentSongPublisherService>();
@@ -258,10 +266,44 @@ namespace OutcoldSolutions.GoogleMusic
                                                                           MenuItemMetadata.FromViewType<IPlaylistsPageView>("Genres", PlaylistsRequest.Genres)
                                                                       });
 
-#if DEBUG
-           InAppPurchases.SimulatorInAppPurchasesInitialization();
-#endif
 
+
+            var applicationSettingViewsService = Container.Resolve<IApplicationSettingViewsService>();
+            applicationSettingViewsService.RegisterSettings<AccountsView>("accounts", "Accounts");
+
+            bool upgradeViewRegistered = false;
+            if (!InAppPurchases.HasFeature(GoogleMusicFeatures.All))
+            {
+                applicationSettingViewsService.RegisterSettings<UpgradeView>("upgrade", "Upgrade");
+                upgradeViewRegistered = true;
+            }
+
+            applicationSettingViewsService.RegisterSettings<SupportView>("support", "Support");
+            applicationSettingViewsService.RegisterSettings<PrivacyView>("privacy", "Privacy Policy");
+
+            InAppPurchases.LicenseChanged += () =>
+                {
+                    if (!InAppPurchases.HasFeature(GoogleMusicFeatures.All))
+                    {
+                        if (!upgradeViewRegistered)
+                        {
+                            applicationSettingViewsService.RegisterSettings<UpgradeView>("upgrade", "Upgrade", ApplicationSettingLayoutType.Standard, "accounts");
+                            upgradeViewRegistered = true;
+                        }
+                    }
+                    else
+                    {
+                        if (upgradeViewRegistered)
+                        {
+                            applicationSettingViewsService.UnregisterSettings("upgrade");
+                            upgradeViewRegistered = false;
+                        }
+                    }
+                };
+#if DEBUG
+            InAppPurchases.SimulatorInAppPurchasesInitialization();
+#endif
+            
             Container.Resolve<INavigationService>().NavigateTo<IInitPageView>(keepInHistory: false);
         }
 

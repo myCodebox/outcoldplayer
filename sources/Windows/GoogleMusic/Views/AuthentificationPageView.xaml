@@ -39,7 +39,7 @@
                                  IsEnabled="{Binding Path=BindingModel.IsSigningIn, Mode=OneWay, Converter={StaticResource InvertBooleanConverter}}"/>
 
                     <CheckBox HorizontalAlignment="Right" Margin="0, 7 ,0 ,0" 
-                              IsChecked="{Binding Path=RememberAccount, Mode=TwoWay}" 
+                              IsChecked="{Binding Path=BindingModel.RememberAccount, Mode=TwoWay}" 
                               IsEnabled="{Binding Path=BindingModel.IsSigningIn, Mode=OneWay, Converter={StaticResource InvertBooleanConverter}}">
                         Remember account
                     </CheckBox>

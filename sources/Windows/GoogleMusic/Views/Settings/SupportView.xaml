@@ -7,98 +7,57 @@
     mc:Ignorable="d"
     d:DesignHeight="600"
     d:DesignWidth="400">
-    <Border BorderBrush="{StaticResource AppBarBorderThemeBrush}" BorderThickness="1,0,0,0" >
-        <Grid VerticalAlignment="Stretch" Background="{StaticResource AppBarBackgroundThemeBrush}">
-            <!-- Root grid definition -->
-            <Grid.RowDefinitions>
-                <RowDefinition Height="80" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
+    <StackPanel>
+        <StackPanel.Transitions>
+            <TransitionCollection>
+                <EntranceThemeTransition FromHorizontalOffset="120" />
+            </TransitionCollection>
+        </StackPanel.Transitions>
 
-            <!-- Header area for panel -->
-            <Grid Background="{StaticResource ApplicationThemeBrush}" Grid.Row="0">
-
-                <Grid Margin="40,32,17,13">
-
-                    <Grid.Transitions>
-                        <TransitionCollection>
-                            <EntranceThemeTransition FromHorizontalOffset="50" />
-                        </TransitionCollection>
-                    </Grid.Transitions>
-
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="30" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition />
-                    </Grid.ColumnDefinitions>
-
-                    <Button Click="BackButtonClick" Margin="0,3,0,0" Grid.Column="0" Style="{StaticResource SettingsBackButtonStyle}" HorizontalAlignment="Left" />
-
-                    <TextBlock Grid.Column="1" Style="{StaticResource SettingTitleTextStyle}" Text="Support" />
-
-                    <Image Source="ms-appx:///Assets/SmallLogo.png" HorizontalAlignment="Right" Grid.Column="2" Margin="0,0,6,0" Width="30" Height="30" />
-
-                </Grid>
-
-            </Grid>
-
-            <ScrollViewer Grid.Row="1" Margin="40,24,23,0" VerticalAlignment="Top" 
-                          HorizontalScrollBarVisibility="Disabled" HorizontalScrollMode="Disabled"
-                          VerticalScrollBarVisibility="Auto" VerticalScrollMode="Auto">
-                <StackPanel>
-                    <StackPanel.Transitions>
-                        <TransitionCollection>
-                            <EntranceThemeTransition FromHorizontalOffset="120" />
-                        </TransitionCollection>
-                    </StackPanel.Transitions>
-
-                    <TextBlock Style="{StaticResource BodyTextStyle}">
+        <TextBlock Style="{StaticResource BodyTextStyle}">
                         Do you want to send feedback? Please, do. 
                         UserVoice is the best way to tell us what features you want to see in next versions of gMusic.
-                    </TextBlock>
-                
-                    <Button Click="UserVoiceClick" Margin="0, 20, 0, 0" >
-                        <Image Source="ms-appx:///Resources/uservoice.png" Height="28" Width="118" VerticalAlignment="Top"  />
-                    </Button>
+        </TextBlock>
 
-                    <TextBlock Style="{StaticResource BodyTextStyle}"  Margin="0, 20, 0, 0">
+        <Button Click="UserVoiceClick" Margin="0, 20, 0, 0" >
+            <Image Source="ms-appx:///Resources/uservoice.png" Height="28" Width="118" VerticalAlignment="Top"  />
+        </Button>
+
+        <TextBlock Style="{StaticResource BodyTextStyle}"  Margin="0, 20, 0, 0">
                         Or you can just send email to:
-                    </TextBlock>
+        </TextBlock>
 
-                    <HyperlinkButton Padding="0" Click="SendEmailClick">
-                        gMusic@OutcoldSolutions.com
-                    </HyperlinkButton>
+        <HyperlinkButton Padding="0" NavigateUri="mailto:gMusic@OutcoldSolutions.com">
+            gMusic@OutcoldSolutions.com
+        </HyperlinkButton>
 
-                    <TextBlock Style="{StaticResource BodyTextStyle}"  Margin="0, 20, 0, 0">
+        <TextBlock Style="{StaticResource BodyTextStyle}"  Margin="0, 20, 0, 0">
                         Follow us on twitter to know about our plans:
-                    </TextBlock>
+        </TextBlock>
 
-                    <Button Click="TwitterFollowClick" Margin="0, 20, 0, 0">
-                        <StackPanel Height="28" Width="118" Orientation="Horizontal" >
-                            <Image Source="ms-appx:///Resources/twitter-logo.png" Height="22" Width="26" Margin="10, 0, 0, 0" VerticalAlignment="Center"  />
-                            <TextBlock VerticalAlignment="Center" Margin="10, 0, 0, 0">gMusicW</TextBlock>
-                        </StackPanel>
-                    </Button>
+        <Button Click="TwitterFollowClick" Margin="0, 20, 0, 0">
+            <StackPanel Height="28" Width="118" Orientation="Horizontal" >
+                <Image Source="ms-appx:///Resources/twitter-logo.png" Height="22" Width="26" Margin="10, 0, 0, 0" VerticalAlignment="Center"  />
+                <TextBlock VerticalAlignment="Center" Margin="10, 0, 0, 0">gMusicW</TextBlock>
+            </StackPanel>
+        </Button>
 
-                    <TextBlock Style="{StaticResource BodyTextStyle}"  Margin="0, 20, 0, 0">
+        <TextBlock Style="{StaticResource BodyTextStyle}"  Margin="0, 20, 0, 0">
                         Sometimes we can ask you to enable logging to help us find bugs and unexpected behaviors with gMusic. 
                         We are sorry, if this happend with you. 
                         And thank you for your help.
-                    </TextBlock>
-                
-                    <ToggleSwitch Margin="0, 20, 0, 0" IsOn="{Binding Path=IsLoggingOn, Mode=TwoWay}">Logging</ToggleSwitch>
+        </TextBlock>
 
-                    <TextBlock Style="{StaticResource BodyTextStyle}"  Margin="0, 0, 0, 0"  Visibility="{Binding Path=IsLoggingOn, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" >
+        <ToggleSwitch Margin="0, 20, 0, 0" IsOn="{Binding Path=IsLoggingOn, Mode=TwoWay}">Logging</ToggleSwitch>
+
+        <TextBlock Style="{StaticResource BodyTextStyle}"  Margin="0, 0, 0, 0"  Visibility="{Binding Path=IsLoggingOn, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" >
                         Log folder:
-                    </TextBlock>
-                    <TextBox IsReadOnly="True"
+        </TextBlock>
+        <TextBox IsReadOnly="True"
                              Margin="0, 10, 0, 0" 
                              x:Name="LogFolder" 
                              Visibility="{Binding Path=IsLoggingOn, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" 
                              GotFocus="LogFolderGotFocus"/>
 
-                </StackPanel>
-            </ScrollViewer>
-        </Grid>
-    </Border>
+    </StackPanel>
 </UserControl>

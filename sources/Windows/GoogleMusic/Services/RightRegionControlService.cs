@@ -8,6 +8,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
     using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Services.Shell;
     using OutcoldSolutions.GoogleMusic.Views;
+    using OutcoldSolutions.Shell;
     using OutcoldSolutions.Views;
 
     using Windows.UI.Xaml;
@@ -97,7 +98,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         private void AdControlRemoveButtonOnClick(object sender, RoutedEventArgs routedEventArgs)
         {
-            this.settingsCommands.ActivateSettings("upgrade");
+            this.settingsCommands.Show("upgrade");
         }
 
         private void AdControlOnErrorOccurred(object sender, AdErrorEventArgs adErrorEventArgs)

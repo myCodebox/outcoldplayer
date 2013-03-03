@@ -7,32 +7,35 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
     using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Services.Publishers;
-    using OutcoldSolutions.GoogleMusic.Services.Shell;
     using OutcoldSolutions.GoogleMusic.Views;
+    using OutcoldSolutions.GoogleMusic.Views.Popups;
     using OutcoldSolutions.GoogleMusic.Web.Lastfm;
     using OutcoldSolutions.Presenters;
+    using OutcoldSolutions.Shell;
     using OutcoldSolutions.Views;
 
-    public class AccountPageViewPresenter : ViewPresenterBase<IPopupView>
+    public class AccountsViewPresenter : ViewPresenterBase<IView>
     {
         private readonly IGoogleAccountService googleAccountService;
         private readonly IGoogleMusicSessionService sessionService;
         private readonly ILastfmWebService lastfmWebService;
         private readonly ICurrentSongPublisherService publisherService;
-        private readonly IApplicationSettingViewsService settingsCommands;
+        private readonly ILastFmConnectionService lastFmConnectionService;
         private readonly ISongsRepository songsRepository;
         private readonly IMusicPlaylistRepository musicPlaylistRepository;
+        private readonly IApplicationSettingViewsService applicationSettingViewsService;
         private readonly INavigationService navigationService;
 
-        public AccountPageViewPresenter(
+        public AccountsViewPresenter(
             IDependencyResolverContainer container,
             IGoogleAccountService googleAccountService,
             IGoogleMusicSessionService sessionService,
             ILastfmWebService lastfmWebService,
             ICurrentSongPublisherService publisherService,
-            IApplicationSettingViewsService settingsCommands,
+            ILastFmConnectionService lastFmConnectionService,
             ISongsRepository songsRepository,
             IMusicPlaylistRepository musicPlaylistRepository,
+            IApplicationSettingViewsService applicationSettingViewsService,
             INavigationService navigationService)
             : base(container)
         {
@@ -40,9 +43,10 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
             this.sessionService = sessionService;
             this.lastfmWebService = lastfmWebService;
             this.publisherService = publisherService;
-            this.settingsCommands = settingsCommands;
+            this.lastFmConnectionService = lastFmConnectionService;
             this.songsRepository = songsRepository;
             this.musicPlaylistRepository = musicPlaylistRepository;
+            this.applicationSettingViewsService = applicationSettingViewsService;
             this.navigationService = navigationService;
             this.BindingModel = new AccountViewBindingModel();
             this.ForgetAccountCommand = new DelegateCommand(this.ForgetAccount);
@@ -100,20 +104,20 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
         private void SignOutAccount()
         {
             this.sessionService.ClearSession();
-            this.View.Close();
+            this.applicationSettingViewsService.Close();
         }
 
         private void LastfmUnlink()
         {
             this.lastfmWebService.ForgetAccount();
             this.publisherService.RemovePublishers<LastFmCurrentSongPublisher>();
-            this.View.Close();
+            this.applicationSettingViewsService.Close();
         }
 
         private void LastfmLink()
         {
-            this.View.Close();
-            this.settingsCommands.ActivateSettings("link-lastfm");
+            this.applicationSettingViewsService.Close();
+            this.lastFmConnectionService.Connect();
         }
 
         private async void ReloadSongs()
@@ -124,7 +128,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
 
             this.navigationService.NavigateTo<IProgressLoadingView>(keepInHistory: false);
 
-            this.View.Close();
+            this.applicationSettingViewsService.Close();
         }
     }
 }

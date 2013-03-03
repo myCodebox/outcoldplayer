@@ -1,86 +1,52 @@
-﻿<UserControl
+﻿<views:ViewBase
     x:Class="OutcoldSolutions.GoogleMusic.Views.Settings.UpgradeView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:OutcoldSolutions.GoogleMusic.Views.Settings"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:views="using:OutcoldSolutions.Views" 
     mc:Ignorable="d"
     d:DesignHeight="600"
     d:DesignWidth="400">
 
-    <Border BorderBrush="{StaticResource AppBarBorderThemeBrush}" BorderThickness="1,0,0,0" >
-        <Grid VerticalAlignment="Stretch" Background="{StaticResource AppBarBackgroundThemeBrush}">
-            <!-- Root grid definition -->
-            <Grid.RowDefinitions>
-                <RowDefinition Height="80" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
+    <StackPanel>
+        <StackPanel.Resources>
+            <x:String x:Key="UltimatePackageName">Ultimate</x:String>
+            <x:String x:Key="AddFreeUnlimitedPackageName">AdFreeUnlimited</x:String>
+        </StackPanel.Resources>
+        
+        <StackPanel.Transitions>
+            <TransitionCollection>
+                <EntranceThemeTransition FromHorizontalOffset="120" />
+            </TransitionCollection>
+        </StackPanel.Transitions>
 
-            <!-- Header area for panel -->
-            <Grid Background="{StaticResource ApplicationThemeBrush}" Grid.Row="0">
+        <TextBlock Style="{StaticResource BodyTextStyle}">
+                        Do you want to remove advertisements from gMusic?
+        </TextBlock>
 
-                <Grid Margin="40,32,17,13">
-
-                    <Grid.Transitions>
-                        <TransitionCollection>
-                            <EntranceThemeTransition FromHorizontalOffset="50" />
-                        </TransitionCollection>
-                    </Grid.Transitions>
-
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="30" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition />
-                    </Grid.ColumnDefinitions>
-
-                    <Button Click="BackButtonClick" Margin="0,3,0,0" Grid.Column="0" Style="{StaticResource SettingsBackButtonStyle}" HorizontalAlignment="Left" />
-
-                    <TextBlock Grid.Column="1" Style="{StaticResource SettingTitleTextStyle}" Text="Upgrade" />
-
-                    <Image Source="ms-appx:///Assets/SmallLogo.png" HorizontalAlignment="Right" Grid.Column="2" Margin="0,0,6,0" Width="30" Height="30" />
-
-                </Grid>
-
-            </Grid>
-
-            <ScrollViewer Grid.Row="1" Margin="40,24,23,0" VerticalAlignment="Top" 
-                          HorizontalScrollBarVisibility="Disabled" HorizontalScrollMode="Disabled"
-                          VerticalScrollBarVisibility="Auto" VerticalScrollMode="Auto">
-                <StackPanel>
-                    <StackPanel.Transitions>
-                        <TransitionCollection>
-                            <EntranceThemeTransition FromHorizontalOffset="120" />
-                        </TransitionCollection>
-                    </StackPanel.Transitions>
-
-                    <TextBlock Style="{StaticResource BodyTextStyle}">
-                        Do you want to remove advertisements from gMusic? 
-                    </TextBlock>
-
-                    <TextBlock Style="{StaticResource BodyTextStyle}" Margin="0, 20, 0, 0">
+        <TextBlock Style="{StaticResource BodyTextStyle}" Margin="0, 20, 0, 0">
                         You can buy for $1.99 AdFree package, which will remove all advertisements (limited offer):
-                    </TextBlock>
+        </TextBlock>
 
-                    <Button Click="AdFreeUnlimitedPackage" Margin="0, 20, 0, 0" x:Name="AdFreePackageButton">
-                        Ad Free (unlimited)
-                    </Button>
+        <Button Margin="0, 20, 0, 0" Command="{Binding Path=BuyPackageCommand, Mode=OneTime}"
+                CommandParameter="{StaticResource AddFreeUnlimitedPackageName}">
+            Ad Free (unlimited)
+        </Button>
 
-                    <TextBlock Style="{StaticResource BodyTextStyle}"  Margin="0, 40, 0, 0">
+        <TextBlock Style="{StaticResource BodyTextStyle}"  Margin="0, 40, 0, 0">
                         Or you can spend $4.99 for Ultimate package. This package does not offer any additional features now (other than Ad Free package has). 
                         But it will contains all additional features, which we will ship in future (limited offer):
-                    </TextBlock>
+        </TextBlock>
 
-                    <Button Click="UltimatePackage" Margin="0, 20, 0, 0" x:Name="UltimatePackageButton">
-                        Ultimate (unlimited)
-                    </Button>
+        <Button Margin="0, 20, 0, 0" Command="{Binding Path=BuyPackageCommand, Mode=OneTime}"
+                CommandParameter="{StaticResource UltimatePackageName}">
+            Ultimate (unlimited)
+        </Button>
 
-                    <TextBlock Style="{StaticResource BodyTextStyle}"  Margin="0, 40, 0, 0">
+        <TextBlock Style="{StaticResource BodyTextStyle}"  Margin="0, 40, 0, 0">
                         Thank you!
-                    </TextBlock>
-                </StackPanel>
-            </ScrollViewer>
-
-        </Grid>
-    </Border>
-</UserControl>
+        </TextBlock>
+    </StackPanel>
+    
+</views:ViewBase>
