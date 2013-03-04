@@ -141,6 +141,11 @@
     <Compile Include="Presenters\LinksRegionViewPresenter.cs" />
     <Compile Include="Presenters\Settings\UpgradeViewPresenter.cs" />
     <Compile Include="Registration.cs" />
+    <Compile Include="Shell\IMediaElementContainer.cs" />
+    <Compile Include="Shell\MediaElementContainer.cs" />
+    <Compile Include="Shell\MediaEndedEventArgs.cs" />
+    <Compile Include="Shell\MediaEndedReason.cs" />
+    <Compile Include="Shell\PlayProgressEventArgs.cs" />
     <Compile Include="Views\PlaylistViewResolver.cs" />
     <Compile Include="Presenters\AlbumPageViewPresenter.cs" />
     <Compile Include="Presenters\ArtistPageViewPresenter.cs" />
@@ -161,9 +166,9 @@
     <Compile Include="Services\InAppPurchases.cs" />
     <Compile Include="Services\RightRegionControlService.cs" />
     <Compile Include="Services\ICurrentPlaylistService.cs" />
-    <Compile Include="Services\Shell\ISearchService.cs" />
+    <Compile Include="Shell\ISearchService.cs" />
     <Compile Include="Services\Publishers\TileCurrentSongPublisher.cs" />
-    <Compile Include="Services\Shell\SearchService.cs" />
+    <Compile Include="Shell\SearchService.cs" />
     <Compile Include="Views\Popups\LastFmConnectionService.cs" />
     <Compile Include="Services\SettingsService.cs" />
     <Compile Include="Services\GoogleAccountService.cs" />

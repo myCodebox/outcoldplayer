@@ -118,6 +118,9 @@ namespace OutcoldSolutions.GoogleMusic
                                         AutoPlay = true,
                                         AudioCategory = AudioCategory.BackgroundCapableMedia
                                     });
+
+                registration.Register<IMediaElementContainer>()
+                            .AsSingleton<MediaElementContainer>();
             }
 
             Container.Resolve<ApplicationLogManager>();

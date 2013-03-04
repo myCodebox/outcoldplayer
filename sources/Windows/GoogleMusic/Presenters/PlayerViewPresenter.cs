@@ -8,24 +8,23 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using System.Linq;
     using System.Threading.Tasks;
 
+    using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Services.Publishers;
+    using OutcoldSolutions.GoogleMusic.Shell;
     using OutcoldSolutions.GoogleMusic.Views;
     using OutcoldSolutions.GoogleMusic.Web;
+    using OutcoldSolutions.GoogleMusic.Web.Models;
     using OutcoldSolutions.Presenters;
 
     using Windows.Media;
     using Windows.System.Display;
     using Windows.UI.Popups;
-    using Windows.UI.Xaml;
-    using Windows.UI.Xaml.Controls;
 
     public class PlayerViewPresenter : ViewPresenterBase<IPlayerView>, ICurrentPlaylistService, IDisposable
     {
-        private readonly DispatcherTimer timer = new DispatcherTimer();
-
         private readonly ISongWebService songWebService;
         private readonly IGoogleMusicSessionService sessionService;
         private readonly ISettingsService settingsService;
@@ -36,7 +35,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private readonly List<int> playOrder = new List<int>();
 
-        private MediaElement mediaElement;
+        private readonly IMediaElementContainer mediaElement;
 
         private int playIndex = 0;
 
@@ -46,15 +45,17 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private Playlist currentPlaylist;
 
+        private double progressPosition;
+
         public PlayerViewPresenter(
-            MediaElement mediaElement,
+            IMediaElementContainer mediaElementContainer,
             ISongWebService songWebService,
             IGoogleMusicSessionService sessionService,
             ISettingsService settingsService,
             IMediaStreamDownloadService mediaStreamDownloadService,
             ICurrentSongPublisherService publisherService)
         {
-            this.mediaElement = mediaElement;
+            this.mediaElement = mediaElementContainer;
             this.songWebService = songWebService;
             this.sessionService = sessionService;
             this.settingsService = settingsService;
@@ -81,8 +82,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             MediaControl.StopPressed += this.MediaControlStopPressed;
 
             this.BindingModel.SkipBackCommand = new DelegateCommand(this.PreviousSong, () => !this.BindingModel.IsBusy && this.playIndex > 0);
-            this.BindingModel.PlayCommand = new DelegateCommand(this.Play, () => !this.BindingModel.IsBusy && !this.BindingModel.IsPlaying && this.BindingModel.Songs.Count > 0);
-            this.BindingModel.PauseCommand = new DelegateCommand(this.Pause, () => !this.BindingModel.IsBusy && this.BindingModel.IsPlaying);
+            this.BindingModel.PlayCommand = new DelegateCommand(async () => await this.PlayAsync(), () => !this.BindingModel.IsBusy && !this.BindingModel.IsPlaying && this.BindingModel.Songs.Count > 0);
+            this.BindingModel.PauseCommand = new DelegateCommand(async () => await this.PauseAsync(), () => !this.BindingModel.IsBusy && this.BindingModel.IsPlaying);
             this.BindingModel.SkipAheadCommand = new DelegateCommand(
                 this.NextSong,
                 () =>
@@ -101,16 +102,13 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
             this.BindingModel.UpdateBindingModel();
 
-            this.timer.Interval = TimeSpan.FromMilliseconds(500);
-            this.timer.Start();
-
-            this.BindingModel.PropertyChanged += (sender, args) =>
+            this.BindingModel.PropertyChanged += async (sender, args) =>
                 {
                     if (args.PropertyName.Equals("CurrentPosition"))
                     {
-                        if (Math.Abs(this.mediaElement.Position.TotalSeconds - this.BindingModel.CurrentPosition) > 2)
+                        if (Math.Abs(progressPosition - this.BindingModel.CurrentPosition) > 1)
                         {
-                            this.mediaElement.Position = TimeSpan.FromSeconds(this.BindingModel.CurrentPosition);
+                            await this.mediaElement.SetPositionAsync(TimeSpan.FromSeconds(this.BindingModel.CurrentPosition));
                         }
                     }
                     else if (args.PropertyName.Equals("IsRepeatAllEnabled"))
@@ -126,19 +124,20 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                         this.settingsService.SetValue("IsLockScreenEnabled", this.BindingModel.IsLockScreenEnabled);
                     }
                 };
-           
-            this.timer.Tick += (sender, o) =>
-            {
-                if (this.BindingModel.IsPlaying)
-                {
-                    this.BindingModel.CurrentPosition = this.mediaElement.Position.TotalSeconds;
-                }
-            };
 
-            this.sessionService.SessionCleared += (sender, args) => this.Dispatcher.RunAsync(
-                () =>
+            this.mediaElement.PlayProgress += (sender, args) =>
+                {
+                    if (this.BindingModel.IsPlaying)
                     {
-                        this.Stop();
+                        this.BindingModel.TotalSeconds = args.Duration.TotalSeconds;
+                        this.BindingModel.CurrentPosition = this.progressPosition = args.Position.TotalSeconds;
+                    }
+                };
+           
+            this.sessionService.SessionCleared += (sender, args) => this.Dispatcher.RunAsync(
+                async () =>
+                    {
+                        await this.StopAsync();
                         this.ClearPlaylist();
                     });
         }
@@ -218,10 +217,10 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 else
                 {
                     await this.Dispatcher.RunAsync(
-                        () =>
+                        async () =>
                             {
                                 this.playIndex = this.playOrder.IndexOf(songIndex);
-                                this.PlayCurrentSong();
+                                await this.PlayCurrentSongAsync();
                             });
 
                     // TODO:  this.View.Activate();
@@ -240,45 +239,41 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 }
                 else
                 {
-                    await this.Dispatcher.RunAsync(
-                        () =>
-                            {
-                                var index = this.playOrder.IndexOf(songIndex);
+                    var index = this.playOrder.IndexOf(songIndex);
 
-                                this.playOrder.RemoveAt(index);
-                                for (int i = 0; i < this.playOrder.Count; i++)
-                                {
-                                    if (this.playOrder[i] > songIndex)
-                                    {
-                                        this.playOrder[i]--;
-                                    }
-                                }
+                    this.playOrder.RemoveAt(index);
+                    for (int i = 0; i < this.playOrder.Count; i++)
+                    {
+                        if (this.playOrder[i] > songIndex)
+                        {
+                            this.playOrder[i]--;
+                        }
+                    }
 
-                                this.BindingModel.Songs.Remove(songBindingModel);
+                    this.BindingModel.Songs.Remove(songBindingModel);
 
-                                if (index == this.playIndex)
-                                {
-                                    this.Stop();
-                                    this.PlayCurrentSong();
-                                }
-                                else 
-                                {
-                                    if (index < this.playIndex)
-                                    {
-                                        this.playIndex--;
-                                    }
-                                }
-                                
-                                if (this.BindingModel.Songs.Count == 0)
-                                {
-                                    this.ClearPlaylist();
-                                }
-                                else
-                                {
-                                    this.RaisePlaylistChanged();
-                                    this.BindingModel.UpdateBindingModel();
-                                }
-                            });
+                    if (index == this.playIndex)
+                    {
+                        await this.StopAsync();
+                        await this.PlayCurrentSongAsync();
+                    }
+                    else
+                    {
+                        if (index < this.playIndex)
+                        {
+                            this.playIndex--;
+                        }
+                    }
+
+                    if (this.BindingModel.Songs.Count == 0)
+                    {
+                        this.ClearPlaylist();
+                    }
+                    else
+                    {
+                        this.RaisePlaylistChanged();
+                        this.BindingModel.UpdateBindingModel();
+                    }
                 }
             }
         }
@@ -295,29 +290,14 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         {
             base.OnInitialized();
             
-            this.mediaElement.MediaOpened += (sender, args) =>
-            {
-                this.Logger.Info("Media opened. Duration: {0}.", this.mediaElement.NaturalDuration.TimeSpan);
-
-                this.BindingModel.CurrentPosition = 0;
-                this.BindingModel.TotalSeconds = this.mediaElement.NaturalDuration.TimeSpan.TotalSeconds;
-            };
-
             this.mediaElement.MediaEnded += (sender, args) =>
             {
                 this.Logger.Info("Media Ended");
                 this.OnMediaEnded();
             };
-
-            this.mediaElement.MediaFailed += (sender, args) =>
-            {
-                this.Logger.Error("Media Failed: {0}", args.ErrorMessage);
-                this.Logger.Debug("Media Failed - trying to handle this like MediaEnded");
-                this.OnMediaEnded();
-            };
         }
 
-        private void NextSong()
+        private async void NextSong()
         {
             this.Logger.Debug("NextSong.");
 
@@ -331,11 +311,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 this.playIndex++;
             }
 
-            this.PlayCurrentSong();
+            await this.PlayCurrentSongAsync();
             this.BindingModel.UpdateBindingModel();
         }
 
-        private void PreviousSong()
+        private async void PreviousSong()
         {
             this.Logger.Debug("PreviousSong.");
 
@@ -344,60 +324,60 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 this.playIndex--;
             }
 
-            this.PlayCurrentSong();
+            await this.PlayCurrentSongAsync();
 
             this.BindingModel.UpdateBindingModel();
         }
 
-        private void Play()
+        private async Task PlayAsync()
         {
             this.Logger.Debug("Play.");
 
             if (this.BindingModel.State == PlayState.Stop)
             {
-                this.PlayCurrentSong();
+                await this.PlayCurrentSongAsync();
             }
             else
             {
-                this.publisherService.PublishAsync(this.BindingModel.CurrentSong, this.currentPlaylist);
+                this.Logger.LogTask(this.publisherService.PublishAsync(this.BindingModel.CurrentSong, this.currentPlaylist));
 
-                this.mediaElement.Play();
+                await this.mediaElement.PlayAsync();
                 this.BindingModel.State = PlayState.Play;
             }
 
             this.BindingModel.UpdateBindingModel();
         }
 
-        private void Pause()
+        private async Task PauseAsync()
         {
             this.Logger.Debug("Pause.");
 
-            this.mediaElement.Pause();
+            await this.mediaElement.PauseAsync();
             this.BindingModel.State = PlayState.Pause;
             this.publisherService.CancelActiveTasks();
 
             this.BindingModel.UpdateBindingModel();
         }
 
-        private void Stop()
+        private async Task StopAsync()
         {
             this.Logger.Debug("Stop.");
 
             this.publisherService.CancelActiveTasks();
-            this.mediaElement.Stop();
+            await this.mediaElement.StopAsync();
             this.BindingModel.State = PlayState.Stop;
 
             this.BindingModel.UpdateBindingModel();
         }
 
-        private void PlayCurrentSong()
+        private async Task PlayCurrentSongAsync()
         {
             this.Logger.Debug("PlayCurrentSong.");
 
             this.BindingModel.UpdateBindingModel();
             this.publisherService.CancelActiveTasks();
 
-            this.Stop();
+            await this.StopAsync();
 
             if (this.playOrder.Count > this.playIndex)
             {
@@ -411,64 +391,63 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     this.Logger.Debug("Getting url for song '{0}'.", song.Metadata.Id);
 
                     this.BindingModel.IsBusy = true;
-                    this.songWebService.GetSongUrlAsync(song.Metadata.Id).ContinueWith(
-                        async (t) =>
-                            {
-                                if (t.IsCompleted && !t.IsFaulted && t.Result != null)
-                                {
-                                    if (this.currentSongStream != null)
-                                    {
-                                        this.Logger.Debug("Current song is not null .Stopping medial element.");
 
-                                        await this.Dispatcher.RunAsync(() => this.mediaElement.Stop());
+                    GoogleMusicSongUrl songUrl = null;
+                    
+                    try
+                    {
+                        songUrl = await this.songWebService.GetSongUrlAsync(song.Metadata.Id);
+                    }
+                    catch (Exception e)
+                    {
+                        this.Logger.LogErrorException(e);
+                    }
+                    
+                    if (songUrl != null)
+                    {
+                        if (this.currentSongStream != null)
+                        {
+                            this.Logger.Debug("Current song is not null .Stopping medial element.");
 
-                                        this.Logger.Debug("Disposing current song.");
-                                        this.currentSongStream.DownloadProgressChanged -= CurrentSongStreamOnDownloadProgressChanged;
-                                        this.currentSongStream.Dispose();
-                                        this.currentSongStream = null;
-                                    }
+                            await this.mediaElement.StopAsync();
 
-                                    this.Logger.Debug("Request completed. Trying to get stream by url '{0}'.", t.Result.Url);
-                                    var stream = await mediaStreamDownloadService.GetStreamAsync(t.Result.Url);
+                            this.Logger.Debug("Disposing current song.");
+                            this.currentSongStream.DownloadProgressChanged -= this.CurrentSongStreamOnDownloadProgressChanged;
+                            this.currentSongStream.Dispose();
+                            this.currentSongStream = null;
+                        }
 
-                                    await this.Dispatcher.RunAsync(
-                                        () =>
-                                            {
-                                                this.Logger.Debug("Setting current song.");
-                                                this.currentSongStream = stream;
-                                                this.currentSongStream.DownloadProgressChanged += CurrentSongStreamOnDownloadProgressChanged;
+                        this.Logger.Debug("Request completed. Trying to get stream by url '{0}'.", songUrl.Url);
+                        var stream = await this.mediaStreamDownloadService.GetStreamAsync(songUrl.Url);
 
-                                                this.BindingModel.CurrentSongIndex = currentSongIndex;
+                        this.Logger.Debug("Setting current song.");
+                        this.currentSongStream = stream;
+                        this.currentSongStream.DownloadProgressChanged += this.CurrentSongStreamOnDownloadProgressChanged;
 
-                                                this.Logger.Info("Set new source for media element with content type '{0}'.", this.currentSongStream.ContentType);
+                        this.BindingModel.CurrentSongIndex = currentSongIndex;
 
-                                                this.mediaElement.SetSource(this.currentSongStream, this.currentSongStream.ContentType);
-                                                this.mediaElement.Play();
+                        this.Logger.Info("Set new source for media element with content type '{0}'.", this.currentSongStream.ContentType);
 
-                                                this.BindingModel.State = PlayState.Play;
-                                                this.BindingModel.UpdateBindingModel();
+                        await this.mediaElement.PlayAsync(this.currentSongStream, this.currentSongStream.ContentType);
 
-                                                this.BindingModel.IsBusy = false;
+                        this.BindingModel.State = PlayState.Play;
+                        this.BindingModel.UpdateBindingModel();
 
-                                                this.UpdateMediaButtons();
+                        this.BindingModel.IsBusy = false;
 
-                                                this.publisherService.PublishAsync(this.BindingModel.CurrentSong, this.currentPlaylist);
-                                            });
-                                }
-                                else
-                                {
-                                    await this.Dispatcher.RunAsync(
-                                        () =>
-                                            {
-                                                this.BindingModel.IsBusy = false;
-                                                this.Logger.Debug(
-                                                    "Could not find url for song {0}.", song.Metadata.Id);
-                                                var tResult = (new MessageDialog(
-                                                    "Cannot play right now. Make sure that you don't use current account on different device at the same time. Try after couple minutes."))
-                                                    .ShowAsync();
-                                            });
-                                }
-                            });
+                        this.UpdateMediaButtons();
+
+                        this.Logger.LogTask(this.publisherService.PublishAsync(this.BindingModel.CurrentSong, this.currentPlaylist));
+                    }
+                    else
+                    {
+                        this.BindingModel.IsBusy = false;
+                        this.Logger.Debug("Could not get url for song {0}.", song.Metadata.Id);
+
+                        this.Logger.LogTask((new MessageDialog(
+                            "Cannot play right now. Make sure that you don't use current account on different device at the same time. Try after couple minutes."))
+                            .ShowAsync().AsTask());
+                    }
                 }
             }
         }
@@ -517,41 +496,41 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             }
         }
 
-        private void MediaControlPausePressed(object sender, object e)
+        private async void MediaControlPausePressed(object sender, object e)
         {
             this.Logger.Debug("MediaControlPausePressed.");
-            this.Dispatcher.RunAsync(this.Pause);
+            await this.PauseAsync();
         }
 
-        private void MediaControlPlayPressed(object sender, object e)
+        private async void MediaControlPlayPressed(object sender, object e)
         {
             this.Logger.Debug("MediaControlPlayPressed.");
-            this.Dispatcher.RunAsync(this.Play);
+            await this.PlayAsync();
         }
 
-        private void MediaControlStopPressed(object sender, object e)
+        private async void MediaControlStopPressed(object sender, object e)
         {
             this.Logger.Debug("MediaControlStopPressed.");
-            this.Dispatcher.RunAsync(this.Stop);
+            await this.StopAsync();
         }
 
-        private void MediaControlPlayPauseTogglePressed(object sender, object e)
+        private async void MediaControlPlayPauseTogglePressed(object sender, object e)
         {
             this.Logger.Debug("MediaControlPlayPauseTogglePressed.");
             if (this.BindingModel.State == PlayState.Play)
             {
-                this.Dispatcher.RunAsync(this.Pause);
+                await this.PauseAsync();
             }
             else
             {
-                this.Dispatcher.RunAsync(this.Play);
+                await this.PlayAsync();
             }
         }
 
         private void MediaControlOnNextTrackPressed(object sender, object o)
         {
             this.Logger.Debug("MediaControlOnNextTrackPressed.");
-            this.Dispatcher.RunAsync(this.NextSong);
+            this.NextSong();
         }
 
         private void MediaControlOnPreviousTrackPressed(object sender, object o)

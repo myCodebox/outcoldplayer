@@ -188,8 +188,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
             set
             {
-                this.totalSeconds = value;
-                this.RaiseCurrentPropertyChanged();
+                this.SetValue(ref this.totalSeconds, value);
             }
         }
 
