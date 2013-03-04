@@ -4,20 +4,11 @@
 namespace OutcoldSolutions.GoogleMusic.BindingModels
 {
     using OutcoldSolutions.GoogleMusic.Models;
-
-    public enum PlayState
-    {
-        Stop = 0,
-
-        Play = 1,
-
-        Pause = 2
-    }
+    using OutcoldSolutions.GoogleMusic.Services;
 
     public class PlayerBindingModel : SongsBindingModelBase
     {
-        private int currentSongIndex = -1;
-        private PlayState playState = PlayState.Stop;
+        private QueueState playState = QueueState.Unknown;
 
         private bool isShuffleEnabled = false;
         private bool isRepeatAllEnabled = false;
@@ -28,6 +19,8 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         private double totalSeconds = 1;
         private double currentPosition;
         private double downloadProgress;
+
+        private Song currentSong;
 
         public DelegateCommand SkipBackCommand { get; set; }
 
@@ -98,11 +91,11 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         {
             get
             {
-                return this.playState == PlayState.Play;
+                return this.playState == QueueState.Play;
             }
         }
 
-        public PlayState State
+        public QueueState State
         {
             get
             {
@@ -111,40 +104,11 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
             set
             {
-                if (this.playState != value)
+                if (this.SetValue(ref this.playState, value))
                 {
-                    this.playState = value;
-                    this.RaiseCurrentPropertyChanged();
                     this.RaisePropertyChanged(() => this.IsPlaying);
+                    this.RaisePropertyChanged(() => this.IsBusy);
                 }
-            }
-        }
-
-        public int CurrentSongIndex
-        {
-            get
-            {
-                return this.currentSongIndex;
-            }
-
-            set
-            {
-                var currentSong = this.CurrentSong;
-                if (currentSong != null)
-                {
-                    currentSong.State = SongState.None;
-                }
-
-                this.currentSongIndex = value;
-
-                currentSong = this.CurrentSong;
-                if (currentSong != null)
-                {
-                    currentSong.State = SongState.Playing;
-                }
-
-                this.RaiseCurrentPropertyChanged();
-                this.RaisePropertyChanged(() => this.CurrentSong);
             }
         }
 
@@ -152,12 +116,12 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         {
             get
             {
-                if (this.currentSongIndex >= 0 && this.currentSongIndex < this.Songs.Count)
-                {
-                    return this.Songs[this.currentSongIndex];
-                }
+                return this.currentSong;
+            }
 
-                return null;
+            set
+            {
+                this.SetValue(ref this.currentSong, value);
             }
         }
 
@@ -165,17 +129,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         {
             get
             {
-                return this.isBusy;
-            }
-
-            set
-            {
-                if (this.isBusy != value)
-                {
-                    this.isBusy = value;
-                    this.RaiseCurrentPropertyChanged();
-                    this.UpdateBindingModel();
-                }
+                return this.playState == QueueState.Busy;
             }
         }
 

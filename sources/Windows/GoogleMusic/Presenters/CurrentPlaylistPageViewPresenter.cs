@@ -19,19 +19,19 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
     public class CurrentPlaylistPageViewPresenter : DataPagePresenterBase<ICurrentPlaylistPageView, CurrentPlaylistPageViewBindingModel>
     {
-        private readonly ICurrentPlaylistService currentPlaylistService;
+        private readonly IPlayQueueService playQueueService;
         private readonly ISongMetadataEditService metadataEditService;
 
         public CurrentPlaylistPageViewPresenter(
             IDependencyResolverContainer container, 
-            ICurrentPlaylistService currentPlaylistService,
+            IPlayQueueService playQueueService,
             ISongMetadataEditService metadataEditService)
             : base(container)
         {
-            this.currentPlaylistService = currentPlaylistService;
+            this.playQueueService = playQueueService;
             this.metadataEditService = metadataEditService;
 
-            this.currentPlaylistService.PlaylistChanged += (sender, args) => this.UpdateSongs();
+            this.playQueueService.QueueChanged += (sender, args) => this.UpdateSongs();
 
             this.PlaySelectedSongCommand = new DelegateCommand(this.PlaySelectedSong);
             this.RemoveSelectedSongCommand = new DelegateCommand(this.RemoveSelectedSong);
@@ -49,7 +49,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         public void SelectPlayingSong()
         {
-            this.BindingModel.SelectedSongIndex = this.currentPlaylistService.CurrentSongIndex;
+            this.BindingModel.SelectedSongIndex = this.playQueueService.GetCurrentSongIndex();
         }
 
         protected override void OnInitialized()
@@ -93,7 +93,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             var selectedSongIndex = this.BindingModel.SelectedSongIndex;
             if (selectedSongIndex >= 0)
             {
-                await this.currentPlaylistService.RemoveAsync(selectedSongIndex);
+                await this.playQueueService.RemoveAsync(selectedSongIndex);
 
                 if (selectedSongIndex < this.BindingModel.Songs.Count)
                 {
@@ -113,13 +113,13 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             var selectedSongIndex = this.BindingModel.SelectedSongIndex;
             if (selectedSongIndex >= 0)
             {
-                this.Logger.LogTask(this.currentPlaylistService.PlayAsync(selectedSongIndex));
+                this.Logger.LogTask(this.playQueueService.PlayAsync(selectedSongIndex));
             }
         }
 
         private void UpdateSongs()
         {
-            this.BindingModel.Songs = new List<Song>(this.currentPlaylistService.GetPlaylist());
+            this.Dispatcher.RunAsync(() => { this.BindingModel.Songs = new List<Song>(this.playQueueService.GetQueue()); });
         }
 
         private void SelectedSongChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)

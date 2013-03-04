@@ -16,16 +16,16 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
     public class ArtistPageViewPresenter : DataPagePresenterBase<IArtistPageView, ArtistPageViewBindingModel>
     {
-        private readonly ICurrentPlaylistService currentPlaylistService;
+        private readonly IPlayQueueService playQueueService;
         private readonly INavigationService navigationService;
 
         public ArtistPageViewPresenter(
-            IDependencyResolverContainer container, 
-            ICurrentPlaylistService currentPlaylistService,
+            IDependencyResolverContainer container,
+            IPlayQueueService playQueueService,
             INavigationService navigationService)
             : base(container)
         {
-            this.currentPlaylistService = currentPlaylistService;
+            this.playQueueService = playQueueService;
             this.navigationService = navigationService;
             this.PlayCommand = new DelegateCommand(this.Play);
             this.ShowAllCommand = new DelegateCommand(this.ShowAll);
@@ -86,9 +86,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     this.navigationService.ResolveAndNavigateTo<PlaylistViewResolver>(playlist);
                 }
 
-                this.currentPlaylistService.ClearPlaylist();
-                this.currentPlaylistService.SetPlaylist(playlist);
-                this.currentPlaylistService.PlayAsync();
+                this.playQueueService.PlayAsync(playlist);
+                this.playQueueService.PlayAsync();
             }
         }
     }

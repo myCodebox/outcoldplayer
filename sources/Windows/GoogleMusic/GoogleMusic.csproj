@@ -141,10 +141,16 @@
     <Compile Include="Presenters\LinksRegionViewPresenter.cs" />
     <Compile Include="Presenters\Settings\UpgradeViewPresenter.cs" />
     <Compile Include="Registration.cs" />
+    <Compile Include="Services\IPlayQueueService.cs" />
+    <Compile Include="Services\PlayQueueService.cs" />
+    <Compile Include="Services\QueueState.cs" />
+    <Compile Include="Services\StateChangedEventArgs.cs" />
     <Compile Include="Shell\IMediaElementContainer.cs" />
+    <Compile Include="Shell\INotificationService.cs" />
     <Compile Include="Shell\MediaElementContainer.cs" />
     <Compile Include="Shell\MediaEndedEventArgs.cs" />
     <Compile Include="Shell\MediaEndedReason.cs" />
+    <Compile Include="Shell\NotificationService.cs" />
     <Compile Include="Shell\PlayProgressEventArgs.cs" />
     <Compile Include="Views\PlaylistViewResolver.cs" />
     <Compile Include="Presenters\AlbumPageViewPresenter.cs" />
@@ -165,7 +171,6 @@
     <Compile Include="Presenters\StartPageViewPresenter.cs" />
     <Compile Include="Services\InAppPurchases.cs" />
     <Compile Include="Services\RightRegionControlService.cs" />
-    <Compile Include="Services\ICurrentPlaylistService.cs" />
     <Compile Include="Shell\ISearchService.cs" />
     <Compile Include="Services\Publishers\TileCurrentSongPublisher.cs" />
     <Compile Include="Shell\SearchService.cs" />

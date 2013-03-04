@@ -23,13 +23,13 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         where TPlaylist : Playlist 
         where TView : IDataPageView
     {
-        private readonly ICurrentPlaylistService currentPlaylistService;
+        private readonly IPlayQueueService playQueueService;
         private readonly ISongMetadataEditService metadataEditService;
 
         public PlaylistPageViewPresenterBase(IDependencyResolverContainer container)
             : base(container)
         {
-            this.currentPlaylistService = container.Resolve<ICurrentPlaylistService>();
+            this.playQueueService = container.Resolve<IPlayQueueService>();
             this.metadataEditService = container.Resolve<ISongMetadataEditService>();
 
             this.PlaySongCommand = new DelegateCommand(this.Play, () => this.BindingModel != null && this.BindingModel.SelectedSong != null);
@@ -86,9 +86,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             var selectedSong = this.BindingModel.SelectedSong;
             if (selectedSong != null)
             {
-                this.currentPlaylistService.ClearPlaylist();
-                this.currentPlaylistService.SetPlaylist(this.BindingModel.Playlist);
-                this.currentPlaylistService.PlayAsync(this.BindingModel.Playlist.Songs.IndexOf(selectedSong));
+                this.playQueueService.PlayAsync(this.BindingModel.Playlist, this.BindingModel.Playlist.Songs.IndexOf(selectedSong));
             }
         }
 

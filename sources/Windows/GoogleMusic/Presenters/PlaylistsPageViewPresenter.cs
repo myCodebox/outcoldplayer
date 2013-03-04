@@ -25,7 +25,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private readonly IPlaylistCollectionsService playlistCollectionsService;
         private readonly IMusicPlaylistRepository musicPlaylistRepository;
         private readonly INavigationService navigationService;
-        private readonly ICurrentPlaylistService currentPlaylistService;
+        private readonly IPlayQueueService playQueueService;
 
         private PlaylistsRequest currentRequest;
 
@@ -34,13 +34,13 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             IPlaylistCollectionsService playlistCollectionsService,
             IMusicPlaylistRepository musicPlaylistRepository,
             INavigationService navigationService,
-            ICurrentPlaylistService currentPlaylistService)
+            IPlayQueueService playQueueService)
             : base(container)
         {
             this.playlistCollectionsService = playlistCollectionsService;
             this.musicPlaylistRepository = musicPlaylistRepository;
             this.navigationService = navigationService;
-            this.currentPlaylistService = currentPlaylistService;
+            this.playQueueService = playQueueService;
 
             this.AddPlaylistCommand = new DelegateCommand(this.AddPlaylist);
             this.DeletePlaylistCommand = new DelegateCommand(this.DetelePlaylist, () => this.BindingModel.SelectedItem != null);
@@ -270,9 +270,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             if (playlist != null)
             {
                 this.navigationService.NavigateTo<IPlaylistPageView>(playlist);
-                this.currentPlaylistService.ClearPlaylist();
-                this.currentPlaylistService.SetPlaylist(playlist);
-                this.currentPlaylistService.PlayAsync();
+                this.playQueueService.PlayAsync(playlist);
             }
         }
     }

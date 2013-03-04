@@ -18,18 +18,18 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     {
         private const int MaxItems = 12;
 
-        private readonly ICurrentPlaylistService currentPlaylistService;
+        private readonly IPlayQueueService playQueueService;
         private readonly IPlaylistCollectionsService collectionsService;
         private readonly INavigationService navigationService;
 
         public StartPageViewPresenter(
             IDependencyResolverContainer container, 
             INavigationService navigationService,
-            ICurrentPlaylistService currentPlaylistService,
+            IPlayQueueService playQueueService,
             IPlaylistCollectionsService collectionsService)
             : base(container)
         {
-            this.currentPlaylistService = currentPlaylistService;
+            this.playQueueService = playQueueService;
             this.collectionsService = collectionsService;
             this.navigationService = navigationService;
 
@@ -78,13 +78,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             Playlist playlist = commandParameter as Playlist;
             if (playlist != null)
             {
-                this.currentPlaylistService.ClearPlaylist();
-                if (playlist.Songs.Count > 0)
-                {
-                    this.currentPlaylistService.SetPlaylist(playlist);
-                    this.currentPlaylistService.PlayAsync();
-                }
-
+                this.playQueueService.PlayAsync(playlist);
                 this.navigationService.NavigateTo<IPlaylistPageView>(playlist);
             }
         }

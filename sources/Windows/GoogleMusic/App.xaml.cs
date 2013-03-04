@@ -53,9 +53,7 @@ namespace OutcoldSolutions.GoogleMusic
                             .InjectionRule<BindingModelBase, PlayerViewPresenter>()
                             .As<PlayerView>();
 
-                registration.Register<ICurrentPlaylistService>()
-                            .And<PlayerViewPresenter>()
-                            .AsSingleton<PlayerViewPresenter>();
+                registration.Register<PlayerViewPresenter>().AsSingleton();
 
                 registration.Register<LinksRegionView>()
                             .InjectionRule<BindingModelBase, LinksRegionViewPresenter>();
@@ -121,6 +119,12 @@ namespace OutcoldSolutions.GoogleMusic
 
                 registration.Register<IMediaElementContainer>()
                             .AsSingleton<MediaElementContainer>();
+
+                registration.Register<IPlayQueueService>()
+                            .AsSingleton<PlayQueueService>();
+
+                registration.Register<INotificationService>()
+                            .AsSingleton<NotificationService>();
             }
 
             Container.Resolve<ApplicationLogManager>();

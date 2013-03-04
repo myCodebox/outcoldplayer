@@ -52,14 +52,10 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
                     updateRecentPlaylist = true;
                     playlistId = ((MusicPlaylist)currentPlaylist).Id.ToString();
                 }
-                else if (currentPlaylist is Album || currentPlaylist is Genre || currentPlaylist is Artist || currentPlaylist is SystemPlaylist)
+                else 
                 {
                     updateRecentAlbum = true;
                     playlistId = string.Format("{0} - {1}", song.Metadata.Artist, song.Metadata.Album);
-                }
-                else
-                {
-                    Debug.Assert(false, "Unknown type of playlist!");
                 }
             }
 
