@@ -333,19 +333,19 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
                     this.songsQueue.RemoveAt(songIndex);
 
-                    if (queueIndex < this.currentQueueIndex)
-                    {
-                        this.currentQueueIndex--;
-                    }
-
                     if (this.songsQueue.Count == 0)
                     {
                         await this.mediaElement.StopAsync();
                         this.currentQueueIndex = -1;
                     }
-                    else
+                    else if (queueIndex == this.currentQueueIndex)
                     {
+                        this.currentQueueIndex--;
                         await this.PlaySongAsyncInternal(this.CurrentSongIndex);
+                    }
+                    else if (queueIndex < this.currentQueueIndex)
+                    {
+                        this.currentQueueIndex--;
                     }
 
                     this.RaiseQueueChanged();

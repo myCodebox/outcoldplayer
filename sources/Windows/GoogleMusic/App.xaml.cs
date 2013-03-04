@@ -48,6 +48,7 @@ namespace OutcoldSolutions.GoogleMusic
                 Registration.RegisterPages(registration);
                 Registration.RegisterSettingViews(registration);
                 Registration.RegisterViewResolvers(registration);
+                Registration.RegisterPopupViews(registration);
 
                 registration.Register<IPlayerView>()
                             .InjectionRule<BindingModelBase, PlayerViewPresenter>()

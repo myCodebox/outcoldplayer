@@ -101,7 +101,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
         {
             if (this.logger.IsDebugEnabled)
             {
-                this.logger.Debug("PublishAsync: Add new task for publishing: SongId: {0}, PlaylistType: {1}.", song.Metadata.Id, currentPlaylist.GetType());
+                this.logger.Debug("PublishAsync: Add new task for publishing: SongId: {0}, PlaylistType: {1}.", song.Metadata.Id, currentPlaylist == null ? null : currentPlaylist.GetType());
             }
 
             Task<Uri> getAlbumArtTak = this.GetAlbumArtUri(song);
@@ -138,7 +138,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
 
             if (!delayPublishers.Any())
             {
-                this.logger.Debug("PublishAsync: no delay publishers, return.", song.Metadata.Id, currentPlaylist.GetType());
+                this.logger.Debug("PublishAsync: no delay publishers, return.", song.Metadata.Id, currentPlaylist == null ? null : currentPlaylist.GetType());
                 return;
             }
 
@@ -172,7 +172,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
 
             await Task.WhenAll(immediately, delay);
 
-            this.logger.Debug("PublishAsync completed for SongId: {0}, PlaylistType: {1}.", song.Metadata.Id, currentPlaylist.GetType());
+            this.logger.Debug("PublishAsync completed for SongId: {0}, PlaylistType: {1}.", song.Metadata.Id, currentPlaylist == null ? null : currentPlaylist.GetType());
         }
 
         private async Task PublishAsync(IEnumerable<Lazy<ICurrentSongPublisher>> publishers, Song song, Playlist currentPlaylist, Uri albumArtUri, CancellationToken cancellationToken)
