@@ -241,7 +241,11 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
             {
                 if (!string.Equals(
                     propertyChangedEventArgs.PropertyName,
-                    PropertyNameExtractor.GetPropertyName(() => song.PlayCount),
+                    PropertyNameExtractor.GetPropertyName(() => song.State),
+                    StringComparison.OrdinalIgnoreCase)
+                    && !string.Equals(
+                    propertyChangedEventArgs.PropertyName,
+                    PropertyNameExtractor.GetPropertyName(() => song.IsPlaying),
                     StringComparison.OrdinalIgnoreCase))
                 {
                     this.songsCacheService.UpdateSongMedatadaAsync(song.Metadata);

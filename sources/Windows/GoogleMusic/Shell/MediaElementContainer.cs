@@ -43,6 +43,11 @@ namespace OutcoldSolutions.GoogleMusic.Shell
 
         public Task PlayAsync(IRandomAccessStream stream, string mimeType)
         {
+            if (this.logger.IsDebugEnabled)
+            {
+                this.logger.Debug("Play new media {0}.", mimeType);
+            }
+
             return this.dispatcher.RunAsync(
                 CoreDispatcherPriority.High,
                 () =>
@@ -54,6 +59,11 @@ namespace OutcoldSolutions.GoogleMusic.Shell
 
         public Task PlayAsync()
         {
+            if (this.logger.IsDebugEnabled)
+            {
+                this.logger.Debug("Play current media.");
+            }
+
             return this.dispatcher.RunAsync(
                 CoreDispatcherPriority.High,
                 () =>
@@ -66,6 +76,11 @@ namespace OutcoldSolutions.GoogleMusic.Shell
 
         public Task PauseAsync()
         {
+            if (this.logger.IsDebugEnabled)
+            {
+                this.logger.Debug("Pausing current media.");
+            }
+
             return this.dispatcher.RunAsync(
                 CoreDispatcherPriority.High,
                 () =>
@@ -77,6 +92,11 @@ namespace OutcoldSolutions.GoogleMusic.Shell
 
         public Task StopAsync()
         {
+            if (this.logger.IsDebugEnabled)
+            {
+                this.logger.Debug("Stopping current media.");
+            }
+
             return this.dispatcher.RunAsync(
                 CoreDispatcherPriority.High,
                 () =>
@@ -88,6 +108,11 @@ namespace OutcoldSolutions.GoogleMusic.Shell
 
         public Task SetPositionAsync(TimeSpan position)
         {
+            if (this.logger.IsDebugEnabled)
+            {
+                this.logger.Debug("Changing position of current song to {0}.", position);
+            }
+
             return this.dispatcher.RunAsync(
                 CoreDispatcherPriority.High,
                 () =>
@@ -103,13 +128,22 @@ namespace OutcoldSolutions.GoogleMusic.Shell
 
         private void MediaElementOnMediaOpened(object sender, RoutedEventArgs routedEventArgs)
         {
+            if (this.logger.IsDebugEnabled)
+            {
+                this.logger.Debug("MediaElement opened, duration is {0}.", this.mediaElement.NaturalDuration.TimeSpan);
+            }
+
             this.timer.Start();
             this.RaisePlayProgress(new PlayProgressEventArgs(new TimeSpan(0), this.mediaElement.NaturalDuration.TimeSpan));
         }
 
         private void MediaElementOnMediaEnded(object sender, RoutedEventArgs routedEventArgs)
         {
-            this.logger.Error("MediaElement ended.");
+            if (this.logger.IsDebugEnabled)
+            {
+                this.logger.Debug("MediaElement ended.");
+            }
+
             this.timer.Stop();
             this.RaiseMediaEnded(new MediaEndedEventArgs(MediaEndedReason.Ended));
         }
