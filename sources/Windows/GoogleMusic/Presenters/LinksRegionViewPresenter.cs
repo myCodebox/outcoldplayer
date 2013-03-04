@@ -3,7 +3,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Presenters
 {
-    using OutcoldSolutions.GoogleMusic.Services.Shell;
+    using OutcoldSolutions.GoogleMusic.Shell;
     using OutcoldSolutions.Presenters;
     using OutcoldSolutions.Views;
 

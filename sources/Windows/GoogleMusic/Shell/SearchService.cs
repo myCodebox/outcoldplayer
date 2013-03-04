@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // Outcold Solutions (http://outcoldman.com)
 // --------------------------------------------------------------------------------------------------------------------
-namespace OutcoldSolutions.GoogleMusic.Services.Shell
+namespace OutcoldSolutions.GoogleMusic.Shell
 {
     using System;
     using System.Collections.Generic;
@@ -11,6 +11,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Shell
 
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Repositories;
+    using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
 
     using Windows.ApplicationModel.Search;
