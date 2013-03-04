@@ -129,6 +129,10 @@ namespace OutcoldSolutions.GoogleMusic
                             .As<AddToPlaylistPopupView>();
                 registration.Register<AddToPlaylistPopupViewPresenter>();
 
+                registration.Register<LinksRegionView>()
+                            .InjectionRule<PresenterBase, LinksRegionViewPresenter>();
+                registration.Register<LinksRegionViewPresenter>();
+
                 // Settings
                 registration.Register<ISearchService>().AsSingleton<SearchService>();
 
@@ -233,7 +237,7 @@ namespace OutcoldSolutions.GoogleMusic
             Container.Resolve<RightRegionControlService>();
 
             var mainFrameRegionProvider = Container.Resolve<IMainFrameRegionProvider>();
-            mainFrameRegionProvider.SetContent(MainFrameRegion.Links, new LinksRegionContent());
+            mainFrameRegionProvider.SetContent(MainFrameRegion.Links, Container.Resolve<LinksRegionView>());
             mainFrameRegionProvider.SetContent(
                 MainFrameRegion.Background,
                 new Image()

@@ -3,13 +3,14 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Views
 {
+    using OutcoldSolutions.Views;
+
     using Windows.ApplicationModel.Search;
     using Windows.UI.Xaml;
-    using Windows.UI.Xaml.Controls;
 
-    public sealed partial class LinksRegionContent : UserControl
+    public sealed partial class LinksRegionView : ViewBase
     {
-        public LinksRegionContent()
+        public LinksRegionView()
         {
             this.InitializeComponent();
         }

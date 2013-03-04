@@ -31,7 +31,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Shell
         private readonly IPlaylistCollectionsService playlistCollectionsService;
         private readonly ISongsRepository songsRepository;
 
-        private bool isRegistered = false;
+        private bool isRegistered;
 
         public SearchService(
             INavigationService navigationService, 
@@ -45,6 +45,22 @@ namespace OutcoldSolutions.GoogleMusic.Services.Shell
             this.songsRepository = songsRepository;
 
             this.navigationService.NavigatedTo += this.OnNavigatedTo;
+        }
+
+        public event EventHandler IsRegisteredChanged;
+
+        public bool IsRegistered
+        {
+            get
+            {
+                return this.isRegistered;
+            }
+
+            private set
+            {
+                this.isRegistered = value;
+                this.RaiseIsRegisteredChanged();
+            }
         }
 
         public void Activate()
@@ -66,19 +82,28 @@ namespace OutcoldSolutions.GoogleMusic.Services.Shell
                 || navigatedToEventArgs.View is IReleasesHistoryPageView
                 || navigatedToEventArgs.View is IInitPageView)
             {
-                if (this.isRegistered)
+                if (this.IsRegistered)
                 {
                     this.Unregister();
-                    this.isRegistered = false;
+                    this.IsRegistered = false;
                 }
             }
             else
             {
-                if (!this.isRegistered)
+                if (!this.IsRegistered)
                 {
                     this.Register();
-                    this.isRegistered = true;
+                    this.IsRegistered = true;
                 }
+            }
+        }
+
+        private void RaiseIsRegisteredChanged()
+        {
+            var handler = this.IsRegisteredChanged;
+            if (handler != null)
+            {
+                handler(this, EventArgs.Empty);
             }
         }
 

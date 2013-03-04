@@ -135,6 +135,7 @@
     <Compile Include="Converters\StringFormatConverter.cs" />
     <Compile Include="Models\PlaylistsRequest.cs" />
     <Compile Include="Models\TimeSpanEx.cs" />
+    <Compile Include="Presenters\LinksRegionViewPresenter.cs" />
     <Compile Include="Presenters\Settings\UpgradeViewPresenter.cs" />
     <Compile Include="Views\PlaylistViewResolver.cs" />
     <Compile Include="Presenters\AlbumPageViewPresenter.cs" />
@@ -174,8 +175,8 @@
     <Compile Include="Views\InitPageView.xaml.cs">
       <DependentUpon>InitPageView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\LinksRegionContent.xaml.cs">
-      <DependentUpon>LinksRegionContent.xaml</DependentUpon>
+    <Compile Include="Views\LinksRegionView.xaml.cs">
+      <DependentUpon>LinksRegionView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Popups\AddToPlaylistPopupView.xaml.cs">
       <DependentUpon>AddToPlaylistPopupView.xaml</DependentUpon>
@@ -309,7 +310,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\LinksRegionContent.xaml">
+    <Page Include="Views\LinksRegionView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
