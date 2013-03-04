@@ -141,12 +141,14 @@
     <Compile Include="Presenters\LinksRegionViewPresenter.cs" />
     <Compile Include="Presenters\Settings\UpgradeViewPresenter.cs" />
     <Compile Include="Registration.cs" />
+    <Compile Include="Services\CurrentSongPropertiesUpdateService.cs" />
     <Compile Include="Services\IPlayQueueService.cs" />
     <Compile Include="Services\PlayQueueService.cs" />
     <Compile Include="Services\QueueState.cs" />
     <Compile Include="Services\StateChangedEventArgs.cs" />
     <Compile Include="Shell\IMediaElementContainer.cs" />
     <Compile Include="Shell\INotificationService.cs" />
+    <Compile Include="Shell\MediaControlIntegration.cs" />
     <Compile Include="Shell\MediaElementContainer.cs" />
     <Compile Include="Shell\MediaEndedEventArgs.cs" />
     <Compile Include="Shell\MediaEndedReason.cs" />

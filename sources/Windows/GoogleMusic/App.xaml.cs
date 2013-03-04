@@ -125,6 +125,9 @@ namespace OutcoldSolutions.GoogleMusic
 
                 registration.Register<INotificationService>()
                             .AsSingleton<NotificationService>();
+
+                registration.Register<MediaControlIntegration>();
+                registration.Register<CurrentSongPropertiesUpdateService>();
             }
 
             Container.Resolve<ApplicationLogManager>();
@@ -175,7 +178,10 @@ namespace OutcoldSolutions.GoogleMusic
             
             MainMenu.Initialize(Container.Resolve<IApplicationToolbar>());
             ApplicationSettingViews.Initialize(Container.Resolve<IApplicationSettingViewsService>());
-            
+
+            Container.Resolve<MediaControlIntegration>();
+            Container.Resolve<CurrentSongPropertiesUpdateService>();
+
             Container.Resolve<INavigationService>().NavigateTo<IInitPageView>(keepInHistory: false);
         }
 

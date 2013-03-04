@@ -121,7 +121,7 @@ namespace OutcoldSolutions.GoogleMusic.Models
         {
             get
             {
-                return this.songState == SongState.Playing;
+                return this.songState == SongState.Playing || this.songState == SongState.Paused;
             }
         }
     }

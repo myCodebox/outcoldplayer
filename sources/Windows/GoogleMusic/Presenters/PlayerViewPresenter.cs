@@ -12,10 +12,9 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using OutcoldSolutions.GoogleMusic.Views;
     using OutcoldSolutions.Presenters;
 
-    using Windows.Media;
     using Windows.System.Display;
 
-    public class PlayerViewPresenter : ViewPresenterBase<IPlayerView>, IDisposable
+    public class PlayerViewPresenter : ViewPresenterBase<IPlayerView>
     {
         private readonly IGoogleMusicSessionService sessionService;
         private readonly ISettingsService settingsService;
@@ -46,14 +45,9 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             {
                 this.UpdateLockScreen();
             }
-
-            MediaControl.PlayPauseTogglePressed += this.MediaControlPlayPauseTogglePressed;
-            MediaControl.PlayPressed += this.MediaControlPlayPressed;
-            MediaControl.PausePressed += this.MediaControlPausePressed;
-            MediaControl.StopPressed += this.MediaControlStopPressed;
-
+            
             this.BindingModel.SkipBackCommand = new DelegateCommand(this.PreviousSong, () => !this.BindingModel.IsBusy && this.queueService.CanSwitchToPrevious());
-            this.BindingModel.PlayCommand = new DelegateCommand(async () => await this.PlayAsync(), () => !this.BindingModel.IsBusy && !this.BindingModel.IsPlaying && this.BindingModel.Songs.Count > 0);
+            this.BindingModel.PlayCommand = new DelegateCommand(async () => await this.PlayAsync(), () => !this.BindingModel.IsBusy && (this.BindingModel.State == QueueState.Stopped || this.BindingModel.State == QueueState.Paused));
             this.BindingModel.PauseCommand = new DelegateCommand(async () => await this.PauseAsync(), () => !this.BindingModel.IsBusy && this.BindingModel.IsPlaying);
             this.BindingModel.SkipAheadCommand = new DelegateCommand(this.NextSong, () => !this.BindingModel.IsBusy && this.queueService.CanSwitchToNext());
 
@@ -64,28 +58,27 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
             this.BindingModel.UpdateBindingModel();
 
-            this.BindingModel.PropertyChanged += async (sender, args) =>
-                {
-                    if (args.PropertyName.Equals("CurrentPosition"))
+            this.BindingModel.Subscribe(
+                () => this.BindingModel.IsShuffleEnabled, 
+                (sender, args) => this.queueService.SetShuffledAsync(this.BindingModel.IsShuffleEnabled));
+
+            this.BindingModel.Subscribe(
+                () => this.BindingModel.IsRepeatAllEnabled,
+                (sender, args) => this.queueService.SetShuffledAsync(this.BindingModel.IsRepeatAllEnabled));
+
+            this.BindingModel.Subscribe(
+                () => this.BindingModel.IsLockScreenEnabled,
+                (sender, args) => this.settingsService.SetValue("IsLockScreenEnabled", this.BindingModel.IsLockScreenEnabled));
+
+            this.BindingModel.Subscribe(
+                () => this.BindingModel.CurrentPosition,
+                async (sender, args) =>
                     {
-                        if (Math.Abs(progressPosition - this.BindingModel.CurrentPosition) > 1)
+                        if (Math.Abs(this.progressPosition - this.BindingModel.CurrentPosition) > 1)
                         {
                             await this.mediaElement.SetPositionAsync(TimeSpan.FromSeconds(this.BindingModel.CurrentPosition));
                         }
-                    }
-                    else if (args.PropertyName.Equals("IsRepeatAllEnabled"))
-                    {
-                        this.settingsService.SetValue("IsRepeatAllEnabled", this.BindingModel.IsRepeatAllEnabled);
-                    }
-                    else if (args.PropertyName.Equals("IsShuffleEnabled"))
-                    {
-                        this.settingsService.SetValue("IsShuffleEnabled", this.BindingModel.IsShuffleEnabled);
-                    }
-                    else if (args.PropertyName.Equals("IsLockScreenEnabled"))
-                    {
-                        this.settingsService.SetValue("IsLockScreenEnabled", this.BindingModel.IsLockScreenEnabled);
-                    }
-                };
+                    });
 
             this.mediaElement.PlayProgress += (sender, args) =>
                 {
@@ -111,23 +104,17 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                         this.BindingModel.CurrentSong = args.CurrentSong;
                         this.BindingModel.State = args.State;
                         this.BindingModel.UpdateBindingModel();
-                        this.UpdateMediaButtons();
                     });
-        }
 
-        ~PlayerViewPresenter()
-        {
-            this.Dispose(disposing: false);
+            this.queueService.QueueChanged += (sender, args) =>
+                {
+                    this.BindingModel.IsRepeatAllEnabled = this.queueService.IsRepeatAll;
+                    this.BindingModel.IsShuffleEnabled = this.queueService.IsShuffled;
+                };
         }
 
         public PlayerBindingModel BindingModel { get; private set; }
-
-        public void Dispose()
-        {
-            this.Dispose(disposing: true);
-            GC.SuppressFinalize(this);
-        }
-
+        
         private async void NextSong()
         {
             await this.queueService.NextSongAsync();
@@ -157,30 +144,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             await this.queueService.StopAsync();
             this.BindingModel.UpdateBindingModel();
         }
-
-        private void UpdateMediaButtons()
-        {
-            if (this.BindingModel.SkipAheadCommand.CanExecute())
-            {
-                MediaControl.NextTrackPressed -= this.MediaControlOnNextTrackPressed;
-                MediaControl.NextTrackPressed += this.MediaControlOnNextTrackPressed;
-            }
-            else
-            {
-                MediaControl.NextTrackPressed -= this.MediaControlOnNextTrackPressed;
-            }
-
-            if (this.BindingModel.SkipBackCommand.CanExecute())
-            {
-                MediaControl.PreviousTrackPressed -= this.MediaControlOnPreviousTrackPressed;
-                MediaControl.PreviousTrackPressed += this.MediaControlOnPreviousTrackPressed;
-            }
-            else
-            {
-                MediaControl.PreviousTrackPressed -= this.MediaControlOnPreviousTrackPressed;
-            }
-        }
-
+        
         private void CurrentSongStreamOnDownloadProgressChanged(object sender, double d)
         {
             this.Dispatcher.RunAsync(
@@ -189,60 +153,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                         this.Logger.Info("Download progress changed to {0}", d);
                         this.BindingModel.DownloadProgress = d;
                     });
-        }
-
-        private void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                MediaControl.PlayPauseTogglePressed -= this.MediaControlPlayPauseTogglePressed;
-                MediaControl.PlayPressed -= this.MediaControlPlayPressed;
-                MediaControl.PausePressed -= this.MediaControlPausePressed;
-                MediaControl.StopPressed -= this.MediaControlStopPressed;
-            }
-        }
-
-        private async void MediaControlPausePressed(object sender, object e)
-        {
-            this.Logger.Debug("MediaControlPausePressed.");
-            await this.PauseAsync();
-        }
-
-        private async void MediaControlPlayPressed(object sender, object e)
-        {
-            this.Logger.Debug("MediaControlPlayPressed.");
-            await this.PlayAsync();
-        }
-
-        private async void MediaControlStopPressed(object sender, object e)
-        {
-            this.Logger.Debug("MediaControlStopPressed.");
-            await this.StopAsync();
-        }
-
-        private async void MediaControlPlayPauseTogglePressed(object sender, object e)
-        {
-            this.Logger.Debug("MediaControlPlayPauseTogglePressed.");
-            if (this.BindingModel.State == QueueState.Play)
-            {
-                await this.PauseAsync();
-            }
-            else
-            {
-                await this.PlayAsync();
-            }
-        }
-
-        private void MediaControlOnNextTrackPressed(object sender, object o)
-        {
-            this.Logger.Debug("MediaControlOnNextTrackPressed.");
-            this.NextSong();
-        }
-
-        private void MediaControlOnPreviousTrackPressed(object sender, object o)
-        {
-            this.Logger.Debug("MediaControlOnPreviousTrackPressed.");
-            this.Dispatcher.RunAsync(this.PreviousSong);
         }
         
         private void UpdateLockScreen()

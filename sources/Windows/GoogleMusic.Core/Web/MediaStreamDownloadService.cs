@@ -243,9 +243,12 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
                         lock (this.locker)
                         {
-                            int length = (int)Math.Min(count, this.contentLength - (int)this.currentPosition);
-                            this.data.CopyTo((int)this.currentPosition, buffer, 0, length);
-                            buffer.Length = (uint)length;
+                            if (this.data != null)
+                            {
+                                int length = (int)Math.Min(count, this.contentLength - (int)this.currentPosition);
+                                this.data.CopyTo((int)this.currentPosition, buffer, 0, length);
+                                buffer.Length = (uint)length;
+                            }
                         }
 
                         return buffer;

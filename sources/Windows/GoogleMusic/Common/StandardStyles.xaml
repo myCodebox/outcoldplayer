@@ -621,6 +621,19 @@
                             <VisualStateGroup x:Name="PauseGroup">
                                 
                                 <VisualState x:Name="Paused" >
+                                    <Storyboard >
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Bar1" Storyboard.TargetProperty="Height">
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Bar2" Storyboard.TargetProperty="Height">
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Bar3" Storyboard.TargetProperty="Height">
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Bar4" Storyboard.TargetProperty="Height">
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Bar5" Storyboard.TargetProperty="Height">
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                    
                                 </VisualState>
                                 
                                 <VisualState x:Name="Active">

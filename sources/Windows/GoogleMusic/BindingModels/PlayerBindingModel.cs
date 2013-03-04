@@ -3,18 +3,17 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.BindingModels
 {
+    using OutcoldSolutions.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services;
 
-    public class PlayerBindingModel : SongsBindingModelBase
+    public class PlayerBindingModel : BindingModelBase
     {
         private QueueState playState = QueueState.Unknown;
 
         private bool isShuffleEnabled = false;
         private bool isRepeatAllEnabled = false;
         private bool isLockScreenEnabled = false;
-
-        private bool isBusy = false;
 
         private double totalSeconds = 1;
         private double currentPosition;
@@ -45,11 +44,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
             set
             {
-                if (this.isShuffleEnabled != value)
-                {
-                    this.isShuffleEnabled = value;
-                    this.RaiseCurrentPropertyChanged();
-                }
+                this.SetValue(ref this.isShuffleEnabled, value);
             }
         }
 
@@ -62,11 +57,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
             set
             {
-                if (this.isRepeatAllEnabled != value)
-                {
-                    this.isRepeatAllEnabled = value;
-                    this.RaiseCurrentPropertyChanged();
-                }
+                this.SetValue(ref this.isRepeatAllEnabled, value);
             }
         }
 
@@ -79,11 +70,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
             set
             {
-                if (this.isLockScreenEnabled != value)
-                {
-                    this.isLockScreenEnabled = value;
-                    this.RaiseCurrentPropertyChanged();
-                }
+                this.SetValue(ref this.isLockScreenEnabled, value);
             }
         }
 
@@ -155,8 +142,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
             set
             {
-                this.currentPosition = value;
-                this.RaiseCurrentPropertyChanged();
+                this.SetValue(ref this.currentPosition, value);
             }
         }
 
@@ -169,9 +155,10 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
             set
             {
-                this.downloadProgress = value;
-                this.RaiseCurrentPropertyChanged();
-                this.RaisePropertyChanged(() => this.IsDownloaded);
+                if (this.SetValue(ref this.downloadProgress, value))
+                {
+                    this.RaisePropertyChanged(() => this.IsDownloaded);
+                }
             }
         }
 

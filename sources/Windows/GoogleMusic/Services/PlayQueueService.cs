@@ -45,7 +45,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
             IMediaStreamDownloadService downloadService,
             ICurrentSongPublisherService publisherService,
             ISongWebService songWebService,
-            INotificationService notificationService)
+            INotificationService notificationService,
+            IGoogleMusicSessionService sessionService)
         {
             this.logger = logManager.CreateLogger("PlayQueueService");
             this.mediaElement = mediaElement;
@@ -67,6 +68,16 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     {
                         await this.NextSongAsync();
                     }
+                };
+
+            sessionService.SessionCleared += async (sender, args) =>
+                {
+                    await this.StopAsync();
+                    this.queueOrder.Clear();
+                    this.songsQueue.Clear();
+                    this.currentQueueIndex = -1;
+                    this.currentSongStream = null;
+                    this.currentPlaylist = null;
                 };
         }
 
@@ -129,6 +140,11 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
             await Task.Run(async () =>
             {
+                if (this.State == QueueState.Busy)
+                {
+                    throw new InvalidOperationException("Queue is busy");
+                }
+
                 this.currentPlaylist = playlist;
                 this.songsQueue.Clear();
                 this.songsQueue.AddRange(playlist.Songs);
@@ -150,6 +166,11 @@ namespace OutcoldSolutions.GoogleMusic.Services
         {
             await Task.Run(async () =>
             {
+                if (this.State == QueueState.Busy)
+                {
+                    throw new InvalidOperationException("Queue is busy");
+                }
+
                 this.currentQueueIndex = this.queueOrder.IndexOf(songIndex);
 
                 await this.PlaySongAsyncInternal(this.CurrentSongIndex);
@@ -158,6 +179,11 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         public async Task PlayAsync()
         {
+            if (this.State == QueueState.Busy)
+            {
+                throw new InvalidOperationException("Queue is busy");
+            }
+
             if (this.State == QueueState.Paused)
             {
                 await this.mediaElement.PlayAsync();
@@ -182,6 +208,11 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         public async Task NextSongAsync()
         {
+            if (this.State == QueueState.Busy)
+            {
+                throw new InvalidOperationException("Queue is busy");
+            }
+
             if (this.currentQueueIndex == (this.queueOrder.Count - 1) && this.IsRepeatAll)
             {
                 this.currentQueueIndex = 0;
@@ -201,6 +232,11 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         public async Task PreviousSongAsync()
         {
+            if (this.State == QueueState.Busy)
+            {
+                throw new InvalidOperationException("Queue is busy");
+            }
+
             if (this.currentQueueIndex != 0)
             {
                 this.currentQueueIndex--;
@@ -269,6 +305,11 @@ namespace OutcoldSolutions.GoogleMusic.Services
         {
             await Task.Run(async () =>
             {
+                if (this.State == QueueState.Busy)
+                {
+                    throw new InvalidOperationException("Queue is busy");
+                }
+
                 if (songIndex >= this.songsQueue.Count)
                 {
                     throw new ArgumentOutOfRangeException("songIndex");
@@ -314,25 +355,34 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         public async Task SetRepeatAllAsync(bool repeatAll)
         {
-            await Task.Run(() => this.IsRepeatAll = repeatAll);
+            await Task.Run(() =>
+                {
+                    if (this.IsRepeatAll != repeatAll)
+                    {
+                        this.IsRepeatAll = repeatAll;
+                        this.settingsService.SetValue("IsRepeatAllEnabled", this.IsRepeatAll);
+                        this.RaiseQueueChanged();
+                    }
+                });
         }
 
         public async Task SetShuffledAsync(bool isShuffled)
         {
-            if (isShuffled != this.IsShuffled)
-            {
-                this.IsShuffled = isShuffled;
-
-                await Task.Run(() =>
+            await Task.Run(() =>
                 {
-                    lock (this.queueOrder)
+                    if (isShuffled != this.IsShuffled)
                     {
-                        this.UpdateOrder();
+                        this.IsShuffled = isShuffled;
+                        this.settingsService.SetValue("IsShuffleEnabled", this.IsShuffled);
+
+                        lock (this.queueOrder)
+                        {
+                            this.UpdateOrder();
+                        }
+
+                        this.RaiseQueueChanged();
                     }
                 });
-
-                this.RaiseQueueChanged();
-            }
         }
 
         public IEnumerable<Song> GetQueue()
@@ -389,21 +439,18 @@ namespace OutcoldSolutions.GoogleMusic.Services
                             this.logger.Debug("Getting stream by url '{0}'.", songUrl.Url);
                         }
 
-                        var stream = await this.downloadService.GetStreamAsync(songUrl.Url);
-
-                        if (this.State == QueueState.Play)
-                        {
-                            await this.mediaElement.StopAsync();
-                        }
-
                         if (this.currentSongStream != null)
                         {
                             this.logger.Debug("Current song is not null. Disposing current stream.");
+
+                            await this.mediaElement.StopAsync();
 
                             this.currentSongStream.DownloadProgressChanged -= this.CurrentSongStreamOnDownloadProgressChanged;
                             this.currentSongStream.Dispose();
                             this.currentSongStream = null;
                         }
+
+                        var stream = await this.downloadService.GetStreamAsync(songUrl.Url);
 
                         this.currentSongStream = stream;
                         this.currentSongStream.DownloadProgressChanged += this.CurrentSongStreamOnDownloadProgressChanged;
