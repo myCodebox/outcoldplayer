@@ -5,27 +5,23 @@
 namespace OutcoldSolutions.GoogleMusic
 {
     using System;
-    using System.Collections.Generic;
     using System.Diagnostics;
     using System.Threading.Tasks;
 
+    using OutcoldSolutions.BindingModels;
     using OutcoldSolutions.Controls;
     using OutcoldSolutions.Diagnostics;
-    using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Presenters;
     using OutcoldSolutions.GoogleMusic.Presenters.Popups;
-    using OutcoldSolutions.GoogleMusic.Presenters.Settings;
     using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Services.Publishers;
     using OutcoldSolutions.GoogleMusic.Services.Shell;
     using OutcoldSolutions.GoogleMusic.Views;
     using OutcoldSolutions.GoogleMusic.Views.Popups;
-    using OutcoldSolutions.GoogleMusic.Views.Settings;
     using OutcoldSolutions.GoogleMusic.Web;
     using OutcoldSolutions.GoogleMusic.Web.Lastfm;
-    using OutcoldSolutions.Presenters;
     using OutcoldSolutions.Shell;
     using OutcoldSolutions.Views;
 
@@ -37,9 +33,6 @@ namespace OutcoldSolutions.GoogleMusic
 
     public sealed partial class App : ApplicationBase
     {
-        private ILogManager logManager;
-        private ISettingsService settingsService;
-
         public App()
         {
             this.InitializeComponent();
@@ -52,104 +45,27 @@ namespace OutcoldSolutions.GoogleMusic
 #if DEBUG
                 registration.Register<IDebugConsole>().AsSingleton<DebugConsole>();
 #endif
-
-                registration.Register<PlaylistViewResolver>();
-
-                registration.Register<IInitPageView>()
-                            .InjectionRule<PresenterBase, InitPageViewPresenter>()
-                            .As<InitPageView>();
-                registration.Register<InitPageViewPresenter>();
+                Registration.RegisterPages(registration);
+                Registration.RegisterSettingViews(registration);
+                Registration.RegisterViewResolvers(registration);
 
                 registration.Register<IPlayerView>()
-                            .InjectionRule<PresenterBase, PlayerViewPresenter>()
+                            .InjectionRule<BindingModelBase, PlayerViewPresenter>()
                             .As<PlayerView>();
+
                 registration.Register<ICurrentPlaylistService>()
                             .And<PlayerViewPresenter>()
                             .AsSingleton<PlayerViewPresenter>();
 
-                registration.Register<IAuthentificationPageView>()
-                            .InjectionRule<PresenterBase, AuthentificationPageViewPresenter>()
-                            .As<AuthentificationPageView>();
-                registration.Register<AuthentificationPageViewPresenter>();
-
-                registration.Register<IStartPageView>()
-                            .InjectionRule<PresenterBase, StartPageViewPresenter>()
-                            .AsSingleton<StartPageView>();
-                registration.Register<StartPageViewPresenter>().AsSingleton();
-                registration.Register<StartViewBindingModel>().AsSingleton();
-
-                registration.Register<IPlaylistsPageView>()
-                            .InjectionRule<PresenterBase, PlaylistsPageViewPresenter>()
-                            .AsSingleton<PlaylistsPageView>();
-                registration.Register<PlaylistsPageViewPresenter>().AsSingleton();
-                registration.Register<PlaylistsPageViewBindingModel>().AsSingleton();
-
-                registration.Register<IPlaylistPageView>()
-                            .InjectionRule<PresenterBase, PlaylistPageViewPresenter>()
-                            .AsSingleton<PlaylistPageView>();
-                registration.Register<PlaylistPageViewPresenter>().AsSingleton();
-                registration.Register<PlaylistPageViewBindingModel<Playlist>>().AsSingleton();
-
-                registration.Register<ICurrentPlaylistPageView>()
-                            .InjectionRule<PresenterBase, CurrentPlaylistPageViewPresenter>()
-                            .AsSingleton<CurrentPlaylistPageView>();
-                registration.Register<CurrentPlaylistPageViewPresenter>().AsSingleton();
-                registration.Register<CurrentPlaylistPageViewBindingModel>().AsSingleton();
-
-                registration.Register<IProgressLoadingView>()
-                            .InjectionRule<PresenterBase, ProgressLoadingPageViewPresenter>()
-                            .As<ProgressLoadingPageView>();
-                registration.Register<ProgressLoadingPageViewPresenter>();
-
-                registration.Register<ISearchView>()
-                            .InjectionRule<PresenterBase, SearchPageViewPresenter>()
-                            .AsSingleton<SearchPageView>();
-                registration.Register<SearchPageViewPresenter>().AsSingleton();
-                registration.Register<SearchPageViewBindingModel>().AsSingleton();
-
-                registration.Register<IArtistPageView>()
-                            .InjectionRule<PresenterBase, ArtistPageViewPresenter>()
-                            .AsSingleton<ArtistPageView>();
-                registration.Register<ArtistPageViewPresenter>().AsSingleton(); 
-                registration.Register<ArtistPageViewBindingModel>().AsSingleton(); 
-
-                registration.Register<IAlbumPageView>()
-                            .InjectionRule<PresenterBase, AlbumPageViewPresenter>()
-                            .AsSingleton<AlbumPageView>();
-                registration.Register<AlbumPageViewPresenter>().AsSingleton();
-                registration.Register<PlaylistPageViewBindingModel<Album>>().AsSingleton();
-                
-                registration.Register<IReleasesHistoryPageView>()
-                            .InjectionRule<PresenterBase, ReleasesHistoryPageViewPresenter>()
-                            .As<ReleasesHistoryPageView>();
-                registration.Register<ReleasesHistoryPageViewPresenter>();
-
-                registration.Register<IAddToPlaylistPopupView>()
-                            .InjectionRule<PresenterBase, AddToPlaylistPopupViewPresenter>()
-                            .As<AddToPlaylistPopupView>();
-                registration.Register<AddToPlaylistPopupViewPresenter>();
-
                 registration.Register<LinksRegionView>()
-                            .InjectionRule<PresenterBase, LinksRegionViewPresenter>();
+                            .InjectionRule<BindingModelBase, LinksRegionViewPresenter>();
                 registration.Register<LinksRegionViewPresenter>();
 
                 // Settings
                 registration.Register<ISearchService>().AsSingleton<SearchService>();
 
-                // Settings views
-                registration.Register<AccountsView>()
-                            .InjectionRule<PresenterBase, AccountsViewPresenter>();
-                registration.Register<AccountsViewPresenter>();
-
-                registration.Register<UpgradeView>()
-                            .InjectionRule<PresenterBase, UpgradeViewPresenter>();
-                registration.Register<UpgradeViewPresenter>();
-
-                registration.Register<PrivacyView>();
-                registration.Register<SupportView>();
-
                 registration.Register<ILastfmAuthentificationView>()
-                            .InjectionRule<PresenterBase, LastfmAuthentificationPresenter>()
+                            .InjectionRule<BindingModelBase, LastfmAuthentificationPresenter>()
                             .As<LastfmAuthentificationPageView>();
                 registration.Register<LastfmAuthentificationPresenter>();
 
@@ -192,6 +108,7 @@ namespace OutcoldSolutions.GoogleMusic
                 registration.Register<ISongMetadataEditService>().AsSingleton<SongMetadataEditService>();
 
                 registration.Register<RightRegionControlService>().AsSingleton();
+                registration.Register<ApplicationLogManager>().AsSingleton();
 
                 registration.Register<MediaElement>()
                             .AsSingleton(
@@ -203,17 +120,7 @@ namespace OutcoldSolutions.GoogleMusic
                                     });
             }
 
-            this.logManager = Container.Resolve<ILogManager>();
-            this.settingsService = Container.Resolve<ISettingsService>();
-
-            this.UpdateLogLevel();
-            this.settingsService.ValueChanged += (sender, eventArgs) =>
-                {
-                    if (string.Equals(eventArgs.Key, "IsLoggingOn", StringComparison.OrdinalIgnoreCase))
-                    {
-                        Task.Factory.StartNew(this.UpdateLogLevel);
-                    }
-                };
+            Container.Resolve<ApplicationLogManager>();
 
             Container.Resolve<IGoogleMusicSessionService>().LoadSession();
 
@@ -228,7 +135,6 @@ namespace OutcoldSolutions.GoogleMusic
                 currentSongPublisherService.AddPublisher<LastFmCurrentSongPublisher>();
             }
 
-            Container.Resolve<IApplicationSettingViewsService>();
             Container.Resolve<ISearchService>();
         }
 
@@ -259,54 +165,9 @@ namespace OutcoldSolutions.GoogleMusic
 
             var page = (Page)Window.Current.Content;
             VisualTreeHelperEx.GetVisualChild<Panel>(page).Children.Add(Container.Resolve<MediaElement>());
-
-            Container.Resolve<IApplicationToolbar>().SetMenuItems(new List<MenuItemMetadata>()
-                                                                      {
-                                                                          MenuItemMetadata.FromViewType<IStartPageView>("Home"),
-                                                                          MenuItemMetadata.FromViewType<ICurrentPlaylistPageView>("Queue"),
-                                                                          MenuItemMetadata.FromViewType<IPlaylistsPageView>("Playlists", PlaylistsRequest.Playlists),
-                                                                          MenuItemMetadata.FromViewType<IPlaylistsPageView>("Artists", PlaylistsRequest.Artists),
-                                                                          MenuItemMetadata.FromViewType<IPlaylistsPageView>("Albums", PlaylistsRequest.Albums),
-                                                                          MenuItemMetadata.FromViewType<IPlaylistsPageView>("Genres", PlaylistsRequest.Genres)
-                                                                      });
-
-
-
-            var applicationSettingViewsService = Container.Resolve<IApplicationSettingViewsService>();
-            applicationSettingViewsService.RegisterSettings<AccountsView>("accounts", "Accounts");
-
-            bool upgradeViewRegistered = false;
-            if (!InAppPurchases.HasFeature(GoogleMusicFeatures.All))
-            {
-                applicationSettingViewsService.RegisterSettings<UpgradeView>("upgrade", "Upgrade");
-                upgradeViewRegistered = true;
-            }
-
-            applicationSettingViewsService.RegisterSettings<SupportView>("support", "Support");
-            applicationSettingViewsService.RegisterSettings<PrivacyView>("privacy", "Privacy Policy");
-
-            InAppPurchases.LicenseChanged += () =>
-                {
-                    if (!InAppPurchases.HasFeature(GoogleMusicFeatures.All))
-                    {
-                        if (!upgradeViewRegistered)
-                        {
-                            applicationSettingViewsService.RegisterSettings<UpgradeView>("upgrade", "Upgrade", ApplicationSettingLayoutType.Standard, "accounts");
-                            upgradeViewRegistered = true;
-                        }
-                    }
-                    else
-                    {
-                        if (upgradeViewRegistered)
-                        {
-                            applicationSettingViewsService.UnregisterSettings("upgrade");
-                            upgradeViewRegistered = false;
-                        }
-                    }
-                };
-#if DEBUG
-            InAppPurchases.SimulatorInAppPurchasesInitialization();
-#endif
+            
+            MainMenu.Initialize(Container.Resolve<IApplicationToolbar>());
+            ApplicationSettingViews.Initialize(Container.Resolve<IApplicationSettingViewsService>());
             
             Container.Resolve<INavigationService>().NavigateTo<IInitPageView>(keepInHistory: false);
         }
@@ -327,30 +188,7 @@ namespace OutcoldSolutions.GoogleMusic
             TileUpdateManager.CreateTileUpdaterForApplication().Clear();
         }
 
-        private void UpdateLogLevel()
-        {
-            var isLoggingOn = this.settingsService.GetValue("IsLoggingOn", defaultValue: false);
-            if (isLoggingOn)
-            {
-                this.logManager.Writers.AddOrUpdate(typeof(FileLogWriter), type => new FileLogWriter(), (type, writer) => writer);
-            }
-            else
-            {
-                ILogWriter fileLogWriter;
-                if (this.logManager.Writers.TryRemove(typeof(FileLogWriter), out fileLogWriter))
-                {
-                    ((FileLogWriter)fileLogWriter).Dispose();
-                }
-            }
-
-            if (Debugger.IsAttached)
-            {
-                this.logManager.Writers.AddOrUpdate(typeof(DebugLogWriter), type => new DebugLogWriter(Container), (type, writer) => writer);
-            }
-
-            this.logManager.LogLevel = this.logManager.Writers.Count > 0 ? LogLevel.Info : LogLevel.None;
-        }
-
+#if DEBUG
         private class DebugConsole : IDebugConsole
         {
             public void WriteLine(string message)
@@ -358,5 +196,6 @@ namespace OutcoldSolutions.GoogleMusic
                 Debug.WriteLine(message);
             }
         }
+#endif
     }
 }

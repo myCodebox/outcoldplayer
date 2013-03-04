@@ -40,10 +40,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
 
         public AddToPlaylistPopupViewPresenter(
             IEnumerable<Song> songs,
-            IDependencyResolverContainer container,
             IPlaylistCollectionsService collectionsService,
             IMusicPlaylistRepository musicPlaylistRepository)
-            : base(container)
         {
             this.Songs = songs.ToList();
             this.collectionsService = collectionsService;

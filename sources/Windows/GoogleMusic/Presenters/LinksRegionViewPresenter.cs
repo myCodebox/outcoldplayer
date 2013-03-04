@@ -3,10 +3,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Presenters
 {
-    using System;
-
     using OutcoldSolutions.GoogleMusic.Services.Shell;
-    using OutcoldSolutions.GoogleMusic.Views;
     using OutcoldSolutions.Presenters;
     using OutcoldSolutions.Views;
 
@@ -15,9 +12,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private readonly ISearchService searchService;
 
         public LinksRegionViewPresenter(
-            IDependencyResolverContainer container,
             ISearchService searchService)
-            : base(container)
         {
             this.ShowSearchCommand = new DelegateCommand(this.ShowSearch);
 

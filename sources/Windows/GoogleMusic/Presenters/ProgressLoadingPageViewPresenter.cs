@@ -35,13 +35,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private readonly ISettingsService settingsService;
 
         public ProgressLoadingPageViewPresenter(
-            IDependencyResolverContainer container,
             INavigationService navigationService,
             ISettingsService settingsService,
             ISongWebService songWebService,
             IMusicPlaylistRepository musicPlaylistRepository,
             ISongsRepository songsRepository)
-            : base(container)
         {
             this.navigationService = navigationService;
             this.settingsService = settingsService;

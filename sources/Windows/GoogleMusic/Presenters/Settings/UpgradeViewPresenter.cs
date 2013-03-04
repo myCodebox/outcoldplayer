@@ -16,9 +16,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
         private bool buying = false;
 
         public UpgradeViewPresenter(
-            IDependencyResolverContainer container,
             IApplicationSettingViewsService applicationSettingViewsService)
-            : base(container)
         {
             this.applicationSettingViewsService = applicationSettingViewsService;
 

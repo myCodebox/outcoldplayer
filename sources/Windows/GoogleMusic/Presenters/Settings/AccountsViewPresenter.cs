@@ -27,7 +27,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
         private readonly INavigationService navigationService;
 
         public AccountsViewPresenter(
-            IDependencyResolverContainer container,
             IGoogleAccountService googleAccountService,
             IGoogleMusicSessionService sessionService,
             ILastfmWebService lastfmWebService,
@@ -37,7 +36,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
             IMusicPlaylistRepository musicPlaylistRepository,
             IApplicationSettingViewsService applicationSettingViewsService,
             INavigationService navigationService)
-            : base(container)
         {
             this.googleAccountService = googleAccountService;
             this.sessionService = sessionService;

@@ -14,7 +14,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using OutcoldSolutions.GoogleMusic.Views;
     using OutcoldSolutions.Presenters;
 
-    public class SearchPageViewPresenter : DataPagePresenterBase<ISearchView, SearchPageViewBindingModel>
+    public class SearchPageViewPresenter : DataPagePresenterBase<ISearchPageView, SearchPageViewBindingModel>
     {
         private readonly ISongsRepository songsRepository;
         private readonly IPlaylistCollectionsService collectionsService;

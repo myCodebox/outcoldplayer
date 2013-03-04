@@ -106,6 +106,8 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ApplicationLogManager.cs" />
+    <Compile Include="ApplicationSettingViews.cs" />
     <Compile Include="BindingModels\ArtistPageViewBindingModel.cs" />
     <Compile Include="BindingModels\CurrentPlaylistPageViewBindingModel.cs" />
     <Compile Include="BindingModels\PlaylistPageViewBindingModel.cs" />
@@ -133,10 +135,12 @@
     <Compile Include="Converters\AlbumArtUrlToImageConverter.cs" />
     <Compile Include="Converters\DoubleToTimeConverter.cs" />
     <Compile Include="Converters\StringFormatConverter.cs" />
+    <Compile Include="MainMenu.cs" />
     <Compile Include="Models\PlaylistsRequest.cs" />
     <Compile Include="Models\TimeSpanEx.cs" />
     <Compile Include="Presenters\LinksRegionViewPresenter.cs" />
     <Compile Include="Presenters\Settings\UpgradeViewPresenter.cs" />
+    <Compile Include="Registration.cs" />
     <Compile Include="Views\PlaylistViewResolver.cs" />
     <Compile Include="Presenters\AlbumPageViewPresenter.cs" />
     <Compile Include="Presenters\ArtistPageViewPresenter.cs" />
@@ -379,13 +383,13 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\..\packages\Newtonsoft.Json.4.5.11\lib\winrt45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="OutcoldSolutions.Framework, Version=1.0.30303.20010, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
+    <Reference Include="OutcoldSolutions.Framework, Version=1.0.30303.34942, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\OutcoldSolutions.Framework.1.0.30303.20010\lib\portable-win+net45+sl40+wp71\OutcoldSolutions.Framework.dll</HintPath>
+      <HintPath>..\..\packages\OutcoldSolutions.Framework.1.0.30303.34942\lib\portable-win+net45+sl40+wp71\OutcoldSolutions.Framework.dll</HintPath>
     </Reference>
-    <Reference Include="OutcoldSolutions.Presentation, Version=1.0.30303.20812, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
+    <Reference Include="OutcoldSolutions.Presentation, Version=1.0.30303.34943, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\OutcoldSolutions.Presentation.1.0.30303.20812\lib\win\OutcoldSolutions.Presentation.dll</HintPath>
+      <HintPath>..\..\packages\OutcoldSolutions.Presentation.1.0.30303.34943\lib\win\OutcoldSolutions.Presentation.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

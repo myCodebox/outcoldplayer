@@ -11,9 +11,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private readonly INavigationService navigationService;
 
         public ReleasesHistoryPageViewPresenter(
-            IDependencyResolverContainer container,
             INavigationService navigationService)
-            : base(container)
         {
             this.navigationService = navigationService;
 

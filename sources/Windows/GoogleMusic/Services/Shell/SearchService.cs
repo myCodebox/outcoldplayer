@@ -127,7 +127,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Shell
 
         private async void SearchPaneOnQuerySubmitted(SearchPane sender, SearchPaneQuerySubmittedEventArgs args)
         {
-            await this.dispatcher.RunAsync(() => this.navigationService.NavigateTo<ISearchView>(args.QueryText));
+            await this.dispatcher.RunAsync(() => this.navigationService.NavigateTo<ISearchPageView>(args.QueryText));
         }
 
         private void OnSuggestionsRequested(SearchPane sender, SearchPaneSuggestionsRequestedEventArgs args)

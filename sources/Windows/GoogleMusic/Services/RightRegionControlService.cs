@@ -6,7 +6,6 @@ namespace OutcoldSolutions.GoogleMusic.Services
     using Microsoft.Advertising.WinRT.UI;
 
     using OutcoldSolutions.Diagnostics;
-    using OutcoldSolutions.GoogleMusic.Services.Shell;
     using OutcoldSolutions.GoogleMusic.Views;
     using OutcoldSolutions.Shell;
     using OutcoldSolutions.Views;

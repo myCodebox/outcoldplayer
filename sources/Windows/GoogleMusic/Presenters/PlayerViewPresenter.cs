@@ -48,13 +48,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         public PlayerViewPresenter(
             MediaElement mediaElement,
-            IDependencyResolverContainer container,
             ISongWebService songWebService,
             IGoogleMusicSessionService sessionService,
             ISettingsService settingsService,
             IMediaStreamDownloadService mediaStreamDownloadService,
             ICurrentSongPublisherService publisherService)
-            : base(container)
         {
             this.mediaElement = mediaElement;
             this.songWebService = songWebService;
