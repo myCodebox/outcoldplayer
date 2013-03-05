@@ -238,7 +238,7 @@
                                 <Setter Property="Template">
                                     <Setter.Value>
                                         <ControlTemplate TargetType="Thumb">
-                                            <Canvas Margin="-20, -30, 0, 0" Width="20" Height="23">
+                                            <Canvas Margin="-15, -30, 0, 0" Width="20" Height="23">
                                                 <Ellipse Fill="Transparent"
                                                          Stroke="{TemplateBinding BorderBrush}"
                                                          StrokeThickness="2"
@@ -475,7 +475,7 @@
                                Style="{StaticResource SliderThumbStyle}"
                                DataContext="{TemplateBinding Value}"
                                Height="{StaticResource SliderTrackThemeHeight}"
-                               Width="{StaticResource SliderTrackThemeHeight}"
+                               Width="0"
                                Grid.Row="1"
                                Grid.Column="1" />
                             <Rectangle x:Name="FocusVisualWhiteHorizontal"

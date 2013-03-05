@@ -15,6 +15,8 @@ namespace OutcoldSolutions.GoogleMusic.Shell
 
         event EventHandler<PlayProgressEventArgs> PlayProgress;
 
+        double Volume { get; set; }
+
         Task PlayAsync(IRandomAccessStream stream, string mimeType);
 
         Task PlayAsync();

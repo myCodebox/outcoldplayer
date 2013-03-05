@@ -18,6 +18,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         private double totalSeconds = 1;
         private double currentPosition;
         private double downloadProgress;
+        private double volume;
 
         private Song currentSong;
 
@@ -167,6 +168,19 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             get
             {
                 return this.DownloadProgress <= 0.001 || this.DownloadProgress >= 0.999;
+            }
+        }
+
+        public double Volume
+        {
+            get
+            {
+                return this.volume;
+            }
+
+            set
+            {
+                this.SetValue(ref this.volume, value);
             }
         }
 

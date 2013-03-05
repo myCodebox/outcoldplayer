@@ -10,14 +10,16 @@ namespace OutcoldSolutions.GoogleMusic.Converters
 
     public class StringFormatConverter : IValueConverter 
     {
+        public string Format { get; set; }
+
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            if (parameter == null)
+            if (parameter == null && this.Format == null)
             {
                 return DependencyProperty.UnsetValue;
             }
 
-            return string.Format("{0:" + parameter + "}", value);
+            return string.Format("{0:" + (this.Format ?? parameter) + "}", value);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)

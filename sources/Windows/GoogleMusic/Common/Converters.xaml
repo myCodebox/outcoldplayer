@@ -4,6 +4,7 @@
     xmlns:converters="using:OutcoldSolutions.GoogleMusic.Converters">
 
     <converters:StringFormatConverter x:Key="StringFormatConverter"/>
+    <converters:StringFormatConverter x:Key="PercentageStringFormatConverter" Format="P0" />
     <converters:DoubleToTimeConverter x:Key="DoubleToTimeConverter"/>
     <converters:AlbumArtUrlToImageConverter x:Key="AlbumArtUrlToImageConverter" />
 

@@ -38,7 +38,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                                     {
                                         IsRepeatAllEnabled = this.queueService.IsRepeatAll,
                                         IsShuffleEnabled = this.queueService.IsShuffled,
-                                        IsLockScreenEnabled = this.settingsService.GetValue("IsLockScreenEnabled", defaultValue: false)
+                                        IsLockScreenEnabled = this.settingsService.GetValue("IsLockScreenEnabled", defaultValue: false),
+                                        Volume = this.mediaElement.Volume
                                     };
 
             if (this.BindingModel.IsLockScreenEnabled)
@@ -79,6 +80,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                             await this.mediaElement.SetPositionAsync(TimeSpan.FromSeconds(this.BindingModel.CurrentPosition));
                         }
                     });
+
+            this.BindingModel.Subscribe(() => this.BindingModel.Volume, (sender, args) => this.mediaElement.Volume = this.BindingModel.Volume);
 
             this.mediaElement.PlayProgress += (sender, args) =>
                 {

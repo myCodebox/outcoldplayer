@@ -41,6 +41,19 @@ namespace OutcoldSolutions.GoogleMusic.Shell
 
         public event EventHandler<PlayProgressEventArgs> PlayProgress;
 
+        public double Volume
+        {
+            get
+            {
+                return this.mediaElement.Volume;
+            }
+
+            set
+            {
+                this.mediaElement.Volume = value;
+            }
+        }
+
         public Task PlayAsync(IRandomAccessStream stream, string mimeType)
         {
             if (this.logger.IsDebugEnabled)
@@ -120,7 +133,7 @@ namespace OutcoldSolutions.GoogleMusic.Shell
                         this.mediaElement.Position = position;
                     });
         }
-
+        
         private void TimerOnTick(object sender, object o)
         {
             this.RaisePlayProgress(new PlayProgressEventArgs(this.mediaElement.Position, this.mediaElement.NaturalDuration.TimeSpan));

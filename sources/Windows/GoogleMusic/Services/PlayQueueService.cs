@@ -251,7 +251,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         public bool CanSwitchToPrevious()
         {
-            return this.currentQueueIndex > 1 || this.IsRepeatAll;
+            return this.currentQueueIndex > 0 || this.IsRepeatAll;
         }
 
         public async Task PauseAsync()
