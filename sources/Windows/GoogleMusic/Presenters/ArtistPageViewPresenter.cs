@@ -20,10 +20,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private readonly INavigationService navigationService;
 
         public ArtistPageViewPresenter(
-            IDependencyResolverContainer container,
             IPlayQueueService playQueueService,
             INavigationService navigationService)
-            : base(container)
         {
             this.playQueueService = playQueueService;
             this.navigationService = navigationService;
@@ -88,6 +86,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
                 this.playQueueService.PlayAsync(playlist);
                 this.playQueueService.PlayAsync();
+                this.Toolbar.IsBottomAppBarOpen = true;
             }
         }
     }

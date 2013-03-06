@@ -27,7 +27,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private readonly ISongMetadataEditService metadataEditService;
 
         public PlaylistPageViewPresenterBase(IDependencyResolverContainer container)
-            : base(container)
         {
             this.playQueueService = container.Resolve<IPlayQueueService>();
             this.metadataEditService = container.Resolve<ISongMetadataEditService>();
@@ -87,6 +86,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             if (selectedSong != null)
             {
                 this.playQueueService.PlayAsync(this.BindingModel.Playlist, this.BindingModel.Playlist.Songs.IndexOf(selectedSong));
+                this.Toolbar.IsBottomAppBarOpen = true;
             }
         }
 

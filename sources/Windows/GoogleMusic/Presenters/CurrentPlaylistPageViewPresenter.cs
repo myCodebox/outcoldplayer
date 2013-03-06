@@ -23,10 +23,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private readonly ISongMetadataEditService metadataEditService;
 
         public CurrentPlaylistPageViewPresenter(
-            IDependencyResolverContainer container, 
             IPlayQueueService playQueueService,
             ISongMetadataEditService metadataEditService)
-            : base(container)
         {
             this.playQueueService = playQueueService;
             this.metadataEditService = metadataEditService;

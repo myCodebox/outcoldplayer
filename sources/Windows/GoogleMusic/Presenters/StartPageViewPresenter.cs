@@ -23,11 +23,9 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private readonly INavigationService navigationService;
 
         public StartPageViewPresenter(
-            IDependencyResolverContainer container, 
             INavigationService navigationService,
             IPlayQueueService playQueueService,
             IPlaylistCollectionsService collectionsService)
-            : base(container)
         {
             this.playQueueService = playQueueService;
             this.collectionsService = collectionsService;
@@ -80,6 +78,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             {
                 this.playQueueService.PlayAsync(playlist);
                 this.navigationService.NavigateTo<IPlaylistPageView>(playlist);
+                this.Toolbar.IsBottomAppBarOpen = true;
             }
         }
     }

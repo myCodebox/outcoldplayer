@@ -30,12 +30,10 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private PlaylistsRequest currentRequest;
 
         public PlaylistsPageViewPresenter(
-            IDependencyResolverContainer container,
             IPlaylistCollectionsService playlistCollectionsService,
             IMusicPlaylistRepository musicPlaylistRepository,
             INavigationService navigationService,
             IPlayQueueService playQueueService)
-            : base(container)
         {
             this.playlistCollectionsService = playlistCollectionsService;
             this.musicPlaylistRepository = musicPlaylistRepository;
@@ -271,6 +269,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             {
                 this.navigationService.NavigateTo<IPlaylistPageView>(playlist);
                 this.playQueueService.PlayAsync(playlist);
+                this.Toolbar.IsBottomAppBarOpen = true;
             }
         }
     }

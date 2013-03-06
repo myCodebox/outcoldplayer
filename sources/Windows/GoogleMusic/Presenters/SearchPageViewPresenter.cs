@@ -20,10 +20,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private readonly IPlaylistCollectionsService collectionsService;
 
         public SearchPageViewPresenter(
-            IDependencyResolverContainer container,
             ISongsRepository songsRepository,
             IPlaylistCollectionsService collectionsService)
-            : base(container)
         {
             this.songsRepository = songsRepository;
             this.collectionsService = collectionsService;
