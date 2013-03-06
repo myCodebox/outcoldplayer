@@ -36,6 +36,7 @@ namespace OutcoldSolutions.GoogleMusic
         public App()
         {
             this.InitializeComponent();
+            this.UnhandledException += this.OnUnhandledException;
         }
 
         protected override void InitializeApplication()
@@ -234,6 +235,15 @@ namespace OutcoldSolutions.GoogleMusic
             await Container.Resolve<ISongsRepository>().SaveToCacheAsync();
 
             TileUpdateManager.CreateTileUpdaterForApplication().Clear();
+        }
+
+        private void OnUnhandledException(object sender, UnhandledExceptionEventArgs unhandledExceptionEventArgs)
+        {
+            var logger = this.logManager.CreateLogger("App");
+            logger.Error("Unhandled exception: {0}.", unhandledExceptionEventArgs.Message);
+            logger.LogErrorException(unhandledExceptionEventArgs.Exception);
+
+            Debug.Assert(false, unhandledExceptionEventArgs.Message);
         }
 
         private void UpdateLogLevel()

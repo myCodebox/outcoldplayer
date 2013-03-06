@@ -10,6 +10,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Models
     {
         public List<GoogleMusicPlaylist> Playlists { get; set; }
 
-        public List<GoogleMusicPlaylist> MagicPlaylists { get; set; }
+        // TODO: Find what is Magic Playlists?
+        // public List<GoogleMusicPlaylist> MagicPlaylists { get; set; }
     }
 }
