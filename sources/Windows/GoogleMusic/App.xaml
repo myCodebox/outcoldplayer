@@ -17,8 +17,11 @@
                 <ResourceDictionary Source="Common/Buttons.xaml"/>
                 <ResourceDictionary Source="Common/DataTemplates.xaml"/>
                 <ResourceDictionary Source="Common/Models.xaml"/>
-
+                
             </ResourceDictionary.MergedDictionaries>
+
+            <x:String x:Key="ApplicationName">gMusic v2.0</x:String>
+            
         </ResourceDictionary>
     </Application.Resources>
 </outcoldSolutions:ApplicationBase>

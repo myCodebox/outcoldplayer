@@ -117,7 +117,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
         {
             get
             {
-                if (this.currentQueueIndex >= this.queueOrder.Count)
+                if (this.currentQueueIndex >= this.queueOrder.Count || this.currentQueueIndex < 0)
                 {
                     return -1;
                 }

@@ -2,6 +2,122 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-   
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="../OutcoldSolutions.Presentation/Common/Buttons.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+    
+    <Style x:Key="SkipBackAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
+        <Setter Property="AutomationProperties.AutomationId" Value="SkipBackAppBarButton"/>
+        <Setter Property="AutomationProperties.Name" Value="Skip Back"/>
+        <Setter Property="Content" Value="&#xE100;"/>
+    </Style>
+
+    <Style x:Key="SkipAheadAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
+        <Setter Property="AutomationProperties.AutomationId" Value="SkipAheadAppBarButton"/>
+        <Setter Property="AutomationProperties.Name" Value="Skip Ahead"/>
+        <Setter Property="Content" Value="&#xE101;"/>
+    </Style>
+
+    <Style x:Key="PlayAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
+        <Setter Property="AutomationProperties.AutomationId" Value="PlayAppBarButton"/>
+        <Setter Property="AutomationProperties.Name" Value="Play"/>
+        <Setter Property="Content" Value="&#xE102;"/>
+    </Style>
+
+    <Style x:Key="PauseAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
+        <Setter Property="AutomationProperties.AutomationId" Value="PauseAppBarButton"/>
+        <Setter Property="AutomationProperties.Name" Value="Pause"/>
+        <Setter Property="Content" Value="&#xE103;"/>
+    </Style>
+
+    <Style x:Key="SetLockScreenAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
+        <Setter Property="AutomationProperties.AutomationId" Value="SetLockscreenAppBarButton"/>
+        <Setter Property="AutomationProperties.Name" Value="Screen On"/>
+        <Setter Property="Content" Value="&#xE18C;"/>
+    </Style>
+
+    <Style x:Key="SetLockScreenPopupMenuButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource PopupMenuButtonStyle}">
+        <Setter Property="AutomationProperties.AutomationId" Value="SetLockscreenAppBarButton"/>
+        <Setter Property="AutomationProperties.Name" Value="Screen On"/>
+        <Setter Property="Content" Value="&#xE18C;"/>
+    </Style>
+
+    <Style x:Key="MoreAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
+        <Setter Property="AutomationProperties.AutomationId" Value="MoreAppBarButton"/>
+        <Setter Property="AutomationProperties.Name" Value="More"/>
+        <Setter Property="Content" Value="&#xE10C;"/>
+    </Style>
+
+    <Style x:Key="ShuffleAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
+        <Setter Property="AutomationProperties.AutomationId" Value="ShuffleAppBarButton"/>
+        <Setter Property="AutomationProperties.Name" Value="Shuffle"/>
+        <Setter Property="Content" Value="&#xE14B;"/>
+    </Style>
+
+    <Style x:Key="ShufflePopupMenuButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource PopupMenuButtonStyle}">
+        <Setter Property="AutomationProperties.AutomationId" Value="ShuffleAppBarButton"/>
+        <Setter Property="AutomationProperties.Name" Value="Shuffle"/>
+        <Setter Property="Content" Value="&#xE14B;"/>
+    </Style>
+
+    <Style x:Key="RepeatAllAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
+        <Setter Property="AutomationProperties.AutomationId" Value="RepeatAllAppBarButton"/>
+        <Setter Property="AutomationProperties.Name" Value="Repeat All"/>
+        <Setter Property="Content" Value="&#xE1CD;"/>
+    </Style>
+
+    <Style x:Key="RepeatAllPopupMenuButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource PopupMenuButtonStyle}">
+        <Setter Property="AutomationProperties.AutomationId" Value="RepeatAllAppBarButton"/>
+        <Setter Property="AutomationProperties.Name" Value="Repeat All"/>
+        <Setter Property="Content" Value="&#xE1CD;"/>
+    </Style>
+
+    <Style x:Key="RemoveAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
+        <Setter Property="AutomationProperties.AutomationId" Value="RemoveAppBarButton"/>
+        <Setter Property="AutomationProperties.Name" Value="Remove"/>
+        <Setter Property="Content" Value="&#xE108;"/>
+    </Style>
+
+    <Style x:Key="AddAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
+        <Setter Property="AutomationProperties.AutomationId" Value="AddAppBarButton"/>
+        <Setter Property="AutomationProperties.Name" Value="Add"/>
+        <Setter Property="Content" Value="&#xE109;"/>
+    </Style>
+
+    <Style x:Key="EditAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
+        <Setter Property="AutomationProperties.AutomationId" Value="EditAppBarButton"/>
+        <Setter Property="AutomationProperties.Name" Value="Edit"/>
+        <Setter Property="Content" Value="&#xE104;"/>
+    </Style>
+
+    <Style x:Key="DeleteAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
+        <Setter Property="AutomationProperties.AutomationId" Value="DeleteAppBarButton"/>
+        <Setter Property="AutomationProperties.Name" Value="Delete"/>
+        <Setter Property="Content" Value="&#xE106;"/>
+    </Style>
+
+    <Style x:Key="RateAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
+        <Setter Property="AutomationProperties.AutomationId" Value="RateAppBarButton"/>
+        <Setter Property="AutomationProperties.Name" Value="Rate"/>
+        <Setter Property="Content" Value="&#xE082;"/>
+    </Style>
+
+    <Style x:Key="SearchAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
+        <Setter Property="AutomationProperties.AutomationId" Value="SearchAppBarButton"/>
+        <Setter Property="AutomationProperties.Name" Value="Search"/>
+        <Setter Property="Content" Value="&#xE11A;"/>
+    </Style>
+
+    <Style x:Key="SearchPopupMenuButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource PopupMenuButtonStyle}">
+        <Setter Property="AutomationProperties.AutomationId" Value="SearchAppBarButton"/>
+        <Setter Property="AutomationProperties.Name" Value="Search"/>
+        <Setter Property="Content" Value="&#xE11A;"/>
+    </Style>
+
+    <Style x:Key="ListAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
+        <Setter Property="AutomationProperties.AutomationId" Value="ListAppBarButton"/>
+        <Setter Property="AutomationProperties.Name" Value="List"/>
+        <Setter Property="Content" Value="&#xE14C;"/>
+    </Style>
     
 </ResourceDictionary>
