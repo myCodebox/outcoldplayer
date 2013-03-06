@@ -11,6 +11,8 @@ namespace OutcoldSolutions.GoogleMusic
     using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Services;
 
+    using Windows.UI.Xaml;
+
     public class ApplicationLogManager
     {
         private readonly ILogManager logManager;
@@ -19,6 +21,8 @@ namespace OutcoldSolutions.GoogleMusic
 
         public ApplicationLogManager(ILogManager logManager, ISettingsService settingsService)
         {
+            Application.Current.UnhandledException += this.CurrentOnUnhandledException;
+
             this.logManager = logManager;
             this.settingsService = settingsService;
 
@@ -30,6 +34,15 @@ namespace OutcoldSolutions.GoogleMusic
                     Task.Factory.StartNew(this.UpdateLogLevel);
                 }
             };
+        }
+
+        private void CurrentOnUnhandledException(object sender, UnhandledExceptionEventArgs unhandledExceptionEventArgs)
+        {
+            var logger = this.logManager.CreateLogger("App");
+            logger.Error("Unhandled exception: {0}.", unhandledExceptionEventArgs.Message);
+            logger.LogErrorException(unhandledExceptionEventArgs.Exception);
+
+            Debug.Assert(false, unhandledExceptionEventArgs.Message);
         }
 
         private void UpdateLogLevel()
