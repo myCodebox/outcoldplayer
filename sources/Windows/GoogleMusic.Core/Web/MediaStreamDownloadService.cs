@@ -32,85 +32,96 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
         public async Task<INetworkRandomAccessStream> GetStreamAsync(string url)
         {
-            if (this.logger.IsDebugEnabled)
+            try
             {
-                this.logger.Debug("Stream requested at url '{0}'.", url);
+                if (this.logger.IsDebugEnabled)
+                {
+                    this.logger.Debug("Stream requested at url '{0}'.", url);
+                }
+
+                var source = this.cancellationTokenSource;
+                if (source != null)
+                {
+                    this.client.CancelPendingRequests();
+                    source.Cancel();
+                }
+
+                source = this.cancellationTokenSource = new CancellationTokenSource();
+                var cancellationToken = source.Token;
+
+                var response = await this.client.SendAsync(new HttpRequestMessage(HttpMethod.Get, url), HttpCompletionOption.ResponseHeadersRead, cancellationToken);
+
+                if (this.logger.IsDebugEnabled)
+                {
+                    this.logger.Debug("Got response. ContentLength: {0}, ContentType: {1}.", response.Content.Headers.ContentLength, response.Content.Headers.ContentType);
+                }
+
+                if (!response.Content.Headers.ContentLength.HasValue)
+                {
+                    this.logger.Error("Headers does not contains Content Length. Returning null.");
+                    return null;
+                }
+
+                var contentLength = response.Content.Headers.ContentLength.Value;
+
+                long start = Math.Max(response.Content.Headers.ContentLength.Value - DefaultBufferSize, 0);
+
+                var readCount = (int)(response.Content.Headers.ContentLength - start);
+
+                if (this.logger.IsDebugEnabled)
+                {
+                    this.logger.Debug("Requestion end of stream. Start: {0}, End: {1}, Read Count: {2}.", start, response.Content.Headers.ContentLength, readCount);
+                }
+
+                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, url);
+                request.Headers.Range = new RangeHeaderValue(start, contentLength);
+                var streamResponse = await this.client.SendAsync(request, cancellationToken);
+
+                cancellationToken.ThrowIfCancellationRequested();
+
+                var data = new byte[contentLength];
+                int read;
+
+                using (var audioStreamEnd = await streamResponse.Content.ReadAsStreamAsync())
+                {
+                    read = await audioStreamEnd.ReadAsync(data, (int)start, readCount, cancellationToken);
+                }
+
+                cancellationToken.ThrowIfCancellationRequested();
+
+                if (this.logger.IsDebugEnabled || this.logger.IsWarningEnabled)
+                {
+                    if (read == readCount)
+                    {
+                        this.logger.Debug("Got end of the stream. Expected read count from stream {0}.", read);
+                    }
+                    else
+                    {
+                        this.logger.Warning("Got end of the stream. Unexpected read count from stream {0}.", read);
+                    }
+                }
+
+                this.cancellationTokenSource = null;
+
+                return new MemoryRandomAccessStream(this.logger, await response.Content.ReadAsStreamAsync(), data, response.Content.Headers.ContentType.MediaType, read);
             }
-
-            var source = this.cancellationTokenSource;
-            if (source != null)
+            catch (Exception e)
             {
-                this.client.CancelPendingRequests();
-                source.Cancel();
-            }
-
-            source = this.cancellationTokenSource = new CancellationTokenSource();
-            var cancellationToken = source.Token;
-
-            var response = await this.client.SendAsync(new HttpRequestMessage(HttpMethod.Get, url), HttpCompletionOption.ResponseHeadersRead, cancellationToken);
-
-            if (this.logger.IsDebugEnabled)
-            {
-                this.logger.Debug("Got response. ContentLength: {0}, ContentType: {1}.", response.Content.Headers.ContentLength, response.Content.Headers.ContentType);
-            }
-
-            if (!response.Content.Headers.ContentLength.HasValue)
-            {
-                this.logger.Error("Headers does not contains Content Length. Returning null.");
+                this.logger.Error("Exception while loading stream");
+                this.logger.LogErrorException(e);
                 return null;
             }
-
-            var contentLength = response.Content.Headers.ContentLength.Value;
-
-            long start = Math.Max(response.Content.Headers.ContentLength.Value - DefaultBufferSize, 0);
-
-            var readCount = (int)(response.Content.Headers.ContentLength - start);
-
-            if (this.logger.IsDebugEnabled)
-            {
-                this.logger.Debug("Requestion end of stream. Start: {0}, End: {1}, Read Count: {2}.", start, response.Content.Headers.ContentLength, readCount);
-            }
-
-            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, url);
-            request.Headers.Range = new RangeHeaderValue(start, contentLength);
-            var streamResponse = await this.client.SendAsync(request, cancellationToken);
-            
-            cancellationToken.ThrowIfCancellationRequested();
-
-            var data = new byte[contentLength];
-            int read;
-
-            using (var audioStreamEnd = await streamResponse.Content.ReadAsStreamAsync())
-            {
-                read = await audioStreamEnd.ReadAsync(data, (int)start, readCount, cancellationToken);
-            }
-
-            cancellationToken.ThrowIfCancellationRequested();
-
-            if (this.logger.IsDebugEnabled || this.logger.IsWarningEnabled)
-            {
-                if (read == readCount)
-                {
-                    this.logger.Debug("Got end of the stream. Expected read count from stream {0}.", read);
-                }
-                else
-                {
-                    this.logger.Warning("Got end of the stream. Unexpected read count from stream {0}.", read);
-                }
-            }
-
-            this.cancellationTokenSource = null;
-
-            return new MemoryRandomAccessStream(await response.Content.ReadAsStreamAsync(), data, response.Content.Headers.ContentType.MediaType, read);
         }
 
         private class MemoryRandomAccessStream : INetworkRandomAccessStream
         {
+            private readonly ILogger logger;
+
             private readonly object locker = new object();
 
             private readonly int endFilled;
-
             private readonly int contentLength;
+
             private byte[] data;
 
             private CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
@@ -122,7 +133,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
             private double latestDownloadProgressUpdate;
             
-            public MemoryRandomAccessStream(Stream networkStream, byte[] data, string contentType, int endFilled)
+            public MemoryRandomAccessStream(ILogger logger, Stream networkStream, byte[] data, string contentType, int endFilled)
             {
                 if (networkStream == null)
                 {
@@ -132,6 +143,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 this.ContentType = contentType;
 
                 this.contentLength = data.Length;
+                this.logger = logger;
                 this.data = data;
                 this.endFilled = endFilled;
                 this.networkStream = networkStream;
@@ -196,6 +208,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
                 set
                 {
+                    this.logger.Warning("set_Size is not supported.");
                     throw new NotSupportedException();
                 }
             }
@@ -254,26 +267,31 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
             public IAsyncOperationWithProgress<uint, uint> WriteAsync(IBuffer buffer)
             {
+                this.logger.Warning("WriteAsync is not supported.");
                 throw new NotSupportedException();
             }
 
             public IAsyncOperation<bool> FlushAsync()
             {
+                this.logger.Warning("FlushAsync is not supported.");
                 throw new NotSupportedException();
             }
 
             public IInputStream GetInputStreamAt(ulong position)
             {
+                this.logger.Warning("GetInputStreamAt ({0}) is not supported.", position);
                 throw new NotSupportedException();
             }
 
             public IOutputStream GetOutputStreamAt(ulong position)
             {
+                this.logger.Warning("GetOutputStreamAt ({0}) is not supported.", position);
                 throw new NotSupportedException();
             }
 
             public IRandomAccessStream CloneStream()
             {
+                this.logger.Warning("CloneStream is not supported.");
                 throw new NotSupportedException();
             }
 
@@ -334,62 +352,70 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
             private void SafeDownloadSream(CancellationToken cancellationToken)
             {
-                double downloadProgress = 0d;
-
-                bool canRead;
-                lock (this.locker)
+                try
                 {
-                    cancellationToken.ThrowIfCancellationRequested();
-                    canRead = this.networkStream.CanRead;
-                }
+                    double downloadProgress = 0d;
 
-                while (canRead)
-                {
-                    int currentRead = DefaultBufferSize;
-
-                    lock (this.locker)
-                    {
-                        if ((int)this.readPosition >= this.contentLength - this.endFilled)
-                        {
-                            break;
-                        }
-
-                        if (currentRead + (int)this.readPosition >= (this.contentLength - this.endFilled))
-                        {
-                            currentRead = (this.contentLength - this.endFilled) - (int)this.readPosition;
-                        }
-                    }
-
-                    int read;
-                    lock (this.locker)
-                    {
-                        cancellationToken.ThrowIfCancellationRequested();
-
-                        read = this.networkStream.Read(this.data, (int)this.readPosition, currentRead);
-                    }
-
-                    if (read == 0)
-                    {
-                        break;
-                    }
-
-                    lock (this.locker)
-                    {
-                        this.readPosition += (ulong)read;
-                        downloadProgress = (double)this.readPosition / (double)this.contentLength;
-                    }
-
-                    this.RaiseDownloadProgressChanged(downloadProgress);
-
+                    bool canRead;
                     lock (this.locker)
                     {
                         cancellationToken.ThrowIfCancellationRequested();
                         canRead = this.networkStream.CanRead;
                     }
-                }
 
-                downloadProgress = 1d;
-                this.RaiseDownloadProgressChanged(downloadProgress);
+                    while (canRead)
+                    {
+                        int currentRead = DefaultBufferSize;
+
+                        lock (this.locker)
+                        {
+                            if ((int)this.readPosition >= this.contentLength - this.endFilled)
+                            {
+                                break;
+                            }
+
+                            if (currentRead + (int)this.readPosition >= (this.contentLength - this.endFilled))
+                            {
+                                currentRead = (this.contentLength - this.endFilled) - (int)this.readPosition;
+                            }
+                        }
+
+                        int read;
+                        lock (this.locker)
+                        {
+                            cancellationToken.ThrowIfCancellationRequested();
+
+                            read = this.networkStream.Read(this.data, (int)this.readPosition, currentRead);
+                        }
+
+                        if (read == 0)
+                        {
+                            break;
+                        }
+
+                        lock (this.locker)
+                        {
+                            this.readPosition += (ulong)read;
+                            downloadProgress = (double)this.readPosition / (double)this.contentLength;
+                        }
+
+                        this.RaiseDownloadProgressChanged(downloadProgress);
+
+                        lock (this.locker)
+                        {
+                            cancellationToken.ThrowIfCancellationRequested();
+                            canRead = this.networkStream.CanRead;
+                        }
+                    }
+
+                    downloadProgress = 1d;
+                    this.RaiseDownloadProgressChanged(downloadProgress);
+                }
+                catch (Exception e)
+                {
+                    this.logger.Error("Exception while reading stream");
+                    this.logger.LogErrorException(e);
+                }
             }
         }
     }

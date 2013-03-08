@@ -436,15 +436,24 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                                         () =>
                                             {
                                                 this.Logger.Debug("Setting current song.");
-                                                this.currentSongStream = stream;
-                                                this.currentSongStream.DownloadProgressChanged += CurrentSongStreamOnDownloadProgressChanged;
 
-                                                this.BindingModel.CurrentSongIndex = currentSongIndex;
+                                                if (stream != null)
+                                                {
+                                                    this.currentSongStream = stream;
 
-                                                this.Logger.Info("Set new source for media element with content type '{0}'.", this.currentSongStream.ContentType);
+                                                    this.currentSongStream.DownloadProgressChanged += CurrentSongStreamOnDownloadProgressChanged;
 
-                                                this.mediaElement.SetSource(this.currentSongStream, this.currentSongStream.ContentType);
-                                                this.mediaElement.Play();
+                                                    this.BindingModel.CurrentSongIndex = currentSongIndex;
+
+                                                    this.Logger.Info("Set new source for media element with content type '{0}'.", this.currentSongStream.ContentType);
+
+                                                    this.mediaElement.SetSource(this.currentSongStream, this.currentSongStream.ContentType);
+                                                    this.mediaElement.Play();
+                                                }
+                                                else
+                                                {
+                                                    this.Logger.Warning("Current song stream is null.");
+                                                }
 
                                                 this.BindingModel.State = PlayState.Play;
                                                 this.BindingModel.UpdateBindingModel();
@@ -453,7 +462,10 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
                                                 this.UpdateMediaButtons();
 
-                                                this.publisherService.PublishAsync(this.BindingModel.CurrentSong, this.currentPlaylist);
+                                                if (this.BindingModel.CurrentSong != null)
+                                                {
+                                                    this.publisherService.PublishAsync(this.BindingModel.CurrentSong, this.currentPlaylist);
+                                                }
                                             });
                                 }
                                 else
