@@ -114,7 +114,7 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Web
             Assert.AreEqual(googleMusicSong.Id, playlist.Playlist[0].Id, "Playlist contains song.");
 
             // Remove song from playlist
-            var resultSongRemove = await this.playlistsWebService.RemoveSongAsync(playlistResp.Id, playlist.Playlist[0].Id, playlist.Playlist[0].PlaylistEntryId);
+            var resultSongRemove = await this.playlistsWebService.RemoveSongAsync(playlistResp.Id, playlist.Playlist[0].Id, playlist.Playlist[0].PlaylistEntryId.Value);
             Assert.IsTrue(resultSongRemove, "Song has been removed.");
 
             // Verify that song has been removed.
