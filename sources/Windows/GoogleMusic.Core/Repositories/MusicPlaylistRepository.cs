@@ -307,9 +307,10 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
                         }
 
                         var playlistSongs = (googlePlaylist.Playlist ?? Enumerable.Empty<GoogleMusicSong>())
+                            .Where(s => s.PlaylistEntryId.HasValue)
                             .Select(s => new { EntryId = s.PlaylistEntryId, Song = this.songsRepository.GetSong(s.Id) })
                             .Where(s => s.Song != null)
-                            .ToDictionary(s => s.EntryId, s => s.Song);
+                            .ToDictionary(s => s.EntryId.Value, s => s.Song);
 
                         if (googlePlaylist.Playlist != null && playlistSongs.Count != googlePlaylist.Playlist.Count)
                         {
