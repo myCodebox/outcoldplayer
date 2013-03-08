@@ -85,7 +85,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
                         "Playlist was created on the server with id '{0}' for name '{1}'.", resp.Id, resp.Title);
                 }
 
-                var playlist = new MusicPlaylist(resp.Id, resp.Title, new List<Song>(), new List<Guid>());
+                var playlist = new MusicPlaylist(resp.Id, resp.Title, new List<Song>(), new List<string>());
                 this.musicPlaylists.AddOrUpdate(resp.Id, guid => playlist, (guid, musicPlaylist) => playlist);
                 return playlist;
             }
@@ -159,7 +159,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
             return result;
         }
 
-        public async Task<bool> RemoveEntry(Guid playlistId, Guid entryId)
+        public async Task<bool> RemoveEntry(Guid playlistId, string entryId)
         {
             if (this.logger.IsDebugEnabled)
             {
@@ -307,10 +307,9 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
                         }
 
                         var playlistSongs = (googlePlaylist.Playlist ?? Enumerable.Empty<GoogleMusicSong>())
-                            .Where(s => s.PlaylistEntryId.HasValue)
                             .Select(s => new { EntryId = s.PlaylistEntryId, Song = this.songsRepository.GetSong(s.Id) })
-                            .Where(s => s.Song != null)
-                            .ToDictionary(s => s.EntryId.Value, s => s.Song);
+                            .Where(s => s != null && s.Song != null)
+                            .ToDictionary(s => s.EntryId, s => s.Song);
 
                         if (googlePlaylist.Playlist != null && playlistSongs.Count != googlePlaylist.Playlist.Count)
                         {
@@ -360,7 +359,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
                 var googlePlaylistSong = googleMusicPlaylist.Playlist[i];
 
                 if (googlePlaylistSong.Id != musicPlaylist.Songs[i].Metadata.Id
-                    || googlePlaylistSong.PlaylistEntryId != musicPlaylist.EntriesIds[i])
+                    || !string.Equals(googlePlaylistSong.PlaylistEntryId, musicPlaylist.EntriesIds[i], StringComparison.OrdinalIgnoreCase))
                 {
                     return false;
                 }

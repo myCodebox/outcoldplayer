@@ -9,7 +9,7 @@ namespace OutcoldSolutions.GoogleMusic.Models
 
     public class MusicPlaylist : Playlist
     {
-        public MusicPlaylist(Guid id, string name, List<Song> songs, List<Guid> entrieIds)
+        public MusicPlaylist(Guid id, string name, List<Song> songs, List<string> entrieIds)
             : base(name, songs)
         {
             Debug.Assert(songs.Count == entrieIds.Count, "songs.Count == entrieIds.Count");
@@ -20,6 +20,6 @@ namespace OutcoldSolutions.GoogleMusic.Models
 
         public Guid Id { get; set; }
 
-        public List<Guid> EntriesIds { get; set; }
+        public List<string> EntriesIds { get; set; }
     }
 }

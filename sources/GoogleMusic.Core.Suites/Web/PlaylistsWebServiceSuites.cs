@@ -107,14 +107,14 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Web
             var songs = await this.songsWebService.GetAllSongsAsync();
             var googleMusicSong = songs.First();
             var resultAddSongs = await this.playlistsWebService.AddSongAsync(playlistResp.Id, new [] { googleMusicSong.Id });
-            Assert.IsTrue(resultAddSongs.SongIds[0].PlaylistEntryId != Guid.Empty, "Song has been added to playlist");
+            Assert.IsNotEmpty(resultAddSongs.SongIds[0].PlaylistEntryId, "Song has been added to playlist");
 
             // Verify that songs has been added to playlist
             var playlist = await this.playlistsWebService.GetAsync(playlistResp.Id);
             Assert.AreEqual(googleMusicSong.Id, playlist.Playlist[0].Id, "Playlist contains song.");
 
             // Remove song from playlist
-            var resultSongRemove = await this.playlistsWebService.RemoveSongAsync(playlistResp.Id, playlist.Playlist[0].Id, playlist.Playlist[0].PlaylistEntryId.Value);
+            var resultSongRemove = await this.playlistsWebService.RemoveSongAsync(playlistResp.Id, playlist.Playlist[0].Id, playlist.Playlist[0].PlaylistEntryId);
             Assert.IsTrue(resultSongRemove, "Song has been removed.");
 
             // Verify that song has been removed.
@@ -135,7 +135,6 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Web
         {
             var googleLoginResponse = await this.googleAccountWebService.AuthenticateAsync(new Uri(this.musicWebService.GetServiceUrl()), SuitesConstants.GoogleAccountName, SuitesConstants.GoogleAccountPassword);
             this.musicWebService.Initialize(googleLoginResponse.CookieCollection.Cast<Cookie>());
-            // await this.musicWebService.AuthenticateAsync(SuitesConstants.GoogleAccountName, SuitesConstants.GoogleAccountPassword);
         }
     }
 }

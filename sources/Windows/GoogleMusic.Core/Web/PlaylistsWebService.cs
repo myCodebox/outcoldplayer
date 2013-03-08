@@ -100,7 +100,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
             return await this.googleMusicWebService.PostAsync<AddSongResp>(AddToPlaylistUrl, jsonProperties: jsonProperties);
         }
 
-        public async Task<bool> RemoveSongAsync(Guid playlistId, Guid songId, Guid entryId)
+        public async Task<bool> RemoveSongAsync(Guid playlistId, Guid songId, string entryId)
         {
             var jsonProperties = new Dictionary<string, string>
                                         {

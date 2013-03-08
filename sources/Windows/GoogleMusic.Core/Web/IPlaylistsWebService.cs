@@ -24,6 +24,6 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
         Task<AddSongResp> AddSongAsync(Guid playlistId, IEnumerable<Guid> songIds);
 
-        Task<bool> RemoveSongAsync(Guid playlistId, Guid songId, Guid entryId);
+        Task<bool> RemoveSongAsync(Guid playlistId, Guid songId, string entryId);
     }
 }

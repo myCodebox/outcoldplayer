@@ -322,6 +322,7 @@
     <Compile Include="Web\PlaylistsWebServiceSuites.cs" />
     <Compile Include="Web\HttpContentExtensionsSuites.cs" />
     <Compile Include="Web\Lastfm\LastfmAccountWebServiceSuites.cs" />
+    <Compile Include="Web\SongSerializationSuites.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -68,7 +68,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Models
 
         public string AlbumArtUrl { get; set; }
 
-        public Guid? PlaylistEntryId { get; set; }
+        public string PlaylistEntryId { get; set; }
 
         public ushort Bitrate { get; set; }
 
