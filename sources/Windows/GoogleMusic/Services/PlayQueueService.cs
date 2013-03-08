@@ -453,13 +453,26 @@ namespace OutcoldSolutions.GoogleMusic.Services
                         var stream = await this.downloadService.GetStreamAsync(songUrl.Url);
 
                         this.currentSongStream = stream;
-                        this.currentSongStream.DownloadProgressChanged += this.CurrentSongStreamOnDownloadProgressChanged;
 
-                        await this.mediaElement.PlayAsync(this.currentSongStream, this.currentSongStream.ContentType);
+                        if (this.currentSongStream != null)
+                        {
+                            this.currentSongStream.DownloadProgressChanged += this.CurrentSongStreamOnDownloadProgressChanged;
 
-                        this.State = QueueState.Play;
+                            await this.mediaElement.PlayAsync(this.currentSongStream, this.currentSongStream.ContentType);
 
-                        this.logger.LogTask(this.publisherService.PublishAsync(song, this.currentPlaylist));
+                            this.State = QueueState.Play;
+
+                            this.logger.LogTask(this.publisherService.PublishAsync(song, this.currentPlaylist));
+                        }
+                        else
+                        {
+                            this.State = QueueState.Stopped;
+
+                            if (this.logger.IsWarningEnabled)
+                            {
+                                this.logger.Warning("Stream is null.");
+                            }
+                        }
                     }
                     else
                     {
