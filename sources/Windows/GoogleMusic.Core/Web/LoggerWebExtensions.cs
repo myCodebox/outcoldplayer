@@ -14,6 +14,8 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
     using OutcoldSolutions.Diagnostics;
 
+    using Windows.Storage;
+
 #if !DEBUG
     using Windows.Security.Cryptography;
     using Windows.Security.Cryptography.Core;
@@ -22,6 +24,8 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
     public static class LoggerWebExtensions
     {
+        private const string WebResponseLogs = "WebResponses_Logs";
+
         public static void LogRequest(
             this ILogger @this,
             HttpMethod method,
@@ -109,7 +113,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 log.AppendLine("    RESPONSE HEADERS: ");
                 LogHeaders(log, responseMessage.Headers);
 
-                await LogContentAsync(log, responseMessage.Content);
+                await LogContentAsync(@this, log, responseMessage.Content);
 
                 log.AppendLine();
 
@@ -117,7 +121,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
             }
         }
 
-        private static async Task LogContentAsync(StringBuilder log, HttpContent httpContent)
+        private static async Task LogContentAsync(ILogger logger, StringBuilder log, HttpContent httpContent)
         {
             if (httpContent != null)
             {
@@ -132,10 +136,23 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 {
                     var content = await httpContent.ReadAsStringAsync();
 
-                    log.AppendFormat("    CONTENT:{0}{1}", Environment.NewLine, content.Substring(0, Math.Min(4096, content.Length)));
-                    log.AppendLine();
-                    log.AppendFormat("    ENDCONTENT.");
-                    log.AppendLine();
+                    var folder = (await ApplicationData.Current.LocalFolder.GetFoldersAsync())
+                        .FirstOrDefault(x => string.Equals(x.Name, WebResponseLogs, StringComparison.OrdinalIgnoreCase));
+
+                    if (folder != null)
+                    {
+                        var fileName = string.Format("{0}.log", Guid.NewGuid());
+                        var file = await folder.CreateFileAsync(fileName);
+                        await FileIO.WriteTextAsync(file, content);
+                        log.AppendFormat("    CONTENT FILE: {0}", file.Path);
+                    }
+                    else
+                    {
+                        log.AppendFormat("    CONTENT:{0}{1}", Environment.NewLine, content.Substring(0, Math.Min(4096, content.Length)));
+                        log.AppendLine();
+                        log.AppendFormat("    ENDCONTENT.");
+                        log.AppendLine();
+                    }
                 }
             }
             else
