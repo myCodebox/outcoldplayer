@@ -22,7 +22,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
     {
         private readonly ILogger logger;
 
-        private readonly ConcurrentDictionary<Guid, MusicPlaylist> musicPlaylists = new ConcurrentDictionary<Guid, MusicPlaylist>();
+        private readonly ConcurrentDictionary<string, MusicPlaylist> musicPlaylists = new ConcurrentDictionary<string, MusicPlaylist>();
         
         private readonly IPlaylistsWebService playlistsWebService;
         private readonly ISongsRepository songsRepository;
@@ -101,7 +101,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
             }
         }
 
-        public async Task<bool> DeleteAsync(Guid playlistId)
+        public async Task<bool> DeleteAsync(string playlistId)
         {
             if (this.logger.IsDebugEnabled)
             {
@@ -129,7 +129,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
             return resp;
         }
 
-        public async Task<bool> ChangeName(Guid playlistId, string name)
+        public async Task<bool> ChangeName(string playlistId, string name)
         {
             if (this.logger.IsDebugEnabled)
             {
@@ -159,7 +159,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
             return result;
         }
 
-        public async Task<bool> RemoveEntry(Guid playlistId, string entryId)
+        public async Task<bool> RemoveEntry(string playlistId, string entryId)
         {
             if (this.logger.IsDebugEnabled)
             {
@@ -193,7 +193,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
             return result;
         }
 
-        public async Task<bool> AddEntriesAsync(Guid playlistId, List<Song> songs)
+        public async Task<bool> AddEntriesAsync(string playlistId, List<Song> songs)
         {
             if (songs == null)
             {
@@ -225,7 +225,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
 
                 foreach (var songIdResp in result.SongIds)
                 {
-                    Song song = songs.FirstOrDefault(x => x.Metadata.Id == songIdResp.SongId);
+                    Song song = songs.FirstOrDefault(x => string.Equals(x.Metadata.Id, songIdResp.SongId));
                     
                     if (song != null)
                     {
@@ -270,7 +270,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
             {
                 foreach (var googlePlaylist in googlePlaylists.Playlists)
                 {
-                    var playlistId = Guid.Parse(googlePlaylist.PlaylistId);
+                    var playlistId = googlePlaylist.PlaylistId;
                     bool addPlaylist = false;
 
                     existingPlaylistIds.Remove(playlistId);

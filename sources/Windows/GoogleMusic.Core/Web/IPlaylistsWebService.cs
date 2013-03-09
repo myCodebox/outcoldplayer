@@ -14,16 +14,16 @@ namespace OutcoldSolutions.GoogleMusic.Web
     {
         Task<GoogleMusicPlaylists> GetAllAsync();
 
-        Task<GoogleMusicPlaylist> GetAsync(Guid playlistId);
+        Task<GoogleMusicPlaylist> GetAsync(string playlistId);
         
         Task<AddPlaylistResp> CreateAsync(string name);
 
-        Task<bool> DeleteAsync(Guid id);
+        Task<bool> DeleteAsync(string id);
 
-        Task<bool> ChangeNameAsync(Guid id, string name);
+        Task<bool> ChangeNameAsync(string id, string name);
 
-        Task<AddSongResp> AddSongAsync(Guid playlistId, IEnumerable<Guid> songIds);
+        Task<AddSongResp> AddSongAsync(string playlistId, IEnumerable<string> songIds);
 
-        Task<bool> RemoveSongAsync(Guid playlistId, Guid songId, string entryId);
+        Task<bool> RemoveSongAsync(string playlistId, string songId, string entryId);
     }
 }

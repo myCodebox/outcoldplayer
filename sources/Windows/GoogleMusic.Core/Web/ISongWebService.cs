@@ -17,10 +17,10 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
         Task<List<GoogleMusicSong>> StreamingLoadAllTracksAsync(DateTime? lastUpdate, IProgress<int> progress);
 
-        Task<GoogleMusicSongUrl> GetSongUrlAsync(Guid id);
+        Task<GoogleMusicSongUrl> GetSongUrlAsync(string id);
 
-        Task<bool> RecordPlayingAsync(Guid songId, string playlistId, bool updateRecentAlbum, bool updateRecentPlaylist, int playCount);
+        Task<bool> RecordPlayingAsync(string songId, string playlistId, bool updateRecentAlbum, bool updateRecentPlaylist, int playCount);
 
-        Task<RatingResp> UpdateRatingAsync(Guid songId, int rating);
+        Task<RatingResp> UpdateRatingAsync(string songId, int rating);
     }
 }

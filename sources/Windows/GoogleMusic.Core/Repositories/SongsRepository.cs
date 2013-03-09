@@ -22,7 +22,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
         private readonly ISongsCacheService songsCacheService;
         private readonly ILogger logger;
 
-        private readonly Dictionary<Guid, Song> songs = new Dictionary<Guid, Song>();
+        private readonly Dictionary<string, Song> songs = new Dictionary<string, Song>();
         private DispatcherTimer dispatcherTimer;
 
         private DateTime? lastUpdate;
@@ -85,7 +85,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
             this.dispatcherTimer.Start();
         }
 
-        public Song GetSong(Guid songId)
+        public Song GetSong(string songId)
         {
             if (this.lastUpdate == null)
             {

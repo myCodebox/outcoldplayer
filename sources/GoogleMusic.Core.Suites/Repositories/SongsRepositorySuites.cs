@@ -4,11 +4,8 @@
 namespace OutcoldSolutions.GoogleMusic.Suites.Repositories
 {
     using System;
-    using System.Linq;
 
     using Moq;
-
-    using NUnit.Framework;
 
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Repositories;
@@ -17,8 +14,8 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Repositories
 
     public class SongsRepositorySuites : GoogleMusicSuitesBase
     {
-        private readonly SongMetadata song1 = new SongMetadata() { Id = Guid.NewGuid() };
-        private readonly SongMetadata song2 = new SongMetadata() { Id = Guid.NewGuid() };
+        private readonly SongMetadata song1 = new SongMetadata() { Id = Guid.NewGuid().ToString() };
+        private readonly SongMetadata song2 = new SongMetadata() { Id = Guid.NewGuid().ToString() };
 
         private SongsRepository repository;
 
@@ -28,6 +25,5 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Repositories
 
             this.repository = new SongsRepository(this.LogManager, Mock.Of<ISongWebService>(), Mock.Of<IGoogleMusicSessionService>(), Mock.Of<ISongsCacheService>());
         }
-
     }
 }

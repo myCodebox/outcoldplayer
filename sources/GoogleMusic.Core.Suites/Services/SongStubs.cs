@@ -19,7 +19,7 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Services
 
         public static readonly Song Song1Artist1Album1 = new Song(new GoogleMusicSong()
         {
-            Id = Guid.NewGuid(),
+            Id = Guid.NewGuid().ToString(),
             Artist = Artist1,
             ArtistNorm = Artist1,
             Album = Artist1Album1,
@@ -30,7 +30,7 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Services
 
         public static readonly Song Song2Artist1Album1 = new Song(new GoogleMusicSong()
         {
-            Id = Guid.NewGuid(),
+            Id = Guid.NewGuid().ToString(),
             Artist = Artist1,
             ArtistNorm = Artist1,
             Album = Artist1Album1,
@@ -41,7 +41,7 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Services
 
         public static readonly Song Song1Artist1Album2 = new Song(new GoogleMusicSong()
         {
-            Id = Guid.NewGuid(),
+            Id = Guid.NewGuid().ToString(),
             Artist = Artist1,
             ArtistNorm = Artist1,
             Album = Artist1Album2,
@@ -52,7 +52,7 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Services
 
         public static readonly Song Song2Artist1Album2 = new Song(new GoogleMusicSong()
         {
-            Id = Guid.NewGuid(),
+            Id = Guid.NewGuid().ToString(),
             Artist = Artist1,
             ArtistNorm = Artist1,
             Album = Artist1Album2,
@@ -63,7 +63,7 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Services
 
         public static readonly Song Song1Artist2Album1 = new Song(new GoogleMusicSong()
         {
-            Id = Guid.NewGuid(),
+            Id = Guid.NewGuid().ToString(),
             Artist = Artist2,
             ArtistNorm = Artist2,
             Album = Artist2Album1,
@@ -74,7 +74,7 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Services
 
         public static readonly Song Song2Artist2Album1 = new Song(new GoogleMusicSong()
         {
-            Id = Guid.NewGuid(),
+            Id = Guid.NewGuid().ToString(),
             Artist = Artist2,
             ArtistNorm = Artist2,
             Album = Artist2Album1,

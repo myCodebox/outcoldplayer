@@ -128,14 +128,14 @@ namespace OutcoldSolutions.GoogleMusic.Services
                                 this.logger.Debug("File contains {0} lines.", updates.Count);
                             }
 
-                            Dictionary<Guid, SongMetadata> dictionary = null;
+                            Dictionary<string, SongMetadata> dictionary = null;
                             if (songsCache.Songs != null)
                             {
                                 dictionary = songsCache.Songs.ToDictionary(x => x.Id, x => x);
                             }
                             else
                             {
-                                dictionary = new Dictionary<Guid, SongMetadata>();
+                                dictionary = new Dictionary<string, SongMetadata>();
                             }
 
                             foreach (var update in updates)

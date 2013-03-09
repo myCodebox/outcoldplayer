@@ -3,7 +3,6 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Repositories
 {
-    using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
 
@@ -17,13 +16,13 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
 
         Task<MusicPlaylist> CreateAsync(string name);
 
-        Task<bool> DeleteAsync(Guid playlistId);
+        Task<bool> DeleteAsync(string playlistId);
 
-        Task<bool> ChangeName(Guid playlistId, string name);
+        Task<bool> ChangeName(string playlistId, string name);
 
-        Task<bool> RemoveEntry(Guid playlistId, string entryId);
+        Task<bool> RemoveEntry(string playlistId, string entryId);
 
-        Task<bool> AddEntriesAsync(Guid playlistId, List<Song> song);
+        Task<bool> AddEntriesAsync(string playlistId, List<Song> song);
 
         void ClearRepository();
     }

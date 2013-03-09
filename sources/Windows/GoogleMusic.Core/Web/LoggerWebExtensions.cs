@@ -113,7 +113,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 log.AppendLine("    RESPONSE HEADERS: ");
                 LogHeaders(log, responseMessage.Headers);
 
-                await LogContentAsync(@this, log, responseMessage.Content);
+                await LogContentAsync(log, responseMessage.Content);
 
                 log.AppendLine();
 
@@ -121,7 +121,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
             }
         }
 
-        private static async Task LogContentAsync(ILogger logger, StringBuilder log, HttpContent httpContent)
+        private static async Task LogContentAsync(StringBuilder log, HttpContent httpContent)
         {
             if (httpContent != null)
             {
@@ -136,8 +136,17 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 {
                     var content = await httpContent.ReadAsStringAsync();
 
-                    var folder = (await ApplicationData.Current.LocalFolder.GetFoldersAsync())
-                        .FirstOrDefault(x => string.Equals(x.Name, WebResponseLogs, StringComparison.OrdinalIgnoreCase));
+                    StorageFolder folder = null;
+
+                    try
+                    {
+                        folder = (await ApplicationData.Current.LocalFolder.GetFoldersAsync())
+                            .FirstOrDefault(x => string.Equals(x.Name, WebResponseLogs, StringComparison.OrdinalIgnoreCase));
+                    }
+                    catch (InvalidOperationException)
+                    {
+                        // Unit tests does not have package identity. We just ignore them.
+                    }
 
                     if (folder != null)
                     {
@@ -148,7 +157,10 @@ namespace OutcoldSolutions.GoogleMusic.Web
                     }
                     else
                     {
-                        log.AppendFormat("    CONTENT:{0}{1}", Environment.NewLine, content.Substring(0, Math.Min(4096, content.Length)));
+                        log.AppendFormat(
+                            "    CONTENT:{0}{1}",
+                            Environment.NewLine,
+                            content.Substring(0, Math.Min(4096, content.Length)));
                         log.AppendLine();
                         log.AppendFormat("    ENDCONTENT.");
                         log.AppendLine();

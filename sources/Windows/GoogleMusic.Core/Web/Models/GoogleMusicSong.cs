@@ -26,7 +26,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Models
 
         public ushort Disc { get; set; }
 
-        public Guid Id { get; set; }
+        public string Id { get; set; }
 
         public string Composer { get; set; }
 
