@@ -17,7 +17,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
 
         IEnumerable<Song> GetAll();
 
-        Song GetSong(Guid songId);
+        Song GetSong(string songId);
 
         Task SaveToCacheAsync();
 

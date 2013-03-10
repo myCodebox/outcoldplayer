@@ -12,8 +12,6 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
     public interface IGoogleMusicWebService
     {
-        // Task<bool> AuthenticateAsync(string email, string password);
-
         string GetServiceUrl();
 
         void Initialize(IEnumerable<Cookie> cookieCollection);

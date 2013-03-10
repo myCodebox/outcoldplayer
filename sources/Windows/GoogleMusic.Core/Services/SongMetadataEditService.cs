@@ -61,7 +61,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             {
                 var songRatingResp = songUpdate;
 
-                if (songUpdate.Id == song.Metadata.Id)
+                if (string.Equals(songUpdate.Id, song.Metadata.Id))
                 {
                     await this.dispatcher.RunAsync(() => song.Rating = songRatingResp.Rating);
 

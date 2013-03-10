@@ -34,7 +34,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
             return await this.googleMusicWebService.PostAsync<GoogleMusicPlaylists>(PlaylistsUrl);
         }
 
-        public async Task<GoogleMusicPlaylist> GetAsync(Guid playlistId)
+        public async Task<GoogleMusicPlaylist> GetAsync(string playlistId)
         {
             var jsonProperties = new Dictionary<string, string>
                                         {
@@ -58,7 +58,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
             return await this.googleMusicWebService.PostAsync<AddPlaylistResp>(AddPlaylistUrl, jsonProperties: jsonProperties);
         }
 
-        public async Task<bool> DeleteAsync(Guid id)
+        public async Task<bool> DeleteAsync(string id)
         {
             var jsonProperties = new Dictionary<string, string>
                                         {
@@ -72,7 +72,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
             return deletePlaylistResp.DeleteId == id;
         }
 
-        public async Task<bool> ChangeNameAsync(Guid id, string name)
+        public async Task<bool> ChangeNameAsync(string id, string name)
         {
             var jsonProperties = new Dictionary<string, string>
                                         {
@@ -84,7 +84,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
             return !response.Success.HasValue || response.Success.Value;
         }
 
-        public async Task<AddSongResp> AddSongAsync(Guid playlistId, IEnumerable<Guid> songIds)
+        public async Task<AddSongResp> AddSongAsync(string playlistId, IEnumerable<string> songIds)
         {
             if (songIds == null)
             {
@@ -100,7 +100,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
             return await this.googleMusicWebService.PostAsync<AddSongResp>(AddToPlaylistUrl, jsonProperties: jsonProperties);
         }
 
-        public async Task<bool> RemoveSongAsync(Guid playlistId, Guid songId, Guid entryId)
+        public async Task<bool> RemoveSongAsync(string playlistId, string songId, string entryId)
         {
             var jsonProperties = new Dictionary<string, string>
                                         {

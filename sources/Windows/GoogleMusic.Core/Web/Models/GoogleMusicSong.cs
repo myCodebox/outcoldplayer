@@ -27,7 +27,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Models
 
         public ushort Disc { get; set; }
 
-        public Guid Id { get; set; }
+        public string Id { get; set; }
 
         public string Composer { get; set; }
 
@@ -69,7 +69,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Models
 
         public string AlbumArtUrl { get; set; }
 
-        public Guid? PlaylistEntryId { get; set; }
+        public string PlaylistEntryId { get; set; }
 
         public ushort Bitrate { get; set; }
 
