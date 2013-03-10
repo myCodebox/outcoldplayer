@@ -32,6 +32,13 @@
         <ScrollViewer Grid.Row="2" Margin="0, 20, 0, 0">
             <StackPanel>
                 <TextBlock Style="{StaticResource TitleTextStyle}" Margin="0, 10, 0, 0" >
+                    <Run>03/09/2013 - Version 1.3.2</Run>
+                </TextBlock>
+                <RichTextBlock Style="{StaticResource BodyRichTextStyle}">
+                    <Paragraph>[b] gMusic cannot load load playlist for some users (loading stops on 80-90%).</Paragraph>
+                </RichTextBlock>
+
+                <TextBlock Style="{StaticResource TitleTextStyle}" Margin="0, 10, 0, 0" >
                     <Run>03/01/2013 - Version 1.3.1</Run>
                 </TextBlock>
                 <RichTextBlock Style="{StaticResource BodyRichTextStyle}">
