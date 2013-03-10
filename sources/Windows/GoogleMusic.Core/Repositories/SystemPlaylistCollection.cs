@@ -8,6 +8,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
     using System.Linq;
     using System.Threading.Tasks;
 
+    using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
 
     public class SystemPlaylistCollection : PlaylistCollectionBase<SystemPlaylist>
@@ -25,7 +26,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
 
         protected override async Task<List<SystemPlaylist>> LoadCollectionAsync()
         {
-            var allSongs = this.SongsRepository.GetAll().ToList();
+            var allSongs = (await this.SongsRepository.GetAllAsync()).ToList();
 
             var allSongsPlaylist = new SystemPlaylist("All songs", SystemPlaylist.SystemPlaylistType.AllSongs, this.OrderSongs(allSongs));
             var highlyRatedPlaylist = new SystemPlaylist("Highly rated", SystemPlaylist.SystemPlaylistType.HighlyRated, this.OrderSongs(allSongs.Where(x => x.Rating >= HighlyRatedValue)));

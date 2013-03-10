@@ -7,6 +7,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
     using System.Linq;
     using System.Threading.Tasks;
 
+    using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
 
     public class MusicPlaylistCollection : PlaylistCollectionBase<MusicPlaylist>

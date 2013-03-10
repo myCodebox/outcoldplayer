@@ -10,19 +10,21 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
     using System.Threading.Tasks;
 
     using OutcoldSolutions.Diagnostics;
+    using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Web;
 
     using Windows.UI.Xaml;
 
-    public class SongsRepository : ISongsRepository
+    public class SongsRepository : RepositoryBase, ISongsRepository
     {
+        private const string LastUpdateKey = "SongsCacheService_CacheFreshnessDate";
+
         private readonly ISongWebService songWebService;
-        private readonly ISongsCacheService songsCacheService;
+        private readonly ISettingsService settingsService;
         private readonly ILogger logger;
 
-        private readonly Dictionary<string, Song> songs = new Dictionary<string, Song>();
         private DispatcherTimer dispatcherTimer;
 
         private DateTime? lastUpdate;
@@ -31,16 +33,15 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
             ILogManager logManager,
             ISongWebService songWebService,
             IGoogleMusicSessionService googleMusicSessionService,
-            ISongsCacheService songsCacheService)
+            ISettingsService settingsService)
         {
             this.songWebService = songWebService;
-            this.songsCacheService = songsCacheService;
+            this.settingsService = settingsService;
             this.logger = logManager.CreateLogger("SongsRepository");
 
             googleMusicSessionService.SessionCleared += async (sender, args) =>
                 {
                     this.logger.Debug("Session cleared. Stopping the dispatcher and clearing the cache of songs.");
-
                     await this.ClearRepositoryAsync();
                 };
         }
@@ -51,29 +52,20 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
         {
             this.logger.Debug("Initializing.");
 
-            var cache = await this.songsCacheService.ReadFromFileAsync();
-            if (cache != null)
+
+            this.lastUpdate = this.settingsService.GetValue(LastUpdateKey, DateTime.MinValue);
+            if (this.lastUpdate == DateTime.MinValue)
             {
-                if (this.logger.IsDebugEnabled)
-                {
-                    this.logger.Debug(
-                        "Loaded {0} songs from cache. Last update: {1}.", cache.Songs.Length, cache.LastUpdate);
-                }
-
-                this.AddRange(cache.Songs);
-                this.lastUpdate = cache.LastUpdate;
-
-                progress.Report(cache.Songs.Length);
-
-                await this.UpdateSongsAsync();
+                var updateStart = DateTime.UtcNow;
+                var loaddedSongs = (await this.songWebService.GetAllSongsAsync(progress)).Select(x => (SongMetadata)x);
+                await this.Connection.InsertAllAsync(loaddedSongs);
+                this.lastUpdate = updateStart;
             }
             else
             {
-                var updateStart = DateTime.UtcNow;
-                this.AddRange((await this.songWebService.GetAllSongsAsync(progress)).Select(x => (SongMetadata)x));
-                this.lastUpdate = updateStart;
+                progress.Report(await this.Connection.Table<SongMetadata>().CountAsync());
 
-                await this.SaveToCacheAsync();
+                await this.UpdateSongsAsync();
             }
 
             this.logger.Debug("Initialized. Creating dispatcher timer.");
@@ -85,46 +77,28 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
             this.dispatcherTimer.Start();
         }
 
-        public Song GetSong(string songId)
+        public async Task<Song> GetSongAsync(string songId)
         {
             if (this.lastUpdate == null)
             {
                 throw new NotSupportedException("Songs Repository is not initialized yet.");
             }
 
-            lock (this.songs)
-            {
-                Song song;
-                return this.songs.TryGetValue(songId, out song) ? song : null;
-            }
+            return new Song(await this.Connection.GetAsync<SongMetadata>(songId));
         }
 
-        public IEnumerable<Song> GetAll()
+        public async Task<IEnumerable<Song>> GetAllAsync()
         {
-            lock (this.songs)
-            {
-                return this.songs.Values.ToList();
-            }
-        }
-
-        public async Task SaveToCacheAsync()
-        {
-            if (this.lastUpdate != null)
-            {
-                await this.songsCacheService.SaveToFileAsync(
-                    this.lastUpdate.Value, this.songs.Values.Select(x => x.Metadata).ToList());
-            }
+            return (await this.Connection.Table<SongMetadata>().ToListAsync()).Select(x => new Song(x));
         }
 
         public async Task ClearRepositoryAsync()
         {
             this.dispatcherTimer.Stop();
             this.dispatcherTimer = null;
-            this.songs.Clear();
+            await this.Connection.ExecuteAsync("delete from SongMetadata");
 
             this.lastUpdate = null;
-
-            await this.songsCacheService.ClearCacheAsync();
 
             this.RaiseUpdated();
         }
@@ -145,86 +119,26 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
             var updatedSongs = await this.songWebService.StreamingLoadAllTracksAsync(this.lastUpdate, null);
             if (updatedSongs.Count > 0)
             {
-                bool updated = false;
-
-                lock (this.songs)
-                {
-                    foreach (var songInfo in updatedSongs)
+                await this.Connection.RunInTransactionAsync(connection =>
                     {
-                        updated = true;
-
-                        Song song;
-                        bool containsSong = this.songs.TryGetValue(songInfo.Id, out song);
-                        if (songInfo.Deleted)
+                        foreach (var song in updatedSongs)
                         {
-                            if (containsSong)
+                            if (song.Deleted)
                             {
-                                song.PropertyChanged -= this.SongOnPropertyChanged;
-                                this.songs.Remove(songInfo.Id);
-                            }
-                        }
-                        else
-                        {
-                            if (containsSong)
-                            {
-                                song.PropertyChanged -= this.SongOnPropertyChanged;
-                                song.Metadata = songInfo;
-                                song.PropertyChanged += this.SongOnPropertyChanged;
+                                connection.Delete(song.Id);
                             }
                             else
                             {
-                                this.songs.Add(songInfo.Id, this.CreateSong(songInfo));
+                                connection.Update((SongMetadata)song);
                             }
                         }
-                    }
+                    });
 
-                    if (updated)
-                    {
-                        this.RaiseUpdated();
-                    }
-                }
+                this.RaiseUpdated();
             }
             
             this.lastUpdate = updateStart;
-
-            if (updatedSongs.Count > 0)
-            {
-                await this.SaveToCacheAsync();
-            }
-            else
-            {
-                this.songsCacheService.UpdateCacheFreshness(this.lastUpdate.Value);
-            }
-        }
-
-        private void AddRange(IEnumerable<SongMetadata> songInfos)
-        {
-            bool updated = false;
-
-            lock (this.songs)
-            {
-                foreach (var songInfo in songInfos)
-                {
-                    updated = true;
-
-                    Song song;
-                    if (this.songs.TryGetValue(songInfo.Id, out song))
-                    {
-                        song.PropertyChanged -= this.SongOnPropertyChanged;
-                        song.Metadata = songInfo;
-                        song.PropertyChanged += this.SongOnPropertyChanged;
-                    }
-                    else
-                    {
-                        this.songs.Add(songInfo.Id, this.CreateSong(songInfo));
-                    }
-                }
-            }
-
-            if (updated)
-            {
-                this.RaiseUpdated();
-            }
+            this.settingsService.SetValue(LastUpdateKey, this.lastUpdate.Value);
         }
 
         private Song CreateSong(SongMetadata metadata)
@@ -234,7 +148,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
             return song;
         }
 
-        private void SongOnPropertyChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)
+        private async void SongOnPropertyChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)
         {
             var song = sender as Song;
             if (song != null)
@@ -248,7 +162,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
                     PropertyNameExtractor.GetPropertyName(() => song.IsPlaying),
                     StringComparison.OrdinalIgnoreCase))
                 {
-                    this.songsCacheService.UpdateSongMedatadaAsync(song.Metadata);
+                    await this.Connection.UpdateAsync(((Song)sender).Metadata);
                 }
             }
         }

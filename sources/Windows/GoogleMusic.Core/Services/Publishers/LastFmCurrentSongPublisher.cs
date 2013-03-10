@@ -8,6 +8,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
     using System.Threading;
     using System.Threading.Tasks;
 
+    using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Web.Lastfm;
     using OutcoldSolutions.Models;

@@ -7,6 +7,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
     using System.Collections.Generic;
     using System.Threading.Tasks;
 
+    using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
 
     public interface ISongsRepository
@@ -15,11 +16,9 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
 
         Task InitializeAsync(IProgress<int> progress);
 
-        IEnumerable<Song> GetAll();
+        Task<IEnumerable<Song>> GetAllAsync();
 
-        Song GetSong(string songId);
-
-        Task SaveToCacheAsync();
+        Task<Song> GetSongAsync(string songId);
 
         Task ClearRepositoryAsync();
     }

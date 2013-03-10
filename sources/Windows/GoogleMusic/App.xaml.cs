@@ -11,6 +11,7 @@ namespace OutcoldSolutions.GoogleMusic
     using OutcoldSolutions.BindingModels;
     using OutcoldSolutions.Controls;
     using OutcoldSolutions.Diagnostics;
+    using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Presenters;
     using OutcoldSolutions.GoogleMusic.Presenters.Popups;
@@ -101,8 +102,6 @@ namespace OutcoldSolutions.GoogleMusic
                 registration.Register<IPlaylistCollection<SystemPlaylist>>().AsSingleton<SystemPlaylistCollection>();
                 registration.Register<IPlaylistCollection<MusicPlaylist>>().AsSingleton<MusicPlaylistCollection>();
                 registration.Register<IPlaylistCollectionsService>().AsSingleton<PlaylistCollectionsService>();
-
-                registration.Register<ISongsCacheService>().AsSingleton<SongsCacheService>();
 
                 registration.Register<ISongMetadataEditService>().AsSingleton<SongMetadataEditService>();
 
@@ -197,7 +196,6 @@ namespace OutcoldSolutions.GoogleMusic
             }
 
             Container.Resolve<ILastfmWebService>().SaveCurrentSession();
-            await Container.Resolve<ISongsRepository>().SaveToCacheAsync();
 
             TileUpdateManager.CreateTileUpdaterForApplication().Clear();
         }

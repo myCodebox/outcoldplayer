@@ -9,12 +9,13 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
     using System.Threading;
     using System.Threading.Tasks;
 
+    using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
 
     public abstract class PlaylistCollectionBase<TPlaylist> : IPlaylistCollection<TPlaylist>
         where TPlaylist : Playlist
     {
-        private readonly object locker = new object();
+        private readonly SemaphoreSlim mutex = new SemaphoreSlim(1);
         private readonly bool useCache = false;
 
         private List<TPlaylist> playlists;
@@ -29,10 +30,9 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
                 {
                     if (this.useCache)
                     {
-                        lock (this.locker)
-                        {
-                            this.playlists = null;
-                        }
+                        this.mutex.Wait();
+                        this.playlists = null;
+                        this.mutex.Release();
                     }
                 };
         }
@@ -89,7 +89,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
             {
                 if (this.useCache)
                 {
-                    Monitor.Enter(this.locker);
+                    await this.mutex.WaitAsync();
                 }
 
                 if (this.playlists != null)
@@ -111,7 +111,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
             {
                 if (this.useCache)
                 {
-                    Monitor.Exit(this.locker);
+                    this.mutex.Release();
                 }
             }
         }

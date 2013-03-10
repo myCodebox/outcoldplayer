@@ -5,6 +5,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
 {
     using System;
 
+    using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
 
     public class PlaylistViewResolver : IPageViewResolver

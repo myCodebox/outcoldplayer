@@ -6,6 +6,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
 {
     using System.Linq;
 
+    using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Presenters;
     using OutcoldSolutions.Views;

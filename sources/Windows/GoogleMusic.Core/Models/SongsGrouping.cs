@@ -7,6 +7,8 @@ namespace OutcoldSolutions.GoogleMusic.Models
     using System.Collections.Generic;
     using System.Linq;
 
+    using OutcoldSolutions.GoogleMusic.BindingModels;
+
     public class SongsGrouping
     {
         public static List<Album> GroupByAlbums(IEnumerable<Song> songs)

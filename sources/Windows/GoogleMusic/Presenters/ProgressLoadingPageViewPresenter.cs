@@ -97,6 +97,9 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private async Task InitializeRepositoriesAsync()
         {
+            DbContext dbContext = new DbContext();
+            await dbContext.InitializeAsync();
+
             await this.Dispatcher.RunAsync(
                 () =>
                 {

@@ -7,6 +7,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
     using System.Collections.Generic;
     using System.Threading.Tasks;
 
+    using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
 
     public interface IPlayQueueService

@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // Outcold Solutions (http://outcoldman.com)
 // --------------------------------------------------------------------------------------------------------------------
-namespace OutcoldSolutions.GoogleMusic.Models
+namespace OutcoldSolutions.GoogleMusic.BindingModels
 {
     using System;
     using System.Collections.Generic;

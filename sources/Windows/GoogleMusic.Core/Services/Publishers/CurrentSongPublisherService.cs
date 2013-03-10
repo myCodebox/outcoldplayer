@@ -12,6 +12,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
     using System.Threading.Tasks;
 
     using OutcoldSolutions.Diagnostics;
+    using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
 
     using Windows.Storage;

@@ -11,6 +11,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
     using System.Threading.Tasks;
 
     using OutcoldSolutions.Diagnostics;
+    using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Web;
@@ -306,10 +307,20 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
                             this.logger.Debug("Creating new MusicPlaylist instance with id '{0}'.", playlistId);
                         }
 
-                        var playlistSongs = (googlePlaylist.Playlist ?? Enumerable.Empty<GoogleMusicSong>())
-                            .Select(s => new { EntryId = s.PlaylistEntryId, Song = this.songsRepository.GetSong(s.Id) })
-                            .Where(s => s != null && s.Song != null)
-                            .ToDictionary(s => s.EntryId, s => s.Song);
+                        Dictionary<string, Song> playlistSongs = new Dictionary<string, Song>();
+
+                        if (googlePlaylist.Playlist != null)
+                        {
+                            foreach (var s in googlePlaylist.Playlist)
+                            {
+                                var song = await this.songsRepository.GetSongAsync(s.Id);
+
+                                if (s.PlaylistEntryId != null && song != null)
+                                {
+                                    playlistSongs.Add(s.PlaylistEntryId, song);
+                                }
+                            }
+                        }
 
                         if (googlePlaylist.Playlist != null && playlistSongs.Count != googlePlaylist.Playlist.Count)
                         {

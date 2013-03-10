@@ -5,8 +5,11 @@ namespace OutcoldSolutions.GoogleMusic.Models
 {
     using System;
 
+    using SQLite;
+
     public class SongMetadata
     {
+        [PrimaryKey]
         public string Id { get; set; }
 
         public string Title { get; set; }
@@ -44,6 +47,8 @@ namespace OutcoldSolutions.GoogleMusic.Models
         public DateTime CreationDate { get; set; }
 
         public string Comment { get; set; }
+
+        public ushort Bitrate { get; set; }
 
         public StreamType StreamType { get; set; }
     }

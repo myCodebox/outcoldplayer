@@ -9,6 +9,7 @@ namespace OutcoldSolutions.GoogleMusic.Shell
     using System.Linq;
     using System.Threading.Tasks;
 
+    using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Services;
@@ -217,7 +218,7 @@ namespace OutcoldSolutions.GoogleMusic.Shell
 
                         case Songs:
                             {
-                                var songs = this.songsRepository.GetAll();
+                                var songs = await this.songsRepository.GetAllAsync();
                                 var song = songs.Where(
                                     x =>
                                     {
@@ -280,7 +281,7 @@ namespace OutcoldSolutions.GoogleMusic.Shell
 
             if (result.Count < MaxResults)
             {
-                var songs = this.songsRepository.GetAll();
+                var songs = await this.songsRepository.GetAllAsync();
                 var songsSearch = songs.Where(x => Search.Contains(x.Title, args.QueryText)).Take(MaxResults - result.Count).ToList();
 
                 if (songsSearch.Count > 0)

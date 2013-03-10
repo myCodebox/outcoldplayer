@@ -72,7 +72,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 results.Add(new SearchGroupBindingModel("Genres", genres));
             }
 
-            var songs = this.songsRepository.GetAll().Where(
+            var songs = (await this.songsRepository.GetAllAsync()).Where(
                 x => Models.Search.Contains(x.Title, query)).Select(x => new SongResultBindingModel(query, x)).Cast<SearchResultBindingModel>().ToList();
 
             if (songs.Count > 0)

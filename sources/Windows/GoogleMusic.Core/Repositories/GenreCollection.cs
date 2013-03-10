@@ -7,6 +7,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
     using System.Linq;
     using System.Threading.Tasks;
 
+    using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
 
     public class GenreCollection : PlaylistCollectionBase<Genre>
@@ -16,12 +17,13 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
         {
         }
 
-        protected override Task<List<Genre>> LoadCollectionAsync()
+        protected override async Task<List<Genre>> LoadCollectionAsync()
         {
-            return Task.FromResult(this.SongsRepository.GetAll()
-                    .GroupBy(x => x.Metadata.Genre)
-                    .OrderBy(x => x.Key)
-                    .Select(x => new Genre(x.Key, x.ToList())).ToList());
+            var songs = await this.SongsRepository.GetAllAsync();
+            return songs.GroupBy(x => x.Metadata.Genre)
+                     .OrderBy(x => x.Key)
+                     .Select(x => new Genre(x.Key, x.ToList()))
+                     .ToList();
         }
     }
 }

@@ -7,6 +7,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
     using System.Linq;
     using System.Threading.Tasks;
 
+    using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
 
     public class AlbumCollection : PlaylistCollectionBase<Album>
@@ -16,9 +17,10 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
         {
         }
 
-        protected override Task<List<Album>> LoadCollectionAsync()
+        protected override async Task<List<Album>> LoadCollectionAsync()
         {
-            return Task.FromResult(SongsGrouping.GroupByAlbums(this.SongsRepository.GetAll()).ToList());
+            var songs = await this.SongsRepository.GetAllAsync();
+            return SongsGrouping.GroupByAlbums(songs).ToList();
         }
     }
 }

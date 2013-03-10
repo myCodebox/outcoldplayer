@@ -35,7 +35,11 @@ namespace OutcoldSolutions.GoogleMusic.Web.Models
 
         public string AlbumArtist { get; set; }
 
+        public string ArtistMatchedId { get; set; }
+
         public ushort TotalTracks { get; set; }
+
+        public bool SubjectToCuration { get; set; }
 
         public string Name { get; set; }
 
@@ -53,7 +57,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Models
 
         public long DurationMillis { get; set; }
 
-        public string AlbumArt { get; set; }
+        public string MatchedId { get; set; }
 
         public bool Deleted { get; set; }
 
@@ -103,6 +107,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Models
                            TotalTracks = song.TotalTracks,
                            Year = song.Year,
                            Comment = song.Comment,
+                           Bitrate = song.Bitrate,
                            StreamType = StreamType.GoogleMusic
                        };
         }
