@@ -9,7 +9,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
     public class SongsCache
     {
-        public SongMetadata[] Songs { get; set; }
+        public SongEntity[] Songs { get; set; }
 
         public DateTime LastUpdate { get; set; }
     }

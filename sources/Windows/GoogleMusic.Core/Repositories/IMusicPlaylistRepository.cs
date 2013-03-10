@@ -7,12 +7,9 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
-    using OutcoldSolutions.GoogleMusic.Models;
 
     public interface IMusicPlaylistRepository
     {
-        Task InitializeAsync();
-
         Task<IEnumerable<MusicPlaylist>> GetAllAsync();
 
         Task<MusicPlaylist> CreateAsync(string name);
@@ -24,7 +21,5 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
         Task<bool> RemoveEntry(string playlistId, string entryId);
 
         Task<bool> AddEntriesAsync(string playlistId, List<Song> song);
-
-        void ClearRepository();
     }
 }

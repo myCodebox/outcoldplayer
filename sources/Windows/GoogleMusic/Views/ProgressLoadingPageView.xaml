@@ -13,7 +13,7 @@
 
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0, 300, 0, 0">
 
-            <ProgressBar Maximum="{Binding Path=BindingModel.Maximum, Mode=OneWay}" 
+            <ProgressBar Maximum="1" 
                          Value="{Binding Path=BindingModel.Progress, Mode=OneWay}" 
                          Width="600"  
                          HorizontalAlignment="Center" />

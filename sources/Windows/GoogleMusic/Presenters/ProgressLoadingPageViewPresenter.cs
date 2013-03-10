@@ -25,26 +25,20 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private const string DoNotAskToReviewKey = "DoNotAskToReviewKey";
         private const string CountOfStartsBeforeReview = "CountOfStartsBeforeReview";
 
-        private const string CurrentVersion = "1.3.1";
+        private const string CurrentVersion = "2.0.0.3";
 
-        private readonly ISongWebService songWebService;
-        private readonly IMusicPlaylistRepository musicPlaylistRepository;
-        private readonly ISongsRepository songsRepository;
+        private readonly IGoogleMusicSynchronizationService synchronizationService;
         private readonly INavigationService navigationService;
         private readonly ISettingsService settingsService;
 
         public ProgressLoadingPageViewPresenter(
             INavigationService navigationService,
             ISettingsService settingsService,
-            ISongWebService songWebService,
-            IMusicPlaylistRepository musicPlaylistRepository,
-            ISongsRepository songsRepository)
+            IGoogleMusicSynchronizationService synchronizationService)
         {
             this.navigationService = navigationService;
             this.settingsService = settingsService;
-            this.songWebService = songWebService;
-            this.musicPlaylistRepository = musicPlaylistRepository;
-            this.songsRepository = songsRepository;
+            this.synchronizationService = synchronizationService;
             this.BindingModel = new ProgressLoadingPageViewBindingModel();
 
             this.ReloadSongsCommand = new DelegateCommand(this.LoadSongs, () => this.BindingModel.IsFailed);
@@ -67,9 +61,13 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         {
             this.BindingModel.IsFailed = false;
 
+            var currentVersion = this.settingsService.GetValue<string>("Version", null);
+            bool fCurrentVersion = string.Equals(currentVersion, CurrentVersion, StringComparison.OrdinalIgnoreCase);
+            bool fUpdate = !fCurrentVersion && currentVersion != null;
+
             try
             {
-                await this.InitializeRepositoriesAsync();
+                await this.InitializeRepositoriesAsync(fUpdate);
             }
             catch (Exception e)
             {
@@ -83,8 +81,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             
             this.VerifyIfCanAskForReview();
 
-            var currentVersion = this.settingsService.GetValue<string>("Version", CurrentVersion);
-            if (string.Equals(currentVersion, CurrentVersion, StringComparison.OrdinalIgnoreCase))
+            if (!fUpdate)
             {
                 this.navigationService.NavigateTo<IStartPageView>();
             }
@@ -95,28 +92,24 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             }
         }
 
-        private async Task InitializeRepositoriesAsync()
+        private async Task InitializeRepositoriesAsync(bool fUpdate)
         {
             DbContext dbContext = new DbContext();
+            if (fUpdate)
+            {
+                await this.synchronizationService.ClearLocalDatabaseAsync();
+            }
+
             await dbContext.InitializeAsync();
 
             await this.Dispatcher.RunAsync(
                 () =>
                 {
                     this.BindingModel.Progress = 0;
-                    this.BindingModel.Message = "Initializing...";
+                    this.BindingModel.Message = "Loading music library...";
                 });
 
-            var status = await this.songWebService.GetStatusAsync();
-
-            await this.Dispatcher.RunAsync(
-                () =>
-                {
-                    this.BindingModel.Maximum = status.AvailableTracks * 1.5;
-                    this.BindingModel.Message = "Loading songs...";
-                });
-
-            Progress<int> progress = new Progress<int>();
+            Progress<double> progress = new Progress<double>();
             progress.ProgressChanged += async (sender, i) =>
             {
                 await this.Dispatcher.RunAsync(
@@ -127,16 +120,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     });
             };
 
-            await this.songsRepository.InitializeAsync(progress);
-
-            await this.Dispatcher.RunAsync(
-               () =>
-               {
-                   this.BindingModel.Progress = status.AvailableTracks * 1.3;
-                   this.BindingModel.Message = "Loading playlists...";
-               });
-
-            await this.musicPlaylistRepository.InitializeAsync();
+            await this.synchronizationService.InitializeAsync(progress);
         }
 
         private void VerifyIfCanAskForReview()

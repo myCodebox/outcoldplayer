@@ -4,11 +4,11 @@
 namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
 {
     using OutcoldSolutions.GoogleMusic.BindingModels.Settings;
-    using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Services.Publishers;
     using OutcoldSolutions.GoogleMusic.Views;
     using OutcoldSolutions.GoogleMusic.Views.Popups;
+    using OutcoldSolutions.GoogleMusic.Web;
     using OutcoldSolutions.GoogleMusic.Web.Lastfm;
     using OutcoldSolutions.Presenters;
     using OutcoldSolutions.Shell;
@@ -21,10 +21,10 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
         private readonly ILastfmWebService lastfmWebService;
         private readonly ICurrentSongPublisherService publisherService;
         private readonly ILastFmConnectionService lastFmConnectionService;
-        private readonly ISongsRepository songsRepository;
-        private readonly IMusicPlaylistRepository musicPlaylistRepository;
         private readonly IApplicationSettingViewsService applicationSettingViewsService;
         private readonly INavigationService navigationService;
+
+        private readonly IGoogleMusicSynchronizationService synchronizationService;
 
         public AccountsViewPresenter(
             IGoogleAccountService googleAccountService,
@@ -32,20 +32,18 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
             ILastfmWebService lastfmWebService,
             ICurrentSongPublisherService publisherService,
             ILastFmConnectionService lastFmConnectionService,
-            ISongsRepository songsRepository,
-            IMusicPlaylistRepository musicPlaylistRepository,
             IApplicationSettingViewsService applicationSettingViewsService,
-            INavigationService navigationService)
+            INavigationService navigationService,
+            IGoogleMusicSynchronizationService synchronizationService)
         {
             this.googleAccountService = googleAccountService;
             this.sessionService = sessionService;
             this.lastfmWebService = lastfmWebService;
             this.publisherService = publisherService;
             this.lastFmConnectionService = lastFmConnectionService;
-            this.songsRepository = songsRepository;
-            this.musicPlaylistRepository = musicPlaylistRepository;
             this.applicationSettingViewsService = applicationSettingViewsService;
             this.navigationService = navigationService;
+            this.synchronizationService = synchronizationService;
             this.BindingModel = new AccountViewBindingModel();
             this.ForgetAccountCommand = new DelegateCommand(this.ForgetAccount);
             this.SignOutCommand = new DelegateCommand(this.SignOutAccount);
@@ -120,8 +118,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
 
         private async void ReloadSongs()
         {
-            await this.songsRepository.ClearRepositoryAsync();
-            this.musicPlaylistRepository.ClearRepository();
+            await this.synchronizationService.ClearLocalDatabaseAsync();
+
             this.navigationService.ClearHistory();
 
             this.navigationService.NavigateTo<IProgressLoadingView>(keepInHistory: false);

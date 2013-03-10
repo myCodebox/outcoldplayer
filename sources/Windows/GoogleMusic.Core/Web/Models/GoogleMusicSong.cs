@@ -79,14 +79,14 @@ namespace OutcoldSolutions.GoogleMusic.Web.Models
 
         public double RecentTimestamp { get; set; }
 
-        public static implicit operator SongMetadata(GoogleMusicSong song)
+        public static implicit operator SongEntity(GoogleMusicSong song)
         {
             if (song == null)
             {
                 throw new ArgumentNullException("song");
             }
 
-            return new SongMetadata()
+            return new SongEntity()
                        {
                            Album = song.Album,
                            AlbumArtist = song.AlbumArtist,

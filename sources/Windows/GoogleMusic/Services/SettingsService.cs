@@ -15,6 +15,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
         private const string RoamingSettingsContainerKey = "RoamingSettings";
 
         private static readonly Type DateTimeType = typeof(DateTime);
+        private static readonly Type DateTimeNullableType = typeof(DateTime?);
 
         private readonly ApplicationDataContainer settingsContainer;
         private readonly ApplicationDataContainer roamingSettingsContainer;
@@ -131,9 +132,21 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         private T ParseValue<T>(object value)
         {
-            if (typeof(T) == DateTimeType)
+            var clrType = typeof(T);
+            if (clrType == DateTimeType || clrType == DateTimeNullableType)
             {
                 return (T)(object)DateTime.FromBinary((long)value);
+            }
+            else if (clrType == DateTimeNullableType)
+            {
+                if (value == null)
+                {
+                    return (T)(object)null;
+                }
+                else
+                {
+                    return (T)(object)DateTime.FromBinary((long)value);
+                }
             }
             else
             {
@@ -147,6 +160,18 @@ namespace OutcoldSolutions.GoogleMusic.Services
             {
                 long binaryValue = ((DateTime)(object)value).ToBinary();
                 return binaryValue;
+            }
+            else if (typeof(T) == DateTimeNullableType)
+            {
+                if (value == null)
+                {
+                    return null;
+                }
+                else
+                {
+                    long binaryValue = ((DateTime)(object)value).ToBinary();
+                    return binaryValue;
+                }
             }
             else
             {

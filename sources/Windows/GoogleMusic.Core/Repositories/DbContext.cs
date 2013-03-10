@@ -49,7 +49,20 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
             if (dbFile == null)
             {
                 var connection = this.CreateConnection();
-                await connection.CreateTableAsync<SongMetadata>();
+                await connection.CreateTableAsync<SongEntity>();
+                await connection.CreateTableAsync<UserPlaylistEntity>();
+                await connection.CreateTableAsync<UserPlaylistEntryEntity>();
+            }
+        }
+
+        public async Task DeleteDatabaseAsync()
+        {
+            var dbFile = (await ApplicationData.Current.LocalFolder.GetFilesAsync())
+                .FirstOrDefault(f => string.Equals(f.Name, this.dbFileName));
+
+            if (dbFile != null)
+            {
+                await dbFile.DeleteAsync();
             }
         }
 

@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// Outcold Solutions (http://outcoldman.com)
+// OutcoldSolutions (http://outcoldsolutions.com)
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Models
 {
@@ -7,7 +7,8 @@ namespace OutcoldSolutions.GoogleMusic.Models
 
     using SQLite;
 
-    public class SongMetadata
+    [Table("Song")]
+    public class SongEntity
     {
         [PrimaryKey]
         public string Id { get; set; }

@@ -12,7 +12,6 @@ namespace OutcoldSolutions.GoogleMusic
     using OutcoldSolutions.Controls;
     using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.BindingModels;
-    using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Presenters;
     using OutcoldSolutions.GoogleMusic.Presenters.Popups;
     using OutcoldSolutions.GoogleMusic.Repositories;
@@ -128,6 +127,9 @@ namespace OutcoldSolutions.GoogleMusic
 
                 registration.Register<MediaControlIntegration>();
                 registration.Register<CurrentSongPropertiesUpdateService>();
+
+                registration.Register<IGoogleMusicSynchronizationService>()
+                            .AsSingleton<GoogleMusicSynchronizationService>();
             }
 
             Container.Resolve<ApplicationLogManager>();

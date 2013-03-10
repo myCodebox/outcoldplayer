@@ -89,7 +89,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         {
             this.currentRequest = (PlaylistsRequest)navigatedToEventArgs.Parameter;
 
-            await Task.Run(() => this.RefreshPlaylists());
+            await this.RefreshPlaylists();
 
             this.BindingModel.IsEditable = this.currentRequest == PlaylistsRequest.Playlists;
         }
@@ -141,7 +141,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                         {
                             this.BindingModel.FreezeNotifications();
 
-                            this.RefreshPlaylists();
+                            await this.RefreshPlaylists();
 
                             await this.Dispatcher.RunAsync(
                                 () =>
@@ -160,7 +160,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             }
         }
 
-        private async void RefreshPlaylists()
+        private async Task RefreshPlaylists()
         {
             var playlists = await this.LoadPlaylistsAsync();
             this.BindingModel.Groups = playlists;
@@ -190,7 +190,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                                     if (t.IsCompleted && !t.IsFaulted && t.Result)
                                     {
                                         this.BindingModel.FreezeNotifications();
-                                        this.RefreshPlaylists();
+                                        await this.RefreshPlaylists();
                                         
                                         await this.Dispatcher.RunAsync(
                                                        () =>

@@ -8,10 +8,10 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
     public class Song : BindingModelBase
     {
-        private SongMetadata metadata;
+        private SongEntity metadata;
         private SongState songState = SongState.None;
 
-        public Song(SongMetadata metadata)
+        public Song(SongEntity metadata)
         {
             this.metadata = metadata;
         }
@@ -84,7 +84,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             }
         }
 
-        public SongMetadata Metadata
+        public SongEntity Metadata
         {
             get
             {

@@ -10,7 +10,6 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         private string message;
         private double progress = 0;
         private bool isFailed;
-        private double maximum = 1;
 
         public string Message
         {
@@ -35,19 +34,6 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             set
             {
                 this.SetValue(ref this.progress, value);
-            }
-        }
-
-        public double Maximum
-        {
-            get
-            {
-                return this.maximum;
-            }
-
-            set
-            {
-                this.SetValue(ref this.maximum, value);
             }
         }
 

@@ -8,7 +8,6 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
-    using OutcoldSolutions.GoogleMusic.Models;
 
     public class MusicPlaylistCollection : PlaylistCollectionBase<MusicPlaylist>
     {

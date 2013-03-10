@@ -26,15 +26,6 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
         {
             this.useCache = useCache;
             this.SongsRepository = songsRepository;
-            this.SongsRepository.Updated += () =>
-                {
-                    if (this.useCache)
-                    {
-                        this.mutex.Wait();
-                        this.playlists = null;
-                        this.mutex.Release();
-                    }
-                };
         }
 
         protected ISongsRepository SongsRepository { get; private set; }
