@@ -403,6 +403,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\OutcoldSolutions.Presentation.1.0.30305.41618\lib\win\OutcoldSolutions.Presentation.dll</HintPath>
     </Reference>
+    <Reference Include="OutcoldSolutions.SQLite, Version=1.0.31003.28344, Culture=en-us, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\OutcoldSolutions.SQLite.1.0.30310.0\lib\win\OutcoldSolutions.SQLite.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <SDKReference Include="MSAdvertisingXaml, Version=6.1">

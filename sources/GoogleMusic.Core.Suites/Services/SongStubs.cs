@@ -6,7 +6,7 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Services
     using System;
     using System.Collections.Generic;
 
-    using OutcoldSolutions.GoogleMusic.Models;
+    using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Web.Models;
 
     public class SongStubs

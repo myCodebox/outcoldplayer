@@ -13,7 +13,7 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Services.Pubslishers
 
     using NUnit.Framework;
 
-    using OutcoldSolutions.GoogleMusic.Models;
+    using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Services.Publishers;
     using OutcoldSolutions.GoogleMusic.Web.Models;

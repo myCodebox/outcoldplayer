@@ -45,6 +45,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\OutcoldSolutions.Framework.1.0.30305.40630\lib\portable-win+net45+sl40+wp71\OutcoldSolutions.Framework.dll</HintPath>
     </Reference>
+    <Reference Include="OutcoldSolutions.SQLite">
+      <HintPath>..\packages\OutcoldSolutions.SQLite.1.0.30310.0\lib\net45\OutcoldSolutions.SQLite.dll</HintPath>
+    </Reference>
     <Reference Include="OutcoldSolutions.SuitesBase, Version=1.0.30305.40630, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\OutcoldSolutions.SuitesBase.1.0.30305.40630\lib\net45\OutcoldSolutions.SuitesBase.dll</HintPath>
@@ -70,29 +73,32 @@
     <Reference Include="Windows" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Windows\GoogleMusic.Core\Models\Album.cs">
-      <Link>_sources\Models\Album.cs</Link>
+    <Compile Include="..\Windows\GoogleMusic.Core\BindingModels\Album.cs">
+      <Link>_sources\BindingModels\Album.cs</Link>
     </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Models\Artist.cs">
-      <Link>_sources\Models\Artist.cs</Link>
+    <Compile Include="..\Windows\GoogleMusic.Core\BindingModels\Artist.cs">
+      <Link>_sources\BindingModels\Artist.cs</Link>
     </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Models\Genre.cs">
-      <Link>_sources\Models\Genre.cs</Link>
+    <Compile Include="..\Windows\GoogleMusic.Core\BindingModels\Genre.cs">
+      <Link>_sources\BindingModels\Genre.cs</Link>
     </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Models\MusicPlaylist.cs">
-      <Link>_sources\Models\MusicPlaylist.cs</Link>
+    <Compile Include="..\Windows\GoogleMusic.Core\BindingModels\MusicPlaylist.cs">
+      <Link>_sources\BindingModels\MusicPlaylist.cs</Link>
     </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Models\Playlist.cs">
-      <Link>_sources\Models\Playlist.cs</Link>
+    <Compile Include="..\Windows\GoogleMusic.Core\BindingModels\Playlist.cs">
+      <Link>_sources\BindingModels\Playlist.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\BindingModels\Song.cs">
+      <Link>_sources\BindingModels\Song.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\BindingModels\SystemPlaylist.cs">
+      <Link>_sources\BindingModels\SystemPlaylist.cs</Link>
     </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Models\Search.cs">
       <Link>_sources\Models\Search.cs</Link>
     </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Models\Song.cs">
-      <Link>_sources\Models\Song.cs</Link>
-    </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Models\SongMetadata.cs">
-      <Link>_sources\Models\SongMetadata.cs</Link>
+    <Compile Include="..\Windows\GoogleMusic.Core\Models\SongEntity.cs">
+      <Link>_sources\Models\SongEntity.cs</Link>
     </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Models\SongsGrouping.cs">
       <Link>_sources\Models\SongsGrouping.cs</Link>
@@ -103,11 +109,14 @@
     <Compile Include="..\Windows\GoogleMusic.Core\Models\StreamType.cs">
       <Link>_sources\Models\StreamType.cs</Link>
     </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Models\SystemPlaylist.cs">
-      <Link>_sources\Models\SystemPlaylist.cs</Link>
-    </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Models\UserInfo.cs">
       <Link>_sources\Models\UserInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Models\UserPlaylistEntity.cs">
+      <Link>_sources\Models\UserPlaylistEntity.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Models\UserPlaylistEntryEntity.cs">
+      <Link>_sources\Models\UserPlaylistEntryEntity.cs</Link>
     </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Models\UserSession.cs">
       <Link>_sources\Models\UserSession.cs</Link>
@@ -117,6 +126,9 @@
     </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Repositories\ArtistCollection.cs">
       <Link>_sources\Repositories\ArtistCollection.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Repositories\DbContext.cs">
+      <Link>_sources\Repositories\DbContext.cs</Link>
     </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Repositories\GenreCollection.cs">
       <Link>_sources\Repositories\GenreCollection.cs</Link>
@@ -142,6 +154,9 @@
     <Compile Include="..\Windows\GoogleMusic.Core\Repositories\PlaylistCollectionBase.cs">
       <Link>_sources\Repositories\PlaylistCollectionBase.cs</Link>
     </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Repositories\RepositoryBase.cs">
+      <Link>_sources\Repositories\RepositoryBase.cs</Link>
+    </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Repositories\SongsRepository.cs">
       <Link>_sources\Repositories\SongsRepository.cs</Link>
     </Compile>
@@ -159,9 +174,6 @@
     </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Services\ISettingsService.cs">
       <Link>_sources\Services\ISettingsService.cs</Link>
-    </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Services\ISongsCacheService.cs">
-      <Link>_sources\Services\ISongsCacheService.cs</Link>
     </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Services\PlaylistCollectionsService.cs">
       <Link>_sources\Services\PlaylistCollectionsService.cs</Link>
@@ -183,9 +195,6 @@
     </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Services\SongsCache.cs">
       <Link>_sources\Services\SongsCache.cs</Link>
-    </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Services\SongsCacheService.cs">
-      <Link>_sources\Services\SongsCacheService.cs</Link>
     </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Web\CookieContainerWrapper.cs">
       <Link>_sources\Web\CookieContainerWrapper.cs</Link>
@@ -297,9 +306,7 @@
     </Compile>
     <Compile Include="GoogleMusicSuitesBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Repositories\SongsRepositorySuites.cs" />
     <Compile Include="Services\SongStubs.cs" />
-    <Compile Include="Repositories\AlbumCollectionSuites.cs" />
     <Compile Include="Services\Pubslishers\CurrentSongPublisherServiceSuites.cs" />
     <Compile Include="SuitesConstants.cs" />
     <Compile Include="Web\CookieContainerWrapperSuites.cs" />
