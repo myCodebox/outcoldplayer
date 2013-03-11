@@ -67,7 +67,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 {
                     var playlist = (UserPlaylist)playlistBindingModel.Playlist;
 
-                    this.userPlaylistRepository.ChangeName(playlist.Id, newName).ContinueWith(
+                    this.userPlaylistRepository.ChangeName(playlist.Metadata, newName).ContinueWith(
                         t =>
                             {
                                 this.IsDataLoading = false;
@@ -184,7 +184,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     dialog.Commands.Add(
                         new UICommand(
                             "Yes",
-                            command => this.userPlaylistRepository.DeleteAsync(((UserPlaylist)playlist).Id).ContinueWith(
+                            command => this.userPlaylistRepository.DeleteAsync(((UserPlaylist)playlist).Metadata).ContinueWith(
                                 async t =>
                                 {
                                     if (t.IsCompleted && !t.IsFaulted && t.Result)

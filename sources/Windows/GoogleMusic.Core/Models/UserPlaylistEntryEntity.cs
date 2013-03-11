@@ -11,12 +11,12 @@ namespace OutcoldSolutions.GoogleMusic.Models
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
 
-        public string PlaylistId { get; set; }
+        public int PlaylistId { get; set; }
 
-        public string SongId { get; set; }
+        public int SongId { get; set; }
 
         public int PlaylistOrder { get; set; }
 
-        public string GoogleMusicEntryId { get; set; }
+        public string ProviderEntryId { get; set; }
     }
 }

@@ -5,14 +5,14 @@ namespace OutcoldSolutions.GoogleMusic.Models
 {
     using SQLite;
 
-    [Table("UserPlaylist")]
-    public class UserPlaylistEntity
+    [Table("AlbumEntry")]
+    public class AlbumEntryEntity
     {
         [PrimaryKey, AutoIncrement]
-        public int PlaylistId { get; set; }
+        public int AlbumEntryId { get; set; }
 
-        public string ProviderPlaylistId { get; set; }
+        public int SongId { get; set; }
 
-        public string Title { get; set; }
+        public int AlbumId { get; set; }
     }
 }

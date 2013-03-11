@@ -419,14 +419,14 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 {
                     if (this.logger.IsDebugEnabled)
                     {
-                        this.logger.Debug("Getting url for song '{0}'.", song.Metadata.Id);
+                        this.logger.Debug("Getting url for song '{0}'.", song.Metadata.ProviderSongId);
                     }
 
                     GoogleMusicSongUrl songUrl = null;
 
                     try
                     {
-                        songUrl = await this.songWebService.GetSongUrlAsync(song.Metadata.Id);
+                        songUrl = await this.songWebService.GetSongUrlAsync(song.Metadata.ProviderSongId);
                     }
                     catch (Exception e)
                     {
@@ -481,7 +481,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
                         if (this.logger.IsDebugEnabled)
                         {
-                            this.logger.Debug("Could not get url for song {0}.", song.Metadata.Id);
+                            this.logger.Debug("Could not get url for song {0}.", song.Metadata.ProviderSongId);
                         }
 
                         this.logger.LogTask(this.notificationService.ShowMessageAsync("Cannot play right now. Make sure that you don't use current account on different device at the same time. Try after couple minutes."));

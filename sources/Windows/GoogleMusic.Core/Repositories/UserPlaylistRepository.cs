@@ -39,7 +39,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
                 List<string> entrieIds = new List<string>();
                 List<Song> songs = new List<Song>();
 
-                string playlistId = playlist.Id;
+                int playlistId = playlist.PlaylistId;
                 var entries = await this.Connection.Table<UserPlaylistEntryEntity>()
                                     .Where(x => x.PlaylistId == playlistId)
                                     .OrderBy(x => x.PlaylistOrder).ToListAsync();
@@ -50,7 +50,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
 
                     if (song != null)
                     {
-                        entrieIds.Add(entry.GoogleMusicEntryId);
+                        entrieIds.Add(entry.ProviderEntryId);
                         songs.Add(new Song(song));
                     }
                     else
@@ -59,7 +59,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
                     }
                 }
 
-                userPlaylists.Add(new UserPlaylist(playlistId, playlist.Title, songs, entrieIds));
+                userPlaylists.Add(new UserPlaylist(playlist, playlist.Title, songs, entrieIds));
             }
 
             return userPlaylists;
@@ -81,8 +81,9 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
                         "Playlist was created on the server with id '{0}' for name '{1}'.", resp.Id, resp.Title);
                 }
 
-                await this.Connection.InsertAsync(new UserPlaylistEntity() { Id = resp.Id, Title = resp.Title });
-                return new UserPlaylist(resp.Id, resp.Title, new List<Song>(), new List<string>());
+                var userPlaylistEntity = new UserPlaylistEntity() { ProviderPlaylistId = resp.Id, Title = resp.Title };
+                await this.Connection.InsertAsync(userPlaylistEntity);
+                return new UserPlaylist(userPlaylistEntity, resp.Title, new List<Song>(), new List<string>());
             }
             else
             {
@@ -96,17 +97,17 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
             }
         }
 
-        public async Task<bool> DeleteAsync(string playlistId)
+        public async Task<bool> DeleteAsync(UserPlaylistEntity playlist)
         {
             if (this.logger.IsDebugEnabled)
             {
-                this.logger.Debug("Deleting playlist '{0}'.", playlistId);
+                this.logger.Debug("Deleting playlist '{0}'.", playlist.ProviderPlaylistId);
             }
 
-            var resp = await this.playlistsWebService.DeleteAsync(playlistId);
+            var resp = await this.playlistsWebService.DeleteAsync(playlist.ProviderPlaylistId);
             if (this.logger.IsDebugEnabled)
             {
-                this.logger.Debug("Deleting playlist '{0}'. Response '{1}'.", playlistId, resp);
+                this.logger.Debug("Deleting playlist '{0}'. Response '{1}'.", playlist.ProviderPlaylistId, resp);
             }
 
             if (resp)
@@ -114,26 +115,26 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
                 await this.Connection.RunInTransactionAsync(
                     (connection) =>
                         {
-                            connection.Execute("DELETE from UserPlaylistEntry where PlaylistId = ?", playlistId);
-                            connection.Delete<UserPlaylistEntity>(playlistId);
+                            connection.Execute("DELETE from UserPlaylistEntry where ProviderPlaylistId = ?", playlist.PlaylistId);
+                            connection.Delete<UserPlaylistEntity>(playlist.PlaylistId);
                         });
             }
 
             return resp;
         }
 
-        public async Task<bool> ChangeName(string playlistId, string name)
+        public async Task<bool> ChangeName(UserPlaylistEntity playlist, string name)
         {
             if (this.logger.IsDebugEnabled)
             {
-                this.logger.Debug("Changing name for playlist with Id '{0}' to '{1}'.", playlistId, name);
+                this.logger.Debug("Changing name for playlist with Id '{0}' to '{1}'.", playlist.ProviderPlaylistId, name);
             }
 
-            bool result = await this.playlistsWebService.ChangeNameAsync(playlistId, name);
+            bool result = await this.playlistsWebService.ChangeNameAsync(playlist.ProviderPlaylistId, name);
 
             if (this.logger.IsDebugEnabled)
             {
-                this.logger.Debug("The result of name changing for playlist with id '{0}' is '{1}'.", playlistId, result);
+                this.logger.Debug("The result of name changing for playlist with id '{0}' is '{1}'.", playlist.ProviderPlaylistId, result);
             }
 
             if (result)
@@ -141,34 +142,34 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
                 await this.Connection.RunInTransactionAsync(
                     (connection) =>
                     {
-                        connection.Execute("UPDATE UserPlaylist SET Title = ? WHERE Id = ?", name, playlistId);
+                        connection.Execute("UPDATE UserPlaylist SET Title = ? WHERE ProviderPlaylistId = ?", name, playlist.PlaylistId);
                     });
             }
 
             return result;
         }
 
-        public async Task<bool> RemoveEntry(string playlistId, string songId, string entryId)
+        public async Task<bool> RemoveEntry(UserPlaylistEntity playlist, string songId, string entryId)
         {
             if (this.logger.IsDebugEnabled)
             {
-                this.logger.Debug("Removing entry Id '{0}' from playlist '{1}'.", entryId, playlistId);
+                this.logger.Debug("Removing entry Id '{0}' from playlist '{1}'.", entryId, playlist.ProviderPlaylistId);
             }
 
-            var result = await this.playlistsWebService.RemoveSongAsync(playlistId, songId, entryId);
+            var result = await this.playlistsWebService.RemoveSongAsync(playlist.ProviderPlaylistId, songId, entryId);
             if (this.logger.IsDebugEnabled)
             {
-                this.logger.Debug("Result of entry removing '{0}' from playlist '{1}' is '{2}'.", entryId, playlistId, result);
+                this.logger.Debug("Result of entry removing '{0}' from playlist '{1}' is '{2}'.", entryId, playlist.ProviderPlaylistId, result);
             }
 
             if (result)
             {
                 await this.Connection.RunInTransactionAsync(connection =>
                     {
-                        var entry = connection.Find<UserPlaylistEntryEntity>(e => e.PlaylistId == playlistId && e.GoogleMusicEntryId == entryId);
+                        var entry = connection.Find<UserPlaylistEntryEntity>(e => e.PlaylistId == playlist.PlaylistId && e.ProviderEntryId == entryId);
                         connection.Execute(
                             "UPDATE UserPlaylistEntry SET PlaylistOrder = (PlaylistOrder - 1) WHERE PlaylistId = ? AND PlaylistOrder > ?",
-                            playlistId,
+                            playlist.PlaylistId,
                             entry.PlaylistOrder);
                         connection.Delete(entry);
                     });
@@ -177,7 +178,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
             return result;
         }
 
-        public async Task<bool> AddEntriesAsync(string playlistId, List<Song> songs)
+        public async Task<bool> AddEntriesAsync(UserPlaylistEntity playlist, List<Song> songs)
         {
             if (songs == null)
             {
@@ -186,36 +187,39 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
 
             if (this.logger.IsDebugEnabled)
             {
-                this.logger.Debug("Adding song Ids '{0}' to playlist '{1}'.", string.Join(",", songs.Select(x => x.Metadata.Id.ToString())), playlistId);
+                this.logger.Debug("Adding song Ids '{0}' to playlist '{1}'.", string.Join(",", songs.Select(x => x.Metadata.ProviderSongId.ToString())), playlist.ProviderPlaylistId);
             }
 
-            var result = await this.playlistsWebService.AddSongAsync(playlistId, songs.Select(s => s.Metadata.Id));
+            var result = await this.playlistsWebService.AddSongAsync(playlist.ProviderPlaylistId, songs.Select(s => s.Metadata.ProviderSongId));
             if (result != null && result.SongIds.Length == 1)
             {
                 if (this.logger.IsDebugEnabled)
                 {
                     this.logger.Debug(
                         "Successfully added entries '{0}' to playlist {1}.",
-                        string.Join(",", songs.Select(x => x.Metadata.Id.ToString())),
-                        playlistId);
+                        string.Join(",", songs.Select(x => x.Metadata.ProviderSongId.ToString())),
+                        playlist.ProviderPlaylistId);
                 }
 
                 await this.Connection.RunInTransactionAsync(
                     (connection) =>
                         {
                             var lastEntry = connection.Table<UserPlaylistEntryEntity>()
-                                          .Where(e => e.PlaylistId == playlistId)
+                                          .Where(e => e.PlaylistId == playlist.PlaylistId)
                                           .OrderByDescending(x => x.PlaylistOrder)
                                           .FirstOrDefault();
 
                             int nextIndex = lastEntry == null ? 0 : (lastEntry.PlaylistOrder + 1);
 
-                            var entries = result.SongIds.Select((x, index) => new UserPlaylistEntryEntity()
+                            var entries = result.SongIds
+                                            .Select((x, index) => Tuple.Create(x.PlaylistEntryId, songs.FirstOrDefault(s => string.Equals(s.Metadata.ProviderSongId, x.SongId)), index))
+                                            .Where(x => x.Item2 != null)
+                                            .Select(x => new UserPlaylistEntryEntity()
                                                {
-                                                   GoogleMusicEntryId = x.PlaylistEntryId,
-                                                   SongId = x.SongId,
-                                                   PlaylistId = playlistId,
-                                                   PlaylistOrder = nextIndex + index
+                                                   ProviderEntryId = x.Item1,
+                                                   SongId = x.Item2.Metadata.SongId,
+                                                   PlaylistId = playlist.PlaylistId,
+                                                   PlaylistOrder = nextIndex + x.Item3
                                                });
 
                             connection.InsertAll(entries);
@@ -227,7 +231,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
             if (this.logger.IsWarningEnabled)
             {
                 this.logger.Warning(
-                    "Result of adding entries '{0}' to playlist {1} was unsuccesefull.", string.Join(",", songs.Select(x => x.Metadata.Id.ToString())), playlistId);
+                    "Result of adding entries '{0}' to playlist {1} was unsuccesefull.", string.Join(",", songs.Select(x => x.Metadata.ProviderSongId.ToString())), playlist.ProviderPlaylistId);
             }
 
             return false;

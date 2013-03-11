@@ -97,7 +97,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Models
                            TotalDiscs = song.TotalDiscs,
                            Duration = TimeSpan.FromMilliseconds(song.DurationMillis),
                            Genre = song.Genre,
-                           Id = song.Id,
+                           ProviderSongId = song.Id,
                            LastPlayed = DateTimeExtensions.FromUnixFileTime(song.LastPlayed / 1000),
                            CreationDate = DateTimeExtensions.FromUnixFileTime(song.CreationDate / 1000),
                            PlayCount = song.PlayCount,

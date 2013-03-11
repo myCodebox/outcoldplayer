@@ -10,8 +10,10 @@ namespace OutcoldSolutions.GoogleMusic.Models
     [Table("Song")]
     public class SongEntity
     {
-        [PrimaryKey]
-        public string Id { get; set; }
+        [PrimaryKey, AutoIncrement]
+        public int SongId { get; set; }
+
+        public string ProviderSongId { get; set; }
 
         public string Title { get; set; }
 

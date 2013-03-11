@@ -80,7 +80,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
 
         public void AddToPlaylist(AddToSongMusicPlaylist playlist)
         {
-            this.Logger.LogTask(this.userPlaylistRepository.AddEntriesAsync(playlist.Playlist.Id, this.Songs));
+            this.Logger.LogTask(this.userPlaylistRepository.AddEntriesAsync(playlist.Playlist.Metadata, this.Songs));
             this.View.Close();
         }
 

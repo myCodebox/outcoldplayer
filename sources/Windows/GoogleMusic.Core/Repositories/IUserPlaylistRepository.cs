@@ -7,6 +7,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
+    using OutcoldSolutions.GoogleMusic.Models;
 
     public interface IUserPlaylistRepository
     {
@@ -14,12 +15,12 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
 
         Task<UserPlaylist> CreateAsync(string name);
 
-        Task<bool> DeleteAsync(string playlistId);
+        Task<bool> DeleteAsync(UserPlaylistEntity playlistId);
 
-        Task<bool> ChangeName(string playlistId, string name);
+        Task<bool> ChangeName(UserPlaylistEntity playlistId, string name);
 
-        Task<bool> RemoveEntry(string playlistId, string songId, string entryId);
+        Task<bool> RemoveEntry(UserPlaylistEntity playlistId, string songId, string entryId);
 
-        Task<bool> AddEntriesAsync(string playlistId, List<Song> song);
+        Task<bool> AddEntriesAsync(UserPlaylistEntity playlistId, List<Song> song);
     }
 }

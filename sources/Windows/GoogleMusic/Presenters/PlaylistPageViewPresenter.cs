@@ -49,7 +49,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 var musicPlaylist = (UserPlaylist)this.BindingModel.Playlist;
 
                 this.userPlaylistRepository.RemoveEntry(
-                    musicPlaylist.Id, musicPlaylist.Songs[selectedSongIndex].Metadata.Id, musicPlaylist.EntriesIds[selectedSongIndex]).ContinueWith(
+                    musicPlaylist.Metadata, musicPlaylist.Songs[selectedSongIndex].Metadata.ProviderSongId, musicPlaylist.EntriesIds[selectedSongIndex]).ContinueWith(
                         t =>
                             {
                                 this.IsDataLoading = false;
