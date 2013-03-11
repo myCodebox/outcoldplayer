@@ -84,9 +84,6 @@
     <Compile Include="..\Windows\GoogleMusic.Core\BindingModels\Genre.cs">
       <Link>_sources\BindingModels\Genre.cs</Link>
     </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\BindingModels\MusicPlaylist.cs">
-      <Link>_sources\BindingModels\MusicPlaylist.cs</Link>
-    </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\BindingModels\Playlist.cs">
       <Link>_sources\BindingModels\Playlist.cs</Link>
     </Compile>
@@ -95,6 +92,9 @@
     </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\BindingModels\SystemPlaylist.cs">
       <Link>_sources\BindingModels\SystemPlaylist.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\BindingModels\UserPlaylist.cs">
+      <Link>_sources\BindingModels\UserPlaylist.cs</Link>
     </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Models\Search.cs">
       <Link>_sources\Models\Search.cs</Link>
@@ -135,20 +135,17 @@
     <Compile Include="..\Windows\GoogleMusic.Core\Repositories\GenreCollection.cs">
       <Link>_sources\Repositories\GenreCollection.cs</Link>
     </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Repositories\IMusicPlaylistRepository.cs">
-      <Link>_sources\Repositories\IMusicPlaylistRepository.cs</Link>
-    </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Repositories\IPlaylistCollection.cs">
       <Link>_sources\Repositories\IPlaylistCollection.cs</Link>
     </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Repositories\ISongsRepository.cs">
       <Link>_sources\Repositories\ISongsRepository.cs</Link>
     </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Repositories\IUserPlaylistRepository.cs">
+      <Link>_sources\Repositories\IUserPlaylistRepository.cs</Link>
+    </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Repositories\MusicPlaylistCollection.cs">
       <Link>_sources\Repositories\MusicPlaylistCollection.cs</Link>
-    </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Repositories\MusicPlaylistRepository.cs">
-      <Link>_sources\Repositories\MusicPlaylistRepository.cs</Link>
     </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Repositories\Order.cs">
       <Link>_sources\Repositories\Order.cs</Link>
@@ -164,6 +161,9 @@
     </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Repositories\SystemPlaylistCollection.cs">
       <Link>_sources\Repositories\SystemPlaylistCollection.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Repositories\UserPlaylistRepository.cs">
+      <Link>_sources\Repositories\UserPlaylistRepository.cs</Link>
     </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Services\IGoogleAccountService.cs">
       <Link>_sources\Services\IGoogleAccountService.cs</Link>
