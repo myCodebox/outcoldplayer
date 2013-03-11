@@ -48,10 +48,10 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
 
             if (currentPlaylist != null)
             {
-                if (currentPlaylist is MusicPlaylist)
+                if (currentPlaylist is UserPlaylist)
                 {
                     updateRecentPlaylist = true;
-                    playlistId = ((MusicPlaylist)currentPlaylist).Id.ToString();
+                    playlistId = ((UserPlaylist)currentPlaylist).Id.ToString();
                 }
                 else 
                 {

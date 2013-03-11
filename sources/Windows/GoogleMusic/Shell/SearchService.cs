@@ -212,7 +212,7 @@ namespace OutcoldSolutions.GoogleMusic.Shell
 
                         case Playlists:
                             {
-                                playlists = await this.playlistCollectionsService.GetCollection<MusicPlaylist>().SearchAsync(strings[1]);
+                                playlists = await this.playlistCollectionsService.GetCollection<UserPlaylist>().SearchAsync(strings[1]);
                                 break;
                             }
 
@@ -300,7 +300,7 @@ namespace OutcoldSolutions.GoogleMusic.Shell
 
             if (result.Count < MaxResults)
             {
-                var playlistsSearch = (await this.playlistCollectionsService.GetCollection<MusicPlaylist>().SearchAsync(args.QueryText, MaxResults - result.Count)).ToList();
+                var playlistsSearch = (await this.playlistCollectionsService.GetCollection<UserPlaylist>().SearchAsync(args.QueryText, MaxResults - result.Count)).ToList();
                 if (playlistsSearch.Count > 0)
                 {
                     this.AddResults(result, playlistsSearch, Playlists);

@@ -53,7 +53,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
                     return "Genre";
                 }
 
-                if (this.result is MusicPlaylist)
+                if (this.result is UserPlaylist)
                 {
                     return "Playlist";
                 }

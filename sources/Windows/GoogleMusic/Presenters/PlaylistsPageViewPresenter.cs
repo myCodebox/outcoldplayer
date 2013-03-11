@@ -23,7 +23,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     public class PlaylistsPageViewPresenter : DataPagePresenterBase<IPlaylistsPageView, PlaylistsPageViewBindingModel>
     {
         private readonly IPlaylistCollectionsService playlistCollectionsService;
-        private readonly IMusicPlaylistRepository musicPlaylistRepository;
+        private readonly IUserPlaylistRepository userPlaylistRepository;
         private readonly INavigationService navigationService;
         private readonly IPlayQueueService playQueueService;
 
@@ -31,12 +31,12 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         public PlaylistsPageViewPresenter(
             IPlaylistCollectionsService playlistCollectionsService,
-            IMusicPlaylistRepository musicPlaylistRepository,
+            IUserPlaylistRepository userPlaylistRepository,
             INavigationService navigationService,
             IPlayQueueService playQueueService)
         {
             this.playlistCollectionsService = playlistCollectionsService;
-            this.musicPlaylistRepository = musicPlaylistRepository;
+            this.userPlaylistRepository = userPlaylistRepository;
             this.navigationService = navigationService;
             this.playQueueService = playQueueService;
 
@@ -65,9 +65,9 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
                 if (playlistBindingModel != null)
                 {
-                    var playlist = (MusicPlaylist)playlistBindingModel.Playlist;
+                    var playlist = (UserPlaylist)playlistBindingModel.Playlist;
 
-                    this.musicPlaylistRepository.ChangeName(playlist.Id, newName).ContinueWith(
+                    this.userPlaylistRepository.ChangeName(playlist.Id, newName).ContinueWith(
                         t =>
                             {
                                 this.IsDataLoading = false;
@@ -134,7 +134,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 this.IsDataLoading = true;
                 this.BindingModel.IsEditable = false;
 
-                this.musicPlaylistRepository.CreateAsync(string.Format(CultureInfo.CurrentCulture, "Playlist - {0}", DateTime.Now)).ContinueWith(
+                this.userPlaylistRepository.CreateAsync(string.Format(CultureInfo.CurrentCulture, "Playlist - {0}", DateTime.Now)).ContinueWith(
                     async t =>
                     {
                         if (t.Result != null)
@@ -184,7 +184,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     dialog.Commands.Add(
                         new UICommand(
                             "Yes",
-                            command => this.musicPlaylistRepository.DeleteAsync(((MusicPlaylist)playlist).Id).ContinueWith(
+                            command => this.userPlaylistRepository.DeleteAsync(((UserPlaylist)playlist).Id).ContinueWith(
                                 async t =>
                                 {
                                     if (t.IsCompleted && !t.IsFaulted && t.Result)
@@ -238,7 +238,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     queue = await this.playlistCollectionsService.GetCollection<Album>().GetAllAsync(Order.Name);
                     break;
                 case PlaylistsRequest.Playlists:
-                    queue = await this.playlistCollectionsService.GetCollection<MusicPlaylist>().GetAllAsync(Order.Name);
+                    queue = await this.playlistCollectionsService.GetCollection<UserPlaylist>().GetAllAsync(Order.Name);
                     break;
                 case PlaylistsRequest.Genres:
                     queue = await this.playlistCollectionsService.GetCollection<Genre>().GetAllAsync(Order.Name);

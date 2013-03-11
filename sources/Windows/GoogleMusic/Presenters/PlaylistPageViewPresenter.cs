@@ -13,14 +13,14 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
     public class PlaylistPageViewPresenter : PlaylistPageViewPresenterBase<IPlaylistPageView, Playlist>
     {
-        private readonly IMusicPlaylistRepository musicPlaylistRepository;
+        private readonly IUserPlaylistRepository userPlaylistRepository;
 
         public PlaylistPageViewPresenter(
             IDependencyResolverContainer container, 
-            IMusicPlaylistRepository musicPlaylistRepository)
+            IUserPlaylistRepository userPlaylistRepository)
             : base(container)
         {
-            this.musicPlaylistRepository = musicPlaylistRepository;
+            this.userPlaylistRepository = userPlaylistRepository;
             this.RemoveFromPlaylistCommand = new DelegateCommand(this.RemoveFromPlaylist);
         }
 
@@ -29,7 +29,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         protected override IEnumerable<CommandMetadata> GetContextCommands()
         {
             var commandMetadatas = base.GetContextCommands();
-            if (this.BindingModel.Playlist is MusicPlaylist)
+            if (this.BindingModel.Playlist is UserPlaylist)
             {
                 commandMetadatas = new List<CommandMetadata>(commandMetadatas)
                                        {
@@ -43,13 +43,13 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private void RemoveFromPlaylist()
         {
             var selectedSongIndex = this.BindingModel.SelectedSongIndex;
-            if (selectedSongIndex >= 0 && !this.IsDataLoading && this.BindingModel.Playlist is MusicPlaylist)
+            if (selectedSongIndex >= 0 && !this.IsDataLoading && this.BindingModel.Playlist is UserPlaylist)
             {
                 this.IsDataLoading = true;
-                var musicPlaylist = (MusicPlaylist)this.BindingModel.Playlist;
+                var musicPlaylist = (UserPlaylist)this.BindingModel.Playlist;
 
-                this.musicPlaylistRepository.RemoveEntry(
-                    musicPlaylist.Id, musicPlaylist.EntriesIds[selectedSongIndex]).ContinueWith(
+                this.userPlaylistRepository.RemoveEntry(
+                    musicPlaylist.Id, musicPlaylist.Songs[selectedSongIndex].Metadata.Id, musicPlaylist.EntriesIds[selectedSongIndex]).ContinueWith(
                         t =>
                             {
                                 this.IsDataLoading = false;

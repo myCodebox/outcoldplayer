@@ -6,9 +6,9 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
     using System.Collections.Generic;
     using System.Diagnostics;
 
-    public class MusicPlaylist : Playlist
+    public class UserPlaylist : Playlist
     {
-        public MusicPlaylist(string id, string name, List<Song> songs, List<string> entrieIds)
+        public UserPlaylist(string id, string name, List<Song> songs, List<string> entrieIds)
             : base(name, songs)
         {
             Debug.Assert(songs.Count == entrieIds.Count, "songs.Count == entrieIds.Count");

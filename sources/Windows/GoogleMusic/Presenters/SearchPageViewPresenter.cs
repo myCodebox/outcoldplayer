@@ -81,7 +81,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             }
 
             var playlists =
-                (await this.collectionsService.GetCollection<MusicPlaylist>().SearchAsync(query))
+                (await this.collectionsService.GetCollection<UserPlaylist>().SearchAsync(query))
                     .Select(x => new PlaylistResultBindingModel(query, x))
                     .Cast<SearchResultBindingModel>()
                     .ToList();

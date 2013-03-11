@@ -9,7 +9,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
 
     using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.BindingModels;
-    using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views.Popups;
@@ -20,20 +19,20 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
         public class AddToSongMusicPlaylist
         {
             public AddToSongMusicPlaylist(
-                MusicPlaylist musicPlaylist,
+                UserPlaylist userPlaylist,
                 IEnumerable<Song> addingSongs)
             {
-                this.Playlist = musicPlaylist;
+                this.Playlist = userPlaylist;
                 this.SongContainsCount = addingSongs.Count(x => this.Playlist.Songs.Contains(x));
             }
 
-            public MusicPlaylist Playlist { get; set; }
+            public UserPlaylist Playlist { get; set; }
 
             public int SongContainsCount { get; set; }
         }
 
         private readonly IPlaylistCollectionsService collectionsService;
-        private readonly IMusicPlaylistRepository musicPlaylistRepository;
+        private readonly IUserPlaylistRepository userPlaylistRepository;
 
         private bool isLoading;
 
@@ -42,11 +41,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
         public AddToPlaylistPopupViewPresenter(
             IEnumerable<Song> songs,
             IPlaylistCollectionsService collectionsService,
-            IMusicPlaylistRepository musicPlaylistRepository)
+            IUserPlaylistRepository userPlaylistRepository)
         {
             this.Songs = songs.ToList();
             this.collectionsService = collectionsService;
-            this.musicPlaylistRepository = musicPlaylistRepository;
+            this.userPlaylistRepository = userPlaylistRepository;
         }
 
         public bool IsLoading
@@ -81,7 +80,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
 
         public void AddToPlaylist(AddToSongMusicPlaylist playlist)
         {
-            this.Logger.LogTask(this.musicPlaylistRepository.AddEntriesAsync(playlist.Playlist.Id, this.Songs));
+            this.Logger.LogTask(this.userPlaylistRepository.AddEntriesAsync(playlist.Playlist.Id, this.Songs));
             this.View.Close();
         }
 
@@ -94,7 +93,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
             this.Logger.LogTask(Task.Run(async () =>
                 {
                     var result = (await this.collectionsService
-                        .GetCollection<MusicPlaylist>()
+                        .GetCollection<UserPlaylist>()
                         .GetAllAsync(Order.Name))
                         .Select(x => new AddToSongMusicPlaylist(x, this.Songs))
                         .ToList();

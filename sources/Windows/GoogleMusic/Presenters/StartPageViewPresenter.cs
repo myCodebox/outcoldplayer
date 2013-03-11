@@ -45,7 +45,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 await this.collectionsService.GetCollection<SystemPlaylist>().CountAsync(),
                 (await this.collectionsService.GetCollection<SystemPlaylist>().GetAllAsync(Order.None)).Select(x => new PlaylistBindingModel(x) { PlayCommand = this.PlayCommand })));
 
-            await this.LoadAndAdd<MusicPlaylist>(groups, "Playlists", PlaylistsRequest.Playlists);
+            await this.LoadAndAdd<UserPlaylist>(groups, "Playlists", PlaylistsRequest.Playlists);
             await this.LoadAndAdd<Artist>(groups, "Artists", PlaylistsRequest.Artists);
             await this.LoadAndAdd<Album>(groups, "Albums", PlaylistsRequest.Albums);
             await this.LoadAndAdd<Genre>(groups, "Genres", PlaylistsRequest.Genres);
