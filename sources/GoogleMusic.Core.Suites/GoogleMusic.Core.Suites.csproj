@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -45,7 +46,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\OutcoldSolutions.Framework.1.0.30305.40630\lib\portable-win+net45+sl40+wp71\OutcoldSolutions.Framework.dll</HintPath>
     </Reference>
-    <Reference Include="OutcoldSolutions.SQLite">
+    <Reference Include="OutcoldSolutions.SQLite, Version=1.0.31003.29193, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\OutcoldSolutions.SQLite.1.0.30310.0\lib\net45\OutcoldSolutions.SQLite.dll</HintPath>
     </Reference>
     <Reference Include="OutcoldSolutions.SuitesBase, Version=1.0.30305.40630, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">

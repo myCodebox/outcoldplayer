@@ -150,7 +150,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
             {
                 DateTime currentTime = DateTime.UtcNow;
 
-                progress.SafeReport(0d);
+                await progress.SafeReportAsync(0d);
 
                 Progress<double> songsProgress = null;
                 if (progress != null)
@@ -160,7 +160,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
                 await this.SynchronizeSongsAsync(songsProgress, lastUpdate.Value);
 
-                progress.SafeReport(0.5d);
+                await progress.SafeReportAsync(0.5d);
 
                 Progress<double> userPlaylustsProgress = null;
                 if (progress != null)
@@ -170,7 +170,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
                 await this.SynchronizeUserPlaylistsAsync(userPlaylustsProgress);
 
-                progress.SafeReport(1d);
+                await progress.SafeReportAsync(1d);
 
                 this.settingsService.SetValue<DateTime?>(LastUpdateKey, currentTime);
             }
@@ -221,11 +221,11 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 this.logger.Debug("SynchronizeSongsAsync: streaming load all tracks.");
             }
 
-            progress.SafeReport(0d);
+            await progress.SafeReportAsync(0d);
 
             var updatedSongs = await this.songWebService.StreamingLoadAllTracksAsync(lastUpdate, null);
 
-            progress.SafeReport(0.5d);
+            await progress.SafeReportAsync(0.5d);
 
             if (updatedSongs.Count > 0)
             {
@@ -266,15 +266,17 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 }
             }
 
-            progress.SafeReport(1d);
+            await progress.SafeReportAsync(1d);
         }
 
         private async Task SynchronizeUserPlaylistsAsync(IProgress<double> progress)
         {
-            progress.SafeReport(0d);
+            await progress.SafeReportAsync(0d);
 
             var googlePlaylists = await this.playlistsWebService.GetAllAsync();
             var existingPlaylists = await this.Connection.Table<UserPlaylistEntity>().ToListAsync();
+
+            await progress.SafeReportAsync(0.4d);
 
             var pInserts = new List<UserPlaylistEntity>();
             var pUpdates = new List<UserPlaylistEntity>();
@@ -283,6 +285,8 @@ namespace OutcoldSolutions.GoogleMusic.Web
             var eInserts = new List<UserPlaylistEntryEntity>();
             var eUpdates = new List<UserPlaylistEntryEntity>();
             var eDeletes = new List<UserPlaylistEntryEntity>();
+
+            int index = 0;
 
             foreach (var googlePlaylist in googlePlaylists.Playlists ?? Enumerable.Empty<GoogleMusicPlaylist>())
             {
@@ -369,11 +373,12 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 }
 
                 eDeletes.AddRange(userPlaylistSongs);
+                await progress.SafeReportAsync(0.4d + (((double)index++ / googlePlaylists.Playlists.Count) * 0.5d));
             }
 
             pDeletes.AddRange(existingPlaylists);
 
-            progress.SafeReport(0.6d);
+            await progress.SafeReportAsync(0.9d);
 
             await this.Connection.RunInTransactionAsync(
                 (connection) =>
@@ -409,7 +414,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
                         }
                     });
 
-            progress.SafeReport(1d);
+            await progress.SafeReportAsync(1d);
         }
     }
 }

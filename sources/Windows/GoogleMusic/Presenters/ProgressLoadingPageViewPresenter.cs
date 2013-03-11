@@ -95,12 +95,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private async Task InitializeRepositoriesAsync(bool fUpdate)
         {
             DbContext dbContext = new DbContext();
-            if (fUpdate)
+            var status = await dbContext.InitializeAsync();
+            if (fUpdate || status == DbContext.DatabaseStatus.New)
             {
                 await this.synchronizationService.ClearLocalDatabaseAsync();
             }
-
-            await dbContext.InitializeAsync();
 
             await this.Dispatcher.RunAsync(
                 () =>

@@ -13,7 +13,9 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
 
     using SQLite;
 
+#if NETFX_CORE
     using Windows.Storage;
+#endif
 
     public class DbContext
     {
@@ -28,12 +30,19 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
 
             if (Path.IsPathRooted(dbFileName))
             {
-                throw new ArgumentException("Path cannot be rooted.", "dbFileName");
+                throw new ArgumentException("Path to database cannot be rooted. It should be relative path to base (local) folder.", "dbFileName");
             }
             else
             {
-                this.dbFileName = Path.Combine(ApplicationData.Current.LocalFolder.Path, dbFileName);
+                this.dbFileName = dbFileName;
             }
+        }
+
+        public enum DatabaseStatus
+        {
+            Unknown = 0,
+            New = 1,
+            Existed = 2
         }
 
         public SQLiteAsyncConnection CreateConnection()
@@ -41,22 +50,30 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
             return new SQLiteAsyncConnection(this.GetDatabaseFilePath(), storeDateTimeAsTicks: true);
         }
 
-        public async Task InitializeAsync()
+        public async Task<DatabaseStatus> InitializeAsync()
         {
-            var dbFile = (await ApplicationData.Current.LocalFolder.GetFilesAsync())
-                .FirstOrDefault(f => string.Equals(f.Name, this.dbFileName));
+            bool fDbExists = false;
 
-            if (dbFile == null)
+#if NETFX_CORE
+            fDbExists = (await ApplicationData.Current.LocalFolder.GetFilesAsync())
+                .Any(f => string.Equals(f.Name, this.dbFileName));
+#else
+            fDbExists = File.Exists(this.GetDatabaseFilePath());
+#endif
+            if (!fDbExists)
             {
                 var connection = this.CreateConnection();
                 await connection.CreateTableAsync<SongEntity>();
                 await connection.CreateTableAsync<UserPlaylistEntity>();
                 await connection.CreateTableAsync<UserPlaylistEntryEntity>();
             }
+
+            return fDbExists ? DatabaseStatus.Existed : DatabaseStatus.New;
         }
 
         public async Task DeleteDatabaseAsync()
         {
+#if NETFX_CORE
             var dbFile = (await ApplicationData.Current.LocalFolder.GetFilesAsync())
                 .FirstOrDefault(f => string.Equals(f.Name, this.dbFileName));
 
@@ -64,11 +81,26 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
             {
                 await dbFile.DeleteAsync();
             }
+#else
+            await Task.Run(
+                () =>
+                    {
+                        var databaseFilePath = this.GetDatabaseFilePath();
+                        if (File.Exists(databaseFilePath))
+                        {
+                            File.Delete(databaseFilePath);
+                        }
+                    });
+#endif
         }
 
         private string GetDatabaseFilePath()
         {
+#if NETFX_CORE
             return Path.Combine(ApplicationData.Current.LocalFolder.Path, this.dbFileName);
+#else
+            return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, this.dbFileName);
+#endif
         }
     }
 }

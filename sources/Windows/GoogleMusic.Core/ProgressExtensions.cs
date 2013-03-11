@@ -5,14 +5,16 @@
 namespace OutcoldSolutions.GoogleMusic
 {
     using System;
+    using System.Threading.Tasks;
 
     public static class ProgressExtensions
     {
-        public static void SafeReport<T>(this IProgress<T> progress, T value)
+        public static async Task SafeReportAsync<T>(this IProgress<T> progress, T value)
         {
             if (progress != null)
             {
                 progress.Report(value);
+                await Task.Yield();
             }
         }
     }
