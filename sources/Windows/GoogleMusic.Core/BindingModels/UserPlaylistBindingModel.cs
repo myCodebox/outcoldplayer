@@ -8,9 +8,9 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
     using OutcoldSolutions.GoogleMusic.Models;
 
-    public class UserPlaylist : Playlist
+    public class UserPlaylistBindingModel : PlaylistBaseBindingModel
     {
-        public UserPlaylist(UserPlaylistEntity metadata, string name, List<Song> songs, List<string> entrieIds)
+        public UserPlaylistBindingModel(UserPlaylistEntity metadata, string name, List<SongBindingModel> songs, List<string> entrieIds)
             : base(name, songs)
         {
             Debug.Assert(songs.Count == entrieIds.Count, "songs.Count == entrieIds.Count");

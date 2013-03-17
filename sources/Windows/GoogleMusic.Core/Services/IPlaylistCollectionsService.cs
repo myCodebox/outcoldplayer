@@ -9,6 +9,6 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
     public interface IPlaylistCollectionsService
     {
-        IPlaylistCollection<TPlaylist> GetCollection<TPlaylist>() where TPlaylist : Playlist;
+        IPlaylistCollection<TPlaylist> GetCollection<TPlaylist>() where TPlaylist : PlaylistBaseBindingModel;
     }
 }

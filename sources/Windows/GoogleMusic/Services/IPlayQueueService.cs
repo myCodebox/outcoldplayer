@@ -24,9 +24,9 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         QueueState State { get; }
 
-        Task PlayAsync(Playlist playlist);
+        Task PlayAsync(PlaylistBaseBindingModel playlist);
 
-        Task PlayAsync(Playlist playlist, int songIndex);
+        Task PlayAsync(PlaylistBaseBindingModel playlist, int songIndex);
 
         Task PlayAsync(int index);
 
@@ -44,7 +44,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         bool CanSwitchToPrevious();
 
-        Task AddRangeAsync(IEnumerable<Song> songs);
+        Task AddRangeAsync(IEnumerable<SongBindingModel> songs);
 
         Task RemoveAsync(int index);
 
@@ -52,7 +52,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         Task SetShuffledAsync(bool isShuffled);
 
-        IEnumerable<Song> GetQueue();
+        IEnumerable<SongBindingModel> GetQueue();
 
         int GetCurrentSongIndex();
     }

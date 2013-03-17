@@ -46,9 +46,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\OutcoldSolutions.Framework.1.0.30305.40630\lib\portable-win+net45+sl40+wp71\OutcoldSolutions.Framework.dll</HintPath>
     </Reference>
-    <Reference Include="OutcoldSolutions.SQLite, Version=1.0.31003.29193, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\OutcoldSolutions.SQLite.1.0.30310.0\lib\net45\OutcoldSolutions.SQLite.dll</HintPath>
+    <Reference Include="OutcoldSolutions.SQLite">
+      <HintPath>..\packages\OutcoldSolutions.SQLite.1.1.30317.1\lib\net45\OutcoldSolutions.SQLite.dll</HintPath>
     </Reference>
     <Reference Include="OutcoldSolutions.SuitesBase, Version=1.0.30305.40630, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -75,26 +74,26 @@
     <Reference Include="Windows" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Windows\GoogleMusic.Core\BindingModels\Album.cs">
-      <Link>_sources\BindingModels\Album.cs</Link>
+    <Compile Include="..\Windows\GoogleMusic.Core\BindingModels\AlbumBindingModel.cs">
+      <Link>_sources\BindingModels\AlbumBindingModel.cs</Link>
     </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\BindingModels\Artist.cs">
-      <Link>_sources\BindingModels\Artist.cs</Link>
+    <Compile Include="..\Windows\GoogleMusic.Core\BindingModels\ArtistBindingModel.cs">
+      <Link>_sources\BindingModels\ArtistBindingModel.cs</Link>
     </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\BindingModels\Genre.cs">
-      <Link>_sources\BindingModels\Genre.cs</Link>
+    <Compile Include="..\Windows\GoogleMusic.Core\BindingModels\GenreBindingModel.cs">
+      <Link>_sources\BindingModels\GenreBindingModel.cs</Link>
     </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\BindingModels\Playlist.cs">
-      <Link>_sources\BindingModels\Playlist.cs</Link>
+    <Compile Include="..\Windows\GoogleMusic.Core\BindingModels\PlaylistBaseBindingModel.cs">
+      <Link>_sources\BindingModels\PlaylistBaseBindingModel.cs</Link>
     </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\BindingModels\Song.cs">
-      <Link>_sources\BindingModels\Song.cs</Link>
+    <Compile Include="..\Windows\GoogleMusic.Core\BindingModels\SongBindingModel.cs">
+      <Link>_sources\BindingModels\SongBindingModel.cs</Link>
     </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\BindingModels\SystemPlaylist.cs">
-      <Link>_sources\BindingModels\SystemPlaylist.cs</Link>
+    <Compile Include="..\Windows\GoogleMusic.Core\BindingModels\SystemPlaylistBindingModel.cs">
+      <Link>_sources\BindingModels\SystemPlaylistBindingModel.cs</Link>
     </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\BindingModels\UserPlaylist.cs">
-      <Link>_sources\BindingModels\UserPlaylist.cs</Link>
+    <Compile Include="..\Windows\GoogleMusic.Core\BindingModels\UserPlaylistBindingModel.cs">
+      <Link>_sources\BindingModels\UserPlaylistBindingModel.cs</Link>
     </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Models\Search.cs">
       <Link>_sources\Models\Search.cs</Link>

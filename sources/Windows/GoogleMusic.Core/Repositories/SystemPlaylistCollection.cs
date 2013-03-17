@@ -11,27 +11,27 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
     using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
 
-    public class SystemPlaylistCollection : PlaylistCollectionBase<SystemPlaylist>
+    public class SystemPlaylistCollection : PlaylistCollectionBase<SystemPlaylistBindingModel>
     {
         private const int HighlyRatedValue = 4;
         private const int EnoughLastAddedSongsCount = 500;
 
-        private readonly IPlaylistCollection<Album> albumCollection;
+        private readonly IPlaylistCollection<AlbumBindingModel> albumCollection;
 
-        public SystemPlaylistCollection(ISongsRepository songsRepository, IPlaylistCollection<Album> albumCollection)
+        public SystemPlaylistCollection(ISongsRepository songsRepository, IPlaylistCollection<AlbumBindingModel> albumCollection)
             : base(songsRepository)
         {
             this.albumCollection = albumCollection;
         }
 
-        protected override async Task<List<SystemPlaylist>> LoadCollectionAsync()
+        protected override async Task<List<SystemPlaylistBindingModel>> LoadCollectionAsync()
         {
             var allSongs = (await this.SongsRepository.GetAllAsync()).ToList();
 
-            var allSongsPlaylist = new SystemPlaylist("All songs", SystemPlaylist.SystemPlaylistType.AllSongs, this.OrderSongs(allSongs));
-            var highlyRatedPlaylist = new SystemPlaylist("Highly rated", SystemPlaylist.SystemPlaylistType.HighlyRated, this.OrderSongs(allSongs.Where(x => x.Rating >= HighlyRatedValue)));
+            var allSongsPlaylist = new SystemPlaylistBindingModel("All songs", SystemPlaylistType.AllSongs, this.OrderSongs(allSongs));
+            var highlyRatedPlaylist = new SystemPlaylistBindingModel("Highly rated", SystemPlaylistType.HighlyRated, this.OrderSongs(allSongs.Where(x => x.Rating >= HighlyRatedValue)));
 
-            List<Song> lastAddedSongs = new List<Song>();
+            List<SongBindingModel> lastAddedSongs = new List<SongBindingModel>();
             var albums = (await this.albumCollection.GetAllAsync()).OrderByDescending(a => a.Songs.Max(s => s.Metadata.CreationDate));
             foreach (var album in albums)
             {
@@ -42,12 +42,12 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
                 }
             }
 
-            var lastAdded = new SystemPlaylist("Last added", SystemPlaylist.SystemPlaylistType.LastAdded, lastAddedSongs);
+            var lastAdded = new SystemPlaylistBindingModel("Last added", SystemPlaylistType.LastAdded, lastAddedSongs);
 
-            return new List<SystemPlaylist>() { allSongsPlaylist, highlyRatedPlaylist, lastAdded };
+            return new List<SystemPlaylistBindingModel>() { allSongsPlaylist, highlyRatedPlaylist, lastAdded };
         }
 
-        private IEnumerable<Song> OrderSongs(IEnumerable<Song> songs)
+        private IEnumerable<SongBindingModel> OrderSongs(IEnumerable<SongBindingModel> songs)
         {
             return songs.OrderBy(s => s.Metadata.Artist, StringComparer.CurrentCultureIgnoreCase)
                  .ThenBy(s => s.Metadata.Album, StringComparer.CurrentCultureIgnoreCase)

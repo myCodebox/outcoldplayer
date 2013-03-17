@@ -3,7 +3,6 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Repositories
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
@@ -22,14 +21,14 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
             this.logger = logManager.CreateLogger("SongsRepository");
         }
 
-        public async Task<Song> GetSongAsync(string songId)
+        public async Task<SongBindingModel> GetSongAsync(string songId)
         {
-            return new Song(await this.Connection.GetAsync<SongEntity>(songId));
+            return new SongBindingModel(await this.Connection.GetAsync<SongEntity>(songId));
         }
 
-        public async Task<IEnumerable<Song>> GetAllAsync()
+        public async Task<IList<SongBindingModel>> GetAllAsync()
         {
-            return (await this.Connection.Table<SongEntity>().ToListAsync()).Select(x => new Song(x));
+            return (await this.Connection.Table<SongEntity>().ToListAsync()).Select(x => new SongBindingModel(x)).ToList();
         }
     }
 }

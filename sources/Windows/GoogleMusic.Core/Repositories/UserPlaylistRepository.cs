@@ -6,6 +6,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Text;
     using System.Threading.Tasks;
 
     using OutcoldSolutions.Diagnostics;
@@ -15,10 +16,47 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
 
     public class UserPlaylistRepository : RepositoryBase, IUserPlaylistRepository
     {
+        private const string SqlAllPlaylists = @"
+select 
+  p.[PlaylistId], 
+  p.Title, 
+  p.ProviderPlaylistId, 
+  count(*) as [SongsCount], 
+  sum(s.Duration) as [Duration],
+  max(s.[LastPlayed]) as [LastPlayed],
+  s.[AlbumArtUrl] as [AlbumArtUrl]
+from [UserPlaylist] as p
+     inner join [UserPlaylistEntry] as e on e.[PlaylistId] = p.[PlaylistId]
+     inner join [Song] as s on s.[SongId] = e.[SongId]     
+group by p.[PlaylistId], p.[Title], p.ProviderPlaylistId
+";
+
+        private const string SqlSearchPlaylists = @"
+select 
+  p.[PlaylistId], 
+  p.Title, 
+  p.ProviderPlaylistId, 
+  count(*) as [SongsCount], 
+  sum(s.Duration) as [Duration],
+  max(s.[LastPlayed]) as [LastPlayed],
+  max(ifnull(s.[AlbumArtUrl], '')) as [AlbumArtUrl]
+from [UserPlaylist] as p
+     inner join [UserPlaylistEntry] as e on e.[PlaylistId] = p.[PlaylistId]
+     inner join [Song] as s on s.[SongId] = e.[SongId]  
+where p.[Title] like ?1   
+group by p.[PlaylistId], p.[Title], p.ProviderPlaylistId
+order by [p].Title
+";
+
         private readonly ILogger logger;
 
         private readonly IPlaylistsWebService playlistsWebService;
 
+        private readonly Dictionary<Order, string> orderStatements = new Dictionary<Order, string>()
+                                                                {
+                                                                    { Order.Name,  " order by p.[Title]" },
+                                                                    { Order.LastPlayed,  " order by max(s.[LastPlayed]) desc" }
+                                                                };
 
         public UserPlaylistRepository(
             ILogManager logManager,
@@ -28,16 +66,53 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
             this.playlistsWebService = playlistsWebService;
         }
 
-        public async Task<IEnumerable<UserPlaylist>> GetAllAsync()
+        public async Task<int> GetCountAsync()
         {
-            List<UserPlaylist> userPlaylists = new List<UserPlaylist>();
+            return await this.Connection.Table<UserPlaylistEntity>().CountAsync();
+        }
+
+        public async Task<IList<UserPlaylist>> GetPlaylistsAsync(Order order, uint? take = null)
+        {
+            if (!this.orderStatements.ContainsKey(order))
+            {
+                throw new ArgumentOutOfRangeException("order");
+            }
+
+            var sql = new StringBuilder(SqlAllPlaylists);
+            sql.Append(this.orderStatements[order]);
+
+            if (take.HasValue)
+            {
+                sql.AppendFormat(" limit {0}", take.Value);
+            }
+
+            return await this.Connection.QueryAsync<UserPlaylist>(sql.ToString());
+        }
+
+        public async Task<IList<UserPlaylist>> SearchAsync(string searchQuery, uint? take)
+        {
+            var searchQueryNorm = searchQuery.Normalize() ?? string.Empty;
+
+            var sql = new StringBuilder(SqlSearchPlaylists);
+
+            if (take.HasValue)
+            {
+                sql.AppendFormat(" limit {0}", take.Value);
+            }
+
+            return await this.Connection.QueryAsync<UserPlaylist>(sql.ToString(), string.Format("%{0}%", searchQueryNorm.Normalize()));
+        }
+
+        public async Task<IEnumerable<UserPlaylistBindingModel>> GetAllAsync()
+        {
+            List<UserPlaylistBindingModel> userPlaylists = new List<UserPlaylistBindingModel>();
 
             var playlists = await this.Connection.Table<UserPlaylistEntity>().ToListAsync();
 
             foreach (var playlist in playlists)
             {
                 List<string> entrieIds = new List<string>();
-                List<Song> songs = new List<Song>();
+                List<SongBindingModel> songs = new List<SongBindingModel>();
 
                 int playlistId = playlist.PlaylistId;
                 var entries = await this.Connection.Table<UserPlaylistEntryEntity>()
@@ -51,7 +126,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
                     if (song != null)
                     {
                         entrieIds.Add(entry.ProviderEntryId);
-                        songs.Add(new Song(song));
+                        songs.Add(new SongBindingModel(song));
                     }
                     else
                     {
@@ -59,13 +134,13 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
                     }
                 }
 
-                userPlaylists.Add(new UserPlaylist(playlist, playlist.Title, songs, entrieIds));
+                userPlaylists.Add(new UserPlaylistBindingModel(playlist, playlist.Title, songs, entrieIds));
             }
 
             return userPlaylists;
         }
 
-        public async Task<UserPlaylist> CreateAsync(string name)
+        public async Task<UserPlaylistBindingModel> CreateAsync(string name)
         {
             if (this.logger.IsDebugEnabled)
             {
@@ -81,9 +156,9 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
                         "Playlist was created on the server with id '{0}' for name '{1}'.", resp.Id, resp.Title);
                 }
 
-                var userPlaylistEntity = new UserPlaylistEntity() { ProviderPlaylistId = resp.Id, Title = resp.Title };
+                var userPlaylistEntity = new UserPlaylistEntity() { ProviderPlaylistId = resp.Id, Title = resp.Title, TitleNorm = resp.Title.Normalize() };
                 await this.Connection.InsertAsync(userPlaylistEntity);
-                return new UserPlaylist(userPlaylistEntity, resp.Title, new List<Song>(), new List<string>());
+                return new UserPlaylistBindingModel(userPlaylistEntity, resp.Title, new List<SongBindingModel>(), new List<string>());
             }
             else
             {
@@ -178,7 +253,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
             return result;
         }
 
-        public async Task<bool> AddEntriesAsync(UserPlaylistEntity playlist, List<Song> songs)
+        public async Task<bool> AddEntriesAsync(UserPlaylistEntity playlist, List<SongBindingModel> songs)
         {
             if (songs == null)
             {

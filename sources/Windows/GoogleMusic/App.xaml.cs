@@ -95,11 +95,15 @@ namespace OutcoldSolutions.GoogleMusic
                 // Songs Repositories and Services
                 registration.Register<ISongsRepository>().AsSingleton<SongsRepository>();
                 registration.Register<IUserPlaylistRepository>().AsSingleton<UserPlaylistRepository>();
-                registration.Register<IPlaylistCollection<Album>>().AsSingleton<AlbumCollection>();
-                registration.Register<IPlaylistCollection<Artist>>().AsSingleton<ArtistCollection>();
-                registration.Register<IPlaylistCollection<Genre>>().AsSingleton<GenreCollection>();
-                registration.Register<IPlaylistCollection<SystemPlaylist>>().AsSingleton<SystemPlaylistCollection>();
-                registration.Register<IPlaylistCollection<UserPlaylist>>().AsSingleton<MusicPlaylistCollection>();
+                registration.Register<IArtistsRepository>().AsSingleton<ArtistsRepository>();
+                registration.Register<IAlbumsRepository>().AsSingleton<AlbumsRepository>();
+                registration.Register<IGenresRepository>().AsSingleton<GenresRepository>();
+                registration.Register<ISystemPlaylistRepository>().AsSingleton<SystemPlaylistRepository>();
+                registration.Register<IPlaylistCollection<AlbumBindingModel>>().AsSingleton<AlbumCollection>();
+                registration.Register<IPlaylistCollection<ArtistBindingModel>>().AsSingleton<ArtistCollection>();
+                registration.Register<IPlaylistCollection<GenreBindingModel>>().AsSingleton<GenreCollection>();
+                registration.Register<IPlaylistCollection<SystemPlaylistBindingModel>>().AsSingleton<SystemPlaylistCollection>();
+                registration.Register<IPlaylistCollection<UserPlaylistBindingModel>>().AsSingleton<MusicPlaylistCollection>();
                 registration.Register<IPlaylistCollectionsService>().AsSingleton<PlaylistCollectionsService>();
 
                 registration.Register<ISongMetadataEditService>().AsSingleton<SongMetadataEditService>();

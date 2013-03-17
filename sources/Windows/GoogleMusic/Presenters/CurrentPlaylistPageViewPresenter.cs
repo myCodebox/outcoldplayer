@@ -71,7 +71,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             var selectedSong = this.BindingModel.Songs[this.BindingModel.SelectedSongIndex];
             if (selectedSong != null)
             {
-                this.Toolbar.ShowPopup<IAddToPlaylistPopupView>(new List<Song>{ selectedSong });
+                this.Toolbar.ShowPopup<IAddToPlaylistPopupView>(new List<SongBindingModel>{ selectedSong });
             }
         }
 
@@ -82,7 +82,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             if (ratingEventArgs != null)
             {
                 this.Logger.LogTask(this.metadataEditService.UpdateRatingAsync(
-                        (Song)ratingEventArgs.CommandParameter, (byte)ratingEventArgs.Value));
+                        (SongBindingModel)ratingEventArgs.CommandParameter, (byte)ratingEventArgs.Value));
             }
         }
 
@@ -117,7 +117,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private void UpdateSongs()
         {
-            this.Dispatcher.RunAsync(() => { this.BindingModel.Songs = new List<Song>(this.playQueueService.GetQueue()); });
+            this.Dispatcher.RunAsync(() => { this.BindingModel.Songs = new List<SongBindingModel>(this.playQueueService.GetQueue()); });
         }
 
         private void SelectedSongChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)

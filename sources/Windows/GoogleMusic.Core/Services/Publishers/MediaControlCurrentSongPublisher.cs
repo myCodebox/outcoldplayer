@@ -29,7 +29,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
             }
         }
 
-        public async Task PublishAsync(Song song, Playlist currentPlaylist, Uri albumArtUri, CancellationToken cancellationToken)
+        public async Task PublishAsync(SongBindingModel song, PlaylistBaseBindingModel currentPlaylist, Uri albumArtUri, CancellationToken cancellationToken)
         {
             await this.dispatcher.RunAsync(
                 () =>

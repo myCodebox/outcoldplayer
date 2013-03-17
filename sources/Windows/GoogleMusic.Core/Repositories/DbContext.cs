@@ -6,7 +6,6 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
 {
     using System;
     using System.IO;
-    using System.Linq;
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.Models;
@@ -21,7 +20,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
     {
         private readonly string dbFileName;
 
-        public DbContext(string dbFileName = "db.v1.sqlite")
+        public DbContext(string dbFileName = "db.sqlite")
         {
             if (dbFileName == null)
             {
@@ -47,7 +46,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
 
         public SQLiteAsyncConnection CreateConnection()
         {
-            return new SQLiteAsyncConnection(this.GetDatabaseFilePath(), storeDateTimeAsTicks: true);
+            return new SQLiteAsyncConnection(this.GetDatabaseFilePath(), openFlags: SQLiteOpenFlags.Create | SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.SharedCache | SQLiteOpenFlags.NoMutex, storeDateTimeAsTicks: true);
         }
 
         public async Task<DatabaseStatus> InitializeAsync()
@@ -60,9 +59,14 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
 #else
             fDbExists = File.Exists(this.GetDatabaseFilePath());
 #endif
+            SQLite3.Config(SQLite3.ConfigOption.MultiThread);
+
             if (!fDbExists)
             {
                 var connection = this.CreateConnection();
+                await connection.ExecuteAsync("PRAGMA page_size = 65536 ;");
+                await connection.ExecuteAsync("PRAGMA user_version = 1 ;");
+
                 await connection.CreateTableAsync<SongEntity>();
                 await connection.CreateTableAsync<UserPlaylistEntity>();
                 await connection.CreateTableAsync<UserPlaylistEntryEntity>();

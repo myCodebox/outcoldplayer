@@ -11,9 +11,15 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
 
     public interface IUserPlaylistRepository
     {
-        Task<IEnumerable<UserPlaylist>> GetAllAsync();
+        Task<int> GetCountAsync();
 
-        Task<UserPlaylist> CreateAsync(string name);
+        Task<IList<UserPlaylist>> GetPlaylistsAsync(Order order, uint? take = null);
+
+        Task<IList<UserPlaylist>> SearchAsync(string searchQuery, uint? take);
+
+        Task<IEnumerable<UserPlaylistBindingModel>> GetAllAsync();
+
+        Task<UserPlaylistBindingModel> CreateAsync(string name);
 
         Task<bool> DeleteAsync(UserPlaylistEntity playlistId);
 
@@ -21,6 +27,6 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
 
         Task<bool> RemoveEntry(UserPlaylistEntity playlistId, string songId, string entryId);
 
-        Task<bool> AddEntriesAsync(UserPlaylistEntity playlistId, List<Song> song);
+        Task<bool> AddEntriesAsync(UserPlaylistEntity playlistId, List<SongBindingModel> song);
     }
 }

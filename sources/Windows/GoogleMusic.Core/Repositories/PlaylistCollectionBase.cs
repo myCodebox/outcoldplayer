@@ -13,7 +13,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
     using OutcoldSolutions.GoogleMusic.Models;
 
     public abstract class PlaylistCollectionBase<TPlaylist> : IPlaylistCollection<TPlaylist>
-        where TPlaylist : Playlist
+        where TPlaylist : PlaylistBaseBindingModel
     {
         private readonly SemaphoreSlim mutex = new SemaphoreSlim(1);
         private readonly bool useCache = false;

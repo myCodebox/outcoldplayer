@@ -5,21 +5,19 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
 {
     using System;
     using System.Collections.Generic;
-    using System.Globalization;
     using System.Linq;
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
-    using OutcoldSolutions.GoogleMusic.Models;
 
-    public class ArtistCollection : PlaylistCollectionBase<Artist>
+    public class ArtistCollection : PlaylistCollectionBase<ArtistBindingModel>
     {
         public ArtistCollection(ISongsRepository songsRepository)
             : base(songsRepository)
         {
         }
 
-        protected async override Task<List<Artist>> GetForSearchAsync()
+        protected async override Task<List<ArtistBindingModel>> GetForSearchAsync()
         {
             var artists = await base.GetForSearchAsync();
 
@@ -32,7 +30,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
 
                 if (artist != null)
                 {
-                    foreach (Song song in group)
+                    foreach (SongBindingModel song in group)
                     {
                         if (!artist.Songs.Contains(song))
                         {
@@ -42,19 +40,19 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
                 }
                 else
                 {
-                    artists.Add(new Artist(group.ToList(), useArtist: true));
+                    artists.Add(new ArtistBindingModel(group.ToList(), useArtist: true));
                 }
             }
 
             return this.OrderCollection(artists, Order.Name).ToList();
         }
 
-        protected override async Task<List<Artist>> LoadCollectionAsync()
+        protected override async Task<List<ArtistBindingModel>> LoadCollectionAsync()
         {
             return (await this.SongsRepository.GetAllAsync())
                 .GroupBy(x => string.IsNullOrWhiteSpace(x.Metadata.AlbumArtist) ? x.Metadata.Artist : x.Metadata.AlbumArtist, StringComparer.CurrentCultureIgnoreCase)
                 .OrderBy(x => x.Key, StringComparer.CurrentCultureIgnoreCase)
-                .Select(x => new Artist(x.ToList())).ToList();
+                .Select(x => new ArtistBindingModel(x.ToList())).ToList();
         }
     }
 }

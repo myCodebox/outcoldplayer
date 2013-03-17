@@ -72,7 +72,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
             }
         }
 
-        public async Task PublishAsync(Song song, Playlist currentPlaylist)
+        public async Task PublishAsync(SongBindingModel song, PlaylistBaseBindingModel currentPlaylist)
         {
             CancellationTokenSource source;
 
@@ -98,7 +98,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
             }
         }
 
-        private async Task PublishAsync(Song song, Playlist currentPlaylist, CancellationToken cancellationToken)
+        private async Task PublishAsync(SongBindingModel song, PlaylistBaseBindingModel currentPlaylist, CancellationToken cancellationToken)
         {
             if (this.logger.IsDebugEnabled)
             {
@@ -176,12 +176,12 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
             this.logger.Debug("PublishAsync completed for ProviderSongId: {0}, PlaylistType: {1}.", song.Metadata.ProviderSongId, currentPlaylist == null ? null : currentPlaylist.GetType());
         }
 
-        private async Task PublishAsync(IEnumerable<Lazy<ICurrentSongPublisher>> publishers, Song song, Playlist currentPlaylist, Uri albumArtUri, CancellationToken cancellationToken)
+        private async Task PublishAsync(IEnumerable<Lazy<ICurrentSongPublisher>> publishers, SongBindingModel song, PlaylistBaseBindingModel currentPlaylist, Uri albumArtUri, CancellationToken cancellationToken)
         {
             await Task.WhenAll(publishers.Select(x => x.Value.PublishAsync(song, currentPlaylist, albumArtUri, cancellationToken)).Where(task => task != null));
         }
 
-        private async Task<Uri> GetAlbumArtUri(Song song)
+        private async Task<Uri> GetAlbumArtUri(SongBindingModel song)
         {
             Uri albumArtUri = new Uri("ms-appx:///Resources/UnknownArt-116.png");
 

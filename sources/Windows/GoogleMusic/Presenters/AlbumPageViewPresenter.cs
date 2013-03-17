@@ -11,7 +11,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
 
-    public class AlbumPageViewPresenter : PlaylistPageViewPresenterBase<IAlbumPageView, Album>
+    public class AlbumPageViewPresenter : PlaylistPageViewPresenterBase<IAlbumPageView, AlbumBindingModel>
     {
         private readonly IPlaylistCollectionsService playlistCollectionsService;
 
@@ -25,10 +25,10 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         protected override async Task LoadDataAsync(NavigatedToEventArgs navigatedToEventArgs)
         {
-            var song = navigatedToEventArgs.Parameter as Song;
+            var song = navigatedToEventArgs.Parameter as SongBindingModel;
             if (song != null)
             {
-                var albums = await this.playlistCollectionsService.GetCollection<Album>().GetAllAsync();
+                var albums = await this.playlistCollectionsService.GetCollection<AlbumBindingModel>().GetAllAsync();
                 var album = albums.FirstOrDefault(x => x.Songs.Contains(song));
 
                 this.BindingModel.Playlist = album;

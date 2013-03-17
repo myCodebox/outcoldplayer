@@ -11,7 +11,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Views;
 
-    public class PlaylistPageViewPresenter : PlaylistPageViewPresenterBase<IPlaylistPageView, Playlist>
+    public class PlaylistPageViewPresenter : PlaylistPageViewPresenterBase<IPlaylistPageView, PlaylistBaseBindingModel>
     {
         private readonly IUserPlaylistRepository userPlaylistRepository;
 
@@ -29,7 +29,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         protected override IEnumerable<CommandMetadata> GetContextCommands()
         {
             var commandMetadatas = base.GetContextCommands();
-            if (this.BindingModel.Playlist is UserPlaylist)
+            if (this.BindingModel.Playlist is UserPlaylistBindingModel)
             {
                 commandMetadatas = new List<CommandMetadata>(commandMetadatas)
                                        {
@@ -43,10 +43,10 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private void RemoveFromPlaylist()
         {
             var selectedSongIndex = this.BindingModel.SelectedSongIndex;
-            if (selectedSongIndex >= 0 && !this.IsDataLoading && this.BindingModel.Playlist is UserPlaylist)
+            if (selectedSongIndex >= 0 && !this.IsDataLoading && this.BindingModel.Playlist is UserPlaylistBindingModel)
             {
                 this.IsDataLoading = true;
-                var musicPlaylist = (UserPlaylist)this.BindingModel.Playlist;
+                var musicPlaylist = (UserPlaylistBindingModel)this.BindingModel.Playlist;
 
                 this.userPlaylistRepository.RemoveEntry(
                     musicPlaylist.Metadata, musicPlaylist.Songs[selectedSongIndex].Metadata.ProviderSongId, musicPlaylist.EntriesIds[selectedSongIndex]).ContinueWith(

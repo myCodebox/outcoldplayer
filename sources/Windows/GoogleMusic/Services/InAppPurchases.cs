@@ -94,7 +94,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 #if DEBUG
             return CurrentAppSimulator.RequestProductPurchaseAsync(inAppPurchaseName, false).AsTask();
 #else
-            return CurrentApp.RequestProductPurchaseAsync(inAppPurchaseName, false);
+            return CurrentApp.RequestProductPurchaseAsync(inAppPurchaseName, false).AsTask();
 #endif
         }
     }

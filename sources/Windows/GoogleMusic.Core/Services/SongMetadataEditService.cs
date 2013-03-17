@@ -13,7 +13,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
     public interface ISongMetadataEditService
     {
-        Task UpdateRatingAsync(Song song, byte newRating);
+        Task UpdateRatingAsync(SongBindingModel song, byte newRating);
     }
 
     public class SongMetadataEditService : ISongMetadataEditService
@@ -32,7 +32,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             this.logger = logManager.CreateLogger("SongMetadataEditService");
         }
 
-        public async Task UpdateRatingAsync(Song song, byte newRating)
+        public async Task UpdateRatingAsync(SongBindingModel song, byte newRating)
         {
             if (song == null)
             {

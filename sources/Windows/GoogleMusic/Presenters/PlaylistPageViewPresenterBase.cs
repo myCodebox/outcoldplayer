@@ -20,7 +20,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
     public class PlaylistPageViewPresenterBase<TView, TPlaylist> 
         : DataPagePresenterBase<TView, PlaylistPageViewBindingModel<TPlaylist>>
-        where TPlaylist : Playlist 
+        where TPlaylist : PlaylistBaseBindingModel 
         where TView : IDataPageView
     {
         private readonly IPlayQueueService playQueueService;
@@ -95,7 +95,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             var selectedSong = this.BindingModel.SelectedSong;
             if (selectedSong != null)
             {
-                this.Toolbar.ShowPopup<IAddToPlaylistPopupView>(new List<Song> { selectedSong });
+                this.Toolbar.ShowPopup<IAddToPlaylistPopupView>(new List<SongBindingModel> { selectedSong });
             }
         }
 
@@ -106,7 +106,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             if (ratingEventArgs != null)
             {
                 this.Logger.LogTask(this.metadataEditService.UpdateRatingAsync(
-                        (Song)ratingEventArgs.CommandParameter, (byte)ratingEventArgs.Value));
+                        (SongBindingModel)ratingEventArgs.CommandParameter, (byte)ratingEventArgs.Value));
             }
         }
 

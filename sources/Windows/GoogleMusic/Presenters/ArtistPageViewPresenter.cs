@@ -35,7 +35,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         protected override async Task LoadDataAsync(NavigatedToEventArgs navigatedToEventArgs)
         {
-            var artist = navigatedToEventArgs.Parameter as Artist;
+            var artist = navigatedToEventArgs.Parameter as ArtistBindingModel;
             if (artist == null)
             {
                 throw new NotSupportedException("Current view cannot show not-artists playlists.");
@@ -73,7 +73,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         {
             if (this.BindingModel.Artist != null)
             {
-                Playlist playlist = commandParameter as Playlist;
+                PlaylistBaseBindingModel playlist = commandParameter as PlaylistBaseBindingModel;
                 if (playlist == null)
                 {
                     playlist = this.BindingModel.Artist;

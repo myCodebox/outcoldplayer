@@ -25,7 +25,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
         private readonly ISongWebService songWebService;
         private readonly INotificationService notificationService;
 
-        private readonly List<Song> songsQueue = new List<Song>();
+        private readonly List<SongBindingModel> songsQueue = new List<SongBindingModel>();
         private readonly List<int> queueOrder = new List<int>();
 
         private readonly Random random = new Random((int)DateTime.Now.Ticks);
@@ -35,7 +35,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
         private INetworkRandomAccessStream currentSongStream;
         private int currentQueueIndex; // From queueOrder
 
-        private Playlist currentPlaylist;
+        private PlaylistBaseBindingModel currentPlaylist;
 
         private QueueState state;
 
@@ -127,12 +127,12 @@ namespace OutcoldSolutions.GoogleMusic.Services
             }
         }
 
-        public async Task PlayAsync(Playlist playlist)
+        public async Task PlayAsync(PlaylistBaseBindingModel playlist)
         {
             await this.PlayAsync(playlist, songIndex: -1);
         }
 
-        public async Task PlayAsync(Playlist playlist, int songIndex)
+        public async Task PlayAsync(PlaylistBaseBindingModel playlist, int songIndex)
         {
             if (playlist == null)
             {
@@ -265,7 +265,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             }
         }
 
-        public async Task AddRangeAsync(IEnumerable<Song> songs)
+        public async Task AddRangeAsync(IEnumerable<SongBindingModel> songs)
         {
             if (songs == null)
             {
@@ -386,7 +386,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 });
         }
 
-        public IEnumerable<Song> GetQueue()
+        public IEnumerable<SongBindingModel> GetQueue()
         {
             lock (this.queueOrder)
             {

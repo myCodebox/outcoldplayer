@@ -7,11 +7,12 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
+    using OutcoldSolutions.GoogleMusic.Models;
 
     public interface ISongsRepository
     {
-        Task<IEnumerable<Song>> GetAllAsync();
+        Task<IList<SongBindingModel>> GetAllAsync();
 
-        Task<Song> GetSongAsync(string songId);
+        Task<SongBindingModel> GetSongAsync(string songId);
     }
 }

@@ -7,9 +7,9 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
     using System.Collections.Generic;
     using System.Linq;
 
-    public class Genre : Playlist
+    public class GenreBindingModel : PlaylistBaseBindingModel
     {
-        public Genre(string name, List<Song> songs)
+        public GenreBindingModel(string name, List<SongBindingModel> songs)
             : base(
                 name,
                 songs.OrderBy(s => s.Metadata.Artist, StringComparer.CurrentCultureIgnoreCase)

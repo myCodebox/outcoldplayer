@@ -14,6 +14,6 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
     {
         PublisherType PublisherType { get; }
 
-        Task PublishAsync(Song song, Playlist currentPlaylist, Uri imageUri, CancellationToken cancellationToken);
+        Task PublishAsync(SongBindingModel song, PlaylistBaseBindingModel currentPlaylist, Uri imageUri, CancellationToken cancellationToken);
     }
 }

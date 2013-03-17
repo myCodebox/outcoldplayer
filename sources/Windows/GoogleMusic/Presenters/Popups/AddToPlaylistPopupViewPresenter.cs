@@ -19,14 +19,14 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
         public class AddToSongMusicPlaylist
         {
             public AddToSongMusicPlaylist(
-                UserPlaylist userPlaylist,
-                IEnumerable<Song> addingSongs)
+                UserPlaylistBindingModel userPlaylist,
+                IEnumerable<SongBindingModel> addingSongs)
             {
                 this.Playlist = userPlaylist;
                 this.SongContainsCount = addingSongs.Count(x => this.Playlist.Songs.Contains(x));
             }
 
-            public UserPlaylist Playlist { get; set; }
+            public UserPlaylistBindingModel Playlist { get; set; }
 
             public int SongContainsCount { get; set; }
         }
@@ -39,7 +39,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
         private List<AddToSongMusicPlaylist> playlists;
 
         public AddToPlaylistPopupViewPresenter(
-            IEnumerable<Song> songs,
+            IEnumerable<SongBindingModel> songs,
             IPlaylistCollectionsService collectionsService,
             IUserPlaylistRepository userPlaylistRepository)
         {
@@ -76,7 +76,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
             }
         }
 
-        public List<Song> Songs { get; set; }
+        public List<SongBindingModel> Songs { get; set; }
 
         public void AddToPlaylist(AddToSongMusicPlaylist playlist)
         {
@@ -93,7 +93,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
             this.Logger.LogTask(Task.Run(async () =>
                 {
                     var result = (await this.collectionsService
-                        .GetCollection<UserPlaylist>()
+                        .GetCollection<UserPlaylistBindingModel>()
                         .GetAllAsync(Order.Name))
                         .Select(x => new AddToSongMusicPlaylist(x, this.Songs))
                         .ToList();

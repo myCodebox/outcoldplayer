@@ -6,6 +6,7 @@
     <converters:StringFormatConverter x:Key="StringFormatConverter"/>
     <converters:StringFormatConverter x:Key="PercentageStringFormatConverter" Format="P0" />
     <converters:DoubleToTimeConverter x:Key="DoubleToTimeConverter"/>
+    <converters:TimeSpanToTimeConverter x:Key="TimeSpanToTimeConverter" />
     <converters:AlbumArtUrlToImageConverter x:Key="AlbumArtUrlToImageConverter" />
 
 </ResourceDictionary>

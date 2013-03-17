@@ -27,7 +27,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
             get { return PublisherType.ImmediatelyWithAlbumArt; }
         }
 
-        public Task PublishAsync(Song song, Playlist currentPlaylist, Uri albumArtUri, CancellationToken cancellationToken)
+        public Task PublishAsync(SongBindingModel song, PlaylistBaseBindingModel currentPlaylist, Uri albumArtUri, CancellationToken cancellationToken)
         {
             return Task.Factory.StartNew(() =>
                 {
@@ -51,7 +51,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
                 });
         }
 
-        private XmlDocument GenerateWideTile(Song song, Uri albumArtUri)
+        private XmlDocument GenerateWideTile(SongBindingModel song, Uri albumArtUri)
         {
             XmlDocument templateContent = TileUpdateManager.GetTemplateContent(TileTemplateType.TileWideSmallImageAndText02);
             XmlNodeList images = templateContent.GetElementsByTagName("image");
@@ -64,7 +64,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
             return templateContent;
         }
 
-        private XmlDocument GenerateSquareTile(Song song)
+        private XmlDocument GenerateSquareTile(SongBindingModel song)
         {
             XmlDocument templateContent = TileUpdateManager.GetTemplateContent(TileTemplateType.TileSquareText03);
 
@@ -74,7 +74,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
             return templateContent;
         }
 
-        private void SetTextElements(XmlNodeList textElements, XmlDocument templateContent, Song song)
+        private void SetTextElements(XmlNodeList textElements, XmlDocument templateContent, SongBindingModel song)
         {
             textElements[0].AppendChild(templateContent.CreateTextNode(song.Title));
             textElements[1].AppendChild(templateContent.CreateTextNode(song.Artist));

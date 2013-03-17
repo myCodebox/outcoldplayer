@@ -12,9 +12,9 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
     {
         protected SongsBindingModelBase()
         {
-            this.Songs = new ObservableCollection<Song>();
+            this.Songs = new ObservableCollection<SongBindingModel>();
         }
 
-        public ObservableCollection<Song> Songs { get; private set; }
+        public ObservableCollection<SongBindingModel> Songs { get; private set; }
     }
 }

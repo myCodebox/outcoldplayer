@@ -17,15 +17,29 @@ namespace OutcoldSolutions.GoogleMusic.Models
 
         public string Title { get; set; }
 
+        [Indexed]
+        public string TitleNorm { get; set; }
+
         public TimeSpan Duration { get; set; }
 
         public string Artist { get; set; }
+
+        [Indexed]
+        [Indexed(Name = "Song_AlbumNorm_ArtistNorm")]
+        public string ArtistNorm { get; set; }
 
         public string Composer { get; set; }
 
         public string Album { get; set; }
 
+        [Indexed]
+        [Indexed(Name = "Song_AlbumNorm_ArtistNorm")]
+        public string AlbumNorm { get; set; }
+
         public string AlbumArtist { get; set; }
+
+        [Indexed]
+        public string AlbumArtistNorm { get; set; }
 
         public ushort PlayCount { get; set; }
 
@@ -43,10 +57,15 @@ namespace OutcoldSolutions.GoogleMusic.Models
 
         public string Genre { get; set; }
 
+        [Indexed]
+        public string GenreNorm { get; set; }
+
         public Uri AlbumArtUrl { get; set; }
 
+        [Indexed]
         public DateTime LastPlayed { get; set; }
 
+        [Indexed]
         public DateTime CreationDate { get; set; }
 
         public string Comment { get; set; }

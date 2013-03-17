@@ -9,11 +9,11 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
     using OutcoldSolutions.BindingModels;
 
-    public abstract class Playlist : BindingModelBase
+    public abstract class PlaylistBaseBindingModel : BindingModelBase
     {
         private string title;
 
-        protected Playlist(string name, List<Song> songs)
+        protected PlaylistBaseBindingModel(string name, List<SongBindingModel> songs)
         {
             this.Title = name;
             this.Songs = songs;
@@ -38,7 +38,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
         public Uri AlbumArtUrl { get; protected set; }
 
-        public List<Song> Songs { get; private set; }
+        public List<SongBindingModel> Songs { get; private set; }
 
         public void CalculateFields()
         {

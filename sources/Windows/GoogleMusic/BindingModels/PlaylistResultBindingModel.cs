@@ -10,15 +10,15 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
     public class PlaylistResultBindingModel : SearchResultBindingModel
     {
-        private readonly Playlist result;
+        private readonly PlaylistBaseBindingModel result;
 
-        public PlaylistResultBindingModel(string search, Playlist result)
+        public PlaylistResultBindingModel(string search, PlaylistBaseBindingModel result)
             : base(search, result.Title)
         {
             this.result = result;
         }
 
-        public Playlist Result
+        public PlaylistBaseBindingModel Result
         {
             get
             {
@@ -38,22 +38,22 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         {
             get
             {
-                if (this.result is Album)
+                if (this.result is AlbumBindingModel)
                 {
                     return "Album";
                 }
 
-                if (this.result is Artist)
+                if (this.result is ArtistBindingModel)
                 {
                     return "Artist";
                 }
 
-                if (this.result is Genre)
+                if (this.result is GenreBindingModel)
                 {
                     return "Genre";
                 }
 
-                if (this.result is UserPlaylist)
+                if (this.result is UserPlaylistBindingModel)
                 {
                     return "Playlist";
                 }

@@ -10,7 +10,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
     {
         private readonly IDispatcher dispatcher;
 
-        private Song currentSong;
+        private SongBindingModel currentSong;
 
         public CurrentSongPropertiesUpdateService(
             IDispatcher dispatcher,

@@ -20,7 +20,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         private double downloadProgress;
         private double volume;
 
-        private Song currentSong;
+        private SongBindingModel currentSong;
 
         public DelegateCommand SkipBackCommand { get; set; }
 
@@ -100,7 +100,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             }
         }
 
-        public Song CurrentSong
+        public SongBindingModel CurrentSong
         {
             get
             {

@@ -10,11 +10,11 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
     public class ArtistPageViewBindingModel : BindingModelBase
     {
-        private Artist artist;
+        private ArtistBindingModel artist;
 
         private List<PlaylistBindingModel> albums;
 
-        public Artist Artist
+        public ArtistBindingModel Artist
         {
             get
             {

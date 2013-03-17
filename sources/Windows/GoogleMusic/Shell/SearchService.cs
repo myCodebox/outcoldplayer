@@ -189,30 +189,30 @@ namespace OutcoldSolutions.GoogleMusic.Shell
                 var strings = tag.Split(new[] { ':' }, 2);
                 if (strings.Length == 2)
                 {
-                    IEnumerable<Playlist> playlists = null;
+                    IEnumerable<PlaylistBaseBindingModel> playlists = null;
                     switch (strings[0])
                     {
                         case Artists:
                             {
-                                playlists = await this.playlistCollectionsService.GetCollection<Artist>().SearchAsync(strings[1]);
+                                playlists = await this.playlistCollectionsService.GetCollection<ArtistBindingModel>().SearchAsync(strings[1]);
                                 break;
                             }
 
                         case Albums:
                             {
-                                playlists = await this.playlistCollectionsService.GetCollection<Album>().SearchAsync(strings[1]);
+                                playlists = await this.playlistCollectionsService.GetCollection<AlbumBindingModel>().SearchAsync(strings[1]);
                                 break; 
                             }
 
                         case Genres:
                             {
-                                playlists = await this.playlistCollectionsService.GetCollection<Genre>().SearchAsync(strings[1]);
+                                playlists = await this.playlistCollectionsService.GetCollection<GenreBindingModel>().SearchAsync(strings[1]);
                                 break;
                             }
 
                         case Playlists:
                             {
-                                playlists = await this.playlistCollectionsService.GetCollection<UserPlaylist>().SearchAsync(strings[1]);
+                                playlists = await this.playlistCollectionsService.GetCollection<UserPlaylistBindingModel>().SearchAsync(strings[1]);
                                 break;
                             }
 
@@ -255,7 +255,7 @@ namespace OutcoldSolutions.GoogleMusic.Shell
         {
             var result = new List<ISearchItem>();
 
-            var artistsSearch = (await this.playlistCollectionsService.GetCollection<Artist>().SearchAsync(args.QueryText, MaxResults)).ToList();
+            var artistsSearch = (await this.playlistCollectionsService.GetCollection<ArtistBindingModel>().SearchAsync(args.QueryText, MaxResults)).ToList();
             if (artistsSearch.Count > 0)
             {
                 this.AddResults(result, artistsSearch, Artists);
@@ -263,7 +263,7 @@ namespace OutcoldSolutions.GoogleMusic.Shell
 
             if (result.Count < MaxResults)
             {
-                var albumsSearch = (await this.playlistCollectionsService.GetCollection<Album>().SearchAsync(args.QueryText, MaxResults - result.Count)).ToList();
+                var albumsSearch = (await this.playlistCollectionsService.GetCollection<AlbumBindingModel>().SearchAsync(args.QueryText, MaxResults - result.Count)).ToList();
                 if (albumsSearch.Count > 0)
                 {
                     this.AddResults(result, albumsSearch, Albums);
@@ -272,7 +272,7 @@ namespace OutcoldSolutions.GoogleMusic.Shell
 
             if (result.Count < MaxResults)
             {
-                var genresSearch = (await this.playlistCollectionsService.GetCollection<Genre>().SearchAsync(args.QueryText, MaxResults - result.Count)).ToList();
+                var genresSearch = (await this.playlistCollectionsService.GetCollection<GenreBindingModel>().SearchAsync(args.QueryText, MaxResults - result.Count)).ToList();
                 if (genresSearch.Count > 0)
                 {
                     this.AddResults(result, genresSearch, Genres);
@@ -300,7 +300,7 @@ namespace OutcoldSolutions.GoogleMusic.Shell
 
             if (result.Count < MaxResults)
             {
-                var playlistsSearch = (await this.playlistCollectionsService.GetCollection<UserPlaylist>().SearchAsync(args.QueryText, MaxResults - result.Count)).ToList();
+                var playlistsSearch = (await this.playlistCollectionsService.GetCollection<UserPlaylistBindingModel>().SearchAsync(args.QueryText, MaxResults - result.Count)).ToList();
                 if (playlistsSearch.Count > 0)
                 {
                     this.AddResults(result, playlistsSearch, Playlists);
@@ -310,7 +310,7 @@ namespace OutcoldSolutions.GoogleMusic.Shell
             return result;
         }
 
-        private void AddResults(List<ISearchItem> result, IEnumerable<Playlist> playlists, string title)
+        private void AddResults(List<ISearchItem> result, IEnumerable<PlaylistBaseBindingModel> playlists, string title)
         {
             bool titleAdded = false;
 

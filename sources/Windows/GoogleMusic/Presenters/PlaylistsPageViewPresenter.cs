@@ -65,7 +65,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
                 if (playlistBindingModel != null)
                 {
-                    var playlist = (UserPlaylist)playlistBindingModel.Playlist;
+                    var playlist = (UserPlaylistBindingModel)playlistBindingModel.Playlist;
 
                     this.userPlaylistRepository.ChangeName(playlist.Metadata, newName).ContinueWith(
                         t =>
@@ -184,7 +184,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     dialog.Commands.Add(
                         new UICommand(
                             "Yes",
-                            command => this.userPlaylistRepository.DeleteAsync(((UserPlaylist)playlist).Metadata).ContinueWith(
+                            command => this.userPlaylistRepository.DeleteAsync(((UserPlaylistBindingModel)playlist).Metadata).ContinueWith(
                                 async t =>
                                 {
                                     if (t.IsCompleted && !t.IsFaulted && t.Result)
@@ -231,20 +231,20 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private async Task<List<PlaylistsGroupBindingModel>> LoadPlaylistsAsync()
         {
-            IEnumerable<Playlist> queue = null;
+            IEnumerable<PlaylistBaseBindingModel> queue = null;
             switch (this.currentRequest)
             {
                 case PlaylistsRequest.Albums:
-                    queue = await this.playlistCollectionsService.GetCollection<Album>().GetAllAsync(Order.Name);
+                    queue = await this.playlistCollectionsService.GetCollection<AlbumBindingModel>().GetAllAsync(Order.Name);
                     break;
                 case PlaylistsRequest.Playlists:
-                    queue = await this.playlistCollectionsService.GetCollection<UserPlaylist>().GetAllAsync(Order.Name);
+                    queue = await this.playlistCollectionsService.GetCollection<UserPlaylistBindingModel>().GetAllAsync(Order.Name);
                     break;
                 case PlaylistsRequest.Genres:
-                    queue = await this.playlistCollectionsService.GetCollection<Genre>().GetAllAsync(Order.Name);
+                    queue = await this.playlistCollectionsService.GetCollection<GenreBindingModel>().GetAllAsync(Order.Name);
                     break;
                 case PlaylistsRequest.Artists:
-                    queue = await this.playlistCollectionsService.GetCollection<Artist>().GetAllAsync(Order.Name);
+                    queue = await this.playlistCollectionsService.GetCollection<ArtistBindingModel>().GetAllAsync(Order.Name);
                     break;
             }
 
@@ -264,7 +264,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private void Play(object commandParameter)
         {
-            Playlist playlist = commandParameter as Playlist;
+            PlaylistBaseBindingModel playlist = commandParameter as PlaylistBaseBindingModel;
             if (playlist != null)
             {
                 this.navigationService.NavigateTo<IPlaylistPageView>(playlist);

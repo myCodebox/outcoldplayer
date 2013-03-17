@@ -10,19 +10,19 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
     using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
 
-    public class GenreCollection : PlaylistCollectionBase<Genre>
+    public class GenreCollection : PlaylistCollectionBase<GenreBindingModel>
     {
         public GenreCollection(ISongsRepository songsRepository)
             : base(songsRepository)
         {
         }
 
-        protected override async Task<List<Genre>> LoadCollectionAsync()
+        protected override async Task<List<GenreBindingModel>> LoadCollectionAsync()
         {
             var songs = await this.SongsRepository.GetAllAsync();
             return songs.GroupBy(x => x.Metadata.Genre)
                      .OrderBy(x => x.Key)
-                     .Select(x => new Genre(x.Key, x.ToList()))
+                     .Select(x => new GenreBindingModel(x.Key, x.ToList()))
                      .ToList();
         }
     }

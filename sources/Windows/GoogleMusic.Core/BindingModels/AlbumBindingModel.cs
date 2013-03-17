@@ -6,9 +6,9 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
     using System.Collections.Generic;
     using System.Linq;
 
-    public class Album : Playlist
+    public class AlbumBindingModel : PlaylistBaseBindingModel
     {
-        public Album(List<Song> songs)
+        public AlbumBindingModel(List<SongBindingModel> songs)
             : base(null, songs)
         {
             var song = songs.FirstOrDefault(x => !string.IsNullOrWhiteSpace(x.Metadata.AlbumArtist))

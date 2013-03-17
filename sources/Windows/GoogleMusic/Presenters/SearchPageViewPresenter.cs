@@ -42,7 +42,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         {
             var results = new List<SearchGroupBindingModel>();
 
-            var artists = (await this.collectionsService.GetCollection<Artist>().SearchAsync(query))
+            var artists = (await this.collectionsService.GetCollection<ArtistBindingModel>().SearchAsync(query))
                     .Select(x => new PlaylistResultBindingModel(query, x))
                     .Cast<SearchResultBindingModel>()
                     .ToList();
@@ -52,7 +52,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 results.Add(new SearchGroupBindingModel("Artists", artists));
             }
 
-            var albums = (await this.collectionsService.GetCollection<Album>().SearchAsync(query))
+            var albums = (await this.collectionsService.GetCollection<AlbumBindingModel>().SearchAsync(query))
                     .Select(x => new PlaylistResultBindingModel(query, x))
                     .Cast<SearchResultBindingModel>()
                     .ToList();
@@ -62,7 +62,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 results.Add(new SearchGroupBindingModel("Albums", albums));
             }
 
-            var genres = (await this.collectionsService.GetCollection<Genre>().SearchAsync(query))
+            var genres = (await this.collectionsService.GetCollection<GenreBindingModel>().SearchAsync(query))
                     .Select(x => new PlaylistResultBindingModel(query, x))
                     .Cast<SearchResultBindingModel>()
                     .ToList();
@@ -81,7 +81,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             }
 
             var playlists =
-                (await this.collectionsService.GetCollection<UserPlaylist>().SearchAsync(query))
+                (await this.collectionsService.GetCollection<UserPlaylistBindingModel>().SearchAsync(query))
                     .Select(x => new PlaylistResultBindingModel(query, x))
                     .Cast<SearchResultBindingModel>()
                     .ToList();

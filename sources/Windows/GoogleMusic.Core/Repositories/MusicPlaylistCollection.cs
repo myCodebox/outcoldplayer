@@ -9,7 +9,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
 
-    public class MusicPlaylistCollection : PlaylistCollectionBase<UserPlaylist>
+    public class MusicPlaylistCollection : PlaylistCollectionBase<UserPlaylistBindingModel>
     {
         private readonly IUserPlaylistRepository userPlaylistRepository;
 
@@ -21,7 +21,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
             this.userPlaylistRepository = userPlaylistRepository;
         }
 
-        protected async override Task<List<UserPlaylist>> LoadCollectionAsync()
+        protected async override Task<List<UserPlaylistBindingModel>> LoadCollectionAsync()
         {
             return (await this.userPlaylistRepository.GetAllAsync()).ToList();
         }

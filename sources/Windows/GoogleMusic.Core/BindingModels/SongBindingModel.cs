@@ -6,12 +6,12 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
     using OutcoldSolutions.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
 
-    public class Song : BindingModelBase
+    public class SongBindingModel : BindingModelBase
     {
         private SongEntity metadata;
         private SongState songState = SongState.None;
 
-        public Song(SongEntity metadata)
+        public SongBindingModel(SongEntity metadata)
         {
             this.metadata = metadata;
         }

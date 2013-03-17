@@ -17,7 +17,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             this.container = container;
         }
 
-        public IPlaylistCollection<TPlaylist> GetCollection<TPlaylist>() where TPlaylist : Playlist
+        public IPlaylistCollection<TPlaylist> GetCollection<TPlaylist>() where TPlaylist : PlaylistBaseBindingModel
         {
             return this.container.Resolve<IPlaylistCollection<TPlaylist>>();
         }

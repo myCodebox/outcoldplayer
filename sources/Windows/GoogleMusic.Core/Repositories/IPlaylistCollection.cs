@@ -9,7 +9,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
     using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
 
-    public interface IPlaylistCollection<TPlaylist> where TPlaylist : Playlist 
+    public interface IPlaylistCollection<TPlaylist> where TPlaylist : PlaylistBaseBindingModel 
     {
         Task<int> CountAsync();
 

@@ -11,9 +11,9 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
     public class CurrentPlaylistPageViewBindingModel : BindingModelBase
     {
         private int selectedSongIndex;
-        private List<Song> songs;
+        private List<SongBindingModel> songs;
 
-        public List<Song> Songs
+        public List<SongBindingModel> Songs
         {
             get
             {
@@ -27,7 +27,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             }
         }
 
-        public Song SelectedSong
+        public SongBindingModel SelectedSong
         {
             get
             {

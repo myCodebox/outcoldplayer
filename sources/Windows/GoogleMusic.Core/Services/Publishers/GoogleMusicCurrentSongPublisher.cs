@@ -32,7 +32,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
             get { return PublisherType.Delay; }
         }
 
-        public async Task PublishAsync(Song song, Playlist currentPlaylist, Uri albumArtUri, CancellationToken cancellationToken)
+        public async Task PublishAsync(SongBindingModel song, PlaylistBaseBindingModel currentPlaylist, Uri albumArtUri, CancellationToken cancellationToken)
         {
             this.logger.Debug("PublishAsync: Publishing song playing to GoogleMusic services. ProviderSongId: {0}.", song.Metadata.ProviderSongId);
 
@@ -46,10 +46,10 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
 
             if (currentPlaylist != null)
             {
-                if (currentPlaylist is UserPlaylist)
+                if (currentPlaylist is UserPlaylistBindingModel)
                 {
                     updateRecentPlaylist = true;
-                    playlistId = ((UserPlaylist)currentPlaylist).Metadata.ProviderPlaylistId;
+                    playlistId = ((UserPlaylistBindingModel)currentPlaylist).Metadata.ProviderPlaylistId;
                 }
                 else 
                 {

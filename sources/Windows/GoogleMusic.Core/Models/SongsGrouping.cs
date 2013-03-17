@@ -11,7 +11,7 @@ namespace OutcoldSolutions.GoogleMusic.Models
 
     public class SongsGrouping
     {
-        public static List<Album> GroupByAlbums(IEnumerable<Song> songs)
+        public static List<AlbumBindingModel> GroupByAlbums(IEnumerable<SongBindingModel> songs)
         {
             if (songs == null)
             {
@@ -29,7 +29,7 @@ namespace OutcoldSolutions.GoogleMusic.Models
                         AlbumArtist.AlbumArtistComparer)
                 .Select(
                     x =>
-                    new Album(
+                    new AlbumBindingModel(
                         x.OrderBy(s => Math.Max(s.Metadata.Disc, (byte)1))
                          .ThenBy(s => s.Metadata.Track)
                          .ToList()))

@@ -17,12 +17,12 @@ namespace OutcoldSolutions.GoogleMusic.Views
                 throw new ArgumentNullException("parameter");
             }
 
-            if (parameter is Album)
+            if (parameter is AlbumBindingModel)
             {
                 return typeof(IAlbumPageView);
             }
             
-            if (parameter is Artist)
+            if (parameter is ArtistBindingModel)
             {
                 return typeof(IArtistPageView);
             }

@@ -6,9 +6,18 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
     using System.Collections.Generic;
     using System.Linq;
 
-    public class SystemPlaylist : Playlist
+    public enum SystemPlaylistType
     {
-        public SystemPlaylist(string name, SystemPlaylistType type, IEnumerable<Song> songs)
+        AllSongs = 1,
+
+        HighlyRated = 2,
+
+        LastAdded = 3
+    }
+
+    public class SystemPlaylistBindingModel : PlaylistBaseBindingModel
+    {
+        public SystemPlaylistBindingModel(string name, SystemPlaylistType type, IEnumerable<SongBindingModel> songs)
             : base(
             name,
             songs.ToList())
@@ -16,16 +25,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             this.Type = type;
             this.AlbumArtUrl = null;
         }
-
-        public enum SystemPlaylistType
-        {
-            AllSongs,
-
-            HighlyRated,
-
-            LastAdded
-        }
-
+        
         public SystemPlaylistType Type { get; set; }
     }
 }

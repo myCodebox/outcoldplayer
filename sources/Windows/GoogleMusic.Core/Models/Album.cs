@@ -1,20 +1,31 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // OutcoldSolutions (http://outcoldsolutions.com)
 // --------------------------------------------------------------------------------------------------------------------
+
 namespace OutcoldSolutions.GoogleMusic.Models
 {
-    using SQLite;
+    using System;
 
-    [Table("UserPlaylist")]
-    public class UserPlaylistEntity
+    public class Album
     {
-        [PrimaryKey, AutoIncrement]
-        public int PlaylistId { get; set; }
-
-        public string ProviderPlaylistId { get; set; }
-
         public string Title { get; set; }
 
         public string TitleNorm { get; set; }
+
+        public string Artist { get; set; }
+
+        public string ArtistNorm { get; set; }
+
+        public string Genre { get; set; }
+
+        public string GenreNorm { get; set; }
+
+        public int SongsCount { get; set; }
+
+        public TimeSpan Duration { get; set; }
+
+        public Uri AlbumArtUrl { get; set; }
+
+        public DateTime LastPlayed { get; set; }
     }
 }

@@ -7,9 +7,9 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
     using System.Collections.Generic;
     using System.Linq;
 
-    public class Artist : Playlist
+    public class ArtistBindingModel : PlaylistBaseBindingModel
     {
-        public Artist(List<Song> songs)
+        public ArtistBindingModel(List<SongBindingModel> songs)
             : this(songs, false)
         {
             var song = songs.FirstOrDefault(x => !string.IsNullOrWhiteSpace(x.Metadata.AlbumArtist))
@@ -21,14 +21,14 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             }
         }
 
-        public Artist(List<Song> songs, bool useArtist)
+        public ArtistBindingModel(List<SongBindingModel> songs, bool useArtist)
             : base(
                 null, 
                 songs.OrderBy(s => s.Metadata.Album, StringComparer.CurrentCultureIgnoreCase)
                     .ThenBy(s => Math.Max(s.Metadata.Disc, (byte)1))
                     .ThenBy(s => s.Metadata.Track).ToList())
         {
-            Song song;
+            SongBindingModel song;
 
             if (useArtist)
             {

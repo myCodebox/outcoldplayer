@@ -6,7 +6,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
     using OutcoldSolutions.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
 
-    public class PlaylistPageViewBindingModel<TPlaylist> : BindingModelBase where TPlaylist : Playlist
+    public class PlaylistPageViewBindingModel<TPlaylist> : BindingModelBase where TPlaylist : PlaylistBaseBindingModel
     {
         private TPlaylist playlist;
         private int selectedSongIndex = -1;
@@ -31,22 +31,22 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         {
             get
             {
-                if (this.playlist is Album)
+                if (this.playlist is AlbumBindingModel)
                 {
                     return "Album";
                 }
 
-                if (this.playlist is Artist)
+                if (this.playlist is ArtistBindingModel)
                 {
                     return "Artist";
                 }
 
-                if (this.playlist is Genre)
+                if (this.playlist is GenreBindingModel)
                 {
                     return "Genre";
                 }
 
-                if (this.playlist is UserPlaylist)
+                if (this.playlist is UserPlaylistBindingModel)
                 {
                     return "Playlist";
                 }
@@ -55,7 +55,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             }
         }
 
-        public Song SelectedSong
+        public SongBindingModel SelectedSong
         {
             get
             {

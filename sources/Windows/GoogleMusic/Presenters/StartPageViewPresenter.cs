@@ -19,16 +19,30 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private const int MaxItems = 12;
 
         private readonly IPlayQueueService playQueueService;
-        private readonly IPlaylistCollectionsService collectionsService;
+
         private readonly INavigationService navigationService;
+
+        private readonly ISystemPlaylistRepository systemPlaylistRepository;
+        private readonly IArtistsRepository artistsRepository;
+        private readonly IAlbumsRepository albumsRepository;
+        private readonly IGenresRepository genresRepository;
+        private readonly IUserPlaylistRepository userPlaylistRepository;
 
         public StartPageViewPresenter(
             INavigationService navigationService,
             IPlayQueueService playQueueService,
-            IPlaylistCollectionsService collectionsService)
+            ISystemPlaylistRepository systemPlaylistRepository,
+            IArtistsRepository artistsRepository,
+            IAlbumsRepository albumsRepository,
+            IGenresRepository genresRepository,
+            IUserPlaylistRepository userPlaylistRepository)
         {
             this.playQueueService = playQueueService;
-            this.collectionsService = collectionsService;
+            this.systemPlaylistRepository = systemPlaylistRepository;
+            this.artistsRepository = artistsRepository;
+            this.albumsRepository = albumsRepository;
+            this.genresRepository = genresRepository;
+            this.userPlaylistRepository = userPlaylistRepository;
             this.navigationService = navigationService;
 
             this.PlayCommand = new DelegateCommand(this.Play);
@@ -38,42 +52,78 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         protected override async Task LoadDataAsync(NavigatedToEventArgs navigatedToEventArgs)
         {
-            var groups = new List<PlaylistsGroupBindingModel>();
-
-            groups.Add(new PlaylistsGroupBindingModel(
-                null,
-                await this.collectionsService.GetCollection<SystemPlaylist>().CountAsync(),
-                (await this.collectionsService.GetCollection<SystemPlaylist>().GetAllAsync(Order.None)).Select(x => new PlaylistBindingModel(x) { PlayCommand = this.PlayCommand })));
-
-            await this.LoadAndAdd<UserPlaylist>(groups, "Playlists", PlaylistsRequest.Playlists);
-            await this.LoadAndAdd<Artist>(groups, "Artists", PlaylistsRequest.Artists);
-            await this.LoadAndAdd<Album>(groups, "Albums", PlaylistsRequest.Albums);
-            await this.LoadAndAdd<Genre>(groups, "Genres", PlaylistsRequest.Genres);
-
+            var groups = new List<GroupPlaylistsGroupBindingModel>();
+            groups.AddRange(await Task.WhenAll(
+                SystemPlaylistsAsync(), 
+                UserPlaylistsAsync(), 
+                ArtistsAsync(), 
+                AlbumsAsync(), 
+                GenresAsync()
+            ));
             this.BindingModel.Groups = groups;
         }
 
-        private async Task LoadAndAdd<TPlaylist>(
-            IList<PlaylistsGroupBindingModel> groups,
-            string title, 
-            PlaylistsRequest playlistsRequest) where TPlaylist : Playlist
+        private async Task<GroupPlaylistsGroupBindingModel> SystemPlaylistsAsync()
         {
-            var collection = this.collectionsService.GetCollection<TPlaylist>();
-            var playlists = (await collection.GetAllAsync(Order.LastPlayed, MaxItems)).ToList();
+            var systemPlaylists = await this.systemPlaylistRepository.GetSystemPlaylistsAsync();
+            return new GroupPlaylistsGroupBindingModel(
+                null, systemPlaylists.Count, systemPlaylists.Select(x => new GroupPlaylistBindingModel(x)).ToList());
+        }
 
-            if (playlists.Count > 0)
-            {
-                groups.Add(new PlaylistsGroupBindingModel(
-                    title,
-                    await collection.CountAsync(),
-                    playlists.Select(x => new PlaylistBindingModel(x) { PlayCommand = this.PlayCommand }),
-                    playlistsRequest));
-            }
+        private async Task<GroupPlaylistsGroupBindingModel> ArtistsAsync()
+        {
+            int artistsCount = await this.artistsRepository.GetCountAsync();
+            var artists = await this.artistsRepository.GetAristsAsync(Order.LastPlayed, take: MaxItems);
+            return new GroupPlaylistsGroupBindingModel(
+                "Artists",
+                artistsCount,
+                artists.Select(x => new GroupPlaylistBindingModel(x)).ToList(),
+                PlaylistsRequest.Artists);
+        }
+
+        private async Task<GroupPlaylistsGroupBindingModel> AlbumsAsync()
+        {
+            var taskCount = this.albumsRepository.GetCountAsync();
+            var taskList = this.albumsRepository.GetAlbumsAsync(Order.LastPlayed, take: MaxItems);
+            await Task.WhenAll(taskCount, taskList);
+
+            int albumsCount = await taskCount;
+            var albums = await taskList;
+
+            return new GroupPlaylistsGroupBindingModel(
+                "Albums",
+                albumsCount,
+                albums.Select(x => new GroupPlaylistBindingModel(x)).ToList(),
+                PlaylistsRequest.Albums);
+        }
+
+        private async Task<GroupPlaylistsGroupBindingModel> GenresAsync()
+        {
+            int genresCount = await this.genresRepository.GetCountAsync();
+            var genres = await this.genresRepository.GetGenresAsync(Order.LastPlayed, take: MaxItems);
+
+            return new GroupPlaylistsGroupBindingModel(
+                "Genres",
+                genresCount,
+                genres.Select(x => new GroupPlaylistBindingModel(x)).ToList(),
+                PlaylistsRequest.Genres);
+        }
+
+        private async Task<GroupPlaylistsGroupBindingModel> UserPlaylistsAsync()
+        {
+            int userPlaylistsCount = await this.userPlaylistRepository.GetCountAsync();
+            var playlists = await this.userPlaylistRepository.GetPlaylistsAsync(Order.LastPlayed, take: MaxItems);
+
+            return new GroupPlaylistsGroupBindingModel(
+                "Playlists",
+                userPlaylistsCount,
+                playlists.Select(x => new GroupPlaylistBindingModel(x)).ToList(),
+                PlaylistsRequest.Playlists);
         }
 
         private void Play(object commandParameter)
         {
-            Playlist playlist = commandParameter as Playlist;
+            PlaylistBaseBindingModel playlist = commandParameter as PlaylistBaseBindingModel;
             if (playlist != null)
             {
                 this.playQueueService.PlayAsync(playlist);

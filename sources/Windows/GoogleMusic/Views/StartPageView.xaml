@@ -22,7 +22,7 @@
                   Opacity="0"
                   Visibility="{Binding Path=IsDataLoading, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}"
                   ItemsSource="{Binding Source={StaticResource Groups}}"
-                  ItemTemplate="{StaticResource PlaylistDataTemplate}"
+                  ItemTemplateSelector="{StaticResource PlaylistDataTemplateSelector}"
                   IsItemClickEnabled="True"
                   SelectionMode="None"
                   ItemClick="PlaylistItemClick"  
@@ -57,9 +57,9 @@
                                             <StackPanel Orientation="Horizontal" >
                                                 <TextBlock Style="{StaticResource GroupHeaderTextStyle}" Text="{Binding Path=Title, Mode=OneWay}" />
                                                 <TextBlock Style="{StaticResource GroupHeaderTextStyle}" Text=" (" />
-                                                <TextBlock Style="{StaticResource GroupHeaderTextStyle}" Text="{Binding Path=PlaylistsCount, Mode=OneWay}" />
+                                                <TextBlock Style="{StaticResource GroupHeaderTextStyle}" Text="{Binding Path=ItemsCount, Mode=OneWay}" />
                                                 <TextBlock Style="{StaticResource GroupHeaderTextStyle}" Text=")" />
-                                                <TextBlock Style="{StaticResource GroupHeaderTextStyle}" Margin="10, 0, 0, 0" FontFamily="Segoe UI Symbol" Text="{StaticResource ChevronGlyph}"></TextBlock>
+                                                <TextBlock Style="{StaticResource GroupHeaderTextStyle}" Margin="10, 0, 0, 0" FontFamily="Segoe UI Symbol" Text="{StaticResource ChevronGlyph}"/>
                                             </StackPanel>
                                         </ControlTemplate>
                                     </Button.Template>

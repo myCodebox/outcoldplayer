@@ -129,12 +129,14 @@
     <Compile Include="BindingModels\AuthentificationPageViewBindingModel.cs" />
     <Compile Include="Controls\AppBarToggleButton.cs" />
     <Compile Include="Controls\FakeEqualizerControl.cs" />
+    <Compile Include="Controls\PlaylistDataTemplateSelector.cs" />
     <Compile Include="Controls\Rating.cs" />
     <Compile Include="Controls\RatingEventArgs.cs" />
     <Compile Include="Controls\ValueChangedEventArgs.cs" />
     <Compile Include="Converters\AlbumArtUrlToImageConverter.cs" />
     <Compile Include="Converters\DoubleToTimeConverter.cs" />
     <Compile Include="Converters\StringFormatConverter.cs" />
+    <Compile Include="Converters\TimeSpanToTimeConverter.cs" />
     <Compile Include="MainMenu.cs" />
     <Compile Include="Models\PlaylistsRequest.cs" />
     <Compile Include="Models\TimeSpanEx.cs" />
@@ -403,9 +405,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\OutcoldSolutions.Presentation.1.0.30305.41618\lib\win\OutcoldSolutions.Presentation.dll</HintPath>
     </Reference>
-    <Reference Include="OutcoldSolutions.SQLite, Version=1.0.31003.29193, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
+    <Reference Include="OutcoldSolutions.SQLite, Version=1.1.30316.18172, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\OutcoldSolutions.SQLite.1.0.30310.0\lib\win\OutcoldSolutions.SQLite.dll</HintPath>
+      <HintPath>..\..\packages\OutcoldSolutions.SQLite.1.1.30317.1\lib\win\OutcoldSolutions.SQLite.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

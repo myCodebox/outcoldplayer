@@ -76,7 +76,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
             else
             {
                 this.presenter.BindingModel.SelectedSongIndex =
-                    this.presenter.BindingModel.Songs.IndexOf((Song)e.AddedItems.First());
+                    this.presenter.BindingModel.Songs.IndexOf((SongBindingModel)e.AddedItems.First());
             }
         }
 

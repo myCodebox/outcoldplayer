@@ -10,9 +10,9 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
     public class PlaylistBindingModel : BindingModelBase
     {
-        private readonly Playlist playlist;
+        private readonly PlaylistBaseBindingModel playlist;
 
-        public PlaylistBindingModel(Playlist playlist)
+        public PlaylistBindingModel(PlaylistBaseBindingModel playlist)
         {
             if (playlist == null)
             {
@@ -28,11 +28,11 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         {
             get
             {
-                return this.playlist is Album;
+                return this.playlist is AlbumBindingModel;
             }
         }
 
-        public Playlist Playlist
+        public PlaylistBaseBindingModel Playlist
         {
             get
             {

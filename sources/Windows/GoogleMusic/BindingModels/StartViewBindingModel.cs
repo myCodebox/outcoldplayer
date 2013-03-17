@@ -9,9 +9,9 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
     public class StartViewBindingModel : BindingModelBase
     {
-        private List<PlaylistsGroupBindingModel> groups;
+        private List<GroupPlaylistsGroupBindingModel> groups;
 
-        public List<PlaylistsGroupBindingModel> Groups
+        public List<GroupPlaylistsGroupBindingModel> Groups
         {
             get
             {
