@@ -107,11 +107,6 @@ namespace OutcoldSolutions.GoogleMusic
             registration.Register<SupportView>();
         }
 
-        public static void RegisterViewResolvers(IRegistrationContext registration)
-        {
-            registration.Register<PlaylistViewResolver>();
-        }
-
         public static void RegisterPopupViews(IRegistrationContext registration)
         {
             registration.Register<IAddToPlaylistPopupView>()
@@ -119,6 +114,5 @@ namespace OutcoldSolutions.GoogleMusic
                             .As<AddToPlaylistPopupView>();
             registration.Register<AddToPlaylistPopupViewPresenter>();
         }
-
     }
 }

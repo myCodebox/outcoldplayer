@@ -6,8 +6,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using System.Collections.Generic;
     using System.Threading.Tasks;
 
-    using OutcoldSolutions.GoogleMusic.BindingModels;
-    using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Repositories.DbModels;
     using OutcoldSolutions.GoogleMusic.Views;
@@ -30,7 +28,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         protected override IEnumerable<CommandMetadata> GetContextCommands()
         {
             var commandMetadatas = base.GetContextCommands();
-            if (this.BindingModel.Playlist is UserPlaylistBindingModel)
+            if (this.BindingModel.Playlist is UserPlaylist)
             {
                 commandMetadatas = new List<CommandMetadata>(commandMetadatas)
                                        {
@@ -44,25 +42,25 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private void RemoveFromPlaylist()
         {
             var selectedSongIndex = this.BindingModel.SelectedSongIndex;
-            if (selectedSongIndex >= 0 && !this.IsDataLoading && this.BindingModel.Playlist is UserPlaylistBindingModel)
+            if (selectedSongIndex >= 0 && !this.IsDataLoading && this.BindingModel.Playlist is UserPlaylist)
             {
                 this.IsDataLoading = true;
-                var musicPlaylist = (UserPlaylistBindingModel)this.BindingModel.Playlist;
+                var musicPlaylist = (UserPlaylist)this.BindingModel.Playlist;
 
                 this.userPlaylistsRepository.RemoveEntry(
-                    musicPlaylist.Metadata, musicPlaylist.Songs[selectedSongIndex].Metadata.ProviderSongId, musicPlaylist.EntriesIds[selectedSongIndex]).ContinueWith(
+                    musicPlaylist, this.BindingModel.Songs[selectedSongIndex].Metadata.ProviderSongId, this.BindingModel.Songs[selectedSongIndex].Metadata.UserPlaylistEntry.ProviderEntryId).ContinueWith(
                         t =>
                             {
                                 this.IsDataLoading = false;
-                                //if (this.BindingModel.Playlist.Songs.Count > 0)
-                                //{
-                                //    if (this.BindingModel.Playlist.Songs.Count <= selectedSongIndex)
-                                //    {
-                                //        selectedSongIndex--;
-                                //    }
+                                if (this.BindingModel.Songs.Count > 0)
+                                {
+                                    if (this.BindingModel.Songs.Count <= selectedSongIndex)
+                                    {
+                                        selectedSongIndex--;
+                                    }
 
-                                //    this.BindingModel.SelectedSongIndex = selectedSongIndex;
-                                //}
+                                    this.BindingModel.SelectedSongIndex = selectedSongIndex;
+                                }
                             },
                         TaskScheduler.FromCurrentSynchronizationContext());
             }

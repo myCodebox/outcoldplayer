@@ -6,6 +6,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
 
@@ -14,7 +15,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
 
     public interface IAlbumsRepository : IPlaylistRepository<Album>
     {
-        Task<IList<Album>> GetArtistAlbumsAsync(string artistNorm);
+        Task<IList<Album>> GetArtistAlbumsAsync(int atistId);
     }
 
     public class AlbumsRepository : RepositoryBase, IAlbumsRepository
@@ -64,57 +65,33 @@ where x.[AlbumNorm] like ?1
 group by x.[ArtistNormX], x.[TitleNorm]
 ";
 
+        // TODO: We need to include here also not-artist albums but which contain artist songs
         private const string SqlArtistAlbums = @"
-select * from
-(
 select 
-       x.[ArtistNormX] as [ArtistNorm], 
-       x.[AlbumNorm] as [TitleNorm],
-       max(coalesce(nullif(x.[AlbumArtist], ''), x.[Artist])) as [Artist],       
-       max(ifnull(x.[Album], 0)) as [Title],        
-       count(*) as [SongsCount], 
-       max(ifnull(x.[Year], 0)) as [Year],       
-       max(ifnull(x.[Genre], '')) as [Genre],  
-       max(ifnull(x.[GenreNorm], '')) as [GenreNorm],     
-       sum(x.[Duration]) as [Duration],       
-       max(ifnull(x.[AlbumArtUrl], '')) as [AlbumArtUrl],    
-       max(x.[LastPlayed]) as [LastPlayed]
-from
-(
-select coalesce(nullif(s.[AlbumArtistNorm], ''), s.[ArtistNorm]) as [ArtistNormX], s.*
-from [Song] s
-where coalesce(nullif(s.[AlbumArtistNorm], ''), s.[ArtistNorm]) = ?1
-) as x
-group by x.[ArtistNormX], x.[AlbumNorm]
-
-union 
-
-select 
-       x.[ArtistNormX] as [ArtistNorm], 
-       x.[AlbumNorm] as [TitleNorm],
-       max(coalesce(nullif(x.[AlbumArtist], ''), x.[Artist])) as [Artist],       
-       max(ifnull(x.[Album], 0)) as [Title],        
-       count(*) as [SongsCount], 
-       max(ifnull(x.[Year], 0)) as [Year],       
-       max(ifnull(x.[Genre], '')) as [Genre], 
-       max(ifnull(x.[GenreNorm], '')) as [GenreNorm],      
-       sum(x.[Duration]) as [Duration],       
-       max(ifnull(x.[AlbumArtUrl], '')) as [AlbumArtUrl],    
-       max(x.[LastPlayed]) as [LastPlayed]
-from
-(
-select coalesce(nullif(s.[AlbumArtistNorm], ''), s.[ArtistNorm]) as [ArtistNormX], s.*
-from [Song] s
-where ifnull(s.[AlbumArtistNorm], '') <> '' and ifnull(s.[ArtistNorm], '') <> '' and s.[ArtistNorm] <> s.[AlbumArtistNorm]  
-      and s.[ArtistNorm] = ?1
-) as x
-group by x.[ArtistNormX], x.[AlbumNorm]
-) as u
-order by u.[Year], u.[TitleNorm]
+       x.[AlbumId],
+       x.[Title],  
+       x.[TitleNorm],
+       x.[ArtistId],
+       x.[SongsCount], 
+       x.[Year],    
+       x.[Duration],       
+       x.[ArtUrl],    
+       x.[LastPlayed],       
+       a.[ArtistId] as [Artist.ArtistId],
+       a.[Title] as [Artist.Title],
+       a.[TitleNorm] as [Artist.TitleNorm],
+       a.[AlbumsCount] as [Artist.AlbumsCount],
+       a.[SongsCount] as [Artist.SongsCount],
+       a.[Duration] as [Artist.Duration],
+       a.[ArtUrl] as [Artist.ArtUrl],
+       a.[LastPlayed]  as [Artist.LastPlayed]
+from [Album] x 
+     inner join [Artist] as a on x.[ArtistId] = a.[ArtistId]       
+where a.[ArtistId] = ?1
 ";
 
         private const string SqlAlbumsSongs = @"
-select * ,
+select s.* ,
        a.[AlbumId] as [Album.AlbumId],
        a.[Title] as [Album.Title],  
        a.[TitleNorm] as [Album.TitleNorm],
@@ -168,9 +145,9 @@ order by coalesce(nullif(s.Disc, 0), 1), s.Track
             return await this.Connection.QueryAsync<Album>(sql.ToString());
         }
 
-        public async Task<IList<Album>> GetArtistAlbumsAsync(string artistNorm)
+        public async Task<IList<Album>> GetArtistAlbumsAsync(int atistId)
         {
-            return await this.Connection.QueryAsync<Album>(SqlArtistAlbums, artistNorm);
+            return await this.Connection.QueryAsync<Album>(SqlArtistAlbums, atistId);
         }
 
         public async Task<IList<Album>> SearchAsync(string searchQuery, uint? take)
@@ -192,7 +169,7 @@ order by coalesce(nullif(s.Disc, 0), 1), s.Track
             var sql = new StringBuilder(SqlAllAlbums);
             sql.Append(" where x.[AlbumId] == ?1 ");
 
-            return await this.Connection.ExecuteScalarAsync<Album>(sql.ToString(), id);
+            return (await this.Connection.QueryAsync<Album>(sql.ToString(), id)).FirstOrDefault();
         }
 
         public async Task<IList<Song>> GetSongsAsync(int id)

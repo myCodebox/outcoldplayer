@@ -2,43 +2,6 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:controls="using:OutcoldSolutions.GoogleMusic.Controls">
 
-    <DataTemplate x:Key="PlaylistDataTemplate">
-        <Border Background="{StaticResource ListViewItemPlaceholderBackgroundThemeBrush}">
-            <Grid Width="294" Height="146" Margin="0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <Border Margin="15" Width="116" Height="116" Background="Gray">
-                    <Image Width="116" Height="116" Source="{Binding Path=Playlist.AlbumArtUrl, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=116, Mode=OneWay}" Stretch="None"/>
-                </Border>
-                <StackPanel Grid.Column="1" Margin="0,15,10,0">
-                    <TextBlock Text="{Binding Path=Playlist.Title, Mode=OneWay}"  Style="{StaticResource BodyTextStyle}" TextWrapping="Wrap"/>
-                    <!--<TextBlock Visibility="{Binding Path=IsAlbum, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                                           Text="{Binding Path=Playlist.Artist, Mode=OneTime}"  
-                                                           Style="{StaticResource BodyTextStyle}" 
-                                                           Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" 
-                                                           TextWrapping="Wrap"/>-->
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{Binding Path=Playlist.Duration, Mode=OneTime, Converter={StaticResource DoubleToTimeConverter}}" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
-                        <TextBlock Text=" (" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
-                        <TextBlock Text="{Binding Path=Playlist.Songs.Count, Mode=OneTime}" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
-                        <TextBlock Text=")" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
-                    </StackPanel>
-                </StackPanel>
-                <Button Grid.Column="1"
-                        Width="65"
-                        Height="65"
-                        Style="{StaticResource PlayAppBarButtonStyle}"  
-                        AutomationProperties.Name=""
-                        VerticalAlignment="Bottom"
-                        HorizontalAlignment="Right"
-                        Command="{Binding Path=PlayCommand, Mode=OneTime}"
-                        CommandParameter="{Binding Path=Playlist, Mode=OneTime}"/>
-            </Grid>
-        </Border>
-    </DataTemplate>
-
     <DataTemplate x:Key="AlbumDataTemplate">
         <Border Background="{StaticResource ListViewItemPlaceholderBackgroundThemeBrush}">
             <Grid Width="294" Height="146" Margin="0">
@@ -50,14 +13,15 @@
                     <Image Width="116" Height="116" Source="{Binding Path=Playlist.ArtUrl, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=116, Mode=OneWay}" Stretch="None"/>
                 </Border>
                 <StackPanel Grid.Column="1" Margin="0,15,10,0">
-                    <TextBlock Text="{Binding Path=Playlist.Title, Mode=OneWay}"  Style="{StaticResource BodyTextStyle}" TextWrapping="Wrap"/>
-                    <TextBlock Text="{Binding Path=Playlist.Artist.Title, Mode=OneTime}" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="Wrap"/>
+                    <TextBlock Text="{Binding Path=Playlist.Title, Mode=OneWay}"  Style="{StaticResource BodyTextStyle}" TextWrapping="Wrap" TextTrimming="WordEllipsis" MaxHeight="40"/>
+                    <TextBlock Text="{Binding Path=Playlist.Artist.Title, Mode=OneTime}" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="Wrap" TextTrimming="WordEllipsis" MaxHeight="20"/>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{Binding Path=Playlist.Duration, Mode=OneTime, Converter={StaticResource TimeSpanToTimeConverter}}" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
                         <TextBlock Text=" (" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
                         <TextBlock Text="{Binding Path=Playlist.SongsCount, Mode=OneTime}" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
                         <TextBlock Text=")" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
                     </StackPanel>
+                    <TextBlock Text="{Binding Path=Playlist.Year, Mode=OneTime}" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" Visibility="{Binding Path=BindingModel.Playlist.Year, Converter={StaticResource ValueToInvisibilityConverter}, ConverterParameter=0}"/>
                 </StackPanel>
                 <Button Grid.Column="1"
                         Width="65"
@@ -83,7 +47,7 @@
                     <Image Width="116" Height="116" Source="{Binding Path=Playlist.ArtUrl, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=116, Mode=OneWay}" Stretch="None"/>
                 </Border>
                 <StackPanel Grid.Column="1" Margin="0,15,10,0">
-                    <TextBlock Text="{Binding Path=Playlist.Title, Mode=OneWay}"  Style="{StaticResource BodyTextStyle}" TextWrapping="Wrap"/>
+                    <TextBlock Text="{Binding Path=Playlist.Title, Mode=OneWay}"  Style="{StaticResource BodyTextStyle}" TextWrapping="Wrap" TextTrimming="WordEllipsis" MaxHeight="40"/>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{Binding Path=Playlist.AlbumsCount, Mode=OneTime}" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" />
                         <TextBlock Text=" albums" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" />
@@ -119,7 +83,7 @@
                     <Image Width="116" Height="116" Source="{Binding Path=Playlist.ArtUrl, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=116, Mode=OneWay}" Stretch="None"/>
                 </Border>
                 <StackPanel Grid.Column="1" Margin="0,15,10,0">
-                    <TextBlock Text="{Binding Path=Playlist.Title, Mode=OneWay}"  Style="{StaticResource BodyTextStyle}" TextWrapping="Wrap"/>
+                    <TextBlock Text="{Binding Path=Playlist.Title, Mode=OneWay}"  Style="{StaticResource BodyTextStyle}" TextWrapping="Wrap"  TextTrimming="WordEllipsis" MaxHeight="40"/>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{Binding Path=Playlist.Duration, Mode=OneTime, Converter={StaticResource TimeSpanToTimeConverter}}" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
                         <TextBlock Text=" (" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
@@ -151,7 +115,7 @@
                     <Image Width="116" Height="116" Source="ms-appx:///Resources/UnknownArt-116.png" Stretch="None"/>
                 </Border>
                 <StackPanel Grid.Column="1" Margin="0,15,10,0">
-                    <TextBlock Text="{Binding Path=Playlist.SystemPlaylistType, Mode=OneWay}"  Style="{StaticResource BodyTextStyle}" TextWrapping="Wrap"/>
+                    <TextBlock Text="{Binding Path=Playlist.SystemPlaylistType, Mode=OneWay}"  Style="{StaticResource BodyTextStyle}" TextWrapping="Wrap"  TextTrimming="WordEllipsis" MaxHeight="40"/>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{Binding Path=Playlist.Duration, Mode=OneTime, Converter={StaticResource TimeSpanToTimeConverter}}" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
                         <TextBlock Text=" (" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
@@ -183,7 +147,7 @@
                     <Image Width="116" Height="116" Source="{Binding Path=Playlist.ArtUrl, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=116, Mode=OneWay}" Stretch="None"/>
                 </Border>
                 <StackPanel Grid.Column="1" Margin="0,15,10,0">
-                    <TextBlock Text="{Binding Path=Playlist.Title, Mode=OneWay}"  Style="{StaticResource BodyTextStyle}" TextWrapping="Wrap"/>
+                    <TextBlock Text="{Binding Path=Playlist.Title, Mode=OneWay}"  Style="{StaticResource BodyTextStyle}" TextWrapping="Wrap"  TextTrimming="WordEllipsis" MaxHeight="40"/>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{Binding Path=Playlist.Duration, Mode=OneTime, Converter={StaticResource TimeSpanToTimeConverter}}" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
                         <TextBlock Text=" (" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
@@ -209,7 +173,6 @@
         ArtistDataTemplate="{StaticResource ArtistDataTemplate}"
         AlbumDataTemplate="{StaticResource AlbumDataTemplate}"
         GenreDataTemplate="{StaticResource GenreDataTemplate}"
-        PlaylistDataTemplate="{StaticResource PlaylistDataTemplate}"
         SystemPlaylistDataTemplate="{StaticResource SystemPlaylistDataTemplate}"
         UserPlaylistDataTemplate="{StaticResource UserPlaylistDataTemplate}"/>
     

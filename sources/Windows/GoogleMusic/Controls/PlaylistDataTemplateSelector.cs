@@ -25,11 +25,9 @@ namespace OutcoldSolutions.GoogleMusic.Controls
 
         public DataTemplate UserPlaylistDataTemplate { get; set; }
 
-        public DataTemplate PlaylistDataTemplate { get; set; }
-
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
         {
-            var groupPlaylistBindingModel = item as GroupPlaylistBindingModel;
+            var groupPlaylistBindingModel = item as PlaylistBindingModel;
             object playlist = null;
             if (groupPlaylistBindingModel != null)
             {
@@ -66,9 +64,8 @@ namespace OutcoldSolutions.GoogleMusic.Controls
                 return this.UserPlaylistDataTemplate;
             }
 
-            Debug.Assert(this.PlaylistDataTemplate != null, "this.PlaylistDataTemplate != null");
-            return this.PlaylistDataTemplate;
-            // return base.SelectTemplateCore(item, container);
+            Debug.Assert(false, "Uknown playlist type.");
+            return base.SelectTemplateCore(item, container);
         }
     }
 }

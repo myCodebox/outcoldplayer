@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// Outcold Solutions (http://outcoldman.com)
+// OutcoldSolutions (http://outcoldsolutions.com)
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.BindingModels
 {
@@ -9,9 +9,9 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
     public class StartViewBindingModel : BindingModelBase
     {
-        private List<GroupPlaylistsGroupBindingModel> groups;
+        private List<PlaylistsGroupBindingModel> groups;
 
-        public List<GroupPlaylistsGroupBindingModel> Groups
+        public List<PlaylistsGroupBindingModel> Groups
         {
             get
             {

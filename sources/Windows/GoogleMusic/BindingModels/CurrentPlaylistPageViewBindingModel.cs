@@ -6,7 +6,6 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
     using System.Collections.Generic;
 
     using OutcoldSolutions.BindingModels;
-    using OutcoldSolutions.GoogleMusic.Models;
 
     public class CurrentPlaylistPageViewBindingModel : BindingModelBase
     {

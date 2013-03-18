@@ -244,7 +244,7 @@ namespace OutcoldSolutions.GoogleMusic.Shell
                         var playlist = playlists.FirstOrDefault(x => string.Equals(x.Title, strings[1], StringComparison.CurrentCultureIgnoreCase));
                         if (playlist != null)
                         {
-                            await this.dispatcher.RunAsync(() => this.navigationService.ResolveAndNavigateTo<PlaylistViewResolver>(playlist));
+                            await this.dispatcher.RunAsync(() => this.navigationService.NavigateToPlaylist(null));
                         }
                     }
                 }

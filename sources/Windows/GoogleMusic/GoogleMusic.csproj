@@ -158,7 +158,6 @@
     <Compile Include="Shell\MediaEndedReason.cs" />
     <Compile Include="Shell\NotificationService.cs" />
     <Compile Include="Shell\PlayProgressEventArgs.cs" />
-    <Compile Include="Views\PlaylistViewResolver.cs" />
     <Compile Include="Presenters\AlbumPageViewPresenter.cs" />
     <Compile Include="Presenters\ArtistPageViewPresenter.cs" />
     <Compile Include="Presenters\AuthentificationPageViewPresenter.cs" />

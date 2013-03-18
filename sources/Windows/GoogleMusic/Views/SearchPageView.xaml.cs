@@ -5,6 +5,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
 {
     using OutcoldSolutions.Controls;
     using OutcoldSolutions.GoogleMusic.BindingModels;
+    using OutcoldSolutions.GoogleMusic.Repositories.DbModels;
     using OutcoldSolutions.Views;
 
     using Windows.UI.Xaml.Controls;
@@ -67,7 +68,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
             }
             else if (e.ClickedItem is PlaylistResultBindingModel)
             {
-                this.NavigationService.ResolveAndNavigateTo<PlaylistViewResolver>(((PlaylistResultBindingModel)e.ClickedItem).Result);
+                this.NavigationService.NavigateToPlaylist((IPlaylist)e.ClickedItem);
             }
         }
 

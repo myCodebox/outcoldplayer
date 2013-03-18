@@ -1,26 +1,21 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// Outcold Solutions (http://outcoldman.com)
+// OutcoldSolutions (http://outcoldsolutions.com)
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Presenters
 {
-    using System.Linq;
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
+    using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Repositories.DbModels;
-    using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
 
     public class AlbumPageViewPresenter : PlaylistPageViewPresenterBase<IAlbumPageView, Album>
     {
-        private readonly IPlaylistCollectionsService playlistCollectionsService;
-
         public AlbumPageViewPresenter(
-            IDependencyResolverContainer container,
-            IPlaylistCollectionsService playlistCollectionsService)
+            IDependencyResolverContainer container)
             : base(container)
         {
-            this.playlistCollectionsService = playlistCollectionsService;
         }
 
         protected override async Task LoadDataAsync(NavigatedToEventArgs navigatedToEventArgs)
@@ -28,11 +23,18 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             var song = navigatedToEventArgs.Parameter as SongBindingModel;
             if (song != null)
             {
-                var albums = await this.playlistCollectionsService.GetCollection<AlbumBindingModel>().GetAllAsync();
-                var album = albums.FirstOrDefault(x => x.Songs.Contains(song));
+                await base.LoadDataAsync(
+                        new NavigatedToEventArgs(
+                            navigatedToEventArgs.View,
+                            navigatedToEventArgs.State,
+                            new PlaylistNavigationRequest()
+                                {
+                                    PlaylistId = song.Metadata.Album.Id,
+                                    PlaylistType = PlaylistType.Album
+                                },
+                            navigatedToEventArgs.IsNavigationBack));
 
-                // this.BindingModel.Playlist = album;
-                this.BindingModel.SelectedSongIndex = album.Songs.IndexOf(song);
+                this.BindingModel.SelectedSongIndex = this.BindingModel.Songs.IndexOf(new SongBindingModel(song.Metadata));
             }
             else
             {

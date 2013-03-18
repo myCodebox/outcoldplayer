@@ -1,20 +1,19 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// Outcold Solutions (http://outcoldman.com)
+// OutcoldSolutions (http://outcoldsolutions.com)
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.BindingModels
 {
     using System.Collections.Generic;
 
     using OutcoldSolutions.BindingModels;
-    using OutcoldSolutions.GoogleMusic.Models;
+    using OutcoldSolutions.GoogleMusic.Repositories.DbModels;
 
     public class ArtistPageViewBindingModel : BindingModelBase
     {
-        private ArtistBindingModel artist;
+        private Artist artist;
+        private IList<PlaylistBindingModel> albums;
 
-        private List<PlaylistBindingModel> albums;
-
-        public ArtistBindingModel Artist
+        public Artist Artist
         {
             get
             {
@@ -23,12 +22,11 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
             set
             {
-                this.artist = value;
-                this.RaiseCurrentPropertyChanged();
+                this.SetValue(ref this.artist, value);
             }
         }
 
-        public List<PlaylistBindingModel> Albums
+        public IList<PlaylistBindingModel> Albums
         {
             get
             {
@@ -37,8 +35,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
             set
             {
-                this.albums = value;
-                this.RaiseCurrentPropertyChanged();
+                this.SetValue(ref this.albums, value);
             }
         }
     }

@@ -46,7 +46,7 @@
         
         <ListView Grid.Row="1"
                   Visibility="{Binding Path=IsDataLoading, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}"
-                  ItemsSource="{Binding Path=BindingModel.Playlist.Songs, Mode=OneWay}"
+                  ItemsSource="{Binding Path=BindingModel.Songs, Mode=OneWay}"
                   SelectedIndex="{Binding Path=BindingModel.SelectedSongIndex, Mode=TwoWay}"
                   SelectionMode="Single"
                   HorizontalAlignment="Stretch"
@@ -79,8 +79,8 @@
                         
                         <TextBlock Grid.Column="1" Style="{StaticResource BasicTextStyle}" VerticalAlignment="Center" Margin="5, 0, 0, 0" Text="{Binding Path=Title, Mode=OneWay}" HorizontalAlignment="Left" TextTrimming="WordEllipsis" />
                         <TextBlock Grid.Column="2" Style="{StaticResource BasicTextStyle}" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="{Binding Path=Duration, Converter={StaticResource DoubleToTimeConverter}, Mode=OneWay}" HorizontalAlignment="Right"/>
-                        <TextBlock Grid.Column="3" Style="{StaticResource BasicTextStyle}" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="{Binding Path=Artist, Mode=OneWay}" TextTrimming="WordEllipsis" />
-                        <TextBlock Grid.Column="4" Style="{StaticResource BasicTextStyle}" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="{Binding Path=Album, Mode=OneWay}" TextTrimming="WordEllipsis" />
+                        <TextBlock Grid.Column="3" Style="{StaticResource BasicTextStyle}" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="{Binding Path=Artist.Title, Mode=OneWay}" TextTrimming="WordEllipsis" />
+                        <TextBlock Grid.Column="4" Style="{StaticResource BasicTextStyle}" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="{Binding Path=Album.Title, Mode=OneWay}" TextTrimming="WordEllipsis" />
                         <TextBlock Grid.Column="5" Style="{StaticResource BasicTextStyle}" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="{Binding Path=PlayCount, Mode=OneWay}" HorizontalAlignment="Right" />
                         <controls:Rating Grid.Column="6" VerticalAlignment="Center" Margin="20, 0, 40, 0" Value="{Binding Path=Rating, Mode=OneWay}" HorizontalAlignment="Right" 
                                             Command="{Binding Path=DataContext.RateSongCommand, ElementName=ListView, Mode=OneTime}"

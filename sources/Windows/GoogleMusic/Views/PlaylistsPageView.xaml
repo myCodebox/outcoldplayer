@@ -35,7 +35,7 @@
                           IsItemClickEnabled="True"
                           ScrollViewer.HorizontalScrollMode="Enabled"
                           ScrollViewer.VerticalScrollMode="Disabled"
-                          ItemTemplate="{StaticResource PlaylistDataTemplate}"
+                          ItemTemplateSelector="{StaticResource PlaylistDataTemplateSelector}"
                           SelectedItem="{Binding Path=BindingModel.SelectedItem, Mode=TwoWay}" 
                           Padding="120, 0, 0, 0"
                           ManipulationMode="None" >

@@ -95,7 +95,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
             var playlistBindingModel = e.ClickedItem as PlaylistBindingModel;
             if (playlistBindingModel != null)
             {
-                this.NavigationService.ResolveAndNavigateTo<PlaylistViewResolver>(playlistBindingModel.Playlist);
+                this.NavigationService.NavigateToPlaylist(playlistBindingModel.Playlist);
             }
         }
         

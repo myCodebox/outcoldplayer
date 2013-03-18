@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// Outcold Solutions (http://outcoldman.com)
+// OutcoldSolutions (http://outcoldsolutions.com)
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Presenters
 {
@@ -10,6 +10,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
+    using OutcoldSolutions.GoogleMusic.Repositories;
+    using OutcoldSolutions.GoogleMusic.Repositories.DbModels;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
     using OutcoldSolutions.Presenters;
@@ -18,13 +20,19 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     {
         private readonly IPlayQueueService playQueueService;
         private readonly INavigationService navigationService;
+        private readonly IPlaylistsService playlistsService;
+        private readonly IAlbumsRepository albumsRepository;
 
         public ArtistPageViewPresenter(
             IPlayQueueService playQueueService,
-            INavigationService navigationService)
+            INavigationService navigationService,
+            IPlaylistsService playlistsService,
+            IAlbumsRepository albumsRepository)
         {
             this.playQueueService = playQueueService;
             this.navigationService = navigationService;
+            this.playlistsService = playlistsService;
+            this.albumsRepository = albumsRepository;
             this.PlayCommand = new DelegateCommand(this.Play);
             this.ShowAllCommand = new DelegateCommand(this.ShowAll);
         }
@@ -33,24 +41,26 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         public DelegateCommand ShowAllCommand { get; set; }
 
+        public override void OnNavigatingFrom(NavigatingFromEventArgs eventArgs)
+        {
+            base.OnNavigatingFrom(eventArgs);
+
+            this.BindingModel.Artist = null;
+            this.BindingModel.Albums = null;
+        }
+
         protected override async Task LoadDataAsync(NavigatedToEventArgs navigatedToEventArgs)
         {
-            var artist = navigatedToEventArgs.Parameter as ArtistBindingModel;
-            if (artist == null)
+            var request = navigatedToEventArgs.Parameter as PlaylistNavigationRequest;
+            if (request == null || request.PlaylistType != PlaylistType.Artist)
             {
-                throw new NotSupportedException("Current view cannot show not-artists playlists.");
+                throw new NotSupportedException("Request should be PlaylistNavigationRequest and playlist type should be artist.");
             }
 
-            await Task.Run(
-                () =>
-                    {
-                        this.BindingModel.Artist = artist;
-                        this.BindingModel.Albums =
-                            SongsGrouping.GroupByAlbums(artist.Songs)
-                                         .Select(x => new PlaylistBindingModel(x) { PlayCommand = this.PlayCommand })
-                                         .OrderBy(x => x.Playlist.Title, StringComparer.CurrentCultureIgnoreCase)
-                                         .ToList();
-                    });
+            this.BindingModel.Artist = await this.playlistsService.GetRepository<Artist>().GetAsync(request.PlaylistId);
+            this.BindingModel.Albums = (await this.albumsRepository.GetArtistAlbumsAsync(request.PlaylistId))
+                    .Select(a => new PlaylistBindingModel(a) { PlayCommand = this.PlayCommand })
+                    .ToList();
         }
 
         protected override IEnumerable<CommandMetadata> GetViewCommands()
@@ -63,30 +73,39 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private void ShowAll()
         {
-            if (this.BindingModel.Artist != null)
-            {
-                this.navigationService.NavigateTo<IPlaylistPageView>(this.BindingModel.Artist);
-            }
+            this.NavigateToShowAllArtistsSongs();
         }
 
         private void Play(object commandParameter)
         {
             if (this.BindingModel.Artist != null)
             {
-                PlaylistBaseBindingModel playlist = commandParameter as PlaylistBaseBindingModel;
+                IPlaylist playlist = commandParameter as Album;
                 if (playlist == null)
                 {
                     playlist = this.BindingModel.Artist;
-                    this.navigationService.NavigateTo<IPlaylistPageView>(this.BindingModel.Artist);
+                    this.NavigateToShowAllArtistsSongs();
                 }
                 else
                 {
-                    this.navigationService.ResolveAndNavigateTo<PlaylistViewResolver>(playlist);
+                    this.navigationService.NavigateToPlaylist(playlist);
                 }
 
-                this.playQueueService.PlayAsync(null, playlist.Songs.Select(x => x.Metadata).ToList(), songIndex: -1);
-                this.playQueueService.PlayAsync();
+                this.playQueueService.PlayAsync(playlist);
                 this.Toolbar.IsBottomAppBarOpen = true;
+            }
+        }
+
+        private void NavigateToShowAllArtistsSongs()
+        {
+            if (this.BindingModel.Artist != null)
+            {
+                this.navigationService.NavigateTo<IPlaylistPageView>(
+                    new PlaylistNavigationRequest()
+                        {
+                            PlaylistId = this.BindingModel.Artist.Id,
+                            PlaylistType = PlaylistType.Artist
+                        });
             }
         }
     }

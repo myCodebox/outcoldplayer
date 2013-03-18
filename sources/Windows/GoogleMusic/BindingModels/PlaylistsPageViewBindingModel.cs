@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// Outcold Solutions (http://outcoldman.com)
+// OutcoldSolutions (http://outcoldsolutions.com)
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.BindingModels
 {
@@ -22,11 +22,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
             set
             {
-                if (this.title != value)
-                {
-                    this.title = value;
-                    this.RaiseCurrentPropertyChanged();
-                }
+                this.SetValue(ref this.title, value);
             }
         }
 
@@ -39,8 +35,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
             set
             {
-                this.isEditable = value;
-                this.RaiseCurrentPropertyChanged();
+                this.SetValue(ref this.isEditable, value);
             }
         }
 
@@ -53,8 +48,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
             set
             {
-                this.selectedItem = value;
-                this.RaiseCurrentPropertyChanged();
+                this.SetValue(ref this.selectedItem, value);
             }
         }
 

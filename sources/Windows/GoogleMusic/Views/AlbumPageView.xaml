@@ -26,17 +26,18 @@
                Margin="12, 32, 12, 32" 
                Height="116" 
                Width="116" 
-               Source="{Binding Path=BindingModel.Playlist.AlbumArtUrl, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=116, Mode=OneWay}"
+               Source="{Binding Path=BindingModel.Playlist.ArtUrl, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=116, Mode=OneWay}"
                Stretch="None"/>
 
             <TextBlock Style="{StaticResource TitleTextStyle}" Text="{Binding Path=BindingModel.Playlist.Title, Mode=OneWay}" TextWrapping="Wrap" TextTrimming="WordEllipsis" />
-            <TextBlock Style="{StaticResource SubtitleTextStyle}" Margin="0, 7, 0, 0" Text="{Binding Path=BindingModel.Playlist.Artist, Mode=OneWay}"  TextWrapping="Wrap" TextTrimming="WordEllipsis" />
+            <TextBlock Style="{StaticResource SubtitleTextStyle}" Margin="0, 7, 0, 0" Text="{Binding Path=BindingModel.Playlist.Artist.Title, Mode=OneWay}"  TextWrapping="Wrap" TextTrimming="WordEllipsis" />
             <TextBlock Style="{StaticResource SubtitleTextStyle}" Margin="0, 14, 0, 0" Text="{Binding Path=BindingModel.Playlist.Year, Mode=OneWay}" Visibility="{Binding Path=BindingModel.Playlist.Year, Converter={StaticResource ValueToInvisibilityConverter}, ConverterParameter=0}" />
+            <!-- TODO: Fix genre -->
             <TextBlock Style="{StaticResource SubtitleTextStyle}" Margin="0, 7, 0, 0" Text="{Binding Path=BindingModel.Playlist.Genre, Mode=OneWay}" />
 
             <StackPanel Orientation="Horizontal" Margin="0, 7, 0, 0">
                 <TextBlock Style="{StaticResource TitleTextStyle}" Text="Songs: " />
-                <TextBlock Style="{StaticResource SubtitleTextStyle}" Margin="7, 0, 0, 0" Text="{Binding Path=BindingModel.Playlist.Songs.Count, Mode=OneWay}" />
+                <TextBlock Style="{StaticResource SubtitleTextStyle}" Margin="7, 0, 0, 0" Text="{Binding Path=BindingModel.Playlist.SongsCount, Mode=OneWay}" />
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" Margin="0, 7, 0, 0">

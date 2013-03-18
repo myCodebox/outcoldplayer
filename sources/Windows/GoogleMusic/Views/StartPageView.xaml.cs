@@ -48,7 +48,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
             Debug.Assert(album != null, "album != null");
             if (album != null)
             {
-                this.NavigationService.ResolveAndNavigateTo<PlaylistViewResolver>(album.Playlist);
+                this.NavigationService.NavigateToPlaylist(album.Playlist);
             }
         }
         

@@ -24,17 +24,17 @@
             
             <StackPanel Orientation="Horizontal" Margin="0, 7, 0, 0">
                 <TextBlock Style="{StaticResource TitleTextStyle}" Text="Albums: " />
-                <TextBlock Style="{StaticResource SubtitleTextStyle}" Margin="7, 0, 0, 0" Text="{Binding Path=BindingModel.Albums.Count, Mode=OneWay}" />
+                <TextBlock Style="{StaticResource SubtitleTextStyle}" Margin="7, 0, 0, 0" Text="{Binding Path=BindingModel.Artist.AlbumsCount, Mode=OneWay}" />
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" Margin="0, 7, 0, 0">
                 <TextBlock Style="{StaticResource TitleTextStyle}" Text="Songs: " />
-                <TextBlock Style="{StaticResource SubtitleTextStyle}" Margin="7, 0, 0, 0" Text="{Binding Path=BindingModel.Artist.Songs.Count, Mode=OneWay}" />
+                <TextBlock Style="{StaticResource SubtitleTextStyle}" Margin="7, 0, 0, 0" Text="{Binding Path=BindingModel.Artist.SongsCount, Mode=OneWay}" />
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" Margin="0, 7, 0, 0">
                 <TextBlock Style="{StaticResource TitleTextStyle}" Text="Duration: " />
-                <TextBlock Style="{StaticResource SubtitleTextStyle}" Margin="7, 0, 0, 0" Text="{Binding Path=BindingModel.Artist.Duration, Converter={StaticResource DoubleToTimeConverter}, Mode=OneWay}" />
+                <TextBlock Style="{StaticResource SubtitleTextStyle}" Margin="7, 0, 0, 0" Text="{Binding Path=BindingModel.Artist.Duration, Converter={StaticResource TimeSpanToTimeConverter}, Mode=OneWay}" />
             </StackPanel>
 
         </StackPanel>
@@ -51,7 +51,7 @@
                   IsItemClickEnabled="True"
                   ScrollViewer.HorizontalScrollMode="Enabled"
                   ScrollViewer.VerticalScrollMode="Disabled"
-                  ItemTemplate="{StaticResource PlaylistDataTemplate}"
+                  ItemTemplate="{StaticResource AlbumDataTemplate}"
                   Padding="0, 0, 0, 0"
                   ManipulationMode="None" >
             <GridView.ItemsPanel>

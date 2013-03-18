@@ -67,17 +67,17 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.BindingModel.Groups = groups.ToList();
         }
 
-        private GroupPlaylistsGroupBindingModel CreateGroup(string title, int playlistsCount, IEnumerable<IPlaylist> playlists, PlaylistType type)
+        private PlaylistsGroupBindingModel CreateGroup(string title, int playlistsCount, IEnumerable<IPlaylist> playlists, PlaylistType type)
         {
-            List<GroupPlaylistBindingModel> groupItems =
+            List<PlaylistBindingModel> groupItems =
                 playlists.Select(
                     playlist =>
-                    new GroupPlaylistBindingModel(playlist)
+                    new PlaylistBindingModel(playlist)
                         {
                             PlayCommand = this.PlayCommand
                         }).ToList();
 
-            return new GroupPlaylistsGroupBindingModel(
+            return new PlaylistsGroupBindingModel(
                 title,
                 playlistsCount,
                 groupItems,
