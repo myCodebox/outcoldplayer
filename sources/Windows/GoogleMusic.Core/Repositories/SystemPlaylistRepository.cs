@@ -38,7 +38,7 @@ select count(*) as SongsCount, sum(x.[Duration]) as Duration, ?2 as [SystemPlayl
 (
   select *
   from [Song] as s  
-  order by s.[CreationDate]
+  order by s.[CreationDate] desc
   limit ?1
 ) as x
 ";
@@ -67,8 +67,7 @@ select count(*) as SongsCount, sum(s.[Duration]) as Duration, ?1 as [SystemPlayl
             return await Task.WhenAll(
                 this.GetAllSongsPlaylistAsync(),
                 this.GetHighlyRatedPlaylistAsync(),
-                this.GetLastAddedSongsPlaylistAsync()
-                );
+                this.GetLastAddedSongsPlaylistAsync());
         }
     }
 }

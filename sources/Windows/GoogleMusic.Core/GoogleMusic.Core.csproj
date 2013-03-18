@@ -100,14 +100,14 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="CommandIcon.cs" />
-    <Compile Include="Models\Album.cs" />
-    <Compile Include="Models\Artist.cs" />
-    <Compile Include="Models\Genre.cs" />
+    <Compile Include="Repositories\DbModels\AlbumEntity.cs" />
     <Compile Include="Models\StringEx.cs" />
     <Compile Include="Models\SystemPlaylist.cs" />
-    <Compile Include="Models\UserPlaylist.cs" />
-    <Compile Include="Models\UserPlaylistEntity.cs" />
-    <Compile Include="Models\UserPlaylistEntryEntity.cs" />
+    <Compile Include="Repositories\DbModels\ArtistEntity.cs" />
+    <Compile Include="Repositories\DbModels\GenreEntity.cs" />
+    <Compile Include="Repositories\DbModels\ISongsContainerEntity.cs" />
+    <Compile Include="Repositories\DbModels\UserPlaylistEntity.cs" />
+    <Compile Include="Repositories\DbModels\UserPlaylistEntryEntity.cs" />
     <Compile Include="Models\SongsGrouping.cs" />
     <Compile Include="Models\Search.cs" />
     <Compile Include="BindingModels\AlbumBindingModel.cs" />
@@ -116,7 +116,7 @@
     <Compile Include="BindingModels\UserPlaylistBindingModel.cs" />
     <Compile Include="BindingModels\PlaylistBaseBindingModel.cs" />
     <Compile Include="BindingModels\SongBindingModel.cs" />
-    <Compile Include="Models\SongEntity.cs" />
+    <Compile Include="Repositories\DbModels\SongEntity.cs" />
     <Compile Include="Models\SongState.cs" />
     <Compile Include="Models\StreamType.cs" />
     <Compile Include="BindingModels\SystemPlaylistBindingModel.cs" />
@@ -163,7 +163,7 @@
     <Compile Include="Repositories\SystemPlaylistCollection.cs" />
     <Compile Include="Web\CookieContainerWrapper.cs" />
     <Compile Include="Web\GoogleAccountWebService.cs" />
-    <Compile Include="Web\GoogleMusicSynchronizationService.cs" />
+    <Compile Include="Web\Synchronization\GoogleMusicSynchronizationService.cs" />
     <Compile Include="Web\GoogleMusicWebService.cs" />
     <Compile Include="Web\IGoogleAccountWebService.cs" />
     <Compile Include="Web\ICookieManager.cs" />
@@ -199,6 +199,7 @@
     <Compile Include="Web\Models\CommonResponse.cs" />
     <Compile Include="Web\PlaylistsWebService.cs" />
     <Compile Include="Web\SongWebService.cs" />
+    <Compile Include="Web\Synchronization\SongsSyncContainer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">
@@ -212,9 +213,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\OutcoldSolutions.Presentation.1.0.30305.41618\lib\win\OutcoldSolutions.Presentation.dll</HintPath>
     </Reference>
-    <Reference Include="OutcoldSolutions.SQLite, Version=1.1.30316.18172, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
+    <Reference Include="OutcoldSolutions.SQLite, Version=1.1.30316.31424, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\OutcoldSolutions.SQLite.1.1.30317.1\lib\win\OutcoldSolutions.SQLite.dll</HintPath>
+      <HintPath>..\..\packages\OutcoldSolutions.SQLite.1.1.30317.2\lib\win\OutcoldSolutions.SQLite.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

@@ -5,6 +5,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 {
     using OutcoldSolutions.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
+    using OutcoldSolutions.GoogleMusic.Repositories.DbModels;
 
     public class SongBindingModel : BindingModelBase
     {
@@ -36,7 +37,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         {
             get
             {
-                return this.Metadata.Artist;
+                return this.Metadata.ArtistTitle;
             }
         }
 
@@ -44,7 +45,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         {
             get
             {
-                return this.Metadata.Album;
+                return this.Metadata.AlbumTitle;
             }
         }
 

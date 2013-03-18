@@ -6,9 +6,11 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
 {
     using System;
     using System.IO;
+    using System.Linq;
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.Models;
+    using OutcoldSolutions.GoogleMusic.Repositories.DbModels;
 
     using SQLite;
 
@@ -70,6 +72,9 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
                 await connection.CreateTableAsync<SongEntity>();
                 await connection.CreateTableAsync<UserPlaylistEntity>();
                 await connection.CreateTableAsync<UserPlaylistEntryEntity>();
+                await connection.CreateTableAsync<AlbumEntity>();
+                await connection.CreateTableAsync<GenreEntity>();
+                await connection.CreateTableAsync<ArtistEntity>();
             }
 
             return fDbExists ? DatabaseStatus.Existed : DatabaseStatus.New;

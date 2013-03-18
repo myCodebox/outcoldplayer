@@ -13,18 +13,18 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             : this(songs, false)
         {
             var song = songs.FirstOrDefault(x => !string.IsNullOrWhiteSpace(x.Metadata.AlbumArtist))
-                   ?? songs.FirstOrDefault(x => !string.IsNullOrWhiteSpace(x.Metadata.Artist));
+                   ?? songs.FirstOrDefault(x => !string.IsNullOrWhiteSpace(x.Metadata.ArtistTitle));
 
             if (song != null)
             {
-                this.Title = string.IsNullOrWhiteSpace(song.Metadata.AlbumArtist) ? song.Metadata.Artist : song.Metadata.AlbumArtist;
+                this.Title = string.IsNullOrWhiteSpace(song.Metadata.AlbumArtist) ? song.Metadata.ArtistTitle : song.Metadata.AlbumArtist;
             }
         }
 
         public ArtistBindingModel(List<SongBindingModel> songs, bool useArtist)
             : base(
                 null, 
-                songs.OrderBy(s => s.Metadata.Album, StringComparer.CurrentCultureIgnoreCase)
+                songs.OrderBy(s => s.Metadata.AlbumTitle, StringComparer.CurrentCultureIgnoreCase)
                     .ThenBy(s => Math.Max(s.Metadata.Disc, (byte)1))
                     .ThenBy(s => s.Metadata.Track).ToList())
         {
@@ -32,21 +32,21 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
             if (useArtist)
             {
-                song = songs.FirstOrDefault(x => !string.IsNullOrWhiteSpace(x.Metadata.Artist));
+                song = songs.FirstOrDefault(x => !string.IsNullOrWhiteSpace(x.Metadata.ArtistTitle));
 
                 if (song != null)
                 {
-                    this.Title = song.Metadata.Artist;
+                    this.Title = song.Metadata.ArtistTitle;
                 }
             }
             else
             {
                 song = songs.FirstOrDefault(x => !string.IsNullOrWhiteSpace(x.Metadata.AlbumArtist))
-                           ?? songs.FirstOrDefault(x => !string.IsNullOrWhiteSpace(x.Metadata.Artist));
+                           ?? songs.FirstOrDefault(x => !string.IsNullOrWhiteSpace(x.Metadata.ArtistTitle));
 
                 if (song != null)
                 {
-                    this.Title = string.IsNullOrWhiteSpace(song.Metadata.AlbumArtist) ? song.Metadata.Artist : song.Metadata.AlbumArtist;
+                    this.Title = string.IsNullOrWhiteSpace(song.Metadata.AlbumArtist) ? song.Metadata.ArtistTitle : song.Metadata.AlbumArtist;
                 }
             }
         }

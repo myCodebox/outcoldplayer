@@ -9,7 +9,6 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
-    using OutcoldSolutions.GoogleMusic.Models;
 
     public class SystemPlaylistCollection : PlaylistCollectionBase<SystemPlaylistBindingModel>
     {
@@ -49,8 +48,8 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
 
         private IEnumerable<SongBindingModel> OrderSongs(IEnumerable<SongBindingModel> songs)
         {
-            return songs.OrderBy(s => s.Metadata.Artist, StringComparer.CurrentCultureIgnoreCase)
-                 .ThenBy(s => s.Metadata.Album, StringComparer.CurrentCultureIgnoreCase)
+            return songs.OrderBy(s => s.Metadata.ArtistTitle, StringComparer.CurrentCultureIgnoreCase)
+                 .ThenBy(s => s.Metadata.AlbumTitle, StringComparer.CurrentCultureIgnoreCase)
                  .ThenBy(s => Math.Max(s.Metadata.Disc, (byte)1))
                  .ThenBy(s => s.Metadata.Track);
         }

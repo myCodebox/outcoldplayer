@@ -1,9 +1,11 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // OutcoldSolutions (http://outcoldsolutions.com)
 // --------------------------------------------------------------------------------------------------------------------
-namespace OutcoldSolutions.GoogleMusic.Models
+namespace OutcoldSolutions.GoogleMusic.Repositories.DbModels
 {
     using System;
+
+    using OutcoldSolutions.GoogleMusic.Models;
 
     using SQLite;
 
@@ -22,24 +24,13 @@ namespace OutcoldSolutions.GoogleMusic.Models
 
         public TimeSpan Duration { get; set; }
 
-        public string Artist { get; set; }
-
-        [Indexed]
-        [Indexed(Name = "Song_AlbumNorm_ArtistNorm")]
-        public string ArtistNorm { get; set; }
+        public int ArtistId { get; set; }
 
         public string Composer { get; set; }
 
-        public string Album { get; set; }
-
-        [Indexed]
-        [Indexed(Name = "Song_AlbumNorm_ArtistNorm")]
-        public string AlbumNorm { get; set; }
+        public int AlbumId { get; set; }
 
         public string AlbumArtist { get; set; }
-
-        [Indexed]
-        public string AlbumArtistNorm { get; set; }
 
         public ushort PlayCount { get; set; }
 
@@ -55,10 +46,7 @@ namespace OutcoldSolutions.GoogleMusic.Models
 
         public ushort Year { get; set; }
 
-        public string Genre { get; set; }
-
-        [Indexed]
-        public string GenreNorm { get; set; }
+        public int GenreId { get; set; }
 
         public Uri AlbumArtUrl { get; set; }
 
@@ -73,5 +61,23 @@ namespace OutcoldSolutions.GoogleMusic.Models
         public ushort Bitrate { get; set; }
 
         public StreamType StreamType { get; set; }
+
+        [Ignore]
+        public string AlbumTitle { get; set; }
+
+        [Ignore]
+        public string ArtistTitle { get; set; }
+
+        [Ignore]
+        public string GenreTitle { get; set; }
+
+        [Ignore]
+        public AlbumEntity Album { get; set; }
+
+        [Ignore]
+        public GenreEntity Genre { get; set; }
+
+        [Ignore]
+        public ArtistEntity Artist { get; set; }
     }
 }

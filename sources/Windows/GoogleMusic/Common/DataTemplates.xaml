@@ -14,11 +14,11 @@
                 </Border>
                 <StackPanel Grid.Column="1" Margin="0,15,10,0">
                     <TextBlock Text="{Binding Path=Playlist.Title, Mode=OneWay}"  Style="{StaticResource BodyTextStyle}" TextWrapping="Wrap"/>
-                    <TextBlock Visibility="{Binding Path=IsAlbum, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}"
+                    <!--<TextBlock Visibility="{Binding Path=IsAlbum, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}"
                                                            Text="{Binding Path=Playlist.Artist, Mode=OneTime}"  
                                                            Style="{StaticResource BodyTextStyle}" 
                                                            Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" 
-                                                           TextWrapping="Wrap"/>
+                                                           TextWrapping="Wrap"/>-->
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{Binding Path=Playlist.Duration, Mode=OneTime, Converter={StaticResource DoubleToTimeConverter}}" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
                         <TextBlock Text=" (" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
@@ -47,11 +47,11 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <Border Margin="15" Width="116" Height="116" Background="Gray">
-                    <Image Width="116" Height="116" Source="{Binding Path=Playlist.AlbumArtUrl, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=116, Mode=OneWay}" Stretch="None"/>
+                    <Image Width="116" Height="116" Source="{Binding Path=Playlist.ArtUrl, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=116, Mode=OneWay}" Stretch="None"/>
                 </Border>
                 <StackPanel Grid.Column="1" Margin="0,15,10,0">
                     <TextBlock Text="{Binding Path=Playlist.Title, Mode=OneWay}"  Style="{StaticResource BodyTextStyle}" TextWrapping="Wrap"/>
-                    <TextBlock Text="{Binding Path=Playlist.Artist, Mode=OneTime}" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="Wrap"/>
+                    <TextBlock Text="{Binding Path=Playlist.Artist.Title, Mode=OneTime}" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="Wrap"/>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{Binding Path=Playlist.Duration, Mode=OneTime, Converter={StaticResource TimeSpanToTimeConverter}}" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
                         <TextBlock Text=" (" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
@@ -80,7 +80,7 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <Border Margin="15" Width="116" Height="116" Background="Gray">
-                    <Image Width="116" Height="116" Source="{Binding Path=Playlist.ArtistArtUrl, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=116, Mode=OneWay}" Stretch="None"/>
+                    <Image Width="116" Height="116" Source="{Binding Path=Playlist.ArtUrl, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=116, Mode=OneWay}" Stretch="None"/>
                 </Border>
                 <StackPanel Grid.Column="1" Margin="0,15,10,0">
                     <TextBlock Text="{Binding Path=Playlist.Title, Mode=OneWay}"  Style="{StaticResource BodyTextStyle}" TextWrapping="Wrap"/>
@@ -116,7 +116,7 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <Border Margin="15" Width="116" Height="116" Background="Gray">
-                    <Image Width="116" Height="116" Source="{Binding Path=Playlist.AlbumArtUrl, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=116, Mode=OneWay}" Stretch="None"/>
+                    <Image Width="116" Height="116" Source="{Binding Path=Playlist.ArtUrl, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=116, Mode=OneWay}" Stretch="None"/>
                 </Border>
                 <StackPanel Grid.Column="1" Margin="0,15,10,0">
                     <TextBlock Text="{Binding Path=Playlist.Title, Mode=OneWay}"  Style="{StaticResource BodyTextStyle}" TextWrapping="Wrap"/>
@@ -180,7 +180,7 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <Border Margin="15" Width="116" Height="116" Background="Gray">
-                    <Image Width="116" Height="116" Source="{Binding Path=Playlist.AlbumArtUrl, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=116, Mode=OneWay}" Stretch="None"/>
+                    <Image Width="116" Height="116" Source="{Binding Path=Playlist.ArtUrl, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=116, Mode=OneWay}" Stretch="None"/>
                 </Border>
                 <StackPanel Grid.Column="1" Margin="0,15,10,0">
                     <TextBlock Text="{Binding Path=Playlist.Title, Mode=OneWay}"  Style="{StaticResource BodyTextStyle}" TextWrapping="Wrap"/>

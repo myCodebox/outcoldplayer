@@ -12,8 +12,8 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         public GenreBindingModel(string name, List<SongBindingModel> songs)
             : base(
                 name,
-                songs.OrderBy(s => s.Metadata.Artist, StringComparer.CurrentCultureIgnoreCase)
-                     .ThenBy(s => s.Metadata.Album, StringComparer.CurrentCultureIgnoreCase)
+                songs.OrderBy(s => s.Metadata.ArtistTitle, StringComparer.CurrentCultureIgnoreCase)
+                     .ThenBy(s => s.Metadata.AlbumTitle, StringComparer.CurrentCultureIgnoreCase)
                      .ThenBy(s => Math.Max(s.Metadata.Disc, (byte)1))
                      .ThenBy(s => s.Metadata.Track)
                      .ToList())

@@ -10,48 +10,45 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.Models;
+    using OutcoldSolutions.GoogleMusic.Repositories.DbModels;
 
     public interface IAlbumsRepository
     {
         Task<int> GetCountAsync();
 
-        Task<IList<Album>> GetAlbumsAsync(Order order, uint? take = null);
+        Task<IList<AlbumEntity>> GetAlbumsAsync(Order order, uint? take = null);
 
-        Task<IList<Album>> GetArtistAlbumsAsync(string artistNorm);
+        Task<IList<AlbumEntity>> GetArtistAlbumsAsync(string artistNorm);
 
-        Task<IList<Album>> SearchAsync(string searchQuery, uint? take);
+        Task<IList<AlbumEntity>> SearchAsync(string searchQuery, uint? take);
     }
 
     public class AlbumsRepository : RepositoryBase, IAlbumsRepository
     {
         private const string SqlAllAlbums = @"
 select 
-       x.[AlbumArtistNorm] as [ArtistNorm], 
-       x.[AlbumNorm] as [TitleNorm],
-       x.[AlbumArtist] as [Artist],       
-       x.[Album] as [Title],        
-       count(*) as [SongsCount], 
-       x.[Year] as [Year],       
-       x.[Genre] as [Genre],  
-       x.[GenreNorm] as [GenreNorm],     
-       sum(x.[Duration]) as [Duration],       
-       x.[AlbumArtUrl] as [AlbumArtUrl],    
-       max(x.[LastPlayed]) as [LastPlayed]
-from [Song] x
-group by x.[AlbumArtistNorm], x.[AlbumNorm]
+       x.[AlbumId],
+       x.[Title],  
+       x.[TitleNorm],
+       x.[ArtistId],
+       x.[SongsCount], 
+       x.[Year],    
+       x.[Duration],       
+       x.[ArtUrl],    
+       x.[LastPlayed],       
+       a.[ArtistId] as [Artist.ArtistId],
+       a.[Title] as [Artist.Title],
+       a.[TitleNorm] as [Artist.TitleNorm],
+       a.[AlbumsCount] as [Artist.AlbumsCount],
+       a.[SongsCount] as [Artist.SongsCount],
+       a.[Duration] as [Artist.Duration],
+       a.[ArtUrl] as [Artist.ArtUrl],
+       a.[LastPlayed]  as [Artist.LastPlayed]
+from [Album] x 
+     inner join [Artist] as a on x.[ArtistId] = a.[ArtistId]    
 ";
 
-        private const string SqlCountAlbums = @"
-select count(*)
-from
-(
-  select x.[AlbumArtistNorm], x.[AlbumNorm]
-  from [Song] x
-  group by x.[AlbumArtistNorm], x.[AlbumNorm]
-) as y
-";
-
-        private const string SqlSearchAlbums = @"
+       private const string SqlSearchAlbums = @"
 select 
        x.[ArtistNormX] as [ArtistNorm], 
        x.[AlbumNorm] as [TitleNorm],
@@ -124,16 +121,16 @@ order by u.[Year], u.[TitleNorm]
 
         private readonly Dictionary<Order, string> orderStatements = new Dictionary<Order, string>()
                                                                 {
-                                                                    { Order.Name,  " order by x.[AlbumNorm]" },
+                                                                    { Order.Name,  " order by x.[TitleNorm]" },
                                                                     { Order.LastPlayed,  " order by x.[LastPlayed] desc" }
                                                                 };
 
         public async Task<int> GetCountAsync()
         {
-            return await this.Connection.ExecuteScalarAsync<int>(SqlCountAlbums);
+            return await this.Connection.Table<AlbumEntity>().CountAsync();
         }
 
-        public async Task<IList<Album>> GetAlbumsAsync(Order order, uint? take = null)
+        public async Task<IList<AlbumEntity>> GetAlbumsAsync(Order order, uint? take = null)
         {
             if (!this.orderStatements.ContainsKey(order))
             {
@@ -148,15 +145,15 @@ order by u.[Year], u.[TitleNorm]
                 sql.AppendFormat(" limit {0}", take.Value);
             }
 
-            return await this.Connection.QueryAsync<Album>(sql.ToString());
+            return await this.Connection.QueryAsync<AlbumEntity>(sql.ToString());
         }
 
-        public async Task<IList<Album>> GetArtistAlbumsAsync(string artistNorm)
+        public async Task<IList<AlbumEntity>> GetArtistAlbumsAsync(string artistNorm)
         {
-            return await this.Connection.QueryAsync<Album>(SqlArtistAlbums, artistNorm);
+            return await this.Connection.QueryAsync<AlbumEntity>(SqlArtistAlbums, artistNorm);
         }
 
-        public async Task<IList<Album>> SearchAsync(string searchQuery, uint? take)
+        public async Task<IList<AlbumEntity>> SearchAsync(string searchQuery, uint? take)
         {
             var searchQueryNorm = searchQuery.Normalize() ?? string.Empty;
 
@@ -167,7 +164,7 @@ order by u.[Year], u.[TitleNorm]
                 sql.AppendFormat(" limit {0}", take.Value);
             }
 
-            return await this.Connection.QueryAsync<Album>(sql.ToString(), string.Format("%{0}%", searchQueryNorm.Normalize()));
+            return await this.Connection.QueryAsync<AlbumEntity>(sql.ToString(), string.Format("%{0}%", searchQueryNorm.Normalize()));
         }
     }
 }

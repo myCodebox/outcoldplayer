@@ -54,7 +54,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
                 else 
                 {
                     updateRecentAlbum = true;
-                    playlistId = string.Format("{0} - {1}", song.Metadata.Artist, song.Metadata.Album);
+                    playlistId = string.Format("{0} - {1}", song.Metadata.ArtistTitle, song.Metadata.AlbumTitle);
                 }
             }
 

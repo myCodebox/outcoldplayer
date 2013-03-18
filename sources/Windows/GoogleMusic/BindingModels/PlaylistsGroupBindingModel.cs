@@ -9,6 +9,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
     using OutcoldSolutions.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
+    using OutcoldSolutions.GoogleMusic.Repositories.DbModels;
 
     public class PlaylistsGroupBindingModel
     {
@@ -84,14 +85,6 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         }
 
         public DelegateCommand PlayCommand { get; set; }
-
-        public bool IsAlbum
-        {
-            get
-            {
-                return this.playlist is Album;
-            }
-        }
 
         public object Playlist
         {

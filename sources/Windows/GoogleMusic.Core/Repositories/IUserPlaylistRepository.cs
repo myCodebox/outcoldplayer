@@ -7,15 +7,15 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
-    using OutcoldSolutions.GoogleMusic.Models;
+    using OutcoldSolutions.GoogleMusic.Repositories.DbModels;
 
     public interface IUserPlaylistRepository
     {
         Task<int> GetCountAsync();
 
-        Task<IList<UserPlaylist>> GetPlaylistsAsync(Order order, uint? take = null);
+        Task<IList<UserPlaylistEntity>> GetPlaylistsAsync(Order order, uint? take = null);
 
-        Task<IList<UserPlaylist>> SearchAsync(string searchQuery, uint? take);
+        Task<IList<UserPlaylistEntity>> SearchAsync(string searchQuery, uint? take);
 
         Task<IEnumerable<UserPlaylistBindingModel>> GetAllAsync();
 

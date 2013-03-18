@@ -7,6 +7,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Models
     using System;
 
     using OutcoldSolutions.GoogleMusic.Models;
+    using OutcoldSolutions.GoogleMusic.Repositories.DbModels;
     using OutcoldSolutions.Models;
 
     public class GoogleMusicSong
@@ -79,42 +80,42 @@ namespace OutcoldSolutions.GoogleMusic.Web.Models
 
         public double RecentTimestamp { get; set; }
 
-        public static implicit operator SongEntity(GoogleMusicSong song)
-        {
-            if (song == null)
-            {
-                throw new ArgumentNullException("song");
-            }
+        //public static implicit operator SongEntity(GoogleMusicSong song)
+        //{
+        //    if (song == null)
+        //    {
+        //        throw new ArgumentNullException("song");
+        //    }
 
-            return new SongEntity()
-                       {
-                           Album = song.Album,
-                           AlbumNorm = song.Album.Normalize(),
-                           AlbumArtist = song.AlbumArtist,
-                           AlbumArtistNorm = song.AlbumArtist.Normalize(),
-                           AlbumArtUrl = string.IsNullOrEmpty(song.AlbumArtUrl) ? null : new Uri("http:" + song.AlbumArtUrl),
-                           Artist = song.Artist,
-                           ArtistNorm = song.Artist.Normalize(),
-                           Composer = song.Composer,
-                           Disc = song.Disc,
-                           TotalDiscs = song.TotalDiscs,
-                           Duration = TimeSpan.FromMilliseconds(song.DurationMillis),
-                           Genre = song.Genre,
-                           GenreNorm = song.Genre.Normalize(),
-                           ProviderSongId = song.Id,
-                           LastPlayed = DateTimeExtensions.FromUnixFileTime(song.LastPlayed / 1000),
-                           CreationDate = DateTimeExtensions.FromUnixFileTime(song.CreationDate / 1000),
-                           PlayCount = song.PlayCount,
-                           Rating = song.Rating,
-                           Title = song.Title,
-                           TitleNorm = song.Title.Normalize(),
-                           Track = song.Track,
-                           TotalTracks = song.TotalTracks,
-                           Year = song.Year,
-                           Comment = song.Comment,
-                           Bitrate = song.Bitrate,
-                           StreamType = StreamType.GoogleMusic
-                       };
-        }
+        //    return new SongEntity()
+        //               {
+        //                   Album = song.Album,
+        //                   AlbumNorm = song.Album.Normalize(),
+        //                   AlbumArtist = song.AlbumArtist,
+        //                   AlbumArtistNorm = song.AlbumArtist.Normalize(),
+        //                   AlbumArtUrl = string.IsNullOrEmpty(song.AlbumArtUrl) ? null : new Uri("http:" + song.AlbumArtUrl),
+        //                   Artist = song.Artist,
+        //                   ArtistNorm = song.Artist.Normalize(),
+        //                   Composer = song.Composer,
+        //                   Disc = song.Disc,
+        //                   TotalDiscs = song.TotalDiscs,
+        //                   Duration = TimeSpan.FromMilliseconds(song.DurationMillis),
+        //                   Genre = song.Genre,
+        //                   GenreNorm = song.Genre.Normalize(),
+        //                   ProviderSongId = song.Id,
+        //                   LastPlayed = DateTimeExtensions.FromUnixFileTime(song.LastPlayed / 1000),
+        //                   CreationDate = DateTimeExtensions.FromUnixFileTime(song.CreationDate / 1000),
+        //                   PlayCount = song.PlayCount,
+        //                   Rating = song.Rating,
+        //                   Title = song.Title,
+        //                   TitleNorm = song.Title.Normalize(),
+        //                   Track = song.Track,
+        //                   TotalTracks = song.TotalTracks,
+        //                   Year = song.Year,
+        //                   Comment = song.Comment,
+        //                   Bitrate = song.Bitrate,
+        //                   StreamType = StreamType.GoogleMusic
+        //               };
+        //}
     }
 }

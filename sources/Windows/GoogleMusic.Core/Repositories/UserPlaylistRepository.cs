@@ -12,25 +12,11 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
     using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
+    using OutcoldSolutions.GoogleMusic.Repositories.DbModels;
     using OutcoldSolutions.GoogleMusic.Web;
 
     public class UserPlaylistRepository : RepositoryBase, IUserPlaylistRepository
     {
-        private const string SqlAllPlaylists = @"
-select 
-  p.[PlaylistId], 
-  p.Title, 
-  p.ProviderPlaylistId, 
-  count(*) as [SongsCount], 
-  sum(s.Duration) as [Duration],
-  max(s.[LastPlayed]) as [LastPlayed],
-  s.[AlbumArtUrl] as [AlbumArtUrl]
-from [UserPlaylist] as p
-     inner join [UserPlaylistEntry] as e on e.[PlaylistId] = p.[PlaylistId]
-     inner join [Song] as s on s.[SongId] = e.[SongId]     
-group by p.[PlaylistId], p.[Title], p.ProviderPlaylistId
-";
-
         private const string SqlSearchPlaylists = @"
 select 
   p.[PlaylistId], 
@@ -52,12 +38,6 @@ order by [p].Title
 
         private readonly IPlaylistsWebService playlistsWebService;
 
-        private readonly Dictionary<Order, string> orderStatements = new Dictionary<Order, string>()
-                                                                {
-                                                                    { Order.Name,  " order by p.[Title]" },
-                                                                    { Order.LastPlayed,  " order by max(s.[LastPlayed]) desc" }
-                                                                };
-
         public UserPlaylistRepository(
             ILogManager logManager,
             IPlaylistsWebService playlistsWebService)
@@ -71,25 +51,28 @@ order by [p].Title
             return await this.Connection.Table<UserPlaylistEntity>().CountAsync();
         }
 
-        public async Task<IList<UserPlaylist>> GetPlaylistsAsync(Order order, uint? take = null)
+        public async Task<IList<UserPlaylistEntity>> GetPlaylistsAsync(Order order, uint? take = null)
         {
-            if (!this.orderStatements.ContainsKey(order))
-            {
-                throw new ArgumentOutOfRangeException("order");
-            }
+            var query = this.Connection.Table<UserPlaylistEntity>(); 
 
-            var sql = new StringBuilder(SqlAllPlaylists);
-            sql.Append(this.orderStatements[order]);
+            if (order == Order.Name)
+            {
+                query = query.OrderBy(p => p.TitleNorm);
+            }
+            else if (order == Order.LastPlayed)
+            {
+                query = query.OrderByDescending(p => p.LastPlayed);
+            }
 
             if (take.HasValue)
             {
-                sql.AppendFormat(" limit {0}", take.Value);
+                query = query.Take((int)take.Value);
             }
 
-            return await this.Connection.QueryAsync<UserPlaylist>(sql.ToString());
+            return await query.ToListAsync();
         }
 
-        public async Task<IList<UserPlaylist>> SearchAsync(string searchQuery, uint? take)
+        public async Task<IList<UserPlaylistEntity>> SearchAsync(string searchQuery, uint? take)
         {
             var searchQueryNorm = searchQuery.Normalize() ?? string.Empty;
 
@@ -100,7 +83,7 @@ order by [p].Title
                 sql.AppendFormat(" limit {0}", take.Value);
             }
 
-            return await this.Connection.QueryAsync<UserPlaylist>(sql.ToString(), string.Format("%{0}%", searchQueryNorm.Normalize()));
+            return await this.Connection.QueryAsync<UserPlaylistEntity>(sql.ToString(), string.Format("%{0}%", searchQueryNorm.Normalize()));
         }
 
         public async Task<IEnumerable<UserPlaylistBindingModel>> GetAllAsync()

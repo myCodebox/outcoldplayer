@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // OutcoldSolutions (http://outcoldsolutions.com)
 // --------------------------------------------------------------------------------------------------------------------
-namespace OutcoldSolutions.GoogleMusic.Models
+namespace OutcoldSolutions.GoogleMusic.Repositories.DbModels
 {
     using SQLite;
 

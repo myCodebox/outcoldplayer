@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // OutcoldSolutions (http://outcoldsolutions.com)
 // --------------------------------------------------------------------------------------------------------------------
-namespace OutcoldSolutions.GoogleMusic.Web
+namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
 {
     using System;
     using System.Collections.Generic;
@@ -11,8 +11,10 @@ namespace OutcoldSolutions.GoogleMusic.Web
     using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Repositories;
+    using OutcoldSolutions.GoogleMusic.Repositories.DbModels;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Web.Models;
+    using OutcoldSolutions.Models;
 
     using Windows.UI.Xaml;
 
@@ -58,23 +60,23 @@ namespace OutcoldSolutions.GoogleMusic.Web
                                            Interval = TimeSpan.FromMinutes(10)
                                        };
 #if NETFX_CORE
-            this.dispatcherTimer.Tick += async (sender, o) =>
-                {
-                    this.dispatcherTimer.Stop();
-                    try
-                    {
-                        await this.SynchronizeAsync(null);
-                    }
-                    catch (Exception e)
-                    {
-                        this.logger.Error("SynchronizeAsync threw exception in DispatcherTimer.");
-                        this.logger.LogErrorException(e);
-                    }
-                    finally
-                    {
-                        this.dispatcherTimer.Start();
-                    }
-                };
+            //this.dispatcherTimer.Tick += async (sender, o) =>
+            //    {
+            //        this.dispatcherTimer.Stop();
+            //        try
+            //        {
+            //            await this.SynchronizeAsync(null);
+            //        }
+            //        catch (Exception e)
+            //        {
+            //            this.logger.Error("SynchronizeAsync threw exception in DispatcherTimer.");
+            //            this.logger.LogErrorException(e);
+            //        }
+            //        finally
+            //        {
+            //            this.dispatcherTimer.Start();
+            //        }
+            //    };
 #endif
             this.dispatcherTimer.Start();
         }
@@ -97,12 +99,12 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
             await progress.SafeReportAsync(0.6d);
 
+            var syncContainer = new SongsSyncContainer();
+
             this.logger.Debug("SynchronizeAsync: insert all songs into database.");
-            var songEntities = songs.Select(x => (SongEntity)x).ToList();
-            await this.Connection.InsertAllAsync(songEntities);
 
-            await progress.SafeReportAsync(0.7d);
-
+            syncContainer.AddRange(songs);
+            
             this.logger.Debug("SynchronizeAsync: loading playlists.");
             var playlists = await this.playlistsWebService.GetAllAsync();
 
@@ -111,42 +113,12 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
             if (playlists.Playlists != null)
             {
-                for (int i = 0; i < playlists.Playlists.Count; i++)
-                {
-                    var googleUserPlaylist = playlists.Playlists[i];
-
-                    var userPlaylistEntity = new UserPlaylistEntity()
-                    {
-                        ProviderPlaylistId = googleUserPlaylist.PlaylistId,
-                        Title = googleUserPlaylist.Title
-                    };
-
-                    var entries = googleUserPlaylist.Playlist
-                        .Select((googleMusicSong, index) => Tuple.Create(googleMusicSong, index, songEntities.FirstOrDefault(s => s.ProviderSongId == googleMusicSong.Id)))
-                        .Where(x => x.Item3 != null)
-                        .Select(
-                            (x) =>
-                            new UserPlaylistEntryEntity()
-                            {
-                                ProviderEntryId = x.Item1.PlaylistEntryId,
-                                SongId = x.Item3.SongId,
-                                PlaylistOrder = x.Item2
-                            }).ToList();
-
-                    await this.Connection.RunInTransactionAsync(
-                        (connection) =>
-                        {
-                            connection.Insert(userPlaylistEntity);
-                            connection.InsertAll(entries.Select(x =>
-                            {
-                                x.PlaylistId = userPlaylistEntity.PlaylistId;
-                                return x;
-                            }));
-                        });
-
-                    await progress.SafeReportAsync(0.8d + (((double)i / playlists.Playlists.Count) * 0.2d));
-                }
+                syncContainer.AddPlaylists(playlists.Playlists);
             }
+
+            await syncContainer.SaveAsync(this.Connection);
+
+            await progress.SafeReportAsync(0.9d);
 
             this.settingsService.SetValue<DateTime?>(LastUpdateKey, lastUpdate);
 
@@ -246,32 +218,32 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 }
 
                 // TODO: Optimization
-                await this.Connection.RunInTransactionAsync(connection =>
-                {
-                    foreach (var song in updatedSongs)
-                    {
-                        var songId = song.Id;
+                //await this.Connection.RunInTransactionAsync(connection =>
+                //{
+                //    foreach (var song in updatedSongs)
+                //    {
+                //        var songId = song.Id;
 
-                        if (song.Deleted)
-                        {
-                            connection.Delete(songId);
-                        }
-                        else
-                        {
-                            var storedSong = connection.Find<SongEntity>(x => x.ProviderSongId == songId);
-                            if (storedSong != null)
-                            {
-                                var songEntity = (SongEntity)song;
-                                songEntity.SongId = storedSong.SongId;
-                                connection.Update(songEntity);
-                            }
-                            else
-                            {
-                                connection.Insert((SongEntity)song);
-                            }
-                        }
-                    }
-                });
+                //        if (song.Deleted)
+                //        {
+                //            connection.Delete(songId);
+                //        }
+                //        else
+                //        {
+                //            var storedSong = connection.Find<SongEntity>(x => x.ProviderSongId == songId);
+                //            if (storedSong != null)
+                //            {
+                //                var songEntity = (SongEntity)song;
+                //                songEntity.SongId = storedSong.SongId;
+                //                connection.Update(songEntity);
+                //            }
+                //            else
+                //            {
+                //                connection.Insert((SongEntity)song);
+                //            }
+                //        }
+                //    }
+                //});
             }
             else
             {

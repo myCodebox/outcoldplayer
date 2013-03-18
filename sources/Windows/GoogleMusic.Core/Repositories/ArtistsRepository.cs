@@ -10,35 +10,20 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.Models;
+    using OutcoldSolutions.GoogleMusic.Repositories.DbModels;
 
     public interface IArtistsRepository
     {
         Task<int> GetCountAsync();
 
-        Task<IList<Artist>> GetAristsAsync(Order order, uint? take = null);
+        Task<IList<ArtistEntity>> GetAristsAsync(Order order, uint? take = null);
 
-        Task<IList<Artist>> SearchAsync(string searchQuery, uint? take);
+        Task<IList<ArtistEntity>> SearchAsync(string searchQuery, uint? take);
     }
 
     public class ArtistsRepository : RepositoryBase, IArtistsRepository
     {
-        private const string SqlAllArtists = @"
-select 
-       x.[AlbumArtistNorm] as [TitleNorm],        
-       count(distinct x.[AlbumNorm]) as [AlbumsCount],       
-       x.[AlbumArtist] as [Title],
-       count(*) as [SongsCount], 
-       x.[Duration] as [Duration],       
-       x.[AlbumArtUrl] as [ArtistArtUrl],    
-       x.[LastPlayed] as [LastPlayed]
-from [Song] x
-group by x.[AlbumArtistNorm]
-";
-
-        private const string SqlCountArtist = @"
-select count(distinct x.[AlbumArtistNorm]) from [Song] x
-";
-
+     
         private const string SqlSearchArtist = @"
 select 
        u.[ArtistNorm] as [TitleNorm],       
@@ -85,36 +70,32 @@ group by u.[ArtistNorm]
 order by u.[ArtistNorm]
 ";
 
-        private readonly Dictionary<Order, string> orderStatements = new Dictionary<Order, string>()
-                                                                {
-                                                                    { Order.Name,  " order by x.[ArtistNormX]" },
-                                                                    { Order.LastPlayed,  " order by x.[LastPlayed] desc" }
-                                                                };
-
-        public async Task<IList<Artist>> GetAristsAsync(Order order, uint? take = null)
+        public async Task<IList<ArtistEntity>> GetAristsAsync(Order order, uint? take = null)
         {
-            if (!this.orderStatements.ContainsKey(order))
+            var query = this.Connection.Table<ArtistEntity>().Where(a => a.AlbumsCount > 0);
+            if (order == Order.Name)
             {
-                throw new ArgumentOutOfRangeException("order");
+                query = query.OrderBy(x => x.TitleNorm);
             }
-
-            var sql = new StringBuilder(SqlAllArtists);
-            sql.Append(this.orderStatements[order]);
+            else if (order == Order.LastPlayed)
+            {
+                query = query.OrderByDescending(x => x.LastPlayed);
+            }
 
             if (take.HasValue)
             {
-                sql.AppendFormat(" limit {0}", take.Value);
+                query = query.Take((int)take.Value);
             }
 
-            return await this.Connection.QueryAsync<Artist>(sql.ToString());
+            return await query.ToListAsync();
         }
 
         public async Task<int> GetCountAsync()
         {
-            return await this.Connection.ExecuteScalarAsync<int>(SqlCountArtist);
+            return await this.Connection.Table<ArtistEntity>().Where(a => a.AlbumsCount > 0).CountAsync();
         }
 
-        public async Task<IList<Artist>> SearchAsync(string searchQuery, uint? take)
+        public async Task<IList<ArtistEntity>> SearchAsync(string searchQuery, uint? take)
         {
             var searchQueryNorm = searchQuery.Normalize() ?? string.Empty;
 
@@ -125,7 +106,7 @@ order by u.[ArtistNorm]
                 sql.AppendFormat(" limit {0}", take.Value);
             }
 
-            return await this.Connection.QueryAsync<Artist>(sql.ToString(), string.Format("%{0}%", searchQueryNorm.Normalize()));
+            return await this.Connection.QueryAsync<ArtistEntity>(sql.ToString(), string.Format("%{0}%", searchQueryNorm.Normalize()));
         }
     }
 }

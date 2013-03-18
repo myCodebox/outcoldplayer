@@ -23,8 +23,8 @@ namespace OutcoldSolutions.GoogleMusic.Models
                     x =>
                     new AlbumArtist
                     {
-                        Album = x.Metadata.Album,
-                        Artist = string.IsNullOrWhiteSpace(x.Metadata.AlbumArtist) ? x.Metadata.Artist : x.Metadata.AlbumArtist
+                        Album = x.Metadata.AlbumTitle,
+                        Artist = string.IsNullOrWhiteSpace(x.Metadata.AlbumArtist) ? x.Metadata.ArtistTitle : x.Metadata.AlbumArtist
                     },
                         AlbumArtist.AlbumArtistComparer)
                 .Select(

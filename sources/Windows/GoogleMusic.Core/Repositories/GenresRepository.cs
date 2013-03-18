@@ -4,40 +4,24 @@
 
 namespace OutcoldSolutions.GoogleMusic.Repositories
 {
-    using System;
     using System.Collections.Generic;
     using System.Text;
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.Models;
+    using OutcoldSolutions.GoogleMusic.Repositories.DbModels;
 
     public interface IGenresRepository
     {
         Task<int> GetCountAsync();
 
-        Task<IList<Genre>> GetGenresAsync(Order order, uint? take = null);
+        Task<IList<GenreEntity>> GetGenresAsync(Order order, uint? take = null);
 
-        Task<IList<Genre>> SearchAsync(string searchQuery, uint? take);
+        Task<IList<GenreEntity>> SearchAsync(string searchQuery, uint? take);
     }
 
     public class GenresRepository : RepositoryBase, IGenresRepository
     {
-        private const string SqlCountGenres = @"
-select count(distinct x.[GenreNorm]) from [Song] x
-";
-
-        private const string SqlAllGenres = @"
-select 
-       x.[GenreNorm] as [TitleNorm],
-       x.[Genre] as [Title],       
-       count(*) as [SongsCount],    
-       sum(x.[Duration]) as [Duration],       
-       x.[AlbumArtUrl] as [AlbumArtUrl],    
-       max(x.[LastPlayed]) as [LastPlayed]
-from [Song] x
-group by x.[GenreNorm]
-";
-
         private const string SqlSearchGenres = @"
 select 
        x.[GenreNorm] as [TitleNorm],
@@ -51,36 +35,33 @@ where x.[GenreNorm] like ?1
 group by x.[GenreNorm]
 ";
 
-        private readonly Dictionary<Order, string> orderStatements = new Dictionary<Order, string>()
-                                                                {
-                                                                    { Order.Name,  " order by x.[GenreNorm]" },
-                                                                    { Order.LastPlayed,  " order by x.[LastPlayed] desc" }
-                                                                };
-
         public async Task<int> GetCountAsync()
         {
-            return await this.Connection.ExecuteScalarAsync<int>(SqlCountGenres);
+            return await this.Connection.Table<GenreEntity>().CountAsync();
         }
 
-        public async Task<IList<Genre>> GetGenresAsync(Order order, uint? take = null)
+        public async Task<IList<GenreEntity>> GetGenresAsync(Order order, uint? take = null)
         {
-            if (!this.orderStatements.ContainsKey(order))
-            {
-                throw new ArgumentOutOfRangeException("order");
-            }
+            var query = this.Connection.Table<GenreEntity>();
 
-            var sql = new StringBuilder(SqlAllGenres);
-            sql.Append(this.orderStatements[order]);
+            if (order == Order.Name)
+            {
+                query = query.OrderBy(g => g.TitleNorm);
+            }
+            else if (order == Order.LastPlayed)
+            {
+                query = query.OrderByDescending(g => g.LastPlayed);
+            }
 
             if (take.HasValue)
             {
-                sql.AppendFormat(" limit {0}", take.Value);
+                query = query.Take((int)take.Value);
             }
 
-            return await this.Connection.QueryAsync<Genre>(sql.ToString());
+            return await query.ToListAsync();
         }
 
-        public async Task<IList<Genre>> SearchAsync(string searchQuery, uint? take)
+        public async Task<IList<GenreEntity>> SearchAsync(string searchQuery, uint? take)
         {
             var searchQueryNorm = searchQuery.Normalize() ?? string.Empty;
 
@@ -91,7 +72,7 @@ group by x.[GenreNorm]
                 sql.AppendFormat(" limit {0}", take.Value);
             }
 
-            return await this.Connection.QueryAsync<Genre>(sql.ToString(), string.Format("%{0}%", searchQueryNorm.Normalize()));
+            return await this.Connection.QueryAsync<GenreEntity>(sql.ToString(), string.Format("%{0}%", searchQueryNorm.Normalize()));
         }
     }
 }

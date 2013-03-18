@@ -1,24 +1,37 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // OutcoldSolutions (http://outcoldsolutions.com)
 // --------------------------------------------------------------------------------------------------------------------
-namespace OutcoldSolutions.GoogleMusic.Models
+namespace OutcoldSolutions.GoogleMusic.Repositories.DbModels
 {
     using System;
 
-    public class UserPlaylist
+    using SQLite;
+
+    [Table("Album")]
+    public class AlbumEntity : ISongsContainerEntity
     {
+        [PrimaryKey, AutoIncrement]
+        public int AlbumId { get; set; }
+
         public string Title { get; set; }
 
+        [Indexed]
         public string TitleNorm { get; set; }
-
-        public string ProviderPlaylistId { get; set; }
+        
+        public int ArtistId { get; set; }
 
         public int SongsCount { get; set; }
 
+        public ushort Year { get; set; }
+
         public TimeSpan Duration { get; set; }
 
-        public Uri AlbumArtUrl { get; set; }
+        public Uri ArtUrl { get; set; }
 
+        [Indexed]
         public DateTime LastPlayed { get; set; }
+
+        [Reference]
+        public ArtistEntity Artist { get; set; }
     }
 }
