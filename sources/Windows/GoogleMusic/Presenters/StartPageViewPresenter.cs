@@ -7,6 +7,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using System.Linq;
     using System.Threading.Tasks;
 
+    using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Repositories;
@@ -124,9 +125,9 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             ISongsContainer playlist = commandParameter as ISongsContainer;
             if (playlist != null)
             {
-                this.songsQueueService.PlayAsync(playlist);
-                // this.navigationService.NavigateTo<IPlaylistPageView>(playlist);
                 this.Toolbar.IsBottomAppBarOpen = true;
+                this.Logger.LogTask(this.songsQueueService.PlayAsync(playlist));
+                this.navigationService.NavigateToPlaylist(playlist);
             }
         }
     }
