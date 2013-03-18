@@ -16,11 +16,11 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
     {
         Task<int> GetCountAsync();
 
-        Task<IList<AlbumEntity>> GetAlbumsAsync(Order order, uint? take = null);
+        Task<IList<Album>> GetAlbumsAsync(Order order, uint? take = null);
 
-        Task<IList<AlbumEntity>> GetArtistAlbumsAsync(string artistNorm);
+        Task<IList<Album>> GetArtistAlbumsAsync(string artistNorm);
 
-        Task<IList<AlbumEntity>> SearchAsync(string searchQuery, uint? take);
+        Task<IList<Album>> SearchAsync(string searchQuery, uint? take);
     }
 
     public class AlbumsRepository : RepositoryBase, IAlbumsRepository
@@ -127,10 +127,10 @@ order by u.[Year], u.[TitleNorm]
 
         public async Task<int> GetCountAsync()
         {
-            return await this.Connection.Table<AlbumEntity>().CountAsync();
+            return await this.Connection.Table<Album>().CountAsync();
         }
 
-        public async Task<IList<AlbumEntity>> GetAlbumsAsync(Order order, uint? take = null)
+        public async Task<IList<Album>> GetAlbumsAsync(Order order, uint? take = null)
         {
             if (!this.orderStatements.ContainsKey(order))
             {
@@ -145,15 +145,15 @@ order by u.[Year], u.[TitleNorm]
                 sql.AppendFormat(" limit {0}", take.Value);
             }
 
-            return await this.Connection.QueryAsync<AlbumEntity>(sql.ToString());
+            return await this.Connection.QueryAsync<Album>(sql.ToString());
         }
 
-        public async Task<IList<AlbumEntity>> GetArtistAlbumsAsync(string artistNorm)
+        public async Task<IList<Album>> GetArtistAlbumsAsync(string artistNorm)
         {
-            return await this.Connection.QueryAsync<AlbumEntity>(SqlArtistAlbums, artistNorm);
+            return await this.Connection.QueryAsync<Album>(SqlArtistAlbums, artistNorm);
         }
 
-        public async Task<IList<AlbumEntity>> SearchAsync(string searchQuery, uint? take)
+        public async Task<IList<Album>> SearchAsync(string searchQuery, uint? take)
         {
             var searchQueryNorm = searchQuery.Normalize() ?? string.Empty;
 
@@ -164,7 +164,7 @@ order by u.[Year], u.[TitleNorm]
                 sql.AppendFormat(" limit {0}", take.Value);
             }
 
-            return await this.Connection.QueryAsync<AlbumEntity>(sql.ToString(), string.Format("%{0}%", searchQueryNorm.Normalize()));
+            return await this.Connection.QueryAsync<Album>(sql.ToString(), string.Format("%{0}%", searchQueryNorm.Normalize()));
         }
     }
 }

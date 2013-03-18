@@ -104,7 +104,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.queueService.StateChanged += async (sender, args) => await this.Dispatcher.RunAsync(
                 () =>
                     {
-                        this.BindingModel.CurrentSong = args.CurrentSong;
+                        this.BindingModel.CurrentSong = args.CurrentSong == null ? null : new SongBindingModel(args.CurrentSong);
                         this.BindingModel.State = args.State;
                         this.BindingModel.UpdateBindingModel();
                     });

@@ -9,10 +9,10 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
     public class SongBindingModel : BindingModelBase
     {
-        private SongEntity metadata;
+        private Song metadata;
         private SongState songState = SongState.None;
 
-        public SongBindingModel(SongEntity metadata)
+        public SongBindingModel(Song metadata)
         {
             this.metadata = metadata;
         }
@@ -37,7 +37,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         {
             get
             {
-                return this.Metadata.ArtistTitle;
+                return this.Metadata.Artist.Title;
             }
         }
 
@@ -45,7 +45,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         {
             get
             {
-                return this.Metadata.AlbumTitle;
+                return this.Metadata.Album.Title;
             }
         }
 
@@ -81,11 +81,11 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         {
             get
             {
-                return this.Metadata.Track;
+                return this.Metadata.Track.Value;
             }
         }
 
-        public SongEntity Metadata
+        public Song Metadata
         {
             get
             {

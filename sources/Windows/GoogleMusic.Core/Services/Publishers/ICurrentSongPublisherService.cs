@@ -5,8 +5,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
 {
     using System.Threading.Tasks;
 
-    using OutcoldSolutions.GoogleMusic.BindingModels;
-    using OutcoldSolutions.GoogleMusic.Models;
+    using OutcoldSolutions.GoogleMusic.Repositories.DbModels;
 
     public interface ICurrentSongPublisherService
     {
@@ -14,7 +13,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
 
         void RemovePublishers<TPublisherType>() where TPublisherType : ICurrentSongPublisher;
 
-        Task PublishAsync(SongBindingModel song, PlaylistBaseBindingModel currentPlaylist);
+        Task PublishAsync(Song song, ISongsContainer currentPlaylist);
 
         void CancelActiveTasks();
     }

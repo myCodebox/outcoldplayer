@@ -9,8 +9,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
     using System.Threading.Tasks;
 
     using OutcoldSolutions.Diagnostics;
-    using OutcoldSolutions.GoogleMusic.BindingModels;
-    using OutcoldSolutions.GoogleMusic.Models;
+    using OutcoldSolutions.GoogleMusic.Repositories.DbModels;
     using OutcoldSolutions.GoogleMusic.Services.Publishers;
     using OutcoldSolutions.GoogleMusic.Shell;
     using OutcoldSolutions.GoogleMusic.Web;
@@ -25,7 +24,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
         private readonly ISongWebService songWebService;
         private readonly INotificationService notificationService;
 
-        private readonly List<SongBindingModel> songsQueue = new List<SongBindingModel>();
+        private readonly List<Song> songsQueue = new List<Song>();
         private readonly List<int> queueOrder = new List<int>();
 
         private readonly Random random = new Random((int)DateTime.Now.Ticks);
@@ -35,7 +34,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
         private INetworkRandomAccessStream currentSongStream;
         private int currentQueueIndex; // From queueOrder
 
-        private PlaylistBaseBindingModel currentPlaylist;
+        private ISongsContainer currentPlaylist;
 
         private QueueState state;
 
@@ -127,16 +126,16 @@ namespace OutcoldSolutions.GoogleMusic.Services
             }
         }
 
-        public async Task PlayAsync(PlaylistBaseBindingModel playlist)
+        public async Task PlayAsync(ISongsContainer playlist, IList<Song> songs)
         {
-            await this.PlayAsync(playlist, songIndex: -1);
+            await this.PlayAsync(playlist, songs, songIndex: -1);
         }
 
-        public async Task PlayAsync(PlaylistBaseBindingModel playlist, int songIndex)
+        public async Task PlayAsync(ISongsContainer playlist, IList<Song> songs, int songIndex)
         {
-            if (playlist == null)
+            if (songs == null)
             {
-                throw new ArgumentNullException("playlist");
+                throw new ArgumentNullException("songs");
             }
 
             await Task.Run(async () =>
@@ -148,7 +147,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
                 this.currentPlaylist = playlist;
                 this.songsQueue.Clear();
-                this.songsQueue.AddRange(playlist.Songs);
+                this.songsQueue.AddRange(songs);
 
                 this.UpdateOrder(songIndex);
 
@@ -189,7 +188,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             {
                 await this.mediaElement.PlayAsync();
                 this.State = QueueState.Play;
-                this.logger.LogTask(this.publisherService.PublishAsync(this.songsQueue[this.CurrentSongIndex], this.currentPlaylist));
+                this.logger.LogTask(this.publisherService.PublishAsync(this.songsQueue[this.CurrentSongIndex], null /* TODO:  this.currentPlaylist */));
             }
             else
             {
@@ -265,7 +264,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             }
         }
 
-        public async Task AddRangeAsync(IEnumerable<SongBindingModel> songs)
+        public async Task AddRangeAsync(IEnumerable<Song> songs)
         {
             if (songs == null)
             {
@@ -386,7 +385,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 });
         }
 
-        public IEnumerable<SongBindingModel> GetQueue()
+        public IEnumerable<Song> GetQueue()
         {
             lock (this.queueOrder)
             {
@@ -419,14 +418,14 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 {
                     if (this.logger.IsDebugEnabled)
                     {
-                        this.logger.Debug("Getting url for song '{0}'.", song.Metadata.ProviderSongId);
+                        this.logger.Debug("Getting url for song '{0}'.", song.ProviderSongId);
                     }
 
                     GoogleMusicSongUrl songUrl = null;
 
                     try
                     {
-                        songUrl = await this.songWebService.GetSongUrlAsync(song.Metadata.ProviderSongId);
+                        songUrl = await this.songWebService.GetSongUrlAsync(song.ProviderSongId);
                     }
                     catch (Exception e)
                     {
@@ -463,7 +462,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
                             this.State = QueueState.Play;
 
-                            this.logger.LogTask(this.publisherService.PublishAsync(song, this.currentPlaylist));
+                            this.logger.LogTask(this.publisherService.PublishAsync(song, null /* TODO: this.currentPlaylist */));
                         }
                         else
                         {
@@ -481,7 +480,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
                         if (this.logger.IsDebugEnabled)
                         {
-                            this.logger.Debug("Could not get url for song {0}.", song.Metadata.ProviderSongId);
+                            this.logger.Debug("Could not get url for song {0}.", song.ProviderSongId);
                         }
 
                         this.logger.LogTask(this.notificationService.ShowMessageAsync("Cannot play right now. Make sure that you don't use current account on different device at the same time. Try after couple minutes."));

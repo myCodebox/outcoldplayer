@@ -7,8 +7,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
     using System.Collections.Generic;
     using System.Threading.Tasks;
 
-    using OutcoldSolutions.GoogleMusic.BindingModels;
-    using OutcoldSolutions.GoogleMusic.Models;
+    using OutcoldSolutions.GoogleMusic.Repositories.DbModels;
 
     public interface IPlayQueueService
     {
@@ -24,9 +23,9 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         QueueState State { get; }
 
-        Task PlayAsync(PlaylistBaseBindingModel playlist);
+        Task PlayAsync(ISongsContainer playlist, IList<Song> songs);
 
-        Task PlayAsync(PlaylistBaseBindingModel playlist, int songIndex);
+        Task PlayAsync(ISongsContainer playlist, IList<Song> songs, int songIndex);
 
         Task PlayAsync(int index);
 
@@ -44,7 +43,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         bool CanSwitchToPrevious();
 
-        Task AddRangeAsync(IEnumerable<SongBindingModel> songs);
+        Task AddRangeAsync(IEnumerable<Song> songs);
 
         Task RemoveAsync(int index);
 
@@ -52,7 +51,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         Task SetShuffledAsync(bool isShuffled);
 
-        IEnumerable<SongBindingModel> GetQueue();
+        IEnumerable<Song> GetQueue();
 
         int GetCurrentSongIndex();
     }

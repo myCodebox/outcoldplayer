@@ -48,9 +48,9 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
 
         private IEnumerable<SongBindingModel> OrderSongs(IEnumerable<SongBindingModel> songs)
         {
-            return songs.OrderBy(s => s.Metadata.ArtistTitle, StringComparer.CurrentCultureIgnoreCase)
-                 .ThenBy(s => s.Metadata.AlbumTitle, StringComparer.CurrentCultureIgnoreCase)
-                 .ThenBy(s => Math.Max(s.Metadata.Disc, (byte)1))
+            return songs.OrderBy(s => s.Metadata.Artist.Title, StringComparer.CurrentCultureIgnoreCase)
+                 .ThenBy(s => s.Metadata.Album.Title, StringComparer.CurrentCultureIgnoreCase)
+                 .ThenBy(s => Math.Max(s.Metadata.Disc.Value, (byte)1))
                  .ThenBy(s => s.Metadata.Track);
         }
     }

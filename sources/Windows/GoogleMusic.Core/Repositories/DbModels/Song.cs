@@ -10,7 +10,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories.DbModels
     using SQLite;
 
     [Table("Song")]
-    public class SongEntity
+    public class Song
     {
         [PrimaryKey, AutoIncrement]
         public int SongId { get; set; }
@@ -36,15 +36,15 @@ namespace OutcoldSolutions.GoogleMusic.Repositories.DbModels
 
         public byte Rating { get; set; }
 
-        public ushort Disc { get; set; }
+        public ushort? Disc { get; set; }
 
-        public ushort TotalDiscs { get; set; }
+        public ushort? TotalDiscs { get; set; }
 
-        public ushort Track { get; set; }
+        public ushort? Track { get; set; }
 
-        public ushort TotalTracks { get; set; }
+        public ushort? TotalTracks { get; set; }
 
-        public ushort Year { get; set; }
+        public ushort? Year { get; set; }
 
         public int GenreId { get; set; }
 
@@ -62,22 +62,16 @@ namespace OutcoldSolutions.GoogleMusic.Repositories.DbModels
 
         public StreamType StreamType { get; set; }
 
-        [Ignore]
-        public string AlbumTitle { get; set; }
+        [Reference]
+        public Album Album { get; set; }
 
-        [Ignore]
-        public string ArtistTitle { get; set; }
+        [Reference]
+        public Genre Genre { get; set; }
 
-        [Ignore]
-        public string GenreTitle { get; set; }
+        [Reference]
+        public Artist Artist { get; set; }
 
-        [Ignore]
-        public AlbumEntity Album { get; set; }
-
-        [Ignore]
-        public GenreEntity Genre { get; set; }
-
-        [Ignore]
-        public ArtistEntity Artist { get; set; }
+        [Reference]
+        public UserPlaylistEntryEntity UserPlaylistEntry { get; set; }
     }
 }

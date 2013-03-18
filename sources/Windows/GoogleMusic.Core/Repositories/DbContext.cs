@@ -69,12 +69,12 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
                 await connection.ExecuteAsync("PRAGMA page_size = 65536 ;");
                 await connection.ExecuteAsync("PRAGMA user_version = 1 ;");
 
-                await connection.CreateTableAsync<SongEntity>();
-                await connection.CreateTableAsync<UserPlaylistEntity>();
+                await connection.CreateTableAsync<Song>();
+                await connection.CreateTableAsync<UserPlaylist>();
                 await connection.CreateTableAsync<UserPlaylistEntryEntity>();
-                await connection.CreateTableAsync<AlbumEntity>();
-                await connection.CreateTableAsync<GenreEntity>();
-                await connection.CreateTableAsync<ArtistEntity>();
+                await connection.CreateTableAsync<Album>();
+                await connection.CreateTableAsync<Genre>();
+                await connection.CreateTableAsync<Artist>();
             }
 
             return fDbExists ? DatabaseStatus.Existed : DatabaseStatus.New;

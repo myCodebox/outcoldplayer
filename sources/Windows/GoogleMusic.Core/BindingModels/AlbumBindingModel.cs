@@ -12,28 +12,28 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             : base(null, songs)
         {
             var song = songs.FirstOrDefault(x => !string.IsNullOrWhiteSpace(x.Metadata.AlbumArtist))
-                   ?? songs.FirstOrDefault(x => !string.IsNullOrWhiteSpace(x.Metadata.ArtistTitle));
+                   ?? songs.FirstOrDefault(x => !string.IsNullOrWhiteSpace(x.Metadata.Artist.Title));
             if (song != null)
             {
-                this.Artist = string.IsNullOrWhiteSpace(song.Metadata.AlbumArtist) ? song.Metadata.ArtistTitle : song.Metadata.AlbumArtist;
+                this.Artist = string.IsNullOrWhiteSpace(song.Metadata.AlbumArtist) ? song.Metadata.Artist.Title : song.Metadata.AlbumArtist;
             }
 
             song = songs.FirstOrDefault(x => x.Metadata.Year > 0);
             if (song != null)
             {
-                this.Year = song.Metadata.Year;
+                this.Year = song.Metadata.Year.Value;
             }
 
-            song = songs.FirstOrDefault(x => !string.IsNullOrEmpty(x.Metadata.AlbumTitle));
+            song = songs.FirstOrDefault(x => !string.IsNullOrEmpty(x.Metadata.Album.Title));
             if (song != null)
             {
-                this.Title = song.Metadata.AlbumTitle;
+                this.Title = song.Metadata.Album.Title;
             }
 
-            song = songs.FirstOrDefault(x => !string.IsNullOrEmpty(x.Metadata.GenreTitle));
+            song = songs.FirstOrDefault(x => !string.IsNullOrEmpty(x.Metadata.Genre.Title));
             if (song != null)
             {
-                this.Genre = song.Metadata.GenreTitle;
+                this.Genre = song.Metadata.Genre.Title;
             }
         }
 

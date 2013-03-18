@@ -15,9 +15,9 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
     {
         Task<int> GetCountAsync();
 
-        Task<IList<GenreEntity>> GetGenresAsync(Order order, uint? take = null);
+        Task<IList<Genre>> GetGenresAsync(Order order, uint? take = null);
 
-        Task<IList<GenreEntity>> SearchAsync(string searchQuery, uint? take);
+        Task<IList<Genre>> SearchAsync(string searchQuery, uint? take);
     }
 
     public class GenresRepository : RepositoryBase, IGenresRepository
@@ -37,12 +37,12 @@ group by x.[GenreNorm]
 
         public async Task<int> GetCountAsync()
         {
-            return await this.Connection.Table<GenreEntity>().CountAsync();
+            return await this.Connection.Table<Genre>().CountAsync();
         }
 
-        public async Task<IList<GenreEntity>> GetGenresAsync(Order order, uint? take = null)
+        public async Task<IList<Genre>> GetGenresAsync(Order order, uint? take = null)
         {
-            var query = this.Connection.Table<GenreEntity>();
+            var query = this.Connection.Table<Genre>();
 
             if (order == Order.Name)
             {
@@ -61,7 +61,7 @@ group by x.[GenreNorm]
             return await query.ToListAsync();
         }
 
-        public async Task<IList<GenreEntity>> SearchAsync(string searchQuery, uint? take)
+        public async Task<IList<Genre>> SearchAsync(string searchQuery, uint? take)
         {
             var searchQueryNorm = searchQuery.Normalize() ?? string.Empty;
 
@@ -72,7 +72,7 @@ group by x.[GenreNorm]
                 sql.AppendFormat(" limit {0}", take.Value);
             }
 
-            return await this.Connection.QueryAsync<GenreEntity>(sql.ToString(), string.Format("%{0}%", searchQueryNorm.Normalize()));
+            return await this.Connection.QueryAsync<Genre>(sql.ToString(), string.Format("%{0}%", searchQueryNorm.Normalize()));
         }
     }
 }

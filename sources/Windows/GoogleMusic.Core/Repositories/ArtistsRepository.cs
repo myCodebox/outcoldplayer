@@ -16,9 +16,9 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
     {
         Task<int> GetCountAsync();
 
-        Task<IList<ArtistEntity>> GetAristsAsync(Order order, uint? take = null);
+        Task<IList<Artist>> GetAristsAsync(Order order, uint? take = null);
 
-        Task<IList<ArtistEntity>> SearchAsync(string searchQuery, uint? take);
+        Task<IList<Artist>> SearchAsync(string searchQuery, uint? take);
     }
 
     public class ArtistsRepository : RepositoryBase, IArtistsRepository
@@ -70,9 +70,9 @@ group by u.[ArtistNorm]
 order by u.[ArtistNorm]
 ";
 
-        public async Task<IList<ArtistEntity>> GetAristsAsync(Order order, uint? take = null)
+        public async Task<IList<Artist>> GetAristsAsync(Order order, uint? take = null)
         {
-            var query = this.Connection.Table<ArtistEntity>().Where(a => a.AlbumsCount > 0);
+            var query = this.Connection.Table<Artist>().Where(a => a.AlbumsCount > 0);
             if (order == Order.Name)
             {
                 query = query.OrderBy(x => x.TitleNorm);
@@ -92,10 +92,10 @@ order by u.[ArtistNorm]
 
         public async Task<int> GetCountAsync()
         {
-            return await this.Connection.Table<ArtistEntity>().Where(a => a.AlbumsCount > 0).CountAsync();
+            return await this.Connection.Table<Artist>().Where(a => a.AlbumsCount > 0).CountAsync();
         }
 
-        public async Task<IList<ArtistEntity>> SearchAsync(string searchQuery, uint? take)
+        public async Task<IList<Artist>> SearchAsync(string searchQuery, uint? take)
         {
             var searchQueryNorm = searchQuery.Normalize() ?? string.Empty;
 
@@ -106,7 +106,7 @@ order by u.[ArtistNorm]
                 sql.AppendFormat(" limit {0}", take.Value);
             }
 
-            return await this.Connection.QueryAsync<ArtistEntity>(sql.ToString(), string.Format("%{0}%", searchQueryNorm.Normalize()));
+            return await this.Connection.QueryAsync<Artist>(sql.ToString(), string.Format("%{0}%", searchQueryNorm.Normalize()));
         }
     }
 }

@@ -36,19 +36,19 @@ namespace OutcoldSolutions.GoogleMusic.Controls
                 playlist = groupPlaylistBindingModel.Playlist;
             }
 
-            if (playlist is ArtistEntity)
+            if (playlist is Artist)
             {
                 Debug.Assert(this.ArtistDataTemplate != null, "this.ArtistDataTemplate != null");
                 return this.ArtistDataTemplate;
             }
 
-            if (playlist is AlbumEntity)
+            if (playlist is Album)
             {
                 Debug.Assert(this.AlbumDataTemplate != null, "this.AlbumDataTemplate != null");
                 return this.AlbumDataTemplate;
             }
 
-            if (playlist is GenreEntity)
+            if (playlist is Genre)
             {
                 Debug.Assert(this.GenreDataTemplate != null, "this.GenreDataTemplate != null");
                 return this.GenreDataTemplate;
@@ -60,7 +60,7 @@ namespace OutcoldSolutions.GoogleMusic.Controls
                 return this.SystemPlaylistDataTemplate;
             }
 
-            if (playlist is UserPlaylistEntity)
+            if (playlist is UserPlaylist)
             {
                 Debug.Assert(this.UserPlaylistDataTemplate != null, "this.UserPlaylistDataTemplate != null");
                 return this.UserPlaylistDataTemplate;

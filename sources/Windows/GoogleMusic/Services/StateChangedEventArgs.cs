@@ -5,8 +5,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 {
     using System;
 
-    using OutcoldSolutions.GoogleMusic.BindingModels;
-    using OutcoldSolutions.GoogleMusic.Models;
+    using OutcoldSolutions.GoogleMusic.Repositories.DbModels;
 
     public class StateChangedEventArgs : EventArgs
     {
@@ -15,7 +14,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             this.State = state;
         }
 
-        public StateChangedEventArgs(QueueState state, SongBindingModel currentSong)
+        public StateChangedEventArgs(QueueState state, Song currentSong)
         {
             this.State = state;
             this.CurrentSong = currentSong;
@@ -23,6 +22,6 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         public QueueState State { get; private set; }
 
-        public SongBindingModel CurrentSong { get; private set; }
+        public Song CurrentSong { get; private set; }
     }
 }

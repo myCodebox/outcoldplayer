@@ -19,7 +19,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
         protected override async Task<List<GenreBindingModel>> LoadCollectionAsync()
         {
             var songs = await this.SongsRepository.GetAllAsync();
-            return songs.GroupBy(x => x.Metadata.GenreTitle)
+            return songs.GroupBy(x => x.Metadata.Genre.Title)
                      .OrderBy(x => x.Key)
                      .Select(x => new GenreBindingModel(x.Key, x.ToList()))
                      .ToList();

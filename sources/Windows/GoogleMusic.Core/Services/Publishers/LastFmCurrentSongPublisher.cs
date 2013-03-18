@@ -9,7 +9,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
-    using OutcoldSolutions.GoogleMusic.Models;
+    using OutcoldSolutions.GoogleMusic.Repositories.DbModels;
     using OutcoldSolutions.GoogleMusic.Web.Lastfm;
     using OutcoldSolutions.Models;
 
@@ -27,7 +27,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
             get { return PublisherType.Immediately; }
         }
 
-        public async Task PublishAsync(SongBindingModel song, PlaylistBaseBindingModel currentPlaylist, Uri imageUri, CancellationToken cancellationToken)
+        public async Task PublishAsync(Song song, ISongsContainer currentPlaylist, Uri imageUri, CancellationToken cancellationToken)
         {
             var startPlaying = DateTime.UtcNow;
 
@@ -35,17 +35,17 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
 
             var parameters = new Dictionary<string, string>()
                                  {
-                                     { "artist", song.Artist },
+                                     { "artist", song.Artist.Title },
                                      { "track", song.Title },
-                                     { "album", song.Album },
-                                     { "trackNumber", song.Metadata.Track.ToString("D") },
-                                     { "duration", ((int)song.Duration).ToString("D") }
+                                     { "album", song.Album.Title },
+                                     { "trackNumber", song.Track.HasValue ? song.Track.Value.ToString("D") : "0" },
+                                     { "duration", ((int)song.Duration.TotalSeconds).ToString("D") }
                                  };
 
-            if (!string.IsNullOrEmpty(song.Metadata.AlbumArtist)
-                && string.Equals(song.Metadata.AlbumArtist, song.Artist, StringComparison.OrdinalIgnoreCase))
+            if (!string.IsNullOrEmpty(song.AlbumArtist)
+                && string.Equals(song.AlbumArtist, song.Artist.Title, StringComparison.OrdinalIgnoreCase))
             {
-                parameters.Add("albumArtist", song.Metadata.AlbumArtist);
+                parameters.Add("albumArtist", song.AlbumArtist);
             }
 
             Task nowPlayingTask = this.webService.CallAsync("track.updateNowPlaying", new Dictionary<string, string>(parameters));
@@ -53,10 +53,10 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
             cancellationToken.ThrowIfCancellationRequested();
 
             // Last.fm only accept songs with > 30 seconds
-            if (song.Duration >= 30)
+            if (song.Duration.TotalSeconds >= 30)
             {
                 // 4 minutes or half of the track
-                await Task.Delay(Math.Min(4 * 60 * 1000, (int)(song.Duration * 1000 / 2)), cancellationToken);
+                await Task.Delay(Math.Min(4 * 60 * 1000, (int)(song.Duration.TotalMilliseconds / 2)), cancellationToken);
 
                 cancellationToken.ThrowIfCancellationRequested();
 

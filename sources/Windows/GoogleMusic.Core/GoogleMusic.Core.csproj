@@ -100,13 +100,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="CommandIcon.cs" />
-    <Compile Include="Repositories\DbModels\AlbumEntity.cs" />
+    <Compile Include="Repositories\DbModels\Album.cs" />
     <Compile Include="Models\StringEx.cs" />
     <Compile Include="Models\SystemPlaylist.cs" />
-    <Compile Include="Repositories\DbModels\ArtistEntity.cs" />
-    <Compile Include="Repositories\DbModels\GenreEntity.cs" />
-    <Compile Include="Repositories\DbModels\ISongsContainerEntity.cs" />
-    <Compile Include="Repositories\DbModels\UserPlaylistEntity.cs" />
+    <Compile Include="Repositories\DbModels\Artist.cs" />
+    <Compile Include="Repositories\DbModels\Genre.cs" />
+    <Compile Include="Repositories\DbModels\ISongsContainer.cs" />
+    <Compile Include="Repositories\DbModels\UserPlaylist.cs" />
     <Compile Include="Repositories\DbModels\UserPlaylistEntryEntity.cs" />
     <Compile Include="Models\SongsGrouping.cs" />
     <Compile Include="Models\Search.cs" />
@@ -116,7 +116,7 @@
     <Compile Include="BindingModels\UserPlaylistBindingModel.cs" />
     <Compile Include="BindingModels\PlaylistBaseBindingModel.cs" />
     <Compile Include="BindingModels\SongBindingModel.cs" />
-    <Compile Include="Repositories\DbModels\SongEntity.cs" />
+    <Compile Include="Repositories\DbModels\Song.cs" />
     <Compile Include="Models\SongState.cs" />
     <Compile Include="Models\StreamType.cs" />
     <Compile Include="BindingModels\SystemPlaylistBindingModel.cs" />

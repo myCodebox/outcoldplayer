@@ -22,7 +22,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
             var artists = await base.GetForSearchAsync();
 
             var songs = await this.SongsRepository.GetAllAsync();
-            var groupBy = songs.GroupBy(x => x.Metadata.ArtistTitle, StringComparer.CurrentCultureIgnoreCase);
+            var groupBy = songs.GroupBy(x => x.Metadata.Artist.Title, StringComparer.CurrentCultureIgnoreCase);
             foreach (var group in groupBy)
             {
                 var artist = artists.FirstOrDefault(
@@ -50,7 +50,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
         protected override async Task<List<ArtistBindingModel>> LoadCollectionAsync()
         {
             return (await this.SongsRepository.GetAllAsync())
-                .GroupBy(x => string.IsNullOrWhiteSpace(x.Metadata.AlbumArtist) ? x.Metadata.ArtistTitle : x.Metadata.AlbumArtist, StringComparer.CurrentCultureIgnoreCase)
+                .GroupBy(x => string.IsNullOrWhiteSpace(x.Metadata.AlbumArtist) ? x.Metadata.Artist.Title : x.Metadata.AlbumArtist, StringComparer.CurrentCultureIgnoreCase)
                 .OrderBy(x => x.Key, StringComparer.CurrentCultureIgnoreCase)
                 .Select(x => new ArtistBindingModel(x.ToList())).ToList();
         }

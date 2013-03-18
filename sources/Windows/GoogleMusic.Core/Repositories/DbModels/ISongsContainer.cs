@@ -5,7 +5,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories.DbModels
 {
     using System;
 
-    public interface ISongsContainerEntity
+    public interface ISongsContainer
     {
         string Title { get; set; }
 
@@ -17,6 +17,6 @@ namespace OutcoldSolutions.GoogleMusic.Repositories.DbModels
 
         Uri ArtUrl { get; set; }
 
-         DateTime LastPlayed { get; set; }
+        DateTime LastPlayed { get; set; }
     }
 }

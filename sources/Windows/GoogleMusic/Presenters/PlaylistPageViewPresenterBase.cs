@@ -7,6 +7,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.Diagnostics;
+    using System.Linq;
     using System.Threading.Tasks;
 
     using OutcoldSolutions.Diagnostics;
@@ -85,7 +86,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             var selectedSong = this.BindingModel.SelectedSong;
             if (selectedSong != null)
             {
-                this.playQueueService.PlayAsync(this.BindingModel.Playlist, this.BindingModel.Playlist.Songs.IndexOf(selectedSong));
+                this.playQueueService.PlayAsync(null, this.BindingModel.Playlist.Songs.Select(x => x.Metadata).ToList(), this.BindingModel.Playlist.Songs.IndexOf(selectedSong));
                 this.Toolbar.IsBottomAppBarOpen = true;
             }
         }

@@ -6,6 +6,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.Diagnostics;
+    using System.Linq;
     using System.Threading.Tasks;
 
     using OutcoldSolutions.Diagnostics;
@@ -117,7 +118,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private void UpdateSongs()
         {
-            this.Dispatcher.RunAsync(() => { this.BindingModel.Songs = new List<SongBindingModel>(this.playQueueService.GetQueue()); });
+            this.Dispatcher.RunAsync(() => { this.BindingModel.Songs = new List<SongBindingModel>(this.playQueueService.GetQueue().Select(x => new SongBindingModel(x))); });
         }
 
         private void SelectedSongChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)

@@ -268,7 +268,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             if (playlist != null)
             {
                 this.navigationService.NavigateTo<IPlaylistPageView>(playlist);
-                this.playQueueService.PlayAsync(playlist);
+                this.playQueueService.PlayAsync(null, playlist.Songs.Select(x => x.Metadata).ToList());
                 this.Toolbar.IsBottomAppBarOpen = true;
             }
         }

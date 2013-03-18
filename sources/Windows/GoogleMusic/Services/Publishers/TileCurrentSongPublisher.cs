@@ -9,6 +9,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
+    using OutcoldSolutions.GoogleMusic.Repositories.DbModels;
 
     using Windows.Data.Xml.Dom;
     using Windows.UI.Notifications;
@@ -27,7 +28,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
             get { return PublisherType.ImmediatelyWithAlbumArt; }
         }
 
-        public Task PublishAsync(SongBindingModel song, PlaylistBaseBindingModel currentPlaylist, Uri albumArtUri, CancellationToken cancellationToken)
+        public Task PublishAsync(Song song, ISongsContainer currentPlaylist, Uri albumArtUri, CancellationToken cancellationToken)
         {
             return Task.Factory.StartNew(() =>
                 {
@@ -43,7 +44,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
 
                     var tileNotification = new TileNotification(wideTileTemplate)
                                                {
-                                                   ExpirationTime = DateTimeOffset.UtcNow.AddSeconds(song.Duration),
+                                                   ExpirationTime = DateTimeOffset.UtcNow.Add(song.Duration),
                                                    Tag = CurrentSongTileTag
                                                };
 
@@ -51,7 +52,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
                 });
         }
 
-        private XmlDocument GenerateWideTile(SongBindingModel song, Uri albumArtUri)
+        private XmlDocument GenerateWideTile(Song song, Uri albumArtUri)
         {
             XmlDocument templateContent = TileUpdateManager.GetTemplateContent(TileTemplateType.TileWideSmallImageAndText02);
             XmlNodeList images = templateContent.GetElementsByTagName("image");
@@ -64,7 +65,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
             return templateContent;
         }
 
-        private XmlDocument GenerateSquareTile(SongBindingModel song)
+        private XmlDocument GenerateSquareTile(Song song)
         {
             XmlDocument templateContent = TileUpdateManager.GetTemplateContent(TileTemplateType.TileSquareText03);
 
@@ -74,12 +75,12 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
             return templateContent;
         }
 
-        private void SetTextElements(XmlNodeList textElements, XmlDocument templateContent, SongBindingModel song)
+        private void SetTextElements(XmlNodeList textElements, XmlDocument templateContent, Song song)
         {
             textElements[0].AppendChild(templateContent.CreateTextNode(song.Title));
-            textElements[1].AppendChild(templateContent.CreateTextNode(song.Artist));
-            textElements[2].AppendChild(templateContent.CreateTextNode(song.Album));
-            textElements[3].AppendChild(templateContent.CreateTextNode(TimeSpan.FromSeconds(song.Duration).ToPresentString()));
+            textElements[1].AppendChild(templateContent.CreateTextNode(song.Artist.Title));
+            textElements[2].AppendChild(templateContent.CreateTextNode(song.Album.Title));
+            textElements[3].AppendChild(templateContent.CreateTextNode(song.Duration.ToPresentString()));
         }
     }
 }

@@ -23,14 +23,14 @@ namespace OutcoldSolutions.GoogleMusic.Models
                     x =>
                     new AlbumArtist
                     {
-                        Album = x.Metadata.AlbumTitle,
-                        Artist = string.IsNullOrWhiteSpace(x.Metadata.AlbumArtist) ? x.Metadata.ArtistTitle : x.Metadata.AlbumArtist
+                        Album = x.Metadata.Album.Title,
+                        Artist = string.IsNullOrWhiteSpace(x.Metadata.AlbumArtist) ? x.Metadata.Artist.Title : x.Metadata.AlbumArtist
                     },
                         AlbumArtist.AlbumArtistComparer)
                 .Select(
                     x =>
                     new AlbumBindingModel(
-                        x.OrderBy(s => Math.Max(s.Metadata.Disc, (byte)1))
+                        x.OrderBy(s => Math.Max(s.Metadata.Disc.Value, (byte)1))
                          .ThenBy(s => s.Metadata.Track)
                          .ToList()))
                 .ToList();

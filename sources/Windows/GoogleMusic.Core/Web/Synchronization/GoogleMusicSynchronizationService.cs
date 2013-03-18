@@ -9,12 +9,10 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
     using System.Threading.Tasks;
 
     using OutcoldSolutions.Diagnostics;
-    using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Repositories.DbModels;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Web.Models;
-    using OutcoldSolutions.Models;
 
     using Windows.UI.Xaml;
 
@@ -177,13 +175,13 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
                 (connection) =>
                     {
                         int result = 0;
-                        result = connection.DeleteAll<SongEntity>();
+                        result = connection.DeleteAll<Song>();
                         if (this.logger.IsDebugEnabled)
                         {
                             this.logger.Debug("{0} Songs were deleted from DB", result);
                         }
 
-                        result = connection.DeleteAll<UserPlaylistEntity>();
+                        result = connection.DeleteAll<UserPlaylist>();
                         if (this.logger.IsDebugEnabled)
                         {
                             this.logger.Debug("{0} UserPlaylists were deleted from DB", result);
@@ -261,17 +259,17 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
             await progress.SafeReportAsync(0d);
 
             var googlePlaylists = await this.playlistsWebService.GetAllAsync();
-            var existingPlaylists = await this.Connection.Table<UserPlaylistEntity>().ToListAsync();
+            var existingPlaylists = await this.Connection.Table<UserPlaylist>().ToListAsync();
 
             await progress.SafeReportAsync(0.4d);
 
-            var pInserts = new List<UserPlaylistEntity>();
-            var pUpdates = new List<UserPlaylistEntity>();
-            var pDeletes = new List<UserPlaylistEntity>();
+            var pInserts = new List<UserPlaylist>();
+            var pUpdates = new List<UserPlaylist>();
+            var pDeletes = new List<UserPlaylist>();
 
-            var eInserts = new List<Tuple<UserPlaylistEntity, UserPlaylistEntryEntity>>();
-            var eUpdates = new List<Tuple<UserPlaylistEntity, UserPlaylistEntryEntity>>();
-            var eDeletes = new List<Tuple<UserPlaylistEntity, UserPlaylistEntryEntity>>();
+            var eInserts = new List<Tuple<UserPlaylist, UserPlaylistEntryEntity>>();
+            var eUpdates = new List<Tuple<UserPlaylist, UserPlaylistEntryEntity>>();
+            var eDeletes = new List<Tuple<UserPlaylist, UserPlaylistEntryEntity>>();
 
             int index = 0;
 
@@ -309,7 +307,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
                             providerPlaylistId);
                     }
 
-                    pInserts.Add(userPlaylistEntity = new UserPlaylistEntity() { ProviderPlaylistId = providerPlaylistId, Title = googlePlaylist.Title });
+                    pInserts.Add(userPlaylistEntity = new UserPlaylist() { ProviderPlaylistId = providerPlaylistId, Title = googlePlaylist.Title });
                 }
 
                 var userPlaylistEntries = await this.Connection.Table<UserPlaylistEntryEntity>()
@@ -317,7 +315,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
                                                              .OrderBy(e => e.PlaylistOrder)
                                                              .ToListAsync();
 
-                var userPlaylistSongs = await this.Connection.QueryAsync<SongEntity>(
+                var userPlaylistSongs = await this.Connection.QueryAsync<Song>(
                         "SELECT s.* FROM Song s INNER JOIN UserPlaylistEntry e ON s.SongId == e.SongId WHERE e.PlaylistId = ?",
                         userPlaylistEntity.PlaylistId);
 
@@ -358,7 +356,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
 
                         if (storedSong == null)
                         {
-                            storedSong = await this.Connection.FindAsync<SongEntity>(x => x.ProviderSongId == song.Id);
+                            storedSong = await this.Connection.FindAsync<Song>(x => x.ProviderSongId == song.Id);
                         }
 
                         if (storedSong != null)
@@ -397,7 +395,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
 
                         foreach (var playlist in pDeletes)
                         {
-                            connection.Delete<UserPlaylistEntity>(playlist);
+                            connection.Delete<UserPlaylist>(playlist);
                         }
 
                         if (pUpdates.Count > 0)

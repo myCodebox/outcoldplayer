@@ -3,14 +3,14 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Services
 {
-    using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
+    using OutcoldSolutions.GoogleMusic.Repositories.DbModels;
 
     public class CurrentSongPropertiesUpdateService
     {
         private readonly IDispatcher dispatcher;
 
-        private SongBindingModel currentSong;
+        private Song currentSong;
 
         public CurrentSongPropertiesUpdateService(
             IDispatcher dispatcher,
@@ -35,24 +35,24 @@ namespace OutcoldSolutions.GoogleMusic.Services
                         {
                             if (this.currentSong != eventArgs.CurrentSong && this.currentSong != null)
                             {
-                                this.currentSong.State = SongState.None;
+                                //this.currentSong.State = SongState.None;
                             }
 
                             this.currentSong = eventArgs.CurrentSong;
                             if (eventArgs.State == QueueState.Play)
                             {
-                                this.currentSong.State = SongState.Playing;
+                                //this.currentSong.State = SongState.Playing;
                             }
                             else if (eventArgs.State == QueueState.Paused)
                             {
-                                this.currentSong.State = SongState.Paused;
+                                //this.currentSong.State = SongState.Paused;
                             }
                         }
                         else
                         {
                             if (this.currentSong != null)
                             {
-                                this.currentSong.State = SongState.None;
+                                //this.currentSong.State = SongState.None;
                                 this.currentSong = null;
                             }
                         }

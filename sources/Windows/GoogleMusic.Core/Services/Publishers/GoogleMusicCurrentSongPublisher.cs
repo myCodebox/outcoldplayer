@@ -9,6 +9,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
 
     using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.BindingModels;
+    using OutcoldSolutions.GoogleMusic.Repositories.DbModels;
     using OutcoldSolutions.GoogleMusic.Web;
 
     public class GoogleMusicCurrentSongPublisher : ICurrentSongPublisher
@@ -32,29 +33,30 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
             get { return PublisherType.Delay; }
         }
 
-        public async Task PublishAsync(SongBindingModel song, PlaylistBaseBindingModel currentPlaylist, Uri albumArtUri, CancellationToken cancellationToken)
+        public async Task PublishAsync(Song song, ISongsContainer currentPlaylist, Uri albumArtUri, CancellationToken cancellationToken)
         {
-            this.logger.Debug("PublishAsync: Publishing song playing to GoogleMusic services. ProviderSongId: {0}.", song.Metadata.ProviderSongId);
+            this.logger.Debug("PublishAsync: Publishing song playing to GoogleMusic services. ProviderSongId: {0}.", song.ProviderSongId);
 
             cancellationToken.ThrowIfCancellationRequested();
 
             ushort playCount = (ushort)(song.PlayCount + 1);
 
-            string playlistId = song.Metadata.Title;
+            string playlistId = song.Title;
             bool updateRecentAlbum = false;
             bool updateRecentPlaylist = false;
 
             if (currentPlaylist != null)
             {
-                if (currentPlaylist is UserPlaylistBindingModel)
+                var userPlaylist = currentPlaylist as UserPlaylist;
+                if (userPlaylist != null)
                 {
                     updateRecentPlaylist = true;
-                    playlistId = ((UserPlaylistBindingModel)currentPlaylist).Metadata.ProviderPlaylistId;
+                    playlistId = userPlaylist.ProviderPlaylistId;
                 }
                 else 
                 {
                     updateRecentAlbum = true;
-                    playlistId = string.Format("{0} - {1}", song.Metadata.ArtistTitle, song.Metadata.AlbumTitle);
+                    playlistId = string.Format("{0} - {1}", song.Artist.Title, song.Album.Title);
                 }
             }
 
@@ -62,17 +64,17 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
                 this.dispatcher.RunAsync(() =>
                     { 
                         song.PlayCount = playCount;
-                        song.Metadata.LastPlayed = DateTime.Now;
+                        song.LastPlayed = DateTime.Now;
                     }),
                 Task.Run(async () =>
                     {
-                        if (!(await this.songWebService.RecordPlayingAsync(song.Metadata.ProviderSongId, playlistId, updateRecentAlbum, updateRecentPlaylist, playCount)))
+                        if (!(await this.songWebService.RecordPlayingAsync(song.ProviderSongId, playlistId, updateRecentAlbum, updateRecentPlaylist, playCount)))
                         {
-                            this.logger.Warning("PublishAsync: Could not update GoogleMusic services for ProviderSongId: {0}.", song.Metadata.ProviderSongId);
+                            this.logger.Warning("PublishAsync: Could not update GoogleMusic services for ProviderSongId: {0}.", song.ProviderSongId);
                         }
                     }));
 
-            this.logger.Debug("PublishAsync: Song playing published to GoogleMusic services. ProviderSongId: {0}. Plays count: {1}.", song.Metadata.ProviderSongId, playCount);
+            this.logger.Debug("PublishAsync: Song playing published to GoogleMusic services. ProviderSongId: {0}. Plays count: {1}.", song.ProviderSongId, playCount);
         }
     }
 }

@@ -48,12 +48,12 @@ order by [p].Title
 
         public async Task<int> GetCountAsync()
         {
-            return await this.Connection.Table<UserPlaylistEntity>().CountAsync();
+            return await this.Connection.Table<UserPlaylist>().CountAsync();
         }
 
-        public async Task<IList<UserPlaylistEntity>> GetPlaylistsAsync(Order order, uint? take = null)
+        public async Task<IList<UserPlaylist>> GetPlaylistsAsync(Order order, uint? take = null)
         {
-            var query = this.Connection.Table<UserPlaylistEntity>(); 
+            var query = this.Connection.Table<UserPlaylist>(); 
 
             if (order == Order.Name)
             {
@@ -72,7 +72,7 @@ order by [p].Title
             return await query.ToListAsync();
         }
 
-        public async Task<IList<UserPlaylistEntity>> SearchAsync(string searchQuery, uint? take)
+        public async Task<IList<UserPlaylist>> SearchAsync(string searchQuery, uint? take)
         {
             var searchQueryNorm = searchQuery.Normalize() ?? string.Empty;
 
@@ -83,14 +83,14 @@ order by [p].Title
                 sql.AppendFormat(" limit {0}", take.Value);
             }
 
-            return await this.Connection.QueryAsync<UserPlaylistEntity>(sql.ToString(), string.Format("%{0}%", searchQueryNorm.Normalize()));
+            return await this.Connection.QueryAsync<UserPlaylist>(sql.ToString(), string.Format("%{0}%", searchQueryNorm.Normalize()));
         }
 
         public async Task<IEnumerable<UserPlaylistBindingModel>> GetAllAsync()
         {
             List<UserPlaylistBindingModel> userPlaylists = new List<UserPlaylistBindingModel>();
 
-            var playlists = await this.Connection.Table<UserPlaylistEntity>().ToListAsync();
+            var playlists = await this.Connection.Table<UserPlaylist>().ToListAsync();
 
             foreach (var playlist in playlists)
             {
@@ -104,7 +104,7 @@ order by [p].Title
 
                 foreach (var entry in entries)
                 {
-                    var song = await this.Connection.FindAsync<SongEntity>(entry.SongId);
+                    var song = await this.Connection.FindAsync<Song>(entry.SongId);
 
                     if (song != null)
                     {
@@ -139,7 +139,7 @@ order by [p].Title
                         "Playlist was created on the server with id '{0}' for name '{1}'.", resp.Id, resp.Title);
                 }
 
-                var userPlaylistEntity = new UserPlaylistEntity() { ProviderPlaylistId = resp.Id, Title = resp.Title, TitleNorm = resp.Title.Normalize() };
+                var userPlaylistEntity = new UserPlaylist() { ProviderPlaylistId = resp.Id, Title = resp.Title, TitleNorm = resp.Title.Normalize() };
                 await this.Connection.InsertAsync(userPlaylistEntity);
                 return new UserPlaylistBindingModel(userPlaylistEntity, resp.Title, new List<SongBindingModel>(), new List<string>());
             }
@@ -155,7 +155,7 @@ order by [p].Title
             }
         }
 
-        public async Task<bool> DeleteAsync(UserPlaylistEntity playlist)
+        public async Task<bool> DeleteAsync(UserPlaylist playlist)
         {
             if (this.logger.IsDebugEnabled)
             {
@@ -174,14 +174,14 @@ order by [p].Title
                     (connection) =>
                         {
                             connection.Execute("DELETE from UserPlaylistEntry where ProviderPlaylistId = ?", playlist.PlaylistId);
-                            connection.Delete<UserPlaylistEntity>(playlist.PlaylistId);
+                            connection.Delete<UserPlaylist>(playlist.PlaylistId);
                         });
             }
 
             return resp;
         }
 
-        public async Task<bool> ChangeName(UserPlaylistEntity playlist, string name)
+        public async Task<bool> ChangeName(UserPlaylist playlist, string name)
         {
             if (this.logger.IsDebugEnabled)
             {
@@ -207,7 +207,7 @@ order by [p].Title
             return result;
         }
 
-        public async Task<bool> RemoveEntry(UserPlaylistEntity playlist, string songId, string entryId)
+        public async Task<bool> RemoveEntry(UserPlaylist playlist, string songId, string entryId)
         {
             if (this.logger.IsDebugEnabled)
             {
@@ -236,7 +236,7 @@ order by [p].Title
             return result;
         }
 
-        public async Task<bool> AddEntriesAsync(UserPlaylistEntity playlist, List<SongBindingModel> songs)
+        public async Task<bool> AddEntriesAsync(UserPlaylist playlist, List<SongBindingModel> songs)
         {
             if (songs == null)
             {

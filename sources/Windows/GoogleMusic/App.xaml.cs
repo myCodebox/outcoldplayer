@@ -127,6 +127,9 @@ namespace OutcoldSolutions.GoogleMusic
                 registration.Register<IPlayQueueService>()
                             .AsSingleton<PlayQueueService>();
 
+                registration.Register<ISongsQueueService>()
+                            .AsSingleton<SongsQueueService>();
+
                 registration.Register<INotificationService>()
                             .AsSingleton<NotificationService>();
 

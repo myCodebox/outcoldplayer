@@ -7,7 +7,6 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
 
-    using OutcoldSolutions.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Repositories.DbModels;
 
@@ -70,11 +69,11 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         public PlaylistsRequest Request { get; set; }
     }
 
-    public class GroupPlaylistBindingModel : BindingModelBase
+    public class GroupPlaylistBindingModel
     {
-        private readonly object playlist;
+        private readonly ISongsContainer playlist;
 
-        public GroupPlaylistBindingModel(object playlist)
+        public GroupPlaylistBindingModel(ISongsContainer playlist)
         {
             if (playlist == null)
             {
@@ -86,7 +85,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
         public DelegateCommand PlayCommand { get; set; }
 
-        public object Playlist
+        public ISongsContainer Playlist
         {
             get
             {

@@ -8,7 +8,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories.DbModels
     using SQLite;
 
     [Table("Album")]
-    public class AlbumEntity : ISongsContainerEntity
+    public class Album : ISongsContainer
     {
         [PrimaryKey, AutoIncrement]
         public int AlbumId { get; set; }
@@ -22,7 +22,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories.DbModels
 
         public int SongsCount { get; set; }
 
-        public ushort Year { get; set; }
+        public ushort? Year { get; set; }
 
         public TimeSpan Duration { get; set; }
 
@@ -32,6 +32,6 @@ namespace OutcoldSolutions.GoogleMusic.Repositories.DbModels
         public DateTime LastPlayed { get; set; }
 
         [Reference]
-        public ArtistEntity Artist { get; set; }
+        public Artist Artist { get; set; }
     }
 }

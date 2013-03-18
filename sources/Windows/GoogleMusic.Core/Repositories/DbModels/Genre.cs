@@ -7,13 +7,11 @@ namespace OutcoldSolutions.GoogleMusic.Repositories.DbModels
 
     using SQLite;
 
-    [Table("UserPlaylist")]
-    public class UserPlaylistEntity : ISongsContainerEntity
+    [Table("Genre")]
+    public class Genre : ISongsContainer
     {
         [PrimaryKey, AutoIncrement]
-        public int PlaylistId { get; set; }
-
-        public string ProviderPlaylistId { get; set; }
+        public int GenreId { get; set; }
 
         public string Title { get; set; }
 

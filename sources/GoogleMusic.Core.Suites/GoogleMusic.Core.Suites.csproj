@@ -99,9 +99,6 @@
     <Compile Include="..\Windows\GoogleMusic.Core\Models\Search.cs">
       <Link>_sources\Models\Search.cs</Link>
     </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Models\SongEntity.cs">
-      <Link>_sources\Models\SongEntity.cs</Link>
-    </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Models\SongsGrouping.cs">
       <Link>_sources\Models\SongsGrouping.cs</Link>
     </Compile>
@@ -114,12 +111,6 @@
     <Compile Include="..\Windows\GoogleMusic.Core\Models\UserInfo.cs">
       <Link>_sources\Models\UserInfo.cs</Link>
     </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Models\UserPlaylistEntity.cs">
-      <Link>_sources\Models\UserPlaylistEntity.cs</Link>
-    </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Models\UserPlaylistEntryEntity.cs">
-      <Link>_sources\Models\UserPlaylistEntryEntity.cs</Link>
-    </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Models\UserSession.cs">
       <Link>_sources\Models\UserSession.cs</Link>
     </Compile>
@@ -131,6 +122,27 @@
     </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Repositories\DbContext.cs">
       <Link>_sources\Repositories\DbContext.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Repositories\DbModels\Album.cs">
+      <Link>_sources\Repositories\DbModels\Album.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Repositories\DbModels\Artist.cs">
+      <Link>_sources\Repositories\DbModels\Artist.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Repositories\DbModels\Genre.cs">
+      <Link>_sources\Repositories\DbModels\Genre.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Repositories\DbModels\ISongsContainerEntity.cs">
+      <Link>_sources\Repositories\DbModels\ISongsContainerEntity.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Repositories\DbModels\Song.cs">
+      <Link>_sources\Repositories\DbModels\Song.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Repositories\DbModels\UserPlaylistEntity.cs">
+      <Link>_sources\Repositories\DbModels\UserPlaylistEntity.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Repositories\DbModels\UserPlaylistEntryEntity.cs">
+      <Link>_sources\Repositories\DbModels\UserPlaylistEntryEntity.cs</Link>
     </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Repositories\GenreCollection.cs">
       <Link>_sources\Repositories\GenreCollection.cs</Link>
