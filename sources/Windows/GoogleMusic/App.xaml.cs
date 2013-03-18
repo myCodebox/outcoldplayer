@@ -97,11 +97,11 @@ namespace OutcoldSolutions.GoogleMusic
 
                 // Songs Repositories and Services
                 registration.Register<ISongsRepository>().AsSingleton<SongsRepository>();
-                registration.Register<IUserPlaylistRepository>().And<IPlaylistRepository<UserPlaylist>>().AsSingleton<UserPlaylistRepository>();
+                registration.Register<IUserPlaylistsRepository>().And<IPlaylistRepository<UserPlaylist>>().AsSingleton<UserPlaylistsRepository>();
                 registration.Register<IArtistsRepository>().And<IPlaylistRepository<Artist>>().AsSingleton<ArtistsRepository>();
                 registration.Register<IAlbumsRepository>().And<IPlaylistRepository<Album>>().AsSingleton<AlbumsRepository>();
                 registration.Register<IGenresRepository>().And<IPlaylistRepository<Genre>>().AsSingleton<GenresRepository>();
-                registration.Register<ISystemPlaylistRepository>().And<IPlaylistRepository<SystemPlaylist>>().AsSingleton<SystemPlaylistRepository>();
+                registration.Register<ISystemPlaylistsRepository>().And<IPlaylistRepository<SystemPlaylist>>().AsSingleton<SystemPlaylistsRepository>();
                 registration.Register<IPlaylistsService>().AsSingleton<PlaylistsService>();
 
                 registration.Register<IPlaylistCollection<AlbumBindingModel>>().AsSingleton<AlbumCollection>();

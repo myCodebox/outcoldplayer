@@ -13,7 +13,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Repositories.DbModels;
 
-    public interface ISystemPlaylistRepository : IPlaylistRepository<SystemPlaylist>
+    public interface ISystemPlaylistsRepository : IPlaylistRepository<SystemPlaylist>
     {
         Task<SystemPlaylist> GetAsync(SystemPlaylistType systemPlaylistType);
 
@@ -22,7 +22,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
         Task<IList<SystemPlaylist>> GetAllAsync();
     }
 
-    public class SystemPlaylistRepository : RepositoryBase, ISystemPlaylistRepository
+    public class SystemPlaylistsRepository : RepositoryBase, ISystemPlaylistsRepository
     {
         private const int HighlyRatedValue = 4;
         private const int LastAddedSongsCount = 500;

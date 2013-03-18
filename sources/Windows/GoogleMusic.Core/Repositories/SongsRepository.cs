@@ -11,6 +11,13 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
     using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Repositories.DbModels;
 
+    public interface ISongsRepository
+    {
+        Task<IList<SongBindingModel>> GetAllAsync();
+
+        Task<SongBindingModel> GetSongAsync(string songId);
+    }
+
     public class SongsRepository : RepositoryBase, ISongsRepository
     {
         private readonly ILogger logger;

@@ -15,7 +15,22 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
     using OutcoldSolutions.GoogleMusic.Repositories.DbModels;
     using OutcoldSolutions.GoogleMusic.Web;
 
-    public class UserPlaylistRepository : RepositoryBase, IUserPlaylistRepository
+    public interface IUserPlaylistsRepository : IPlaylistRepository<UserPlaylist>
+    {
+        Task<IEnumerable<UserPlaylistBindingModel>> GetAllAsync();
+
+        Task<UserPlaylistBindingModel> CreateAsync(string name);
+
+        Task<bool> DeleteAsync(UserPlaylist playlistId);
+
+        Task<bool> ChangeName(UserPlaylist playlistId, string name);
+
+        Task<bool> RemoveEntry(UserPlaylist playlistId, string songId, string entryId);
+
+        Task<bool> AddEntriesAsync(UserPlaylist playlistId, List<SongBindingModel> song);
+    }
+
+    public class UserPlaylistsRepository : RepositoryBase, IUserPlaylistsRepository
     {
         private const string SqlSearchPlaylists = @"
 select 
@@ -70,11 +85,11 @@ order by e.[PlaylistOrder]
 
         private readonly IPlaylistsWebService playlistsWebService;
 
-        public UserPlaylistRepository(
+        public UserPlaylistsRepository(
             ILogManager logManager,
             IPlaylistsWebService playlistsWebService)
         {
-            this.logger = logManager.CreateLogger("UserPlaylistRepository");
+            this.logger = logManager.CreateLogger("userPlaylistsRepository");
             this.playlistsWebService = playlistsWebService;
         }
 

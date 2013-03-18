@@ -11,19 +11,19 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
 
     public class MusicPlaylistCollection : PlaylistCollectionBase<UserPlaylistBindingModel>
     {
-        private readonly IUserPlaylistRepository userPlaylistRepository;
+        private readonly IUserPlaylistsRepository userPlaylistsRepository;
 
         public MusicPlaylistCollection(
-            IUserPlaylistRepository userPlaylistRepository,
+            IUserPlaylistsRepository userPlaylistsRepository,
             ISongsRepository songsRepository)
             : base(songsRepository, useCache: false)
         {
-            this.userPlaylistRepository = userPlaylistRepository;
+            this.userPlaylistsRepository = userPlaylistsRepository;
         }
 
         protected async override Task<List<UserPlaylistBindingModel>> LoadCollectionAsync()
         {
-            return (await this.userPlaylistRepository.GetAllAsync()).ToList();
+            return (await this.userPlaylistsRepository.GetAllAsync()).ToList();
         }
     }
 }

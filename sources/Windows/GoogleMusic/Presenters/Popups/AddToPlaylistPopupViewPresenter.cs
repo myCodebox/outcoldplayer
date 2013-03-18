@@ -32,7 +32,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
         }
 
         private readonly IPlaylistCollectionsService collectionsService;
-        private readonly IUserPlaylistRepository userPlaylistRepository;
+        private readonly IUserPlaylistsRepository userPlaylistsRepository;
 
         private bool isLoading;
 
@@ -41,11 +41,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
         public AddToPlaylistPopupViewPresenter(
             IEnumerable<SongBindingModel> songs,
             IPlaylistCollectionsService collectionsService,
-            IUserPlaylistRepository userPlaylistRepository)
+            IUserPlaylistsRepository userPlaylistsRepository)
         {
             this.Songs = songs.ToList();
             this.collectionsService = collectionsService;
-            this.userPlaylistRepository = userPlaylistRepository;
+            this.userPlaylistsRepository = userPlaylistsRepository;
         }
 
         public bool IsLoading
@@ -80,7 +80,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
 
         public void AddToPlaylist(AddToSongMusicPlaylist playlist)
         {
-            this.Logger.LogTask(this.userPlaylistRepository.AddEntriesAsync(playlist.Playlist.Metadata, this.Songs));
+            this.Logger.LogTask(this.userPlaylistsRepository.AddEntriesAsync(playlist.Playlist.Metadata, this.Songs));
             this.View.Close();
         }
 

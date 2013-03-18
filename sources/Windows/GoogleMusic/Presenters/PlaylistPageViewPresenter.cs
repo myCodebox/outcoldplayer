@@ -14,14 +14,14 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
     public class PlaylistPageViewPresenter : PlaylistPageViewPresenterBase<IPlaylistPageView, IPlaylist>
     {
-        private readonly IUserPlaylistRepository userPlaylistRepository;
+        private readonly IUserPlaylistsRepository userPlaylistsRepository;
 
         public PlaylistPageViewPresenter(
             IDependencyResolverContainer container, 
-            IUserPlaylistRepository userPlaylistRepository)
+            IUserPlaylistsRepository userPlaylistsRepository)
             : base(container)
         {
-            this.userPlaylistRepository = userPlaylistRepository;
+            this.userPlaylistsRepository = userPlaylistsRepository;
             this.RemoveFromPlaylistCommand = new DelegateCommand(this.RemoveFromPlaylist);
         }
 
@@ -49,7 +49,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 this.IsDataLoading = true;
                 var musicPlaylist = (UserPlaylistBindingModel)this.BindingModel.Playlist;
 
-                this.userPlaylistRepository.RemoveEntry(
+                this.userPlaylistsRepository.RemoveEntry(
                     musicPlaylist.Metadata, musicPlaylist.Songs[selectedSongIndex].Metadata.ProviderSongId, musicPlaylist.EntriesIds[selectedSongIndex]).ContinueWith(
                         t =>
                             {
