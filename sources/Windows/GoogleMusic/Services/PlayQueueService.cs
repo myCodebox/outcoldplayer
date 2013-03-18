@@ -34,7 +34,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
         private INetworkRandomAccessStream currentSongStream;
         private int currentQueueIndex; // From queueOrder
 
-        private ISongsContainer currentPlaylist;
+        private IPlaylist currentPlaylist;
 
         private QueueState state;
 
@@ -126,12 +126,12 @@ namespace OutcoldSolutions.GoogleMusic.Services
             }
         }
 
-        public async Task PlayAsync(ISongsContainer playlist, IList<Song> songs)
+        public async Task PlayAsync(IPlaylist playlist, IList<Song> songs)
         {
             await this.PlayAsync(playlist, songs, songIndex: -1);
         }
 
-        public async Task PlayAsync(ISongsContainer playlist, IList<Song> songs, int songIndex)
+        public async Task PlayAsync(IPlaylist playlist, IList<Song> songs, int songIndex)
         {
             if (songs == null)
             {

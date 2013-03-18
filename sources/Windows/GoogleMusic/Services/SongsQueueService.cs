@@ -23,38 +23,38 @@ namespace OutcoldSolutions.GoogleMusic.Services
             this.songsRepository = songsRepository;
         }
 
-        public async Task PlayAsync(ISongsContainer songsContainer)
+        public async Task PlayAsync(IPlaylist playlist)
         {
-            if (songsContainer == null)
+            if (playlist == null)
             {
-                throw new ArgumentNullException("songsContainer");
+                throw new ArgumentNullException("playlist");
             }
 
             IList<Song> songs = null;
 
-            if (songsContainer is Album)
+            if (playlist is Album)
             {
-                songs = await this.songsRepository.GetAlbumSongsAsync((Album)songsContainer);
+                songs = await this.songsRepository.GetAlbumSongsAsync((Album)playlist);
             }
-            else if (songsContainer is Artist)
+            else if (playlist is Artist)
             {
-                songs = await this.songsRepository.GetArtistSongsAsync((Artist)songsContainer);
+                songs = await this.songsRepository.GetArtistSongsAsync((Artist)playlist);
             }
-            else if (songsContainer is UserPlaylist)
+            else if (playlist is UserPlaylist)
             {
-                songs = await this.songsRepository.GetUserPlaylistSongsAsync((UserPlaylist)songsContainer);
+                songs = await this.songsRepository.GetUserPlaylistSongsAsync((UserPlaylist)playlist);
             }
-            else if (songsContainer is Genre)
+            else if (playlist is Genre)
             {
-                songs = await this.songsRepository.GetGenreSongsAsync((Genre)songsContainer);
+                songs = await this.songsRepository.GetGenreSongsAsync((Genre)playlist);
             }
             else
             {
                 // TODO: Implement system playlists
-                throw new ArgumentException("Unknown songs container type.", "songsContainer");
+                throw new ArgumentException("Unknown songs container type.", "playlist");
             }
 
-            await this.playQueueService.PlayAsync(songsContainer, songs);
+            await this.playQueueService.PlayAsync(playlist, songs);
         }
     }
 }

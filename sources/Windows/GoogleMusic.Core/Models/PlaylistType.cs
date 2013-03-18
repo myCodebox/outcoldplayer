@@ -3,7 +3,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Models
 {
-    public enum SongsContainerType
+    public enum PlaylistType
     {
         Unknown = 0,
         Album = 1,

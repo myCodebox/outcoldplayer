@@ -68,7 +68,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         {
             var systemPlaylists = await this.systemPlaylistRepository.GetSystemPlaylistsAsync();
 
-            return this.CreateGroup(null, systemPlaylists.Count, systemPlaylists, SongsContainerType.Unknown);
+            return this.CreateGroup(null, systemPlaylists.Count, systemPlaylists, PlaylistType.Unknown);
         }
 
         private async Task<GroupPlaylistsGroupBindingModel> ArtistsAsync()
@@ -76,7 +76,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             int artistsCount = await this.artistsRepository.GetCountAsync();
             var artists = await this.artistsRepository.GetAristsAsync(Order.LastPlayed, take: MaxItems);
 
-            return this.CreateGroup("Artists", artistsCount, artists, SongsContainerType.Artist);
+            return this.CreateGroup("Artists", artistsCount, artists, PlaylistType.Artist);
         }
 
         private async Task<GroupPlaylistsGroupBindingModel> AlbumsAsync()
@@ -84,7 +84,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             var albumsCount = await this.albumsRepository.GetCountAsync();
             var albums = await this.albumsRepository.GetAlbumsAsync(Order.LastPlayed, take: MaxItems);
 
-            return this.CreateGroup("Albums", albumsCount, albums, SongsContainerType.Album);
+            return this.CreateGroup("Albums", albumsCount, albums, PlaylistType.Album);
         }
 
         private async Task<GroupPlaylistsGroupBindingModel> GenresAsync()
@@ -92,7 +92,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             int genresCount = await this.genresRepository.GetCountAsync();
             var genres = await this.genresRepository.GetGenresAsync(Order.LastPlayed, take: MaxItems);
 
-            return this.CreateGroup("Genres", genresCount, genres, SongsContainerType.Genre);
+            return this.CreateGroup("Genres", genresCount, genres, PlaylistType.Genre);
         }
 
         private async Task<GroupPlaylistsGroupBindingModel> UserPlaylistsAsync()
@@ -100,10 +100,10 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             int userPlaylistsCount = await this.userPlaylistRepository.GetCountAsync();
             var playlists = await this.userPlaylistRepository.GetPlaylistsAsync(Order.LastPlayed, take: MaxItems);
 
-            return this.CreateGroup("Playlists", userPlaylistsCount, playlists, SongsContainerType.UserPlaylist);
+            return this.CreateGroup("Playlists", userPlaylistsCount, playlists, PlaylistType.UserPlaylist);
         }
 
-        private GroupPlaylistsGroupBindingModel CreateGroup(string title, int userPlaylistsCount, IEnumerable<ISongsContainer> playlists, SongsContainerType type)
+        private GroupPlaylistsGroupBindingModel CreateGroup(string title, int userPlaylistsCount, IEnumerable<IPlaylist> playlists, PlaylistType type)
         {
             List<GroupPlaylistBindingModel> groupItems =
                 playlists.Select(
@@ -122,7 +122,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private void Play(object commandParameter)
         {
-            ISongsContainer playlist = commandParameter as ISongsContainer;
+            IPlaylist playlist = commandParameter as IPlaylist;
             if (playlist != null)
             {
                 this.Toolbar.IsBottomAppBarOpen = true;

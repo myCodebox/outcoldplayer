@@ -27,7 +27,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private readonly INavigationService navigationService;
         private readonly IPlayQueueService playQueueService;
 
-        private SongsContainerType currentRequest;
+        private PlaylistType currentRequest;
 
         public PlaylistsPageViewPresenter(
             IPlaylistCollectionsService playlistCollectionsService,
@@ -87,16 +87,16 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         protected override async Task LoadDataAsync(NavigatedToEventArgs navigatedToEventArgs)
         {
-            this.currentRequest = (SongsContainerType)navigatedToEventArgs.Parameter;
+            this.currentRequest = (PlaylistType)navigatedToEventArgs.Parameter;
 
             await this.RefreshPlaylists();
 
-            this.BindingModel.IsEditable = this.currentRequest == SongsContainerType.UserPlaylist;
+            this.BindingModel.IsEditable = this.currentRequest == PlaylistType.UserPlaylist;
         }
 
         protected override IEnumerable<CommandMetadata> GetViewCommands()
         {
-            if (this.currentRequest == SongsContainerType.UserPlaylist)
+            if (this.currentRequest == PlaylistType.UserPlaylist)
             {
                 yield return new CommandMetadata(CommandIcon.Add, "Add", this.AddPlaylistCommand);
             }
@@ -104,7 +104,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private IEnumerable<CommandMetadata> GetContextCommands()
         {
-            if (this.currentRequest == SongsContainerType.UserPlaylist)
+            if (this.currentRequest == PlaylistType.UserPlaylist)
             {
                 yield return new CommandMetadata(CommandIcon.Edit, "Rename", this.EditPlaylistCommand);
                 yield return new CommandMetadata(CommandIcon.Delete, "Delete", this.DeletePlaylistCommand);
@@ -234,16 +234,16 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             IEnumerable<PlaylistBaseBindingModel> queue = null;
             switch (this.currentRequest)
             {
-                case SongsContainerType.Album:
+                case PlaylistType.Album:
                     queue = await this.playlistCollectionsService.GetCollection<AlbumBindingModel>().GetAllAsync(Order.Name);
                     break;
-                case SongsContainerType.UserPlaylist:
+                case PlaylistType.UserPlaylist:
                     queue = await this.playlistCollectionsService.GetCollection<UserPlaylistBindingModel>().GetAllAsync(Order.Name);
                     break;
-                case SongsContainerType.Genre:
+                case PlaylistType.Genre:
                     queue = await this.playlistCollectionsService.GetCollection<GenreBindingModel>().GetAllAsync(Order.Name);
                     break;
-                case SongsContainerType.Artist:
+                case PlaylistType.Artist:
                     queue = await this.playlistCollectionsService.GetCollection<ArtistBindingModel>().GetAllAsync(Order.Name);
                     break;
             }

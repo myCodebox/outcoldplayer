@@ -28,7 +28,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
             get { return PublisherType.ImmediatelyWithAlbumArt; }
         }
 
-        public Task PublishAsync(Song song, ISongsContainer currentPlaylist, Uri albumArtUri, CancellationToken cancellationToken)
+        public Task PublishAsync(Song song, IPlaylist currentPlaylist, Uri albumArtUri, CancellationToken cancellationToken)
         {
             return Task.Factory.StartNew(() =>
                 {

@@ -73,7 +73,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
             }
         }
 
-        public async Task PublishAsync(Song song, ISongsContainer currentPlaylist)
+        public async Task PublishAsync(Song song, IPlaylist currentPlaylist)
         {
             CancellationTokenSource source;
 
@@ -99,7 +99,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
             }
         }
 
-        private async Task PublishAsync(Song song, ISongsContainer currentPlaylist, CancellationToken cancellationToken)
+        private async Task PublishAsync(Song song, IPlaylist currentPlaylist, CancellationToken cancellationToken)
         {
             if (this.logger.IsDebugEnabled)
             {
@@ -177,7 +177,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
             this.logger.Debug("PublishAsync completed for ProviderSongId: {0}, PlaylistType: {1}.", song.ProviderSongId, currentPlaylist == null ? null : currentPlaylist.GetType());
         }
 
-        private async Task PublishAsync(IEnumerable<Lazy<ICurrentSongPublisher>> publishers, Song song, ISongsContainer currentPlaylist, Uri albumArtUri, CancellationToken cancellationToken)
+        private async Task PublishAsync(IEnumerable<Lazy<ICurrentSongPublisher>> publishers, Song song, IPlaylist currentPlaylist, Uri albumArtUri, CancellationToken cancellationToken)
         {
             await Task.WhenAll(publishers.Select(x => x.Value.PublishAsync(song, currentPlaylist, albumArtUri, cancellationToken)).Where(task => task != null));
         }

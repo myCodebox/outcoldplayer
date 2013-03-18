@@ -12,58 +12,58 @@ namespace OutcoldSolutions.GoogleMusic
 
     public static class NavigationServiceEx 
     {
-        public static IPageView NavigateToPlaylist(this INavigationService @this, ISongsContainer songsContainer)
+        public static IPageView NavigateToPlaylist(this INavigationService @this, IPlaylist playlist)
         {
             if (@this == null)
             {
                 throw new ArgumentNullException("this");
             }
 
-            if (songsContainer == null)
+            if (playlist == null)
             {
-                throw new ArgumentNullException("songsContainer");
+                throw new ArgumentNullException("playlist");
             }
 
-            if (songsContainer is Album)
+            if (playlist is Album)
             {
                 return @this.NavigateTo<IAlbumPageView>(
                     new PlaylistNavigationRequest()
                         {
-                            PlaylistId = ((Album)songsContainer).AlbumId,
-                            SongsContainerType = SongsContainerType.Album
+                            PlaylistId = ((Album)playlist).AlbumId,
+                            PlaylistType = PlaylistType.Album
                         });
             }
-            else if (songsContainer is Artist)
+            else if (playlist is Artist)
             {
                 return @this.NavigateTo<IArtistPageView>(
                     new PlaylistNavigationRequest()
                     {
-                        PlaylistId = ((Artist)songsContainer).ArtistId,
-                        SongsContainerType = SongsContainerType.Artist
+                        PlaylistId = ((Artist)playlist).ArtistId,
+                        PlaylistType = PlaylistType.Artist
                     });
             }
             else
             {
                 var request = new PlaylistNavigationRequest();
 
-                if (songsContainer is Genre)
+                if (playlist is Genre)
                 {
-                    request.SongsContainerType = SongsContainerType.Genre;
-                    request.PlaylistId = ((Genre)songsContainer).GenreId;
+                    request.PlaylistType = PlaylistType.Genre;
+                    request.PlaylistId = ((Genre)playlist).GenreId;
                 }
-                else if (songsContainer is UserPlaylist)
+                else if (playlist is UserPlaylist)
                 {
-                    request.SongsContainerType = SongsContainerType.UserPlaylist;
-                    request.PlaylistId = ((UserPlaylist)songsContainer).PlaylistId;
+                    request.PlaylistType = PlaylistType.UserPlaylist;
+                    request.PlaylistId = ((UserPlaylist)playlist).PlaylistId;
                 }
-                else if (songsContainer is SystemPlaylist)
+                else if (playlist is SystemPlaylist)
                 {
-                    request.SongsContainerType = SongsContainerType.SystemPlaylist;
-                    request.PlaylistId = (int)((SystemPlaylist)songsContainer).SystemPlaylistType;
+                    request.PlaylistType = PlaylistType.SystemPlaylist;
+                    request.PlaylistId = (int)((SystemPlaylist)playlist).SystemPlaylistType;
                 }
                 else
                 {
-                    throw new ArgumentException("Unknown songs container", "songsContainer");
+                    throw new ArgumentException("Unknown songs container", "playlist");
                 }
 
                 return @this.NavigateTo<IPlaylistPageView>(request);

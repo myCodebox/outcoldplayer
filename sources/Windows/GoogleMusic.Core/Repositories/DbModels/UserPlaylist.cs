@@ -8,7 +8,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories.DbModels
     using SQLite;
 
     [Table("UserPlaylist")]
-    public class UserPlaylist : ISongsContainer
+    public class UserPlaylist : IPlaylist
     {
         [PrimaryKey, AutoIncrement]
         public int PlaylistId { get; set; }

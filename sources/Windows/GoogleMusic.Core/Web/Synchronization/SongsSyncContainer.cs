@@ -191,7 +191,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
                         });
         }
 
-        private void UpdateContainer(ISongsContainer entity, Song song)
+        private void UpdateContainer(IPlaylist entity, Song song)
         {
             if (entity.ArtUrl == null && song.AlbumArtUrl != null)
             {

@@ -26,7 +26,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
             get { return PublisherType.Immediately; }
         }
 
-        public async Task PublishAsync(Song song, ISongsContainer currentPlaylist, Uri imageUri, CancellationToken cancellationToken)
+        public async Task PublishAsync(Song song, IPlaylist currentPlaylist, Uri imageUri, CancellationToken cancellationToken)
         {
             var startPlaying = DateTime.UtcNow;
 

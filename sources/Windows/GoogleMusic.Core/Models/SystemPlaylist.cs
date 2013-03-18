@@ -9,7 +9,7 @@ namespace OutcoldSolutions.GoogleMusic.Models
     using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Repositories.DbModels;
 
-    public class SystemPlaylist : ISongsContainer
+    public class SystemPlaylist : IPlaylist
     {
         public SystemPlaylistType SystemPlaylistType { get; set; }
 

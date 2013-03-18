@@ -12,7 +12,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
     public class PlaylistsGroupBindingModel
     {
-        public PlaylistsGroupBindingModel(string title, int playlistsCount, IEnumerable<PlaylistBindingModel> playlists, SongsContainerType request)
+        public PlaylistsGroupBindingModel(string title, int playlistsCount, IEnumerable<PlaylistBindingModel> playlists, PlaylistType request)
         {
             this.Title = title;
             this.Playlists = new ObservableCollection<PlaylistBindingModel>(playlists);
@@ -33,7 +33,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
         public ObservableCollection<PlaylistBindingModel> Playlists { get; private set; }
 
-        public SongsContainerType Request { get; set; }
+        public PlaylistType Request { get; set; }
     }
 
     public class GroupPlaylistsGroupBindingModel
@@ -42,7 +42,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             string title,
             int itemsCount,
             IList<GroupPlaylistBindingModel> playlists,
-            SongsContainerType type)
+            PlaylistType type)
         {
             this.Title = title;
             this.Playlists = playlists;
@@ -66,14 +66,14 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
         public IList<GroupPlaylistBindingModel> Playlists { get; private set; }
 
-        public SongsContainerType Request { get; set; }
+        public PlaylistType Request { get; set; }
     }
 
     public class GroupPlaylistBindingModel
     {
-        private readonly ISongsContainer playlist;
+        private readonly IPlaylist playlist;
 
-        public GroupPlaylistBindingModel(ISongsContainer playlist)
+        public GroupPlaylistBindingModel(IPlaylist playlist)
         {
             if (playlist == null)
             {
@@ -85,7 +85,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
         public DelegateCommand PlayCommand { get; set; }
 
-        public ISongsContainer Playlist
+        public IPlaylist Playlist
         {
             get
             {

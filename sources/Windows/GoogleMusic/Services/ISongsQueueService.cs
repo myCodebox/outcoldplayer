@@ -10,6 +10,6 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
     public interface ISongsQueueService
     {
-        Task PlayAsync(ISongsContainer songsContainer);
+        Task PlayAsync(IPlaylist playlist);
     }
 }

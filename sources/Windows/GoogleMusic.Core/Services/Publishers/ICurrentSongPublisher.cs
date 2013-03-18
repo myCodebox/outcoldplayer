@@ -13,6 +13,6 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
     {
         PublisherType PublisherType { get; }
 
-        Task PublishAsync(Song song, ISongsContainer currentPlaylist, Uri imageUri, CancellationToken cancellationToken);
+        Task PublishAsync(Song song, IPlaylist currentPlaylist, Uri imageUri, CancellationToken cancellationToken);
     }
 }

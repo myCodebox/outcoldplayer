@@ -100,13 +100,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="CommandIcon.cs" />
-    <Compile Include="Models\SongsContainerType.cs" />
+    <Compile Include="Models\PlaylistType.cs" />
     <Compile Include="Repositories\DbModels\Album.cs" />
     <Compile Include="Models\StringEx.cs" />
     <Compile Include="Models\SystemPlaylist.cs" />
     <Compile Include="Repositories\DbModels\Artist.cs" />
     <Compile Include="Repositories\DbModels\Genre.cs" />
-    <Compile Include="Repositories\DbModels\ISongsContainer.cs" />
+    <Compile Include="Repositories\DbModels\IPlaylist.cs" />
     <Compile Include="Repositories\DbModels\UserPlaylist.cs" />
     <Compile Include="Repositories\DbModels\UserPlaylistEntryEntity.cs" />
     <Compile Include="Models\SongsGrouping.cs" />

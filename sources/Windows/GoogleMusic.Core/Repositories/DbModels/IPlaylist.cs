@@ -5,7 +5,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories.DbModels
 {
     using System;
 
-    public interface ISongsContainer
+    public interface IPlaylist
     {
         string Title { get; set; }
 

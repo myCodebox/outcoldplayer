@@ -9,6 +9,6 @@ namespace OutcoldSolutions.GoogleMusic
     {
         public int PlaylistId { get; set; }
 
-        public SongsContainerType SongsContainerType { get; set; } 
+        public PlaylistType PlaylistType { get; set; } 
     }
 }
