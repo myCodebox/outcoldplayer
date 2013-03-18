@@ -13,7 +13,7 @@
                     <Image Width="116" Height="116" Source="{Binding Path=Playlist.ArtUrl, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=116, Mode=OneWay}" Stretch="None"/>
                 </Border>
                 <StackPanel Grid.Column="1" Margin="0,15,10,0">
-                    <TextBlock Text="{Binding Path=Playlist.Title, Mode=OneWay}"  Style="{StaticResource BodyTextStyle}" TextWrapping="Wrap" TextTrimming="WordEllipsis" MaxHeight="40"/>
+                    <TextBlock Text="{Binding Path=Playlist.Title, Mode=OneWay}"  Style="{StaticResource BodyTextStyle}" TextWrapping="Wrap" TextTrimming="WordEllipsis" MaxHeight="40" Margin="0, 0, 20, 0"/>
                     <TextBlock Text="{Binding Path=Playlist.Artist.Title, Mode=OneTime}" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="Wrap" TextTrimming="WordEllipsis" MaxHeight="20"/>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{Binding Path=Playlist.Duration, Mode=OneTime, Converter={StaticResource TimeSpanToTimeConverter}}" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
@@ -32,6 +32,13 @@
                         HorizontalAlignment="Right"
                         Command="{Binding Path=PlayCommand, Mode=OneTime}"
                         CommandParameter="{Binding Path=Playlist, Mode=OneTime}"/>
+
+                <TextBlock Grid.Column="1"
+                           Visibility="{Binding Path=Playlist.IsCollection, Converter={StaticResource BooleanToVisibilityConverter}}"
+                           FontFamily="Segoe UI Symbol" Text="&#xE179;" 
+                           VerticalAlignment="Top" 
+                           HorizontalAlignment="Right" 
+                           Margin="0, 7, 7, 0" />
             </Grid>
         </Border>
     </DataTemplate>

@@ -68,7 +68,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
             }
             else if (e.ClickedItem is PlaylistResultBindingModel)
             {
-                this.NavigationService.NavigateToPlaylist((IPlaylist)e.ClickedItem);
+                this.NavigationService.NavigateToPlaylist(((PlaylistResultBindingModel)e.ClickedItem).Result);
             }
         }
 

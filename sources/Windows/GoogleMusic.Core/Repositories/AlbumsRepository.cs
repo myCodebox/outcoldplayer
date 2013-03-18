@@ -70,6 +70,9 @@ order by x.[TitleNorm]
 
         // TODO: We need to include here also not-artist albums but which contain artist songs
         private const string SqlArtistAlbums = @"
+select *
+from
+(
 select 
        x.[AlbumId],
        x.[Title],  
@@ -87,10 +90,40 @@ select
        a.[SongsCount] as [Artist.SongsCount],
        a.[Duration] as [Artist.Duration],
        a.[ArtUrl] as [Artist.ArtUrl],
-       a.[LastPlayed]  as [Artist.LastPlayed]
+       a.[LastPlayed]  as [Artist.LastPlayed],       
+       0 as [IsCollection]
 from [Album] x 
      inner join [Artist] as a on x.[ArtistId] = a.[ArtistId]       
 where a.[ArtistId] = ?1
+
+union
+
+select 
+       a.[AlbumId],
+       a.[Title],  
+       a.[TitleNorm],
+       a.[ArtistId],
+       count(distinct s.SongId) as [SongsCount], 
+       a.[Year],    
+       sum(s.[Duration]) as [Duration],       
+       a.[ArtUrl],    
+       a.[LastPlayed],       
+       ar.[ArtistId] as [Artist.ArtistId],
+       ar.[Title] as [Artist.Title],
+       ar.[TitleNorm] as [Artist.TitleNorm],
+       ar.[AlbumsCount] as [Artist.AlbumsCount],
+       ar.[SongsCount] as [Artist.SongsCount],
+       ar.[Duration] as [Artist.Duration],
+       ar.[ArtUrl] as [Artist.ArtUrl],
+       ar.[LastPlayed]  as [Artist.LastPlayed],       
+       1 as [IsCollection]
+from [Song] as s 
+     inner join [Album] a on s.AlbumId = a.AlbumId and s.ArtistId <> a.ArtistId     
+     inner join [Artist] ar on ar.ArtistId = a.ArtistId
+where s.[ArtistId] = ?1 
+group by a.[AlbumId], a.[Title], a.[TitleNorm], a.[ArtistId], a.[Year], a.[ArtUrl], a.[LastPlayed]
+) as x
+order by x.Year 
 ";
 
         private const string SqlAlbumsSongs = @"

@@ -39,6 +39,9 @@ namespace OutcoldSolutions.GoogleMusic.Repositories.DbModels
 
         public Uri ArtUrl { get; set; }
 
+        [Ignore]
+        public bool IsCollection { get; set; }
+
         [Indexed]
         public DateTime LastPlayed { get; set; }
 
