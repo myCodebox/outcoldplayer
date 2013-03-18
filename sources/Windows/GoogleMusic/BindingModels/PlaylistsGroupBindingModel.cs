@@ -12,7 +12,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
     public class PlaylistsGroupBindingModel
     {
-        public PlaylistsGroupBindingModel(string title, int playlistsCount, IEnumerable<PlaylistBindingModel> playlists, PlaylistsRequest request)
+        public PlaylistsGroupBindingModel(string title, int playlistsCount, IEnumerable<PlaylistBindingModel> playlists, SongsContainerType request)
         {
             this.Title = title;
             this.Playlists = new ObservableCollection<PlaylistBindingModel>(playlists);
@@ -33,7 +33,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
         public ObservableCollection<PlaylistBindingModel> Playlists { get; private set; }
 
-        public PlaylistsRequest Request { get; set; }
+        public SongsContainerType Request { get; set; }
     }
 
     public class GroupPlaylistsGroupBindingModel
@@ -42,12 +42,12 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             string title,
             int itemsCount,
             IList<GroupPlaylistBindingModel> playlists,
-            PlaylistsRequest request)
+            SongsContainerType type)
         {
             this.Title = title;
             this.Playlists = playlists;
             this.ItemsCount = itemsCount;
-            this.Request = request;
+            this.Request = type;
         }
 
         public GroupPlaylistsGroupBindingModel(
@@ -66,7 +66,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
         public IList<GroupPlaylistBindingModel> Playlists { get; private set; }
 
-        public PlaylistsRequest Request { get; set; }
+        public SongsContainerType Request { get; set; }
     }
 
     public class GroupPlaylistBindingModel

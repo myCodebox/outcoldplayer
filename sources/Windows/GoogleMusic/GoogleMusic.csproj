@@ -138,8 +138,9 @@
     <Compile Include="Converters\StringFormatConverter.cs" />
     <Compile Include="Converters\TimeSpanToTimeConverter.cs" />
     <Compile Include="MainMenu.cs" />
-    <Compile Include="Models\PlaylistsRequest.cs" />
     <Compile Include="Models\TimeSpanEx.cs" />
+    <Compile Include="NavigationServiceEx.cs" />
+    <Compile Include="PlaylistNavigationRequest.cs" />
     <Compile Include="Presenters\LinksRegionViewPresenter.cs" />
     <Compile Include="Presenters\Settings\UpgradeViewPresenter.cs" />
     <Compile Include="Registration.cs" />

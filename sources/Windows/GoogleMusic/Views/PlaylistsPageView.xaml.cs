@@ -37,7 +37,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
         public override void OnUnfreeze(NavigatedToEventArgs eventArgs)
         {
-            if (eventArgs.Parameter is PlaylistsRequest && ((PlaylistsRequest)eventArgs.Parameter) == PlaylistsRequest.Playlists)
+            if (eventArgs.Parameter is SongsContainerType && ((SongsContainerType)eventArgs.Parameter) == SongsContainerType.UserPlaylist)
             {
                 this.ListView.SelectionMode = ListViewSelectionMode.Single;
             }

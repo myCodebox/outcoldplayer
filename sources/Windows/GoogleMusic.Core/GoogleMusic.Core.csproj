@@ -100,6 +100,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="CommandIcon.cs" />
+    <Compile Include="Models\SongsContainerType.cs" />
     <Compile Include="Repositories\DbModels\Album.cs" />
     <Compile Include="Models\StringEx.cs" />
     <Compile Include="Models\SystemPlaylist.cs" />

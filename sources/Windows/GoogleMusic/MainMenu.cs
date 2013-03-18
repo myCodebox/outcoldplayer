@@ -20,10 +20,10 @@ namespace OutcoldSolutions.GoogleMusic
         {
             yield return MenuItemMetadata.FromViewType<IStartPageView>("Home");
             yield return MenuItemMetadata.FromViewType<ICurrentPlaylistPageView>("Queue");
-            yield return MenuItemMetadata.FromViewType<IPlaylistsPageView>("Playlists", PlaylistsRequest.Playlists);
-            yield return MenuItemMetadata.FromViewType<IPlaylistsPageView>("Artists", PlaylistsRequest.Artists);
-            yield return MenuItemMetadata.FromViewType<IPlaylistsPageView>("Albums", PlaylistsRequest.Albums);
-            yield return MenuItemMetadata.FromViewType<IPlaylistsPageView>("Genres", PlaylistsRequest.Genres);
+            yield return MenuItemMetadata.FromViewType<IPlaylistsPageView>("Playlists", SongsContainerType.UserPlaylist);
+            yield return MenuItemMetadata.FromViewType<IPlaylistsPageView>("Artists", SongsContainerType.Artist);
+            yield return MenuItemMetadata.FromViewType<IPlaylistsPageView>("Albums", SongsContainerType.Album);
+            yield return MenuItemMetadata.FromViewType<IPlaylistsPageView>("Genres", SongsContainerType.Genre);
         }
     }
 }
