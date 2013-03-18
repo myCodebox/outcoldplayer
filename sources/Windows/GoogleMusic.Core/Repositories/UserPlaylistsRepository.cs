@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// Outcold Solutions (http://outcoldman.com)
+// OutcoldSolutions (http://outcoldsolutions.com)
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Repositories
 {
@@ -17,9 +17,9 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
 
     public interface IUserPlaylistsRepository : IPlaylistRepository<UserPlaylist>
     {
-        Task<IEnumerable<UserPlaylistBindingModel>> GetAllAsync();
+        Task<UserPlaylist> CreateAsync(string name);
 
-        Task<UserPlaylistBindingModel> CreateAsync(string name);
+        Task<IList<UserPlaylistEntry>> GetAllEntriesAsync(int sondId);
 
         Task<bool> DeleteAsync(UserPlaylist playlistId);
 
@@ -33,20 +33,10 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
     public class UserPlaylistsRepository : RepositoryBase, IUserPlaylistsRepository
     {
         private const string SqlSearchPlaylists = @"
-select 
-  p.[PlaylistId], 
-  p.Title, 
-  p.ProviderPlaylistId, 
-  count(*) as [SongsCount], 
-  sum(s.Duration) as [Duration],
-  max(s.[LastPlayed]) as [LastPlayed],
-  max(ifnull(s.[AlbumArtUrl], '')) as [AlbumArtUrl]
-from [UserPlaylist] as p
-     inner join [UserPlaylistEntry] as e on e.[PlaylistId] = p.[PlaylistId]
-     inner join [Song] as s on s.[SongId] = e.[SongId]  
-where p.[Title] like ?1   
-group by p.[PlaylistId], p.[Title], p.ProviderPlaylistId
-order by [p].Title
+select p.*
+from [UserPlaylist] as p  
+where p.[TitleNorm] like ?1
+order by p.[TitleNorm]
 ";
 
         private const string SqlUserPlaylistSongs = @"
@@ -140,47 +130,10 @@ order by e.[PlaylistOrder]
                 sql.AppendFormat(" limit {0}", take.Value);
             }
 
-            return await this.Connection.QueryAsync<UserPlaylist>(sql.ToString(), string.Format("%{0}%", searchQueryNorm.Normalize()));
+            return await this.Connection.QueryAsync<UserPlaylist>(sql.ToString(), string.Format("%{0}%", searchQueryNorm));
         }
-
-        public async Task<IEnumerable<UserPlaylistBindingModel>> GetAllAsync()
-        {
-            List<UserPlaylistBindingModel> userPlaylists = new List<UserPlaylistBindingModel>();
-
-            var playlists = await this.Connection.Table<UserPlaylist>().ToListAsync();
-
-            foreach (var playlist in playlists)
-            {
-                List<string> entrieIds = new List<string>();
-                List<SongBindingModel> songs = new List<SongBindingModel>();
-
-                int playlistId = playlist.Id;
-                var entries = await this.Connection.Table<UserPlaylistEntry>()
-                                    .Where(x => x.PlaylistId == playlistId)
-                                    .OrderBy(x => x.PlaylistOrder).ToListAsync();
-
-                foreach (var entry in entries)
-                {
-                    var song = await this.Connection.FindAsync<Song>(entry.SongId);
-
-                    if (song != null)
-                    {
-                        entrieIds.Add(entry.ProviderEntryId);
-                        songs.Add(new SongBindingModel(song));
-                    }
-                    else
-                    {
-                        this.logger.Warning("Could not find a song with id {0}.", entry.SongId);
-                    }
-                }
-
-                userPlaylists.Add(new UserPlaylistBindingModel(playlist, playlist.Title, songs, entrieIds));
-            }
-
-            return userPlaylists;
-        }
-
-        public async Task<UserPlaylistBindingModel> CreateAsync(string name)
+        
+        public async Task<UserPlaylist> CreateAsync(string name)
         {
             if (this.logger.IsDebugEnabled)
             {
@@ -198,7 +151,7 @@ order by e.[PlaylistOrder]
 
                 var userPlaylistEntity = new UserPlaylist() { ProviderPlaylistId = resp.Id, Title = resp.Title, TitleNorm = resp.Title.Normalize() };
                 await this.Connection.InsertAsync(userPlaylistEntity);
-                return new UserPlaylistBindingModel(userPlaylistEntity, resp.Title, new List<SongBindingModel>(), new List<string>());
+                return userPlaylistEntity;
             }
             else
             {
@@ -210,6 +163,11 @@ order by e.[PlaylistOrder]
 
                 return null;
             }
+        }
+
+        public async Task<IList<UserPlaylistEntry>> GetAllEntriesAsync(int sondId)
+        {
+            return await this.Connection.Table<UserPlaylistEntry>().Where(x => x.SongId == sondId).ToListAsync();
         }
 
         public async Task<bool> DeleteAsync(UserPlaylist playlist)

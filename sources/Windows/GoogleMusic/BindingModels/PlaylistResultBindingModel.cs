@@ -7,18 +7,19 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
     using System.Globalization;
 
     using OutcoldSolutions.GoogleMusic.Models;
+    using OutcoldSolutions.GoogleMusic.Repositories.DbModels;
 
     public class PlaylistResultBindingModel : SearchResultBindingModel
     {
-        private readonly PlaylistBaseBindingModel result;
+        private readonly IPlaylist result;
 
-        public PlaylistResultBindingModel(string search, PlaylistBaseBindingModel result)
+        public PlaylistResultBindingModel(string search, IPlaylist result)
             : base(search, result.Title)
         {
             this.result = result;
         }
 
-        public PlaylistBaseBindingModel Result
+        public IPlaylist Result
         {
             get
             {
@@ -30,7 +31,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         {
             get
             {
-                return string.Format(CultureInfo.CurrentCulture, "{0} songs", this.result.Songs.Count);
+                return string.Format(CultureInfo.CurrentCulture, "{0} songs", this.result.SongsCount);
             }
         }
 
@@ -38,27 +39,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         {
             get
             {
-                if (this.result is AlbumBindingModel)
-                {
-                    return "Album";
-                }
-
-                if (this.result is ArtistBindingModel)
-                {
-                    return "Artist";
-                }
-
-                if (this.result is GenreBindingModel)
-                {
-                    return "Genre";
-                }
-
-                if (this.result is UserPlaylistBindingModel)
-                {
-                    return "Playlist";
-                }
-
-                return null;
+                return this.Result.PlaylistType.ToTitle();
             }
         }
 
@@ -66,7 +47,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         {
             get
             {
-                return this.result.AlbumArtUrl;
+                return this.result.ArtUrl;
             }
         }
     }

@@ -18,49 +18,10 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
     public class ArtistsRepository : RepositoryBase, IArtistsRepository
     {
         private const string SqlSearchArtist = @"
-select 
-       u.[ArtistNorm] as [TitleNorm],       
-       sum(u.[AlbumsCount]) as [AlbumsCount],       
-       max(ifnull(u.[Artist], '')) as [Title],       
-       sum(u.[SongsCount]) as [SongsCount],
-       sum(u.[Duration]) as [Duration],        
-       max(ifnull(u.[ArtistArtUrl], '')) as [ArtistArtUrl],       
-       max(u.[LastPlayed]) as [LastPlayed]
-from
-(
-  select 
-         x.[ArtistNormX] as [ArtistNorm],        
-         count(distinct x.[AlbumNorm]) as [AlbumsCount],
-         max(coalesce(nullif(x.[AlbumArtist], ''), x.[Artist])) as [Artist],       
-         count(*) as [SongsCount], 
-         sum(x.[Duration]) as [Duration],       
-         max(ifnull(x.[AlbumArtUrl], '')) as [ArtistArtUrl],    
-         max(x.[LastPlayed]) as [LastPlayed]
-  from
-  (
-  select coalesce(nullif(s.[AlbumArtistNorm], ''), s.[ArtistNorm]) as [ArtistNormX], s.*
-  from [Song] s 
-  ) as x  
-  where x.[ArtistNormX] like ?1
-  group by x.[ArtistNormX]
-
-union 
-
-  select 
-         x.[ArtistNorm], 
-         0 as [AlbumsCount],
-         max(ifnull(x.[Artist], '')) as [Artist],       
-         count(*) as [SongsCount], 
-         sum(x.[Duration]) as [Duration],       
-         max(ifnull(x.[AlbumArtUrl], '')) as [ArtistArtUrl],
-         max(x.[LastPlayed]) as [LastPlayed] 
-  from [Song] as x
-  where ifnull(x.[AlbumArtistNorm], '') <> '' and ifnull(x.[ArtistNorm], '') <> '' and x.[ArtistNorm] <> x.[AlbumArtistNorm]  
-        and x.[ArtistNorm] like ?1
-  group by x.[ArtistNorm]  
-) as u
-group by u.[ArtistNorm]
-order by u.[ArtistNorm]
+select x.*
+from [Artist] as x  
+where x.[TitleNorm] like ?1
+order by x.[TitleNorm]
 ";
 
         private const string SqlArtistSongs = @"
@@ -125,7 +86,7 @@ order by a.[Year], a.TitleNorm, coalesce(nullif(s.Disc, 0), 1), s.Track
                 sql.AppendFormat(" limit {0}", take.Value);
             }
 
-            return await this.Connection.QueryAsync<Artist>(sql.ToString(), string.Format("%{0}%", searchQueryNorm.Normalize()));
+            return await this.Connection.QueryAsync<Artist>(sql.ToString(), string.Format("%{0}%", searchQueryNorm));
         }
 
         public async Task<Artist> GetAsync(int id)

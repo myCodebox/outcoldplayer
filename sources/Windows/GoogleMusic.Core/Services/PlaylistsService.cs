@@ -25,6 +25,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
         Task<IPlaylist> GetAsync(PlaylistType playlistType, int id);
 
         Task<IEnumerable<IPlaylist>> GetAllAsync(PlaylistType playlistType, Order order, uint? take = null);
+
+        Task<IEnumerable<IPlaylist>> SearchAsync(PlaylistType playlistType, string searchQuery, uint? take = null);
     }
 
     public class PlaylistsService : IPlaylistsService
@@ -122,6 +124,25 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     return await this.GetRepository<UserPlaylist>().GetAllAsync(order, take);
                 case PlaylistType.SystemPlaylist:
                     return await this.GetRepository<SystemPlaylist>().GetAllAsync(order, take);
+                default:
+                    throw new ArgumentOutOfRangeException("playlistType");
+            }
+        }
+
+        public async Task<IEnumerable<IPlaylist>> SearchAsync(PlaylistType playlistType, string searchQuery, uint? take = null)
+        {
+            switch (playlistType)
+            {
+                case PlaylistType.Album:
+                    return await this.GetRepository<Album>().SearchAsync(searchQuery, take);
+                case PlaylistType.Artist:
+                    return await this.GetRepository<Artist>().SearchAsync(searchQuery, take);
+                case PlaylistType.Genre:
+                    return await this.GetRepository<Genre>().SearchAsync(searchQuery, take);
+                case PlaylistType.UserPlaylist:
+                    return await this.GetRepository<UserPlaylist>().SearchAsync(searchQuery, take);
+                case PlaylistType.SystemPlaylist:
+                    return await this.GetRepository<SystemPlaylist>().SearchAsync(searchQuery, take);
                 default:
                     throw new ArgumentOutOfRangeException("playlistType");
             }

@@ -9,47 +9,51 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <Border Padding="20" Background="{StaticResource AppBarBackgroundThemeBrush}" Width="Auto" Height="300">
-        <ListView x:Name="ListView"
-                  IsItemClickEnabled="True"
-                  SelectionMode="None"
-                  Width="Auto"
-                  ItemsSource="{Binding Path=Playlists, Mode=OneWay}"
-                  VerticalContentAlignment="Stretch"
-                  ItemClick="PlaylistItemClick"  >
+    <Border Padding="20" Background="{StaticResource AppBarBackgroundThemeBrush}" Width="Auto" Height="300" MinWidth="200">
+        <Grid>
+            <ProgressRing IsActive="{Binding Path=IsLoading, Mode=OneWay}" />
             
-            <ListView.Transitions>
-                <TransitionCollection/>
-            </ListView.Transitions>
+            <ListView x:Name="ListView"
+                      IsItemClickEnabled="True"
+                      SelectionMode="None"
+                      Width="Auto"
+                      ItemsSource="{Binding Path=Playlists, Mode=OneWay}"
+                      VerticalContentAlignment="Stretch"
+                      ItemClick="PlaylistItemClick"  >
             
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem">
-                    <Setter Property="Margin" Value="0" />
-                    <Setter Property="Padding" Value="10, 0, 20, 0" />
-                    <Setter Property="HorizontalAlignment" Value="Stretch" />
-                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                    <Setter Property="VerticalAlignment" Value="Stretch" />
-                    <Setter Property="VerticalContentAlignment" Value="Stretch" />
-                </Style>
-            </ListView.ItemContainerStyle>
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                        <TextBlock Text="{Binding Path=Playlist.Title, Mode=OneTime}" Style="{StaticResource BasicTextStyle}"  />
+                <ListView.Transitions>
+                    <TransitionCollection/>
+                </ListView.Transitions>
+            
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="Margin" Value="0" />
+                        <Setter Property="Padding" Value="10, 0, 20, 0" />
+                        <Setter Property="HorizontalAlignment" Value="Stretch" />
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        <Setter Property="VerticalAlignment" Value="Stretch" />
+                        <Setter Property="VerticalContentAlignment" Value="Stretch" />
+                    </Style>
+                </ListView.ItemContainerStyle>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="{Binding Path=Playlist.Title, Mode=OneTime}" Style="{StaticResource BasicTextStyle}"  />
 
-                        <StackPanel Orientation="Horizontal" 
-                                    VerticalAlignment="Top"
-                                    Margin="5, -5, 0, 0"
-                                    Visibility="{Binding Path=SongContainsCount, Converter={StaticResource ValueToInvisibilityConverter}, ConverterParameter=0}">
-                            <TextBlock Text="{Binding Path=SongContainsCount, Mode=OneTime}" Style="{StaticResource SmallTextStyle}" />
-                            <TextBlock Text="/" Style="{StaticResource SmallTextStyle}" />
-                            <TextBlock Text="{Binding Path=DataContext.Songs.Count, ElementName=ListView, Mode=OneTime}" Style="{StaticResource SmallTextStyle}" />
-                        </StackPanel>
+                            <StackPanel Orientation="Horizontal" 
+                                        VerticalAlignment="Top"
+                                        Margin="5, -5, 0, 0"
+                                        Visibility="{Binding Path=SongContainsCount, Converter={StaticResource ValueToInvisibilityConverter}, ConverterParameter=0}">
+                                <TextBlock Text="{Binding Path=SongContainsCount, Mode=OneTime}" Style="{StaticResource SmallTextStyle}" />
+                                <TextBlock Text="/" Style="{StaticResource SmallTextStyle}" />
+                                <TextBlock Text="{Binding Path=DataContext.Songs.Count, ElementName=ListView, Mode=OneTime}" Style="{StaticResource SmallTextStyle}" />
+                            </StackPanel>
                         
-                    </StackPanel>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Grid>
     </Border>
 
 </views:PopupViewBase>

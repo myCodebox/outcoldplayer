@@ -18,16 +18,10 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
     public class GenresRepository : RepositoryBase, IGenresRepository
     {
         private const string SqlSearchGenres = @"
-select 
-       x.[GenreNorm] as [TitleNorm],
-       ifnull((select i.[Genre] from [Song] as i where i.[GenreNorm] = x.[GenreNorm] and i.[Genre] <> '' limit 1), '') as [Title],       
-       count(*) as [SongsCount],    
-       sum(x.[Duration]) as [Duration],       
-       ifnull((select i.[AlbumArtUrl] from [Song] as i where i.[GenreNorm] = x.[GenreNorm] and i.[AlbumArtUrl] <> '' limit 1), '') as [AlbumArtUrl],    
-       max(x.[LastPlayed]) as [LastPlayed]
-from [Song] x
-where x.[GenreNorm] like ?1
-group by x.[GenreNorm]
+select x.*
+from [Genre] as x  
+where x.[TitleNorm] like ?1
+order by x.[TitleNorm]
 ";
 
         private const string SqlGenreSongs = @"
@@ -94,7 +88,7 @@ order by ar.TitleNorm, a.TitleNorm, coalesce(nullif(s.Disc, 0), 1), s.Track
                 sql.AppendFormat(" limit {0}", take.Value);
             }
 
-            return await this.Connection.QueryAsync<Genre>(sql.ToString(), string.Format("%{0}%", searchQueryNorm.Normalize()));
+            return await this.Connection.QueryAsync<Genre>(sql.ToString(), string.Format("%{0}%", searchQueryNorm));
         }
 
         public async Task<Genre> GetAsync(int id)

@@ -103,13 +103,6 @@ namespace OutcoldSolutions.GoogleMusic
                 registration.Register<ISystemPlaylistsRepository>().And<IPlaylistRepository<SystemPlaylist>>().AsSingleton<SystemPlaylistsRepository>();
                 registration.Register<IPlaylistsService>().AsSingleton<PlaylistsService>();
 
-                registration.Register<IPlaylistCollection<AlbumBindingModel>>().AsSingleton<AlbumCollection>();
-                registration.Register<IPlaylistCollection<ArtistBindingModel>>().AsSingleton<ArtistCollection>();
-                registration.Register<IPlaylistCollection<GenreBindingModel>>().AsSingleton<GenreCollection>();
-                registration.Register<IPlaylistCollection<SystemPlaylistBindingModel>>().AsSingleton<SystemPlaylistCollection>();
-                registration.Register<IPlaylistCollection<UserPlaylistBindingModel>>().AsSingleton<MusicPlaylistCollection>();
-                registration.Register<IPlaylistCollectionsService>().AsSingleton<PlaylistCollectionsService>();
-
                 registration.Register<ISongMetadataEditService>().AsSingleton<SongMetadataEditService>();
 
                 registration.Register<RightRegionControlService>().AsSingleton();

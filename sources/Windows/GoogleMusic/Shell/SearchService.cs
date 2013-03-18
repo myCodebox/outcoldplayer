@@ -9,9 +9,9 @@ namespace OutcoldSolutions.GoogleMusic.Shell
     using System.Linq;
     using System.Threading.Tasks;
 
-    using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Repositories;
+    using OutcoldSolutions.GoogleMusic.Repositories.DbModels;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
 
@@ -22,15 +22,9 @@ namespace OutcoldSolutions.GoogleMusic.Shell
     {
         private const int MaxResults = 5;
 
-        private const string Artists = "Artists";
-        private const string Albums = "Albums";
-        private const string Genres = "Genres";
-        private const string Playlists = "Playlists";
-        private const string Songs = "Songs";
-
         private readonly INavigationService navigationService;
         private readonly IDispatcher dispatcher;
-        private readonly IPlaylistCollectionsService playlistCollectionsService;
+        private readonly IPlaylistsService playlistsService;
         private readonly ISongsRepository songsRepository;
 
         private bool isRegistered;
@@ -38,12 +32,12 @@ namespace OutcoldSolutions.GoogleMusic.Shell
         public SearchService(
             INavigationService navigationService, 
             IDispatcher dispatcher,
-            IPlaylistCollectionsService playlistCollectionsService,
+            IPlaylistsService playlistsService,
             ISongsRepository songsRepository)
         {
             this.navigationService = navigationService;
             this.dispatcher = dispatcher;
-            this.playlistCollectionsService = playlistCollectionsService;
+            this.playlistsService = playlistsService;
             this.songsRepository = songsRepository;
 
             this.navigationService.NavigatedTo += this.OnNavigatedTo;
@@ -189,63 +183,21 @@ namespace OutcoldSolutions.GoogleMusic.Shell
                 var strings = tag.Split(new[] { ':' }, 2);
                 if (strings.Length == 2)
                 {
-                    IEnumerable<PlaylistBaseBindingModel> playlists = null;
-                    switch (strings[0])
+                    PlaylistType playlistType;
+                    int playlistId;
+                    if (Enum.TryParse(strings[0], out playlistType)
+                        && int.TryParse(strings[1], out playlistId))
                     {
-                        case Artists:
-                            {
-                                playlists = await this.playlistCollectionsService.GetCollection<ArtistBindingModel>().SearchAsync(strings[1]);
-                                break;
-                            }
-
-                        case Albums:
-                            {
-                                playlists = await this.playlistCollectionsService.GetCollection<AlbumBindingModel>().SearchAsync(strings[1]);
-                                break; 
-                            }
-
-                        case Genres:
-                            {
-                                playlists = await this.playlistCollectionsService.GetCollection<GenreBindingModel>().SearchAsync(strings[1]);
-                                break;
-                            }
-
-                        case Playlists:
-                            {
-                                playlists = await this.playlistCollectionsService.GetCollection<UserPlaylistBindingModel>().SearchAsync(strings[1]);
-                                break;
-                            }
-
-                        case Songs:
-                            {
-                                var songs = await this.songsRepository.GetAllAsync();
-                                var song = songs.Where(
-                                    x =>
-                                    {
-                                        if (x.Title == null)
-                                        {
-                                            return false;
-                                        }
-
-                                        return string.Equals(strings[1], string.Format(CultureInfo.CurrentCulture, "{0} - {1}", x.Artist, x.Title), StringComparison.CurrentCultureIgnoreCase);
-                                    }).FirstOrDefault();
-
-                                if (song != null)
-                                {
-                                    await this.dispatcher.RunAsync(() => this.navigationService.NavigateTo<IPlaylistPageView>(song));
-                                }
-
-                                return;
-                            }
+                        await this.dispatcher.RunAsync(() => this.navigationService.NavigateToPlaylist(
+                            new PlaylistNavigationRequest(playlistType, playlistId)));
                     }
-
-                    if (playlists != null)
+                }
+                else
+                {
+                    int songId;
+                    if (int.TryParse(tag, out songId))
                     {
-                        var playlist = playlists.FirstOrDefault(x => string.Equals(x.Title, strings[1], StringComparison.CurrentCultureIgnoreCase));
-                        if (playlist != null)
-                        {
-                            await this.dispatcher.RunAsync(() => this.navigationService.NavigateToPlaylist(null));
-                        }
+                        await this.dispatcher.RunAsync(() => this.navigationService.NavigateTo<IAlbumPageView>(songId));
                     }
                 }
             }
@@ -255,62 +207,52 @@ namespace OutcoldSolutions.GoogleMusic.Shell
         {
             var result = new List<ISearchItem>();
 
-            var artistsSearch = (await this.playlistCollectionsService.GetCollection<ArtistBindingModel>().SearchAsync(args.QueryText, MaxResults)).ToList();
-            if (artistsSearch.Count > 0)
+            var types = new[] { PlaylistType.Artist, PlaylistType.Album, PlaylistType.Genre };
+            foreach (var playlistType in types)
             {
-                this.AddResults(result, artistsSearch, Artists);
-            }
-
-            if (result.Count < MaxResults)
-            {
-                var albumsSearch = (await this.playlistCollectionsService.GetCollection<AlbumBindingModel>().SearchAsync(args.QueryText, MaxResults - result.Count)).ToList();
-                if (albumsSearch.Count > 0)
+                var playlists = (await this.playlistsService.SearchAsync(playlistType, args.QueryText, (uint?)(MaxResults - result.Count))).ToList();
+                if (playlists.Count > 0)
                 {
-                    this.AddResults(result, albumsSearch, Albums);
+                    this.AddResults(result, playlists, playlistType);
+                }
+
+                if (result.Count >= MaxResults)
+                {
+                    break;
                 }
             }
-
+            
             if (result.Count < MaxResults)
             {
-                var genresSearch = (await this.playlistCollectionsService.GetCollection<GenreBindingModel>().SearchAsync(args.QueryText, MaxResults - result.Count)).ToList();
-                if (genresSearch.Count > 0)
-                {
-                    this.AddResults(result, genresSearch, Genres);
-                }
-            }
+                var songs = await this.songsRepository.SearchAsync(args.QueryText, (uint?)(MaxResults - result.Count));
 
-            if (result.Count < MaxResults)
-            {
-                var songs = await this.songsRepository.GetAllAsync();
-                var songsSearch = songs.Where(x => Search.Contains(x.Title, args.QueryText)).Take(MaxResults - result.Count).ToList();
-
-                if (songsSearch.Count > 0)
+                if (songs.Count > 0)
                 {
-                    result.Add(new SearchTitle(Songs));
-                    foreach (var song in songsSearch)
+                    result.Add(new SearchTitle("Songs"));
+                    foreach (var song in songs)
                     {
                         result.Add(new SearchResult(
                             song.Title,
-                            song.Artist,
-                            string.Format(CultureInfo.CurrentCulture, "{0}:{1} - {2}", Songs, song.Artist, song.Title),
-                            song.Metadata.AlbumArtUrl));
+                            song.Artist.Title,
+                            song.SongId.ToString(),
+                            song.AlbumArtUrl));
                     }
                 }
             }
 
             if (result.Count < MaxResults)
             {
-                var playlistsSearch = (await this.playlistCollectionsService.GetCollection<UserPlaylistBindingModel>().SearchAsync(args.QueryText, MaxResults - result.Count)).ToList();
-                if (playlistsSearch.Count > 0)
+                var playlists = (await this.playlistsService.SearchAsync(PlaylistType.UserPlaylist, args.QueryText, (uint?)(MaxResults - result.Count))).ToList();
+                if (playlists.Count > 0)
                 {
-                    this.AddResults(result, playlistsSearch, Playlists);
+                    this.AddResults(result, playlists, PlaylistType.UserPlaylist);
                 }
             }
 
             return result;
         }
 
-        private void AddResults(List<ISearchItem> result, IEnumerable<PlaylistBaseBindingModel> playlists, string title)
+        private void AddResults(List<ISearchItem> result, IEnumerable<IPlaylist> playlists, PlaylistType playlistType)
         {
             bool titleAdded = false;
 
@@ -318,15 +260,15 @@ namespace OutcoldSolutions.GoogleMusic.Shell
             {
                 if (!titleAdded)
                 {
-                    result.Add(new SearchTitle(title));
+                    result.Add(new SearchTitle(playlistType.ToTitle()));
                     titleAdded = true;
                 }
 
                 result.Add(new SearchResult(
                     playlist.Title,
-                    string.Format(CultureInfo.CurrentCulture, "{0} songs", playlist.Songs.Count),
-                    string.Format(CultureInfo.CurrentCulture, "{0}:{1}", title, playlist.Title),
-                    playlist.AlbumArtUrl));
+                    string.Format(CultureInfo.CurrentCulture, "{0} songs", playlist.SongsCount),
+                    string.Format(CultureInfo.CurrentCulture, "{0}:{1}", playlistType, playlist.Id),
+                    playlist.ArtUrl));
             }
         }
 

@@ -1,8 +1,9 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// Outcold Solutions (http://outcoldman.com)
+// OutcoldSolutions (http://outcoldsolutions.com)
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
@@ -10,28 +11,12 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
     using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Repositories;
-    using OutcoldSolutions.GoogleMusic.Services;
+    using OutcoldSolutions.GoogleMusic.Repositories.DbModels;
     using OutcoldSolutions.GoogleMusic.Views.Popups;
     using OutcoldSolutions.Presenters;
 
     public class AddToPlaylistPopupViewPresenter : ViewPresenterBase<IAddToPlaylistPopupView>
     {
-        public class AddToSongMusicPlaylist
-        {
-            public AddToSongMusicPlaylist(
-                UserPlaylistBindingModel userPlaylist,
-                IEnumerable<SongBindingModel> addingSongs)
-            {
-                this.Playlist = userPlaylist;
-                this.SongContainsCount = addingSongs.Count(x => this.Playlist.Songs.Contains(x));
-            }
-
-            public UserPlaylistBindingModel Playlist { get; set; }
-
-            public int SongContainsCount { get; set; }
-        }
-
-        private readonly IPlaylistCollectionsService collectionsService;
         private readonly IUserPlaylistsRepository userPlaylistsRepository;
 
         private bool isLoading;
@@ -40,11 +25,9 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
 
         public AddToPlaylistPopupViewPresenter(
             IEnumerable<SongBindingModel> songs,
-            IPlaylistCollectionsService collectionsService,
             IUserPlaylistsRepository userPlaylistsRepository)
         {
             this.Songs = songs.ToList();
-            this.collectionsService = collectionsService;
             this.userPlaylistsRepository = userPlaylistsRepository;
         }
 
@@ -57,8 +40,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
 
             set
             {
-                this.isLoading = value;
-                this.RaiseCurrentPropertyChanged();
+                this.SetValue(ref this.isLoading, value);
             }
         }
 
@@ -71,8 +53,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
 
             set
             {
-                this.playlists = value;
-                this.RaiseCurrentPropertyChanged();
+                this.SetValue(ref this.playlists, value);
             }
         }
 
@@ -80,7 +61,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
 
         public void AddToPlaylist(AddToSongMusicPlaylist playlist)
         {
-            this.Logger.LogTask(this.userPlaylistsRepository.AddEntriesAsync(playlist.Playlist.Metadata, this.Songs));
+            this.Logger.LogTask(this.userPlaylistsRepository.AddEntriesAsync(playlist.Playlist, this.Songs));
             this.View.Close();
         }
 
@@ -92,15 +73,27 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
 
             this.Logger.LogTask(Task.Run(async () =>
                 {
-                    var result = (await this.collectionsService
-                        .GetCollection<UserPlaylistBindingModel>()
-                        .GetAllAsync(Order.Name))
-                        .Select(x => new AddToSongMusicPlaylist(x, this.Songs))
-                        .ToList();
+                    var songsWithEntries = await Task.WhenAll(this.Songs.Select(async x => Tuple.Create(x, await this.userPlaylistsRepository.GetAllEntriesAsync(x.Metadata.SongId))).ToList());
+                    var result = (await this.userPlaylistsRepository.GetAllAsync(Order.Name)).Select(x => new AddToSongMusicPlaylist(x, songsWithEntries)).ToList();
 
                     await this.Dispatcher.RunAsync(() => this.Playlists = result);
                     await this.Dispatcher.RunAsync(() => this.IsLoading = false);
                 }));
+        }
+
+        public class AddToSongMusicPlaylist
+        {
+            public AddToSongMusicPlaylist(
+                UserPlaylist userPlaylist,
+                IEnumerable<Tuple<SongBindingModel, IList<UserPlaylistEntry>>> addingSongs)
+            {
+                this.Playlist = userPlaylist;
+                this.SongContainsCount = addingSongs.Count(x => x.Item2.Any(e => e.PlaylistId == userPlaylist.Id));
+            }
+
+            public UserPlaylist Playlist { get; set; }
+
+            public int SongContainsCount { get; set; }
         }
     }
 }

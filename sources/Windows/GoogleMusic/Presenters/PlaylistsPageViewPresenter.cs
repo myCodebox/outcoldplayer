@@ -250,11 +250,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private void Play(object commandParameter)
         {
-            PlaylistBaseBindingModel playlist = commandParameter as PlaylistBaseBindingModel;
+            IPlaylist playlist = commandParameter as IPlaylist;
             if (playlist != null)
             {
-                this.navigationService.NavigateTo<IPlaylistPageView>(playlist);
-                this.playQueueService.PlayAsync(null, playlist.Songs.Select(x => x.Metadata).ToList(), songIndex: -1);
+                this.navigationService.NavigateToPlaylist(playlist);
+                this.playQueueService.PlayAsync(playlist);
                 this.Toolbar.IsBottomAppBarOpen = true;
             }
         }

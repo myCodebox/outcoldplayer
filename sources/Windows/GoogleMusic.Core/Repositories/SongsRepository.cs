@@ -5,21 +5,73 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
 {
     using System.Collections.Generic;
     using System.Linq;
+    using System.Text;
     using System.Threading.Tasks;
 
     using OutcoldSolutions.Diagnostics;
-    using OutcoldSolutions.GoogleMusic.BindingModels;
+    using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Repositories.DbModels;
 
     public interface ISongsRepository
     {
-        Task<IList<SongBindingModel>> GetAllAsync();
+        Task<Song> GetSongAsync(int songId);
 
-        Task<SongBindingModel> GetSongAsync(string songId);
+        Task<IList<Song>> SearchAsync(string searchQuery, uint? take = null);
     }
 
     public class SongsRepository : RepositoryBase, ISongsRepository
     {
+        private const string SqlSearchSongs = @"
+select s.* ,
+       a.[AlbumId] as [Album.AlbumId],
+       a.[Title] as [Album.Title],  
+       a.[TitleNorm] as [Album.TitleNorm],
+       a.[ArtistId] as [Album.ArtistId],
+       a.[SongsCount] as [Album.SongsCount], 
+       a.[Year] as [Album.Year],    
+       a.[Duration] as [Album.Duration],       
+       a.[ArtUrl] as [Album.ArtUrl],    
+       a.[LastPlayed] as [Album.LastPlayed],  
+       ta.[ArtistId] as [Artist.ArtistId],
+       ta.[Title] as [Artist.Title],
+       ta.[TitleNorm] as [Artist.TitleNorm],
+       ta.[AlbumsCount] as [Artist.AlbumsCount],
+       ta.[SongsCount] as [Artist.SongsCount],
+       ta.[Duration] as [Artist.Duration],
+       ta.[ArtUrl] as [Artist.ArtUrl],
+       ta.[LastPlayed]  as [Artist.LastPlayed]
+from [Song] as s
+     inner join Album a on s.AlbumId = a.AlbumId     
+     inner join Artist ta on ta.ArtistId = s.ArtistId 
+where s.[TitleNorm] like ?1
+order by s.[TitleNorm]
+";
+
+        private const string SqlSong = @"
+select s.* ,
+       a.[AlbumId] as [Album.AlbumId],
+       a.[Title] as [Album.Title],  
+       a.[TitleNorm] as [Album.TitleNorm],
+       a.[ArtistId] as [Album.ArtistId],
+       a.[SongsCount] as [Album.SongsCount], 
+       a.[Year] as [Album.Year],    
+       a.[Duration] as [Album.Duration],       
+       a.[ArtUrl] as [Album.ArtUrl],    
+       a.[LastPlayed] as [Album.LastPlayed],  
+       ta.[ArtistId] as [Artist.ArtistId],
+       ta.[Title] as [Artist.Title],
+       ta.[TitleNorm] as [Artist.TitleNorm],
+       ta.[AlbumsCount] as [Artist.AlbumsCount],
+       ta.[SongsCount] as [Artist.SongsCount],
+       ta.[Duration] as [Artist.Duration],
+       ta.[ArtUrl] as [Artist.ArtUrl],
+       ta.[LastPlayed]  as [Artist.LastPlayed]
+from [Song] as s
+     inner join Album a on s.AlbumId = a.AlbumId     
+     inner join Artist ta on ta.ArtistId = s.ArtistId 
+where s.[SongId] = ?1
+";
+
         private readonly ILogger logger;
 
         public SongsRepository(
@@ -28,14 +80,23 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
             this.logger = logManager.CreateLogger("SongsRepository");
         }
 
-        public async Task<SongBindingModel> GetSongAsync(string songId)
+        public async Task<IList<Song>> SearchAsync(string searchQuery, uint? take = null)
         {
-            return new SongBindingModel(await this.Connection.GetAsync<Song>(songId));
+            var searchQueryNorm = searchQuery.Normalize() ?? string.Empty;
+
+            var sql = new StringBuilder(SqlSearchSongs);
+
+            if (take.HasValue)
+            {
+                sql.AppendFormat(" limit {0}", take.Value);
+            }
+
+            return await this.Connection.QueryAsync<Song>(sql.ToString(), string.Format("%{0}%", searchQueryNorm));
         }
 
-        public async Task<IList<SongBindingModel>> GetAllAsync()
+        public async Task<Song> GetSongAsync(int songId)
         {
-            return (await this.Connection.Table<Song>().ToListAsync()).Select(x => new SongBindingModel(x)).ToList();
+            return (await this.Connection.QueryAsync<Song>(SqlSong, songId)).FirstOrDefault();
         }
     }
 }

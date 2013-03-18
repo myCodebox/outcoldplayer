@@ -45,24 +45,27 @@ from [Album] x
 
        private const string SqlSearchAlbums = @"
 select 
-       x.[ArtistNormX] as [ArtistNorm], 
-       x.[AlbumNorm] as [TitleNorm],
-       max(coalesce(nullif(x.[AlbumArtist], ''), x.[Artist])) as [Artist],       
-       max(ifnull(x.[Album], 0)) as [Title],        
-       count(*) as [SongsCount], 
-       max(ifnull(x.[Year], 0)) as [Year],       
-       max(ifnull(x.[Genre], '')) as [Genre],  
-       max(ifnull(x.[GenreNorm], '')) as [GenreNorm],     
-       sum(x.[Duration]) as [Duration],       
-       max(ifnull(x.[AlbumArtUrl], '')) as [AlbumArtUrl],    
-       max(x.[LastPlayed]) as [LastPlayed]
-from
-(
-select coalesce(nullif(s.[AlbumArtistNorm], ''), s.[ArtistNorm]) as [ArtistNormX], s.*
-from [Song] s
-where x.[AlbumNorm] like ?1
-) as x
-group by x.[ArtistNormX], x.[TitleNorm]
+       x.[AlbumId],
+       x.[Title],  
+       x.[TitleNorm],
+       x.[ArtistId],
+       x.[SongsCount], 
+       x.[Year],    
+       x.[Duration],       
+       x.[ArtUrl],    
+       x.[LastPlayed],       
+       a.[ArtistId] as [Artist.ArtistId],
+       a.[Title] as [Artist.Title],
+       a.[TitleNorm] as [Artist.TitleNorm],
+       a.[AlbumsCount] as [Artist.AlbumsCount],
+       a.[SongsCount] as [Artist.SongsCount],
+       a.[Duration] as [Artist.Duration],
+       a.[ArtUrl] as [Artist.ArtUrl],
+       a.[LastPlayed]  as [Artist.LastPlayed]
+from [Album] x 
+     inner join [Artist] as a on x.[ArtistId] = a.[ArtistId] 
+where x.[TitleNorm] like ?1
+order by x.[TitleNorm]
 ";
 
         // TODO: We need to include here also not-artist albums but which contain artist songs
@@ -161,7 +164,7 @@ order by coalesce(nullif(s.Disc, 0), 1), s.Track
                 sql.AppendFormat(" limit {0}", take.Value);
             }
 
-            return await this.Connection.QueryAsync<Album>(sql.ToString(), string.Format("%{0}%", searchQueryNorm.Normalize()));
+            return await this.Connection.QueryAsync<Album>(sql.ToString(), string.Format("%{0}%", searchQueryNorm));
         }
 
         public async Task<Album> GetAsync(int id)

@@ -5,6 +5,7 @@ namespace OutcoldSolutions.GoogleMusic
 {
     using System;
 
+    using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Repositories.DbModels;
     using OutcoldSolutions.GoogleMusic.Views;
     using OutcoldSolutions.Views;
@@ -23,17 +24,18 @@ namespace OutcoldSolutions.GoogleMusic
                 throw new ArgumentNullException("playlist");
             }
 
-            var request = new PlaylistNavigationRequest()
-                              {
-                                  PlaylistId = playlist.Id,
-                                  PlaylistType = playlist.PlaylistType
-                              };
+            var request = new PlaylistNavigationRequest(playlist.PlaylistType, playlist.Id);
 
-            if (playlist is Album)
+            return @this.NavigateToPlaylist(request);
+        }
+
+        public static IPageView NavigateToPlaylist(this INavigationService @this, PlaylistNavigationRequest request)
+        {
+            if (request.PlaylistType == PlaylistType.Album)
             {
                 return @this.NavigateTo<IAlbumPageView>(request);
             }
-            else if (playlist is Artist)
+            else if (request.PlaylistType == PlaylistType.Artist)
             {
                 return @this.NavigateTo<IArtistPageView>(request);
             }

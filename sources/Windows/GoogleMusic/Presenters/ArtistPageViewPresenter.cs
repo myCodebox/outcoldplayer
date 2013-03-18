@@ -100,12 +100,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         {
             if (this.BindingModel.Artist != null)
             {
-                this.navigationService.NavigateTo<IPlaylistPageView>(
-                    new PlaylistNavigationRequest()
-                        {
-                            PlaylistId = this.BindingModel.Artist.Id,
-                            PlaylistType = PlaylistType.Artist
-                        });
+                this.navigationService.NavigateTo<IPlaylistPageView>(new PlaylistNavigationRequest(PlaylistType.Artist, this.BindingModel.Artist.Id));
             }
         }
     }
