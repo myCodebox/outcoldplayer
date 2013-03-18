@@ -5,8 +5,14 @@ namespace OutcoldSolutions.GoogleMusic.Repositories.DbModels
 {
     using System;
 
+    using OutcoldSolutions.GoogleMusic.Models;
+
     public interface IPlaylist
     {
+        int Id { get; }
+
+        PlaylistType PlaylistType { get; }
+
         string Title { get; set; }
 
         string TitleNorm { get; set; }

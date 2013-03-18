@@ -13,6 +13,22 @@ namespace OutcoldSolutions.GoogleMusic.Models
     {
         public SystemPlaylistType SystemPlaylistType { get; set; }
 
+        public int Id
+        {
+            get
+            {
+                return (int)this.SystemPlaylistType;
+            }
+        }
+
+        public PlaylistType PlaylistType 
+        {
+            get
+            {
+                return PlaylistType.SystemPlaylist;
+            }
+        }
+
         public string Title { get; set; }
 
         public string TitleNorm { get; set; }

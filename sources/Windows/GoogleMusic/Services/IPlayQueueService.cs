@@ -23,9 +23,11 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         QueueState State { get; }
 
-        Task PlayAsync(IPlaylist playlist, IList<Song> songs);
+        Task PlayAsync(IPlaylist playlist);
 
-        Task PlayAsync(IPlaylist playlist, IList<Song> songs, int songIndex);
+        Task PlayAsync(IPlaylist playlist, int songIndex);
+
+        Task PlayAsync(IPlaylist playlist, IEnumerable<Song> songs, int songIndex);
 
         Task PlayAsync(int index);
 

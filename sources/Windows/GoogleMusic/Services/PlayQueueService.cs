@@ -9,6 +9,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
     using System.Threading.Tasks;
 
     using OutcoldSolutions.Diagnostics;
+    using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Repositories.DbModels;
     using OutcoldSolutions.GoogleMusic.Services.Publishers;
     using OutcoldSolutions.GoogleMusic.Shell;
@@ -23,6 +24,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
         private readonly ICurrentSongPublisherService publisherService;
         private readonly ISongWebService songWebService;
         private readonly INotificationService notificationService;
+        private readonly IPlaylistsService playlistsService;
 
         private readonly List<Song> songsQueue = new List<Song>();
         private readonly List<int> queueOrder = new List<int>();
@@ -46,7 +48,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
             ICurrentSongPublisherService publisherService,
             ISongWebService songWebService,
             INotificationService notificationService,
-            IGoogleMusicSessionService sessionService)
+            IGoogleMusicSessionService sessionService,
+            IPlaylistsService playlistsService)
         {
             this.logger = logManager.CreateLogger("PlayQueueService");
             this.mediaElement = mediaElement;
@@ -55,6 +58,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             this.publisherService = publisherService;
             this.songWebService = songWebService;
             this.notificationService = notificationService;
+            this.playlistsService = playlistsService;
             this.currentQueueIndex = -1;
 
             this.IsRepeatAll = this.settingsService.GetValue("IsRepeatAllEnabled", defaultValue: false);
@@ -126,16 +130,27 @@ namespace OutcoldSolutions.GoogleMusic.Services
             }
         }
 
-        public async Task PlayAsync(IPlaylist playlist, IList<Song> songs)
+        public async Task PlayAsync(IPlaylist playlist)
         {
-            await this.PlayAsync(playlist, songs, songIndex: -1);
+            await this.PlayAsync(playlist, songIndex: -1);
         }
 
-        public async Task PlayAsync(IPlaylist playlist, IList<Song> songs, int songIndex)
+        public async Task PlayAsync(IPlaylist playlist, int songIndex)
         {
-            if (songs == null)
+            if (playlist == null)
             {
-                throw new ArgumentNullException("songs");
+                throw new ArgumentNullException("playlist");
+            }
+
+            var songs = await this.playlistsService.GetSongsAsync(playlist);
+            await this.PlayAsync(playlist, songs, songIndex);
+        }
+        
+        public async Task PlayAsync(IPlaylist playlist, IEnumerable<Song> songs, int songIndex)
+        {
+            if (playlist == null)
+            {
+                throw new ArgumentNullException("playlist");
             }
 
             await Task.Run(async () =>
@@ -188,7 +203,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             {
                 await this.mediaElement.PlayAsync();
                 this.State = QueueState.Play;
-                this.logger.LogTask(this.publisherService.PublishAsync(this.songsQueue[this.CurrentSongIndex], null /* TODO:  this.currentPlaylist */));
+                this.logger.LogTask(this.publisherService.PublishAsync(this.songsQueue[this.CurrentSongIndex], this.currentPlaylist));
             }
             else
             {
@@ -462,7 +477,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
                             this.State = QueueState.Play;
 
-                            this.logger.LogTask(this.publisherService.PublishAsync(song, null /* TODO: this.currentPlaylist */));
+                            this.logger.LogTask(this.publisherService.PublishAsync(song, this.currentPlaylist));
                         }
                         else
                         {

@@ -108,7 +108,7 @@
     <Compile Include="Repositories\DbModels\Genre.cs" />
     <Compile Include="Repositories\DbModels\IPlaylist.cs" />
     <Compile Include="Repositories\DbModels\UserPlaylist.cs" />
-    <Compile Include="Repositories\DbModels\UserPlaylistEntryEntity.cs" />
+    <Compile Include="Repositories\DbModels\UserPlaylistEntry.cs" />
     <Compile Include="Models\SongsGrouping.cs" />
     <Compile Include="Models\Search.cs" />
     <Compile Include="BindingModels\AlbumBindingModel.cs" />
@@ -129,10 +129,12 @@
     <Compile Include="Repositories\ArtistsRepository.cs" />
     <Compile Include="Repositories\DbContext.cs" />
     <Compile Include="Repositories\GenresRepository.cs" />
+    <Compile Include="Repositories\IPlaylistRepository.cs" />
     <Compile Include="Repositories\IUserPlaylistRepository.cs" />
     <Compile Include="Repositories\ISongsRepository.cs" />
     <Compile Include="Repositories\RepositoryBase.cs" />
     <Compile Include="Repositories\SystemPlaylistRepository.cs" />
+    <Compile Include="Services\PlaylistsService.cs" />
     <Compile Include="Services\SongMetadataEditService.cs" />
     <Compile Include="Repositories\SongsRepository.cs" />
     <Compile Include="Repositories\AlbumCollection.cs" />

@@ -5,13 +5,24 @@ namespace OutcoldSolutions.GoogleMusic.Repositories.DbModels
 {
     using System;
 
+    using OutcoldSolutions.GoogleMusic.Models;
+
     using SQLite;
 
     [Table("Album")]
     public class Album : IPlaylist
     {
-        [PrimaryKey, AutoIncrement]
-        public int AlbumId { get; set; }
+        [PrimaryKey, AutoIncrement, Column("AlbumId")]
+        public int Id { get; set; }
+
+        [Ignore]
+        public PlaylistType PlaylistType
+        {
+            get
+            {
+                return PlaylistType.Album;
+            }
+        }
 
         public string Title { get; set; }
 

@@ -12,9 +12,11 @@ namespace OutcoldSolutions.GoogleMusic
     using OutcoldSolutions.Controls;
     using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.BindingModels;
+    using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Presenters;
     using OutcoldSolutions.GoogleMusic.Presenters.Popups;
     using OutcoldSolutions.GoogleMusic.Repositories;
+    using OutcoldSolutions.GoogleMusic.Repositories.DbModels;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Services.Publishers;
     using OutcoldSolutions.GoogleMusic.Shell;
@@ -95,11 +97,13 @@ namespace OutcoldSolutions.GoogleMusic
 
                 // Songs Repositories and Services
                 registration.Register<ISongsRepository>().AsSingleton<SongsRepository>();
-                registration.Register<IUserPlaylistRepository>().AsSingleton<UserPlaylistRepository>();
-                registration.Register<IArtistsRepository>().AsSingleton<ArtistsRepository>();
-                registration.Register<IAlbumsRepository>().AsSingleton<AlbumsRepository>();
-                registration.Register<IGenresRepository>().AsSingleton<GenresRepository>();
-                registration.Register<ISystemPlaylistRepository>().AsSingleton<SystemPlaylistRepository>();
+                registration.Register<IUserPlaylistRepository>().And<IPlaylistRepository<UserPlaylist>>().AsSingleton<UserPlaylistRepository>();
+                registration.Register<IArtistsRepository>().And<IPlaylistRepository<Artist>>().AsSingleton<ArtistsRepository>();
+                registration.Register<IAlbumsRepository>().And<IPlaylistRepository<Album>>().AsSingleton<AlbumsRepository>();
+                registration.Register<IGenresRepository>().And<IPlaylistRepository<Genre>>().AsSingleton<GenresRepository>();
+                registration.Register<ISystemPlaylistRepository>().And<IPlaylistRepository<SystemPlaylist>>().AsSingleton<SystemPlaylistRepository>();
+                registration.Register<IPlaylistsService>().AsSingleton<PlaylistsService>();
+
                 registration.Register<IPlaylistCollection<AlbumBindingModel>>().AsSingleton<AlbumCollection>();
                 registration.Register<IPlaylistCollection<ArtistBindingModel>>().AsSingleton<ArtistCollection>();
                 registration.Register<IPlaylistCollection<GenreBindingModel>>().AsSingleton<GenreCollection>();
@@ -126,9 +130,6 @@ namespace OutcoldSolutions.GoogleMusic
 
                 registration.Register<IPlayQueueService>()
                             .AsSingleton<PlayQueueService>();
-
-                registration.Register<ISongsQueueService>()
-                            .AsSingleton<SongsQueueService>();
 
                 registration.Register<INotificationService>()
                             .AsSingleton<NotificationService>();

@@ -72,6 +72,6 @@ namespace OutcoldSolutions.GoogleMusic.Repositories.DbModels
         public Artist Artist { get; set; }
 
         [Reference]
-        public UserPlaylistEntryEntity UserPlaylistEntry { get; set; }
+        public UserPlaylistEntry UserPlaylistEntry { get; set; }
     }
 }

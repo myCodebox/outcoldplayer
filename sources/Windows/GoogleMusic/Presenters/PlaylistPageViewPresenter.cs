@@ -9,9 +9,10 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Repositories;
+    using OutcoldSolutions.GoogleMusic.Repositories.DbModels;
     using OutcoldSolutions.GoogleMusic.Views;
 
-    public class PlaylistPageViewPresenter : PlaylistPageViewPresenterBase<IPlaylistPageView, PlaylistBaseBindingModel>
+    public class PlaylistPageViewPresenter : PlaylistPageViewPresenterBase<IPlaylistPageView, IPlaylist>
     {
         private readonly IUserPlaylistRepository userPlaylistRepository;
 
@@ -53,15 +54,15 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                         t =>
                             {
                                 this.IsDataLoading = false;
-                                if (this.BindingModel.Playlist.Songs.Count > 0)
-                                {
-                                    if (this.BindingModel.Playlist.Songs.Count <= selectedSongIndex)
-                                    {
-                                        selectedSongIndex--;
-                                    }
+                                //if (this.BindingModel.Playlist.Songs.Count > 0)
+                                //{
+                                //    if (this.BindingModel.Playlist.Songs.Count <= selectedSongIndex)
+                                //    {
+                                //        selectedSongIndex--;
+                                //    }
 
-                                    this.BindingModel.SelectedSongIndex = selectedSongIndex;
-                                }
+                                //    this.BindingModel.SelectedSongIndex = selectedSongIndex;
+                                //}
                             },
                         TaskScheduler.FromCurrentSynchronizationContext());
             }

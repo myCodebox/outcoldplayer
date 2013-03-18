@@ -9,14 +9,8 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
     using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Repositories.DbModels;
 
-    public interface IUserPlaylistRepository
+    public interface IUserPlaylistRepository : IPlaylistRepository<UserPlaylist>
     {
-        Task<int> GetCountAsync();
-
-        Task<IList<UserPlaylist>> GetPlaylistsAsync(Order order, uint? take = null);
-
-        Task<IList<UserPlaylist>> SearchAsync(string searchQuery, uint? take);
-
         Task<IEnumerable<UserPlaylistBindingModel>> GetAllAsync();
 
         Task<UserPlaylistBindingModel> CreateAsync(string name);

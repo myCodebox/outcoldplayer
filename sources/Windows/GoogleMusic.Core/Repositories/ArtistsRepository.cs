@@ -4,7 +4,6 @@
 
 namespace OutcoldSolutions.GoogleMusic.Repositories
 {
-    using System;
     using System.Collections.Generic;
     using System.Text;
     using System.Threading.Tasks;
@@ -12,18 +11,12 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Repositories.DbModels;
 
-    public interface IArtistsRepository
+    public interface IArtistsRepository : IPlaylistRepository<Artist>
     {
-        Task<int> GetCountAsync();
-
-        Task<IList<Artist>> GetAristsAsync(Order order, uint? take = null);
-
-        Task<IList<Artist>> SearchAsync(string searchQuery, uint? take);
     }
 
     public class ArtistsRepository : RepositoryBase, IArtistsRepository
     {
-     
         private const string SqlSearchArtist = @"
 select 
        u.[ArtistNorm] as [TitleNorm],       
@@ -70,7 +63,33 @@ group by u.[ArtistNorm]
 order by u.[ArtistNorm]
 ";
 
-        public async Task<IList<Artist>> GetAristsAsync(Order order, uint? take = null)
+        private const string SqlArtistSongs = @"
+select s.*,
+       a.[AlbumId] as [Album.AlbumId],
+       a.[Title] as [Album.Title],  
+       a.[TitleNorm] as [Album.TitleNorm],
+       a.[ArtistId] as [Album.ArtistId],
+       a.[SongsCount] as [Album.SongsCount], 
+       a.[Year] as [Album.Year],    
+       a.[Duration] as [Album.Duration],       
+       a.[ArtUrl] as [Album.ArtUrl],    
+       a.[LastPlayed] as [Album.LastPlayed],  
+       ta.[ArtistId] as [Artist.ArtistId],
+       ta.[Title] as [Artist.Title],
+       ta.[TitleNorm] as [Artist.TitleNorm],
+       ta.[AlbumsCount] as [Artist.AlbumsCount],
+       ta.[SongsCount] as [Artist.SongsCount],
+       ta.[Duration] as [Artist.Duration],
+       ta.[ArtUrl] as [Artist.ArtUrl],
+       ta.[LastPlayed]  as [Artist.LastPlayed]
+from [Song] as s
+     inner join Album a on s.AlbumId = a.AlbumId
+     inner join Artist ta on ta.ArtistId = s.ArtistId 
+where a.ArtistId = ?1
+order by a.[Year], a.TitleNorm, coalesce(nullif(s.Disc, 0), 1), s.Track
+";
+
+        public async Task<IList<Artist>> GetAllAsync(Order order, uint? take = null)
         {
             var query = this.Connection.Table<Artist>().Where(a => a.AlbumsCount > 0);
             if (order == Order.Name)
@@ -107,6 +126,16 @@ order by u.[ArtistNorm]
             }
 
             return await this.Connection.QueryAsync<Artist>(sql.ToString(), string.Format("%{0}%", searchQueryNorm.Normalize()));
+        }
+
+        public async Task<Artist> GetAsync(int id)
+        {
+            return await this.Connection.Table<Artist>().Where(a => a.Id == id).FirstOrDefaultAsync();
+        }
+
+        public async Task<IList<Song>> GetSongsAsync(int id)
+        {
+            return await this.Connection.QueryAsync<Song>(SqlArtistSongs, id);
         }
     }
 }

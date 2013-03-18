@@ -5,7 +5,6 @@ namespace OutcoldSolutions.GoogleMusic
 {
     using System;
 
-    using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Repositories.DbModels;
     using OutcoldSolutions.GoogleMusic.Views;
     using OutcoldSolutions.Views;
@@ -24,48 +23,22 @@ namespace OutcoldSolutions.GoogleMusic
                 throw new ArgumentNullException("playlist");
             }
 
+            var request = new PlaylistNavigationRequest()
+                              {
+                                  PlaylistId = playlist.Id,
+                                  PlaylistType = playlist.PlaylistType
+                              };
+
             if (playlist is Album)
             {
-                return @this.NavigateTo<IAlbumPageView>(
-                    new PlaylistNavigationRequest()
-                        {
-                            PlaylistId = ((Album)playlist).AlbumId,
-                            PlaylistType = PlaylistType.Album
-                        });
+                return @this.NavigateTo<IAlbumPageView>(request);
             }
             else if (playlist is Artist)
             {
-                return @this.NavigateTo<IArtistPageView>(
-                    new PlaylistNavigationRequest()
-                    {
-                        PlaylistId = ((Artist)playlist).ArtistId,
-                        PlaylistType = PlaylistType.Artist
-                    });
+                return @this.NavigateTo<IArtistPageView>(request);
             }
             else
             {
-                var request = new PlaylistNavigationRequest();
-
-                if (playlist is Genre)
-                {
-                    request.PlaylistType = PlaylistType.Genre;
-                    request.PlaylistId = ((Genre)playlist).GenreId;
-                }
-                else if (playlist is UserPlaylist)
-                {
-                    request.PlaylistType = PlaylistType.UserPlaylist;
-                    request.PlaylistId = ((UserPlaylist)playlist).PlaylistId;
-                }
-                else if (playlist is SystemPlaylist)
-                {
-                    request.PlaylistType = PlaylistType.SystemPlaylist;
-                    request.PlaylistId = (int)((SystemPlaylist)playlist).SystemPlaylistType;
-                }
-                else
-                {
-                    throw new ArgumentException("Unknown songs container", "playlist");
-                }
-
                 return @this.NavigateTo<IPlaylistPageView>(request);
             }
         }

@@ -71,7 +71,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
 
                 await connection.CreateTableAsync<Song>();
                 await connection.CreateTableAsync<UserPlaylist>();
-                await connection.CreateTableAsync<UserPlaylistEntryEntity>();
+                await connection.CreateTableAsync<UserPlaylistEntry>();
                 await connection.CreateTableAsync<Album>();
                 await connection.CreateTableAsync<Genre>();
                 await connection.CreateTableAsync<Artist>();

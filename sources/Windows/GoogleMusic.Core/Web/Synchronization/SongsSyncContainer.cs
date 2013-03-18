@@ -26,8 +26,8 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
         private readonly Dictionary<string, Song> songEntities =
             new Dictionary<string, Song>();
 
-        private readonly List<Tuple<UserPlaylist, List<Tuple<UserPlaylistEntryEntity, Song>>>> playlistEntities = 
-            new List<Tuple<UserPlaylist, List<Tuple<UserPlaylistEntryEntity, Song>>>>();
+        private readonly List<Tuple<UserPlaylist, List<Tuple<UserPlaylistEntry, Song>>>> playlistEntities = 
+            new List<Tuple<UserPlaylist, List<Tuple<UserPlaylistEntry, Song>>>>();
 
         public void AddRange(IList<GoogleMusicSong> googleMusicSongs)
         {
@@ -50,13 +50,13 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
                                                  TitleNorm = googleUserPlaylist.Title.Normalize()
                                              };
 
-                var entries = new List<Tuple<UserPlaylistEntryEntity, Song>>();
+                var entries = new List<Tuple<UserPlaylistEntry, Song>>();
 
                 for (int index = 0; index < googleUserPlaylist.Playlist.Count; index++)
                 {
                     GoogleMusicSong googleSong = googleUserPlaylist.Playlist[index];
                     var song = this.songEntities[googleSong.Id];
-                    var entry = new UserPlaylistEntryEntity()
+                    var entry = new UserPlaylistEntry()
                                     {
                                         ProviderEntryId = googleSong.PlaylistEntryId,
                                         SongId = song.SongId,
@@ -160,7 +160,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
                                     var albums = x.Value.Item2.Select(a => a.Value).ToList();
                                     foreach (Album album in albums)
                                     {
-                                        album.ArtistId = x.Value.Item1.ArtistId;
+                                        album.ArtistId = x.Value.Item1.Id;
                                     }
 
                                     return albums;
@@ -168,20 +168,20 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
 
                             c.InsertAll(songEntities.Select(s =>
                                 {
-                                    s.Value.AlbumId = s.Value.Album.AlbumId;
-                                    s.Value.GenreId = s.Value.Genre.GenreId;
-                                    s.Value.ArtistId = s.Value.Artist.ArtistId;
+                                    s.Value.AlbumId = s.Value.Album.Id;
+                                    s.Value.GenreId = s.Value.Genre.Id;
+                                    s.Value.ArtistId = s.Value.Artist.Id;
                                     return s.Value;
                                 }));
 
                             c.InsertAll(this.playlistEntities.Select(x => x.Item1));
                             c.InsertAll(this.playlistEntities.SelectMany(x =>
                                 {
-                                    var entities = new List<UserPlaylistEntryEntity>();
+                                    var entities = new List<UserPlaylistEntry>();
 
                                     foreach (var e in x.Item2)
                                     {
-                                        e.Item1.PlaylistId = x.Item1.PlaylistId;
+                                        e.Item1.PlaylistId = x.Item1.Id;
                                         e.Item1.SongId = e.Item2.SongId;
                                         entities.Add(e.Item1);
                                     }

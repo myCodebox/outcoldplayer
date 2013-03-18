@@ -34,6 +34,38 @@ group by p.[PlaylistId], p.[Title], p.ProviderPlaylistId
 order by [p].Title
 ";
 
+        private const string SqlUserPlaylistSongs = @"
+select s.*,
+       e.[Id] as [UserPlaylistEntry.Id],
+       e.[PlaylistId] as [UserPlaylistEntry.PlaylistId], 
+       e.[SongId] as [UserPlaylistEntry.SongId],
+       e.[PlaylistOrder] as [UserPlaylistEntry.PlaylistOrder],
+       e.[ProviderEntryId] as [UserPlaylistEntry.ProviderEntryId],
+       a.[AlbumId] as [Album.AlbumId],
+       a.[Title] as [Album.Title],  
+       a.[TitleNorm] as [Album.TitleNorm],
+       a.[ArtistId] as [Album.ArtistId],
+       a.[SongsCount] as [Album.SongsCount], 
+       a.[Year] as [Album.Year],    
+       a.[Duration] as [Album.Duration],       
+       a.[ArtUrl] as [Album.ArtUrl],    
+       a.[LastPlayed] as [Album.LastPlayed],  
+       ta.[ArtistId] as [Artist.ArtistId],
+       ta.[Title] as [Artist.Title],
+       ta.[TitleNorm] as [Artist.TitleNorm],
+       ta.[AlbumsCount] as [Artist.AlbumsCount],
+       ta.[SongsCount] as [Artist.SongsCount],
+       ta.[Duration] as [Artist.Duration],
+       ta.[ArtUrl] as [Artist.ArtUrl],
+       ta.[LastPlayed]  as [Artist.LastPlayed]
+from [Song] as s
+     inner join UserPlaylistEntry e on e.SongId = s.SongId
+     inner join Album a on s.AlbumId = a.AlbumId
+     inner join Artist ta on ta.ArtistId = s.ArtistId 
+where e.[PlaylistId] = ?1
+order by e.[PlaylistOrder]
+";
+
         private readonly ILogger logger;
 
         private readonly IPlaylistsWebService playlistsWebService;
@@ -51,7 +83,7 @@ order by [p].Title
             return await this.Connection.Table<UserPlaylist>().CountAsync();
         }
 
-        public async Task<IList<UserPlaylist>> GetPlaylistsAsync(Order order, uint? take = null)
+        public async Task<IList<UserPlaylist>> GetAllAsync(Order order, uint? take = null)
         {
             var query = this.Connection.Table<UserPlaylist>(); 
 
@@ -70,6 +102,16 @@ order by [p].Title
             }
 
             return await query.ToListAsync();
+        }
+
+        public async Task<UserPlaylist> GetAsync(int id)
+        {
+            return await this.Connection.Table<UserPlaylist>().Where(a => a.Id == id).FirstOrDefaultAsync();
+        }
+
+        public async Task<IList<Song>> GetSongsAsync(int id)
+        {
+            return await this.Connection.QueryAsync<Song>(SqlUserPlaylistSongs, id);
         }
 
         public async Task<IList<UserPlaylist>> SearchAsync(string searchQuery, uint? take)
@@ -97,8 +139,8 @@ order by [p].Title
                 List<string> entrieIds = new List<string>();
                 List<SongBindingModel> songs = new List<SongBindingModel>();
 
-                int playlistId = playlist.PlaylistId;
-                var entries = await this.Connection.Table<UserPlaylistEntryEntity>()
+                int playlistId = playlist.Id;
+                var entries = await this.Connection.Table<UserPlaylistEntry>()
                                     .Where(x => x.PlaylistId == playlistId)
                                     .OrderBy(x => x.PlaylistOrder).ToListAsync();
 
@@ -173,8 +215,8 @@ order by [p].Title
                 await this.Connection.RunInTransactionAsync(
                     (connection) =>
                         {
-                            connection.Execute("DELETE from UserPlaylistEntry where ProviderPlaylistId = ?", playlist.PlaylistId);
-                            connection.Delete<UserPlaylist>(playlist.PlaylistId);
+                            connection.Execute("DELETE from UserPlaylistEntry where ProviderPlaylistId = ?", playlist.Id);
+                            connection.Delete<UserPlaylist>(playlist.Id);
                         });
             }
 
@@ -200,7 +242,7 @@ order by [p].Title
                 await this.Connection.RunInTransactionAsync(
                     (connection) =>
                     {
-                        connection.Execute("UPDATE UserPlaylist SET Title = ? WHERE ProviderPlaylistId = ?", name, playlist.PlaylistId);
+                        connection.Execute("UPDATE UserPlaylist SET Title = ? WHERE ProviderPlaylistId = ?", name, playlist.Id);
                     });
             }
 
@@ -224,10 +266,10 @@ order by [p].Title
             {
                 await this.Connection.RunInTransactionAsync(connection =>
                     {
-                        var entry = connection.Find<UserPlaylistEntryEntity>(e => e.PlaylistId == playlist.PlaylistId && e.ProviderEntryId == entryId);
+                        var entry = connection.Find<UserPlaylistEntry>(e => e.PlaylistId == playlist.Id && e.ProviderEntryId == entryId);
                         connection.Execute(
                             "UPDATE UserPlaylistEntry SET PlaylistOrder = (PlaylistOrder - 1) WHERE PlaylistId = ? AND PlaylistOrder > ?",
-                            playlist.PlaylistId,
+                            playlist.Id,
                             entry.PlaylistOrder);
                         connection.Delete(entry);
                     });
@@ -262,8 +304,8 @@ order by [p].Title
                 await this.Connection.RunInTransactionAsync(
                     (connection) =>
                         {
-                            var lastEntry = connection.Table<UserPlaylistEntryEntity>()
-                                          .Where(e => e.PlaylistId == playlist.PlaylistId)
+                            var lastEntry = connection.Table<UserPlaylistEntry>()
+                                          .Where(e => e.Id == playlist.Id)
                                           .OrderByDescending(x => x.PlaylistOrder)
                                           .FirstOrDefault();
 
@@ -272,11 +314,11 @@ order by [p].Title
                             var entries = result.SongIds
                                             .Select((x, index) => Tuple.Create(x.PlaylistEntryId, songs.FirstOrDefault(s => string.Equals(s.Metadata.ProviderSongId, x.SongId)), index))
                                             .Where(x => x.Item2 != null)
-                                            .Select(x => new UserPlaylistEntryEntity()
+                                            .Select(x => new UserPlaylistEntry()
                                                {
                                                    ProviderEntryId = x.Item1,
                                                    SongId = x.Item2.Metadata.SongId,
-                                                   PlaylistId = playlist.PlaylistId,
+                                                   PlaylistId = playlist.Id,
                                                    PlaylistOrder = nextIndex + x.Item3
                                                });
 

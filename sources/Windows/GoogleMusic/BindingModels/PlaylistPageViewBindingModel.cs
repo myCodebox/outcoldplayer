@@ -3,12 +3,16 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.BindingModels
 {
+    using System.Collections.Generic;
+
     using OutcoldSolutions.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
+    using OutcoldSolutions.GoogleMusic.Repositories.DbModels;
 
-    public class PlaylistPageViewBindingModel<TPlaylist> : BindingModelBase where TPlaylist : PlaylistBaseBindingModel
+    public class PlaylistPageViewBindingModel<TPlaylist> : BindingModelBase where TPlaylist : class, IPlaylist
     {
         private TPlaylist playlist;
+        private IList<SongBindingModel> songs;
         private int selectedSongIndex = -1;
 
         public TPlaylist Playlist
@@ -20,9 +24,21 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
             set
             {
-                this.playlist = value;
-                this.RaiseCurrentPropertyChanged();
+                this.SetValue(ref this.playlist, value);
                 this.RaisePropertyChanged(() => this.Type);
+            }
+        }
+
+        public IList<SongBindingModel> Songs
+        {
+            get
+            {
+                return this.songs;
+            }
+
+            set
+            {
+                this.SetValue(ref this.songs, value);
                 this.SelectedSongIndex = -1;
             }
         }
@@ -31,27 +47,13 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         {
             get
             {
-                if (this.playlist is AlbumBindingModel)
+                if (this.Playlist == null)
                 {
-                    return "Album";
+                    return null;
                 }
 
-                if (this.playlist is ArtistBindingModel)
-                {
-                    return "Artist";
-                }
-
-                if (this.playlist is GenreBindingModel)
-                {
-                    return "Genre";
-                }
-
-                if (this.playlist is UserPlaylistBindingModel)
-                {
-                    return "Playlist";
-                }
-
-                return null;
+                // TODO:  Create converter for PlaylistType
+                return this.Playlist.PlaylistType.ToTitle();
             }
         }
 
@@ -59,9 +61,9 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         {
             get
             {
-                if (this.SelectedSongIndex >= 0 && this.SelectedSongIndex < this.playlist.Songs.Count)
+                if (this.SelectedSongIndex >= 0 && this.SelectedSongIndex < this.Songs.Count)
                 {
-                    return this.playlist.Songs[this.SelectedSongIndex];
+                    return this.Songs[this.SelectedSongIndex];
                 }
 
                 return null;

@@ -12,15 +12,9 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Repositories.DbModels;
 
-    public interface IAlbumsRepository
+    public interface IAlbumsRepository : IPlaylistRepository<Album>
     {
-        Task<int> GetCountAsync();
-
-        Task<IList<Album>> GetAlbumsAsync(Order order, uint? take = null);
-
         Task<IList<Album>> GetArtistAlbumsAsync(string artistNorm);
-
-        Task<IList<Album>> SearchAsync(string searchQuery, uint? take);
     }
 
     public class AlbumsRepository : RepositoryBase, IAlbumsRepository
@@ -119,6 +113,32 @@ group by x.[ArtistNormX], x.[AlbumNorm]
 order by u.[Year], u.[TitleNorm]
 ";
 
+        private const string SqlAlbumsSongs = @"
+select * ,
+       a.[AlbumId] as [Album.AlbumId],
+       a.[Title] as [Album.Title],  
+       a.[TitleNorm] as [Album.TitleNorm],
+       a.[ArtistId] as [Album.ArtistId],
+       a.[SongsCount] as [Album.SongsCount], 
+       a.[Year] as [Album.Year],    
+       a.[Duration] as [Album.Duration],       
+       a.[ArtUrl] as [Album.ArtUrl],    
+       a.[LastPlayed] as [Album.LastPlayed],       
+       ta.[ArtistId] as [Artist.ArtistId],
+       ta.[Title] as [Artist.Title],
+       ta.[TitleNorm] as [Artist.TitleNorm],
+       ta.[AlbumsCount] as [Artist.AlbumsCount],
+       ta.[SongsCount] as [Artist.SongsCount],
+       ta.[Duration] as [Artist.Duration],
+       ta.[ArtUrl] as [Artist.ArtUrl],
+       ta.[LastPlayed]  as [Artist.LastPlayed]
+from [Song] as s
+     inner join Album a on s.AlbumId = a.AlbumId
+     inner join Artist ta on ta.ArtistId = s.ArtistId 
+where s.AlbumId = ?1
+order by coalesce(nullif(s.Disc, 0), 1), s.Track
+";
+
         private readonly Dictionary<Order, string> orderStatements = new Dictionary<Order, string>()
                                                                 {
                                                                     { Order.Name,  " order by x.[TitleNorm]" },
@@ -130,7 +150,7 @@ order by u.[Year], u.[TitleNorm]
             return await this.Connection.Table<Album>().CountAsync();
         }
 
-        public async Task<IList<Album>> GetAlbumsAsync(Order order, uint? take = null)
+        public async Task<IList<Album>> GetAllAsync(Order order, uint? take = null)
         {
             if (!this.orderStatements.ContainsKey(order))
             {
@@ -165,6 +185,19 @@ order by u.[Year], u.[TitleNorm]
             }
 
             return await this.Connection.QueryAsync<Album>(sql.ToString(), string.Format("%{0}%", searchQueryNorm.Normalize()));
+        }
+
+        public async Task<Album> GetAsync(int id)
+        {
+            var sql = new StringBuilder(SqlAllAlbums);
+            sql.Append(" where x.[AlbumId] == ?1 ");
+
+            return await this.Connection.ExecuteScalarAsync<Album>(sql.ToString(), id);
+        }
+
+        public async Task<IList<Song>> GetSongsAsync(int id)
+        {
+            return await this.Connection.QueryAsync<Song>(SqlAlbumsSongs, id);
         }
     }
 }

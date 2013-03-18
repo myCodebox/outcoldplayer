@@ -40,7 +40,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
             if (this.presenter.BindingModel.Playlist != null)
             {
-                this.ListView.ItemsSource = this.presenter.BindingModel.Playlist.Songs;
+                this.ListView.ItemsSource = this.presenter.BindingModel.Songs;
                 this.UpdateSelectedSong();
             }
         }
@@ -72,7 +72,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
             else
             {
                 this.presenter.BindingModel.SelectedSongIndex =
-                    this.presenter.BindingModel.Playlist.Songs.IndexOf((SongBindingModel)e.AddedItems.First());
+                    this.presenter.BindingModel.Songs.IndexOf((SongBindingModel)e.AddedItems.First());
             }
         }
 

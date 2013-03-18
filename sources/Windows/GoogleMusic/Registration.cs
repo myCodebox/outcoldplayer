@@ -10,6 +10,7 @@ namespace OutcoldSolutions.GoogleMusic
     using OutcoldSolutions.GoogleMusic.Presenters;
     using OutcoldSolutions.GoogleMusic.Presenters.Popups;
     using OutcoldSolutions.GoogleMusic.Presenters.Settings;
+    using OutcoldSolutions.GoogleMusic.Repositories.DbModels;
     using OutcoldSolutions.GoogleMusic.Views;
     using OutcoldSolutions.GoogleMusic.Views.Popups;
     using OutcoldSolutions.GoogleMusic.Views.Settings;
@@ -55,7 +56,7 @@ namespace OutcoldSolutions.GoogleMusic
                         .InjectionRule<BindingModelBase, PlaylistPageViewPresenter>()
                         .AsSingleton<PlaylistPageView>();
             registration.Register<PlaylistPageViewPresenter>().AsSingleton();
-            registration.Register<PlaylistPageViewBindingModel<PlaylistBaseBindingModel>>().AsSingleton();
+            registration.Register<PlaylistPageViewBindingModel<IPlaylist>>().AsSingleton();
 
             // Queue view
             registration.Register<ICurrentPlaylistPageView>()
@@ -83,7 +84,7 @@ namespace OutcoldSolutions.GoogleMusic
                         .InjectionRule<BindingModelBase, AlbumPageViewPresenter>()
                         .AsSingleton<AlbumPageView>();
             registration.Register<AlbumPageViewPresenter>().AsSingleton();
-            registration.Register<PlaylistPageViewBindingModel<AlbumBindingModel>>().AsSingleton();
+            registration.Register<PlaylistPageViewBindingModel<Album>>().AsSingleton();
 
             // The releases history
             registration.Register<IReleasesHistoryPageView>()

@@ -6,7 +6,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories.DbModels
     using SQLite;
 
     [Table("UserPlaylistEntry")]
-    public class UserPlaylistEntryEntity
+    public class UserPlaylistEntry
     {
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }

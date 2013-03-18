@@ -20,32 +20,20 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     {
         private const int MaxItems = 12;
 
-        private readonly ISongsQueueService songsQueueService;
+        private readonly IPlayQueueService playQueueService;
 
         private readonly INavigationService navigationService;
 
-        private readonly ISystemPlaylistRepository systemPlaylistRepository;
-        private readonly IArtistsRepository artistsRepository;
-        private readonly IAlbumsRepository albumsRepository;
-        private readonly IGenresRepository genresRepository;
-        private readonly IUserPlaylistRepository userPlaylistRepository;
+        private readonly IPlaylistsService playlistsService;
 
         public StartPageViewPresenter(
             INavigationService navigationService,
-            ISongsQueueService songsQueueService,
-            ISystemPlaylistRepository systemPlaylistRepository,
-            IArtistsRepository artistsRepository,
-            IAlbumsRepository albumsRepository,
-            IGenresRepository genresRepository,
-            IUserPlaylistRepository userPlaylistRepository)
+            IPlayQueueService playQueueService,
+            IPlaylistsService playlistsService)
         {
-            this.songsQueueService = songsQueueService;
-            this.systemPlaylistRepository = systemPlaylistRepository;
-            this.artistsRepository = artistsRepository;
-            this.albumsRepository = albumsRepository;
-            this.genresRepository = genresRepository;
-            this.userPlaylistRepository = userPlaylistRepository;
+            this.playQueueService = playQueueService;
             this.navigationService = navigationService;
+            this.playlistsService = playlistsService;
 
             this.PlayCommand = new DelegateCommand(this.Play);
         }
@@ -54,56 +42,32 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         protected override async Task LoadDataAsync(NavigatedToEventArgs navigatedToEventArgs)
         {
-            var groups = new List<GroupPlaylistsGroupBindingModel>();
-            groups.AddRange(await Task.WhenAll(
-                this.SystemPlaylistsAsync(), 
-                this.UserPlaylistsAsync(), 
-                this.ArtistsAsync(), 
-                this.AlbumsAsync(), 
-                this.GenresAsync()));
-            this.BindingModel.Groups = groups;
+            var types = new[]
+                            {
+                                PlaylistType.SystemPlaylist, 
+                                PlaylistType.UserPlaylist, 
+                                PlaylistType.Artist,
+                                PlaylistType.Album, 
+                                PlaylistType.Genre
+                            };
+
+            var groups = await Task.WhenAll(types.Select((t) => Task.Run(async () =>
+                {
+                    var countTask = this.playlistsService.GetCountAsync(t);
+                    var getAllTask = this.playlistsService.GetAllAsync(t, Order.LastPlayed, MaxItems);
+
+                    await Task.WhenAll(countTask, getAllTask);
+
+                    int count = await countTask;
+                    IEnumerable<IPlaylist> playlists = await getAllTask;
+
+                    return this.CreateGroup(t.ToPluralTitle(), count, playlists, t);
+                })));
+
+            this.BindingModel.Groups = groups.ToList();
         }
 
-        private async Task<GroupPlaylistsGroupBindingModel> SystemPlaylistsAsync()
-        {
-            var systemPlaylists = await this.systemPlaylistRepository.GetSystemPlaylistsAsync();
-
-            return this.CreateGroup(null, systemPlaylists.Count, systemPlaylists, PlaylistType.Unknown);
-        }
-
-        private async Task<GroupPlaylistsGroupBindingModel> ArtistsAsync()
-        {
-            int artistsCount = await this.artistsRepository.GetCountAsync();
-            var artists = await this.artistsRepository.GetAristsAsync(Order.LastPlayed, take: MaxItems);
-
-            return this.CreateGroup("Artists", artistsCount, artists, PlaylistType.Artist);
-        }
-
-        private async Task<GroupPlaylistsGroupBindingModel> AlbumsAsync()
-        {
-            var albumsCount = await this.albumsRepository.GetCountAsync();
-            var albums = await this.albumsRepository.GetAlbumsAsync(Order.LastPlayed, take: MaxItems);
-
-            return this.CreateGroup("Albums", albumsCount, albums, PlaylistType.Album);
-        }
-
-        private async Task<GroupPlaylistsGroupBindingModel> GenresAsync()
-        {
-            int genresCount = await this.genresRepository.GetCountAsync();
-            var genres = await this.genresRepository.GetGenresAsync(Order.LastPlayed, take: MaxItems);
-
-            return this.CreateGroup("Genres", genresCount, genres, PlaylistType.Genre);
-        }
-
-        private async Task<GroupPlaylistsGroupBindingModel> UserPlaylistsAsync()
-        {
-            int userPlaylistsCount = await this.userPlaylistRepository.GetCountAsync();
-            var playlists = await this.userPlaylistRepository.GetPlaylistsAsync(Order.LastPlayed, take: MaxItems);
-
-            return this.CreateGroup("Playlists", userPlaylistsCount, playlists, PlaylistType.UserPlaylist);
-        }
-
-        private GroupPlaylistsGroupBindingModel CreateGroup(string title, int userPlaylistsCount, IEnumerable<IPlaylist> playlists, PlaylistType type)
+        private GroupPlaylistsGroupBindingModel CreateGroup(string title, int playlistsCount, IEnumerable<IPlaylist> playlists, PlaylistType type)
         {
             List<GroupPlaylistBindingModel> groupItems =
                 playlists.Select(
@@ -115,7 +79,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
             return new GroupPlaylistsGroupBindingModel(
                 title,
-                userPlaylistsCount,
+                playlistsCount,
                 groupItems,
                 type);
         }
@@ -126,7 +90,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             if (playlist != null)
             {
                 this.Toolbar.IsBottomAppBarOpen = true;
-                this.Logger.LogTask(this.songsQueueService.PlayAsync(playlist));
+                this.Logger.LogTask(this.playQueueService.PlayAsync(playlist));
                 this.navigationService.NavigateToPlaylist(playlist);
             }
         }
