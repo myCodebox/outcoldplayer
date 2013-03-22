@@ -6,8 +6,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using System.Collections.Generic;
     using System.Threading.Tasks;
 
+    using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Repositories;
-    using OutcoldSolutions.GoogleMusic.Repositories.DbModels;
     using OutcoldSolutions.GoogleMusic.Views;
 
     public class PlaylistPageViewPresenter : PlaylistPageViewPresenterBase<IPlaylistPageView, IPlaylist>

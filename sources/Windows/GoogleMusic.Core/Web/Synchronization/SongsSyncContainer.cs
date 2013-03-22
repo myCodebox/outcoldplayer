@@ -9,7 +9,6 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.Models;
-    using OutcoldSolutions.GoogleMusic.Repositories.DbModels;
     using OutcoldSolutions.GoogleMusic.Web.Models;
     using OutcoldSolutions.Models;
 

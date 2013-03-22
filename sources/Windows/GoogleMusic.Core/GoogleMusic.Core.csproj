@@ -102,17 +102,17 @@
     <Compile Include="CommandIcon.cs" />
     <Compile Include="Models\PlaylistType.cs" />
     <Compile Include="Models\SystemPlaylistType.cs" />
-    <Compile Include="Repositories\DbModels\Album.cs" />
+    <Compile Include="Models\Album.cs" />
     <Compile Include="Models\StringEx.cs" />
     <Compile Include="Models\SystemPlaylist.cs" />
-    <Compile Include="Repositories\DbModels\Artist.cs" />
-    <Compile Include="Repositories\DbModels\Genre.cs" />
-    <Compile Include="Repositories\DbModels\IPlaylist.cs" />
-    <Compile Include="Repositories\DbModels\UserPlaylist.cs" />
-    <Compile Include="Repositories\DbModels\UserPlaylistEntry.cs" />
+    <Compile Include="Models\Artist.cs" />
+    <Compile Include="Models\Genre.cs" />
+    <Compile Include="Models\IPlaylist.cs" />
+    <Compile Include="Models\UserPlaylist.cs" />
+    <Compile Include="Models\UserPlaylistEntry.cs" />
     <Compile Include="Models\Search.cs" />
     <Compile Include="BindingModels\SongBindingModel.cs" />
-    <Compile Include="Repositories\DbModels\Song.cs" />
+    <Compile Include="Models\Song.cs" />
     <Compile Include="Models\SongState.cs" />
     <Compile Include="Models\StreamType.cs" />
     <Compile Include="Models\UserInfo.cs" />
@@ -211,8 +211,8 @@
     <SDKReference Include="Microsoft.VCLibs, version=11.0">
       <Name>Microsoft Visual C++ Runtime Package</Name>
     </SDKReference>
-    <SDKReference Include="SQLite.WinRT, Version=3.7.15.2">
-      <Name>SQLite for Windows Runtime</Name>
+    <SDKReference Include="SQLite.WinRT, Version=3.7.16">
+      <Name>SQLite for Windows Runtime %28SQLite.WinRT, Version=3.7.16%29</Name>
     </SDKReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '11.0' ">

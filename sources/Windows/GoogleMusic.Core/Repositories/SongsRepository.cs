@@ -10,7 +10,6 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
 
     using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Models;
-    using OutcoldSolutions.GoogleMusic.Repositories.DbModels;
 
     public interface ISongsRepository
     {

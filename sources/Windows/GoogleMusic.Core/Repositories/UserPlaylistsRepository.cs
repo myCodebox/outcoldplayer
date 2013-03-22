@@ -12,7 +12,6 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
     using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
-    using OutcoldSolutions.GoogleMusic.Repositories.DbModels;
     using OutcoldSolutions.GoogleMusic.Web;
 
     public interface IUserPlaylistsRepository : IPlaylistRepository<UserPlaylist>

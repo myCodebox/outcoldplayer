@@ -6,7 +6,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
     using System.Collections.Generic;
     using System.Threading.Tasks;
 
-    using OutcoldSolutions.GoogleMusic.Repositories.DbModels;
+    using OutcoldSolutions.GoogleMusic.Models;
 
     public interface IPlaylistRepository<TPlaylist> where TPlaylist : IPlaylist
     {

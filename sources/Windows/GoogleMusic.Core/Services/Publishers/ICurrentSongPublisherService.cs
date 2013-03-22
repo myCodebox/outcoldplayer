@@ -5,7 +5,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
 {
     using System.Threading.Tasks;
 
-    using OutcoldSolutions.GoogleMusic.Repositories.DbModels;
+    using OutcoldSolutions.GoogleMusic.Models;
 
     public interface ICurrentSongPublisherService
     {

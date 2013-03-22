@@ -9,7 +9,6 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
-    using OutcoldSolutions.GoogleMusic.Repositories.DbModels;
 
     using Windows.Data.Xml.Dom;
     using Windows.UI.Notifications;

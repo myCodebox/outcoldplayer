@@ -9,7 +9,6 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.Models;
-    using OutcoldSolutions.GoogleMusic.Repositories.DbModels;
 
     public interface IArtistsRepository : IPlaylistRepository<Artist>
     {

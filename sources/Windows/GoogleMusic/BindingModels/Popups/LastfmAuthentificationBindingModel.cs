@@ -22,8 +22,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels.Popups
 
             set
             {
-                this.message = value;
-                this.RaiseCurrentPropertyChanged();
+                this.SetValue(ref this.message, value);
             }
         }
 
@@ -36,8 +35,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels.Popups
 
             set
             {
-                this.isLoading = value;
-                this.RaiseCurrentPropertyChanged();
+                this.SetValue(ref this.isLoading, value);
             }
         }
 
@@ -50,8 +48,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels.Popups
 
             set
             {
-                this.link = value;
-                this.RaiseCurrentPropertyChanged();
+                this.SetValue(ref this.link, value);
             }
         }
 
@@ -64,8 +61,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels.Popups
 
             set
             {
-                this.isLinkVisible = value;
-                this.RaiseCurrentPropertyChanged();
+                this.SetValue(ref this.isLinkVisible, value);
             }
         }
     }

@@ -6,8 +6,6 @@ namespace OutcoldSolutions.GoogleMusic.Models
 {
     using System;
 
-    using OutcoldSolutions.GoogleMusic.Repositories.DbModels;
-
     public class SystemPlaylist : IPlaylist
     {
         public SystemPlaylistType SystemPlaylistType { get; set; }

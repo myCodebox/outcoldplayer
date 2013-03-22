@@ -6,7 +6,6 @@ namespace OutcoldSolutions.GoogleMusic
     using System;
 
     using OutcoldSolutions.GoogleMusic.Models;
-    using OutcoldSolutions.GoogleMusic.Repositories.DbModels;
     using OutcoldSolutions.GoogleMusic.Views;
     using OutcoldSolutions.Views;
 

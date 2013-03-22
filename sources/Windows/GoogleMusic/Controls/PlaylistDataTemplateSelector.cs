@@ -8,7 +8,6 @@ namespace OutcoldSolutions.GoogleMusic.Controls
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
-    using OutcoldSolutions.GoogleMusic.Repositories.DbModels;
 
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;

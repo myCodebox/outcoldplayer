@@ -8,7 +8,6 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
     using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.BindingModels;
-    using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Web;
 
     public interface ISongMetadataEditService

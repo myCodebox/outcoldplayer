@@ -10,8 +10,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
 
     using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.BindingModels;
+    using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Repositories;
-    using OutcoldSolutions.GoogleMusic.Repositories.DbModels;
     using OutcoldSolutions.GoogleMusic.Views.Popups;
     using OutcoldSolutions.Presenters;
 

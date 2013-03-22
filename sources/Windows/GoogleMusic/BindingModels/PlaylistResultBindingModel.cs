@@ -7,7 +7,6 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
     using System.Globalization;
 
     using OutcoldSolutions.GoogleMusic.Models;
-    using OutcoldSolutions.GoogleMusic.Repositories.DbModels;
 
     public class PlaylistResultBindingModel : SearchResultBindingModel
     {

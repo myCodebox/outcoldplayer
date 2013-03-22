@@ -4,7 +4,6 @@
 namespace OutcoldSolutions.GoogleMusic.Services
 {
     using OutcoldSolutions.GoogleMusic.Models;
-    using OutcoldSolutions.GoogleMusic.Repositories.DbModels;
 
     public class CurrentSongPropertiesUpdateService
     {

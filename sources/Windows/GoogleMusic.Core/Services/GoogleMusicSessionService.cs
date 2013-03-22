@@ -13,7 +13,6 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
     using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Models;
-    using OutcoldSolutions.GoogleMusic.Web;
 
     using Windows.Storage;
 

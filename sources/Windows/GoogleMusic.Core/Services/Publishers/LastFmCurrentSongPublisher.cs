@@ -8,7 +8,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
     using System.Threading;
     using System.Threading.Tasks;
 
-    using OutcoldSolutions.GoogleMusic.Repositories.DbModels;
+    using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Web.Lastfm;
     using OutcoldSolutions.Models;
 
@@ -37,7 +37,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
                                      { "artist", song.Artist.Title },
                                      { "track", song.Title },
                                      { "album", song.Album.Title },
-                                     { "trackNumber", song.Track.HasValue ? song.Track.Value.ToString("D") : "0" },
+                                     { "trackNumber", song.Track.HasValue ? song.Track.Value.ToString("D") : string.Empty },
                                      { "duration", ((int)song.Duration.TotalSeconds).ToString("D") }
                                  };
 

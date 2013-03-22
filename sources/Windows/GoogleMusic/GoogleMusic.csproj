@@ -124,7 +124,6 @@
     <Compile Include="BindingModels\Settings\AccountViewBindingModel.cs" />
     <Compile Include="BindingModels\Settings\SupportBindingModel.cs" />
     <Compile Include="BindingModels\SongResultBindingModel.cs" />
-    <Compile Include="BindingModels\SongsBindingModelBase.cs" />
     <Compile Include="BindingModels\StartViewBindingModel.cs" />
     <Compile Include="BindingModels\AuthentificationPageViewBindingModel.cs" />
     <Compile Include="Controls\AppBarToggleButton.cs" />
