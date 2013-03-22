@@ -149,6 +149,7 @@
     <Compile Include="Services\GoogleMusicSessionService.cs" />
     <Compile Include="Web\CookieContainerWrapper.cs" />
     <Compile Include="Web\GoogleAccountWebService.cs" />
+    <Compile Include="Web\Synchronization\GoogleMusicSongEx.cs" />
     <Compile Include="Web\Synchronization\GoogleMusicSynchronizationService.cs" />
     <Compile Include="Web\GoogleMusicWebService.cs" />
     <Compile Include="Web\IGoogleAccountWebService.cs" />
@@ -185,7 +186,8 @@
     <Compile Include="Web\Models\CommonResponse.cs" />
     <Compile Include="Web\PlaylistsWebService.cs" />
     <Compile Include="Web\SongWebService.cs" />
-    <Compile Include="Web\Synchronization\SongsSyncContainer.cs" />
+    <Compile Include="Web\Synchronization\InitialSynchronization.cs" />
+    <Compile Include="Web\Synchronization\SongsUpdateSynchronization.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">

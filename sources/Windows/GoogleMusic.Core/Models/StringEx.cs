@@ -10,9 +10,9 @@ namespace OutcoldSolutions.GoogleMusic.Models
     {
         public static string Normalize(this string val)
         {
-            if (val == null)
+            if (string.IsNullOrEmpty(val))
             {
-                return null;
+                return string.Empty;
             }
 
             var normalizedValue = new StringBuilder();

@@ -35,13 +35,13 @@ namespace OutcoldSolutions.GoogleMusic.Models
         public byte Rating { get; set; }
 
         public ushort? Disc { get; set; }
-
+                     
         public ushort? TotalDiscs { get; set; }
-
+                     
         public ushort? Track { get; set; }
-
+                     
         public ushort? TotalTracks { get; set; }
-
+                     
         public ushort? Year { get; set; }
 
         public int GenreId { get; set; }

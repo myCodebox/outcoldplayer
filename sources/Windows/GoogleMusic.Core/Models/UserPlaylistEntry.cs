@@ -18,5 +18,8 @@ namespace OutcoldSolutions.GoogleMusic.Models
         public int PlaylistOrder { get; set; }
 
         public string ProviderEntryId { get; set; }
+
+        [Reference]
+        public Song Song { get; set; }
     }
 }

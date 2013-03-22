@@ -97,7 +97,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
 
             await progress.SafeReportAsync(0.6d);
 
-            var syncContainer = new SongsSyncContainer();
+            var syncContainer = new InitialSynchronization();
 
             this.logger.Debug("SynchronizeAsync: insert all songs into database.");
 
@@ -114,7 +114,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
                 syncContainer.AddPlaylists(playlists.Playlists);
             }
 
-            await syncContainer.SaveAsync(this.Connection);
+            await syncContainer.CommitAsync(this.Connection);
 
             await progress.SafeReportAsync(0.9d);
 
