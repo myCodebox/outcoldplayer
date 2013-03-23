@@ -27,7 +27,11 @@ namespace OutcoldSolutions.GoogleMusic.Models
         [Indexed]
         public string TitleNorm { get; set; }
         
-        public int ArtistId { get; set; }
+        [Indexed]
+        public string ArtistTitleNorm { get; set; }
+
+        [Indexed]
+        public string GenreTitleNorm { get; set; }
 
         public int SongsCount { get; set; }
 

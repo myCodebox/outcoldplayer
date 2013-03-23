@@ -41,10 +41,10 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
                                      { "duration", ((int)song.Duration.TotalSeconds).ToString("D") }
                                  };
 
-            if (!string.IsNullOrEmpty(song.AlbumArtist)
-                && string.Equals(song.AlbumArtist, song.Artist.Title, StringComparison.OrdinalIgnoreCase))
+            if (!string.IsNullOrEmpty(song.AlbumArtistTitle)
+                && string.Equals(song.AlbumArtistTitle, song.Artist.Title, StringComparison.OrdinalIgnoreCase))
             {
-                parameters.Add("albumArtist", song.AlbumArtist);
+                parameters.Add("albumArtist", song.AlbumArtistTitle);
             }
 
             Task nowPlayingTask = this.webService.CallAsync("track.updateNowPlaying", new Dictionary<string, string>(parameters));

@@ -22,13 +22,7 @@ namespace OutcoldSolutions.GoogleMusic.Models
 
         public TimeSpan Duration { get; set; }
 
-        public int ArtistId { get; set; }
-
         public string Composer { get; set; }
-
-        public int AlbumId { get; set; }
-
-        public string AlbumArtist { get; set; }
 
         public ushort PlayCount { get; set; }
 
@@ -43,8 +37,6 @@ namespace OutcoldSolutions.GoogleMusic.Models
         public ushort? TotalTracks { get; set; }
                      
         public ushort? Year { get; set; }
-
-        public int GenreId { get; set; }
 
         public Uri AlbumArtUrl { get; set; }
 
@@ -71,5 +63,25 @@ namespace OutcoldSolutions.GoogleMusic.Models
 
         [Reference]
         public UserPlaylistEntry UserPlaylistEntry { get; set; }
+
+        public string AlbumArtistTitle { get; set; }
+
+        [Indexed]
+        public string AlbumArtistTitleNorm { get; set; }
+
+        public string ArtistTitle { get; set; }
+
+        [Indexed]
+        public string ArtistTitleNorm { get; set; }
+
+        public string AlbumTitle { get; set; }
+
+        [Indexed]
+        public string AlbumTitleNorm { get; set; }
+
+        public string GenreTitle { get; set; }
+
+        [Indexed]
+        public string GenreTitleNorm { get; set; }
     }
 }

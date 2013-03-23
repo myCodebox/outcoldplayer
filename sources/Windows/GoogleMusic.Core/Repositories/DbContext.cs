@@ -74,6 +74,77 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
                 await connection.CreateTableAsync<Album>();
                 await connection.CreateTableAsync<Genre>();
                 await connection.CreateTableAsync<Artist>();
+
+                await connection.ExecuteAsync(@"CREATE TABLE [Enumerator] (Id integer primary key autoincrement not null);");
+                await connection.ExecuteAsync(@"INSERT INTO [Enumerator] DEFAULT VALUES;");
+
+                await connection.ExecuteAsync(@"
+CREATE TRIGGER instert_song INSERT ON Song 
+  BEGIN
+
+    update [Genre]
+    set 
+        [SongsCount] = [SongsCount] + 1,
+        [Duration] = [Duration] + new.[Duration],
+        [ArtUrl] = case when nullif([ArtUrl], '') is null then new.[AlbumArtUrl] else [ArtUrl] end,
+        [LastPlayed] = case when new.[LastPlayed] > [LastPlayed] then new.[LastPlayed] else [LastPlayed] end        
+    where TitleNorm = new.GenreTitleNorm;
+  
+    insert into Genre([Title], [TitleNorm], [SongsCount], [Duration], [ArtUrl], [LastPlayed])
+    select new.GenreTitle, new.GenreTitleNorm, 1, new.Duration, new.AlbumArtUrl, new.LastPlayed
+    from [Enumerator] as e
+         left join [Genre] as g on g.TitleNorm = new.GenreTitleNorm
+    where e.[Id] = 1 and g.TitleNorm is null;
+
+    update [Artist]
+    set 
+        [SongsCount] = [SongsCount] + 1,
+        [Duration] = [Duration] + new.[Duration],
+        [ArtUrl] = case when nullif([ArtUrl], '') is null then new.[AlbumArtUrl] else [ArtUrl] end,
+        [LastPlayed] = case when new.[LastPlayed] > [LastPlayed] then new.[LastPlayed] else [LastPlayed] end    
+    where TitleNorm = coalesce(nullif(new.AlbumArtistTitleNorm, ''), new.[ArtistTitleNorm]);
+
+    insert into Artist([Title], [TitleNorm], [SongsCount], [Duration], [ArtUrl], [LastPlayed], [AlbumsCount])
+    select coalesce(nullif(new.AlbumArtistTitle, ''), new.[ArtistTitle]), coalesce(nullif(new.AlbumArtistTitleNorm, ''), new.[ArtistTitleNorm]), 1, new.Duration, new.AlbumArtUrl, new.LastPlayed, 0
+    from [Enumerator] as e
+         left join [Artist] as a on a.TitleNorm = coalesce(nullif(new.AlbumArtistTitleNorm, ''), new.[ArtistTitleNorm])
+    where e.[Id] = 1 and a.TitleNorm is null;
+
+    update [Artist]
+    set 
+        [SongsCount] = [SongsCount] + 1,
+        [Duration] = [Duration] + new.[Duration],
+        [ArtUrl] = case when nullif([ArtUrl], '') is null then new.[AlbumArtUrl] else [ArtUrl] end,
+        [LastPlayed] = case when new.[LastPlayed] > [LastPlayed] then new.[LastPlayed] else [LastPlayed] end    
+    where TitleNorm = coalesce(nullif(new.AlbumArtistTitleNorm, ''), new.[ArtistTitleNorm]) and new.[ArtistTitleNorm] <> new.AlbumArtistTitleNorm;
+
+    insert into Artist([Title], [TitleNorm], [SongsCount], [Duration], [ArtUrl], [LastPlayed], [AlbumsCount])
+    select new.[ArtistTitle], new.[ArtistTitleNorm], 1, new.Duration, new.AlbumArtUrl, new.LastPlayed, 0
+    from [Enumerator] as e
+         left join [Artist] as a on a.TitleNorm = new.[ArtistTitleNorm]
+    where e.[Id] = 1 and new.[ArtistTitleNorm] <> new.AlbumArtistTitleNorm and a.TitleNorm is null;
+
+    update [Album]
+    set 
+        [SongsCount] = [SongsCount] + 1,
+        [Duration] = [Duration] + new.[Duration],
+        [ArtUrl] = case when nullif([ArtUrl], '') is null then new.[AlbumArtUrl] else [ArtUrl] end,
+        [LastPlayed] = case when new.[LastPlayed] > [LastPlayed] then new.[LastPlayed] else [LastPlayed] end,
+        [Year] = case when nullif([Year], 0) is null then nullif(new.Year, 0) else [Year] end,
+        [GenreTitleNorm] = case when nullif([GenreTitleNorm], '') is null then new.[GenreTitleNorm] else [GenreTitleNorm] end
+    where ArtistTitleNorm = coalesce(nullif(new.AlbumArtistTitleNorm, ''), new.[ArtistTitleNorm]) and TitleNorm = new.AlbumTitleNorm;
+
+    update [Artist]
+    set [AlbumsCount] = [AlbumsCount] + 1
+    where TitleNorm = coalesce(nullif(new.AlbumArtistTitleNorm, ''), new.[ArtistTitleNorm]) and not exists (select * from [Album] as a where a.ArtistTitleNorm = coalesce(nullif(new.AlbumArtistTitleNorm, ''), new.[ArtistTitleNorm]) and a.TitleNorm = new.AlbumTitleNorm);
+
+    insert into Album([Title], [TitleNorm], [SongsCount], [Duration], [ArtUrl], [LastPlayed], [Year], [ArtistTitleNorm], [GenreTitleNorm])
+    select new.AlbumTitle, new.AlbumTitleNorm, 1, new.Duration, new.AlbumArtUrl, new.LastPlayed, nullif(new.Year, 0), coalesce(nullif(new.AlbumArtistTitleNorm, ''), new.[ArtistTitleNorm]), new.[GenreTitleNorm]
+    from [Enumerator] as e
+         left join [Album] as a on a.ArtistTitleNorm = coalesce(nullif(new.AlbumArtistTitleNorm, ''), new.[ArtistTitleNorm]) and a.TitleNorm = new.AlbumTitleNorm
+    where e.[Id] = 1 and a.TitleNorm is null;
+
+  END;");
             }
 
             return fDbExists ? DatabaseStatus.Existed : DatabaseStatus.New;

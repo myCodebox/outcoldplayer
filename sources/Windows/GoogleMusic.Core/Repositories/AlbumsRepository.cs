@@ -24,7 +24,8 @@ select
        x.[AlbumId],
        x.[Title],  
        x.[TitleNorm],
-       x.[ArtistId],
+       x.[ArtistTitleNorm],       
+       x.[GenreTitleNorm],
        x.[SongsCount], 
        x.[Year],    
        x.[Duration],       
@@ -39,7 +40,7 @@ select
        a.[ArtUrl] as [Artist.ArtUrl],
        a.[LastPlayed]  as [Artist.LastPlayed]
 from [Album] x 
-     inner join [Artist] as a on x.[ArtistId] = a.[ArtistId]    
+     inner join [Artist] as a on x.[ArtistTitleNorm] = a.[TitleNorm]      
 ";
 
        private const string SqlSearchAlbums = @"
@@ -47,7 +48,8 @@ select
        x.[AlbumId],
        x.[Title],  
        x.[TitleNorm],
-       x.[ArtistId],
+       x.[ArtistTitleNorm],       
+       x.[GenreTitleNorm],
        x.[SongsCount], 
        x.[Year],    
        x.[Duration],       
@@ -62,7 +64,7 @@ select
        a.[ArtUrl] as [Artist.ArtUrl],
        a.[LastPlayed]  as [Artist.LastPlayed]
 from [Album] x 
-     inner join [Artist] as a on x.[ArtistId] = a.[ArtistId] 
+     inner join [Artist] as a on x.[ArtistTitleNorm] = a.[TitleNorm]
 where x.[TitleNorm] like ?1
 order by x.[TitleNorm]
 ";
@@ -76,7 +78,8 @@ select
        x.[AlbumId],
        x.[Title],  
        x.[TitleNorm],
-       x.[ArtistId],
+       x.[ArtistTitleNorm],       
+       x.[GenreTitleNorm],
        x.[SongsCount], 
        x.[Year],    
        x.[Duration],       
@@ -89,10 +92,10 @@ select
        a.[SongsCount] as [Artist.SongsCount],
        a.[Duration] as [Artist.Duration],
        a.[ArtUrl] as [Artist.ArtUrl],
-       a.[LastPlayed]  as [Artist.LastPlayed],       
+       a.[LastPlayed]  as [Artist.LastPlayed],    
        0 as [IsCollection]
 from [Album] x 
-     inner join [Artist] as a on x.[ArtistId] = a.[ArtistId]       
+     inner join [Artist] as a on x.[ArtistTitleNorm] = a.[TitleNorm]     
 where a.[ArtistId] = ?1
 
 union
@@ -101,7 +104,8 @@ select
        a.[AlbumId],
        a.[Title],  
        a.[TitleNorm],
-       a.[ArtistId],
+       a.[GenreTitleNorm],       
+       a.[ArtistTitleNorm],
        count(distinct s.SongId) as [SongsCount], 
        a.[Year],    
        sum(s.[Duration]) as [Duration],       
@@ -117,10 +121,10 @@ select
        ar.[LastPlayed]  as [Artist.LastPlayed],       
        1 as [IsCollection]
 from [Song] as s 
-     inner join [Album] a on s.AlbumId = a.AlbumId and s.ArtistId <> a.ArtistId     
-     inner join [Artist] ar on ar.ArtistId = a.ArtistId
-where s.[ArtistId] = ?1 
-group by a.[AlbumId], a.[Title], a.[TitleNorm], a.[ArtistId], a.[Year], a.[ArtUrl], a.[LastPlayed]
+    inner join [Album] a on s.[AlbumTitleNorm] = a.[TitleNorm]      
+    inner join [Artist] ar on ar.[TitleNorm] = s.[ArtistTitleNorm]
+where s.[ArtistTitleNorm] <> s.[AlbumArtistTitleNorm] and ar.[ArtistId] = ?1
+group by a.[AlbumId], a.[Title], a.[TitleNorm], a.[ArtistTitleNorm], a.[Year], a.[ArtUrl], a.[LastPlayed]
 ) as x
 order by x.Year 
 ";

@@ -15,7 +15,14 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
         {
             return new Song()
             {
-                AlbumArtist = googleMusicSong.AlbumArtist,
+                AlbumArtistTitle = googleMusicSong.AlbumArtist,
+                AlbumArtistTitleNorm = googleMusicSong.AlbumArtist.Normalize(),
+                ArtistTitle = googleMusicSong.Artist,
+                ArtistTitleNorm = googleMusicSong.Artist.Normalize(),
+                AlbumTitle = googleMusicSong.Album,
+                AlbumTitleNorm = googleMusicSong.Album.Normalize(),
+                GenreTitle = googleMusicSong.Genre,
+                GenreTitleNorm = googleMusicSong.Genre.Normalize(),
                 AlbumArtUrl = string.IsNullOrEmpty(googleMusicSong.AlbumArtUrl) ? null : new Uri("http:" + googleMusicSong.AlbumArtUrl),
                 Composer = googleMusicSong.Composer,
                 Disc = googleMusicSong.Disc,
