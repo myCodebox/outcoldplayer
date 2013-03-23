@@ -248,6 +248,29 @@ CREATE TRIGGER update_song_lastplayed AFTER UPDATE OF [LastPlayed] ON [Song]
 ");
 
                 await connection.ExecuteAsync(@"
+CREATE TRIGGER update_song_albumarturl AFTER UPDATE OF [AlbumArtUrl] ON [Song]
+  BEGIN
+  
+    update [UserPlaylist]
+    set [ArtUrl] = new.[AlbumArtUrl] 
+    where [PlaylistId] in (select distinct e.[PlaylistId] from [UserPlaylistEntry] e where new.[SongId] = e.[SongId]);
+
+    update [Artist]
+    set [ArtUrl] = new.[AlbumArtUrl] 
+    where [TitleNorm] = new.[ArtistTitleNorm] or [TitleNorm] = new.[AlbumArtistTitleNorm];
+
+    update [Album]
+    set [ArtUrl] = new.[AlbumArtUrl] 
+    where [TitleNorm] = new.[AlbumTitleNorm] and [ArtistTitleNorm] = coalesce(nullif(new.AlbumArtistTitleNorm, ''), new.[ArtistTitleNorm]);
+
+    update [Genre]
+    set [ArtUrl] = new.[AlbumArtUrl] 
+    where [TitleNorm] = new.[GenreTitleNorm];
+
+  END;
+");
+
+                await connection.ExecuteAsync(@"
 CREATE TRIGGER update_song_parenttitlesupdate AFTER UPDATE OF [AlbumTitleNorm], [GenreTitleNorm], [ArtistAlbumTitleNorm], [ArtistTitleNorm] ON [Song]
   BEGIN  
 
