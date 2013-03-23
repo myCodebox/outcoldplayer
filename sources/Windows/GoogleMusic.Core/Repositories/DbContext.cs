@@ -110,7 +110,7 @@ CREATE TRIGGER instert_song INSERT ON Song
         [Duration] = [Duration] + new.[Duration],
         [ArtUrl] = case when nullif([ArtUrl], '') is null then new.[AlbumArtUrl] else [ArtUrl] end,
         [LastPlayed] = case when new.[LastPlayed] > [LastPlayed] then new.[LastPlayed] else [LastPlayed] end    
-    where TitleNorm = new.[ArtistTitleNorm] and s.AlbumArtistTitleNorm <> ''  and new.[ArtistTitleNorm] <> new.AlbumArtistTitleNorm;
+    where TitleNorm = new.[ArtistTitleNorm] and new.AlbumArtistTitleNorm <> ''  and new.[ArtistTitleNorm] <> new.AlbumArtistTitleNorm;
 
     insert into Artist([Title], [TitleNorm], [SongsCount], [Duration], [ArtUrl], [LastPlayed], [AlbumsCount])
     select coalesce(nullif(new.AlbumArtistTitle, ''), new.[ArtistTitle]), coalesce(nullif(new.AlbumArtistTitleNorm, ''), new.[ArtistTitleNorm]), 1, new.Duration, new.AlbumArtUrl, new.LastPlayed, 0
@@ -122,7 +122,7 @@ CREATE TRIGGER instert_song INSERT ON Song
     select new.[ArtistTitle], new.[ArtistTitleNorm], 1, new.Duration, new.AlbumArtUrl, new.LastPlayed, 0
     from [Enumerator] as e
          left join [Artist] as a on a.TitleNorm = new.[ArtistTitleNorm]
-    where e.[Id] = 1 and s.AlbumArtistTitleNorm <> ''  and new.[ArtistTitleNorm] <> new.AlbumArtistTitleNorm and a.TitleNorm is null;
+    where e.[Id] = 1 and new.AlbumArtistTitleNorm <> ''  and new.[ArtistTitleNorm] <> new.AlbumArtistTitleNorm and a.TitleNorm is null;
 
     update [Album]
     set 
