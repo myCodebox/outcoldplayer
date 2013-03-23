@@ -110,6 +110,7 @@
     <Compile Include="ApplicationSettingViews.cs" />
     <Compile Include="BindingModels\ArtistPageViewBindingModel.cs" />
     <Compile Include="BindingModels\CurrentPlaylistPageViewBindingModel.cs" />
+    <Compile Include="BindingModels\LinksRegionBindingModel.cs" />
     <Compile Include="BindingModels\PlaylistPageViewBindingModel.cs" />
     <Compile Include="BindingModels\PlaylistResultBindingModel.cs" />
     <Compile Include="BindingModels\PlaylistsGroupBindingModel.cs" />

@@ -1,39 +1,34 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// Outcold Solutions (http://outcoldman.com)
+// OutcoldSolutions (http://outcoldsolutions.com)
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Presenters
 {
+    using System;
+
+    using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Shell;
     using OutcoldSolutions.Presenters;
     using OutcoldSolutions.Views;
 
+    using Windows.UI.Xaml;
+
     public class LinksRegionViewPresenter : ViewPresenterBase<IView>
     {
-        private readonly ISearchService searchService;
+        private DispatcherTimer synchronizationTimer;
+        private int synchronizationTime; // we don't want to synchronize playlists each time, so we will do it on each 6 time
 
         public LinksRegionViewPresenter(
             ISearchService searchService)
         {
-            this.ShowSearchCommand = new DelegateCommand(this.ShowSearch);
+            this.ShowSearchCommand = new DelegateCommand(searchService.Activate);
+            this.BindingModel = new LinksRegionBindingModel();
 
-            this.searchService = searchService;
-            this.searchService.IsRegisteredChanged +=
-                (sender, args) => this.RaisePropertyChanged(() => this.IsShowSearchCommandVisible);
+            this.synchronizationTimer = new DispatcherTimer { Interval = TimeSpan.FromMinutes(5) };
+            this.synchronizationTime = 0;
         }
 
         public DelegateCommand ShowSearchCommand { get; private set; }
 
-        public bool IsShowSearchCommandVisible
-        {
-            get
-            {
-                return this.searchService.IsRegistered;
-            }
-        }
-
-        private void ShowSearch()
-        {
-            this.searchService.Activate();
-        }
+        public LinksRegionBindingModel BindingModel { get; set; }
     }
 }

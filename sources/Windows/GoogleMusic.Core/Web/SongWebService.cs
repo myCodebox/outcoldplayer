@@ -15,7 +15,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
     using OutcoldSolutions.GoogleMusic.Web.Models;
     using OutcoldSolutions.Web;
 
-    public interface ISongWebService
+    public interface ISongsWebService
     {
         Task<StatusResp> GetStatusAsync();
 
@@ -28,7 +28,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
         Task<RatingResp> UpdateRatingAsync(string songId, int rating);
     }
 
-    public class SongWebService : ISongWebService
+    public class SongsWebService : ISongsWebService
     {
         private const string SongUrlFormat = "play?u=0&songid={0}";
         private const string RecordPlayingUrl = "services/recordplaying";
@@ -41,7 +41,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
         private readonly IGoogleMusicWebService googleMusicWebService;
         private readonly IGoogleMusicSessionService sessionService;
 
-        public SongWebService(
+        public SongsWebService(
             IGoogleMusicWebService googleMusicWebService,
             IGoogleMusicSessionService sessionService)
         {

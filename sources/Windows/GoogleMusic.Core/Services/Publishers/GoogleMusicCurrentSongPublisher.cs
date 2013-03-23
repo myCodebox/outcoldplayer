@@ -14,16 +14,16 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
     public class GoogleMusicCurrentSongPublisher : ICurrentSongPublisher
     {
         private readonly ILogger logger;
-        private readonly ISongWebService songWebService;
+        private readonly ISongsWebService songsWebService;
         private readonly IDispatcher dispatcher;
 
         public GoogleMusicCurrentSongPublisher(
             ILogManager logManager,
-            ISongWebService songWebService,
+            ISongsWebService songsWebService,
             IDispatcher dispatcher)
         {
             this.logger = logManager.CreateLogger("GoogleMusicCurrentSongPublisher");
-            this.songWebService = songWebService;
+            this.songsWebService = songsWebService;
             this.dispatcher = dispatcher;
         }
 
@@ -67,7 +67,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
                     }),
                 Task.Run(async () =>
                     {
-                        if (!(await this.songWebService.RecordPlayingAsync(song.ProviderSongId, playlistId, updateRecentAlbum, updateRecentPlaylist, playCount)))
+                        if (!(await this.songsWebService.RecordPlayingAsync(song.ProviderSongId, playlistId, updateRecentAlbum, updateRecentPlaylist, playCount)))
                         {
                             this.logger.Warning("PublishAsync: Could not update GoogleMusic services for ProviderSongId: {0}.", song.ProviderSongId);
                         }

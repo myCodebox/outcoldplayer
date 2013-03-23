@@ -4,22 +4,23 @@
 namespace OutcoldSolutions.GoogleMusic.Presenters
 {
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.Models;
-    using OutcoldSolutions.GoogleMusic.Repositories;
+    using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
 
     public class PlaylistPageViewPresenter : PlaylistPageViewPresenterBase<IPlaylistPageView, IPlaylist>
     {
-        private readonly IUserPlaylistsRepository userPlaylistsRepository;
+        private readonly IUserPlaylistsService userPlaylistsService;
 
         public PlaylistPageViewPresenter(
-            IDependencyResolverContainer container, 
-            IUserPlaylistsRepository userPlaylistsRepository)
+            IDependencyResolverContainer container,
+            IUserPlaylistsService userPlaylistsService)
             : base(container)
         {
-            this.userPlaylistsRepository = userPlaylistsRepository;
+            this.userPlaylistsService = userPlaylistsService;
             this.RemoveFromPlaylistCommand = new DelegateCommand(this.RemoveFromPlaylist);
         }
 
@@ -47,8 +48,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 this.IsDataLoading = true;
                 var musicPlaylist = (UserPlaylist)this.BindingModel.Playlist;
 
-                this.userPlaylistsRepository.RemoveEntry(
-                    musicPlaylist, this.BindingModel.Songs[selectedSongIndex].Metadata.ProviderSongId, this.BindingModel.Songs[selectedSongIndex].Metadata.UserPlaylistEntry.ProviderEntryId).ContinueWith(
+                this.userPlaylistsService.RemoveSongsAsync(
+                    musicPlaylist, this.BindingModel.Songs.Select(x => x.Metadata)).ContinueWith(
                         t =>
                             {
                                 this.IsDataLoading = false;

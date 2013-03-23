@@ -16,14 +16,24 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
 
     using Windows.UI.Xaml;
 
+    public interface IGoogleMusicSynchronizationService
+    {
+        Task InitializeAsync(IProgress<double> progress);
+
+        Task RefreshAsync(IProgress<double> progress);
+
+        Task SynchronizeAsync(IProgress<double> progress);
+
+        Task ClearLocalDatabaseAsync();
+    }
+
     public class GoogleMusicSynchronizationService : RepositoryBase, IGoogleMusicSynchronizationService
     {
-        private const string LastUpdateKey = "SongsCacheService_CacheFreshnessDate";
-
         private readonly ILogger logger;
         private readonly ISettingsService settingsService;
         private readonly IPlaylistsWebService playlistsWebService;
-        private readonly ISongWebService songWebService;
+        private readonly ISongsWebService songsWebService;
+        private readonly IUserPlaylistsRepository userPlaylistsRepository;
         private readonly IDependencyResolverContainer container;
 
         private DispatcherTimer dispatcherTimer;
@@ -32,19 +42,21 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
             ILogManager logManager,
             ISettingsService settingsService,
             IPlaylistsWebService playlistsWebService,
-            ISongWebService songWebService,
+            ISongsWebService songsWebService,
+            IUserPlaylistsRepository userPlaylistsRepository,
             IDependencyResolverContainer container)
         {
             this.logger = logManager.CreateLogger("GoogleMusicSynchronizationService");
             this.settingsService = settingsService;
             this.playlistsWebService = playlistsWebService;
-            this.songWebService = songWebService;
+            this.songsWebService = songsWebService;
+            this.userPlaylistsRepository = userPlaylistsRepository;
             this.container = container;
         }
 
         public async Task InitializeAsync(IProgress<double> progress)
         {
-            var lastUpdate = this.settingsService.GetValue<DateTime?>(LastUpdateKey);
+            var lastUpdate = this.settingsService.GetLibraryFreshnessDate();
             if (lastUpdate == null)
             {
                 await this.RefreshAsync(progress);
@@ -87,13 +99,13 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
             
             await this.container.Resolve<IInitialSynchronization>().InitializeAsync(progress);
             
-            this.settingsService.SetValue<DateTime?>(LastUpdateKey, lastUpdate);
+            this.settingsService.SetLibraryFreshnessDate(lastUpdate);
             await progress.SafeReportAsync(1d);
         }
 
         public async Task SynchronizeAsync(IProgress<double> progress)
         {
-            var lastUpdate = this.settingsService.GetValue<DateTime?>(LastUpdateKey);
+            var lastUpdate = this.settingsService.GetLibraryFreshnessDate();
 
             if (lastUpdate.HasValue)
             {
@@ -101,27 +113,15 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
 
                 await progress.SafeReportAsync(0d);
 
-                Progress<double> songsProgress = null;
-                if (progress != null)
-                {
-                    songsProgress = new Progress<double>((v) => progress.Report(v * 0.5d));
-                }
-
-                await this.SynchronizeSongsAsync(songsProgress, lastUpdate.Value);
+                await this.UpdateSongsAsync();
 
                 await progress.SafeReportAsync(0.5d);
 
-                Progress<double> userPlaylustsProgress = null;
-                if (progress != null)
-                {
-                    userPlaylustsProgress = new Progress<double>((v) => progress.Report(0.5d + (v * 0.5d)));
-                }
-
-                await this.SynchronizeUserPlaylistsAsync(userPlaylustsProgress);
+                await this.UpdateUserPlaylistsAsync();
 
                 await progress.SafeReportAsync(1d);
 
-                this.settingsService.SetValue<DateTime?>(LastUpdateKey, currentTime);
+                this.settingsService.SetLibraryFreshnessDate(currentTime);
             }
             else
             {
@@ -129,7 +129,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
             }
         }
 
-        public async Task ClearLocalDatabaseAsync()
+        public Task ClearLocalDatabaseAsync()
         {
             if (this.dispatcherTimer != null)
             {
@@ -137,183 +137,187 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
                 this.dispatcherTimer = null;
             }
 
-            this.settingsService.RemoveValue(LastUpdateKey);
+            this.settingsService.ResetLibraryFreshness();
+
+            return Task.FromResult<object>(null);
         }
 
-        private async Task SynchronizeSongsAsync(IProgress<double> progress, DateTime lastUpdate)
+        public async Task<SongsUpdateStatus> UpdateSongsAsync()
         {
+            int songsUpdated = 0;
+            int songsDeleted = 0;
+            int songsInstered = 0;
+
+            DateTime? libraryFreshnessDate = this.settingsService.GetLibraryFreshnessDate();
+            DateTime currentTime = DateTime.UtcNow;
+
             if (this.logger.IsDebugEnabled)
             {
-                this.logger.Debug("SynchronizeSongsAsync: streaming load all tracks.");
+                this.logger.Debug("UpdateSongsAsync: streaming load all tracks. Library freshness date {0}.", libraryFreshnessDate);
             }
 
-            await progress.SafeReportAsync(0d);
+            var updatedSongs = await this.songsWebService.StreamingLoadAllTracksAsync(libraryFreshnessDate, null);
 
-            var updatedSongs = await this.songWebService.StreamingLoadAllTracksAsync(lastUpdate, null);
-
-            await progress.SafeReportAsync(0.5d);
-
-            if (updatedSongs.Count > 0)
+            if (updatedSongs != null && updatedSongs.Count > 0)
             {
                 if (this.logger.IsDebugEnabled)
                 {
-                    this.logger.Debug("SynchronizeSongsAsync: got {0} updates.", updatedSongs.Count);
+                    this.logger.Debug("UpdateSongsAsync: got {0} updates.", updatedSongs.Count);
                 }
 
-                // TODO: Optimization
-                //await this.Connection.RunInTransactionAsync(connection =>
-                //{
-                //    foreach (var song in updatedSongs)
-                //    {
-                //        var songId = song.Id;
+                await this.Connection.RunInTransactionAsync(connection =>
+                {
+                    foreach (var googleSong in updatedSongs)
+                    {
+                        var songId = googleSong.Id;
 
-                //        if (song.Deleted)
-                //        {
-                //            connection.Delete(songId);
-                //        }
-                //        else
-                //        {
-                //            var storedSong = connection.Find<SongEntity>(x => x.ProviderSongId == songId);
-                //            if (storedSong != null)
-                //            {
-                //                var songEntity = (SongEntity)song;
-                //                songEntity.SongId = storedSong.SongId;
-                //                connection.Update(songEntity);
-                //            }
-                //            else
-                //            {
-                //                connection.Insert((SongEntity)song);
-                //            }
-                //        }
-                //    }
-                //});
+                        if (googleSong.Deleted)
+                        {
+                            connection.Delete(songId);
+                            songsDeleted++;
+                        }
+                        else
+                        {
+                            var storedSong = connection.Find<Song>(x => x.ProviderSongId == songId);
+                            
+                            var songEntity = googleSong.ToSong();
+                            if (storedSong != null)
+                            {
+                                songEntity.SongId = storedSong.SongId;
+                                connection.Update(songEntity);
+                                songsUpdated++;
+                            }
+                            else
+                            {
+                                connection.Insert(songEntity);
+                                songsInstered++;
+                            }
+                        }
+                    }
+                });
             }
             else
             {
                 if (this.logger.IsDebugEnabled)
                 {
-                    this.logger.Debug("SynchronizeSongsAsync: no updates.");
+                    this.logger.Debug("UpdateSongsAsync: no updates.");
                 }
             }
 
-            await progress.SafeReportAsync(1d);
+            this.settingsService.SetLibraryFreshnessDate(currentTime);
+
+            return new SongsUpdateStatus(songsInstered, songsUpdated, songsDeleted);
         }
 
-        private async Task SynchronizeUserPlaylistsAsync(IProgress<double> progress)
+        public async Task<UserPlaylistsUpdateStatus> UpdateUserPlaylistsAsync()
         {
-            await progress.SafeReportAsync(0d);
+            Task<GoogleMusicPlaylists> allUserPlaylistsAsync = this.playlistsWebService.GetAllAsync();
+            Task<List<UserPlaylist>> allStoredUserPlaylistsAsync = this.Connection.Table<UserPlaylist>().ToListAsync();
 
-            var googlePlaylists = await this.playlistsWebService.GetAllAsync();
-            var existingPlaylists = await this.Connection.Table<UserPlaylist>().ToListAsync();
+            await Task.WhenAll(allStoredUserPlaylistsAsync, allUserPlaylistsAsync);
 
-            await progress.SafeReportAsync(0.4d);
+            var googlePlaylists = await allUserPlaylistsAsync;
+            var existingPlaylists = await allStoredUserPlaylistsAsync;
 
-            var pInserts = new List<UserPlaylist>();
-            var pUpdates = new List<UserPlaylist>();
-            var pDeletes = new List<UserPlaylist>();
-
-            var eInserts = new List<Tuple<UserPlaylist, UserPlaylistEntry>>();
-            var eUpdates = new List<Tuple<UserPlaylist, UserPlaylistEntry>>();
-            var eDeletes = new List<Tuple<UserPlaylist, UserPlaylistEntry>>();
-
-            int index = 0;
+            int updatedPlaylists = 0;
+            int newPlaylists = 0;
 
             foreach (var googlePlaylist in googlePlaylists.Playlists ?? Enumerable.Empty<GoogleMusicPlaylist>())
             {
+                bool playlistUpdated = false;
+
                 var providerPlaylistId = googlePlaylist.PlaylistId;
 
-                var userPlaylistEntity = existingPlaylists.FirstOrDefault(x => string.Equals(x.ProviderPlaylistId, providerPlaylistId, StringComparison.Ordinal));
-                if (userPlaylistEntity != null)
+                var userPlaylist = existingPlaylists.FirstOrDefault(x => string.Equals(x.ProviderPlaylistId, providerPlaylistId, StringComparison.OrdinalIgnoreCase));
+                if (userPlaylist != null)
                 {
-                    if (!string.Equals(userPlaylistEntity.Title, googlePlaylist.Title, StringComparison.CurrentCulture))
+                    if (!string.Equals(userPlaylist.Title, googlePlaylist.Title, StringComparison.CurrentCulture))
                     {
                         if (this.logger.IsDebugEnabled)
                         {
                             this.logger.Debug(
-                                "SynchronizeUserPlaylistsAsync: title was changed from {0} to {1} (id - {2}).",
-                                userPlaylistEntity.Title,
+                                "UpdateUserPlaylistsAsync: title was changed from {0} to {1} (id - {2}).",
+                                userPlaylist.Title,
                                 googlePlaylist.Title,
                                 providerPlaylistId);
                         }
 
-                        userPlaylistEntity.Title = googlePlaylist.Title;
-                        pUpdates.Add(userPlaylistEntity);
+                        userPlaylist.Title = googlePlaylist.Title;
+                        userPlaylist.TitleNorm = googlePlaylist.Title.Normalize();
+                        playlistUpdated = true;
+
+                        await this.userPlaylistsRepository.UpdateAsync(userPlaylist);
                     }
 
-                    existingPlaylists.Remove(userPlaylistEntity);
+                    existingPlaylists.Remove(userPlaylist);
                 }
                 else
                 {
                     if (this.logger.IsDebugEnabled)
                     {
                         this.logger.Debug(
-                            "SynchronizeUserPlaylistsAsync: new playlist {0} (id - {1}).",
+                            "UpdateUserPlaylistsAsync: new playlist {0} (id - {1}).",
                             googlePlaylist.Title,
                             providerPlaylistId);
                     }
 
-                    pInserts.Add(userPlaylistEntity = new UserPlaylist() { ProviderPlaylistId = providerPlaylistId, Title = googlePlaylist.Title });
+                    userPlaylist = new UserPlaylist
+                                       {
+                                           ProviderPlaylistId = providerPlaylistId,
+                                           Title = googlePlaylist.Title,
+                                           TitleNorm = googlePlaylist.Title.Normalize()
+                                       };
+
+                    await this.userPlaylistsRepository.InstertAsync(userPlaylist);
+                    newPlaylists++;
                 }
 
-                var userPlaylistEntries = await this.Connection.Table<UserPlaylistEntry>()
-                                                             .Where(e => e.PlaylistId == userPlaylistEntity.Id)
-                                                             .OrderBy(e => e.PlaylistOrder)
-                                                             .ToListAsync();
+                var userPlaylistSongs = await this.userPlaylistsRepository.GetSongsAsync(userPlaylist.Id);
 
-                var userPlaylistSongs = await this.Connection.QueryAsync<Song>(
-                        "SELECT s.* FROM Song s INNER JOIN UserPlaylistEntry e ON s.SongId == e.SongId WHERE e.PlaylistId = ?",
-                        userPlaylistEntity.Id);
+                List<UserPlaylistEntry> newEntries = new List<UserPlaylistEntry>();
+                List<UserPlaylistEntry> updatedEntries = new List<UserPlaylistEntry>();
 
                 for (int songIndex = 0; songIndex < googlePlaylist.Playlist.Count; songIndex++)
                 {
                     var song = googlePlaylist.Playlist[songIndex];
+                    var storedSong = userPlaylistSongs.FirstOrDefault(s =>
+                                    string.Equals(s.ProviderSongId, song.Id, StringComparison.OrdinalIgnoreCase) && 
+                                    string.Equals(s.UserPlaylistEntry.ProviderEntryId, song.PlaylistEntryId, StringComparison.OrdinalIgnoreCase));
 
-                    var storedSong = userPlaylistSongs.FirstOrDefault(s => s.ProviderSongId == song.Id);
-                    var entry = storedSong == null ? null : userPlaylistEntries.FirstOrDefault(x => x.SongId == storedSong.SongId);
-
-                    if (entry != null)
+                    if (storedSong != null)
                     {
-                        if (entry.PlaylistOrder != songIndex)
+                        if (storedSong.UserPlaylistEntry.PlaylistOrder != songIndex)
                         {
                             if (this.logger.IsDebugEnabled)
                             {
                                 this.logger.Debug(
-                                    "SynchronizeUserPlaylistsAsync: order was changed for entry id {0} (playlist id - {1}).",
-                                    entry.ProviderEntryId,
+                                    "UpdateUserPlaylistsAsync: order was changed for entry id {0} (playlist id - {1}).",
+                                    storedSong.UserPlaylistEntry.ProviderEntryId,
                                     providerPlaylistId);
                             }
 
-                            entry.PlaylistOrder = songIndex;
-                            eUpdates.Add(Tuple.Create(userPlaylistEntity, entry));
+                            storedSong.UserPlaylistEntry.PlaylistOrder = songIndex;
+                            updatedEntries.Add(storedSong.UserPlaylistEntry);
+                            playlistUpdated = true;
                         }
 
-                        userPlaylistEntries.Remove(entry);
+                        userPlaylistSongs.Remove(storedSong);
                     }
                     else
                     {
-                        if (this.logger.IsDebugEnabled)
-                        {
-                            this.logger.Debug(
-                                "SynchronizeUserPlaylistsAsync: new entry id {0} (playlist id - {1}).",
-                                song.PlaylistEntryId,
-                                providerPlaylistId);
-                        }
-
-                        if (storedSong == null)
-                        {
-                            storedSong = await this.Connection.FindAsync<Song>(x => x.ProviderSongId == song.Id);
-                        }
-
+                        storedSong = await this.Connection.FindAsync<Song>(x => x.ProviderSongId == song.Id);
                         if (storedSong != null)
                         {
-                            entry = new UserPlaylistEntry()
-                                        {
-                                            PlaylistOrder = songIndex,
-                                            SongId = storedSong.SongId,
-                                            ProviderEntryId = song.PlaylistEntryId
-                                        };
+                            playlistUpdated = true;
+                            var entry = new UserPlaylistEntry
+                            {
+                                PlaylistOrder = songIndex,
+                                SongId = storedSong.SongId,
+                                ProviderEntryId = song.PlaylistEntryId,
+                                PlaylistId = userPlaylist.Id
+                            };
 
-                            eInserts.Add(Tuple.Create(userPlaylistEntity, entry));
+                            newEntries.Add(entry);
                         }
                         else
                         {
@@ -322,53 +326,33 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
                     }
                 }
 
-                eDeletes.AddRange(userPlaylistEntries.Select(x => Tuple.Create(userPlaylistEntity, x)));
-                await progress.SafeReportAsync(0.4d + (((double)index++ / googlePlaylists.Playlists.Count) * 0.5d));
+                if (playlistUpdated)
+                {
+                    updatedPlaylists++;
+                }
+
+                if (newEntries.Count > 0)
+                {
+                    await this.userPlaylistsRepository.InsertEntriesAsync(newEntries);
+                }
+
+                if (updatedEntries.Count > 0)
+                {
+                    await this.userPlaylistsRepository.UpdateEntriesAsync(updatedEntries);
+                }
+
+                if (userPlaylistSongs.Count > 0)
+                {
+                    await this.userPlaylistsRepository.DeleteEntriesAsync(userPlaylistSongs.Select(entry => entry.UserPlaylistEntry));
+                }
             }
 
-            pDeletes.AddRange(existingPlaylists);
+            foreach (var existingPlaylist in existingPlaylists)
+            {
+                await this.userPlaylistsRepository.DeleteAsync(existingPlaylist);
+            }
 
-            await progress.SafeReportAsync(0.9d);
-
-            await this.Connection.RunInTransactionAsync(
-                (connection) =>
-                    {
-                        foreach (var entry in eDeletes)
-                        {
-                            connection.Delete<UserPlaylistEntry>(entry);
-                        }
-
-                        foreach (var playlist in pDeletes)
-                        {
-                            connection.Delete<UserPlaylist>(playlist);
-                        }
-
-                        if (pUpdates.Count > 0)
-                        {
-                            connection.UpdateAll(pUpdates);
-                        }
-
-                        if (eUpdates.Count > 0)
-                        {
-                            connection.UpdateAll(eUpdates);
-                        }
-
-                        if (pInserts.Count > 0)
-                        {
-                            connection.InsertAll(pInserts);
-                        }
-
-                        if (eInserts.Count > 0)
-                        {
-                            connection.InsertAll(eInserts.Select(i =>
-                                {
-                                    i.Item2.PlaylistId = i.Item1.Id;
-                                    return i.Item2;
-                                }));
-                        }
-                    });
-
-            await progress.SafeReportAsync(1d);
+            return new UserPlaylistsUpdateStatus(newPlaylists, updatedPlaylists, existingPlaylists.Count);
         }
     }
 }

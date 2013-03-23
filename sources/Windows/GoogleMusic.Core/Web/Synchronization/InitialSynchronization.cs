@@ -13,10 +13,9 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
     using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Repositories;
+    using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Web.Models;
-
-    using SQLite;
-
+    
     public interface IInitialSynchronization
     {
         Task InitializeAsync(IProgress<double> progress = null);
@@ -29,11 +28,13 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
         private readonly ILogger logger;
 
         private readonly IGoogleMusicWebService googleMusicWebService;
-        private readonly ISongWebService songWebService;
+        private readonly ISongsWebService songsWebService;
         private readonly IPlaylistsWebService playlistsWebService;
+        private readonly ISongsRepository songsRepository;
+        private readonly IUserPlaylistsRepository userPlaylistsRepository;
+        private readonly ISettingsService settingsService;
 
         private readonly DbContext dbContext;
-        private readonly SQLiteAsyncConnection connection;
 
         private readonly Dictionary<string, Song> songEntities =
             new Dictionary<string, Song>();
@@ -41,21 +42,28 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
         public InitialSynchronization(
             ILogManager logManager,
             IGoogleMusicWebService googleMusicWebService,
-            ISongWebService songWebService,
-            IPlaylistsWebService playlistsWebService)
+            ISongsWebService songsWebService,
+            IPlaylistsWebService playlistsWebService,
+            ISongsRepository songsRepository,
+            IUserPlaylistsRepository userPlaylistsRepository,
+            ISettingsService settingsService)
         {
             this.dbContext = new DbContext();
-            this.connection = this.dbContext.CreateConnection();
             this.logger = logManager.CreateLogger("InitialSynchronization");
             this.googleMusicWebService = googleMusicWebService;
-            this.songWebService = songWebService;
+            this.songsWebService = songsWebService;
             this.playlistsWebService = playlistsWebService;
+            this.songsRepository = songsRepository;
+            this.userPlaylistsRepository = userPlaylistsRepository;
+            this.settingsService = settingsService;
         }
 
         public async Task InitializeAsync(IProgress<double> progress)
         {
-            var statusAsync = this.songWebService.GetStatusAsync();
+            var statusAsync = this.songsWebService.GetStatusAsync();
             var clearLocalDatabaseAsync = this.ClearLocalDatabaseAsync();
+
+            DateTime currentTime = DateTime.UtcNow;
 
             this.logger.Debug("InitializeAsync: clear current database and gettings status.");
             await Task.WhenAll(clearLocalDatabaseAsync, statusAsync);
@@ -69,6 +77,8 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
             this.logger.Debug("InitializeAsync: loading all user playlists.");
             var playlistsProgress = new Progress<double>(async plProgress => await progress.SafeReportAsync((plProgress * 0.2d) + 0.8d));
             await this.LoadPlaylistsAsync(playlistsProgress);
+
+            this.settingsService.SetLibraryFreshnessDate(currentTime);
         }
 
         private async Task LoadSongsAsync(IProgress<int> progress = null)
@@ -103,7 +113,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
                     songs = new Song[0];
                 }
 
-                commitTask = this.connection.RunInTransactionAsync(c => c.InsertAll(songs));
+                commitTask = this.songsRepository.InsertAsync(songs);
 
                 await progress.SafeReportAsync(this.songEntities.Count);
             }
@@ -124,16 +134,18 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
             this.logger.Debug("LoadPlaylistsAsync: inserting playlists into database.");
             if (playlists.Playlists != null)
             {
-                var userPlaylists = new List<UserPlaylistContainer>();
+                var entries = new List<UserPlaylistEntry>();
 
                 foreach (var googleUserPlaylist in playlists.Playlists)
                 {
-                    var userPlaylist = new UserPlaylistContainer(new UserPlaylist
-                                                                     {
-                                                                         ProviderPlaylistId = googleUserPlaylist.PlaylistId,
-                                                                         Title = googleUserPlaylist.Title,
-                                                                         TitleNorm = googleUserPlaylist.Title.Normalize()
-                                                                     });
+                    var userPlaylist = new UserPlaylist
+                                           {
+                                               ProviderPlaylistId = googleUserPlaylist.PlaylistId,
+                                               Title = googleUserPlaylist.Title,
+                                               TitleNorm = googleUserPlaylist.Title.Normalize()
+                                           };
+
+                    await this.userPlaylistsRepository.InstertAsync(userPlaylist);
 
                     if (googleUserPlaylist.Playlist != null)
                     {
@@ -151,31 +163,16 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
                                             {
                                                 ProviderEntryId = googleSong.PlaylistEntryId,
                                                 PlaylistOrder = index,
-                                                Song = song
+                                                SongId = song.SongId,
+                                                PlaylistId = userPlaylist.Id
                                             };
 
-                            userPlaylist.Entries.Add(entry);
+                            entries.Add(entry);
                         }
                     }
-
-                    userPlaylists.Add(userPlaylist);
                 }
 
-                await this.connection.RunInTransactionAsync(
-                        c =>
-                        {
-                            c.InsertAll(userPlaylists.Select(x => x.Playlist));
-                            c.InsertAll(userPlaylists.SelectMany(x =>
-                            {
-                                foreach (var e in x.Entries)
-                                {
-                                    e.PlaylistId = x.Playlist.Id;
-                                    e.SongId = e.Song.SongId;
-                                }
-
-                                return x.Entries;
-                            }));
-                        });
+                await this.userPlaylistsRepository.InsertEntriesAsync(entries);
             }
 
             await progress.SafeReportAsync(1.0d);
@@ -183,7 +180,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
 
         private async Task ClearLocalDatabaseAsync()
         {
-            await this.connection.RunInTransactionAsync(
+            await this.dbContext.CreateConnection().RunInTransactionAsync(
                 c =>
                 {
                     c.DeleteAll<UserPlaylist>();
@@ -201,19 +198,6 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
             {
                 this.songEntities.Add(song.ProviderSongId, song);
             }
-        }
-        
-        private class UserPlaylistContainer 
-        {
-            public UserPlaylistContainer(UserPlaylist userPlaylist)
-            {
-                this.Playlist = userPlaylist;
-                this.Entries = new List<UserPlaylistEntry>();
-            }
-
-            public UserPlaylist Playlist { get; private set; }
-
-            public List<UserPlaylistEntry> Entries { get; private set; }
         }
     }
 }

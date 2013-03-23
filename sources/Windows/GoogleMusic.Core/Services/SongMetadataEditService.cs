@@ -18,16 +18,16 @@ namespace OutcoldSolutions.GoogleMusic.Services
     public class SongMetadataEditService : ISongMetadataEditService
     {
         private readonly IDispatcher dispatcher;
-        private readonly ISongWebService songWebService;
+        private readonly ISongsWebService songsWebService;
         private readonly ILogger logger;
 
         public SongMetadataEditService(
             ILogManager logManager,
             IDispatcher dispatcher,
-            ISongWebService songWebService)
+            ISongsWebService songsWebService)
         {
             this.dispatcher = dispatcher;
-            this.songWebService = songWebService;
+            this.songsWebService = songsWebService;
             this.logger = logManager.CreateLogger("SongMetadataEditService");
         }
 
@@ -50,7 +50,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
             await this.dispatcher.RunAsync(() => song.Rating = newRating);
 
-            var ratingResp = await this.songWebService.UpdateRatingAsync(song.Metadata.ProviderSongId, newRating);
+            var ratingResp = await this.songsWebService.UpdateRatingAsync(song.Metadata.ProviderSongId, newRating);
             
             if (this.logger.IsDebugEnabled)
             {

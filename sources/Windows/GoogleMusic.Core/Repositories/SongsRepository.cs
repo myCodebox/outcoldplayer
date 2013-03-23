@@ -8,7 +8,6 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
     using System.Text;
     using System.Threading.Tasks;
 
-    using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Models;
 
     public interface ISongsRepository
@@ -16,6 +15,12 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
         Task<Song> GetSongAsync(int songId);
 
         Task<IList<Song>> SearchAsync(string searchQuery, uint? take = null);
+
+        Task UpdateAsync(IEnumerable<Song> songs);
+
+        Task InsertAsync(IEnumerable<Song> songs);
+
+        Task DeleteAsync(IEnumerable<Song> songs);
     }
 
     public class SongsRepository : RepositoryBase, ISongsRepository
@@ -73,14 +78,6 @@ from [Song] as s
 where s.[SongId] = ?1
 ";
 
-        private readonly ILogger logger;
-
-        public SongsRepository(
-            ILogManager logManager)
-        {
-            this.logger = logManager.CreateLogger("SongsRepository");
-        }
-
         public async Task<IList<Song>> SearchAsync(string searchQuery, uint? take = null)
         {
             var searchQueryNorm = searchQuery.Normalize() ?? string.Empty;
@@ -93,6 +90,27 @@ where s.[SongId] = ?1
             }
 
             return await this.Connection.QueryAsync<Song>(sql.ToString(), string.Format("%{0}%", searchQueryNorm));
+        }
+
+        public Task UpdateAsync(IEnumerable<Song> songs)
+        {
+            return this.Connection.RunInTransactionAsync((c) => c.UpdateAll(songs));
+        }
+
+        public Task InsertAsync(IEnumerable<Song> songs)
+        {
+            return this.Connection.RunInTransactionAsync((c) => c.InsertAll(songs));
+        }
+
+        public Task DeleteAsync(IEnumerable<Song> songs)
+        {
+            return this.Connection.RunInTransactionAsync((c) =>
+                {
+                    foreach (var song in songs)
+                    {
+                        c.Delete(song);
+                    }
+                });
         }
 
         public async Task<Song> GetSongAsync(int songId)

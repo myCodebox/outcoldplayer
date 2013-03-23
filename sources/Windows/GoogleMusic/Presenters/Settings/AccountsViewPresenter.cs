@@ -8,8 +8,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
     using OutcoldSolutions.GoogleMusic.Services.Publishers;
     using OutcoldSolutions.GoogleMusic.Views;
     using OutcoldSolutions.GoogleMusic.Views.Popups;
-    using OutcoldSolutions.GoogleMusic.Web;
     using OutcoldSolutions.GoogleMusic.Web.Lastfm;
+    using OutcoldSolutions.GoogleMusic.Web.Synchronization;
     using OutcoldSolutions.Presenters;
     using OutcoldSolutions.Shell;
     using OutcoldSolutions.Views;

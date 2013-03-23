@@ -10,6 +10,12 @@
     d:DesignWidth="400">
 
     <StackPanel Orientation="Horizontal">
+        <StackPanel Orientation="Horizontal"
+                    Visibility="{Binding Path=BindingModel.IsSynchronizing, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+            <ProgressBar VerticalAlignment="Center" IsIndeterminate="True"  />
+            <TextBlock VerticalAlignment="Center" Text="{Binding Path=BindingModel.UpdatingText, Mode=OneWay}"/>
+        </StackPanel>
+
         <HyperlinkButton NavigateUri="https://twitter.com/gMusicW" VerticalAlignment="Top">
             <HyperlinkButton.Template>
                 <ControlTemplate>

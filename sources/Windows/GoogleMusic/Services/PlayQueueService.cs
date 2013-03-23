@@ -22,7 +22,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
         private readonly IMediaElementContainer mediaElement;
         private readonly ISettingsService settingsService;
         private readonly ICurrentSongPublisherService publisherService;
-        private readonly ISongWebService songWebService;
+        private readonly ISongsWebService songsWebService;
         private readonly INotificationService notificationService;
         private readonly IPlaylistsService playlistsService;
 
@@ -46,7 +46,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             ISettingsService settingsService,
             IMediaStreamDownloadService downloadService,
             ICurrentSongPublisherService publisherService,
-            ISongWebService songWebService,
+            ISongsWebService songsWebService,
             INotificationService notificationService,
             IGoogleMusicSessionService sessionService,
             IPlaylistsService playlistsService)
@@ -56,7 +56,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             this.settingsService = settingsService;
             this.downloadService = downloadService;
             this.publisherService = publisherService;
-            this.songWebService = songWebService;
+            this.songsWebService = songsWebService;
             this.notificationService = notificationService;
             this.playlistsService = playlistsService;
             this.currentQueueIndex = -1;
@@ -440,7 +440,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
                     try
                     {
-                        songUrl = await this.songWebService.GetSongUrlAsync(song.ProviderSongId);
+                        songUrl = await this.songsWebService.GetSongUrlAsync(song.ProviderSongId);
                     }
                     catch (Exception e)
                     {

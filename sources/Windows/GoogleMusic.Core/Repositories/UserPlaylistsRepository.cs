@@ -5,28 +5,26 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
 
-    using OutcoldSolutions.Diagnostics;
-    using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
-    using OutcoldSolutions.GoogleMusic.Web;
 
     public interface IUserPlaylistsRepository : IPlaylistRepository<UserPlaylist>
     {
-        Task<UserPlaylist> CreateAsync(string name);
+        Task InstertAsync(UserPlaylist userPlaylist);
 
-        Task<IList<UserPlaylistEntry>> GetAllEntriesAsync(int sondId);
+        Task DeleteAsync(UserPlaylist userPlaylist);
 
-        Task<bool> DeleteAsync(UserPlaylist playlistId);
+        Task UpdateAsync(UserPlaylist userPlaylist);
 
-        Task<bool> ChangeName(UserPlaylist playlistId, string name);
+        Task<IList<UserPlaylistEntry>> GetAllSongEntriesAsync(int sondId);
 
-        Task<bool> RemoveEntry(UserPlaylist playlistId, string songId, string entryId);
+        Task DeleteEntriesAsync(IEnumerable<UserPlaylistEntry> entries);
 
-        Task<bool> AddEntriesAsync(UserPlaylist playlistId, List<SongBindingModel> song);
+        Task InsertEntriesAsync(IEnumerable<UserPlaylistEntry> entries);
+
+        Task UpdateEntriesAsync(IEnumerable<UserPlaylistEntry> entries);
     }
 
     public class UserPlaylistsRepository : RepositoryBase, IUserPlaylistsRepository
@@ -71,17 +69,22 @@ where e.[PlaylistId] = ?1
 order by e.[PlaylistOrder]
 ";
 
-        private readonly ILogger logger;
+        private const string SqlAllPlaylistEntries = @"
+SELECT 
+    s.*,
+    e.[Id] as [UserPlaylistEntry.Id],
+    e.[PlaylistId] as [UserPlaylistEntry.PlaylistId], 
+    e.[SongId] as [UserPlaylistEntry.SongId],
+    e.[PlaylistOrder] as [UserPlaylistEntry.PlaylistOrder],
+    e.[ProviderEntryId] as [UserPlaylistEntry.ProviderEntryId]
+FROM Song s 
+    INNER JOIN UserPlaylistEntry e ON s.SongId == e.SongId 
+WHERE e.PlaylistId = ?1
+";
 
-        private readonly IPlaylistsWebService playlistsWebService;
-
-        public UserPlaylistsRepository(
-            ILogManager logManager,
-            IPlaylistsWebService playlistsWebService)
-        {
-            this.logger = logManager.CreateLogger("userPlaylistsRepository");
-            this.playlistsWebService = playlistsWebService;
-        }
+        private const string SqlDeletePlaylistEntries = @"
+DELETE FROM [UserPlaylistEntry] e WHERE e.PlaylistId = ?1
+";
 
         public async Task<int> GetCountAsync()
         {
@@ -133,181 +136,71 @@ order by e.[PlaylistOrder]
             return await this.Connection.QueryAsync<UserPlaylist>(sql.ToString(), string.Format("%{0}%", searchQueryNorm));
         }
         
-        public async Task<UserPlaylist> CreateAsync(string name)
+        public Task InstertAsync(UserPlaylist userPlaylist)
         {
-            if (this.logger.IsDebugEnabled)
-            {
-                this.logger.Debug("Creating playlist '{0}'.", name);
-            }
-
-            var resp = await this.playlistsWebService.CreateAsync(name);
-            if (resp.Success.HasValue && resp.Success.Value)
-            {
-                if (this.logger.IsDebugEnabled)
-                {
-                    this.logger.Debug(
-                        "Playlist was created on the server with id '{0}' for name '{1}'.", resp.Id, resp.Title);
-                }
-
-                var userPlaylistEntity = new UserPlaylist() { ProviderPlaylistId = resp.Id, Title = resp.Title, TitleNorm = resp.Title.Normalize() };
-                await this.Connection.InsertAsync(userPlaylistEntity);
-                return userPlaylistEntity;
-            }
-            else
-            {
-                if (this.logger.IsDebugEnabled)
-                {
-                    this.logger.Debug(
-                        "Could not create playlist for name '{0}'.", resp.Title);
-                }
-
-                return null;
-            }
+            return this.Connection.InsertAsync(userPlaylist);
         }
 
-        public async Task<IList<UserPlaylistEntry>> GetAllEntriesAsync(int sondId)
+        public async Task<IList<UserPlaylistEntry>> GetAllSongEntriesAsync(int sondId)
         {
             return await this.Connection.Table<UserPlaylistEntry>().Where(x => x.SongId == sondId).ToListAsync();
         }
 
-        public async Task<bool> DeleteAsync(UserPlaylist playlist)
+        public Task DeleteAsync(UserPlaylist playlist)
         {
-            if (this.logger.IsDebugEnabled)
-            {
-                this.logger.Debug("Deleting playlist '{0}'.", playlist.ProviderPlaylistId);
-            }
-
-            var resp = await this.playlistsWebService.DeleteAsync(playlist.ProviderPlaylistId);
-            if (this.logger.IsDebugEnabled)
-            {
-                this.logger.Debug("Deleting playlist '{0}'. Response '{1}'.", playlist.ProviderPlaylistId, resp);
-            }
-
-            if (resp)
-            {
-                await this.Connection.RunInTransactionAsync(
-                    (connection) =>
-                        {
-                            connection.Execute("DELETE from UserPlaylistEntry where ProviderPlaylistId = ?", playlist.Id);
-                            connection.Delete<UserPlaylist>(playlist.Id);
-                        });
-            }
-
-            return resp;
-        }
-
-        public async Task<bool> ChangeName(UserPlaylist playlist, string name)
-        {
-            if (this.logger.IsDebugEnabled)
-            {
-                this.logger.Debug("Changing name for playlist with Id '{0}' to '{1}'.", playlist.ProviderPlaylistId, name);
-            }
-
-            bool result = await this.playlistsWebService.ChangeNameAsync(playlist.ProviderPlaylistId, name);
-
-            if (this.logger.IsDebugEnabled)
-            {
-                this.logger.Debug("The result of name changing for playlist with id '{0}' is '{1}'.", playlist.ProviderPlaylistId, result);
-            }
-
-            if (result)
-            {
-                await this.Connection.RunInTransactionAsync(
+            return this.Connection.RunInTransactionAsync(
                     (connection) =>
                     {
-                        connection.Execute("UPDATE UserPlaylist SET Title = ? WHERE ProviderPlaylistId = ?", name, playlist.Id);
+                        connection.Execute(SqlDeletePlaylistEntries, playlist.Id);
+                        connection.Delete<UserPlaylist>(playlist.Id);
                     });
-            }
-
-            return result;
         }
 
-        public async Task<bool> RemoveEntry(UserPlaylist playlist, string songId, string entryId)
+        public Task UpdateAsync(UserPlaylist playlist)
         {
-            if (this.logger.IsDebugEnabled)
-            {
-                this.logger.Debug("Removing entry Id '{0}' from playlist '{1}'.", entryId, playlist.ProviderPlaylistId);
-            }
-
-            var result = await this.playlistsWebService.RemoveSongAsync(playlist.ProviderPlaylistId, songId, entryId);
-            if (this.logger.IsDebugEnabled)
-            {
-                this.logger.Debug("Result of entry removing '{0}' from playlist '{1}' is '{2}'.", entryId, playlist.ProviderPlaylistId, result);
-            }
-
-            if (result)
-            {
-                await this.Connection.RunInTransactionAsync(connection =>
-                    {
-                        var entry = connection.Find<UserPlaylistEntry>(e => e.PlaylistId == playlist.Id && e.ProviderEntryId == entryId);
-                        connection.Execute(
-                            "UPDATE UserPlaylistEntry SET PlaylistOrder = (PlaylistOrder - 1) WHERE PlaylistId = ? AND PlaylistOrder > ?",
-                            playlist.Id,
-                            entry.PlaylistOrder);
-                        connection.Delete(entry);
-                    });
-            }
-
-            return result;
+            return this.Connection.UpdateAsync(playlist);
         }
 
-        public async Task<bool> AddEntriesAsync(UserPlaylist playlist, List<SongBindingModel> songs)
+        public Task DeleteEntriesAsync(IEnumerable<UserPlaylistEntry> entries)
         {
-            if (songs == null)
+            if (entries == null)
             {
-                throw new ArgumentNullException("songs");
+                throw new ArgumentNullException("entries");
             }
 
-            if (this.logger.IsDebugEnabled)
+            return this.Connection.RunInTransactionAsync(connection =>
             {
-                this.logger.Debug("Adding song Ids '{0}' to playlist '{1}'.", string.Join(",", songs.Select(x => x.Metadata.ProviderSongId.ToString())), playlist.ProviderPlaylistId);
-            }
-
-            var result = await this.playlistsWebService.AddSongAsync(playlist.ProviderPlaylistId, songs.Select(s => s.Metadata.ProviderSongId));
-            if (result != null && result.SongIds.Length == 1)
-            {
-                if (this.logger.IsDebugEnabled)
+                foreach (var userPlaylistEntry in entries)
                 {
-                    this.logger.Debug(
-                        "Successfully added entries '{0}' to playlist {1}.",
-                        string.Join(",", songs.Select(x => x.Metadata.ProviderSongId.ToString())),
-                        playlist.ProviderPlaylistId);
+                    connection.Delete(userPlaylistEntry);
                 }
+            });
+        }
 
-                await this.Connection.RunInTransactionAsync(
-                    (connection) =>
-                        {
-                            var lastEntry = connection.Table<UserPlaylistEntry>()
-                                          .Where(e => e.Id == playlist.Id)
-                                          .OrderByDescending(x => x.PlaylistOrder)
-                                          .FirstOrDefault();
-
-                            int nextIndex = lastEntry == null ? 0 : (lastEntry.PlaylistOrder + 1);
-
-                            var entries = result.SongIds
-                                            .Select((x, index) => Tuple.Create(x.PlaylistEntryId, songs.FirstOrDefault(s => string.Equals(s.Metadata.ProviderSongId, x.SongId)), index))
-                                            .Where(x => x.Item2 != null)
-                                            .Select(x => new UserPlaylistEntry()
-                                               {
-                                                   ProviderEntryId = x.Item1,
-                                                   SongId = x.Item2.Metadata.SongId,
-                                                   PlaylistId = playlist.Id,
-                                                   PlaylistOrder = nextIndex + x.Item3
-                                               });
-
-                            connection.InsertAll(entries);
-                        });
-
-                return true;
-            }
-
-            if (this.logger.IsWarningEnabled)
+        public Task InsertEntriesAsync(IEnumerable<UserPlaylistEntry> entries)
+        {
+            if (entries == null)
             {
-                this.logger.Warning(
-                    "Result of adding entries '{0}' to playlist {1} was unsuccesefull.", string.Join(",", songs.Select(x => x.Metadata.ProviderSongId.ToString())), playlist.ProviderPlaylistId);
+                throw new ArgumentNullException("entries");
             }
 
-            return false;
+            return this.Connection.InsertAllAsync(entries);
+        }
+
+        public Task UpdateEntriesAsync(IEnumerable<UserPlaylistEntry> entries)
+        {
+            if (entries == null)
+            {
+                throw new ArgumentNullException("entries");
+            }
+
+            return this.Connection.RunInTransactionAsync(connection =>
+            {
+                foreach (var userPlaylistEntry in entries)
+                {
+                    connection.Update(userPlaylistEntry);
+                }
+            });
         }
     }
 }

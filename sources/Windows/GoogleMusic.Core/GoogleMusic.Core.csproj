@@ -147,6 +147,8 @@
     <Compile Include="Services\Publishers\PublisherType.cs" />
     <Compile Include="Services\SettingsValueChangedEventArgs.cs" />
     <Compile Include="Services\GoogleMusicSessionService.cs" />
+    <Compile Include="Services\UserPlaylistsService.cs" />
+    <Compile Include="SettingsServiceEx.cs" />
     <Compile Include="Web\CookieContainerWrapper.cs" />
     <Compile Include="Web\GoogleAccountWebService.cs" />
     <Compile Include="Web\Synchronization\GoogleMusicSongEx.cs" />
@@ -154,11 +156,9 @@
     <Compile Include="Web\GoogleMusicWebService.cs" />
     <Compile Include="Web\IGoogleAccountWebService.cs" />
     <Compile Include="Web\ICookieManager.cs" />
-    <Compile Include="Web\IGoogleMusicSynchronizationService.cs" />
     <Compile Include="Web\IGoogleMusicWebService.cs" />
     <Compile Include="Web\IMediaStreamDownloadService.cs" />
     <Compile Include="Web\INetworkRandomAccessStream.cs" />
-    <Compile Include="Web\IPlaylistsWebService.cs" />
     <Compile Include="Web\Lastfm\ErrorResp.cs" />
     <Compile Include="Web\Lastfm\GetSessionResp.cs" />
     <Compile Include="Web\Lastfm\ILastfmAccountWebService.cs" />
@@ -186,6 +186,8 @@
     <Compile Include="Web\PlaylistsWebService.cs" />
     <Compile Include="Web\SongWebService.cs" />
     <Compile Include="Web\Synchronization\InitialSynchronization.cs" />
+    <Compile Include="Web\Synchronization\SongsUpdateStatus.cs" />
+    <Compile Include="Web\Synchronization\UserPlaylistsUpdateStatus.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">

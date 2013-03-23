@@ -24,6 +24,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     {
         private readonly IPlaylistsService playlistsService;
         private readonly IUserPlaylistsRepository userPlaylistsRepository;
+        private readonly IUserPlaylistsService userPlaylistsService;
         private readonly INavigationService navigationService;
         private readonly IPlayQueueService playQueueService;
 
@@ -32,11 +33,13 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         public PlaylistsPageViewPresenter(
             IPlaylistsService playlistsService,
             IUserPlaylistsRepository userPlaylistsRepository,
+            IUserPlaylistsService userPlaylistsService,
             INavigationService navigationService,
             IPlayQueueService playQueueService)
         {
             this.playlistsService = playlistsService;
             this.userPlaylistsRepository = userPlaylistsRepository;
+            this.userPlaylistsService = userPlaylistsService;
             this.navigationService = navigationService;
             this.playQueueService = playQueueService;
 
@@ -67,7 +70,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 {
                     var playlist = (UserPlaylist)playlistBindingModel.Playlist;
 
-                    this.userPlaylistsRepository.ChangeName(playlist, newName).ContinueWith(
+                    this.userPlaylistsService.ChangeNameAsync(playlist, newName).ContinueWith(
                         t =>
                             {
                                 this.IsDataLoading = false;
@@ -134,7 +137,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 this.IsDataLoading = true;
                 this.BindingModel.IsEditable = false;
 
-                this.userPlaylistsRepository.CreateAsync(string.Format(CultureInfo.CurrentCulture, "Playlist - {0}", DateTime.Now)).ContinueWith(
+                this.userPlaylistsService.CreateAsync(string.Format(CultureInfo.CurrentCulture, "Playlist - {0}", DateTime.Now)).ContinueWith(
                     async t =>
                     {
                         if (t.Result != null)
@@ -184,7 +187,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     dialog.Commands.Add(
                         new UICommand(
                             "Yes",
-                            command => this.userPlaylistsRepository.DeleteAsync((UserPlaylist)playlist).ContinueWith(
+                            command => this.userPlaylistsService.DeleteAsync((UserPlaylist)playlist).ContinueWith(
                                 async t =>
                                 {
                                     if (t.IsCompleted && !t.IsFaulted && t.Result)
