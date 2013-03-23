@@ -584,21 +584,31 @@
                     <StackPanel Orientation="Horizontal">
                         <StackPanel.Resources>
                             <Style TargetType="Button" >
+                                <Setter Property="Transitions">
+                                    <Setter.Value>
+                                        <TransitionCollection>
+                                            <RepositionThemeTransition/>
+                                        </TransitionCollection>
+                                    </Setter.Value>
+                                </Setter>
                                 <Setter Property="Template">
                                     <Setter.Value>
                                         <ControlTemplate>
-                                            <TextBlock Text="&#xE082;" FontFamily="Segoe UI Symbol" FontSize="20" />
+                                            <Border Background="Transparent" Width="20" Height="20">
+                                                <TextBlock Text="&#xE082;" FontFamily="Segoe UI Symbol" FontSize="18" 
+                                                           VerticalAlignment="Center" HorizontalAlignment="Left" />
+                                            </Border>
                                         </ControlTemplate>
                                     </Setter.Value>
                                 </Setter>
                             </Style>
                         </StackPanel.Resources>
 
-                        <Button Margin="0, 0, 0, 0" x:Name="Star1" />
-                        <Button Margin="1, 0, 0, 0" x:Name="Star2" />
-                        <Button Margin="1, 0, 0, 0" x:Name="Star3" />
-                        <Button Margin="1, 0, 0, 0" x:Name="Star4" />
-                        <Button Margin="1, 0, 0, 0" x:Name="Star5" />
+                        <Button x:Name="Star1" />
+                        <Button x:Name="Star2" />
+                        <Button x:Name="Star3" />
+                        <Button x:Name="Star4" />
+                        <Button x:Name="Star5" />
                     </StackPanel>
                 </ControlTemplate>
             </Setter.Value>
