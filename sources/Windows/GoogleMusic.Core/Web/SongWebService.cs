@@ -15,12 +15,25 @@ namespace OutcoldSolutions.GoogleMusic.Web
     using OutcoldSolutions.GoogleMusic.Web.Models;
     using OutcoldSolutions.Web;
 
+    public interface ISongWebService
+    {
+        Task<StatusResp> GetStatusAsync();
+
+        Task<List<GoogleMusicSong>> StreamingLoadAllTracksAsync(DateTime? lastUpdate, IProgress<int> progress);
+
+        Task<GoogleMusicSongUrl> GetSongUrlAsync(string id);
+
+        Task<bool> RecordPlayingAsync(string songId, string playlistId, bool updateRecentAlbum, bool updateRecentPlaylist, int playCount);
+
+        Task<RatingResp> UpdateRatingAsync(string songId, int rating);
+    }
+
     public class SongWebService : ISongWebService
     {
         private const string SongUrlFormat = "play?u=0&songid={0}";
         private const string RecordPlayingUrl = "services/recordplaying";
         private const string ModifyEntriesUrl = "services/modifyentries";
-        private const string AllSongsUrl = "services/loadalltracks";
+        
         private const string GetStatusUrl = "services/getstatus";
 
         private const string StreamingLoadAllTracks = "services/streamingloadalltracks?json=";
@@ -40,37 +53,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
         {
             return await this.googleMusicWebService.PostAsync<StatusResp>(GetStatusUrl, forceJsonBody: false);
         }
-
-        public async Task<List<GoogleMusicSong>> GetAllSongsAsync(IProgress<int> progress = null)
-        {
-            List<GoogleMusicSong> googleMusicSongs = new List<GoogleMusicSong>();
-
-            GoogleMusicPlaylist playlist = null;
-            do
-            {
-                var jsonProperties = new Dictionary<string, string>();
-
-                if (playlist != null && !string.IsNullOrEmpty(playlist.ContinuationToken))
-                {
-                    jsonProperties.Add("continuationToken", JsonConvert.ToString(playlist.ContinuationToken));
-                }
-
-                playlist = await this.googleMusicWebService.PostAsync<GoogleMusicPlaylist>(AllSongsUrl, jsonProperties: jsonProperties);
-                if (playlist != null && playlist.Playlist != null)
-                {
-                    googleMusicSongs.AddRange(playlist.Playlist);
-                }
-
-                if (progress != null)
-                {
-                    progress.Report(googleMusicSongs.Count);
-                }
-            }
-            while (playlist != null && !string.IsNullOrEmpty(playlist.ContinuationToken));
-
-            return googleMusicSongs;
-        }
-
+        
         public async Task<List<GoogleMusicSong>> StreamingLoadAllTracksAsync(DateTime? lastUpdate, IProgress<int> progress)
         {
             List<GoogleMusicSong> googleMusicSongs = new List<GoogleMusicSong>();

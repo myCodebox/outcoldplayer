@@ -145,6 +145,21 @@ CREATE TRIGGER instert_song INSERT ON Song
     where e.[Id] = 1 and a.TitleNorm is null;
 
   END;");
+
+                await connection.ExecuteAsync(@"
+CREATE TRIGGER instert_userplaylistentry INSERT ON UserPlaylistEntry 
+  BEGIN
+  
+    update [UserPlaylist]
+    set 
+        [SongsCount] = [SongsCount] + 1,
+        [Duration] = [Duration] + (select s.[Duration] from [Song] as s where s.[SongId] = new.[SongId]),
+        [ArtUrl] = case when nullif([ArtUrl], '') is null then (select s.[AlbumArtUrl] from [Song] as s where s.[SongId] = new.[SongId]) else [ArtUrl] end,
+        [LastPlayed] = (select case when [LastPlayed] > s.[LastPlayed] then [LastPlayed] else s.[LastPlayed] end  from [Song] as s where s.[SongId] = new.[SongId]) 
+    where [PlaylistId] = new.PlaylistId;
+
+  END;
+");
             }
 
             return fDbExists ? DatabaseStatus.Existed : DatabaseStatus.New;

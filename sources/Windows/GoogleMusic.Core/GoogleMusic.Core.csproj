@@ -159,7 +159,6 @@
     <Compile Include="Web\IMediaStreamDownloadService.cs" />
     <Compile Include="Web\INetworkRandomAccessStream.cs" />
     <Compile Include="Web\IPlaylistsWebService.cs" />
-    <Compile Include="Web\ISongWebService.cs" />
     <Compile Include="Web\Lastfm\ErrorResp.cs" />
     <Compile Include="Web\Lastfm\GetSessionResp.cs" />
     <Compile Include="Web\Lastfm\ILastfmAccountWebService.cs" />

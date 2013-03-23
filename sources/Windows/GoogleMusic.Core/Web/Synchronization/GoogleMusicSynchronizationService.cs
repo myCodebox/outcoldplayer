@@ -25,7 +25,10 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
         private readonly ISettingsService settingsService;
 
         private readonly IPlaylistsWebService playlistsWebService;
+
         private readonly ISongWebService songWebService;
+
+        private readonly IDependencyResolverContainer container;
 
         private DispatcherTimer dispatcherTimer;
 
@@ -33,12 +36,15 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
             ILogManager logManager,
             ISettingsService settingsService,
             IPlaylistsWebService playlistsWebService,
-            ISongWebService songWebService)
+            IGoogleMusicWebService googleMusicWebService,
+            ISongWebService songWebService,
+            IDependencyResolverContainer container)
         {
             this.logger = logManager.CreateLogger("GoogleMusicSynchronizationService");
             this.settingsService = settingsService;
             this.playlistsWebService = playlistsWebService;
             this.songWebService = songWebService;
+            this.container = container;
         }
 
         public async Task InitializeAsync(IProgress<double> progress)
@@ -81,45 +87,12 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
 
         public async Task RefreshAsync(IProgress<double> progress)
         {
-            DateTime lastUpdate = DateTime.UtcNow;
-
-            this.logger.Debug("SynchronizeAsync: clearing local database.");
-            await this.ClearLocalDatabaseAsync();
-
-            this.logger.Debug("SynchronizeAsync: getting status.");
-            var status = await this.songWebService.GetStatusAsync();
-
             await progress.SafeReportAsync(0d);
-
-            this.logger.Debug("SynchronizeAsync: loading all songs.");
-            var songsProgress = new Progress<int>((songsCount) => progress.Report(((double)songsCount / status.AvailableTracks) * 0.6d));
-            var songs = await this.songWebService.GetAllSongsAsync(songsProgress);
-
-            await progress.SafeReportAsync(0.6d);
-
-            var syncContainer = new InitialSynchronization();
-
-            this.logger.Debug("SynchronizeAsync: insert all songs into database.");
-
-            syncContainer.AddRange(songs);
+            DateTime lastUpdate = DateTime.UtcNow;
             
-            this.logger.Debug("SynchronizeAsync: loading playlists.");
-            var playlists = await this.playlistsWebService.GetAllAsync();
-
-            await progress.SafeReportAsync(0.8d);
-            this.logger.Debug("SynchronizeAsync: inserting playlists into database.");
-
-            if (playlists.Playlists != null)
-            {
-                syncContainer.AddPlaylists(playlists.Playlists);
-            }
-
-            await syncContainer.CommitAsync(this.Connection);
-
-            await progress.SafeReportAsync(0.9d);
-
+            await this.container.Resolve<IInitialSynchronization>().InitializeAsync(progress);
+            
             this.settingsService.SetValue<DateTime?>(LastUpdateKey, lastUpdate);
-
             await progress.SafeReportAsync(1d);
         }
 
@@ -170,29 +143,6 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
             }
 
             this.settingsService.RemoveValue(LastUpdateKey);
-
-            await this.Connection.RunInTransactionAsync(
-                (connection) =>
-                    {
-                        int result = 0;
-                        result = connection.DeleteAll<Song>();
-                        if (this.logger.IsDebugEnabled)
-                        {
-                            this.logger.Debug("{0} Songs were deleted from DB", result);
-                        }
-
-                        result = connection.DeleteAll<UserPlaylist>();
-                        if (this.logger.IsDebugEnabled)
-                        {
-                            this.logger.Debug("{0} UserPlaylists were deleted from DB", result);
-                        }
-
-                        result = connection.DeleteAll<UserPlaylistEntry>();
-                        if (this.logger.IsDebugEnabled)
-                        {
-                            this.logger.Debug("{0} UserPlaylistEntrys were deleted from DB", result);
-                        }
-                    });
         }
 
         private async Task SynchronizeSongsAsync(IProgress<double> progress, DateTime lastUpdate)
