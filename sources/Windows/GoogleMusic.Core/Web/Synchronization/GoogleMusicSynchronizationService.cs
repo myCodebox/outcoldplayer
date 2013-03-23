@@ -21,13 +21,9 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
         private const string LastUpdateKey = "SongsCacheService_CacheFreshnessDate";
 
         private readonly ILogger logger;
-
         private readonly ISettingsService settingsService;
-
         private readonly IPlaylistsWebService playlistsWebService;
-
         private readonly ISongWebService songWebService;
-
         private readonly IDependencyResolverContainer container;
 
         private DispatcherTimer dispatcherTimer;
@@ -36,7 +32,6 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
             ILogManager logManager,
             ISettingsService settingsService,
             IPlaylistsWebService playlistsWebService,
-            IGoogleMusicWebService googleMusicWebService,
             ISongWebService songWebService,
             IDependencyResolverContainer container)
         {

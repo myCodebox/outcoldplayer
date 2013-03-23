@@ -186,12 +186,12 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
             await this.connection.RunInTransactionAsync(
                 c =>
                 {
-                    c.DeleteAll<Song>();
                     c.DeleteAll<UserPlaylist>();
                     c.DeleteAll<UserPlaylistEntry>();
                     c.DeleteAll<Album>();
                     c.DeleteAll<Artist>();
                     c.DeleteAll<Genre>();
+                    c.DeleteAll<Song>();
                 });
         }
 

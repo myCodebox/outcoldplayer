@@ -104,25 +104,25 @@ CREATE TRIGGER instert_song INSERT ON Song
         [LastPlayed] = case when new.[LastPlayed] > [LastPlayed] then new.[LastPlayed] else [LastPlayed] end    
     where TitleNorm = coalesce(nullif(new.AlbumArtistTitleNorm, ''), new.[ArtistTitleNorm]);
 
-    insert into Artist([Title], [TitleNorm], [SongsCount], [Duration], [ArtUrl], [LastPlayed], [AlbumsCount])
-    select coalesce(nullif(new.AlbumArtistTitle, ''), new.[ArtistTitle]), coalesce(nullif(new.AlbumArtistTitleNorm, ''), new.[ArtistTitleNorm]), 1, new.Duration, new.AlbumArtUrl, new.LastPlayed, 0
-    from [Enumerator] as e
-         left join [Artist] as a on a.TitleNorm = coalesce(nullif(new.AlbumArtistTitleNorm, ''), new.[ArtistTitleNorm])
-    where e.[Id] = 1 and a.TitleNorm is null;
-
     update [Artist]
     set 
         [SongsCount] = [SongsCount] + 1,
         [Duration] = [Duration] + new.[Duration],
         [ArtUrl] = case when nullif([ArtUrl], '') is null then new.[AlbumArtUrl] else [ArtUrl] end,
         [LastPlayed] = case when new.[LastPlayed] > [LastPlayed] then new.[LastPlayed] else [LastPlayed] end    
-    where TitleNorm = coalesce(nullif(new.AlbumArtistTitleNorm, ''), new.[ArtistTitleNorm]) and new.[ArtistTitleNorm] <> new.AlbumArtistTitleNorm;
+    where TitleNorm = new.[ArtistTitleNorm] and s.AlbumArtistTitleNorm <> ''  and new.[ArtistTitleNorm] <> new.AlbumArtistTitleNorm;
+
+    insert into Artist([Title], [TitleNorm], [SongsCount], [Duration], [ArtUrl], [LastPlayed], [AlbumsCount])
+    select coalesce(nullif(new.AlbumArtistTitle, ''), new.[ArtistTitle]), coalesce(nullif(new.AlbumArtistTitleNorm, ''), new.[ArtistTitleNorm]), 1, new.Duration, new.AlbumArtUrl, new.LastPlayed, 0
+    from [Enumerator] as e
+         left join [Artist] as a on a.TitleNorm = coalesce(nullif(new.AlbumArtistTitleNorm, ''), new.[ArtistTitleNorm])
+    where e.[Id] = 1 and a.TitleNorm is null;
 
     insert into Artist([Title], [TitleNorm], [SongsCount], [Duration], [ArtUrl], [LastPlayed], [AlbumsCount])
     select new.[ArtistTitle], new.[ArtistTitleNorm], 1, new.Duration, new.AlbumArtUrl, new.LastPlayed, 0
     from [Enumerator] as e
          left join [Artist] as a on a.TitleNorm = new.[ArtistTitleNorm]
-    where e.[Id] = 1 and new.[ArtistTitleNorm] <> new.AlbumArtistTitleNorm and a.TitleNorm is null;
+    where e.[Id] = 1 and s.AlbumArtistTitleNorm <> ''  and new.[ArtistTitleNorm] <> new.AlbumArtistTitleNorm and a.TitleNorm is null;
 
     update [Album]
     set 
@@ -145,6 +145,54 @@ CREATE TRIGGER instert_song INSERT ON Song
     where e.[Id] = 1 and a.TitleNorm is null;
 
   END;");
+
+                await connection.ExecuteAsync(@"
+CREATE TRIGGER delete_song DELETE ON Song 
+  BEGIN
+
+    update [Genre]    
+    set 
+        [SongsCount] = [SongsCount] - 1,
+        [Duration] = [Duration] - old.[Duration],
+        [ArtUrl] = (select max(s.[AlbumArtUrl]) from [Song] s where s.[GenreTitleNorm] = old.[GenreTitleNorm]),
+        [LastPlayed] = (select max(s.[LastPlayed]) from [Song] s where s.[GenreTitleNorm] = old.[GenreTitleNorm])      
+    where TitleNorm = old.GenreTitleNorm;
+
+    delete from [Genre] where [SongsCount] <= 0;
+
+    update [Album]    
+    set 
+        [SongsCount] = [SongsCount] - 1,
+        [Duration] = [Duration] - old.[Duration],
+        [ArtUrl] = (select max(s.[AlbumArtUrl]) from [Song] s where s.[AlbumTitleNorm] = old.[AlbumTitleNorm]),
+        [LastPlayed] = (select max(s.[LastPlayed]) from [Song] s where s.[AlbumTitleNorm] = old.[AlbumTitleNorm]),
+        [Year] = (select max(s.[Year]) from [Song] s where s.[AlbumTitleNorm] = old.[AlbumTitleNorm]),
+        [GenreTitleNorm] = (select max(s.[GenreTitleNorm]) from [Song] s where s.[AlbumTitleNorm] = old.[AlbumTitleNorm])
+    where TitleNorm = old.AlbumTitleNorm and ArtistTitleNorm = coalesce(nullif(old.AlbumArtistTitleNorm, ''), old.[ArtistTitleNorm]);    
+
+    delete from [Album] where [SongsCount] <= 0;
+
+    update [Artist]
+    set 
+        [SongsCount] = [SongsCount] - 1,
+        [Duration] = [Duration] - old.[Duration],
+        [ArtUrl] = (select max(s.[AlbumArtUrl]) from [Song] s where coalesce(nullif(s.AlbumArtistTitleNorm, ''), s.[ArtistTitleNorm]) = coalesce(nullif(old.AlbumArtistTitleNorm, ''), old.[ArtistTitleNorm])),
+        [LastPlayed] = (select max(s.[LastPlayed]) from [Song] s where coalesce(nullif(s.AlbumArtistTitleNorm, ''), s.[ArtistTitleNorm]) = coalesce(nullif(old.AlbumArtistTitleNorm, ''), old.[ArtistTitleNorm])),        
+        [AlbumsCount] = (select count(*) from [Album] as a where a.ArtistTitleNorm = coalesce(nullif(old.AlbumArtistTitleNorm, ''), old.[ArtistTitleNorm]))
+    where TitleNorm = coalesce(nullif(old.AlbumArtistTitleNorm, ''), old.[ArtistTitleNorm]);    
+
+    update [Artist]    
+    set 
+        [SongsCount] = [SongsCount] - 1,
+        [Duration] = [Duration] - old.[Duration],
+        [ArtUrl] = (select max(s.[AlbumArtUrl]) from [Song] s where coalesce(nullif(s.AlbumArtistTitleNorm, ''), s.[ArtistTitleNorm]) = old.[ArtistTitleNorm]),
+        [LastPlayed] = (select max(s.[LastPlayed]) from [Song] s where coalesce(nullif(s.AlbumArtistTitleNorm, ''), s.[ArtistTitleNorm]) = old.[ArtistTitleNorm])
+    where TitleNorm = old.[ArtistTitleNorm] and old.[AlbumArtistTitleNorm] <> old.[ArtistTitleNorm];
+    
+    delete from [Artist] where [SongsCount] <= 0;
+
+  END;
+");
 
                 await connection.ExecuteAsync(@"
 CREATE TRIGGER instert_userplaylistentry INSERT ON UserPlaylistEntry 
