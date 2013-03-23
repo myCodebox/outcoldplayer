@@ -79,7 +79,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
                 await connection.ExecuteAsync(@"INSERT INTO [Enumerator] DEFAULT VALUES;");
 
                 await connection.ExecuteAsync(@"
-CREATE TRIGGER instert_song INSERT ON Song 
+CREATE TRIGGER instert_song AFTER INSERT ON Song 
   BEGIN
 
     update [Genre]
@@ -207,6 +207,29 @@ CREATE TRIGGER instert_userplaylistentry INSERT ON UserPlaylistEntry
     where [PlaylistId] = new.PlaylistId;
 
   END;
+");
+
+                await connection.ExecuteAsync(@"
+CREATE TRIGGER update_song_lastplayed AFTER UPDATE OF [LastPlayed] ON [Song]
+  BEGIN
+  
+    update [UserPlaylist]
+    set [LastPlayed] = new.[LastPlayed] 
+    where [PlaylistId] in (select distinct e.[PlaylistId] from [UserPlaylistEntry] e where new.[SongId] = e.[SongId]);
+
+    update [Artist]
+    set [LastPlayed] = new.[LastPlayed] 
+    where [TitleNorm] = new.[ArtistTitlteNorm] or [TitleNorm] = new.[AlbumArtistTitleNorm];
+
+    update [Album]
+    set [LastPlayed] = new.[LastPlayed] 
+    where [TitleNorm] = new.[AlbumTitleNorm] and [ArtistTitleNorm] = coalesce(nullif(new.AlbumArtistTitleNorm, ''), new.[ArtistTitleNorm]);
+
+    update [Genre]
+    set [LastPlayed] = new.[LastPlayed] 
+    where [TitleNorm] = new.[GenreTitleNorm];
+
+  END;    
 ");
             }
 
