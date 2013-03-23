@@ -176,28 +176,24 @@ namespace OutcoldSolutions.GoogleMusic.Shell
 
         private async void NavigateToTagAsync(string tag)
         {
-            var separator = tag.IndexOf(":", StringComparison.CurrentCulture);
-            if (separator > 0)
+            var strings = tag.Split(new[] { ':' }, 2);
+            if (strings.Length == 2)
             {
-                var strings = tag.Split(new[] { ':' }, 2);
-                if (strings.Length == 2)
+                PlaylistType playlistType;
+                int playlistId;
+                if (Enum.TryParse(strings[0], out playlistType)
+                    && int.TryParse(strings[1], out playlistId))
                 {
-                    PlaylistType playlistType;
-                    int playlistId;
-                    if (Enum.TryParse(strings[0], out playlistType)
-                        && int.TryParse(strings[1], out playlistId))
-                    {
-                        await this.dispatcher.RunAsync(() => this.navigationService.NavigateToPlaylist(
-                            new PlaylistNavigationRequest(playlistType, playlistId)));
-                    }
+                    await this.dispatcher.RunAsync(() => this.navigationService.NavigateToPlaylist(
+                        new PlaylistNavigationRequest(playlistType, playlistId)));
                 }
-                else
+            }
+            else
+            {
+                int songId;
+                if (int.TryParse(tag, out songId))
                 {
-                    int songId;
-                    if (int.TryParse(tag, out songId))
-                    {
-                        await this.dispatcher.RunAsync(() => this.navigationService.NavigateTo<IAlbumPageView>(songId));
-                    }
+                    await this.dispatcher.RunAsync(() => this.navigationService.NavigateTo<IAlbumPageView>(songId));
                 }
             }
         }
