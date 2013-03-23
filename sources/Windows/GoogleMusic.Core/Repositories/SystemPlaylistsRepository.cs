@@ -51,12 +51,13 @@ select s.* ,
        a.[AlbumId] as [Album.AlbumId],
        a.[Title] as [Album.Title],  
        a.[TitleNorm] as [Album.TitleNorm],
-       a.[ArtistId] as [Album.ArtistId],
+       a.[ArtistTitleNorm] as [Album.ArtistTitleNorm],
        a.[SongsCount] as [Album.SongsCount], 
        a.[Year] as [Album.Year],    
        a.[Duration] as [Album.Duration],       
        a.[ArtUrl] as [Album.ArtUrl],    
-       a.[LastPlayed] as [Album.LastPlayed],  
+       a.[LastPlayed] as [Album.LastPlayed],
+       a.[GenreTitleNorm] as [Album.GenreTitleNorm],
        ta.[ArtistId] as [Artist.ArtistId],
        ta.[Title] as [Artist.Title],
        ta.[TitleNorm] as [Artist.TitleNorm],
@@ -66,10 +67,9 @@ select s.* ,
        ta.[ArtUrl] as [Artist.ArtUrl],
        ta.[LastPlayed]  as [Artist.LastPlayed]
 from [Song] as s
-     inner join Album a on s.AlbumId = a.AlbumId     
-     inner join Artist ar on a.ArtistId = ar.ArtistId
-     inner join Artist ta on ta.ArtistId = s.ArtistId 
-order by ar.TitleNorm, a.TitleNorm, coalesce(nullif(s.Disc, 0), 1), s.Track
+     inner join Album a on s.[AlbumTitleNorm] = a.[TitleNorm] and coalesce(nullif(s.AlbumArtistTitleNorm, ''), s.[ArtistTitleNorm]) = a.[ArtistTitleNorm]
+     inner join Artist ta on ta.[TitleNorm] = a.[ArtistTitleNorm] 
+order by coalesce(nullif(s.AlbumArtistTitleNorm, ''), s.[ArtistTitleNorm]), s.[AlbumTitleNorm], coalesce(nullif(s.Disc, 0), 1), s.Track
 ";
 
         private const string SqlHighlyRatedSongs = @"
@@ -77,12 +77,13 @@ select s.* ,
        a.[AlbumId] as [Album.AlbumId],
        a.[Title] as [Album.Title],  
        a.[TitleNorm] as [Album.TitleNorm],
-       a.[ArtistId] as [Album.ArtistId],
+       a.[ArtistTitleNorm] as [Album.ArtistTitleNorm],
        a.[SongsCount] as [Album.SongsCount], 
        a.[Year] as [Album.Year],    
        a.[Duration] as [Album.Duration],       
        a.[ArtUrl] as [Album.ArtUrl],    
-       a.[LastPlayed] as [Album.LastPlayed],  
+       a.[LastPlayed] as [Album.LastPlayed],
+       a.[GenreTitleNorm] as [Album.GenreTitleNorm],
        ta.[ArtistId] as [Artist.ArtistId],
        ta.[Title] as [Artist.Title],
        ta.[TitleNorm] as [Artist.TitleNorm],
@@ -92,8 +93,8 @@ select s.* ,
        ta.[ArtUrl] as [Artist.ArtUrl],
        ta.[LastPlayed]  as [Artist.LastPlayed]
 from [Song] as s
-     inner join Album a on s.AlbumId = a.AlbumId     
-     inner join Artist ta on ta.ArtistId = s.ArtistId 
+     inner join Album a on s.[AlbumTitleNorm] = a.[TitleNorm] and coalesce(nullif(s.AlbumArtistTitleNorm, ''), s.[ArtistTitleNorm]) = a.[ArtistTitleNorm]
+     inner join Artist ta on ta.[TitleNorm] = a.[ArtistTitleNorm] 
 where s.[Rating] >= ?1 
 order by s.TitleNorm
 ";
@@ -103,12 +104,13 @@ select s.* ,
        a.[AlbumId] as [Album.AlbumId],
        a.[Title] as [Album.Title],  
        a.[TitleNorm] as [Album.TitleNorm],
-       a.[ArtistId] as [Album.ArtistId],
+       a.[ArtistTitleNorm] as [Album.ArtistTitleNorm],
        a.[SongsCount] as [Album.SongsCount], 
        a.[Year] as [Album.Year],    
        a.[Duration] as [Album.Duration],       
        a.[ArtUrl] as [Album.ArtUrl],    
-       a.[LastPlayed] as [Album.LastPlayed],  
+       a.[LastPlayed] as [Album.LastPlayed],
+       a.[GenreTitleNorm] as [Album.GenreTitleNorm],
        ta.[ArtistId] as [Artist.ArtistId],
        ta.[Title] as [Artist.Title],
        ta.[TitleNorm] as [Artist.TitleNorm],
@@ -124,9 +126,8 @@ from
           order by x.[CreationDate] desc
           limit ?1
      ) as s
-     inner join Album a on s.AlbumId = a.AlbumId     
-     inner join Artist ta on ta.ArtistId = s.ArtistId 
-where s.[Rating] >= ?1 
+     inner join Album a on s.[AlbumTitleNorm] = a.[TitleNorm] and coalesce(nullif(s.AlbumArtistTitleNorm, ''), s.[ArtistTitleNorm]) = a.[ArtistTitleNorm]
+     inner join Artist ta on ta.[TitleNorm] = a.[ArtistTitleNorm] 
 order by s.CreationDate desc
 ";
 

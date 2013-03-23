@@ -48,12 +48,13 @@ select s.*,
        a.[AlbumId] as [Album.AlbumId],
        a.[Title] as [Album.Title],  
        a.[TitleNorm] as [Album.TitleNorm],
-       a.[ArtistId] as [Album.ArtistId],
+       a.[ArtistTitleNorm] as [Album.ArtistTitleNorm],
+       a.[GenreTitleNorm] as [Album.GenreTitleNorm],
        a.[SongsCount] as [Album.SongsCount], 
        a.[Year] as [Album.Year],    
        a.[Duration] as [Album.Duration],       
        a.[ArtUrl] as [Album.ArtUrl],    
-       a.[LastPlayed] as [Album.LastPlayed],  
+       a.[LastPlayed] as [Album.LastPlayed],       
        ta.[ArtistId] as [Artist.ArtistId],
        ta.[Title] as [Artist.Title],
        ta.[TitleNorm] as [Artist.TitleNorm],
@@ -64,8 +65,8 @@ select s.*,
        ta.[LastPlayed]  as [Artist.LastPlayed]
 from [Song] as s
      inner join UserPlaylistEntry e on e.SongId = s.SongId
-     inner join Album a on s.AlbumId = a.AlbumId
-     inner join Artist ta on ta.ArtistId = s.ArtistId 
+     inner join Album a on s.[AlbumTitleNorm] = a.[TitleNorm] and coalesce(nullif(s.AlbumArtistTitleNorm, ''), s.[ArtistTitleNorm]) = a.[ArtistTitleNorm]
+     inner join Artist ta on ta.[TitleNorm] = a.[ArtistTitleNorm] 
 where e.[PlaylistId] = ?1
 order by e.[PlaylistOrder]
 ";

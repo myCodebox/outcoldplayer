@@ -63,7 +63,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
         {
             if (e.ClickedItem is SongResultBindingModel)
             {
-                this.NavigationService.NavigateTo<IAlbumPageView>(((SongResultBindingModel)e.ClickedItem).Result);
+                this.NavigationService.NavigateTo<IAlbumPageView>(((SongResultBindingModel)e.ClickedItem).Result.Metadata.SongId);
             }
             else if (e.ClickedItem is PlaylistResultBindingModel)
             {

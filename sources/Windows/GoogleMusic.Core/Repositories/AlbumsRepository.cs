@@ -134,7 +134,8 @@ select s.* ,
        a.[AlbumId] as [Album.AlbumId],
        a.[Title] as [Album.Title],  
        a.[TitleNorm] as [Album.TitleNorm],
-       a.[ArtistId] as [Album.ArtistId],
+       a.[ArtistTitleNorm] as [Album.ArtistTitleNorm],
+       a.[GenreTitleNorm] as [Album.GenreTitleNorm],
        a.[SongsCount] as [Album.SongsCount], 
        a.[Year] as [Album.Year],    
        a.[Duration] as [Album.Duration],       
@@ -149,9 +150,9 @@ select s.* ,
        ta.[ArtUrl] as [Artist.ArtUrl],
        ta.[LastPlayed]  as [Artist.LastPlayed]
 from [Song] as s
-     inner join Album a on s.AlbumId = a.AlbumId
-     inner join Artist ta on ta.ArtistId = s.ArtistId 
-where s.AlbumId = ?1
+     inner join Album a on s.[AlbumTitleNorm] = a.[TitleNorm] and coalesce(nullif(s.AlbumArtistTitleNorm, ''), s.[ArtistTitleNorm]) = a.[ArtistTitleNorm]
+     inner join Artist ta on ta.[TitleNorm] = a.[ArtistTitleNorm] 
+where a.AlbumId = ?1
 order by coalesce(nullif(s.Disc, 0), 1), s.Track
 ";
 
