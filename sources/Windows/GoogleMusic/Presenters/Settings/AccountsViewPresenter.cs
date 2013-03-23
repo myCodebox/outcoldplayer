@@ -9,7 +9,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
     using OutcoldSolutions.GoogleMusic.Views;
     using OutcoldSolutions.GoogleMusic.Views.Popups;
     using OutcoldSolutions.GoogleMusic.Web.Lastfm;
-    using OutcoldSolutions.GoogleMusic.Web.Synchronization;
     using OutcoldSolutions.Presenters;
     using OutcoldSolutions.Shell;
     using OutcoldSolutions.Views;
@@ -23,8 +22,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
         private readonly ILastFmConnectionService lastFmConnectionService;
         private readonly IApplicationSettingViewsService applicationSettingViewsService;
         private readonly INavigationService navigationService;
-
-        private readonly IGoogleMusicSynchronizationService synchronizationService;
+        private readonly ISettingsService settingsService;
 
         public AccountsViewPresenter(
             IGoogleAccountService googleAccountService,
@@ -34,7 +32,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
             ILastFmConnectionService lastFmConnectionService,
             IApplicationSettingViewsService applicationSettingViewsService,
             INavigationService navigationService,
-            IGoogleMusicSynchronizationService synchronizationService)
+            ISettingsService settingsService)
         {
             this.googleAccountService = googleAccountService;
             this.sessionService = sessionService;
@@ -43,7 +41,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
             this.lastFmConnectionService = lastFmConnectionService;
             this.applicationSettingViewsService = applicationSettingViewsService;
             this.navigationService = navigationService;
-            this.synchronizationService = synchronizationService;
+            this.settingsService = settingsService;
             this.BindingModel = new AccountViewBindingModel();
             this.ForgetAccountCommand = new DelegateCommand(this.ForgetAccount);
             this.SignOutCommand = new DelegateCommand(this.SignOutAccount);
@@ -116,14 +114,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
             this.lastFmConnectionService.Connect();
         }
 
-        private async void ReloadSongs()
+        private void ReloadSongs()
         {
-            await this.synchronizationService.ClearLocalDatabaseAsync();
-
+            this.settingsService.ResetLibraryFreshness();
             this.navigationService.ClearHistory();
-
             this.navigationService.NavigateTo<IProgressLoadingView>(keepInHistory: false);
-
             this.applicationSettingViewsService.Close();
         }
     }

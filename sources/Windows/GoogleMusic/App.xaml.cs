@@ -101,6 +101,7 @@ namespace OutcoldSolutions.GoogleMusic
                 registration.Register<IGenresRepository>().And<IPlaylistRepository<Genre>>().AsSingleton<GenresRepository>();
                 registration.Register<ISystemPlaylistsRepository>().And<IPlaylistRepository<SystemPlaylist>>().AsSingleton<SystemPlaylistsRepository>();
                 registration.Register<IPlaylistsService>().AsSingleton<PlaylistsService>();
+                registration.Register<IUserPlaylistsService>().AsSingleton<UserPlaylistsService>();
 
                 registration.Register<IInitialSynchronization>().As<InitialSynchronization>();
 
@@ -157,7 +158,6 @@ namespace OutcoldSolutions.GoogleMusic
             Container.Resolve<RightRegionControlService>();
 
             var mainFrameRegionProvider = Container.Resolve<IMainFrameRegionProvider>();
-            mainFrameRegionProvider.SetContent(MainFrameRegion.Links, Container.Resolve<LinksRegionView>());
             mainFrameRegionProvider.SetContent(
                 MainFrameRegion.Background,
                 new Image()

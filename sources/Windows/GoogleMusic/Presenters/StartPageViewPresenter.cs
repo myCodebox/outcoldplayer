@@ -14,6 +14,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
     using OutcoldSolutions.Presenters;
+    using OutcoldSolutions.Views;
 
     public class StartPageViewPresenter : DataPagePresenterBase<IStartPageView, StartViewBindingModel>
     {
@@ -35,6 +36,10 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.playlistsService = playlistsService;
 
             this.PlayCommand = new DelegateCommand(this.Play);
+
+            // TODO: Make helper method in Framework
+            var mainFrameRegionProvider = ApplicationBase.Container.Resolve<IMainFrameRegionProvider>();
+            mainFrameRegionProvider.SetContent(MainFrameRegion.Links, ApplicationBase.Container.Resolve<LinksRegionView>());
         }
 
         public DelegateCommand PlayCommand { get; set; }

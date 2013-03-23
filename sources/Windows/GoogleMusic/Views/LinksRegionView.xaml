@@ -10,30 +10,18 @@
     d:DesignWidth="400">
 
     <StackPanel Orientation="Horizontal">
-        <StackPanel Orientation="Horizontal"
-                    Visibility="{Binding Path=BindingModel.IsSynchronizing, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
-            <ProgressBar VerticalAlignment="Center" IsIndeterminate="True"  />
-            <TextBlock VerticalAlignment="Center" Text="{Binding Path=BindingModel.UpdatingText, Mode=OneWay}"/>
+        
+        <StackPanel Orientation="Horizontal" 
+                    VerticalAlignment="Top" 
+                    Margin="0, 5, 20, 0" >
+            <ProgressRing VerticalAlignment="Center" 
+                         IsActive="{Binding Path=BindingModel.IsSynchronizing}" 
+                         Margin="0, 0, 10, 0"/>
+
+            <TextBlock VerticalAlignment="Center" 
+                       Text="{Binding Path=BindingModel.UpdatingText, Mode=OneWay}" 
+                       Style="{StaticResource BasicTextStyle}"/>
         </StackPanel>
-
-        <HyperlinkButton NavigateUri="https://twitter.com/gMusicW" VerticalAlignment="Top">
-            <HyperlinkButton.Template>
-                <ControlTemplate>
-                    <StackPanel Height="28" Width="118" Orientation="Horizontal" >
-                        <Image Source="ms-appx:///Resources/twitter-logo.png" Height="22" Width="26" Margin="10, 0, 0, 0" VerticalAlignment="Center"  />
-                        <TextBlock VerticalAlignment="Top" Margin="10, 0, 0, 5" Style="{StaticResource TitleTextStyle}">gMusicW</TextBlock>
-                    </StackPanel>
-                </ControlTemplate>
-            </HyperlinkButton.Template>
-        </HyperlinkButton>
-
-        <HyperlinkButton Margin="10, 0, 20, 0" NavigateUri="https://gmusic.uservoice.com" VerticalAlignment="Top">
-            <HyperlinkButton.Template>
-                <ControlTemplate>
-                    <Image Source="ms-appx:///Resources/uservoice.png" Height="28" Width="118" Margin="0, 0, 0, 0"  />
-                </ControlTemplate>
-            </HyperlinkButton.Template>
-        </HyperlinkButton>
 
         <Button Margin="0, -15, 0, 0" Style="{StaticResource SearchPopupMenuButtonStyle}" 
                 AutomationProperties.Name=""

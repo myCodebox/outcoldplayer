@@ -27,18 +27,19 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private const string CurrentVersion = "2.0.0.3";
 
-        private readonly IGoogleMusicSynchronizationService synchronizationService;
         private readonly INavigationService navigationService;
         private readonly ISettingsService settingsService;
+
+        private readonly IInitialSynchronization initialSynchronization;
 
         public ProgressLoadingPageViewPresenter(
             INavigationService navigationService,
             ISettingsService settingsService,
-            IGoogleMusicSynchronizationService synchronizationService)
+            IInitialSynchronization initialSynchronization)
         {
             this.navigationService = navigationService;
             this.settingsService = settingsService;
-            this.synchronizationService = synchronizationService;
+            this.initialSynchronization = initialSynchronization;
             this.BindingModel = new ProgressLoadingPageViewBindingModel();
 
             this.ReloadSongsCommand = new DelegateCommand(this.LoadSongs, () => this.BindingModel.IsFailed);
@@ -67,7 +68,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
             try
             {
-                await this.InitializeRepositoriesAsync(fUpdate);
+                await this.InitializeRepositoriesAsync();
             }
             catch (Exception e)
             {
@@ -92,14 +93,10 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             }
         }
 
-        private async Task InitializeRepositoriesAsync(bool fUpdate)
+        private async Task InitializeRepositoriesAsync()
         {
             DbContext dbContext = new DbContext();
-            var status = await dbContext.InitializeAsync();
-            if (fUpdate || status == DbContext.DatabaseStatus.New)
-            {
-                await this.synchronizationService.ClearLocalDatabaseAsync();
-            }
+            await dbContext.InitializeAsync();
 
             await this.Dispatcher.RunAsync(
                 () =>
@@ -119,7 +116,12 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     });
             };
 
-            await this.synchronizationService.InitializeAsync(progress);
+            if (!this.settingsService.GetLibraryFreshnessDate().HasValue)
+            {
+                await this.initialSynchronization.InitializeAsync(progress);
+            }
+
+            await progress.SafeReportAsync(1.0);
         }
 
         private void VerifyIfCanAskForReview()

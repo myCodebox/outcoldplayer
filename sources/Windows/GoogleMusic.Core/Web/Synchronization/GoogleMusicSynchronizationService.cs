@@ -14,17 +14,13 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Web.Models;
 
-    using Windows.UI.Xaml;
-
     public interface IGoogleMusicSynchronizationService
     {
-        Task InitializeAsync(IProgress<double> progress);
+        Task<SongsUpdateStatus> UpdateSongsAsync();
 
-        Task RefreshAsync(IProgress<double> progress);
+        Task<UserPlaylistsUpdateStatus> UpdateUserPlaylistsAsync();
 
-        Task SynchronizeAsync(IProgress<double> progress);
-
-        Task ClearLocalDatabaseAsync();
+        Task<UserPlaylistsUpdateStatus> UpdateUserPlaylistAsync(UserPlaylist userPlaylist);
     }
 
     public class GoogleMusicSynchronizationService : RepositoryBase, IGoogleMusicSynchronizationService
@@ -34,112 +30,19 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
         private readonly IPlaylistsWebService playlistsWebService;
         private readonly ISongsWebService songsWebService;
         private readonly IUserPlaylistsRepository userPlaylistsRepository;
-        private readonly IDependencyResolverContainer container;
-
-        private DispatcherTimer dispatcherTimer;
 
         public GoogleMusicSynchronizationService(
             ILogManager logManager,
             ISettingsService settingsService,
             IPlaylistsWebService playlistsWebService,
             ISongsWebService songsWebService,
-            IUserPlaylistsRepository userPlaylistsRepository,
-            IDependencyResolverContainer container)
+            IUserPlaylistsRepository userPlaylistsRepository)
         {
             this.logger = logManager.CreateLogger("GoogleMusicSynchronizationService");
             this.settingsService = settingsService;
             this.playlistsWebService = playlistsWebService;
             this.songsWebService = songsWebService;
             this.userPlaylistsRepository = userPlaylistsRepository;
-            this.container = container;
-        }
-
-        public async Task InitializeAsync(IProgress<double> progress)
-        {
-            var lastUpdate = this.settingsService.GetLibraryFreshnessDate();
-            if (lastUpdate == null)
-            {
-                await this.RefreshAsync(progress);
-            }
-            else
-            {
-                await this.SynchronizeAsync(progress);
-            }
-
-            this.dispatcherTimer = new DispatcherTimer
-                                       {
-                                           Interval = TimeSpan.FromMinutes(10)
-                                       };
-#if NETFX_CORE
-            //this.dispatcherTimer.Tick += async (sender, o) =>
-            //    {
-            //        this.dispatcherTimer.Stop();
-            //        try
-            //        {
-            //            await this.SynchronizeAsync(null);
-            //        }
-            //        catch (Exception e)
-            //        {
-            //            this.logger.Error("SynchronizeAsync threw exception in DispatcherTimer.");
-            //            this.logger.LogErrorException(e);
-            //        }
-            //        finally
-            //        {
-            //            this.dispatcherTimer.Start();
-            //        }
-            //    };
-#endif
-            this.dispatcherTimer.Start();
-        }
-
-        public async Task RefreshAsync(IProgress<double> progress)
-        {
-            await progress.SafeReportAsync(0d);
-            DateTime lastUpdate = DateTime.UtcNow;
-            
-            await this.container.Resolve<IInitialSynchronization>().InitializeAsync(progress);
-            
-            this.settingsService.SetLibraryFreshnessDate(lastUpdate);
-            await progress.SafeReportAsync(1d);
-        }
-
-        public async Task SynchronizeAsync(IProgress<double> progress)
-        {
-            var lastUpdate = this.settingsService.GetLibraryFreshnessDate();
-
-            if (lastUpdate.HasValue)
-            {
-                DateTime currentTime = DateTime.UtcNow;
-
-                await progress.SafeReportAsync(0d);
-
-                await this.UpdateSongsAsync();
-
-                await progress.SafeReportAsync(0.5d);
-
-                await this.UpdateUserPlaylistsAsync();
-
-                await progress.SafeReportAsync(1d);
-
-                this.settingsService.SetLibraryFreshnessDate(currentTime);
-            }
-            else
-            {
-                this.logger.Error("SynchronizeAsync: Last Update is null.");
-            }
-        }
-
-        public Task ClearLocalDatabaseAsync()
-        {
-            if (this.dispatcherTimer != null)
-            {
-                this.dispatcherTimer.Stop();
-                this.dispatcherTimer = null;
-            }
-
-            this.settingsService.ResetLibraryFreshness();
-
-            return Task.FromResult<object>(null);
         }
 
         public async Task<SongsUpdateStatus> UpdateSongsAsync()
@@ -219,10 +122,24 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
             var googlePlaylists = await allUserPlaylistsAsync;
             var existingPlaylists = await allStoredUserPlaylistsAsync;
 
+            return await this.UpdateUserPlaylistsInternalAsync(existingPlaylists, googlePlaylists.Playlists ?? Enumerable.Empty<GoogleMusicPlaylist>());
+        }
+
+        public async Task<UserPlaylistsUpdateStatus> UpdateUserPlaylistAsync(UserPlaylist userPlaylist)
+        {
+            GoogleMusicPlaylist googleMusicPlaylist = await this.playlistsWebService.GetAsync(userPlaylist.ProviderPlaylistId);
+
+            return await this.UpdateUserPlaylistsInternalAsync(new[] { userPlaylist }, googleMusicPlaylist == null ? new GoogleMusicPlaylist[] { } : new[] { googleMusicPlaylist });
+        }
+
+        private async Task<UserPlaylistsUpdateStatus> UpdateUserPlaylistsInternalAsync(IEnumerable<UserPlaylist> userPlaylists, IEnumerable<GoogleMusicPlaylist> googleMusicPlaylists)
+        {
+            var existingPlaylists = userPlaylists.ToList();
+
             int updatedPlaylists = 0;
             int newPlaylists = 0;
 
-            foreach (var googlePlaylist in googlePlaylists.Playlists ?? Enumerable.Empty<GoogleMusicPlaylist>())
+            foreach (var googlePlaylist in googleMusicPlaylists)
             {
                 bool playlistUpdated = false;
 
@@ -262,11 +179,11 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
                     }
 
                     userPlaylist = new UserPlaylist
-                                       {
-                                           ProviderPlaylistId = providerPlaylistId,
-                                           Title = googlePlaylist.Title,
-                                           TitleNorm = googlePlaylist.Title.Normalize()
-                                       };
+                    {
+                        ProviderPlaylistId = providerPlaylistId,
+                        Title = googlePlaylist.Title,
+                        TitleNorm = googlePlaylist.Title.Normalize()
+                    };
 
                     await this.userPlaylistsRepository.InstertAsync(userPlaylist);
                     newPlaylists++;
@@ -281,7 +198,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
                 {
                     var song = googlePlaylist.Playlist[songIndex];
                     var storedSong = userPlaylistSongs.FirstOrDefault(s =>
-                                    string.Equals(s.ProviderSongId, song.Id, StringComparison.OrdinalIgnoreCase) && 
+                                    string.Equals(s.ProviderSongId, song.Id, StringComparison.OrdinalIgnoreCase) &&
                                     string.Equals(s.UserPlaylistEntry.ProviderEntryId, song.PlaylistEntryId, StringComparison.OrdinalIgnoreCase));
 
                     if (storedSong != null)
