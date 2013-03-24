@@ -10,7 +10,6 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
     using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Models;
-    using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Services.Publishers;
     using OutcoldSolutions.GoogleMusic.Shell;
     using OutcoldSolutions.GoogleMusic.Web;
@@ -465,7 +464,23 @@ namespace OutcoldSolutions.GoogleMusic.Services
                             this.currentSongStream = null;
                         }
 
-                        var stream = await this.downloadService.GetStreamAsync(songUrl.Url);
+                        INetworkRandomAccessStream stream = null;
+
+                        try
+                        {
+                            stream = await this.downloadService.GetStreamAsync(songUrl.Url);
+                        }
+                        catch (Exception exception)
+                        {
+                            if (exception is TaskCanceledException)
+                            {
+                                this.logger.Debug("GetStreamAsync was cancelled.");
+                            }
+                            else
+                            {
+                                this.logger.LogErrorException(exception);
+                            }
+                        }
 
                         this.currentSongStream = stream;
 

@@ -184,7 +184,7 @@
     <Compile Include="Web\Models\StatusResp.cs" />
     <Compile Include="Web\Models\CommonResponse.cs" />
     <Compile Include="Web\PlaylistsWebService.cs" />
-    <Compile Include="Web\SongWebService.cs" />
+    <Compile Include="Web\SongsWebService.cs" />
     <Compile Include="Web\Synchronization\InitialSynchronization.cs" />
     <Compile Include="Web\Synchronization\SongsUpdateStatus.cs" />
     <Compile Include="Web\Synchronization\UserPlaylistsUpdateStatus.cs" />
