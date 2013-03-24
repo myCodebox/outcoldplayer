@@ -84,7 +84,6 @@ namespace OutcoldSolutions.GoogleMusic
 
                 registration.Register<ILastfmWebService>().AsSingleton<LastfmWebService>();
                 registration.Register<ILastfmAccountWebService>().As<LastfmAccountWebService>();
-                registration.Register<ILastFmConnectionService>().As<LastFmConnectionService>();
 
                 // Publishers
                 registration.Register<ICurrentSongPublisherService>().AsSingleton<CurrentSongPublisherService>();

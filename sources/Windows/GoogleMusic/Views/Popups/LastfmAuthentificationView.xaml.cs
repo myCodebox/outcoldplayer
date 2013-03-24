@@ -5,20 +5,19 @@ namespace OutcoldSolutions.GoogleMusic.Views.Popups
 {
     using System;
 
+    using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Presenters.Popups;
     using OutcoldSolutions.Views;
 
     using Windows.System;
     using Windows.UI.Core;
     using Windows.UI.Xaml;
-    using Windows.UI.Xaml.Controls.Primitives;
 
-    public interface ILastfmAuthentificationView : IView
+    public interface ILastfmAuthentificationView : IPopupView
     {
-        void Close();
     }
 
-    public sealed partial class LastfmAuthentificationPageView : PageViewBase, ILastfmAuthentificationView
+    public sealed partial class LastfmAuthentificationPageView : PopupViewBase, ILastfmAuthentificationView
     {
         private LastfmAuthentificationPresenter presenter;
 
@@ -29,15 +28,9 @@ namespace OutcoldSolutions.GoogleMusic.Views.Popups
             Window.Current.Activated += this.CurrentOnActivated;
         }
 
-        public void Close()
+        protected override void OnClose()
         {
             Window.Current.Activated -= this.CurrentOnActivated;
-
-            var popup = this.Parent as Popup;
-            if (popup != null)
-            {
-                popup.IsOpen = false;
-            }
         }
 
         protected override void OnInitialized()
@@ -64,7 +57,7 @@ namespace OutcoldSolutions.GoogleMusic.Views.Popups
         private void NavigateToLastfm(object sender, RoutedEventArgs e)
         {
             Window.Current.Activated += this.CurrentOnActivated;
-            var task = Launcher.LaunchUriAsync(new Uri(this.presenter.BindingModel.LinkUrl));
+            this.Logger.LogTask(Launcher.LaunchUriAsync(new Uri(this.presenter.BindingModel.LinkUrl)).AsTask());
         }
     }
 }

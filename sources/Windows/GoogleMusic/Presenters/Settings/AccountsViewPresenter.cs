@@ -19,7 +19,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
         private readonly IGoogleMusicSessionService sessionService;
         private readonly ILastfmWebService lastfmWebService;
         private readonly ICurrentSongPublisherService publisherService;
-        private readonly ILastFmConnectionService lastFmConnectionService;
         private readonly IApplicationSettingViewsService applicationSettingViewsService;
         private readonly INavigationService navigationService;
         private readonly ISettingsService settingsService;
@@ -29,7 +28,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
             IGoogleMusicSessionService sessionService,
             ILastfmWebService lastfmWebService,
             ICurrentSongPublisherService publisherService,
-            ILastFmConnectionService lastFmConnectionService,
             IApplicationSettingViewsService applicationSettingViewsService,
             INavigationService navigationService,
             ISettingsService settingsService)
@@ -38,7 +36,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
             this.sessionService = sessionService;
             this.lastfmWebService = lastfmWebService;
             this.publisherService = publisherService;
-            this.lastFmConnectionService = lastFmConnectionService;
             this.applicationSettingViewsService = applicationSettingViewsService;
             this.navigationService = navigationService;
             this.settingsService = settingsService;
@@ -111,7 +108,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
         private void LastfmLink()
         {
             this.applicationSettingViewsService.Close();
-            this.lastFmConnectionService.Connect();
+            this.MainFrame.ShowPopup<ILastfmAuthentificationView>(PopupRegion.Full);
         }
 
         private void ReloadSongs()
