@@ -13,23 +13,25 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Services.Pubslishers
 
     using NUnit.Framework;
 
-    using OutcoldSolutions.GoogleMusic.BindingModels;
+    using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Services.Publishers;
     using OutcoldSolutions.GoogleMusic.Web.Models;
 
+    using Windows.Media.Playlists;
+
     public class CurrentSongPublisherServiceSuites : GoogleMusicSuitesBase
     {
         private Song song;
-        private Playlist playlist;
+        private IPlaylist playlist;
         private Mock<ISettingsService> settingsService;
 
         public override void SetUp()
         {
             base.SetUp();
 
-            this.song = new Song(new GoogleMusicSong() { DurationMillis = 60000 });
-            this.playlist = new Album(new List<Song>());
+            this.song = new Song() { Duration = TimeSpan.FromMilliseconds(60000) };
+            this.playlist = new Album();
 
             this.settingsService = new Mock<ISettingsService>();
         }
@@ -144,7 +146,7 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Services.Pubslishers
 
             service.AddPublisher<CurrentSongPublisher1>();
 
-            Song song2 = new Song(new GoogleMusicSong() { DurationMillis = 60000 });
+            Song song2 = new Song() { Duration = TimeSpan.FromMilliseconds(60000) };
 
             // Act
             var publish1 = service.PublishAsync(this.song, this.playlist);
@@ -173,12 +175,12 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Services.Pubslishers
 
             service.AddPublisher<CurrentSongPublisher1>();
 
-            this.song.Metadata.Duration = TimeSpan.FromMilliseconds(100);
+            this.song.Duration = TimeSpan.FromMilliseconds(100);
 
             // Act
             await Task.WhenAny(
                 service.PublishAsync(this.song, this.playlist),
-                Task.Delay((int)this.song.Metadata.Duration.TotalMilliseconds));
+                Task.Delay((int)this.song.Duration.TotalMilliseconds));
 
             // Assert
             delayPublisher.Verify(p => p.PublishAsync(this.song, this.playlist, It.IsAny<Uri>(), It.IsAny<CancellationToken>()), Times.Once());
@@ -188,14 +190,14 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Services.Pubslishers
         {
             public abstract PublisherType PublisherType { get; }
 
-            public abstract Task PublishAsync(Song song, Playlist currentPlaylist, Uri imageUri, CancellationToken cancellationToken);
+            public abstract Task PublishAsync(Song song, IPlaylist currentPlaylist, Uri imageUri, CancellationToken cancellationToken);
         }
 
         public abstract class CurrentSongPublisher2 : ICurrentSongPublisher
         {
             public abstract PublisherType PublisherType { get; }
 
-            public abstract Task PublishAsync(Song song, Playlist currentPlaylist, Uri imageUri, CancellationToken cancellationToken);
+            public abstract Task PublishAsync(Song song, IPlaylist currentPlaylist, Uri imageUri, CancellationToken cancellationToken);
         }
     }
 }

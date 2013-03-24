@@ -88,7 +88,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             if (selectedSong != null)
             {
                 this.playQueueService.PlayAsync(this.BindingModel.Playlist, this.BindingModel.Songs.Select(s => s.Metadata), this.BindingModel.Songs.IndexOf(selectedSong));
-                this.Toolbar.IsBottomAppBarOpen = true;
+                this.MainFrame.IsBottomAppBarOpen = true;
             }
         }
 
@@ -97,7 +97,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             var selectedSong = this.BindingModel.SelectedSong;
             if (selectedSong != null)
             {
-                this.Toolbar.ShowPopup<IAddToPlaylistPopupView>(new List<SongBindingModel> { selectedSong });
+                this.MainFrame.ShowPopup<IAddToPlaylistPopupView>(PopupRegion.AppToolBarLeft, new List<SongBindingModel> { selectedSong });
             }
         }
 
@@ -119,11 +119,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
             if (this.BindingModel.SelectedSong != null)
             {
-                this.Toolbar.SetContextCommands(this.GetContextCommands());
+                this.MainFrame.SetContextCommands(this.GetContextCommands());
             }
             else
             {
-                this.Toolbar.ClearContextCommands();
+                this.MainFrame.ClearContextCommands();
             }
         }
     }

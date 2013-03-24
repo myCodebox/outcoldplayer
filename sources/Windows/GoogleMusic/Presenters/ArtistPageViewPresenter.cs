@@ -91,7 +91,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 }
 
                 this.playQueueService.PlayAsync(playlist);
-                this.Toolbar.IsBottomAppBarOpen = true;
+                this.MainFrame.IsBottomAppBarOpen = true;
             }
         }
 

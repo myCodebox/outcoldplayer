@@ -93,7 +93,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             IPlaylist playlist = commandParameter as IPlaylist;
             if (playlist != null)
             {
-                this.Toolbar.IsBottomAppBarOpen = true;
+                this.MainFrame.IsBottomAppBarOpen = true;
                 this.Logger.LogTask(this.playQueueService.PlayAsync(playlist));
                 this.navigationService.NavigateToPlaylist(playlist);
             }

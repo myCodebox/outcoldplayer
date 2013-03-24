@@ -122,11 +122,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
             if (this.BindingModel.IsEditable && this.BindingModel.SelectedItem != null)
             {
-                this.Toolbar.SetContextCommands(this.GetContextCommands());
+                this.MainFrame.SetContextCommands(this.GetContextCommands());
             }
             else
             {
-                this.Toolbar.ClearContextCommands();
+                this.MainFrame.ClearContextCommands();
             }
         }
 
@@ -257,7 +257,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             {
                 this.navigationService.NavigateToPlaylist(playlist);
                 this.playQueueService.PlayAsync(playlist);
-                this.Toolbar.IsBottomAppBarOpen = true;
+                this.MainFrame.IsBottomAppBarOpen = true;
             }
         }
     }

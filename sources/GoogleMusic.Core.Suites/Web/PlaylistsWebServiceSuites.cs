@@ -23,7 +23,7 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Web
         private IGoogleAccountWebService googleAccountWebService;
         private IGoogleMusicWebService musicWebService;
         private IPlaylistsWebService playlistsWebService;
-        private ISongWebService songsWebService;
+        private ISongsWebService songsWebService;
 
         private Mock<IGoogleMusicSessionService> sessionService;
 
@@ -43,13 +43,13 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Web
                 registration.Register<IGoogleAccountWebService>().AsSingleton<GoogleAccountWebService>();
                 registration.Register<IGoogleMusicWebService>().AsSingleton<GoogleMusicWebService>();
                 registration.Register<IPlaylistsWebService>().AsSingleton<PlaylistsWebService>();
-                registration.Register<ISongWebService>().AsSingleton<SongWebService>();
+                registration.Register<ISongsWebService>().AsSingleton<SongsWebService>();
             }
 
             this.googleAccountWebService = this.Container.Resolve<IGoogleAccountWebService>();
             this.musicWebService = this.Container.Resolve<IGoogleMusicWebService>();
             this.playlistsWebService = this.Container.Resolve<IPlaylistsWebService>();
-            this.songsWebService = this.Container.Resolve<ISongWebService>();
+            this.songsWebService = this.Container.Resolve<ISongsWebService>();
         }
 
         [Test]
@@ -58,16 +58,6 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Web
             await this.AuthenticateAsync();
 
             var songs = await this.songsWebService.StreamingLoadAllTracksAsync(null, null);
-
-            Assert.IsTrue(songs.Count > 0);
-        }
-
-        [Test]
-        public async Task GetAllSongsAsync_AuthentificateAndExecute_ListOfSongs()
-        {
-            await this.AuthenticateAsync();
-
-            var songs = await this.songsWebService.GetAllSongsAsync(null);
 
             Assert.IsTrue(songs.Count > 0);
         }
@@ -104,9 +94,9 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Web
             Assert.IsTrue(playlists3.Playlists.Any(p => p.PlaylistId == playlistResp.Id && p.Title == playlistName2), "Could not find playlist with new name.");
 
             // Adding songs to playlist
-            var songs = await this.songsWebService.GetAllSongsAsync();
+            var songs = await this.songsWebService.StreamingLoadAllTracksAsync(null, null);
             var googleMusicSong = songs.First();
-            var resultAddSongs = await this.playlistsWebService.AddSongAsync(playlistResp.Id, new [] { googleMusicSong.Id });
+            var resultAddSongs = await this.playlistsWebService.AddSongsAsync(playlistResp.Id, new[] { googleMusicSong.Id });
             Assert.IsNotEmpty(resultAddSongs.SongIds[0].PlaylistEntryId, "Song has been added to playlist");
 
             // Verify that songs has been added to playlist
@@ -114,7 +104,7 @@ namespace OutcoldSolutions.GoogleMusic.Suites.Web
             Assert.AreEqual(googleMusicSong.Id, playlist.Playlist[0].Id, "Playlist contains song.");
 
             // Remove song from playlist
-            var resultSongRemove = await this.playlistsWebService.RemoveSongAsync(playlistResp.Id, playlist.Playlist[0].Id, playlist.Playlist[0].PlaylistEntryId);
+            var resultSongRemove = await this.playlistsWebService.RemoveSongsAsync(playlistResp.Id, new string[] { playlist.Playlist[0].Id }, new string[] { playlist.Playlist[0].PlaylistEntryId });
             Assert.IsTrue(resultSongRemove, "Song has been removed.");
 
             // Verify that song has been removed.

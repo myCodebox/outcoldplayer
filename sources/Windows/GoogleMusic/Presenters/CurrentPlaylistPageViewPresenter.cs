@@ -16,6 +16,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using OutcoldSolutions.GoogleMusic.Views;
     using OutcoldSolutions.GoogleMusic.Views.Popups;
     using OutcoldSolutions.Presenters;
+    using OutcoldSolutions.Views;
 
     public class CurrentPlaylistPageViewPresenter : DataPagePresenterBase<ICurrentPlaylistPageView, CurrentPlaylistPageViewBindingModel>
     {
@@ -71,7 +72,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             var selectedSong = this.BindingModel.Songs[this.BindingModel.SelectedSongIndex];
             if (selectedSong != null)
             {
-                this.Toolbar.ShowPopup<IAddToPlaylistPopupView>(new List<SongBindingModel> { selectedSong });
+                this.MainFrame.ShowPopup<IAddToPlaylistPopupView>(PopupRegion.AppToolBarLeft, new List<SongBindingModel> { selectedSong });
             }
         }
 
@@ -128,11 +129,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
             if (this.BindingModel.SelectedSong != null)
             {
-                this.Toolbar.SetContextCommands(this.GetContextCommands());
+                this.MainFrame.SetContextCommands(this.GetContextCommands());
             }
             else
             {
-                this.Toolbar.ClearContextCommands();
+                this.MainFrame.ClearContextCommands();
             }
         }
 

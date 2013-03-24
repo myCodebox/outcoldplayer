@@ -11,7 +11,7 @@ namespace OutcoldSolutions.GoogleMusic
 
     public static class MainMenu
     {
-        public static void Initialize(IApplicationToolbar applicationToolbar)
+        public static void Initialize(IMainFrame applicationToolbar)
         {
             applicationToolbar.SetMenuItems(GetItems());
         }
