@@ -1,4 +1,4 @@
-﻿<views:DataPageViewBase
+﻿<views:PageViewBase
     x:Class="OutcoldSolutions.GoogleMusic.Views.ArtistPageView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -67,4 +67,4 @@
             </GridView.ItemContainerStyle>
         </GridView>
     </Grid>
-</views:DataPageViewBase>
+</views:PageViewBase>

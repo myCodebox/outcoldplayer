@@ -4,6 +4,7 @@
 namespace OutcoldSolutions.GoogleMusic.Presenters
 {
     using System;
+    using System.Threading.Tasks;
 
     using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.BindingModels;
@@ -44,6 +45,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         public AuthentificationPageViewBindingModel BindingModel { get; private set; }
 
         public DelegateCommand SignInCommand { get; private set; }
+
+        protected override Task LoadDataAsync(NavigatedToEventArgs navigatedToEventArgs)
+        {
+            return Task.Delay(0);
+        }
 
         private async void SignIn()
         {

@@ -14,12 +14,12 @@ namespace OutcoldSolutions.GoogleMusic.Views
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Input;
 
-    public interface ICurrentPlaylistPageView : IDataPageView
+    public interface ICurrentPlaylistPageView : IPageView
     {
         void SelectPlayingSong();
     }
 
-    public sealed partial class CurrentPlaylistPageView : DataPageViewBase, ICurrentPlaylistPageView
+    public sealed partial class CurrentPlaylistPageView : PageViewBase, ICurrentPlaylistPageView
     {
         private CurrentPlaylistPageViewPresenter presenter;
 

@@ -1,4 +1,4 @@
-﻿<views:DataPageViewBase
+﻿<views:PageViewBase
     x:Class="OutcoldSolutions.GoogleMusic.Views.StartPageView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -12,9 +12,9 @@
     Subtitle="Home"
     IsStoreLogoVisible="True">
 
-    <views:DataPageViewBase.Resources>
+    <views:PageViewBase.Resources>
         <CollectionViewSource x:Name="Groups" IsSourceGrouped="true" ItemsPath="Playlists" />
-    </views:DataPageViewBase.Resources>
+    </views:PageViewBase.Resources>
 
     <Grid Margin="0, 0, 20, 0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
 
@@ -79,4 +79,4 @@
         </GridView>
         
     </Grid>
-</views:DataPageViewBase>
+</views:PageViewBase>

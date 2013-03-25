@@ -18,7 +18,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using OutcoldSolutions.Presenters;
     using OutcoldSolutions.Views;
 
-    public class CurrentPlaylistPageViewPresenter : DataPagePresenterBase<ICurrentPlaylistPageView, CurrentPlaylistPageViewBindingModel>
+    public class CurrentPlaylistPageViewPresenter : PagePresenterBase<ICurrentPlaylistPageView, CurrentPlaylistPageViewBindingModel>
     {
         private readonly IPlayQueueService playQueueService;
         private readonly ISongMetadataEditService metadataEditService;

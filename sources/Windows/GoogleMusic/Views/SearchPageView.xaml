@@ -1,4 +1,4 @@
-﻿<views:DataPageViewBase
+﻿<views:PageViewBase
     x:Class="OutcoldSolutions.GoogleMusic.Views.SearchPageView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -257,4 +257,4 @@
         </ListView>
 
     </Grid>
-</views:DataPageViewBase>
+</views:PageViewBase>

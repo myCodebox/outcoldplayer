@@ -10,11 +10,11 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
     using Windows.UI.Xaml.Controls;
 
-    public interface IArtistPageView : IDataPageView
+    public interface IArtistPageView : IPageView
     {
     }
 
-    public sealed partial class ArtistPageView : DataPageViewBase, IArtistPageView
+    public sealed partial class ArtistPageView : PageViewBase, IArtistPageView
     {
         public ArtistPageView()
         {

@@ -20,9 +20,9 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using OutcoldSolutions.Views;
 
     public class PlaylistPageViewPresenterBase<TView, TPlaylist> 
-        : DataPagePresenterBase<TView, PlaylistPageViewBindingModel<TPlaylist>>
+        : PagePresenterBase<TView, PlaylistPageViewBindingModel<TPlaylist>>
         where TPlaylist : class, IPlaylist 
-        where TView : IDataPageView
+        where TView : IPageView
     {
         private readonly IPlayQueueService playQueueService;
         private readonly ISongMetadataEditService metadataEditService;

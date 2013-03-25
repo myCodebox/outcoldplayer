@@ -14,12 +14,9 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using OutcoldSolutions.Presenters;
     using OutcoldSolutions.Views;
 
-    using Windows.System.Display;
-
     public class PlayerViewPresenter : ViewPresenterBase<IPlayerView>
     {
         private readonly IGoogleMusicSessionService sessionService;
-        private readonly ISettingsService settingsService;
         private readonly IPlayQueueService queueService;
         private readonly IMediaElementContainer mediaElement;
         
@@ -28,12 +25,10 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         public PlayerViewPresenter(
             IMediaElementContainer mediaElementContainer,
             IGoogleMusicSessionService sessionService,
-            ISettingsService settingsService,
             IPlayQueueService queueService)
         {
             this.mediaElement = mediaElementContainer;
             this.sessionService = sessionService;
-            this.settingsService = settingsService;
             this.queueService = queueService;
 
             this.BindingModel = new PlayerBindingModel();

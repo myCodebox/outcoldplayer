@@ -3,6 +3,8 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Presenters
 {
+    using System.Threading.Tasks;
+
     using OutcoldSolutions.GoogleMusic.Views;
     using OutcoldSolutions.Presenters;
 
@@ -19,6 +21,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         }
 
         public DelegateCommand LeavePageCommand { get; private set; }
+
+        protected override Task LoadDataAsync(NavigatedToEventArgs navigatedToEventArgs)
+        {
+            return Task.FromResult(0);
+        }
 
         private void LeavePage()
         {

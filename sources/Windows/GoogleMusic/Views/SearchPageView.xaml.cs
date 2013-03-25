@@ -9,11 +9,11 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
     using Windows.UI.Xaml.Controls;
 
-    public interface ISearchPageView : IDataPageView
+    public interface ISearchPageView : IPageView
     {
     }
 
-    public sealed partial class SearchPageView : DataPageViewBase, ISearchPageView
+    public sealed partial class SearchPageView : PageViewBase, ISearchPageView
     {
         private const string SelectedIndex = "Groups_SelectedIndex";
 

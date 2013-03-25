@@ -20,7 +20,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
     using Windows.UI.Popups;
 
-    public class PlaylistsPageViewPresenter : DataPagePresenterBase<IPlaylistsPageView, PlaylistsPageViewBindingModel>
+    public class PlaylistsPageViewPresenter : PagePresenterBase<IPlaylistsPageView, PlaylistsPageViewBindingModel>
     {
         private readonly IPlaylistsService playlistsService;
         private readonly IUserPlaylistsRepository userPlaylistsRepository;

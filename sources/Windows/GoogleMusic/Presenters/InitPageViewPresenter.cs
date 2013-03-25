@@ -4,6 +4,7 @@
 namespace OutcoldSolutions.GoogleMusic.Presenters
 {
     using System;
+    using System.Threading.Tasks;
 
     using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Services;
@@ -33,10 +34,10 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 });
         }
 
-        public override async void OnNavigatedTo(NavigatedToEventArgs parameter)
+        public async override void OnNavigatedTo(NavigatedToEventArgs parameter)
         {
             base.OnNavigatedTo(parameter);
-            
+
             AuthentificationService.AuthentificationResult result = null;
 
             try
@@ -64,6 +65,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 this.Logger.Debug("User is not logged in. Going to IAuthentificationPageView.");
                 this.navigationService.NavigateTo<IAuthentificationPageView>(keepInHistory: false);
             }
+        }
+
+        protected override Task LoadDataAsync(NavigatedToEventArgs navigatedToEventArgs)
+        {
+            return Task.FromResult(0);
         }
     }
 }

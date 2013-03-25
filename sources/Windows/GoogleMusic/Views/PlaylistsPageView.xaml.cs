@@ -16,7 +16,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Input;
 
-    public interface IPlaylistsPageView : IDataPageView
+    public interface IPlaylistsPageView : IPageView
     {
         void EditPlaylist(PlaylistBindingModel selectedItem);
 
@@ -25,7 +25,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
         void Refresh();
     }
 
-    public sealed partial class PlaylistsPageView : DataPageViewBase, IPlaylistsPageView
+    public sealed partial class PlaylistsPageView : PageViewBase, IPlaylistsPageView
     {
         private PlaylistsPageViewPresenter presenter;
 

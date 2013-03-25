@@ -58,6 +58,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.LoadSongs();
         }
 
+        protected override Task LoadDataAsync(NavigatedToEventArgs navigatedToEventArgs)
+        {
+            return Task.Delay(0);
+        }
+
         public async void LoadSongs()
         {
             this.BindingModel.IsFailed = false;
