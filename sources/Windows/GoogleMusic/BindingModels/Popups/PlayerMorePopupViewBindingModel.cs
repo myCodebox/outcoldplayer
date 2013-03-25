@@ -52,6 +52,11 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels.Popups
             {
                 return this.mediaElementContainer.Volume;
             }
+
+            set
+            {
+                this.mediaElementContainer.Volume = value;
+            }
         }
     }
 }

@@ -135,7 +135,9 @@ CREATE TRIGGER instert_song AFTER INSERT ON Song
     where [Album].ArtistTitleNorm = coalesce(nullif(new.AlbumArtistTitleNorm, ''), new.[ArtistTitleNorm]) and TitleNorm = new.AlbumTitleNorm;
 
     update [Artist]
-    set [AlbumsCount] = [Artist].[AlbumsCount] + 1
+    set 
+        [ArtUrl] = case when [Artist].[AlbumsCount] = 0 then new.[AlbumArtUrl] else [ArtUrl] end,
+        [AlbumsCount] = [Artist].[AlbumsCount] + 1
     where [Artist].TitleNorm = coalesce(nullif(new.AlbumArtistTitleNorm, ''), new.[ArtistTitleNorm]) and not exists (select * from [Album] as a where a.ArtistTitleNorm = coalesce(nullif(new.AlbumArtistTitleNorm, ''), new.[ArtistTitleNorm]) and a.TitleNorm = new.AlbumTitleNorm);
 
     insert into Album([Title], [TitleNorm], [SongsCount], [Duration], [ArtUrl], [LastPlayed], [Year], [ArtistTitleNorm], [GenreTitleNorm])
@@ -380,7 +382,9 @@ CREATE TRIGGER update_song_parenttitlesupdate AFTER UPDATE OF [AlbumTitleNorm], 
           and [Album].ArtistTitleNorm = coalesce(nullif(new.AlbumArtistTitleNorm, ''), new.[ArtistTitleNorm]) and TitleNorm = new.AlbumTitleNorm;
 
     update [Artist]
-    set [AlbumsCount] = [Artist].[AlbumsCount] + 1
+    set 
+        [ArtUrl] = case when [Artist].[AlbumsCount] = 0 then new.[AlbumArtUrl] else [ArtUrl] end,
+        [AlbumsCount] = [Artist].[AlbumsCount] + 1
     where (new.[AlbumTitleNorm] <> old.[AlbumTitleNorm] or new.[ArtistTitleNorm] <> old.[ArtistTitleNorm] or new.[AlbumArtistTitleNorm] <> old.[AlbumArtistTitleNorm])
           and [Artist].TitleNorm = coalesce(nullif(new.AlbumArtistTitleNorm, ''), new.[ArtistTitleNorm]) and not exists (select * from [Album] as a where a.ArtistTitleNorm = coalesce(nullif(new.AlbumArtistTitleNorm, ''), new.[ArtistTitleNorm]) and a.TitleNorm = new.AlbumTitleNorm);
 
