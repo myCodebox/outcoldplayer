@@ -6,17 +6,17 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:views="using:OutcoldSolutions.Views"
     mc:Ignorable="d"
-    d:DesignHeight="300"
-    d:DesignWidth="400">
+    Height="300" 
+    Width="300">
 
-    <Border Padding="20" Background="{StaticResource AppBarBackgroundThemeBrush}" Width="Auto" Height="300" MinWidth="200">
+    <Border Padding="20" Background="{StaticResource AppBarBackgroundThemeBrush}" Width="Auto" >
         <Grid>
             <ProgressRing IsActive="{Binding Path=IsLoading, Mode=OneWay}" />
             
             <ListView x:Name="ListView"
                       IsItemClickEnabled="True"
                       SelectionMode="None"
-                      Width="Auto"
+                      Width="300"
                       ItemsSource="{Binding Path=Playlists, Mode=OneWay}"
                       VerticalContentAlignment="Stretch"
                       ItemClick="PlaylistItemClick"  >
@@ -38,7 +38,11 @@
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <TextBlock Text="{Binding Path=Playlist.Title, Mode=OneTime}" Style="{StaticResource BasicTextStyle}"  />
+                            <TextBlock MaxWidth="200"
+                                       Text="{Binding Path=Playlist.Title, Mode=OneTime}" 
+                                       Style="{StaticResource BasicTextStyle}" 
+                                       TextTrimming="WordEllipsis"
+                                       TextWrapping="NoWrap"/>
 
                             <StackPanel Orientation="Horizontal" 
                                         VerticalAlignment="Top"
@@ -48,7 +52,6 @@
                                 <TextBlock Text="/" Style="{StaticResource SmallTextStyle}" />
                                 <TextBlock Text="{Binding Path=DataContext.Songs.Count, ElementName=ListView, Mode=OneTime}" Style="{StaticResource SmallTextStyle}" />
                             </StackPanel>
-                        
                         </StackPanel>
                     </DataTemplate>
                 </ListView.ItemTemplate>

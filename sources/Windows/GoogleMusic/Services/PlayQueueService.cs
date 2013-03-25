@@ -24,6 +24,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
         private readonly ISongsWebService songsWebService;
         private readonly INotificationService notificationService;
         private readonly IPlaylistsService playlistsService;
+        private readonly IEventAggregator eventAggregator;
 
         private readonly List<Song> songsQueue = new List<Song>();
         private readonly List<int> queueOrder = new List<int>();
@@ -48,7 +49,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
             ISongsWebService songsWebService,
             INotificationService notificationService,
             IGoogleMusicSessionService sessionService,
-            IPlaylistsService playlistsService)
+            IPlaylistsService playlistsService,
+            IEventAggregator eventAggregator)
         {
             this.logger = logManager.CreateLogger("PlayQueueService");
             this.mediaElement = mediaElement;
@@ -58,6 +60,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             this.songsWebService = songsWebService;
             this.notificationService = notificationService;
             this.playlistsService = playlistsService;
+            this.eventAggregator = eventAggregator;
             this.currentQueueIndex = -1;
 
             this.IsRepeatAll = this.settingsService.GetValue("IsRepeatAllEnabled", defaultValue: false);
@@ -599,6 +602,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         private void RaiseQueueChanged()
         {
+            this.eventAggregator.Publish(new QueueChangeEvent(this.IsShuffled, this.IsRepeatAll));
+
             var handler = this.QueueChanged;
             if (handler != null)
             {

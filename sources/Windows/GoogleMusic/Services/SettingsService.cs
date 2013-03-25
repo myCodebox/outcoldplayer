@@ -6,6 +6,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
     using System;
 
     using OutcoldSolutions.Diagnostics;
+    using OutcoldSolutions.GoogleMusic.Models;
 
     using Windows.Storage;
 
@@ -17,13 +18,18 @@ namespace OutcoldSolutions.GoogleMusic.Services
         private static readonly Type DateTimeType = typeof(DateTime);
         private static readonly Type DateTimeNullableType = typeof(DateTime?);
 
+        private readonly IEventAggregator eventAggregator;
+
         private readonly ApplicationDataContainer settingsContainer;
         private readonly ApplicationDataContainer roamingSettingsContainer;
         
         private readonly ILogger logger;
 
-        public SettingsService(ILogManager logManager)
+        public SettingsService(
+            ILogManager logManager,
+            IEventAggregator eventAggregator)
         {
+            this.eventAggregator = eventAggregator;
             this.logger = logManager.CreateLogger("SettingsService");
             var localSettings = ApplicationData.Current.LocalSettings;
             var roamingSettings = ApplicationData.Current.RoamingSettings;
@@ -49,13 +55,12 @@ namespace OutcoldSolutions.GoogleMusic.Services
             }
         }
 
-        public event EventHandler<SettingsValueChangedEventArgs> ValueChanged;
-
         public void SetValue<T>(string key, T value)
         {
             this.logger.Debug("Setting value of key '{0}' to '{1}.'", key, value);
+            object oldValue = this.settingsContainer.Values[key];
             this.settingsContainer.Values[key] = this.ToObject(value);
-            this.RaiseValueChanged(key);
+            this.RaiseValueChanged(key, oldValue, value);
         }
 
         public void RemoveValue(string key)
@@ -63,8 +68,9 @@ namespace OutcoldSolutions.GoogleMusic.Services
             this.logger.Debug("Remove value of key '{0}'", key);
             if (this.settingsContainer.Values.ContainsKey(key))
             {
+                object oldValue = this.settingsContainer.Values[key];
                 this.settingsContainer.Values.Remove(key);
-                this.RaiseValueChanged(key);
+                this.RaiseValueChanged(key, oldValue, null);
             }
         }
 
@@ -89,8 +95,10 @@ namespace OutcoldSolutions.GoogleMusic.Services
         public void SetRoamingValue<T>(string key, T value)
         {
             this.logger.Debug("Setting roaming value of key '{0}' to '{1}.'", key, value);
-            this.roamingSettingsContainer.Values[key] = this.ToObject(value);
-            this.RaiseValueChanged(key);
+            object oldValue = this.roamingSettingsContainer.Values[key];
+            object newValue = this.ToObject(value);
+            this.roamingSettingsContainer.Values[key] = newValue;
+            this.RaiseValueChanged(key, oldValue, newValue);
         }
 
         public T GetRoamingValue<T>(string key, T defaultValue = default(T))
@@ -116,18 +124,15 @@ namespace OutcoldSolutions.GoogleMusic.Services
             this.logger.Debug("Removing roaming value of key '{0}'.'", key);
             if (this.roamingSettingsContainer.Values.ContainsKey(key))
             {
+                object oldValue = this.roamingSettingsContainer.Values[key];
                 this.roamingSettingsContainer.Values.Remove(key);
-                this.RaiseValueChanged(key);
+                this.RaiseValueChanged(key, oldValue, null);
             }
         }
 
-        protected virtual void RaiseValueChanged(string key)
+        protected virtual void RaiseValueChanged(string key, object newValue, object oldValue)
         {
-            var handler = this.ValueChanged;
-            if (handler != null)
-            {
-                handler(this, new SettingsValueChangedEventArgs(key));
-            }
+            this.eventAggregator.Publish(new SettingsChangeEvent(key, newValue, oldValue));
         }
 
         private T ParseValue<T>(object value)

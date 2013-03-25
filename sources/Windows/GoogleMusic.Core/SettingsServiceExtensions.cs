@@ -7,7 +7,7 @@ namespace OutcoldSolutions.GoogleMusic
 
     using OutcoldSolutions.GoogleMusic.Services;
 
-    public static class SettingsServiceEx
+    public static class SettingsServiceExtensions
     {
         private const string LibraryFreshnessDateKey = "LibraryFreshnessDate";
 

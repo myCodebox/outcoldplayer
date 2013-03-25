@@ -4,21 +4,15 @@
 namespace OutcoldSolutions.GoogleMusic.BindingModels
 {
     using OutcoldSolutions.BindingModels;
-    using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services;
 
     public class PlayerBindingModel : BindingModelBase
     {
         private QueueState playState = QueueState.Unknown;
 
-        private bool isShuffleEnabled = false;
-        private bool isRepeatAllEnabled = false;
-        private bool isLockScreenEnabled = false;
-
         private double totalSeconds = 1;
         private double currentPosition;
         private double downloadProgress;
-        private double volume;
 
         private SongBindingModel currentSong;
 
@@ -30,50 +24,9 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
         public DelegateCommand SkipAheadCommand { get; set; }
 
-        public DelegateCommand ShuffleCommand { get; set; }
-
-        public DelegateCommand RepeatAllCommand { get; set; }
-
         public DelegateCommand LockScreenCommand { get; set; }
 
-        public bool IsShuffleEnabled
-        {
-            get
-            {
-                return this.isShuffleEnabled;
-            }
-
-            set
-            {
-                this.SetValue(ref this.isShuffleEnabled, value);
-            }
-        }
-
-        public bool IsRepeatAllEnabled
-        {
-            get
-            {
-                return this.isRepeatAllEnabled;
-            }
-
-            set
-            {
-                this.SetValue(ref this.isRepeatAllEnabled, value);
-            }
-        }
-
-        public bool IsLockScreenEnabled
-        {
-            get
-            {
-                return this.isLockScreenEnabled;
-            }
-
-            set
-            {
-                this.SetValue(ref this.isLockScreenEnabled, value);
-            }
-        }
+        public DelegateCommand ShowMoreCommand { get; set; }
 
         public bool IsPlaying
         {
@@ -168,19 +121,6 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             get
             {
                 return this.DownloadProgress <= 0.001 || this.DownloadProgress >= 0.999;
-            }
-        }
-
-        public double Volume
-        {
-            get
-            {
-                return this.volume;
-            }
-
-            set
-            {
-                this.SetValue(ref this.volume, value);
             }
         }
 

@@ -6,6 +6,7 @@ namespace OutcoldSolutions.GoogleMusic
 {
     using OutcoldSolutions.BindingModels;
     using OutcoldSolutions.GoogleMusic.BindingModels;
+    using OutcoldSolutions.GoogleMusic.BindingModels.Popups;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Presenters;
     using OutcoldSolutions.GoogleMusic.Presenters.Popups;
@@ -98,6 +99,10 @@ namespace OutcoldSolutions.GoogleMusic
                             .InjectionRule<BindingModelBase, AccountsViewPresenter>();
             registration.Register<AccountsViewPresenter>();
 
+            registration.Register<AppSettingsView>()
+                            .InjectionRule<BindingModelBase, AppSettingsViewPresenter>();
+            registration.Register<AppSettingsViewPresenter>();
+
             registration.Register<UpgradeView>()
                         .InjectionRule<BindingModelBase, UpgradeViewPresenter>();
             registration.Register<UpgradeViewPresenter>();
@@ -109,9 +114,15 @@ namespace OutcoldSolutions.GoogleMusic
         public static void RegisterPopupViews(IRegistrationContext registration)
         {
             registration.Register<IAddToPlaylistPopupView>()
-                            .InjectionRule<BindingModelBase, AddToPlaylistPopupViewPresenter>()
-                            .As<AddToPlaylistPopupView>();
+                        .InjectionRule<BindingModelBase, AddToPlaylistPopupViewPresenter>()
+                        .As<AddToPlaylistPopupView>();
             registration.Register<AddToPlaylistPopupViewPresenter>();
+
+            registration.Register<IPlayerMorePopupView>()
+                        .InjectionRule<BindingModelBase, PlayerMorePopupViewPresenter>()
+                        .As<PlayerMorePopupView>();
+            registration.Register<PlayerMorePopupViewBindingModel>();
+            registration.Register<PlayerMorePopupViewPresenter>();
         }
     }
 }

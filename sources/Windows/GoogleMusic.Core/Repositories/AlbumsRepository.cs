@@ -126,7 +126,7 @@ from [Song] as s
 where s.[ArtistTitleNorm] <> s.[AlbumArtistTitleNorm] and ar.[ArtistId] = ?1
 group by a.[AlbumId], a.[Title], a.[TitleNorm], a.[ArtistTitleNorm], a.[Year], a.[ArtUrl], a.[LastPlayed]
 ) as x
-order by x.Year 
+order by x.IsCollection, x.Year 
 ";
 
         private const string SqlAlbumsSongs = @"

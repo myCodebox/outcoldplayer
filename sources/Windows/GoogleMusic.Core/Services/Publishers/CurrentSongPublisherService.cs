@@ -33,7 +33,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
 
         private readonly HttpClient httpImageDownloadClient = new HttpClient() { Timeout = TimeSpan.FromSeconds(5) };
 
-        private readonly int delayPublishersHoldUp;
+        private readonly int delayPublishersHoldUp = 15000;
 
         private CancellationTokenSource cancellationTokenSource;
 

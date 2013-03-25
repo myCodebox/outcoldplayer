@@ -19,11 +19,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
             this.InitializeComponent();
         }
 
-        private void MoreClick(object sender, RoutedEventArgs e)
-        {
-            this.MorePopup.IsOpen = true;
-        }
-
         private void NavigateToCurrentPlaylist(object sender, RoutedEventArgs e)
         {
             ApplicationBase.Container.Resolve<INavigationService>().NavigateTo<ICurrentPlaylistPageView>().SelectPlayingSong();

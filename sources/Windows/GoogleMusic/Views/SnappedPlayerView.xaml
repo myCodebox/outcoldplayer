@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:controls="using:OutcoldSolutions.GoogleMusic.Controls"
+    xmlns:controls="using:OutcoldSolutions.Controls" xmlns:controls2="using:OutcoldSolutions.GoogleMusic.Controls"
     mc:Ignorable="d"
     d:DesignHeight="700"
     d:DesignWidth="320">
@@ -42,9 +42,6 @@
             <controls:AppBarToggleButton Style="{StaticResource RepeatAllAppBarButtonStyle}" 
                                                      IsChecked="{Binding Path=IsRepeatAllEnabled, Mode=OneWay}"
                                                      Command="{Binding Path=RepeatAllCommand, Mode=OneTime}"/>
-            <controls:AppBarToggleButton Style="{StaticResource SetLockScreenAppBarButtonStyle}" 
-                                                     IsChecked="{Binding Path=IsLockScreenEnabled, Mode=OneWay}"
-                                                     Command="{Binding Path=LockScreenCommand, Mode=OneTime}"/>
 
         </StackPanel>
 
@@ -60,7 +57,7 @@
             <TextBlock Grid.Column="0" Style="{StaticResource SmallTextStyle}" VerticalAlignment="Center" HorizontalAlignment="Left">Plays:</TextBlock>
             <TextBlock Grid.Column="1" Style="{StaticResource SmallTextStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="7, 0, 0, 0" Text="{Binding Path=CurrentSong.PlayCount, Mode=OneWay}"  />
 
-            <controls:Rating Grid.Column="1" x:Name="Rating" HorizontalAlignment="Right" ValueChanged="RatingOnValueChanged"/>
+            <controls2:Rating Grid.Column="1" x:Name="Rating" HorizontalAlignment="Right" ValueChanged="RatingOnValueChanged"/>
         </Grid>
 
         <Grid Grid.Row="4" Margin="32, 0" Visibility="{Binding Path=CurrentSong, Mode=OneWay, Converter={StaticResource NullToInvisibilityConverter}}">

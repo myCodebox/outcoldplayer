@@ -1,0 +1,65 @@
+﻿<views:PopupViewBase
+    x:Class="OutcoldSolutions.GoogleMusic.Views.Popups.PlayerMorePopupView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:views="using:OutcoldSolutions.Views"
+    xmlns:controls="using:OutcoldSolutions.Controls"
+    mc:Ignorable="d"
+    Height="240"
+    Width="200">
+
+    <Border Background="{StaticResource AppBarBackgroundThemeBrush}">
+        <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" Margin="10, 0, 10, 0" >
+
+            <Grid HorizontalAlignment="Center" Width="140" Margin="0, 40, 0, 20">
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <Slider Grid.Row="0" Grid.ColumnSpan="2"
+                    Value="{Binding Path=BindingModel.Volume, Mode=TwoWay}" 
+                    x:Name="VolumeSlider"
+                    Maximum="1" 
+                    StepFrequency="0.01" 
+                    Width="140" 
+                    HorizontalAlignment="Center" 
+                    ThumbToolTipValueConverter="{StaticResource PercentageStringFormatConverter}"/>
+
+                <TextBlock Margin="0, 5, 0, 0"
+                           Text="Volume" 
+                           Style="{StaticResource SmallTextStyle}"
+                           Grid.Row="1"
+                           Grid.Column="0"/>
+
+                <TextBlock Margin="0, 5, 0, 0"
+                           Text="{Binding Path=Value, ElementName=VolumeSlider, Mode=OneWay, Converter={StaticResource PercentageStringFormatConverter}}" 
+                           Style="{StaticResource SmallTextStyle}"
+                           HorizontalAlignment="Right"
+                           TextAlignment="Right"
+                           Grid.Row="1"
+                           Grid.Column="1"/>
+
+            </Grid>
+
+
+            <controls:AppBarToggleButton Style="{StaticResource ShufflePopupMenuButtonStyle}" 
+                                                     IsChecked="{Binding Path=BindingModel.IsShuffleEnabled, Mode=OneWay}"
+                                                     Command="{Binding Path=ShuffleCommand, Mode=OneTime}"/>
+            <controls:AppBarToggleButton Style="{StaticResource RepeatAllPopupMenuButtonStyle}" 
+                                                     IsChecked="{Binding Path=BindingModel.IsRepeatAllEnabled, Mode=OneWay}"
+                                                     Command="{Binding Path=RepeatAllCommand, Mode=OneTime}"/>
+            
+        </StackPanel>
+    </Border>
+    
+
+</views:PopupViewBase>

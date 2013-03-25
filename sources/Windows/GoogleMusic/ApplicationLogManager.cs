@@ -6,9 +6,11 @@ namespace OutcoldSolutions.GoogleMusic
 {
     using System;
     using System.Diagnostics;
+    using System.Reactive.Linq;
     using System.Threading.Tasks;
 
     using OutcoldSolutions.Diagnostics;
+    using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services;
 
     using Windows.UI.Xaml;
@@ -19,21 +21,18 @@ namespace OutcoldSolutions.GoogleMusic
 
         private readonly ISettingsService settingsService;
 
-        public ApplicationLogManager(ILogManager logManager, ISettingsService settingsService)
+        public ApplicationLogManager(ILogManager logManager, ISettingsService settingsService, IEventAggregator eventAggregator)
         {
             Application.Current.UnhandledException += this.CurrentOnUnhandledException;
 
             this.logManager = logManager;
             this.settingsService = settingsService;
 
+            eventAggregator.GetEvent<SettingsChangeEvent>()
+                           .Where(e => string.Equals(e.Key, "IsLoggingOn", StringComparison.OrdinalIgnoreCase))
+                           .Subscribe(e => Task.Factory.StartNew(this.UpdateLogLevel));
+
             this.UpdateLogLevel();
-            settingsService.ValueChanged += (sender, eventArgs) =>
-            {
-                if (string.Equals(eventArgs.Key, "IsLoggingOn", StringComparison.OrdinalIgnoreCase))
-                {
-                    Task.Factory.StartNew(this.UpdateLogLevel);
-                }
-            };
         }
 
         private void CurrentOnUnhandledException(object sender, UnhandledExceptionEventArgs unhandledExceptionEventArgs)

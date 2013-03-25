@@ -4,7 +4,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:controls="using:OutcoldSolutions.GoogleMusic.Controls" 
     xmlns:views="using:OutcoldSolutions.Views"
     mc:Ignorable="d"
     d:DesignHeight="100"
@@ -96,24 +95,8 @@
                     Command="{Binding Path=SkipAheadCommand, Mode=OneTime}"
                     VerticalAlignment="Top"/>
 
-            <Button Style="{StaticResource MoreAppBarButtonStyle}" Grid.Column="2" Click="MoreClick" />
-            <Popup x:Name="MorePopup" IsLightDismissEnabled="True" Grid.ColumnSpan="3" HorizontalAlignment="Right" HorizontalOffset="-190" VerticalOffset="-208">
-                <StackPanel Orientation="Vertical" Width="200" Background="{StaticResource AppBarBackgroundThemeBrush}">
-
-                    <Slider Value="{Binding Path=Volume, Mode=TwoWay}" Maximum="1" StepFrequency="0.01" Width="140" HorizontalAlignment="Center" ThumbToolTipValueConverter="{StaticResource PercentageStringFormatConverter}"   />
-                    
-                    <controls:AppBarToggleButton Style="{StaticResource ShufflePopupMenuButtonStyle}" 
-                                                     IsChecked="{Binding Path=IsShuffleEnabled, Mode=OneWay}"
-                                                     Command="{Binding Path=ShuffleCommand, Mode=OneTime}"/>
-                    <controls:AppBarToggleButton Style="{StaticResource RepeatAllPopupMenuButtonStyle}" 
-                                                     IsChecked="{Binding Path=IsRepeatAllEnabled, Mode=OneWay}"
-                                                     Command="{Binding Path=RepeatAllCommand, Mode=OneTime}"/>
-                    <controls:AppBarToggleButton Style="{StaticResource SetLockScreenPopupMenuButtonStyle}" 
-                                                     IsChecked="{Binding Path=IsLockScreenEnabled, Mode=OneWay}"
-                                                     Command="{Binding Path=LockScreenCommand, Mode=OneTime}"/>
-                </StackPanel>
-            </Popup>
-
+            <Button Style="{StaticResource MoreAppBarButtonStyle}" Grid.Column="2" Command="{Binding ShowMoreCommand, Mode=OneTime}" />
+            
         </StackPanel>
         
     </Grid>

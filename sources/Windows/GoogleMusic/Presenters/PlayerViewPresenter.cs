@@ -10,7 +10,9 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Shell;
     using OutcoldSolutions.GoogleMusic.Views;
+    using OutcoldSolutions.GoogleMusic.Views.Popups;
     using OutcoldSolutions.Presenters;
+    using OutcoldSolutions.Views;
 
     using Windows.System.Display;
 
@@ -21,7 +23,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private readonly IPlayQueueService queueService;
         private readonly IMediaElementContainer mediaElement;
         
-        private DisplayRequest request;
         private double progressPosition;
 
         public PlayerViewPresenter(
@@ -34,42 +35,13 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.sessionService = sessionService;
             this.settingsService = settingsService;
             this.queueService = queueService;
-            this.BindingModel = new PlayerBindingModel
-                                    {
-                                        IsRepeatAllEnabled = this.queueService.IsRepeatAll,
-                                        IsShuffleEnabled = this.queueService.IsShuffled,
-                                        IsLockScreenEnabled = this.settingsService.GetValue("IsLockScreenEnabled", defaultValue: false),
-                                        Volume = this.mediaElement.Volume
-                                    };
-
-            if (this.BindingModel.IsLockScreenEnabled)
-            {
-                this.UpdateLockScreen();
-            }
             
             this.BindingModel.SkipBackCommand = new DelegateCommand(this.PreviousSong, () => !this.BindingModel.IsBusy && this.queueService.CanSwitchToPrevious());
             this.BindingModel.PlayCommand = new DelegateCommand(async () => await this.PlayAsync(), () => !this.BindingModel.IsBusy && (this.BindingModel.State == QueueState.Stopped || this.BindingModel.State == QueueState.Paused));
             this.BindingModel.PauseCommand = new DelegateCommand(async () => await this.PauseAsync(), () => !this.BindingModel.IsBusy && this.BindingModel.IsPlaying);
             this.BindingModel.SkipAheadCommand = new DelegateCommand(this.NextSong, () => !this.BindingModel.IsBusy && this.queueService.CanSwitchToNext());
 
-            this.BindingModel.LockScreenCommand = new DelegateCommand(this.UpdateLockScreen);
-
-            this.BindingModel.RepeatAllCommand = new DelegateCommand(async () => await this.queueService.SetRepeatAllAsync(this.BindingModel.IsRepeatAllEnabled = !this.BindingModel.IsRepeatAllEnabled));
-            this.BindingModel.ShuffleCommand = new DelegateCommand(async () => await this.queueService.SetShuffledAsync(this.BindingModel.IsShuffleEnabled));
-
             this.BindingModel.UpdateBindingModel();
-
-            this.BindingModel.Subscribe(
-                () => this.BindingModel.IsShuffleEnabled, 
-                (sender, args) => this.queueService.SetShuffledAsync(this.BindingModel.IsShuffleEnabled));
-
-            this.BindingModel.Subscribe(
-                () => this.BindingModel.IsRepeatAllEnabled,
-                (sender, args) => this.queueService.SetShuffledAsync(this.BindingModel.IsRepeatAllEnabled));
-
-            this.BindingModel.Subscribe(
-                () => this.BindingModel.IsLockScreenEnabled,
-                (sender, args) => this.settingsService.SetValue("IsLockScreenEnabled", this.BindingModel.IsLockScreenEnabled));
 
             this.BindingModel.Subscribe(
                 () => this.BindingModel.CurrentPosition,
@@ -80,8 +52,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                             await this.mediaElement.SetPositionAsync(TimeSpan.FromSeconds(this.BindingModel.CurrentPosition));
                         }
                     });
-
-            this.BindingModel.Subscribe(() => this.BindingModel.Volume, (sender, args) => this.mediaElement.Volume = this.BindingModel.Volume);
 
             this.mediaElement.PlayProgress += (sender, args) =>
                 {
@@ -109,11 +79,10 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                         this.BindingModel.UpdateBindingModel();
                     });
 
-            this.queueService.QueueChanged += (sender, args) =>
+            this.BindingModel.ShowMoreCommand = new DelegateCommand(() =>
                 {
-                    this.BindingModel.IsRepeatAllEnabled = this.queueService.IsRepeatAll;
-                    this.BindingModel.IsShuffleEnabled = this.queueService.IsShuffled;
-                };
+                    this.MainFrame.ShowPopup<IPlayerMorePopupView>(PopupRegion.AppToolBarRight);
+                });
         }
 
         public PlayerBindingModel BindingModel { get; private set; }
@@ -156,24 +125,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                         this.Logger.Info("Download progress changed to {0}", d);
                         this.BindingModel.DownloadProgress = d;
                     });
-        }
-        
-        private void UpdateLockScreen()
-        {
-            if (this.request == null)
-            {
-                this.request = new DisplayRequest();
-                this.request.RequestActive();
-                this.Logger.Debug("Request display active.");
-            }
-            else
-            {
-                this.request.RequestRelease();
-                this.request = null;
-                this.Logger.Debug("Release display active.");
-            }
-
-            this.BindingModel.IsLockScreenEnabled = this.request != null;
         }
     }
 }
