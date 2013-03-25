@@ -11,11 +11,9 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
     using OutcoldSolutions.GoogleMusic.Views.Popups;
     using OutcoldSolutions.Presenters;
 
-    public class PlayerMorePopupViewPresenter : ViewPresenterBase<IPlayerMorePopupView>, IDisposable
+    public class PlayerMorePopupViewPresenter : DisposableViewPresenterBase<IPlayerMorePopupView>, IDisposable
     {
         private readonly IPlayQueueService queueService;
-
-        private IDisposable subscription;
 
         public PlayerMorePopupViewPresenter(
             IPlayQueueService queueService,
@@ -39,16 +37,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
 
         public DelegateCommand LockScreenCommand { get; set; }
 
-        public void Dispose()
-        {
-            this.subscription.Dispose();
-        }
-
         protected override void OnInitialized()
         {
             base.OnInitialized();
 
-            this.subscription = this.EventAggregator.GetEvent<QueueChangeEvent>().Subscribe(
+            this.RegisterForDispose(this.EventAggregator.GetEvent<QueueChangeEvent>().Subscribe(
                 async (e) =>
                     {
                         await this.Dispatcher.RunAsync(
@@ -57,7 +50,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
                                     this.BindingModel.IsRepeatAllEnabled = e.IsRepeatAllEnabled;
                                     this.BindingModel.IsShuffleEnabled = e.IsShuffleEnabled;
                                 });
-                    });
+                    }));
         }
     }
 }
