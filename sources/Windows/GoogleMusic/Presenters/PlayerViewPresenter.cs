@@ -35,6 +35,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.sessionService = sessionService;
             this.settingsService = settingsService;
             this.queueService = queueService;
+
+            this.BindingModel = new PlayerBindingModel();
             
             this.BindingModel.SkipBackCommand = new DelegateCommand(this.PreviousSong, () => !this.BindingModel.IsBusy && this.queueService.CanSwitchToPrevious());
             this.BindingModel.PlayCommand = new DelegateCommand(async () => await this.PlayAsync(), () => !this.BindingModel.IsBusy && (this.BindingModel.State == QueueState.Stopped || this.BindingModel.State == QueueState.Paused));

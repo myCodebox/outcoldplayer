@@ -14,6 +14,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
     using OutcoldSolutions.Diagnostics;
 
     using Windows.Foundation;
+    using Windows.Storage;
     using Windows.Storage.Streams;
 
     public class MediaStreamDownloadService : IMediaStreamDownloadService
@@ -123,6 +124,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
             private readonly int contentLength;
 
             private byte[] data;
+            private byte[] readBuffer = new byte[DefaultBufferSize];
 
             private CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
             private Stream networkStream;
@@ -384,12 +386,8 @@ namespace OutcoldSolutions.GoogleMusic.Web
                         }
 
                         int read;
-                        lock (this.locker)
-                        {
-                            cancellationToken.ThrowIfCancellationRequested();
-
-                            read = this.networkStream.Read(this.data, (int)this.readPosition, currentRead);
-                        }
+                        cancellationToken.ThrowIfCancellationRequested();
+                        read = this.networkStream.Read(this.readBuffer, 0, currentRead);
 
                         if (read == 0)
                         {
@@ -398,6 +396,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
                         lock (this.locker)
                         {
+                            Array.Copy(this.readBuffer, 0, this.data, (int)this.readPosition, read);
                             this.readPosition += (ulong)read;
                             downloadProgress = (double)this.readPosition / (double)this.contentLength;
                         }
@@ -414,10 +413,15 @@ namespace OutcoldSolutions.GoogleMusic.Web
                     downloadProgress = 1d;
                     this.RaiseDownloadProgressChanged(downloadProgress);
                 }
-                catch (Exception e)
+                catch (TaskCanceledException exception)
+                {
+                    this.logger.Error("Downloading task was cancelled");
+                    this.logger.LogDebugException(exception);
+                }
+                catch (Exception exception)
                 {
                     this.logger.Error("Exception while reading stream");
-                    this.logger.LogErrorException(e);
+                    this.logger.LogErrorException(exception);
                 }
             }
         }
