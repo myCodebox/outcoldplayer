@@ -27,7 +27,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             : base(mediaElementContainer, sessionService, queueService, navigationService, snappedPlayerBindingModel)
         {
             this.queueService = queueService;
-            this.BindingModel.IsQueueEmpty = !this.queueService.GetQueue().Any();
 
             this.RepeatAllCommand =
                 new DelegateCommand(
@@ -61,16 +60,22 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         public DelegateCommand AddToQueueCommand { get; set; }
 
+        public void PlaySong(SongBindingModel songBindingModel)
+        {
+            this.queueService.PlayAsync(this.BindingModel.Songs.IndexOf(songBindingModel));
+        }
+
         protected override void OnInitialized()
         {
             base.OnInitialized();
 
-            this.EventAggregator.GetEvent<QueueChangeEvent>().Subscribe(
-                async (e) => await this.Dispatcher.RunAsync(
+            this.EventAggregator.GetEvent<QueueChangeEvent>()
+                .Subscribe(
+                    async (e) => await this.Dispatcher.RunAsync(
                         () =>
-                        {
-                            this.BindingModel.IsQueueEmpty = !this.queueService.GetQueue().Any();
-                        }));
+                            {
+                                this.BindingModel.Songs = e.SongsQueue.Select(x => new SongBindingModel(x)).ToList();
+                            }));
         }
     }
 }

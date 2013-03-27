@@ -56,6 +56,9 @@
                   DoubleTapped="ListDoubleTapped"
                   ManipulationMode="None"
                   x:Name="ListView">
+            <ListView.Transitions>
+                <TransitionCollection />
+            </ListView.Transitions>
             <ListView.ItemTemplate>
                 <DataTemplate>
 

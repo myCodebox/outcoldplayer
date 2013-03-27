@@ -4,6 +4,7 @@
 namespace OutcoldSolutions.GoogleMusic.BindingModels
 {
     using System;
+    using System.Collections.Generic;
 
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services;
@@ -16,6 +17,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         private readonly IEventAggregator eventAggregator;
         private readonly IDispatcher dispatcher;
 
+        private IList<SongBindingModel> songs;
         private bool isQueueEmpty;
 
         public SnappedPlayerBindingModel(
@@ -67,12 +69,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         {
             get
             {
-                return this.isQueueEmpty;
-            }
-
-            set
-            {
-                this.SetValue(ref this.isQueueEmpty, value);
+                return this.Songs == null || this.Songs.Count == 0;
             }
         }
 
@@ -86,6 +83,21 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             set
             {
                 this.mediaElementContainer.Volume = value;
+            }
+        }
+
+        public IList<SongBindingModel> Songs
+        {
+            get
+            {
+                return this.songs;
+            }
+
+            set
+            {
+                this.SetValue(ref this.songs, value);
+                this.RaiseCurrentPropertyChanged();
+                this.RaisePropertyChanged(() => this.IsQueueEmpty);
             }
         }
     }

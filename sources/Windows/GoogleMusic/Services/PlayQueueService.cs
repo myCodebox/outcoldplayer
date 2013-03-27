@@ -622,7 +622,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         private void RaiseQueueChanged()
         {
-            this.eventAggregator.Publish(new QueueChangeEvent(this.IsShuffled, this.IsRepeatAll));
+            this.eventAggregator.Publish(new QueueChangeEvent(this.IsShuffled, this.IsRepeatAll, this.songsQueue));
 
             var handler = this.QueueChanged;
             if (handler != null)

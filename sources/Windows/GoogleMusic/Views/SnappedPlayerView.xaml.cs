@@ -17,6 +17,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
+    using Windows.UI.Xaml.Input;
 
     public interface ISnappedPlayerView : IView
     {
@@ -25,9 +26,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
     public sealed partial class SnappedPlayerView : ViewBase, ISnappedPlayerView
     {
         private readonly ILogger logger;
-
         private AdControl adControl;
-
         private PlayerBindingModel playerBindingModel;
 
         public SnappedPlayerView()
@@ -45,12 +44,8 @@ namespace OutcoldSolutions.GoogleMusic.Views
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             this.Loaded -= this.OnLoaded;
-            var playerViewPresenter = this.DataContext as SnappedPlayerViewPresenter;
-            if (playerViewPresenter != null)
-            {
-                this.playerBindingModel = playerViewPresenter.BindingModel;
-                this.playerBindingModel.Subscribe(() => this.playerBindingModel.CurrentSong, this.SongChanged);
-            }
+            this.playerBindingModel = this.GetPresenter<SnappedPlayerViewPresenter>().BindingModel;
+            this.playerBindingModel.Subscribe(() => this.playerBindingModel.CurrentSong, this.SongChanged);
         }
 
         private void SongChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)
@@ -97,16 +92,12 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
         private void RatingOnValueChanged(object sender, ValueChangedEventArgs e)
         {
-            var playerViewPresenter = this.DataContext as SnappedPlayerViewPresenter;
-            if (playerViewPresenter != null)
+            var currentSong = this.GetPresenter<SnappedPlayerViewPresenter>().BindingModel.CurrentSong;
+            if (currentSong != null)
             {
-                var currentSong = playerViewPresenter.BindingModel.CurrentSong;
-                if (currentSong != null)
+                if (currentSong.Rating != e.NewValue)
                 {
-                    if (currentSong.Rating != e.NewValue)
-                    {
-                        this.logger.LogTask(ApplicationBase.Container.Resolve<ISongsService>().UpdateRatingAsync(currentSong, (byte)e.NewValue));
-                    }
+                    this.logger.LogTask(ApplicationBase.Container.Resolve<ISongsService>().UpdateRatingAsync(currentSong, (byte)e.NewValue));
                 }
             }
         }
@@ -114,6 +105,19 @@ namespace OutcoldSolutions.GoogleMusic.Views
         private void VolumeButtonClick(object sender, RoutedEventArgs e)
         {
             this.VolumePopup.IsOpen = true;
+        }
+
+        private void ListDoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+        {
+            var frameworkElement = e.OriginalSource as FrameworkElement;
+            if (frameworkElement != null)
+            {
+                var songBindingModel = frameworkElement.DataContext as SongBindingModel;
+                if (songBindingModel != null)
+                {
+                    this.GetPresenter<SnappedPlayerViewPresenter>().PlaySong(songBindingModel);
+                }
+            }
         }
     }
 }
