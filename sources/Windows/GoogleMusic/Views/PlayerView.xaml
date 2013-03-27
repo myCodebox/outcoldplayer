@@ -28,10 +28,10 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="90" />
                 <ColumnDefinition Width="110" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="110" />
+                <ColumnDefinition Width="100" />
+                <ColumnDefinition Width="100" />
+                <ColumnDefinition Width="100" />
             </Grid.ColumnDefinitions>
 
             <Button Height="80" 
@@ -58,11 +58,29 @@
                     Visibility="{Binding Path=BindingModel.CurrentSong, Mode=OneWay, Converter={StaticResource NullToInvisibilityConverter}}">
                 <Button.Template>
                     <ControlTemplate>
-                        <StackPanel Orientation="Horizontal" >
-                            <TextBlock Style="{StaticResource TitleTextStyle}" Text="{Binding Path=BindingModel.CurrentSong.Title, Mode=OneWay}" TextWrapping="NoWrap" TextTrimming="WordEllipsis"/>
-                            <TextBlock Style="{StaticResource SubtitleTextStyle}" Margin="10, 0, 0, 0" Text="-" />
-                            <TextBlock Style="{StaticResource SubtitleTextStyle}" Margin="10, 0, 0, 0" Text="{Binding Path=BindingModel.CurrentSong.ArtistTitle, Mode=OneWay}" TextWrapping="NoWrap" TextTrimming="WordEllipsis"/>
-                        </StackPanel>
+                        <Grid Width="495" >
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            
+                            <TextBlock Style="{StaticResource TitleTextStyle}" 
+                                       Text="{Binding Path=BindingModel.CurrentSong.Title, Mode=OneWay}" 
+                                       TextWrapping="NoWrap" 
+                                       TextTrimming="WordEllipsis"
+                                       MaxWidth="290"/>
+                            <TextBlock Grid.Column="1"
+                                       Style="{StaticResource SubtitleTextStyle}" 
+                                       Margin="10, 0, 0, 0" 
+                                       Text="-" />
+                            <TextBlock Grid.Column="2"
+                                       Style="{StaticResource SubtitleTextStyle}" 
+                                       Margin="10, 0, 0, 0" 
+                                       Text="{Binding Path=BindingModel.CurrentSong.ArtistTitle, Mode=OneWay}" 
+                                       TextWrapping="NoWrap" 
+                                       TextTrimming="WordEllipsis"/>
+                        </Grid>
                     </ControlTemplate>
                 </Button.Template>
             </Button>
