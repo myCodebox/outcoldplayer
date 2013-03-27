@@ -99,6 +99,7 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Models\SongsUpdatedEvent.cs" />
     <Compile Include="CommandIcon.cs" />
     <Compile Include="Models\PlaylistType.cs" />
     <Compile Include="Models\SettingsChangeEvent.cs" />
@@ -128,7 +129,7 @@
     <Compile Include="Repositories\RepositoryBase.cs" />
     <Compile Include="Repositories\SystemPlaylistsRepository.cs" />
     <Compile Include="Services\PlaylistsService.cs" />
-    <Compile Include="Services\SongMetadataEditService.cs" />
+    <Compile Include="Services\SongsService.cs" />
     <Compile Include="Repositories\SongsRepository.cs" />
     <Compile Include="Services\AuthentificationService.cs" />
     <Compile Include="Services\DataProtectService.cs" />

@@ -104,7 +104,7 @@ namespace OutcoldSolutions.GoogleMusic
 
                 registration.Register<IInitialSynchronization>().As<InitialSynchronization>();
 
-                registration.Register<ISongMetadataEditService>().AsSingleton<SongMetadataEditService>();
+                registration.Register<ISongsService>().AsSingleton<SongsService>();
 
                 registration.Register<RightRegionControlService>().AsSingleton();
                 registration.Register<ApplicationLogManager>().AsSingleton();

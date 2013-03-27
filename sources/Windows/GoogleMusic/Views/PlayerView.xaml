@@ -44,7 +44,7 @@
                         <Image Height="80" 
                                Width="80" 
                                Canvas.ZIndex="1"
-                               Source="{Binding Path=BindingModel.CurrentSong.Metadata.AlbumArtUrl, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=80, Mode=OneWay}"
+                               Source="{Binding Path=BindingModel.CurrentSong.AlbumArtUrl, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=80, Mode=OneWay}"
                                Stretch="None"/>
                     </ControlTemplate>
                 </Button.Template>
@@ -61,7 +61,7 @@
                         <StackPanel Orientation="Horizontal" >
                             <TextBlock Style="{StaticResource TitleTextStyle}" Text="{Binding Path=BindingModel.CurrentSong.Title, Mode=OneWay}" TextWrapping="NoWrap" TextTrimming="WordEllipsis"/>
                             <TextBlock Style="{StaticResource SubtitleTextStyle}" Margin="10, 0, 0, 0" Text="-" />
-                            <TextBlock Style="{StaticResource SubtitleTextStyle}" Margin="10, 0, 0, 0" Text="{Binding Path=BindingModel.CurrentSong.Artist, Mode=OneWay}" TextWrapping="NoWrap" TextTrimming="WordEllipsis"/>
+                            <TextBlock Style="{StaticResource SubtitleTextStyle}" Margin="10, 0, 0, 0" Text="{Binding Path=BindingModel.CurrentSong.ArtistTitle, Mode=OneWay}" TextWrapping="NoWrap" TextTrimming="WordEllipsis"/>
                         </StackPanel>
                     </ControlTemplate>
                 </Button.Template>
@@ -75,7 +75,7 @@
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Style="{StaticResource SmallTextStyle}" Text="{Binding Path=BindingModel.CurrentPosition, Mode=OneWay, Converter={StaticResource DoubleToTimeConverter}}" />
                     <TextBlock Style="{StaticResource SmallTextStyle}" Text="/"  Margin="5, 0"/>
-                    <TextBlock Style="{StaticResource SmallTextStyle}" Text="{Binding Path=BindingModel.CurrentSong.Duration, Converter={StaticResource DoubleToTimeConverter}, Mode=OneWay}" />
+                    <TextBlock Style="{StaticResource SmallTextStyle}" Text="{Binding Path=BindingModel.TotalSeconds, Converter={StaticResource DoubleToTimeConverter}, Mode=OneWay}" />
                 </StackPanel>
 
                 <StackPanel Margin="0, 10, 0, 0" Orientation="Horizontal" Visibility="{Binding Path=BindingModel.IsDownloaded, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}">
@@ -89,38 +89,38 @@
             </StackPanel>
 
             <Button Style="{StaticResource SkipBackAppBarButtonStyle}" 
-                Command="{Binding Path=SkipBackCommand, Mode=OneTime}"
-                Margin="10, 0, 0, 0"
-                VerticalAlignment="Top"
-                AutomationProperties.Name=""
-                Grid.Column="2"
-                Canvas.ZIndex="100"/>
+                    Command="{Binding Path=SkipBackCommand, Mode=OneTime}"
+                    Margin="10, 0, 0, 0"
+                    VerticalAlignment="Top"
+                    AutomationProperties.Name=""
+                    Grid.Column="2"
+                    Canvas.ZIndex="100"/>
             <Button Style="{StaticResource PlayAppBarButtonStyle}"  
-                Visibility="{Binding Path=BindingModel.IsPlaying, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}" 
-                Command="{Binding Path=PlayCommand, Mode=OneTime}"
-                VerticalAlignment="Top"
-                AutomationProperties.Name=""
-                Grid.Column="3"
-                Canvas.ZIndex="100"/>
+                    Visibility="{Binding Path=BindingModel.IsPlaying, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}" 
+                    Command="{Binding Path=PlayCommand, Mode=OneTime}"
+                    VerticalAlignment="Top"
+                    AutomationProperties.Name=""
+                    Grid.Column="3"
+                    Canvas.ZIndex="100"/>
             <Button Style="{StaticResource PauseAppBarButtonStyle}" 
-                Visibility="{Binding Path=BindingModel.IsPlaying, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" 
-                Command="{Binding Path=PauseCommand, Mode=OneTime}"
-                VerticalAlignment="Top"
-                AutomationProperties.Name=""
-                Grid.Column="3"
-                Canvas.ZIndex="100"/>
+                    Visibility="{Binding Path=BindingModel.IsPlaying, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" 
+                    Command="{Binding Path=PauseCommand, Mode=OneTime}"
+                    VerticalAlignment="Top"
+                    AutomationProperties.Name=""
+                    Grid.Column="3"
+                    Canvas.ZIndex="100"/>
             <Button Style="{StaticResource SkipAheadAppBarButtonStyle}"  
-                Command="{Binding Path=SkipAheadCommand, Mode=OneTime}"
-                VerticalAlignment="Top"
-                AutomationProperties.Name=""
-                Grid.Column="4"
-                Canvas.ZIndex="100"/>
+                    Command="{Binding Path=SkipAheadCommand, Mode=OneTime}"
+                    VerticalAlignment="Top"
+                    AutomationProperties.Name=""
+                    Grid.Column="4"
+                    Canvas.ZIndex="100"/>
 
             <Button Style="{StaticResource MoreAppBarButtonStyle}" 
-                Command="{Binding Path=ShowMoreCommand, Mode=OneTime}"
-                AutomationProperties.Name=""
-                Grid.Column="5"
-                Canvas.ZIndex="100"/>
+                    Command="{Binding Path=ShowMoreCommand, Mode=OneTime}"
+                    AutomationProperties.Name=""
+                    Grid.Column="5"
+                    Canvas.ZIndex="100"/>
 
         </Grid>
 

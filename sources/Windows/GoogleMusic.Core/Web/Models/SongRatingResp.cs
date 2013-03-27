@@ -7,6 +7,6 @@ namespace OutcoldSolutions.GoogleMusic.Web.Models
     {
         public string Id { get; set; }
 
-        public int Rating { get; set; }
+        public byte Rating { get; set; }
     }
 }

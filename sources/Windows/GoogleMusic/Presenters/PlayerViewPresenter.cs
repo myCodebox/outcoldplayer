@@ -45,9 +45,13 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 () => this.BindingModel.CurrentPosition,
                 async (sender, args) =>
                     {
-                        if (Math.Abs(this.progressPosition - this.BindingModel.CurrentPosition) > 1)
+                        if (this.BindingModel.IsPlaying)
                         {
-                            await this.mediaElement.SetPositionAsync(TimeSpan.FromSeconds(this.BindingModel.CurrentPosition));
+                            double currentPosition = this.BindingModel.CurrentPosition;
+                            if (Math.Abs(this.progressPosition - currentPosition) > 1)
+                            {
+                                await this.mediaElement.SetPositionAsync(TimeSpan.FromSeconds(currentPosition));
+                            }
                         }
                     });
 
@@ -72,7 +76,13 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.queueService.StateChanged += async (sender, args) => await this.Dispatcher.RunAsync(
                 () =>
                     {
-                        this.BindingModel.CurrentSong = args.CurrentSong == null ? null : new SongBindingModel(args.CurrentSong);
+                        if (args.State == QueueState.Busy || args.State == QueueState.Stopped)
+                        {
+                            this.BindingModel.CurrentPosition = 0d;
+                            this.BindingModel.TotalSeconds = 0d;
+                        }
+
+                        this.BindingModel.CurrentSong = args.CurrentSong;
                         this.BindingModel.State = args.State;
                         this.UpdateCommands();
                     });

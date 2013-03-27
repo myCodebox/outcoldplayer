@@ -25,13 +25,13 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         where TView : IPageView
     {
         private readonly IPlayQueueService playQueueService;
-        private readonly ISongMetadataEditService metadataEditService;
+        private readonly ISongsService metadataEditService;
         private readonly IPlaylistsService playlistsService;
 
         public PlaylistPageViewPresenterBase(IDependencyResolverContainer container)
         {
             this.playQueueService = container.Resolve<IPlayQueueService>();
-            this.metadataEditService = container.Resolve<ISongMetadataEditService>();
+            this.metadataEditService = container.Resolve<ISongsService>();
             this.playlistsService = container.Resolve<IPlaylistsService>();
 
             this.PlaySongCommand = new DelegateCommand(this.Play, () => this.BindingModel != null && this.BindingModel.SelectedSong != null);
@@ -108,7 +108,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             if (ratingEventArgs != null)
             {
                 this.Logger.LogTask(this.metadataEditService.UpdateRatingAsync(
-                        (SongBindingModel)ratingEventArgs.CommandParameter, (byte)ratingEventArgs.Value));
+                        ((SongBindingModel)ratingEventArgs.CommandParameter).Metadata, (byte)ratingEventArgs.Value));
             }
         }
 

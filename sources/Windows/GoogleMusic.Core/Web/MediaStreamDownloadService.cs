@@ -14,7 +14,6 @@ namespace OutcoldSolutions.GoogleMusic.Web
     using OutcoldSolutions.Diagnostics;
 
     using Windows.Foundation;
-    using Windows.Storage;
     using Windows.Storage.Streams;
 
     public class MediaStreamDownloadService : IMediaStreamDownloadService
@@ -123,8 +122,8 @@ namespace OutcoldSolutions.GoogleMusic.Web
             private readonly int endFilled;
             private readonly int contentLength;
 
+            private readonly byte[] readBuffer = new byte[DefaultBufferSize];
             private byte[] data;
-            private byte[] readBuffer = new byte[DefaultBufferSize];
 
             private CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
             private Stream networkStream;
@@ -396,9 +395,12 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
                         lock (this.locker)
                         {
-                            Array.Copy(this.readBuffer, 0, this.data, (int)this.readPosition, read);
-                            this.readPosition += (ulong)read;
-                            downloadProgress = (double)this.readPosition / (double)this.contentLength;
+                            if (this.data != null)
+                            {
+                                Array.Copy(this.readBuffer, 0, this.data, (int)this.readPosition, read);
+                                this.readPosition += (ulong)read;
+                                downloadProgress = (double)this.readPosition / (double)this.contentLength;
+                            }
                         }
 
                         this.RaiseDownloadProgressChanged(downloadProgress);

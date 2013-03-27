@@ -21,11 +21,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     public class CurrentPlaylistPageViewPresenter : PagePresenterBase<ICurrentPlaylistPageView, CurrentPlaylistPageViewBindingModel>
     {
         private readonly IPlayQueueService playQueueService;
-        private readonly ISongMetadataEditService metadataEditService;
+        private readonly ISongsService metadataEditService;
 
         public CurrentPlaylistPageViewPresenter(
             IPlayQueueService playQueueService,
-            ISongMetadataEditService metadataEditService)
+            ISongsService metadataEditService)
         {
             this.playQueueService = playQueueService;
             this.metadataEditService = metadataEditService;
@@ -83,7 +83,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             if (ratingEventArgs != null)
             {
                 this.Logger.LogTask(this.metadataEditService.UpdateRatingAsync(
-                        (SongBindingModel)ratingEventArgs.CommandParameter, (byte)ratingEventArgs.Value));
+                        ((SongBindingModel)ratingEventArgs.CommandParameter).Metadata, (byte)ratingEventArgs.Value));
             }
         }
 

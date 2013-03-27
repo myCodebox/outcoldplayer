@@ -14,7 +14,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
     using OutcoldSolutions.GoogleMusic.Presenters;
     using OutcoldSolutions.GoogleMusic.Services;
 
-    using Windows.ApplicationModel.Store;
     using Windows.UI.ViewManagement;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
@@ -110,7 +109,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
                 {
                     if (currentSong.Rating != e.NewValue)
                     {
-                        this.logger.LogTask(ApplicationBase.Container.Resolve<ISongMetadataEditService>().UpdateRatingAsync(currentSong, (byte)e.NewValue));
+                        this.logger.LogTask(ApplicationBase.Container.Resolve<ISongsService>().UpdateRatingAsync(currentSong, (byte)e.NewValue));
                     }
                 }
             }

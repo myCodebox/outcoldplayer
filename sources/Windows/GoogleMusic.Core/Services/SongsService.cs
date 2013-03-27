@@ -7,31 +7,36 @@ namespace OutcoldSolutions.GoogleMusic.Services
     using System.Threading.Tasks;
 
     using OutcoldSolutions.Diagnostics;
-    using OutcoldSolutions.GoogleMusic.BindingModels;
+    using OutcoldSolutions.GoogleMusic.Models;
+    using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Web;
 
-    public interface ISongMetadataEditService
+    public interface ISongsService
     {
-        Task UpdateRatingAsync(SongBindingModel song, byte newRating);
+        Task UpdateRatingAsync(Song song, byte newRating);
     }
 
-    public class SongMetadataEditService : ISongMetadataEditService
+    public class SongsService : ISongsService
     {
-        private readonly IDispatcher dispatcher;
+        private readonly IEventAggregator eventAggregator;
         private readonly ISongsWebService songsWebService;
+        private readonly ISongsRepository songsRepository;
+
         private readonly ILogger logger;
 
-        public SongMetadataEditService(
+        public SongsService(
             ILogManager logManager,
-            IDispatcher dispatcher,
-            ISongsWebService songsWebService)
+            IEventAggregator eventAggregator,
+            ISongsWebService songsWebService,
+            ISongsRepository songsRepository)
         {
-            this.dispatcher = dispatcher;
+            this.eventAggregator = eventAggregator;
             this.songsWebService = songsWebService;
+            this.songsRepository = songsRepository;
             this.logger = logManager.CreateLogger("SongMetadataEditService");
         }
 
-        public async Task UpdateRatingAsync(SongBindingModel song, byte newRating)
+        public async Task UpdateRatingAsync(Song song, byte newRating)
         {
             if (song == null)
             {
@@ -45,26 +50,28 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
             if (this.logger.IsDebugEnabled)
             {
-                this.logger.Debug("Updating rating for song '{0}' to rating '{1}' from '{2}'.", song.Metadata.ProviderSongId, newRating, song.Metadata.Rating);
+                this.logger.Debug("Updating rating for song '{0}' to rating '{1}' from '{2}'.", song.ProviderSongId, newRating, song.Rating);
             }
 
-            await this.dispatcher.RunAsync(() => song.Rating = newRating);
-
-            var ratingResp = await this.songsWebService.UpdateRatingAsync(song.Metadata.ProviderSongId, newRating);
+            var ratingResp = await this.songsWebService.UpdateRatingAsync(song.ProviderSongId, newRating);
             
             if (this.logger.IsDebugEnabled)
             {
-                this.logger.Debug("Rating updated for song: {0}.", song.Metadata.ProviderSongId);
+                this.logger.Debug("Rating updated for song: {0}.", song.ProviderSongId);
             }
 
             foreach (var songUpdate in ratingResp.Songs)
             {
                 var songRatingResp = songUpdate;
 
-                if (string.Equals(songUpdate.Id, song.Metadata.ProviderSongId))
+                if (string.Equals(songUpdate.Id, song.ProviderSongId))
                 {
-                    await this.dispatcher.RunAsync(() => song.Rating = songRatingResp.Rating);
-
+                    song.Rating = songRatingResp.Rating;
+                    
+                    var songs = new[] { song };
+                    await this.songsRepository.UpdateAsync(songs);
+                    this.eventAggregator.Publish(new SongsUpdatedEvent(songs));
+                    
                     if (this.logger.IsDebugEnabled)
                     {
                         this.logger.Debug("Song updated: {0}, Rating: {1}.", songUpdate.Id, songUpdate.Rating);
