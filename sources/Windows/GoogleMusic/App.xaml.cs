@@ -50,16 +50,7 @@ namespace OutcoldSolutions.GoogleMusic
                 Registration.RegisterPages(registration);
                 Registration.RegisterSettingViews(registration);
                 Registration.RegisterPopupViews(registration);
-
-                registration.Register<IPlayerView>()
-                            .InjectionRule<BindingModelBase, PlayerViewPresenter>()
-                            .As<PlayerView>();
-
-                registration.Register<PlayerViewPresenter>().AsSingleton();
-
-                registration.Register<LinksRegionView>()
-                            .InjectionRule<BindingModelBase, LinksRegionViewPresenter>();
-                registration.Register<LinksRegionViewPresenter>();
+                Registration.RegisterViews(registration);
 
                 // Settings
                 registration.Register<ISearchService>().AsSingleton<SearchService>();
@@ -172,11 +163,8 @@ namespace OutcoldSolutions.GoogleMusic
                         Opacity = 0.02
                     });
 
-            var playerView = Container.Resolve<IPlayerView>();
-            mainFrameRegionProvider.SetContent(MainFrameRegion.BottomAppBarRightZone, playerView);
-            mainFrameRegionProvider.SetContent(
-                MainFrameRegion.SnappedView,
-                new SnappedPlayerView() { DataContext = playerView.GetPresenter<PlayerViewPresenter>() });
+            mainFrameRegionProvider.SetContent(MainFrameRegion.BottomAppBarRightZone, Container.Resolve<IPlayerView>());
+            mainFrameRegionProvider.SetContent(MainFrameRegion.SnappedView, Container.Resolve<ISnappedPlayerView>());
 
             var page = (Page)Window.Current.Content;
             VisualTreeHelperEx.GetVisualChild<Panel>(page).Children.Add(Container.Resolve<MediaElement>());

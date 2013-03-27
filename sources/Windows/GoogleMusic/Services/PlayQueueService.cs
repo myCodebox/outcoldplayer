@@ -166,6 +166,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 this.songsQueue.Clear();
                 this.songsQueue.AddRange(songs);
 
+                this.RaiseQueueChanged();
+
                 this.UpdateOrder(songIndex);
 
                 if (this.currentQueueIndex >= 0)
@@ -315,6 +317,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 {
                     this.queueOrder.AddRange(range);
                 }
+
+                this.RaiseQueueChanged();
             });
         }
 

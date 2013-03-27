@@ -124,5 +124,26 @@ namespace OutcoldSolutions.GoogleMusic
             registration.Register<PlayerMorePopupViewBindingModel>();
             registration.Register<PlayerMorePopupViewPresenter>();
         }
+
+        public static void RegisterViews(IRegistrationContext registration)
+        {
+            registration.Register<IPlayerView>()
+                        .InjectionRule<BindingModelBase, PlayerViewPresenter>()
+                        .AsSingleton<PlayerView>();
+
+            registration.Register<PlayerBindingModel>().AsSingleton();
+            registration.Register<PlayerViewPresenter>().AsSingleton();
+
+            registration.Register<ISnappedPlayerView>()
+                        .InjectionRule<BindingModelBase, SnappedPlayerViewPresenter>()
+                        .AsSingleton<SnappedPlayerView>();
+
+            registration.Register<SnappedPlayerBindingModel>().AsSingleton();
+            registration.Register<SnappedPlayerViewPresenter>().AsSingleton();
+
+            registration.Register<LinksRegionView>()
+                        .InjectionRule<BindingModelBase, LinksRegionViewPresenter>();
+            registration.Register<LinksRegionViewPresenter>();
+        }
     }
 }

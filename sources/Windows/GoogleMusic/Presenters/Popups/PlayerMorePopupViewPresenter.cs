@@ -35,8 +35,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
 
         public DelegateCommand RepeatAllCommand { get; set; }
 
-        public DelegateCommand LockScreenCommand { get; set; }
-
         protected override void OnInitialized()
         {
             base.OnInitialized();

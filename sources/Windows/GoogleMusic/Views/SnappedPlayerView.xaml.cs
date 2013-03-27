@@ -13,12 +13,16 @@ namespace OutcoldSolutions.GoogleMusic.Views
     using OutcoldSolutions.GoogleMusic.Controls;
     using OutcoldSolutions.GoogleMusic.Presenters;
     using OutcoldSolutions.GoogleMusic.Services;
+    using OutcoldSolutions.Views;
 
-    using Windows.UI.ViewManagement;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
 
-    public sealed partial class SnappedPlayerView : UserControl
+    public interface ISnappedPlayerView : IView
+    {
+    }
+
+    public sealed partial class SnappedPlayerView : ViewBase, ISnappedPlayerView
     {
         private readonly ILogger logger;
 
@@ -41,7 +45,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             this.Loaded -= this.OnLoaded;
-            var playerViewPresenter = this.DataContext as PlayerViewPresenter;
+            var playerViewPresenter = this.DataContext as SnappedPlayerViewPresenter;
             if (playerViewPresenter != null)
             {
                 this.playerBindingModel = playerViewPresenter.BindingModel;
@@ -80,7 +84,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
                         UseStaticAnchor = true
                     };
                     this.adControl.ErrorOccurred += this.AdControlOnErrorOccurred;
-                    Grid.SetRow(this.adControl, 7);
+                    Grid.SetRow(this.adControl, 6);
                     this.SnappedGrid.Children.Add(this.adControl);
                 }
             }
@@ -91,17 +95,9 @@ namespace OutcoldSolutions.GoogleMusic.Views
             this.logger.LogErrorException(adErrorEventArgs.Error);
         }
 
-        private void AddToQueue(object sender, RoutedEventArgs e)
-        {
-            if (ApplicationView.TryUnsnap())
-            {
-                ApplicationBase.Container.Resolve<INavigationService>().NavigateTo<IStartPageView>();
-            }
-        }
-
         private void RatingOnValueChanged(object sender, ValueChangedEventArgs e)
         {
-            var playerViewPresenter = this.DataContext as PlayerViewPresenter;
+            var playerViewPresenter = this.DataContext as SnappedPlayerViewPresenter;
             if (playerViewPresenter != null)
             {
                 var currentSong = playerViewPresenter.BindingModel.CurrentSong;
