@@ -18,6 +18,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     {
         private readonly IGoogleMusicSessionService sessionService;
         private readonly IPlayQueueService queueService;
+        private readonly INavigationService navigationService;
         private readonly IMediaElementContainer mediaElement;
         
         private double progressPosition;
@@ -25,20 +26,20 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         public PlayerViewPresenter(
             IMediaElementContainer mediaElementContainer,
             IGoogleMusicSessionService sessionService,
-            IPlayQueueService queueService)
+            IPlayQueueService queueService,
+            INavigationService navigationService)
         {
             this.mediaElement = mediaElementContainer;
             this.sessionService = sessionService;
             this.queueService = queueService;
+            this.navigationService = navigationService;
 
             this.BindingModel = new PlayerBindingModel();
             
-            this.BindingModel.SkipBackCommand = new DelegateCommand(this.PreviousSong, () => !this.BindingModel.IsBusy && this.queueService.CanSwitchToPrevious());
-            this.BindingModel.PlayCommand = new DelegateCommand(async () => await this.PlayAsync(), () => !this.BindingModel.IsBusy && (this.BindingModel.State == QueueState.Stopped || this.BindingModel.State == QueueState.Paused));
-            this.BindingModel.PauseCommand = new DelegateCommand(async () => await this.PauseAsync(), () => !this.BindingModel.IsBusy && this.BindingModel.IsPlaying);
-            this.BindingModel.SkipAheadCommand = new DelegateCommand(this.NextSong, () => !this.BindingModel.IsBusy && this.queueService.CanSwitchToNext());
-
-            this.BindingModel.UpdateBindingModel();
+            this.SkipBackCommand = new DelegateCommand(this.PreviousSong, () => !this.BindingModel.IsBusy && this.queueService.CanSwitchToPrevious());
+            this.PlayCommand = new DelegateCommand(async () => await this.PlayAsync(), () => !this.BindingModel.IsBusy && (this.BindingModel.State == QueueState.Stopped || this.BindingModel.State == QueueState.Paused));
+            this.PauseCommand = new DelegateCommand(async () => await this.PauseAsync(), () => !this.BindingModel.IsBusy && this.BindingModel.IsPlaying);
+            this.SkipAheadCommand = new DelegateCommand(this.NextSong, () => !this.BindingModel.IsBusy && this.queueService.CanSwitchToNext());
 
             this.BindingModel.Subscribe(
                 () => this.BindingModel.CurrentPosition,
@@ -73,55 +74,73 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     {
                         this.BindingModel.CurrentSong = args.CurrentSong == null ? null : new SongBindingModel(args.CurrentSong);
                         this.BindingModel.State = args.State;
-                        this.BindingModel.UpdateBindingModel();
+                        this.UpdateCommands();
                     });
 
-            this.BindingModel.ShowMoreCommand = new DelegateCommand(() =>
-                {
-                    this.MainFrame.ShowPopup<IPlayerMorePopupView>(PopupRegion.AppToolBarRight);
-                });
+            this.ShowMoreCommand = new DelegateCommand(() => this.MainFrame.ShowPopup<IPlayerMorePopupView>(PopupRegion.AppToolBarRight));
+            this.NavigateToQueueView = new DelegateCommand(() => this.navigationService.NavigateTo<ICurrentPlaylistPageView>().SelectPlayingSong());
         }
 
         public PlayerBindingModel BindingModel { get; private set; }
-        
+
+        public DelegateCommand SkipBackCommand { get; set; }
+
+        public DelegateCommand PlayCommand { get; set; }
+
+        public DelegateCommand PauseCommand { get; set; }
+
+        public DelegateCommand SkipAheadCommand { get; set; }
+
+        public DelegateCommand ShowMoreCommand { get; set; }
+
+        public DelegateCommand NavigateToQueueView { get; set; }
+
         private async void NextSong()
         {
             await this.queueService.NextSongAsync();
-            this.BindingModel.UpdateBindingModel();
+            this.UpdateCommands();
         }
 
         private async void PreviousSong()
         {
             await this.queueService.PreviousSongAsync();
-            this.BindingModel.UpdateBindingModel();
+            this.UpdateCommands();
         }
 
         private async Task PlayAsync()
         {
             await this.queueService.PlayAsync();
-            this.BindingModel.UpdateBindingModel();
+            this.UpdateCommands();
         }
 
         private async Task PauseAsync()
         {
             await this.queueService.PauseAsync();
-            this.BindingModel.UpdateBindingModel();
+            this.UpdateCommands();
         }
 
         private async Task StopAsync()
         {
             await this.queueService.StopAsync();
-            this.BindingModel.UpdateBindingModel();
+            this.UpdateCommands();
         }
         
-        private void CurrentSongStreamOnDownloadProgressChanged(object sender, double d)
+        private async void CurrentSongStreamOnDownloadProgressChanged(object sender, double d)
         {
-            this.Dispatcher.RunAsync(
+            await this.Dispatcher.RunAsync(
                 () =>
                     {
                         this.Logger.Info("Download progress changed to {0}", d);
                         this.BindingModel.DownloadProgress = d;
                     });
+        }
+
+        private void UpdateCommands()
+        {
+            this.PauseCommand.RaiseCanExecuteChanged();
+            this.PlayCommand.RaiseCanExecuteChanged();
+            this.SkipAheadCommand.RaiseCanExecuteChanged();
+            this.SkipBackCommand.RaiseCanExecuteChanged();
         }
     }
 }

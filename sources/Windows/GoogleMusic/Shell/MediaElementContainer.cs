@@ -65,6 +65,7 @@ namespace OutcoldSolutions.GoogleMusic.Shell
                 CoreDispatcherPriority.High,
                 () =>
                     {
+                        this.mediaElement.Position = TimeSpan.FromMilliseconds(0);
                         this.mediaElement.SetSource(stream, mimeType);
                         this.mediaElement.Play();
                     });

@@ -32,7 +32,7 @@
                     StepFrequency="0.01" 
                     Width="140" 
                     HorizontalAlignment="Center" 
-                    ThumbToolTipValueConverter="{StaticResource PercentageStringFormatConverter}"/>
+                    IsThumbToolTipEnabled="False"/>
 
                 <TextBlock Margin="0, 5, 0, 0"
                            Text="Volume" 

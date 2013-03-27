@@ -238,7 +238,7 @@
                                 <Setter Property="Template">
                                     <Setter.Value>
                                         <ControlTemplate TargetType="Thumb">
-                                            <Canvas Margin="-15, -30, 0, 0" Width="20" Height="23">
+                                            <Canvas Margin="-15, -30, 0, 0" Width="20" Height="23" Background="Transparent">
                                                 <Ellipse Fill="Transparent"
                                                          Stroke="{TemplateBinding BorderBrush}"
                                                          StrokeThickness="2"

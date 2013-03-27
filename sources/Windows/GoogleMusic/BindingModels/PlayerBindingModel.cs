@@ -15,19 +15,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         private double downloadProgress;
 
         private SongBindingModel currentSong;
-
-        public DelegateCommand SkipBackCommand { get; set; }
-
-        public DelegateCommand PlayCommand { get; set; }
-
-        public DelegateCommand PauseCommand { get; set; }
-
-        public DelegateCommand SkipAheadCommand { get; set; }
-
-        public DelegateCommand LockScreenCommand { get; set; }
-
-        public DelegateCommand ShowMoreCommand { get; set; }
-
+        
         public bool IsPlaying
         {
             get
@@ -122,14 +110,6 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             {
                 return this.DownloadProgress <= 0.001 || this.DownloadProgress >= 0.999;
             }
-        }
-
-        public void UpdateBindingModel()
-        {
-            this.PauseCommand.RaiseCanExecuteChanged();
-            this.PlayCommand.RaiseCanExecuteChanged();
-            this.SkipAheadCommand.RaiseCanExecuteChanged();
-            this.SkipBackCommand.RaiseCanExecuteChanged();
         }
     }
 }

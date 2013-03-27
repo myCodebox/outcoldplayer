@@ -9,95 +9,122 @@
     d:DesignHeight="100"
     d:DesignWidth="800">
 
-    <Grid DataContext="{Binding Path=BindingModel, Mode=OneTime}" Height="100" Width="720">
-        
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="110" />
-            <ColumnDefinition Width="200" />
-            <ColumnDefinition Width="410" />
-        </Grid.ColumnDefinitions>
-        
+    <Grid Width="610" Height="100">
         <Grid.RowDefinitions>
-            <RowDefinition Height="15" />
+            <RowDefinition Height="10" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-
-        <Button Height="90" Width="90" Margin="10, 5" Click="NavigateToCurrentPlaylist" Grid.Column="0" Grid.RowSpan="2">
-            <Button.Template>
-                <ControlTemplate>
-                    <Image Height="90" Width="90" 
-                           Source="{Binding Path=CurrentSong.Metadata.AlbumArtUrl, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=90, Mode=OneWay}"
-                           Stretch="None"/>
-                </ControlTemplate>
-            </Button.Template>
-        </Button>
-
-        <Slider Grid.Row="0" Grid.ColumnSpan="2" Grid.Column="1"
-                Width="610"
-                ThumbToolTipValueConverter="{StaticResource DoubleToTimeConverter}"
-                Value="{Binding Path=CurrentPosition, Mode=TwoWay}"
-                Maximum="{Binding Path=TotalSeconds, Mode=OneWay}" 
-                Visibility="{Binding Path=CurrentSong, Mode=OneWay, Converter={StaticResource NullToInvisibilityConverter}}" />
-
-        <Button Click="NavigateToCurrentPlaylist" Grid.Row="1" Grid.Column="1" Margin="0, 5" Width="200" 
-                Visibility="{Binding Path=CurrentSong, Mode=OneWay, Converter={StaticResource NullToInvisibilityConverter}}">
-            <Button.Template>
-                <ControlTemplate>
-                    <Grid >
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                            
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Grid.Column="0">
-                            <TextBlock Style="{StaticResource SmallTextStyle}" Text="{Binding Path=CurrentPosition, Mode=OneWay, Converter={StaticResource DoubleToTimeConverter}}" />
-                            <TextBlock Style="{StaticResource SmallTextStyle}" Text="/"  Margin="5, 0"/>
-                            <TextBlock Style="{StaticResource SmallTextStyle}" Text="{Binding Path=CurrentSong.Duration, Converter={StaticResource DoubleToTimeConverter}, Mode=OneWay}" />
-                        </StackPanel>
-
-                        <StackPanel Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Right" Visibility="{Binding Path=IsDownloaded, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}">
-                            <TextBlock HorizontalAlignment="Left" Style="{StaticResource SmallTextStyle}">Buffering (</TextBlock>
-                            <TextBlock Style="{StaticResource SmallTextStyle}"  
-                                        Text="{Binding Path=DownloadProgress, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter=P0}"
-                                        HorizontalAlignment="Stretch"
-                                        TextAlignment="Right" />
-                            <TextBlock HorizontalAlignment="Left" Style="{StaticResource SmallTextStyle}">)</TextBlock>
-                        </StackPanel>
-
-                        <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Style="{StaticResource TitleTextStyle}" Text="{Binding Path=CurrentSong.Title, Mode=OneWay}" TextWrapping="NoWrap" TextTrimming="WordEllipsis"/>
-                        <TextBlock Grid.Row="2" Grid.ColumnSpan="2"  Style="{StaticResource SubtitleTextStyle}" Text="{Binding Path=CurrentSong.Artist, Mode=OneWay}" TextWrapping="NoWrap" TextTrimming="WordEllipsis"/>
-                    </Grid>
-                </ControlTemplate>
-            </Button.Template>
-        </Button>
-
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Row="2" Grid.Column="2" Width="410">
-            
-            <Button Style="{StaticResource SkipBackAppBarButtonStyle}" 
-                    Command="{Binding Path=SkipBackCommand, Mode=OneTime}"
-                    Margin="10, 0, 0, 0"
-                    VerticalAlignment="Top"/>
-            <Button Style="{StaticResource PlayAppBarButtonStyle}"  
-                    Visibility="{Binding Path=IsPlaying, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}" 
-                    Command="{Binding Path=PlayCommand, Mode=OneTime}"
-                    VerticalAlignment="Top"/>
-            <Button Style="{StaticResource PauseAppBarButtonStyle}" 
-                    Visibility="{Binding Path=IsPlaying, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" 
-                    Command="{Binding Path=PauseCommand, Mode=OneTime}"
-                    VerticalAlignment="Top"/>
-            <Button Style="{StaticResource SkipAheadAppBarButtonStyle}"  
-                    Command="{Binding Path=SkipAheadCommand, Mode=OneTime}"
-                    VerticalAlignment="Top"/>
-
-            <Button Style="{StaticResource MoreAppBarButtonStyle}" Grid.Column="2" Command="{Binding ShowMoreCommand, Mode=OneTime}" />
-            
-        </StackPanel>
         
+        <Slider Grid.Row="0"
+                Width="610"
+                IsThumbToolTipEnabled="False"
+                Value="{Binding Path=BindingModel.CurrentPosition, Mode=TwoWay}"
+                Maximum="{Binding Path=BindingModel.TotalSeconds, Mode=OneWay}" 
+                Visibility="{Binding Path=BindingModel.CurrentSong, Mode=OneWay, Converter={StaticResource NullToInvisibilityConverter}}"
+                Canvas.ZIndex="200"/>
+
+        <Grid Height="90" Width="610" Grid.Row="1">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="90" />
+                <ColumnDefinition Width="110" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <Button Height="80" 
+                    Width="80" 
+                    Margin="0, 0, 10, 5"
+                    Grid.Column="0" 
+                    Command="{Binding Path=NavigateToQueueView, Mode=OneTime}">
+                <Button.Template>
+                    <ControlTemplate>
+                        <Image Height="80" 
+                               Width="80" 
+                               Canvas.ZIndex="1"
+                               Source="{Binding Path=BindingModel.CurrentSong.Metadata.AlbumArtUrl, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=80, Mode=OneWay}"
+                               Stretch="None"/>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+
+            <Button Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="5" Margin="5, 0, 20, 10" 
+                    Command="{Binding Path=NavigateToQueueView, Mode=OneTime}"
+                    Canvas.ZIndex="50"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Bottom"
+                    Visibility="{Binding Path=BindingModel.CurrentSong, Mode=OneWay, Converter={StaticResource NullToInvisibilityConverter}}">
+                <Button.Template>
+                    <ControlTemplate>
+                        <StackPanel Orientation="Horizontal" >
+                            <TextBlock Style="{StaticResource TitleTextStyle}" Text="{Binding Path=BindingModel.CurrentSong.Title, Mode=OneWay}" TextWrapping="NoWrap" TextTrimming="WordEllipsis"/>
+                            <TextBlock Style="{StaticResource SubtitleTextStyle}" Margin="10, 0, 0, 0" Text="-" />
+                            <TextBlock Style="{StaticResource SubtitleTextStyle}" Margin="10, 0, 0, 0" Text="{Binding Path=BindingModel.CurrentSong.Artist, Mode=OneWay}" TextWrapping="NoWrap" TextTrimming="WordEllipsis"/>
+                        </StackPanel>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+
+            <StackPanel Grid.Column="1" 
+                        Margin="5, 0, 10, 0"
+                        Orientation="Vertical"
+                        Visibility="{Binding Path=BindingModel.CurrentSong, Mode=OneWay, Converter={StaticResource NullToInvisibilityConverter}}">
+
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Style="{StaticResource SmallTextStyle}" Text="{Binding Path=BindingModel.CurrentPosition, Mode=OneWay, Converter={StaticResource DoubleToTimeConverter}}" />
+                    <TextBlock Style="{StaticResource SmallTextStyle}" Text="/"  Margin="5, 0"/>
+                    <TextBlock Style="{StaticResource SmallTextStyle}" Text="{Binding Path=BindingModel.CurrentSong.Duration, Converter={StaticResource DoubleToTimeConverter}, Mode=OneWay}" />
+                </StackPanel>
+
+                <StackPanel Margin="0, 10, 0, 0" Orientation="Horizontal" Visibility="{Binding Path=BindingModel.IsDownloaded, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}">
+                    <TextBlock HorizontalAlignment="Left" Style="{StaticResource SmallTextStyle}">Buffering (</TextBlock>
+                    <TextBlock Style="{StaticResource SmallTextStyle}"  
+                           Text="{Binding Path=BindingModel.DownloadProgress, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter=P0}"
+                           HorizontalAlignment="Stretch"
+                           TextAlignment="Right" />
+                    <TextBlock HorizontalAlignment="Left" Style="{StaticResource SmallTextStyle}">)</TextBlock>
+                </StackPanel>
+            </StackPanel>
+
+            <Button Style="{StaticResource SkipBackAppBarButtonStyle}" 
+                Command="{Binding Path=SkipBackCommand, Mode=OneTime}"
+                Margin="10, 0, 0, 0"
+                VerticalAlignment="Top"
+                AutomationProperties.Name=""
+                Grid.Column="2"
+                Canvas.ZIndex="100"/>
+            <Button Style="{StaticResource PlayAppBarButtonStyle}"  
+                Visibility="{Binding Path=BindingModel.IsPlaying, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}" 
+                Command="{Binding Path=PlayCommand, Mode=OneTime}"
+                VerticalAlignment="Top"
+                AutomationProperties.Name=""
+                Grid.Column="3"
+                Canvas.ZIndex="100"/>
+            <Button Style="{StaticResource PauseAppBarButtonStyle}" 
+                Visibility="{Binding Path=BindingModel.IsPlaying, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" 
+                Command="{Binding Path=PauseCommand, Mode=OneTime}"
+                VerticalAlignment="Top"
+                AutomationProperties.Name=""
+                Grid.Column="3"
+                Canvas.ZIndex="100"/>
+            <Button Style="{StaticResource SkipAheadAppBarButtonStyle}"  
+                Command="{Binding Path=SkipAheadCommand, Mode=OneTime}"
+                VerticalAlignment="Top"
+                AutomationProperties.Name=""
+                Grid.Column="4"
+                Canvas.ZIndex="100"/>
+
+            <Button Style="{StaticResource MoreAppBarButtonStyle}" 
+                Command="{Binding Path=ShowMoreCommand, Mode=OneTime}"
+                AutomationProperties.Name=""
+                Grid.Column="5"
+                Canvas.ZIndex="100"/>
+
+        </Grid>
+
     </Grid>
+    
+    
 </views:ViewBase>
