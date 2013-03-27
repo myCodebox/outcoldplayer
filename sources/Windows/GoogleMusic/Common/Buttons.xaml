@@ -119,5 +119,11 @@
         <Setter Property="AutomationProperties.Name" Value="List"/>
         <Setter Property="Content" Value="&#xE14C;"/>
     </Style>
-    
+
+    <Style x:Key="VolumeAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
+        <Setter Property="AutomationProperties.AutomationId" Value="VolumeAppBarButton"/>
+        <Setter Property="AutomationProperties.Name" Value="Volume"/>
+        <Setter Property="Content" Value="&#xE15D;"/>
+    </Style>
+
 </ResourceDictionary>

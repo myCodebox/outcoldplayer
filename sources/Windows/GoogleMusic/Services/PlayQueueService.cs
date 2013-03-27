@@ -40,6 +40,10 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         private QueueState state;
 
+        private bool isShuffled;
+
+        private bool isRepeatAll;
+
         public PlayQueueService(
             ILogManager logManager,
             IMediaElementContainer mediaElement,
@@ -93,9 +97,47 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         public event EventHandler<double> DownloadProgress;
 
-        public bool IsShuffled { get; private set; }
+        public bool IsShuffled
+        {
+            get
+            {
+                return this.isShuffled;
+            }
+            
+            set
+            {
+                if (this.isShuffled != value)
+                {
+                    this.isShuffled = value;
+                    this.settingsService.SetValue("IsShuffleEnabled", this.isShuffled);
 
-        public bool IsRepeatAll { get; private set; }
+                    lock (this.queueOrder)
+                    {
+                        this.UpdateOrder();
+                    }
+
+                    this.RaiseQueueChanged();
+                }
+            }
+        }
+
+        public bool IsRepeatAll
+        {
+            get
+            {
+                return this.isRepeatAll;
+            }
+            
+            set
+            {
+                if (this.isRepeatAll != value)
+                {
+                    this.isRepeatAll = value;
+                    this.settingsService.SetValue("IsRepeatAllEnabled", this.isRepeatAll);
+                    this.RaiseQueueChanged();
+                }
+            }
+        }
 
         public QueueState State
         {
@@ -232,21 +274,24 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 throw new InvalidOperationException("Queue is busy");
             }
 
-            if (this.currentQueueIndex == (this.queueOrder.Count - 1) && this.IsRepeatAll)
+            if (this.CanSwitchToNext())
             {
-                this.currentQueueIndex = 0;
-            }
-            else
-            {
-                this.currentQueueIndex++;
-            }
+                if (this.currentQueueIndex == (this.queueOrder.Count - 1) && this.IsRepeatAll)
+                {
+                    this.currentQueueIndex = 0;
+                }
+                else
+                {
+                    this.currentQueueIndex++;
+                }
 
-            await this.PlaySongAsyncInternal(this.currentQueueIndex);
+                await this.PlaySongAsyncInternal(this.currentQueueIndex);
+            }
         }
 
         public bool CanSwitchToNext()
         {
-            return this.currentQueueIndex < (this.queueOrder.Count - 1) || this.IsRepeatAll;
+            return this.currentQueueIndex < (this.queueOrder.Count - 1) || (this.IsRepeatAll && this.queueOrder.Count > 0);
         }
 
         public async Task PreviousSongAsync()
@@ -256,21 +301,24 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 throw new InvalidOperationException("Queue is busy");
             }
 
-            if (this.currentQueueIndex != 0)
+            if (this.CanSwitchToPrevious())
             {
-                this.currentQueueIndex--;
-            }
-            else if (this.IsRepeatAll)
-            {
-                this.currentQueueIndex = this.queueOrder.Count - 1;
-            }
+                if (this.currentQueueIndex != 0)
+                {
+                    this.currentQueueIndex--;
+                }
+                else if (this.IsRepeatAll)
+                {
+                    this.currentQueueIndex = this.queueOrder.Count - 1;
+                }
 
-            await this.PlaySongAsyncInternal(this.currentQueueIndex);
+                await this.PlaySongAsyncInternal(this.currentQueueIndex);
+            }
         }
 
         public bool CanSwitchToPrevious()
         {
-            return this.currentQueueIndex > 0 || this.IsRepeatAll;
+            return this.currentQueueIndex > 0 || (this.IsRepeatAll && this.queueOrder.Count > 0);
         }
 
         public async Task PauseAsync()
@@ -372,38 +420,6 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     this.RaiseQueueChanged();
                 }
             });
-        }
-
-        public async Task SetRepeatAllAsync(bool repeatAll)
-        {
-            await Task.Run(() =>
-                {
-                    if (this.IsRepeatAll != repeatAll)
-                    {
-                        this.IsRepeatAll = repeatAll;
-                        this.settingsService.SetValue("IsRepeatAllEnabled", this.IsRepeatAll);
-                        this.RaiseQueueChanged();
-                    }
-                });
-        }
-
-        public async Task SetShuffledAsync(bool isShuffled)
-        {
-            await Task.Run(() =>
-                {
-                    if (isShuffled != this.IsShuffled)
-                    {
-                        this.IsShuffled = isShuffled;
-                        this.settingsService.SetValue("IsShuffleEnabled", this.IsShuffled);
-
-                        lock (this.queueOrder)
-                        {
-                            this.UpdateOrder();
-                        }
-
-                        this.RaiseQueueChanged();
-                    }
-                });
         }
 
         public IEnumerable<Song> GetQueue()

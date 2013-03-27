@@ -110,5 +110,10 @@ namespace OutcoldSolutions.GoogleMusic.Views
                 }
             }
         }
+
+        private void VolumeButtonClick(object sender, RoutedEventArgs e)
+        {
+            this.VolumePopup.IsOpen = true;
+        }
     }
 }

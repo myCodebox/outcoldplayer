@@ -4,32 +4,48 @@
 
 namespace OutcoldSolutions.GoogleMusic.BindingModels.Popups
 {
-    using OutcoldSolutions.BindingModels;
+    using System;
+
+    using OutcoldSolutions.GoogleMusic.Models;
+    using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Shell;
 
-    public class PlayerMorePopupViewBindingModel : BindingModelBase
+    public class PlayerMorePopupViewBindingModel : DisposableBindingModelBase
     {
         private readonly IMediaElementContainer mediaElementContainer;
-
-        private bool isShuffleEnabled;
-        private bool isRepeatAllEnabled;
+        private readonly IPlayQueueService playQueueService;
+        private readonly IEventAggregator eventAggregator;
+        private readonly IDispatcher dispatcher;
 
         public PlayerMorePopupViewBindingModel(
-            IMediaElementContainer mediaElementContainer)
+            IMediaElementContainer mediaElementContainer,
+            IPlayQueueService playQueueService,
+            IEventAggregator eventAggregator,
+            IDispatcher dispatcher)
         {
             this.mediaElementContainer = mediaElementContainer;
+            this.playQueueService = playQueueService;
+            this.eventAggregator = eventAggregator;
+            this.dispatcher = dispatcher;
+
+            this.RegisterForDispose(this.eventAggregator.GetEvent<QueueChangeEvent>().Subscribe(
+                async (e) => await this.dispatcher.RunAsync(() =>
+                                {
+                                    this.RaisePropertyChanged(() => this.IsShuffleEnabled);
+                                    this.RaisePropertyChanged(() => this.IsRepeatAllEnabled);
+                                })));
         }
 
         public bool IsShuffleEnabled
         {
             get
             {
-                return this.isShuffleEnabled;
+                return this.playQueueService.IsShuffled;
             }
 
             set
             {
-                this.SetValue(ref this.isShuffleEnabled, value);
+                this.playQueueService.IsShuffled = value;
             }
         }
 
@@ -37,12 +53,12 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels.Popups
         {
             get
             {
-                return this.isRepeatAllEnabled;
+                return this.playQueueService.IsRepeatAll;
             }
 
             set
             {
-                this.SetValue(ref this.isRepeatAllEnabled, value);
+                this.playQueueService.IsRepeatAll = value;
             }
         }
 

@@ -27,33 +27,32 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             : base(mediaElementContainer, sessionService, queueService, navigationService, snappedPlayerBindingModel)
         {
             this.queueService = queueService;
-            this.BindingModel.IsRepeatAllEnabled = this.queueService.IsRepeatAll;
-            this.BindingModel.IsShuffleEnabled = this.queueService.IsShuffled;
             this.BindingModel.IsQueueEmpty = !this.queueService.GetQueue().Any();
 
             this.RepeatAllCommand =
                 new DelegateCommand(
-                    async () => await this.queueService.SetRepeatAllAsync(!this.queueService.IsRepeatAll),
+                    () => { },
                     () => this.queueService.State != QueueState.Busy);
 
             this.ShuffleCommand =
                 new DelegateCommand(
-                    async () => await this.queueService.SetShuffledAsync(!this.queueService.IsShuffled),
+                    () => { },
                     () => this.queueService.State != QueueState.Busy);
 
-            this.AddToQueueCommand = new DelegateCommand(async () => await this.Dispatcher.RunAsync(() =>
-                {
-                    if (ApplicationView.TryUnsnap())
+            this.AddToQueueCommand = new DelegateCommand(
+                () =>
                     {
-                        navigationService.NavigateTo<IStartPageView>();
-                    }
-                }));
+                        if (ApplicationView.TryUnsnap())
+                        {
+                            navigationService.NavigateTo<IStartPageView>();
+                        }
+                    });
 
-            this.queueService.StateChanged += (sender, args) =>
+            this.queueService.StateChanged += async (sender, args) => await this.Dispatcher.RunAsync(() => 
                 {
                     this.RepeatAllCommand.RaiseCanExecuteChanged();
                     this.ShuffleCommand.RaiseCanExecuteChanged();
-                };
+                });
         }
 
         public DelegateCommand ShuffleCommand { get; set; }
@@ -67,18 +66,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             base.OnInitialized();
 
             this.EventAggregator.GetEvent<QueueChangeEvent>().Subscribe(
-                async (e) =>
-                    {
-                        await this.Dispatcher.RunAsync(
-                            () =>
-                                {
-                                    this.BindingModel.IsRepeatAllEnabled = e.IsRepeatAllEnabled;
-                                    this.BindingModel.IsShuffleEnabled = e.IsShuffleEnabled;
-                                    this.BindingModel.IsQueueEmpty = !this.queueService.GetQueue().Any();
-                                });
-                    });
+                async (e) => await this.Dispatcher.RunAsync(
+                        () =>
+                        {
+                            this.BindingModel.IsQueueEmpty = !this.queueService.GetQueue().Any();
+                        }));
         }
-
-
     }
 }

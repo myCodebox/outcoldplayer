@@ -16,10 +16,10 @@ namespace OutcoldSolutions.GoogleMusic.Services
         event EventHandler<StateChangedEventArgs> StateChanged;
 
         event EventHandler<double> DownloadProgress;
-        
-        bool IsShuffled { get; }
 
-        bool IsRepeatAll { get; }
+        bool IsShuffled { get; set; }
+
+        bool IsRepeatAll { get; set; }
 
         QueueState State { get; }
 
@@ -48,10 +48,6 @@ namespace OutcoldSolutions.GoogleMusic.Services
         Task AddRangeAsync(IEnumerable<Song> songs);
 
         Task RemoveAsync(int index);
-
-        Task SetRepeatAllAsync(bool repeatAll);
-
-        Task SetShuffledAsync(bool isShuffled);
 
         IEnumerable<Song> GetQueue();
 

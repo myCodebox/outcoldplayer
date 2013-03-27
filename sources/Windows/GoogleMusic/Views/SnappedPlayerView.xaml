@@ -42,16 +42,71 @@
                         Margin="0, 10, 0, 0">
 
                     <controls:AppBarToggleButton Style="{StaticResource ShuffleAppBarButtonStyle}" 
-                                             IsChecked="{Binding Path=BindingModel.IsShuffleEnabled, Mode=OneWay}"
-                                             Command="{Binding Path=ShuffleCommand, Mode=OneTime}"
-                                             HorizontalAlignment="Right"
-                                             AutomationProperties.Name=""/>
+                                                 IsChecked="{Binding Path=BindingModel.IsShuffleEnabled, Mode=TwoWay}"
+                                                 Command="{Binding Path=ShuffleCommand, Mode=OneWay}"
+                                                 HorizontalAlignment="Right"
+                                                 AutomationProperties.Name=""/>
                     <controls:AppBarToggleButton Style="{StaticResource RepeatAllAppBarButtonStyle}" 
-                                             IsChecked="{Binding Path=BindingModel.IsRepeatAllEnabled, Mode=OneWay}"
-                                             Command="{Binding Path=RepeatAllCommand, Mode=OneTime}"
-                                             HorizontalAlignment="Right"
-                                             Margin="0, -20, 0, 0"
-                                             AutomationProperties.Name=""/>
+                                                 IsChecked="{Binding Path=BindingModel.IsRepeatAllEnabled, Mode=TwoWay}"
+                                                 Command="{Binding Path=RepeatAllCommand, Mode=OneWay}"
+                                                 HorizontalAlignment="Right"
+                                                 Margin="0, -20, 0, 0"
+                                                 AutomationProperties.Name=""/>
+
+                    <Button Style="{StaticResource VolumeAppBarButtonStyle}" 
+                            Command="{Binding Path=RepeatAllCommand, Mode=OneTime}"
+                            HorizontalAlignment="Right"
+                            Margin="0, -20, 0, 0"
+                            AutomationProperties.Name=""
+                            Click="VolumeButtonClick"/>
+
+                    <Popup IsLightDismissEnabled="True" x:Name="VolumePopup" Height="80" Width="180" Margin="-220, -100, 0, 0">
+                        <Popup.ChildTransitions>
+                            <TransitionCollection>
+                                <PopupThemeTransition FromHorizontalOffset="0" FromVerticalOffset="30" />
+                            </TransitionCollection>
+                        </Popup.ChildTransitions>
+
+                        <Border Height="80" Width="180" Background="{StaticResource AppBarBackgroundThemeBrush}">
+                            <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Width="140" Margin="0, 30, 0, 0" >
+
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="10" />
+                                    <RowDefinition Height="25" />
+                                </Grid.RowDefinitions>
+
+                                <Slider Grid.Row="0" 
+                                        Grid.ColumnSpan="2"
+                                        Value="{Binding Path=BindingModel.Volume, Mode=TwoWay}" 
+                                        x:Name="VolumeSlider"
+                                        Maximum="1" 
+                                        StepFrequency="0.01" 
+                                        Width="140" 
+                                        HorizontalAlignment="Center" 
+                                        IsThumbToolTipEnabled="False"/>
+
+                                 <TextBlock Margin="0, 5, 0, 0"
+                                            Text="Volume" 
+                                            Style="{StaticResource SmallTextStyle}"
+                                            Grid.Row="1"
+                                            Grid.Column="0"/>
+
+                                 <TextBlock Margin="0, 5, 0, 0"
+                                            Text="{Binding Path=Value, ElementName=VolumeSlider, Mode=OneWay, Converter={StaticResource PercentageStringFormatConverter}}" 
+                                            Style="{StaticResource SmallTextStyle}"
+                                            HorizontalAlignment="Right"
+                                            TextAlignment="Right"
+                                            Grid.Row="1"
+                                            Grid.Column="1"/>
+
+                            </Grid>
+                        </Border>
+                    </Popup>
                 </StackPanel>
 
             </StackPanel>

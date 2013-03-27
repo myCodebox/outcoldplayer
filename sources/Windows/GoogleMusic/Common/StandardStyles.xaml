@@ -238,17 +238,12 @@
                                 <Setter Property="Template">
                                     <Setter.Value>
                                         <ControlTemplate TargetType="Thumb">
-                                            <Canvas Margin="-15, -30, 0, 0" Width="20" Height="23" Background="Transparent">
-                                                <Ellipse Fill="Transparent"
-                                                         Stroke="{TemplateBinding BorderBrush}"
-                                                         StrokeThickness="2"
-                                                         Width="20"
-                                                         Height="20"
-                                                         Canvas.Top="0"
-                                                         Canvas.Left="0" />
-                                                
-                                                <Polygon Points="9,20 14,23 17,17 10,20"
-                                                         Fill="{TemplateBinding BorderBrush}"/>
+                                            <Canvas Width="15" Height="15" Margin="0, -1, 0, 0">
+                                                <Ellipse Canvas.Top="0"
+                                                         Canvas.Left="0"
+                                                         Width="15" 
+                                                         Height="15" 
+                                                         Fill="{TemplateBinding BorderBrush}" />
                                             </Canvas>
                                         </ControlTemplate>
                                     </Setter.Value>

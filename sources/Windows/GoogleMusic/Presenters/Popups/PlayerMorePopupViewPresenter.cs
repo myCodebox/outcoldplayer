@@ -6,7 +6,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
     using System;
 
     using OutcoldSolutions.GoogleMusic.BindingModels.Popups;
-    using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views.Popups;
     using OutcoldSolutions.Presenters;
@@ -22,11 +21,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
             this.queueService = queueService;
 
             this.BindingModel = bindingModel;
-            this.BindingModel.IsRepeatAllEnabled = this.queueService.IsRepeatAll;
-            this.BindingModel.IsShuffleEnabled = this.queueService.IsShuffled;
 
-            this.RepeatAllCommand = new DelegateCommand(async () => await this.queueService.SetRepeatAllAsync(!this.queueService.IsRepeatAll));
-            this.ShuffleCommand = new DelegateCommand(async () => await this.queueService.SetShuffledAsync(!this.queueService.IsShuffled));
+            this.RepeatAllCommand = new DelegateCommand(() => { }, () => this.queueService.State != QueueState.Busy);
+            this.ShuffleCommand = new DelegateCommand(() => { }, () => this.queueService.State != QueueState.Busy);
+
+            this.queueService.StateChanged += this.QueueServiceOnStateChanged;
         }
 
         public PlayerMorePopupViewBindingModel BindingModel { get; private set; }
@@ -35,20 +34,18 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
 
         public DelegateCommand RepeatAllCommand { get; set; }
 
-        protected override void OnInitialized()
+        protected override void OnDisposing()
         {
-            base.OnInitialized();
+            base.OnDisposing();
 
-            this.RegisterForDispose(this.EventAggregator.GetEvent<QueueChangeEvent>().Subscribe(
-                async (e) =>
-                    {
-                        await this.Dispatcher.RunAsync(
-                            () =>
-                                {
-                                    this.BindingModel.IsRepeatAllEnabled = e.IsRepeatAllEnabled;
-                                    this.BindingModel.IsShuffleEnabled = e.IsShuffleEnabled;
-                                });
-                    }));
+            this.BindingModel.Dispose();
+            this.queueService.StateChanged -= this.QueueServiceOnStateChanged;
+        }
+
+        private void QueueServiceOnStateChanged(object sender, StateChangedEventArgs stateChangedEventArgs)
+        {
+            this.ShuffleCommand.RaiseCanExecuteChanged();
+            this.RepeatAllCommand.RaiseCanExecuteChanged();
         }
     }
 }

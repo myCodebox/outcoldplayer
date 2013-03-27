@@ -8,10 +8,10 @@
     xmlns:controls="using:OutcoldSolutions.Controls"
     mc:Ignorable="d"
     Height="240"
-    Width="200">
+    Width="260">
 
     <Border Background="{StaticResource AppBarBackgroundThemeBrush}">
-        <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" Margin="10, 0, 10, 0" >
+        <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" Margin="40, 0, 40, 0" >
 
             <Grid HorizontalAlignment="Center" Width="140" Margin="0, 40, 0, 20">
 
@@ -26,13 +26,13 @@
                 </Grid.RowDefinitions>
 
                 <Slider Grid.Row="0" Grid.ColumnSpan="2"
-                    Value="{Binding Path=BindingModel.Volume, Mode=TwoWay}" 
-                    x:Name="VolumeSlider"
-                    Maximum="1" 
-                    StepFrequency="0.01" 
-                    Width="140" 
-                    HorizontalAlignment="Center" 
-                    IsThumbToolTipEnabled="False"/>
+                        Value="{Binding Path=BindingModel.Volume, Mode=TwoWay}" 
+                        x:Name="VolumeSlider"
+                        Maximum="1" 
+                        StepFrequency="0.01" 
+                        Width="140" 
+                        HorizontalAlignment="Center" 
+                        IsThumbToolTipEnabled="False"/>
 
                 <TextBlock Margin="0, 5, 0, 0"
                            Text="Volume" 
@@ -52,11 +52,11 @@
 
 
             <controls:AppBarToggleButton Style="{StaticResource ShufflePopupMenuButtonStyle}" 
-                                                     IsChecked="{Binding Path=BindingModel.IsShuffleEnabled, Mode=OneWay}"
-                                                     Command="{Binding Path=ShuffleCommand, Mode=OneTime}"/>
+                                         IsChecked="{Binding Path=BindingModel.IsShuffleEnabled, Mode=TwoWay}"
+                                         Command="{Binding Path=ShuffleCommand, Mode=OneTime}"/>
             <controls:AppBarToggleButton Style="{StaticResource RepeatAllPopupMenuButtonStyle}" 
-                                                     IsChecked="{Binding Path=BindingModel.IsRepeatAllEnabled, Mode=OneWay}"
-                                                     Command="{Binding Path=RepeatAllCommand, Mode=OneTime}"/>
+                                         IsChecked="{Binding Path=BindingModel.IsRepeatAllEnabled, Mode=TwoWay}"
+                                         Command="{Binding Path=RepeatAllCommand, Mode=OneTime}"/>
             
         </StackPanel>
     </Border>
