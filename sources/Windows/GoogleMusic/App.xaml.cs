@@ -8,6 +8,8 @@ namespace OutcoldSolutions.GoogleMusic
     using System.Diagnostics;
     using System.Threading.Tasks;
 
+    using BugSense;
+
     using OutcoldSolutions.BindingModels;
     using OutcoldSolutions.Controls;
     using OutcoldSolutions.Diagnostics;
@@ -165,6 +167,7 @@ namespace OutcoldSolutions.GoogleMusic
 
             mainFrameRegionProvider.SetContent(MainFrameRegion.BottomAppBarRightZone, Container.Resolve<IPlayerView>());
             mainFrameRegionProvider.SetContent(MainFrameRegion.SnappedView, Container.Resolve<ISnappedPlayerView>());
+            mainFrameRegionProvider.SetContent(MainFrameRegion.TopAppBarRightZone, new LogoView());
 
             var page = (Page)Window.Current.Content;
             VisualTreeHelperEx.GetVisualChild<Panel>(page).Children.Add(Container.Resolve<MediaElement>());
@@ -177,6 +180,8 @@ namespace OutcoldSolutions.GoogleMusic
             Container.Resolve<ScreenLocker>();
 
             Container.Resolve<INavigationService>().NavigateTo<IInitPageView>(keepInHistory: false);
+
+            BugSenseHandler.Instance.Init(this, "w8c8d6b5");
         }
 
         protected override async Task OnSuspendingAsync()

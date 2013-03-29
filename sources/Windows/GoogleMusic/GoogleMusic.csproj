@@ -16,6 +16,7 @@
     <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
     <AppxPackageDir>C:\Users\Den\Repositories\GoogleMusic\WinAppPackages\</AppxPackageDir>
     <PackageCertificateThumbprint>A11C9603F7F61E61F208F3B2B392F509B544CF6A</PackageCertificateThumbprint>
+    <AllowedReferenceRelatedFileExtensions>.pdb;.pri</AllowedReferenceRelatedFileExtensions>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -110,7 +111,6 @@
     <Compile Include="ApplicationSettingViews.cs" />
     <Compile Include="BindingModels\ArtistPageViewBindingModel.cs" />
     <Compile Include="BindingModels\CurrentPlaylistPageViewBindingModel.cs" />
-    <Compile Include="BindingModels\DisposableBindingModelBase.cs" />
     <Compile Include="BindingModels\LinksRegionBindingModel.cs" />
     <Compile Include="BindingModels\SnappedPlayerBindingModel.cs" />
     <Compile Include="BindingModels\PlaylistPageViewBindingModel.cs" />
@@ -205,6 +205,9 @@
     <Compile Include="Views\LinksRegionView.xaml.cs">
       <DependentUpon>LinksRegionView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\LogoView.xaml.cs">
+      <DependentUpon>LogoView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Popups\AddToPlaylistPopupView.xaml.cs">
       <DependentUpon>AddToPlaylistPopupView.xaml</DependentUpon>
     </Compile>
@@ -292,10 +295,12 @@
     <Content Include="Resources\in-app-purchase.xml" />
     <Content Include="Resources\lastfm_Logo.png" />
     <Content Include="Resources\logo460.png" />
+    <Content Include="Resources\outcoldsolutions.png" />
     <Content Include="Resources\twitter-logo.png" />
     <Content Include="Resources\UnknownArt-116.png" />
     <Content Include="Resources\UnknownArt-256.png" />
     <Content Include="Resources\UnknownArt-90.png" />
+    <Content Include="Resources\uservoice-logo.png" />
     <Content Include="Resources\uservoice.png" />
   </ItemGroup>
   <ItemGroup>
@@ -344,6 +349,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\LinksRegionView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\LogoView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -417,16 +426,19 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="BugSense-W8">
+      <HintPath>..\..\packages\BugSense.W8.3.4\lib\win\BugSense-W8.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\..\packages\Newtonsoft.Json.4.5.11\lib\winrt45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="OutcoldSolutions.Framework, Version=1.0.30327.1, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
+    <Reference Include="OutcoldSolutions.Framework, Version=1.0.30328.1, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\OutcoldSolutions.Framework.1.0.30327.1\lib\portable-win+net45+wp80\OutcoldSolutions.Framework.dll</HintPath>
+      <HintPath>..\..\packages\OutcoldSolutions.Framework.1.0.30328.1\lib\portable-win+net45+wp80\OutcoldSolutions.Framework.dll</HintPath>
     </Reference>
-    <Reference Include="OutcoldSolutions.Presentation, Version=1.0.30327.1, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
+    <Reference Include="OutcoldSolutions.Presentation, Version=1.0.30328.1, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\OutcoldSolutions.Presentation.1.0.30327.1\lib\win\OutcoldSolutions.Presentation.dll</HintPath>
+      <HintPath>..\..\packages\OutcoldSolutions.Presentation.1.0.30328.1\lib\win\OutcoldSolutions.Presentation.dll</HintPath>
     </Reference>
     <Reference Include="OutcoldSolutions.SQLite, Version=1.1.30316.38284, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

@@ -18,7 +18,6 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         private readonly IDispatcher dispatcher;
 
         private IList<SongBindingModel> songs;
-        private bool isQueueEmpty;
 
         public SnappedPlayerBindingModel(
             IMediaElementContainer mediaElementContainer,
