@@ -181,7 +181,9 @@ namespace OutcoldSolutions.GoogleMusic
 
             Container.Resolve<INavigationService>().NavigateTo<IInitPageView>(keepInHistory: false);
 
+#if !DEBUG
             BugSenseHandler.Instance.Init(this, "w8c8d6b5");
+#endif
         }
 
         protected override async Task OnSuspendingAsync()

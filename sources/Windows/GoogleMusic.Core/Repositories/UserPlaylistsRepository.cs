@@ -83,7 +83,7 @@ WHERE e.PlaylistId = ?1
 ";
 
         private const string SqlDeletePlaylistEntries = @"
-DELETE FROM [UserPlaylistEntry] e WHERE e.PlaylistId = ?1
+DELETE FROM [UserPlaylistEntry] WHERE PlaylistId = ?1
 ";
 
         public async Task<int> GetCountAsync()
