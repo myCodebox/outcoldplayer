@@ -5,6 +5,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 {
     using System;
     using System.Collections.Generic;
+    using System.Collections.Specialized;
     using System.ComponentModel;
     using System.Diagnostics;
     using System.Linq;
@@ -34,8 +35,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.metadataEditService = container.Resolve<ISongsService>();
             this.playlistsService = container.Resolve<IPlaylistsService>();
 
-            this.PlaySongCommand = new DelegateCommand(this.Play, () => this.BindingModel != null && this.BindingModel.SelectedSong != null);
-            this.AddToPlaylistCommand = new DelegateCommand(this.AddToPlaylist, () => this.BindingModel != null && this.BindingModel.SelectedSong != null);
+            this.PlaySongCommand = new DelegateCommand(this.Play, () => this.BindingModel != null && this.BindingModel.SongsBindingModel.SelectedItems.Count > 0);
+            this.AddToPlaylistCommand = new DelegateCommand(this.AddToPlaylist, () => this.BindingModel != null && this.BindingModel.SongsBindingModel.SelectedItems.Count > 0);
             this.RateSongCommand = new DelegateCommand(this.RateSong);
         }
 
@@ -49,15 +50,21 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         {
             base.OnNavigatingFrom(eventArgs);
 
-            this.BindingModel.Songs = null;
+            this.BindingModel.SongsBindingModel.SetCollection(null);
             this.BindingModel.Playlist = default(TPlaylist);
+        }
+
+        public void PlaySong(SongBindingModel songBindingModel)
+        {
+            int songIndex = this.BindingModel.SongsBindingModel.Songs.IndexOf(songBindingModel);
+            this.Logger.LogTask(this.playQueueService.PlayAsync(songIndex));
         }
 
         protected override void OnInitialized()
         {
             base.OnInitialized();
 
-            this.BindingModel.Subscribe(() => this.BindingModel.SelectedSong, this.SelectedSongChanged);
+            this.BindingModel.SongsBindingModel.SelectedItems.CollectionChanged += this.SelectedItemsOnCollectionChanged;
         }
 
         protected override async Task LoadDataAsync(NavigatedToEventArgs navigatedToEventArgs)
@@ -71,9 +78,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             var songs = await this.playlistsService.GetSongsAsync(request.PlaylistType, request.PlaylistId);
             var playlist = await this.playlistsService.GetAsync(request.PlaylistType, request.PlaylistId);
 
-            this.BindingModel.Songs = songs.Select(x => new SongBindingModel(x)).ToList();
-            this.BindingModel.Playlist = (TPlaylist)playlist;
-            this.BindingModel.SelectedSongIndex = -1;
+            await this.Dispatcher.RunAsync(() =>
+                { 
+                    this.BindingModel.SongsBindingModel.SetCollection(songs);
+                    this.BindingModel.Playlist = (TPlaylist)playlist;
+                });
         }
 
         protected virtual IEnumerable<CommandMetadata> GetContextCommands()
@@ -84,20 +93,20 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private void Play()
         {
-            var selectedSong = this.BindingModel.SelectedSong;
-            if (selectedSong != null)
+            var selectedIndexes = this.BindingModel.SongsBindingModel.GetSelectedIndexes().ToList();
+            if (selectedIndexes.Count > 0)
             {
-                this.playQueueService.PlayAsync(this.BindingModel.Playlist, this.BindingModel.Songs.Select(s => s.Metadata), this.BindingModel.Songs.IndexOf(selectedSong));
+                this.playQueueService.PlayAsync(this.BindingModel.Playlist, this.BindingModel.SongsBindingModel.Songs.Select(s => s.Metadata), selectedIndexes[0]);
                 this.MainFrame.IsBottomAppBarOpen = true;
             }
         }
 
         private void AddToPlaylist()
         {
-            var selectedSong = this.BindingModel.SelectedSong;
-            if (selectedSong != null)
+            var selectedSongs = this.BindingModel.SongsBindingModel.GetSelectedSongs().ToList();
+            if (selectedSongs.Count > 0)
             {
-                this.MainFrame.ShowPopup<IAddToPlaylistPopupView>(PopupRegion.AppToolBarLeft, new List<SongBindingModel> { selectedSong });
+                this.MainFrame.ShowPopup<IAddToPlaylistPopupView>(PopupRegion.AppToolBarLeft, selectedSongs);
             }
         }
 
@@ -112,12 +121,12 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             }
         }
 
-        private void SelectedSongChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)
+        private void SelectedItemsOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs notifyCollectionChangedEventArgs)
         {
             this.PlaySongCommand.RaiseCanExecuteChanged();
             this.AddToPlaylistCommand.RaiseCanExecuteChanged();
 
-            if (this.BindingModel.SelectedSong != null)
+            if (this.BindingModel.SongsBindingModel.SelectedItems.Count > 0)
             {
                 this.MainFrame.SetContextCommands(this.GetContextCommands());
             }

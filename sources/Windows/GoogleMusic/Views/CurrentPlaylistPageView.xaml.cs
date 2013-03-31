@@ -4,14 +4,16 @@
 
 namespace OutcoldSolutions.GoogleMusic.Views
 {
-    using System.Collections;
-    using System.Collections.Generic;
+    using System;
     using System.Collections.Specialized;
+    using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
+    using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Presenters;
     using OutcoldSolutions.Views;
 
+    using Windows.UI.Core;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Input;
@@ -51,39 +53,27 @@ namespace OutcoldSolutions.GoogleMusic.Views
             }
         }
 
-        private void SelectedItemsOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs notifyCollectionChangedEventArgs)
+        private async void SelectedItemsOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs notifyCollectionChangedEventArgs)
         {
-            this.UpdateCollection(this.ListView.SelectedItems, notifyCollectionChangedEventArgs.NewItems, notifyCollectionChangedEventArgs.OldItems);
+            CollectionExtensions.UpdateCollection(this.ListView.SelectedItems, notifyCollectionChangedEventArgs.NewItems, notifyCollectionChangedEventArgs.OldItems);
+
+            await Task.Yield();
+
+            await this.Dispatcher.RunAsync(
+                CoreDispatcherPriority.Low,
+                () =>
+                    {
+                        if (notifyCollectionChangedEventArgs.NewItems != null
+                            && notifyCollectionChangedEventArgs.NewItems.Count > 0)
+                        {
+                            this.ListView.ScrollIntoView(notifyCollectionChangedEventArgs.NewItems[0]);
+                        }
+                    });
         }
 
         private void ListViewSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            this.UpdateCollection(this.presenter.BindingModel.SelectedItems, e.AddedItems, e.RemovedItems);
-        }
-
-        private void UpdateCollection<T>(IList<T> collection, IEnumerable newItems, IEnumerable oldItems)
-        {
-            if (oldItems != null)
-            {
-                foreach (T songBindingModel in oldItems)
-                {
-                    if (collection.Contains(songBindingModel))
-                    {
-                        collection.Remove(songBindingModel);
-                    }
-                }
-            }
-
-            if (newItems != null)
-            {
-                foreach (T songBindingModel in newItems)
-                {
-                    if (!collection.Contains(songBindingModel))
-                    {
-                        collection.Add(songBindingModel);
-                    }
-                }
-            }
+            CollectionExtensions.UpdateCollection(this.presenter.BindingModel.SelectedItems, e.AddedItems, e.RemovedItems);
         }
     }
 }

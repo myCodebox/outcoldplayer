@@ -3,7 +3,6 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Presenters
 {
-    using System;
     using System.Linq;
     using System.Threading.Tasks;
 
@@ -37,10 +36,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                             new PlaylistNavigationRequest(PlaylistType.Album, song.Album.Id),
                             navigatedToEventArgs.IsNavigationBack));
                 
-                this.BindingModel.SelectedSongIndex = this.BindingModel.Songs.Select((s, index) => Tuple.Create(s.Metadata, index))
-                                                                             .Where(s => s.Item1.SongId == songId)
-                                                                             .Select(x => x.Item2)
-                                                                             .FirstOrDefault();
+                var songBindingModel = this.BindingModel.SongsBindingModel.Songs.FirstOrDefault(s => s.Metadata.SongId == songId);
+                if (songBindingModel != null)
+                {
+                    this.BindingModel.SongsBindingModel.SelectedItems.Add(songBindingModel);
+                }
             }
             else
             {

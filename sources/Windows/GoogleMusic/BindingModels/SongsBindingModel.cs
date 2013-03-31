@@ -140,26 +140,29 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
         private void UpdateSongStates(Song currentSong, QueueState queueState)
         {
-            foreach (var song in this.Songs)
+            if (this.Songs != null)
             {
-                if (currentSong != null && song.Metadata.SongId == currentSong.SongId)
+                foreach (var song in this.Songs)
                 {
-                    if (queueState == QueueState.Play)
+                    if (currentSong != null && song.Metadata.SongId == currentSong.SongId)
                     {
-                        song.State = SongState.Playing;
-                    }
-                    else if (queueState == QueueState.Paused)
-                    {
-                        song.State = SongState.Paused;
+                        if (queueState == QueueState.Play)
+                        {
+                            song.State = SongState.Playing;
+                        }
+                        else if (queueState == QueueState.Paused)
+                        {
+                            song.State = SongState.Paused;
+                        }
+                        else
+                        {
+                            song.State = SongState.None;
+                        }
                     }
                     else
                     {
                         song.State = SongState.None;
                     }
-                }
-                else
-                {
-                    song.State = SongState.None;
                 }
             }
         }

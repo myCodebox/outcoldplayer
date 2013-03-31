@@ -3,9 +3,17 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Views
 {
+    using System.Collections.Specialized;
+    using System.Threading.Tasks;
+
+    using OutcoldSolutions.GoogleMusic.BindingModels;
+    using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Presenters;
     using OutcoldSolutions.Views;
 
+    using Windows.UI.Core;
+    using Windows.UI.Xaml;
+    using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Input;
 
     public interface IPlaylistPageView : IPageView
@@ -27,14 +35,43 @@ namespace OutcoldSolutions.GoogleMusic.Views
             base.OnInitialized();
 
             this.presenter = this.GetPresenter<PlaylistPageViewPresenter>();
+            this.presenter.BindingModel.SongsBindingModel.SelectedItems.CollectionChanged += this.SelectedItemsOnCollectionChanged;
         }
 
         private void ListDoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
         {
-            if (this.presenter.PlaySongCommand.CanExecute())
+            var frameworkElement = e.OriginalSource as FrameworkElement;
+            if (frameworkElement != null)
             {
-                this.presenter.PlaySongCommand.Execute();
+                var songBindingModel = frameworkElement.DataContext as SongBindingModel;
+                if (songBindingModel != null)
+                {
+                    this.presenter.PlaySong(songBindingModel);
+                }
             }
+        }
+
+        private async void SelectedItemsOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs notifyCollectionChangedEventArgs)
+        {
+            CollectionExtensions.UpdateCollection(this.ListView.SelectedItems, notifyCollectionChangedEventArgs.NewItems, notifyCollectionChangedEventArgs.OldItems);
+
+            await Task.Yield();
+
+            this.Dispatcher.RunAsync(
+                CoreDispatcherPriority.Low,
+                () =>
+                {
+                    if (notifyCollectionChangedEventArgs.NewItems != null
+                        && notifyCollectionChangedEventArgs.NewItems.Count > 0)
+                    {
+                        this.ListView.ScrollIntoView(notifyCollectionChangedEventArgs.NewItems[0]);
+                    }
+                });
+        }
+
+        private void ListViewSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            CollectionExtensions.UpdateCollection(this.presenter.BindingModel.SongsBindingModel.SelectedItems, e.AddedItems, e.RemovedItems);
         }
     }
 }

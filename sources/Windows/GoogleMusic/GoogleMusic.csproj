@@ -141,6 +141,7 @@
     <Compile Include="Converters\TimeSpanToTimeConverter.cs" />
     <Compile Include="GoogleMusicSettingsServiceExtensions.cs" />
     <Compile Include="MainMenu.cs" />
+    <Compile Include="Models\CollectionExtensions.cs" />
     <Compile Include="Models\PlaylistTypeEx.cs" />
     <Compile Include="Models\QueueChangeEvent.cs" />
     <Compile Include="Models\TimeSpanEx.cs" />

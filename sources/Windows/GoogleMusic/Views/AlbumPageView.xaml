@@ -79,9 +79,10 @@
             </Border>
 
             <ListView Grid.Row="1"
-                  SelectionMode="Single"
+                  SelectionMode="Extended"
                   HorizontalAlignment="Stretch"
                   HorizontalContentAlignment="Stretch"
+                  ItemsSource="{Binding Path=BindingModel.SongsBindingModel.Songs, Mode=OneWay}"
                   IsTapEnabled="False"
                   Margin="40, 0, 0, 20" 
                   ManipulationMode="None"
