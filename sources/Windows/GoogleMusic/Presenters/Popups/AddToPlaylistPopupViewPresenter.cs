@@ -9,7 +9,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
     using System.Threading.Tasks;
 
     using OutcoldSolutions.Diagnostics;
-    using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Services;
@@ -26,7 +25,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
         private List<AddToSongMusicPlaylist> playlists;
 
         public AddToPlaylistPopupViewPresenter(
-            IEnumerable<SongBindingModel> songs,
+            IEnumerable<Song> songs,
             IUserPlaylistsService userPlaylistsService,
             IUserPlaylistsRepository userPlaylistsRepository)
         {
@@ -61,11 +60,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
             }
         }
 
-        public List<SongBindingModel> Songs { get; set; }
+        public List<Song> Songs { get; set; }
 
         public void AddToPlaylist(AddToSongMusicPlaylist playlist)
         {
-            this.Logger.LogTask(this.userPlaylistsService.AddSongsAsync(playlist.Playlist, this.Songs.Select(x => x.Metadata)));
+            this.Logger.LogTask(this.userPlaylistsService.AddSongsAsync(playlist.Playlist, this.Songs));
             this.View.Close();
         }
 
@@ -77,7 +76,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
 
             this.Logger.LogTask(Task.Run(async () =>
                 {
-                    var songsWithEntries = await Task.WhenAll(this.Songs.Select(async x => Tuple.Create(x, await this.userPlaylistsRepository.GetAllSongEntriesAsync(x.Metadata.SongId))).ToList());
+                    var songsWithEntries = await Task.WhenAll(this.Songs.Select(async x => Tuple.Create(x, await this.userPlaylistsRepository.GetAllSongEntriesAsync(x.SongId))).ToList());
                     var result = (await this.userPlaylistsRepository.GetAllAsync(Order.Name)).Select(x => new AddToSongMusicPlaylist(x, songsWithEntries)).ToList();
 
                     await this.Dispatcher.RunAsync(() => this.Playlists = result);
@@ -89,7 +88,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
         {
             public AddToSongMusicPlaylist(
                 UserPlaylist userPlaylist,
-                IEnumerable<Tuple<SongBindingModel, IList<UserPlaylistEntry>>> addingSongs)
+                IEnumerable<Tuple<Song, IList<UserPlaylistEntry>>> addingSongs)
             {
                 this.Playlist = userPlaylist;
                 this.SongContainsCount = addingSongs.Count(x => x.Item2.Any(e => e.PlaylistId == userPlaylist.Id));

@@ -8,14 +8,11 @@ namespace OutcoldSolutions.GoogleMusic
     using System.Diagnostics;
     using System.Threading.Tasks;
 
-    using BugSense;
-
     using OutcoldSolutions.BindingModels;
     using OutcoldSolutions.Controls;
     using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
-    using OutcoldSolutions.GoogleMusic.Presenters;
     using OutcoldSolutions.GoogleMusic.Presenters.Popups;
     using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Services;
@@ -53,6 +50,8 @@ namespace OutcoldSolutions.GoogleMusic
                 Registration.RegisterSettingViews(registration);
                 Registration.RegisterPopupViews(registration);
                 Registration.RegisterViews(registration);
+
+                registration.Register<SongsBindingModel>();
 
                 // Settings
                 registration.Register<ISearchService>().AsSingleton<SearchService>();
@@ -147,23 +146,25 @@ namespace OutcoldSolutions.GoogleMusic
             Container.Resolve<ISearchService>();
         }
 
-        protected override void OnActivated()
+        protected override void OnActivated(/* bool isFirstTimeActivated */)
         {
+            // if (isFirstTimeActivated)
+            // {
             Container.Resolve<RightRegionControlService>();
 
             var mainFrameRegionProvider = Container.Resolve<IMainFrameRegionProvider>();
             mainFrameRegionProvider.SetContent(
                 MainFrameRegion.Background,
                 new Image()
-                    {
-                        Source = new BitmapImage(new Uri("ms-appx:///Resources/logo460.png")),
-                        Height = 460,
-                        Width = 460,
-                        Margin = new Thickness(20),
-                        HorizontalAlignment = HorizontalAlignment.Right,
-                        VerticalAlignment = VerticalAlignment.Top,
-                        Opacity = 0.02
-                    });
+                {
+                    Source = new BitmapImage(new Uri("ms-appx:///Resources/logo460.png")),
+                    Height = 460,
+                    Width = 460,
+                    Margin = new Thickness(20),
+                    HorizontalAlignment = HorizontalAlignment.Right,
+                    VerticalAlignment = VerticalAlignment.Top,
+                    Opacity = 0.02
+                });
 
             mainFrameRegionProvider.SetContent(MainFrameRegion.BottomAppBarRightZone, Container.Resolve<IPlayerView>());
             mainFrameRegionProvider.SetContent(MainFrameRegion.SnappedView, Container.Resolve<ISnappedPlayerView>());
@@ -182,8 +183,9 @@ namespace OutcoldSolutions.GoogleMusic
             Container.Resolve<INavigationService>().NavigateTo<IInitPageView>(keepInHistory: false);
 
 #if !DEBUG
-            BugSenseHandler.Instance.Init(this, "w8c8d6b5");
+            BugSense.BugSenseHandler.Instance.Init(this, "w8c8d6b5");
 #endif
+            // }
         }
 
         protected override async Task OnSuspendingAsync()

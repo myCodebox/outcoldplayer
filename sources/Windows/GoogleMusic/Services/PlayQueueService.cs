@@ -370,7 +370,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             });
         }
 
-        public async Task RemoveAsync(int songIndex)
+        public async Task RemoveAsync(IEnumerable<int> songIndexes)
         {
             await Task.Run(async () =>
             {
@@ -379,42 +379,55 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     throw new InvalidOperationException("Queue is busy");
                 }
 
-                if (songIndex >= this.songsQueue.Count)
+                List<int> collection = songIndexes.ToList();
+
+                if (collection.Count > 0)
                 {
-                    throw new ArgumentOutOfRangeException("songIndex");
-                }
+                    this.currentPlaylist = null;
 
-                this.currentPlaylist = null;
+                    bool currentSongChanged = false;
 
-                if (this.songsQueue.Count > songIndex)
-                {
-                    var queueIndex = this.queueOrder.IndexOf(songIndex);
-
-                    this.queueOrder.RemoveAt(queueIndex);
-
-                    for (int i = 0; i < this.queueOrder.Count; i++)
+                    foreach (int index in collection.OrderByDescending(x => x))
                     {
-                        if (this.queueOrder[i] > songIndex)
+                        if (this.songsQueue.Count > index)
                         {
-                            this.queueOrder[i]--;
+                            var queueIndex = this.queueOrder.IndexOf(index);
+
+                            this.queueOrder.RemoveAt(queueIndex);
+
+                            for (int i = 0; i < this.queueOrder.Count; i++)
+                            {
+                                if (this.queueOrder[i] > index)
+                                {
+                                    this.queueOrder[i]--;
+                                }
+                            }
+
+                            this.songsQueue.RemoveAt(index);
+
+                            if (this.songsQueue.Count == 0)
+                            {
+                                this.currentQueueIndex = -1;
+                            }
+                            else if (queueIndex == this.currentQueueIndex)
+                            {
+                                this.currentQueueIndex--;
+                                currentSongChanged = true;
+                            }
+                            else if (queueIndex < this.currentQueueIndex)
+                            {
+                                this.currentQueueIndex--;
+                            }
                         }
                     }
 
-                    this.songsQueue.RemoveAt(songIndex);
-
-                    if (this.songsQueue.Count == 0)
+                    if (this.currentQueueIndex == -1)
                     {
-                        await this.mediaElement.StopAsync();
-                        this.currentQueueIndex = -1;
+                        await this.StopAsync();
                     }
-                    else if (queueIndex == this.currentQueueIndex)
+                    else if (currentSongChanged)
                     {
-                        this.currentQueueIndex--;
                         await this.PlaySongAsyncInternal(this.CurrentSongIndex);
-                    }
-                    else if (queueIndex < this.currentQueueIndex)
-                    {
-                        this.currentQueueIndex--;
                     }
 
                     this.RaiseQueueChanged();
@@ -433,6 +446,11 @@ namespace OutcoldSolutions.GoogleMusic.Services
         public int GetCurrentSongIndex()
         {
             return this.CurrentSongIndex;
+        }
+
+        public Song GetCurrentSong()
+        {
+            return this.songsQueue[this.CurrentSongIndex];
         }
 
         private async Task PlaySongAsyncInternal(int songIndex)

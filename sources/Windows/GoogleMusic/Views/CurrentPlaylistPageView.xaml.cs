@@ -4,19 +4,20 @@
 
 namespace OutcoldSolutions.GoogleMusic.Views
 {
-    using System.Linq;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Collections.Specialized;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
-    using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Presenters;
     using OutcoldSolutions.Views;
 
+    using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Input;
 
     public interface ICurrentPlaylistPageView : IPageView
     {
-        void SelectPlayingSong();
     }
 
     public sealed partial class CurrentPlaylistPageView : PageViewBase, ICurrentPlaylistPageView
@@ -29,64 +30,59 @@ namespace OutcoldSolutions.GoogleMusic.Views
             this.TrackItemsControl(this.ListView);
         }
 
-        public override void OnDataLoading(NavigatedToEventArgs eventArgs)
-        {
-            base.OnDataLoading(eventArgs);
-
-            this.ListView.ItemsSource = null;
-        }
-
-        public override void OnDataLoaded(NavigatedToEventArgs eventArgs)
-        {
-            base.OnDataLoaded(eventArgs);
-
-            this.ListView.ItemsSource = this.presenter.BindingModel.Songs;
-            this.UpdateSelectedSong();
-        }
-
-        public void SelectPlayingSong()
-        {
-            this.presenter.SelectPlayingSong();
-        }
-
         protected override void OnInitialized()
         {
             base.OnInitialized();
 
             this.presenter = this.GetPresenter<CurrentPlaylistPageViewPresenter>();
-            this.presenter.BindingModel.Subscribe(
-                () => this.presenter.BindingModel.SelectedSongIndex,
-                (sender, args) => this.UpdateSelectedSong());
+            this.presenter.BindingModel.SelectedItems.CollectionChanged += this.SelectedItemsOnCollectionChanged;
         }
 
         private void ListDoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
         {
-            if (this.presenter.PlaySelectedSongCommand.CanExecute())
+            var frameworkElement = e.OriginalSource as FrameworkElement;
+            if (frameworkElement != null)
             {
-                this.presenter.PlaySelectedSongCommand.Execute();
+                var songBindingModel = frameworkElement.DataContext as SongBindingModel;
+                if (songBindingModel != null)
+                {
+                    this.presenter.PlaySong(songBindingModel);
+                }
             }
+        }
+
+        private void SelectedItemsOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs notifyCollectionChangedEventArgs)
+        {
+            this.UpdateCollection(this.ListView.SelectedItems, notifyCollectionChangedEventArgs.NewItems, notifyCollectionChangedEventArgs.OldItems);
         }
 
         private void ListViewSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (e.AddedItems.Count == 0)
-            {
-                this.presenter.BindingModel.SelectedSongIndex = -1;
-            }
-            else
-            {
-                this.presenter.BindingModel.SelectedSongIndex =
-                    this.presenter.BindingModel.Songs.IndexOf((SongBindingModel)e.AddedItems.First());
-            }
+            this.UpdateCollection(this.presenter.BindingModel.SelectedItems, e.AddedItems, e.RemovedItems);
         }
 
-        private void UpdateSelectedSong()
+        private void UpdateCollection<T>(IList<T> collection, IEnumerable newItems, IEnumerable oldItems)
         {
-            var selectedSongIndex = this.presenter.BindingModel.SelectedSongIndex;
-            if (this.ListView.Items != null && this.ListView.Items.Count > selectedSongIndex)
+            if (oldItems != null)
             {
-                this.ListView.ScrollIntoView(this.presenter.BindingModel.SelectedSong);
-                this.ListView.SelectedIndex = selectedSongIndex;
+                foreach (T songBindingModel in oldItems)
+                {
+                    if (collection.Contains(songBindingModel))
+                    {
+                        collection.Remove(songBindingModel);
+                    }
+                }
+            }
+
+            if (newItems != null)
+            {
+                foreach (T songBindingModel in newItems)
+                {
+                    if (!collection.Contains(songBindingModel))
+                    {
+                        collection.Add(songBindingModel);
+                    }
+                }
             }
         }
     }

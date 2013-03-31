@@ -110,7 +110,6 @@
     <Compile Include="ApplicationLogManager.cs" />
     <Compile Include="ApplicationSettingViews.cs" />
     <Compile Include="BindingModels\ArtistPageViewBindingModel.cs" />
-    <Compile Include="BindingModels\CurrentPlaylistPageViewBindingModel.cs" />
     <Compile Include="BindingModels\LinksRegionBindingModel.cs" />
     <Compile Include="BindingModels\SnappedPlayerBindingModel.cs" />
     <Compile Include="BindingModels\PlaylistPageViewBindingModel.cs" />
@@ -128,6 +127,7 @@
     <Compile Include="BindingModels\Settings\AccountViewBindingModel.cs" />
     <Compile Include="BindingModels\Settings\SupportBindingModel.cs" />
     <Compile Include="BindingModels\SongResultBindingModel.cs" />
+    <Compile Include="BindingModels\SongsBindingModel.cs" />
     <Compile Include="BindingModels\StartViewBindingModel.cs" />
     <Compile Include="BindingModels\AuthentificationPageViewBindingModel.cs" />
     <Compile Include="Controls\FakeEqualizerControl.cs" />
@@ -440,9 +440,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\OutcoldSolutions.Presentation.1.0.30328.1\lib\win\OutcoldSolutions.Presentation.dll</HintPath>
     </Reference>
-    <Reference Include="OutcoldSolutions.SQLite, Version=1.1.30316.38284, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
+    <Reference Include="OutcoldSolutions.SQLite, Version=1.1.30331.42665, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\OutcoldSolutions.SQLite.1.1.30322.0\lib\win\OutcoldSolutions.SQLite.dll</HintPath>
+      <HintPath>..\..\packages\OutcoldSolutions.SQLite.1.1.30331.0\lib\win\OutcoldSolutions.SQLite.dll</HintPath>
     </Reference>
     <Reference Include="System.Reactive.Core, Version=2.1.30214.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

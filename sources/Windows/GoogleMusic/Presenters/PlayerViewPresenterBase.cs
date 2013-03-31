@@ -89,7 +89,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     this.UpdateCommands();
                 });
             
-            this.NavigateToQueueView = new DelegateCommand(() => this.navigationService.NavigateTo<ICurrentPlaylistPageView>().SelectPlayingSong());
+            this.NavigateToQueueView = new DelegateCommand(() => this.navigationService.NavigateTo<ICurrentPlaylistPageView>(parameter: true));
         }
 
         public TPlayerBindingModel BindingModel { get; private set; }

@@ -63,7 +63,6 @@ namespace OutcoldSolutions.GoogleMusic
                         .InjectionRule<BindingModelBase, CurrentPlaylistPageViewPresenter>()
                         .AsSingleton<CurrentPlaylistPageView>();
             registration.Register<CurrentPlaylistPageViewPresenter>().AsSingleton();
-            registration.Register<CurrentPlaylistPageViewBindingModel>().AsSingleton();
 
             // Search page
             registration.Register<ISearchPageView>()

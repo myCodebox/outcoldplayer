@@ -4,7 +4,7 @@
 namespace OutcoldSolutions.GoogleMusic.Presenters
 {
     using System.Collections.Generic;
-    using System.ComponentModel;
+    using System.Collections.Specialized;
     using System.Diagnostics;
     using System.Linq;
     using System.Threading.Tasks;
@@ -18,19 +18,21 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using OutcoldSolutions.Presenters;
     using OutcoldSolutions.Views;
 
-    public class CurrentPlaylistPageViewPresenter : PagePresenterBase<ICurrentPlaylistPageView, CurrentPlaylistPageViewBindingModel>
+    public class CurrentPlaylistPageViewPresenter : PagePresenterBase<ICurrentPlaylistPageView>
     {
         private readonly IPlayQueueService playQueueService;
         private readonly ISongsService metadataEditService;
 
         public CurrentPlaylistPageViewPresenter(
             IPlayQueueService playQueueService,
-            ISongsService metadataEditService)
+            ISongsService metadataEditService,
+            SongsBindingModel songsBindingModel)
         {
             this.playQueueService = playQueueService;
             this.metadataEditService = metadataEditService;
+            this.BindingModel = songsBindingModel;
 
-            this.playQueueService.QueueChanged += (sender, args) => this.UpdateSongs();
+            this.playQueueService.QueueChanged += async (sender, args) => await this.Dispatcher.RunAsync(this.UpdateSongs);
 
             this.PlaySelectedSongCommand = new DelegateCommand(this.PlaySelectedSong);
             this.RemoveSelectedSongCommand = new DelegateCommand(this.RemoveSelectedSong);
@@ -46,33 +48,47 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         public DelegateCommand RateSongCommand { get; set; }
 
+        public SongsBindingModel BindingModel { get; set; }
+
         public void SelectPlayingSong()
         {
-            this.BindingModel.SelectedSongIndex = this.playQueueService.GetCurrentSongIndex();
+            this.BindingModel.SelectedItems.Clear();
+            this.BindingModel.SelectSongByIndex(this.playQueueService.GetCurrentSongIndex());
+        }
+
+        public void PlaySong(SongBindingModel songBindingModel)
+        {
+            int songIndex = this.BindingModel.Songs.IndexOf(songBindingModel);
+            this.Logger.LogTask(this.playQueueService.PlayAsync(songIndex));
         }
 
         protected override void OnInitialized()
         {
             base.OnInitialized();
 
-            this.BindingModel.Subscribe(() => this.BindingModel.SelectedSong, this.SelectedSongChanged);
+            this.BindingModel.SelectedItems.CollectionChanged += this.SelectedSongChanged;
         }
 
         protected override async Task LoadDataAsync(NavigatedToEventArgs navigatedToEventArgs)
         {
-            await Task.Run(() =>
-                {
-                    this.UpdateSongs();
-                    this.SelectPlayingSong();
-                });
+            await this.Dispatcher.RunAsync(
+                () =>
+                    {
+                        this.UpdateSongs();
+
+                        if (navigatedToEventArgs.Parameter is bool && (bool)navigatedToEventArgs.Parameter)
+                        {
+                            this.SelectPlayingSong();
+                        }
+                    });
         }
 
         private void AddToPlaylist()
         {
-            var selectedSong = this.BindingModel.Songs[this.BindingModel.SelectedSongIndex];
-            if (selectedSong != null)
+            var selectedSongs = this.BindingModel.GetSelectedSongs().ToList();
+            if (selectedSongs != null)
             {
-                this.MainFrame.ShowPopup<IAddToPlaylistPopupView>(PopupRegion.AppToolBarLeft, new List<SongBindingModel> { selectedSong });
+                this.MainFrame.ShowPopup<IAddToPlaylistPopupView>(PopupRegion.AppToolBarLeft, selectedSongs);
             }
         }
 
@@ -89,45 +105,52 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private async void RemoveSelectedSong()
         {
-            var selectedSongIndex = this.BindingModel.SelectedSongIndex;
-            if (selectedSongIndex >= 0)
+            var collection = this.BindingModel.GetSelectedIndexes().ToList();
+            if (collection.Count > 0)
             {
-                await this.playQueueService.RemoveAsync(selectedSongIndex);
+                await this.playQueueService.RemoveAsync(collection);
 
-                if (selectedSongIndex < this.BindingModel.Songs.Count)
-                {
-                    this.BindingModel.SelectedSongIndex = selectedSongIndex;
-                }
-                else if (this.BindingModel.Songs.Count > 0)
-                {
-                    this.BindingModel.SelectedSongIndex = selectedSongIndex - 1;
-                }
-
-                this.UpdateSongs();
+                await this.Dispatcher.RunAsync(
+                    () =>
+                        {
+                            if (collection.Count == 1)
+                            {
+                                int selectedSongIndex = collection.First();
+                                if (selectedSongIndex < this.BindingModel.Songs.Count)
+                                {
+                                    this.BindingModel.SelectSongByIndex(selectedSongIndex);
+                                }
+                                else if (this.BindingModel.Songs.Count > 0)
+                                {
+                                    this.BindingModel.SelectSongByIndex(selectedSongIndex - 1);
+                                }
+                            }
+                        });
             }
         }
 
         private void PlaySelectedSong()
         {
-            var selectedSongIndex = this.BindingModel.SelectedSongIndex;
-            if (selectedSongIndex >= 0)
+            var collection = this.BindingModel.GetSelectedIndexes().ToList();
+            if (collection.Count > 0)
             {
+                int selectedSongIndex = collection[0];
                 this.Logger.LogTask(this.playQueueService.PlayAsync(selectedSongIndex));
             }
         }
 
         private void UpdateSongs()
         {
-            this.Dispatcher.RunAsync(() => { this.BindingModel.Songs = new List<SongBindingModel>(this.playQueueService.GetQueue().Select(x => new SongBindingModel(x))); });
+            this.BindingModel.SetCollection(this.playQueueService.GetQueue());
         }
 
-        private void SelectedSongChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)
+        private void SelectedSongChanged(object sender, NotifyCollectionChangedEventArgs notifyCollectionChangedEventArgs)
         {
             this.PlaySelectedSongCommand.RaiseCanExecuteChanged();
             this.AddToPlaylistCommand.RaiseCanExecuteChanged();
             this.RemoveSelectedSongCommand.RaiseCanExecuteChanged();
 
-            if (this.BindingModel.SelectedSong != null)
+            if (this.BindingModel.SelectedItems.Count > 0)
             {
                 this.MainFrame.SetContextCommands(this.GetContextCommands());
             }
