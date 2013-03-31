@@ -10,10 +10,6 @@
     d:DesignWidth="400"
     Title="{Binding Path=BindingModel.Title, Mode=OneWay}">
 
-    <views:PageViewBase.Resources>
-        <CollectionViewSource x:Name="Groups" IsSourceGrouped="true" ItemsPath="Playlists" />
-    </views:PageViewBase.Resources>
-
     <Grid Margin="0, 0, 20, 0">
         
         <Grid.ColumnDefinitions>
@@ -23,11 +19,10 @@
 
         <SemanticZoom VerticalAlignment="Top" x:Name="SemanticZoom" Grid.Column="0" Grid.ColumnSpan="2"
                       Visibility="{Binding Path=IsDataLoading, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}" 
-                      IsZoomOutButtonEnabled="True" >
+                      IsZoomOutButtonEnabled="True" ViewChangeStarted="SemanticZoom_OnViewChangeStarted" >
             <SemanticZoom.ZoomedInView>
-                <GridView x:Name="ListView"
-                          Margin="0, 20, 0, 0" 
-                          ItemsSource="{Binding Source={StaticResource Groups}}"
+                <ListView x:Name="ListView"
+                          Margin="0, 40, 0, 0" 
                           SelectionMode="None"
                           ScrollViewer.VerticalScrollBarVisibility="Disabled"
                           ScrollViewer.HorizontalScrollBarVisibility="Auto"
@@ -37,45 +32,19 @@
                           ScrollViewer.VerticalScrollMode="Disabled"
                           ItemTemplateSelector="{StaticResource PlaylistDataTemplateSelector}"
                           SelectedItem="{Binding Path=BindingModel.SelectedItem, Mode=TwoWay}" 
-                          Padding="120, 0, 0, 0"
-                          ManipulationMode="None" >
-                    <GridView.ItemsPanel>
+                          Padding="120, 0, 0, 0">
+                    <ListView.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <VirtualizingStackPanel Orientation="Horizontal" />
+                            <WrapGrid Orientation="Vertical" ItemWidth="304" ItemHeight="156" />
                         </ItemsPanelTemplate>
-                    </GridView.ItemsPanel>
-                    <GridView.ItemContainerStyle>
-                        <Style TargetType="GridViewItem">
+                    </ListView.ItemsPanel>
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
                             <Setter Property="Margin" Value="0" />
                             <Setter Property="Padding" Value="0" />
                         </Style>
-                    </GridView.ItemContainerStyle>
-
-                    <GridView.GroupStyle>
-                        <GroupStyle>
-                            <GroupStyle.HeaderTemplate>
-                                <DataTemplate>
-                                    <Button Margin="0, 0, 160, 0" Click="ZoomOutClick">
-                                        <Button.Template>
-                                            <ControlTemplate>
-                                                <Border Background="Transparent" Width="200">
-                                                    <TextBlock Style="{StaticResource GroupHeaderTextStyle}" Text="{Binding Path=Title, Mode=OneWay}" />
-                                                </Border>
-                                            </ControlTemplate>
-                                        </Button.Template>
-                                    </Button>
-                                </DataTemplate>
-                            </GroupStyle.HeaderTemplate>
-
-                            <GroupStyle.Panel>
-                                <ItemsPanelTemplate>
-                                    <VariableSizedWrapGrid Orientation="Vertical" Margin="0, 20, 40, 0" ItemWidth="304" ItemHeight="156"  />
-                                </ItemsPanelTemplate>
-                            </GroupStyle.Panel>
-                        </GroupStyle>
-                    </GridView.GroupStyle>
-
-                </GridView>
+                    </ListView.ItemContainerStyle>
+                </ListView>
             </SemanticZoom.ZoomedInView>
             <SemanticZoom.ZoomedOutView>
                 <ListView SelectionMode="None" 
@@ -88,7 +57,7 @@
                           Padding="120, 0, 0, 0">
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Path=Group.Title, Mode=OneTime}" Style="{StaticResource GroupHeaderTextStyle}"/>
+                            <TextBlock Text="{Binding Path=Title, Mode=OneTime}" Style="{StaticResource GroupHeaderTextStyle}"/>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                     <ListView.ItemsPanel>

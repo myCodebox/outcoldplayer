@@ -4,6 +4,9 @@
 
 namespace OutcoldSolutions.GoogleMusic.Views
 {
+    using System.Collections.Generic;
+    using System.Linq;
+
     using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Presenters;
@@ -69,14 +72,15 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
         public void Refresh()
         {
-            this.Groups.Source = this.presenter.BindingModel.Groups;
-            if (Groups.View == null)
+            if (this.presenter.BindingModel.Groups == null)
             {
-                ((ListViewBase)SemanticZoom.ZoomedOutView).ItemsSource = null;
+                this.ListViewGroups.ItemsSource = null;
+                this.ListView.ItemsSource = null;
             }
             else
             {
-                ((ListViewBase)SemanticZoom.ZoomedOutView).ItemsSource = Groups.View.CollectionGroups;
+                this.ListViewGroups.ItemsSource = this.presenter.BindingModel.Groups;
+                this.ListView.ItemsSource = this.presenter.BindingModel.Groups.SelectMany(x => x.Playlists).ToList();
             }
 
             this.ListView.SelectedIndex = -1;
@@ -132,6 +136,19 @@ namespace OutcoldSolutions.GoogleMusic.Views
         private void ZoomOutClick(object sender, RoutedEventArgs e)
         {
             this.SemanticZoom.IsZoomedInViewActive = false;
+        }
+
+        private void SemanticZoom_OnViewChangeStarted(object sender, SemanticZoomViewChangedEventArgs e)
+        {
+            if (e.IsSourceZoomedInView)
+            {
+                e.DestinationItem.Item = ((List<PlaylistsGroupBindingModel>)this.ListViewGroups.ItemsSource)
+                    .FirstOrDefault(x => x.Playlists.Contains(e.SourceItem.Item));
+            }
+            else
+            {
+                e.DestinationItem.Item = ((PlaylistsGroupBindingModel)e.SourceItem.Item).Playlists.FirstOrDefault();
+            }
         }
     }
 }
