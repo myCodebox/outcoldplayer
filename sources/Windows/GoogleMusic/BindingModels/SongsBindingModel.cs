@@ -97,7 +97,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             }
 
             this.CurrentSorting = SongsSorting.Unknown;
-            this.SelectedItems.Clear();
+            this.ClearSelection();
             this.UpdateSongStates(this.playQueueService.GetCurrentSong(), this.playQueueService.State);
         }
 
@@ -120,7 +120,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
             if (index == -1)
             {
-                this.SelectedItems.Clear();
+                this.ClearSelection();
             }
             else
             {
@@ -129,6 +129,14 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
                 {
                     this.SelectedItems.Add(selectedSong);
                 }
+            }
+        }
+
+        public void ClearSelection()
+        {
+            if (this.SelectedItems.Count > 0)
+            {
+                this.SelectedItems.Clear();
             }
         }
 
@@ -226,7 +234,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
                         throw new ArgumentOutOfRangeException();
                 }
 
-                this.SelectedItems.Clear();
+                this.ClearSelection();
                 this.Songs = new ObservableCollection<SongBindingModel>(enumerable);
                 this.CurrentSorting = songsSorting;
             }

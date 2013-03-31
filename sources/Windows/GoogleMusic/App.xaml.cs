@@ -146,46 +146,46 @@ namespace OutcoldSolutions.GoogleMusic
             Container.Resolve<ISearchService>();
         }
 
-        protected override void OnActivated(/* bool isFirstTimeActivated */)
+        protected override void OnActivated(bool isFirstTimeActivated)
         {
-            // if (isFirstTimeActivated)
-            // {
-            Container.Resolve<RightRegionControlService>();
+            if (isFirstTimeActivated)
+            {
+                Container.Resolve<RightRegionControlService>();
 
-            var mainFrameRegionProvider = Container.Resolve<IMainFrameRegionProvider>();
-            mainFrameRegionProvider.SetContent(
-                MainFrameRegion.Background,
-                new Image()
-                {
-                    Source = new BitmapImage(new Uri("ms-appx:///Resources/logo460.png")),
-                    Height = 460,
-                    Width = 460,
-                    Margin = new Thickness(20),
-                    HorizontalAlignment = HorizontalAlignment.Right,
-                    VerticalAlignment = VerticalAlignment.Top,
-                    Opacity = 0.02
-                });
+                var mainFrameRegionProvider = Container.Resolve<IMainFrameRegionProvider>();
+                mainFrameRegionProvider.SetContent(
+                    MainFrameRegion.Background,
+                    new Image()
+                    {
+                        Source = new BitmapImage(new Uri("ms-appx:///Resources/logo460.png")),
+                        Height = 460,
+                        Width = 460,
+                        Margin = new Thickness(20),
+                        HorizontalAlignment = HorizontalAlignment.Right,
+                        VerticalAlignment = VerticalAlignment.Top,
+                        Opacity = 0.02
+                    });
 
-            mainFrameRegionProvider.SetContent(MainFrameRegion.BottomAppBarRightZone, Container.Resolve<IPlayerView>());
-            mainFrameRegionProvider.SetContent(MainFrameRegion.SnappedView, Container.Resolve<ISnappedPlayerView>());
-            mainFrameRegionProvider.SetContent(MainFrameRegion.TopAppBarRightZone, new LogoView());
+                mainFrameRegionProvider.SetContent(MainFrameRegion.BottomAppBarRightZone, Container.Resolve<IPlayerView>());
+                mainFrameRegionProvider.SetContent(MainFrameRegion.SnappedView, Container.Resolve<ISnappedPlayerView>());
+                mainFrameRegionProvider.SetContent(MainFrameRegion.TopAppBarRightZone, new LogoView());
 
-            var page = (Page)Window.Current.Content;
-            VisualTreeHelperEx.GetVisualChild<Panel>(page).Children.Add(Container.Resolve<MediaElement>());
+                var page = (Page)Window.Current.Content;
+                VisualTreeHelperEx.GetVisualChild<Panel>(page).Children.Add(Container.Resolve<MediaElement>());
 
-            MainMenu.Initialize(Container.Resolve<IMainFrame>());
-            ApplicationSettingViews.Initialize(Container.Resolve<IApplicationSettingViewsService>());
+                MainMenu.Initialize(Container.Resolve<IMainFrame>());
+                ApplicationSettingViews.Initialize(Container.Resolve<IApplicationSettingViewsService>());
 
-            Container.Resolve<MediaControlIntegration>();
-            Container.Resolve<CurrentSongPropertiesUpdateService>();
-            Container.Resolve<ScreenLocker>();
+                Container.Resolve<MediaControlIntegration>();
+                Container.Resolve<CurrentSongPropertiesUpdateService>();
+                Container.Resolve<ScreenLocker>();
 
-            Container.Resolve<INavigationService>().NavigateTo<IInitPageView>(keepInHistory: false);
+                Container.Resolve<INavigationService>().NavigateTo<IInitPageView>(keepInHistory: false);
 
 #if !DEBUG
-            BugSense.BugSenseHandler.Instance.Init(this, "w8c8d6b5");
+                BugSense.BugSenseHandler.Instance.Init(this, "w8c8d6b5");
 #endif
-            // }
+            }
         }
 
         protected override async Task OnSuspendingAsync()

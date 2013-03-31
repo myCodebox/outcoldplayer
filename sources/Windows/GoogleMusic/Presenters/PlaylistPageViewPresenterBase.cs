@@ -56,8 +56,12 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         public void PlaySong(SongBindingModel songBindingModel)
         {
-            int songIndex = this.BindingModel.SongsBindingModel.Songs.IndexOf(songBindingModel);
-            this.Logger.LogTask(this.playQueueService.PlayAsync(songIndex));
+            if (songBindingModel != null)
+            {
+                int songIndex = this.BindingModel.SongsBindingModel.Songs.IndexOf(songBindingModel);
+                this.Logger.LogTask(this.playQueueService.PlayAsync(this.BindingModel.Playlist, this.BindingModel.SongsBindingModel.Songs.Select(s => s.Metadata), songIndex));
+                this.MainFrame.IsBottomAppBarOpen = true;
+            }
         }
 
         protected override void OnInitialized()
@@ -78,11 +82,12 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             var songs = await this.playlistsService.GetSongsAsync(request.PlaylistType, request.PlaylistId);
             var playlist = await this.playlistsService.GetAsync(request.PlaylistType, request.PlaylistId);
 
-            await this.Dispatcher.RunAsync(() =>
-                { 
-                    this.BindingModel.SongsBindingModel.SetCollection(songs);
-                    this.BindingModel.Playlist = (TPlaylist)playlist;
-                });
+            await this.Dispatcher.RunAsync(
+                () =>
+                    {
+                        this.BindingModel.SongsBindingModel.SetCollection(songs);
+                        this.BindingModel.Playlist = (TPlaylist)playlist;
+                    });
         }
 
         protected virtual IEnumerable<CommandMetadata> GetContextCommands()
@@ -123,17 +128,21 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private void SelectedItemsOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs notifyCollectionChangedEventArgs)
         {
-            this.PlaySongCommand.RaiseCanExecuteChanged();
-            this.AddToPlaylistCommand.RaiseCanExecuteChanged();
+            this.Dispatcher.RunAsync(
+                () =>
+                    {
+                        this.PlaySongCommand.RaiseCanExecuteChanged();
+                        this.AddToPlaylistCommand.RaiseCanExecuteChanged();
 
-            if (this.BindingModel.SongsBindingModel.SelectedItems.Count > 0)
-            {
-                this.MainFrame.SetContextCommands(this.GetContextCommands());
-            }
-            else
-            {
-                this.MainFrame.ClearContextCommands();
-            }
+                        if (this.BindingModel.SongsBindingModel.SelectedItems.Count > 0)
+                        {
+                            this.MainFrame.SetContextCommands(this.GetContextCommands());
+                        }
+                        else
+                        {
+                            this.MainFrame.ClearContextCommands();
+                        }
+                    });
         }
     }
 }

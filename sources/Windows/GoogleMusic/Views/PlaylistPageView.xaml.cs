@@ -3,6 +3,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Views
 {
+    using System;
     using System.Collections.Specialized;
     using System.Threading.Tasks;
 
@@ -29,7 +30,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
             this.InitializeComponent();
             this.TrackItemsControl(this.ListView);
         }
-        
+
         protected override void OnInitialized()
         {
             base.OnInitialized();
@@ -57,7 +58,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
             await Task.Yield();
 
-            this.Dispatcher.RunAsync(
+            await this.Dispatcher.RunAsync(
                 CoreDispatcherPriority.Low,
                 () =>
                 {

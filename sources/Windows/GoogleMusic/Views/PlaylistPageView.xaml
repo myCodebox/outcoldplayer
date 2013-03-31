@@ -47,7 +47,6 @@
         <ListView Grid.Row="1"
                   Visibility="{Binding Path=IsDataLoading, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}"
                   ItemsSource="{Binding Path=BindingModel.SongsBindingModel.Songs, Mode=OneWay}"
-                  SelectedIndex="{Binding Path=BindingModel.SelectedSongIndex, Mode=TwoWay}"
                   SelectionMode="Extended"
                   HorizontalAlignment="Stretch"
                   HorizontalContentAlignment="Stretch"

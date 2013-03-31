@@ -3,6 +3,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Views
 {
+    using System;
     using System.Collections.Specialized;
     using System.Threading.Tasks;
 
@@ -57,7 +58,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
             await Task.Yield();
 
-            this.Dispatcher.RunAsync(
+            await this.Dispatcher.RunAsync(
                 CoreDispatcherPriority.Low,
                 () =>
                 {

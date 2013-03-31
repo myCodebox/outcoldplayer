@@ -52,7 +52,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         public void SelectPlayingSong()
         {
-            this.BindingModel.SelectedItems.Clear();
+            this.BindingModel.ClearSelection();
             this.BindingModel.SelectSongByIndex(this.playQueueService.GetCurrentSongIndex());
         }
 
