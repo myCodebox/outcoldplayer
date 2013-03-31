@@ -133,11 +133,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
             this.Container.Resolve<ISearchService>().SetShowOnKeyboardInput(true);
         }
 
-        private void ZoomOutClick(object sender, RoutedEventArgs e)
-        {
-            this.SemanticZoom.IsZoomedInViewActive = false;
-        }
-
         private void SemanticZoom_OnViewChangeStarted(object sender, SemanticZoomViewChangedEventArgs e)
         {
             if (e.IsSourceZoomedInView)
