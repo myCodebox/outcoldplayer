@@ -50,10 +50,12 @@
                 <ListView SelectionMode="None" 
                           x:Name="ListViewGroups"
                           IsItemClickEnabled="False"
-                          ScrollViewer.VerticalScrollBarVisibility="Disabled"
-                          ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                          ScrollViewer.HorizontalScrollMode="Enabled"
-                          ScrollViewer.VerticalScrollMode="Disabled"
+                          ScrollViewer.VerticalScrollBarVisibility="Auto"
+                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                          ScrollViewer.HorizontalScrollMode="Disabled"
+                          ScrollViewer.VerticalScrollMode="Enabled"
+                          VerticalAlignment="Center"
+                          HorizontalAlignment="Center"
                           Padding="120, 0, 0, 0">
                     <ListView.ItemTemplate>
                         <DataTemplate>
@@ -62,7 +64,7 @@
                     </ListView.ItemTemplate>
                     <ListView.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <StackPanel Orientation="Horizontal" />
+                            <WrapGrid Orientation="Horizontal"/>
                         </ItemsPanelTemplate>
                     </ListView.ItemsPanel>
                     <ListView.ItemContainerStyle>
