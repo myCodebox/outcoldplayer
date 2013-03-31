@@ -450,6 +450,11 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         public Song GetCurrentSong()
         {
+            if (this.CurrentSongIndex < 0)
+            {
+                return null;
+            }
+
             return this.songsQueue[this.CurrentSongIndex];
         }
 

@@ -4,8 +4,8 @@
 namespace OutcoldSolutions.GoogleMusic.Presenters
 {
     using System;
-    using System.Linq;
 
+    using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services;
@@ -62,7 +62,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         public void PlaySong(SongBindingModel songBindingModel)
         {
-            this.queueService.PlayAsync(this.BindingModel.Songs.IndexOf(songBindingModel));
+            this.Logger.LogTask(this.queueService.PlayAsync(this.BindingModel.SongsBindingModel.Songs.IndexOf(songBindingModel)));
         }
 
         protected override void OnInitialized()
@@ -74,7 +74,9 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     async (e) => await this.Dispatcher.RunAsync(
                         () =>
                             {
-                                this.BindingModel.Songs = e.SongsQueue.Select(x => new SongBindingModel(x)).ToList();
+                                this.BindingModel.SongsBindingModel.SetCollection(e.SongsQueue);
+                                this.BindingModel.IsQueueEmpty = this.BindingModel.SongsBindingModel.Songs == null
+                                                                 || this.BindingModel.SongsBindingModel.Songs.Count == 0;
                             }));
         }
     }

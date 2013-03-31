@@ -218,7 +218,7 @@
             </StackPanel>
 
             <ListView Grid.Row="5"
-                      ItemsSource="{Binding Path=BindingModel.Songs, Mode=OneWay}"
+                      ItemsSource="{Binding Path=BindingModel.SongsBindingModel.Songs, Mode=OneWay}"
                       SelectionMode="None"
                       HorizontalAlignment="Stretch"
                       HorizontalContentAlignment="Stretch"

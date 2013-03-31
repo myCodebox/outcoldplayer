@@ -4,7 +4,6 @@
 namespace OutcoldSolutions.GoogleMusic.BindingModels
 {
     using System;
-    using System.Collections.Generic;
 
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services;
@@ -17,9 +16,10 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         private readonly IEventAggregator eventAggregator;
         private readonly IDispatcher dispatcher;
 
-        private IList<SongBindingModel> songs;
+        private bool isQueueEmpty;
 
         public SnappedPlayerBindingModel(
+            SongsBindingModel songsBindingModel,
             IMediaElementContainer mediaElementContainer,
             IPlayQueueService playQueueService,
             IEventAggregator eventAggregator,
@@ -29,6 +29,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             this.playQueueService = playQueueService;
             this.eventAggregator = eventAggregator;
             this.dispatcher = dispatcher;
+            this.SongsBindingModel = songsBindingModel;
 
             this.eventAggregator.GetEvent<QueueChangeEvent>().Subscribe(
                 async (e) => await this.dispatcher.RunAsync(() =>
@@ -68,7 +69,12 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         {
             get
             {
-                return this.Songs == null || this.Songs.Count == 0;
+                return this.isQueueEmpty;
+            }
+
+            set
+            {
+                this.SetValue(ref this.isQueueEmpty, value);
             }
         }
 
@@ -85,19 +91,6 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             }
         }
 
-        public IList<SongBindingModel> Songs
-        {
-            get
-            {
-                return this.songs;
-            }
-
-            set
-            {
-                this.SetValue(ref this.songs, value);
-                this.RaiseCurrentPropertyChanged();
-                this.RaisePropertyChanged(() => this.IsQueueEmpty);
-            }
-        }
+        public SongsBindingModel SongsBindingModel { get; private set; }
     }
 }
