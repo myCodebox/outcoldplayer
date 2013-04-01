@@ -26,6 +26,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
         public UserPlaylistsPageView()
         {
             this.InitializeComponent();
+            this.TrackItemsControl(this.ListView);
         }
 
         protected override void OnInitialized()
