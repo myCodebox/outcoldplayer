@@ -112,6 +112,7 @@
     <Compile Include="Models\Artist.cs" />
     <Compile Include="Models\Genre.cs" />
     <Compile Include="Models\IPlaylist.cs" />
+    <Compile Include="Models\SystemPlaylistTypeExtensions.cs" />
     <Compile Include="Models\UserPlaylist.cs" />
     <Compile Include="Models\UserPlaylistEntry.cs" />
     <Compile Include="Models\Search.cs" />

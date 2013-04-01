@@ -26,7 +26,17 @@ namespace OutcoldSolutions.GoogleMusic.Models
             }
         }
 
-        public string Title { get; set; }
+        public string Title
+        {
+            get
+            {
+                return this.SystemPlaylistType.ToTitle();
+            }
+
+            set
+            {
+            }
+        }
 
         public string TitleNorm { get; set; }
 
