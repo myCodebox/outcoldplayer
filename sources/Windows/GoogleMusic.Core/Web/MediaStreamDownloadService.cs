@@ -255,14 +255,11 @@ namespace OutcoldSolutions.GoogleMusic.Web
                         } 
                         while (fReading && this.readTask != null);
 
-                        lock (this.locker)
+                        if (this.data != null)
                         {
-                            if (this.data != null)
-                            {
-                                int length = (int)Math.Min(count, this.contentLength - (int)this.currentPosition);
-                                this.data.CopyTo((int)this.currentPosition, buffer, 0, length);
-                                buffer.Length = (uint)length;
-                            }
+                            int length = (int)Math.Min(count, this.contentLength - (int)this.currentPosition);
+                            this.data.CopyTo((int)this.currentPosition, buffer, 0, length);
+                            buffer.Length = (uint)length;
                         }
 
                         return buffer;
@@ -393,14 +390,11 @@ namespace OutcoldSolutions.GoogleMusic.Web
                             break;
                         }
 
-                        lock (this.locker)
+                        if (this.data != null)
                         {
-                            if (this.data != null)
-                            {
-                                Array.Copy(this.readBuffer, 0, this.data, (int)this.readPosition, read);
-                                this.readPosition += (ulong)read;
-                                downloadProgress = (double)this.readPosition / (double)this.contentLength;
-                            }
+                            Array.Copy(this.readBuffer, 0, this.data, (int)this.readPosition, read);
+                            this.readPosition += (ulong)read;
+                            downloadProgress = (double)this.readPosition / (double)this.contentLength;
                         }
 
                         this.RaiseDownloadProgressChanged(downloadProgress);
