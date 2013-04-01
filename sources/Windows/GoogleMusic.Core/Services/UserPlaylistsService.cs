@@ -31,15 +31,18 @@ namespace OutcoldSolutions.GoogleMusic.Services
         private readonly ILogger logger;
         private readonly IPlaylistsWebService webService;
         private readonly IUserPlaylistsRepository repository;
+        private readonly IEventAggregator eventAggregator;
 
         public UserPlaylistsService(
             ILogManager logManager,
             IPlaylistsWebService webService,
-            IUserPlaylistsRepository repository)
+            IUserPlaylistsRepository repository,
+            IEventAggregator eventAggregator)
         {
             this.logger = logManager.CreateLogger("UserPlaylistsService");
             this.webService = webService;
             this.repository = repository;
+            this.eventAggregator = eventAggregator;
         }
 
         public async Task<UserPlaylist> CreateAsync(string name)
@@ -66,6 +69,9 @@ namespace OutcoldSolutions.GoogleMusic.Services
                                              };
 
                 await this.repository.InstertAsync(userPlaylist);
+
+                this.eventAggregator.Publish(PlaylistsChangeEvent.New(PlaylistType.UserPlaylist).AddAddedPlaylists(userPlaylist));
+
                 return userPlaylist;
             }
             else
@@ -96,6 +102,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             if (resp)
             {
                 await this.repository.DeleteAsync(playlist);
+                this.eventAggregator.Publish(PlaylistsChangeEvent.New(PlaylistType.UserPlaylist).AddRemovedPlaylists(playlist));
             }
 
             return resp;
@@ -120,6 +127,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 playlist.Title = name;
                 playlist.TitleNorm = name.Normalize();
                 await this.repository.UpdateAsync(playlist);
+                this.eventAggregator.Publish(PlaylistsChangeEvent.New(PlaylistType.UserPlaylist).AddUpdatedPlaylists(playlist));
             }
 
             return result;

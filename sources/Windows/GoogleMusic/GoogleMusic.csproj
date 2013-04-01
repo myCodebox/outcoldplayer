@@ -130,6 +130,7 @@
     <Compile Include="BindingModels\SongsBindingModel.cs" />
     <Compile Include="BindingModels\StartViewBindingModel.cs" />
     <Compile Include="BindingModels\AuthentificationPageViewBindingModel.cs" />
+    <Compile Include="BindingModels\UserPlaylistsPageViewBindingModel.cs" />
     <Compile Include="Controls\FakeEqualizerControl.cs" />
     <Compile Include="Controls\PlaylistDataTemplateSelector.cs" />
     <Compile Include="Controls\Rating.cs" />
@@ -149,10 +150,13 @@
     <Compile Include="PlaylistNavigationRequest.cs" />
     <Compile Include="Presenters\LinksRegionViewPresenter.cs" />
     <Compile Include="Presenters\PlayerViewPresenterBase.cs" />
+    <Compile Include="Presenters\PlaylistsPageViewPresenterBase.cs" />
+    <Compile Include="Presenters\Popups\PlaylistEditPopupViewPresenter.cs" />
     <Compile Include="Presenters\SnappedPlayerViewPresenter.cs" />
     <Compile Include="Presenters\Popups\PlayerMorePopupViewPresenter.cs" />
     <Compile Include="Presenters\Settings\AppSettingsViewPresenter.cs" />
     <Compile Include="Presenters\Settings\UpgradeViewPresenter.cs" />
+    <Compile Include="Presenters\UserPlaylistsPageViewPresenter.cs" />
     <Compile Include="Registration.cs" />
     <Compile Include="Services\CurrentSongPropertiesUpdateService.cs" />
     <Compile Include="Services\IPlayQueueService.cs" />
@@ -231,6 +235,9 @@
     <Compile Include="Views\Popups\PlayerMorePopupView.xaml.cs">
       <DependentUpon>PlayerMorePopupView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Popups\PlaylistEditPopupView.xaml.cs">
+      <DependentUpon>PlaylistEditPopupView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ReleasesHistoryPageView.xaml.cs">
       <DependentUpon>ReleasesHistoryPageView.xaml</DependentUpon>
     </Compile>
@@ -260,6 +267,9 @@
     </Compile>
     <Compile Include="Views\StartPageView.xaml.cs">
       <DependentUpon>StartPageView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\UserPlaylistsPageView.xaml.cs">
+      <DependentUpon>UserPlaylistsPageView.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -385,6 +395,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Popups\PlaylistEditPopupView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\ReleasesHistoryPageView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -422,6 +436,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\StartPageView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\UserPlaylistsPageView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

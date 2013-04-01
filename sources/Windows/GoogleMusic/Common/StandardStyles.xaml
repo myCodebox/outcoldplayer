@@ -814,5 +814,5 @@
     <Style TargetType="HyperlinkButton">
         <Setter Property="Foreground" Value="{StaticResource ApplicationThemeBrush}" />
     </Style>
-    
+
 </ResourceDictionary>

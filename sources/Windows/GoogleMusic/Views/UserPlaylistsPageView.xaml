@@ -1,9 +1,9 @@
 ﻿<views:PageViewBase
-    x:Class="OutcoldSolutions.GoogleMusic.Views.PlaylistsPageView"
+    x:Class="OutcoldSolutions.GoogleMusic.Views.UserPlaylistsPageView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:views="using:OutcoldSolutions.Views"
     mc:Ignorable="d"
     d:DesignHeight="300"
@@ -12,18 +12,19 @@
     Subtitle="{Binding Path=BindingModel.Subtitle, Mode=OneWay}">
 
     <SemanticZoom Margin="0, 0, 20, 0"
-                  VerticalAlignment="Top"
+                  VerticalAlignment="Top" 
                   Visibility="{Binding Path=IsDataLoading, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}" 
                   IsZoomOutButtonEnabled="True" 
                   ViewChangeStarted="SemanticZoom_OnViewChangeStarted" >
         <SemanticZoom.ZoomedInView>
             <ListView x:Name="ListView"
                       Margin="0, 40, 0, 0" 
-                      SelectionMode="None"
+                      SelectionMode="Extended"
+                      IsItemClickEnabled="True"
                       ItemClick="PlaylistItemClick"
                       ItemsSource="{Binding Path=BindingModel.Playlists, Mode=OneWay}"
-                      IsItemClickEnabled="True"
-                      Style="{StaticResource PlaylistsListView}" />
+                      Style="{StaticResource PlaylistsListView}"
+                      SelectionChanged="ListViewSelectionChanged"/>
         </SemanticZoom.ZoomedInView>
         <SemanticZoom.ZoomedOutView>
             <ListView x:Name="ListViewGroups"
@@ -32,4 +33,5 @@
                       Style="{StaticResource ZoomOutPlaylistGroupsListView}"/>
         </SemanticZoom.ZoomedOutView>
     </SemanticZoom>
+
 </views:PageViewBase>

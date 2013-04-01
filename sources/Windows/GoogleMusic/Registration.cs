@@ -44,12 +44,19 @@ namespace OutcoldSolutions.GoogleMusic
             registration.Register<StartPageViewPresenter>().AsSingleton();
             registration.Register<StartViewBindingModel>().AsSingleton();
 
-            // Playlists view (albums, playlists, genres, artists)
+            // Playlists view (albums, genres, artists)
             registration.Register<IPlaylistsPageView>()
                         .InjectionRule<BindingModelBase, PlaylistsPageViewPresenter>()
                         .AsSingleton<PlaylistsPageView>();
             registration.Register<PlaylistsPageViewPresenter>().AsSingleton();
             registration.Register<PlaylistsPageViewBindingModel>().AsSingleton();
+
+            // User Playlists view
+            registration.Register<IUserPlaylistsPageView>()
+                        .InjectionRule<BindingModelBase, UserPlaylistsPageViewPresenter>()
+                        .AsSingleton<UserPlaylistsPageView>();
+            registration.Register<UserPlaylistsPageViewPresenter>().AsSingleton();
+            registration.Register<UserPlaylistsPageViewBindingModel>().AsSingleton();
 
             // Playlist view (playlist, all artist's songs, system playlists, genre)
             registration.Register<IPlaylistPageView>()
@@ -122,6 +129,11 @@ namespace OutcoldSolutions.GoogleMusic
                         .As<PlayerMorePopupView>();
             registration.Register<PlayerMorePopupViewBindingModel>();
             registration.Register<PlayerMorePopupViewPresenter>();
+
+            registration.Register<IPlaylistEditPopupView>()
+                        .InjectionRule<BindingModelBase, PlaylistEditPopupViewPresenter>()
+                        .As<PlaylistEditPopupView>();
+            registration.Register<PlaylistEditPopupViewPresenter>();
         }
 
         public static void RegisterViews(IRegistrationContext registration)

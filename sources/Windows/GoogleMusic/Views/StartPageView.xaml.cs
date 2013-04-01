@@ -7,6 +7,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
     using System.Diagnostics;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
+    using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Presenters;
     using OutcoldSolutions.Views;
 
@@ -60,7 +61,14 @@ namespace OutcoldSolutions.GoogleMusic.Views
                 var groupBindingModel = frameworkElement.DataContext as PlaylistsGroupBindingModel;
                 if (groupBindingModel != null)
                 {
-                    this.NavigationService.NavigateTo<IPlaylistsPageView>(groupBindingModel.Request);
+                    if (groupBindingModel.Request == PlaylistType.UserPlaylist)
+                    {
+                        this.NavigationService.NavigateTo<IUserPlaylistsPageView>(PlaylistType.UserPlaylist);
+                    }
+                    else
+                    {
+                        this.NavigationService.NavigateTo<IPlaylistsPageView>(groupBindingModel.Request);
+                    }
                 }
             }
         }
