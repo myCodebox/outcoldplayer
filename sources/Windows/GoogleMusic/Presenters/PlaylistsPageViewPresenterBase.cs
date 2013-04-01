@@ -4,6 +4,8 @@
 namespace OutcoldSolutions.GoogleMusic.Presenters
 {
     using System;
+    using System.Collections.Generic;
+    using System.Collections.Specialized;
     using System.Linq;
     using System.Reactive.Linq;
     using System.Threading.Tasks;
@@ -36,9 +38,12 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.playQueueService = playQueueService;
 
             this.PlayCommand = new DelegateCommand(this.Play);
+            this.AddToQueueCommand = new DelegateCommand(this.AddToQueue, () => this.BindingModel.SelectedItems.Count > 0);
         }
 
         public DelegateCommand PlayCommand { get; private set; }
+
+        public DelegateCommand AddToQueueCommand { get; private set; }
 
         public override void OnNavigatedTo(NavigatedToEventArgs parameter)
         {
@@ -60,6 +65,13 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             }
         }
 
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+
+            this.BindingModel.SelectedItems.CollectionChanged += this.SelectedItemsOnCollectionChanged;
+        }
+
         protected override Task LoadDataAsync(NavigatedToEventArgs navigatedToEventArgs)
         {
             this.BindingModel.PlaylistType = (PlaylistType)navigatedToEventArgs.Parameter;
@@ -77,6 +89,28 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             });
         }
 
+        protected virtual void OnSelectedItemsChanged()
+        {
+            if (this.BindingModel.SelectedItems.Count > 0)
+            {
+                this.MainFrame.SetContextCommands(this.GetContextCommands());
+            }
+            else
+            {
+                this.MainFrame.ClearContextCommands();
+            }
+        }
+
+        protected virtual IEnumerable<CommandMetadata> GetContextCommands()
+        {
+            yield return new CommandMetadata(CommandIcon.Add, "Queue", this.AddToQueueCommand);
+        }
+
+        private void SelectedItemsOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            this.OnSelectedItemsChanged();
+        }
+
         private void Play(object commandParameter)
         {
             IPlaylist playlist = commandParameter as IPlaylist;
@@ -85,6 +119,26 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 this.navigationService.NavigateToPlaylist(playlist);
                 this.playQueueService.PlayAsync(playlist);
                 this.MainFrame.IsBottomAppBarOpen = true;
+            }
+        }
+
+        private async void AddToQueue()
+        {
+            try
+            {
+                List<IPlaylist> selectedPlaylists = this.BindingModel.SelectedItems.Select(bm => bm.Playlist).ToList();
+                List<Song> songs = new List<Song>(selectedPlaylists.Sum(p => p.SongsCount));
+                foreach (var selectedPlaylist in selectedPlaylists)
+                {
+                    songs.AddRange(await this.playlistsService.GetSongsAsync(selectedPlaylist));
+                }
+
+                await this.playQueueService.AddRangeAsync(songs);
+                await this.Dispatcher.RunAsync(() => this.BindingModel.ClearSelectedItems());
+            }
+            catch (Exception e)
+            {
+                this.Logger.LogErrorException(e);
             }
         }
     }

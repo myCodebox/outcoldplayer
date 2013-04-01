@@ -4,6 +4,7 @@
 namespace OutcoldSolutions.GoogleMusic.BindingModels
 {
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using System.Linq;
 
     using OutcoldSolutions.BindingModels;
@@ -11,10 +12,16 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
     public class PlaylistsPageViewBindingModel : BindingModelBase
     {
+        private readonly ObservableCollection<PlaylistBindingModel> selectedItems;
         private IList<PlaylistBindingModel> playlists;
         private IList<PlaylistsGroupBindingModel> groups;
 
         private PlaylistType playlistType;
+
+        public PlaylistsPageViewBindingModel()
+        {
+            this.selectedItems = new ObservableCollection<PlaylistBindingModel>();
+        }
 
         public string Title
         {
@@ -75,6 +82,22 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             set
             {
                 this.SetValue(ref this.groups, value);
+            }
+        }
+
+        public ObservableCollection<PlaylistBindingModel> SelectedItems
+        {
+            get
+            {
+                return this.selectedItems;
+            }
+        }
+
+        public void ClearSelectedItems()
+        {
+            if (this.selectedItems.Count > 0)
+            {
+                this.selectedItems.Clear();
             }
         }
 

@@ -31,18 +31,18 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
             var startPlaying = DateTime.UtcNow;
 
             cancellationToken.ThrowIfCancellationRequested();
-
+            
             var parameters = new Dictionary<string, string>()
                                  {
-                                     { "artist", song.Artist.Title },
+                                     { "artist", song.ArtistTitle },
                                      { "track", song.Title },
-                                     { "album", song.Album.Title },
+                                     { "album", song.AlbumTitle },
                                      { "trackNumber", song.Track.HasValue ? song.Track.Value.ToString("D") : string.Empty },
                                      { "duration", ((int)song.Duration.TotalSeconds).ToString("D") }
                                  };
 
             if (!string.IsNullOrEmpty(song.AlbumArtistTitle)
-                && string.Equals(song.AlbumArtistTitle, song.Artist.Title, StringComparison.OrdinalIgnoreCase))
+                && string.Equals(song.AlbumArtistTitle, song.ArtistTitle, StringComparison.OrdinalIgnoreCase))
             {
                 parameters.Add("albumArtist", song.AlbumArtistTitle);
             }

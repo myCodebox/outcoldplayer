@@ -37,49 +37,11 @@ order by p.[TitleNorm]
 ";
 
         private const string SqlUserPlaylistSongs = @"
-select s.*,
-       e.[Id] as [UserPlaylistEntry.Id],
-       e.[PlaylistId] as [UserPlaylistEntry.PlaylistId], 
-       e.[SongId] as [UserPlaylistEntry.SongId],
-       e.[PlaylistOrder] as [UserPlaylistEntry.PlaylistOrder],
-       e.[ProviderEntryId] as [UserPlaylistEntry.ProviderEntryId],
-       a.[AlbumId] as [Album.AlbumId],
-       a.[Title] as [Album.Title],  
-       a.[TitleNorm] as [Album.TitleNorm],
-       a.[ArtistTitleNorm] as [Album.ArtistTitleNorm],
-       a.[GenreTitleNorm] as [Album.GenreTitleNorm],
-       a.[SongsCount] as [Album.SongsCount], 
-       a.[Year] as [Album.Year],    
-       a.[Duration] as [Album.Duration],       
-       a.[ArtUrl] as [Album.ArtUrl],    
-       a.[LastPlayed] as [Album.LastPlayed],       
-       ta.[ArtistId] as [Artist.ArtistId],
-       ta.[Title] as [Artist.Title],
-       ta.[TitleNorm] as [Artist.TitleNorm],
-       ta.[AlbumsCount] as [Artist.AlbumsCount],
-       ta.[SongsCount] as [Artist.SongsCount],
-       ta.[Duration] as [Artist.Duration],
-       ta.[ArtUrl] as [Artist.ArtUrl],
-       ta.[LastPlayed]  as [Artist.LastPlayed]
+select s.*
 from [Song] as s
      inner join UserPlaylistEntry e on e.SongId = s.SongId
-     inner join Album a on s.[AlbumTitleNorm] = a.[TitleNorm] and coalesce(nullif(s.AlbumArtistTitleNorm, ''), s.[ArtistTitleNorm]) = a.[ArtistTitleNorm]
-     inner join Artist ta on ta.[TitleNorm] = a.[ArtistTitleNorm] 
 where e.[PlaylistId] = ?1
 order by e.[PlaylistOrder]
-";
-
-        private const string SqlAllPlaylistEntries = @"
-SELECT 
-    s.*,
-    e.[Id] as [UserPlaylistEntry.Id],
-    e.[PlaylistId] as [UserPlaylistEntry.PlaylistId], 
-    e.[SongId] as [UserPlaylistEntry.SongId],
-    e.[PlaylistOrder] as [UserPlaylistEntry.PlaylistOrder],
-    e.[ProviderEntryId] as [UserPlaylistEntry.ProviderEntryId]
-FROM Song s 
-    INNER JOIN UserPlaylistEntry e ON s.SongId == e.SongId 
-WHERE e.PlaylistId = ?1
 ";
 
         private const string SqlDeletePlaylistEntries = @"

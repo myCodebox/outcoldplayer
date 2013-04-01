@@ -122,7 +122,7 @@
                     <Image Width="116" Height="116" Source="ms-appx:///Resources/UnknownArt-116.png" Stretch="None"/>
                 </Border>
                 <StackPanel Grid.Column="1" Margin="0,15,10,0">
-                    <TextBlock Text="{Binding Path=Playlist.SystemPlaylistType, Mode=OneWay}"  Style="{StaticResource BodyTextStyle}" TextWrapping="Wrap"  TextTrimming="WordEllipsis" MaxHeight="40"/>
+                    <TextBlock Text="{Binding Path=Playlist.Title, Mode=OneWay}"  Style="{StaticResource BodyTextStyle}" TextWrapping="Wrap"  TextTrimming="WordEllipsis" MaxHeight="40"/>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{Binding Path=Playlist.Duration, Mode=OneTime, Converter={StaticResource TimeSpanToTimeConverter}}" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
                         <TextBlock Text=" (" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>

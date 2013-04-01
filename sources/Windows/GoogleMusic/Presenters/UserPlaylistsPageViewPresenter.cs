@@ -6,7 +6,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 {
     using System;
     using System.Collections.Generic;
-    using System.Collections.Specialized;
     using System.Linq;
     using System.Threading.Tasks;
 
@@ -19,7 +18,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
     using Windows.UI.Popups;
 
-    public class UserPlaylistsPageViewPresenter : PlaylistsPageViewPresenterBase<IUserPlaylistsPageView, UserPlaylistsPageViewBindingModel>
+    public class UserPlaylistsPageViewPresenter : PlaylistsPageViewPresenterBase<IUserPlaylistsPageView, PlaylistsPageViewBindingModel>
     {
         private readonly IUserPlaylistsService userPlaylistsService;
         
@@ -42,13 +41,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         public DelegateCommand EditPlaylistCommand { get; private set; }
 
-        protected override void OnInitialized()
-        {
-            base.OnInitialized();
-
-            this.BindingModel.SelectedItems.CollectionChanged += this.SelectedItemsOnCollectionChanged;
-        }
-
         protected override IEnumerable<CommandMetadata> GetViewCommands()
         {
             yield return new CommandMetadata(CommandIcon.Add, "Add", this.AddPlaylistCommand);
@@ -60,28 +52,26 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             await this.Dispatcher.RunAsync(() => this.BindingModel.ClearSelectedItems());
         }
 
-        private IEnumerable<CommandMetadata> GetContextCommands()
+        protected override void OnSelectedItemsChanged()
         {
+            base.OnSelectedItemsChanged();
+
+            this.AddPlaylistCommand.RaiseCanExecuteChanged();
+            this.DeletePlaylistsCommand.RaiseCanExecuteChanged();
+            this.EditPlaylistCommand.RaiseCanExecuteChanged();
+        }
+
+        protected override IEnumerable<CommandMetadata> GetContextCommands()
+        {
+            foreach (CommandMetadata commandMetadata in base.GetContextCommands())
+            {
+                yield return commandMetadata;
+            }
+
             yield return new CommandMetadata(CommandIcon.Edit, "Rename", this.EditPlaylistCommand);
             yield return new CommandMetadata(CommandIcon.Delete, "Delete", this.DeletePlaylistsCommand);
         }
 
-        private void SelectedItemsOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs notifyCollectionChangedEventArgs)
-        {
-            this.AddPlaylistCommand.RaiseCanExecuteChanged();
-            this.DeletePlaylistsCommand.RaiseCanExecuteChanged();
-            this.EditPlaylistCommand.RaiseCanExecuteChanged();
-
-            if (this.BindingModel.SelectedItems.Count > 0)
-            {
-                this.MainFrame.SetContextCommands(this.GetContextCommands());
-            }
-            else
-            {
-                this.MainFrame.ClearContextCommands();
-            }
-        }
-        
         private void AddPlaylist()
         {
             this.MainFrame.ShowPopup<IPlaylistEditPopupView>(PopupRegion.AppToolBarLeft, new UserPlaylist());

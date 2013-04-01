@@ -44,6 +44,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
         public SongsBindingModel(
             IPlayQueueService playQueueService,
+            IEventAggregator eventAggregator,
             IDispatcher dispatcher)
         {
             this.playQueueService = playQueueService;
@@ -53,6 +54,9 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             this.SelectedItems = new ObservableCollection<SongBindingModel>();
 
             this.playQueueService.StateChanged += this.PlayQueueServiceOnStateChanged;
+
+            eventAggregator.GetEvent<SongsUpdatedEvent>()
+                           .Subscribe(async (e) => await this.dispatcher.RunAsync(() => this.OnSongsUpdated(e.UpdatedSongs)));
         }
 
         public DelegateCommand SortCommand { get; set; }
@@ -140,6 +144,21 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             }
         }
 
+        private void OnSongsUpdated(IEnumerable<Song> updateSongs)
+        {
+            if (updateSongs != null)
+            {
+                foreach (var updateSong in updateSongs)
+                {
+                    var songBindingModel = this.Songs.FirstOrDefault(s => s.Metadata.SongId == updateSong.SongId);
+                    if (songBindingModel != null)
+                    {
+                        songBindingModel.Metadata = updateSong;
+                    }
+                }
+            }
+        }
+
         private async void PlayQueueServiceOnStateChanged(object sender, StateChangedEventArgs stateChangedEventArgs)
         {
             await this.dispatcher.RunAsync(
@@ -189,46 +208,46 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
                         enumerable = this.Songs;
                         break;
                     case SongsSorting.Track:
-                        enumerable = this.Songs.OrderBy(s => s.Metadata.Track);
+                        enumerable = this.Songs.OrderBy(s => s.Track);
                         break;
                     case SongsSorting.TrackDescending:
-                        enumerable = this.Songs.OrderByDescending(s => s.Metadata.Track);
+                        enumerable = this.Songs.OrderByDescending(s => s.Track);
                         break;
                     case SongsSorting.Title:
-                        enumerable = this.Songs.OrderBy(s => s.Metadata.Title, StringComparer.CurrentCultureIgnoreCase);
+                        enumerable = this.Songs.OrderBy(s => s.Title, StringComparer.CurrentCultureIgnoreCase);
                         break;
                     case SongsSorting.TitleDescending:
-                        enumerable = this.Songs.OrderByDescending(s => s.Metadata.Title, StringComparer.CurrentCultureIgnoreCase);
+                        enumerable = this.Songs.OrderByDescending(s => s.Title, StringComparer.CurrentCultureIgnoreCase);
                         break;
                     case SongsSorting.Artist:
-                        enumerable = this.Songs.OrderBy(s => s.Metadata.Artist.Title, StringComparer.CurrentCultureIgnoreCase);
+                        enumerable = this.Songs.OrderBy(s => s.Artist, StringComparer.CurrentCultureIgnoreCase);
                         break;
                     case SongsSorting.ArtistDescending:
-                        enumerable = this.Songs.OrderByDescending(s => s.Metadata.Artist.Title, StringComparer.CurrentCultureIgnoreCase);
+                        enumerable = this.Songs.OrderByDescending(s => s.Artist, StringComparer.CurrentCultureIgnoreCase);
                         break;
                     case SongsSorting.Album:
-                        enumerable = this.Songs.OrderBy(s => s.Metadata.Album.Title, StringComparer.CurrentCultureIgnoreCase);
+                        enumerable = this.Songs.OrderBy(s => s.Album, StringComparer.CurrentCultureIgnoreCase);
                         break;
                     case SongsSorting.AlbumDescending:
-                        enumerable = this.Songs.OrderByDescending(s => s.Metadata.Album.Title, StringComparer.CurrentCultureIgnoreCase);
+                        enumerable = this.Songs.OrderByDescending(s => s.Album, StringComparer.CurrentCultureIgnoreCase);
                         break;
                     case SongsSorting.Duration:
-                        enumerable = this.Songs.OrderBy(s => s.Metadata.Duration);
+                        enumerable = this.Songs.OrderBy(s => s.Duration);
                         break;
                     case SongsSorting.DurationDescending:
-                        enumerable = this.Songs.OrderByDescending(s => s.Metadata.Duration);
+                        enumerable = this.Songs.OrderByDescending(s => s.Duration);
                         break;
                     case SongsSorting.Rating:
-                        enumerable = this.Songs.OrderBy(s => s.Metadata.Rating);
+                        enumerable = this.Songs.OrderBy(s => s.Rating);
                         break;
                     case SongsSorting.RatingDescending:
-                        enumerable = this.Songs.OrderByDescending(s => s.Metadata.Rating);
+                        enumerable = this.Songs.OrderByDescending(s => s.Rating);
                         break;
                     case SongsSorting.PlaysCount:
-                        enumerable = this.Songs.OrderBy(s => s.Metadata.PlayCount);
+                        enumerable = this.Songs.OrderBy(s => s.PlayCount);
                         break;
                     case SongsSorting.PlaysCountDescending:
-                        enumerable = this.Songs.OrderByDescending(s => s.Metadata.PlayCount);
+                        enumerable = this.Songs.OrderByDescending(s => s.PlayCount);
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();

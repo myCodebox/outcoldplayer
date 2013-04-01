@@ -228,7 +228,7 @@ namespace OutcoldSolutions.GoogleMusic.Shell
                     {
                         result.Add(new SearchResult(
                             song.Title,
-                            song.Artist.Title,
+                            song.GetSongArtist(),
                             song.SongId.ToString(),
                             song.AlbumArtUrl));
                     }

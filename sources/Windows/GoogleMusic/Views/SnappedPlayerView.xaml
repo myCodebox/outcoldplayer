@@ -263,7 +263,7 @@
                                        Style="{StaticResource SubtitleTextStyle}" 
                                        VerticalAlignment="Center" 
                                        Margin="5, 0, 0, 0" 
-                                       Text="{Binding Path=Metadata.ArtistTitle, Mode=OneWay}" 
+                                       Text="{Binding Path=Artist, Mode=OneWay}" 
                                        TextTrimming="WordEllipsis" />
 
                             <TextBlock Grid.Column="2" 

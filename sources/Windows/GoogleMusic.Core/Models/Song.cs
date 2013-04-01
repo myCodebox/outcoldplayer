@@ -51,16 +51,7 @@ namespace OutcoldSolutions.GoogleMusic.Models
         public ushort Bitrate { get; set; }
 
         public StreamType StreamType { get; set; }
-
-        [Reference]
-        public Album Album { get; set; }
-
-        [Reference]
-        public Genre Genre { get; set; }
-
-        [Reference]
-        public Artist Artist { get; set; }
-
+       
         [Reference]
         public UserPlaylistEntry UserPlaylistEntry { get; set; }
 

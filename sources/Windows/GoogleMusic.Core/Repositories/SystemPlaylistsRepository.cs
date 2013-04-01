@@ -47,88 +47,23 @@ select count(*) as SongsCount, sum(s.[Duration]) as Duration, ?1 as [SystemPlayl
 ";
 
         private const string SqlAllSongs = @"
-select s.* ,
-       a.[AlbumId] as [Album.AlbumId],
-       a.[Title] as [Album.Title],  
-       a.[TitleNorm] as [Album.TitleNorm],
-       a.[ArtistTitleNorm] as [Album.ArtistTitleNorm],
-       a.[SongsCount] as [Album.SongsCount], 
-       a.[Year] as [Album.Year],    
-       a.[Duration] as [Album.Duration],       
-       a.[ArtUrl] as [Album.ArtUrl],    
-       a.[LastPlayed] as [Album.LastPlayed],
-       a.[GenreTitleNorm] as [Album.GenreTitleNorm],
-       ta.[ArtistId] as [Artist.ArtistId],
-       ta.[Title] as [Artist.Title],
-       ta.[TitleNorm] as [Artist.TitleNorm],
-       ta.[AlbumsCount] as [Artist.AlbumsCount],
-       ta.[SongsCount] as [Artist.SongsCount],
-       ta.[Duration] as [Artist.Duration],
-       ta.[ArtUrl] as [Artist.ArtUrl],
-       ta.[LastPlayed]  as [Artist.LastPlayed]
+select s.* 
 from [Song] as s
-     inner join Album a on s.[AlbumTitleNorm] = a.[TitleNorm] and coalesce(nullif(s.AlbumArtistTitleNorm, ''), s.[ArtistTitleNorm]) = a.[ArtistTitleNorm]
-     inner join Artist ta on ta.[TitleNorm] = a.[ArtistTitleNorm] 
 order by coalesce(nullif(s.AlbumArtistTitleNorm, ''), s.[ArtistTitleNorm]), s.[AlbumTitleNorm], coalesce(nullif(s.Disc, 0), 1), s.Track
 ";
 
         private const string SqlHighlyRatedSongs = @"
-select s.* ,
-       a.[AlbumId] as [Album.AlbumId],
-       a.[Title] as [Album.Title],  
-       a.[TitleNorm] as [Album.TitleNorm],
-       a.[ArtistTitleNorm] as [Album.ArtistTitleNorm],
-       a.[SongsCount] as [Album.SongsCount], 
-       a.[Year] as [Album.Year],    
-       a.[Duration] as [Album.Duration],       
-       a.[ArtUrl] as [Album.ArtUrl],    
-       a.[LastPlayed] as [Album.LastPlayed],
-       a.[GenreTitleNorm] as [Album.GenreTitleNorm],
-       ta.[ArtistId] as [Artist.ArtistId],
-       ta.[Title] as [Artist.Title],
-       ta.[TitleNorm] as [Artist.TitleNorm],
-       ta.[AlbumsCount] as [Artist.AlbumsCount],
-       ta.[SongsCount] as [Artist.SongsCount],
-       ta.[Duration] as [Artist.Duration],
-       ta.[ArtUrl] as [Artist.ArtUrl],
-       ta.[LastPlayed]  as [Artist.LastPlayed]
+select s.* 
 from [Song] as s
-     inner join Album a on s.[AlbumTitleNorm] = a.[TitleNorm] and coalesce(nullif(s.AlbumArtistTitleNorm, ''), s.[ArtistTitleNorm]) = a.[ArtistTitleNorm]
-     inner join Artist ta on ta.[TitleNorm] = a.[ArtistTitleNorm] 
 where s.[Rating] >= ?1 
 order by s.TitleNorm
 ";
 
         private const string SqlLastAddedSongs = @"
-select s.* ,
-       a.[AlbumId] as [Album.AlbumId],
-       a.[Title] as [Album.Title],  
-       a.[TitleNorm] as [Album.TitleNorm],
-       a.[ArtistTitleNorm] as [Album.ArtistTitleNorm],
-       a.[SongsCount] as [Album.SongsCount], 
-       a.[Year] as [Album.Year],    
-       a.[Duration] as [Album.Duration],       
-       a.[ArtUrl] as [Album.ArtUrl],    
-       a.[LastPlayed] as [Album.LastPlayed],
-       a.[GenreTitleNorm] as [Album.GenreTitleNorm],
-       ta.[ArtistId] as [Artist.ArtistId],
-       ta.[Title] as [Artist.Title],
-       ta.[TitleNorm] as [Artist.TitleNorm],
-       ta.[AlbumsCount] as [Artist.AlbumsCount],
-       ta.[SongsCount] as [Artist.SongsCount],
-       ta.[Duration] as [Artist.Duration],
-       ta.[ArtUrl] as [Artist.ArtUrl],
-       ta.[LastPlayed]  as [Artist.LastPlayed]
-from 
-     (
-          select *
-          from [Song] as x  
-          order by x.[CreationDate] desc
-          limit ?1
-     ) as s
-     inner join Album a on s.[AlbumTitleNorm] = a.[TitleNorm] and coalesce(nullif(s.AlbumArtistTitleNorm, ''), s.[ArtistTitleNorm]) = a.[ArtistTitleNorm]
-     inner join Artist ta on ta.[TitleNorm] = a.[ArtistTitleNorm] 
-order by s.CreationDate desc
+select *
+from [Song] as x  
+order by x.[CreationDate] desc
+limit ?1
 ";
 
         public async Task<SystemPlaylist> GetHighlyRatedPlaylistAsync()

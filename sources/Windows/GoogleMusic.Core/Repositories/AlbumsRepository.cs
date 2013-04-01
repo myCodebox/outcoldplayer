@@ -15,6 +15,8 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
     public interface IAlbumsRepository : IPlaylistRepository<Album>
     {
         Task<IList<Album>> GetArtistAlbumsAsync(int atistId);
+
+        Task<Album> FindSongAlbumAsync(int songId);
     }
 
     public class AlbumsRepository : RepositoryBase, IAlbumsRepository
@@ -130,30 +132,37 @@ order by x.IsCollection, x.Year
 ";
 
         private const string SqlAlbumsSongs = @"
-select s.* ,
-       a.[AlbumId] as [Album.AlbumId],
-       a.[Title] as [Album.Title],  
-       a.[TitleNorm] as [Album.TitleNorm],
-       a.[ArtistTitleNorm] as [Album.ArtistTitleNorm],
-       a.[GenreTitleNorm] as [Album.GenreTitleNorm],
-       a.[SongsCount] as [Album.SongsCount], 
-       a.[Year] as [Album.Year],    
-       a.[Duration] as [Album.Duration],       
-       a.[ArtUrl] as [Album.ArtUrl],    
-       a.[LastPlayed] as [Album.LastPlayed],       
-       ta.[ArtistId] as [Artist.ArtistId],
-       ta.[Title] as [Artist.Title],
-       ta.[TitleNorm] as [Artist.TitleNorm],
-       ta.[AlbumsCount] as [Artist.AlbumsCount],
-       ta.[SongsCount] as [Artist.SongsCount],
-       ta.[Duration] as [Artist.Duration],
-       ta.[ArtUrl] as [Artist.ArtUrl],
-       ta.[LastPlayed]  as [Artist.LastPlayed]
+select s.* 
 from [Song] as s
      inner join Album a on s.[AlbumTitleNorm] = a.[TitleNorm] and coalesce(nullif(s.AlbumArtistTitleNorm, ''), s.[ArtistTitleNorm]) = a.[ArtistTitleNorm]
-     inner join Artist ta on ta.[TitleNorm] = a.[ArtistTitleNorm] 
 where a.AlbumId = ?1
 order by coalesce(nullif(s.Disc, 0), 1), s.Track
+";
+
+        private const string SqlSongAlbum = @"
+select 
+       x.[AlbumId],
+       x.[Title],  
+       x.[TitleNorm],
+       x.[ArtistTitleNorm],       
+       x.[GenreTitleNorm],
+       x.[SongsCount], 
+       x.[Year],    
+       x.[Duration],       
+       x.[ArtUrl],    
+       x.[LastPlayed],       
+       a.[ArtistId] as [Artist.ArtistId],
+       a.[Title] as [Artist.Title],
+       a.[TitleNorm] as [Artist.TitleNorm],
+       a.[AlbumsCount] as [Artist.AlbumsCount],
+       a.[SongsCount] as [Artist.SongsCount],
+       a.[Duration] as [Artist.Duration],
+       a.[ArtUrl] as [Artist.ArtUrl],
+       a.[LastPlayed]  as [Artist.LastPlayed]
+from [Album] x 
+     inner join [Artist] as a on x.[ArtistTitleNorm] = a.[TitleNorm]
+     inner join [Song] as s on x.[AlbumTitleNorm] = s.[AlbumTitleNorm]
+where s.[SongId] = ?1
 ";
 
         private readonly Dictionary<Order, string> orderStatements = new Dictionary<Order, string>()
@@ -188,6 +197,11 @@ order by coalesce(nullif(s.Disc, 0), 1), s.Track
         public async Task<IList<Album>> GetArtistAlbumsAsync(int atistId)
         {
             return await this.Connection.QueryAsync<Album>(SqlArtistAlbums, atistId);
+        }
+
+        public async Task<Album> FindSongAlbumAsync(int songId)
+        {
+            return (await this.Connection.QueryAsync<Album>(SqlSongAlbum, songId)).FirstOrDefault();
         }
 
         public async Task<IList<Album>> SearchAsync(string searchQuery, uint? take)

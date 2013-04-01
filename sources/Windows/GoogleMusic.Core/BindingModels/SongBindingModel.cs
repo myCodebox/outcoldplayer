@@ -36,7 +36,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         {
             get
             {
-                return this.Metadata.Artist.Title;
+                return string.IsNullOrEmpty(this.Metadata.ArtistTitle) ? this.Metadata.AlbumArtistTitle : this.Metadata.ArtistTitle;
             }
         }
 
@@ -44,7 +44,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         {
             get
             {
-                return this.Metadata.Album.Title;
+                return this.Metadata.AlbumTitle;
             }
         }
 
@@ -54,12 +54,6 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             {
                 return this.Metadata.PlayCount;
             }
-
-            set
-            {
-                this.Metadata.PlayCount = value;
-                this.RaiseCurrentPropertyChanged();
-            }
         }
 
         public int Rating
@@ -68,19 +62,13 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             {
                 return this.Metadata.Rating;
             }
-
-            set
-            {
-                this.Metadata.Rating = (byte)value;
-                this.RaiseCurrentPropertyChanged();
-            }
         }
 
-        public ushort Track
+        public ushort? Track
         {
             get
             {
-                return this.Metadata.Track.Value;
+                return this.Metadata.Track;
             }
         }
 

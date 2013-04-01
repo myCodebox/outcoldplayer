@@ -12,14 +12,14 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
     public class AlbumPageViewPresenter : PlaylistPageViewPresenterBase<IAlbumPageView, Album>
     {
-        private readonly ISongsRepository songsRepository;
+        private readonly IAlbumsRepository albumsRepository;
 
         public AlbumPageViewPresenter(
             IDependencyResolverContainer container,
-            ISongsRepository songsRepository)
+            IAlbumsRepository albumsRepository)
             : base(container)
         {
-            this.songsRepository = songsRepository;
+            this.albumsRepository = albumsRepository;
         }
 
         protected override async Task LoadDataAsync(NavigatedToEventArgs navigatedToEventArgs)
@@ -27,13 +27,13 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             if (navigatedToEventArgs.Parameter is int)
             {
                 int songId = (int)navigatedToEventArgs.Parameter;
-                Song song = await this.songsRepository.GetSongAsync(songId);
+                Album album = await this.albumsRepository.FindSongAlbumAsync(songId);
 
                 await base.LoadDataAsync(
                         new NavigatedToEventArgs(
                             navigatedToEventArgs.View,
                             navigatedToEventArgs.State,
-                            new PlaylistNavigationRequest(PlaylistType.Album, song.Album.Id),
+                            new PlaylistNavigationRequest(PlaylistType.Album, album.Id),
                             navigatedToEventArgs.IsNavigationBack));
                 
                 var songBindingModel = this.BindingModel.SongsBindingModel.Songs.FirstOrDefault(s => s.Metadata.SongId == songId);

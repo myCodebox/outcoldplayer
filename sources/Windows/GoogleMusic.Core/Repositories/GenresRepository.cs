@@ -24,31 +24,11 @@ order by x.[TitleNorm]
 ";
 
         private const string SqlGenreSongs = @"
-select s.* ,
-       a.[AlbumId] as [Album.AlbumId],
-       a.[Title] as [Album.Title],  
-       a.[TitleNorm] as [Album.TitleNorm],
-       a.[ArtistTitleNorm] as [Album.ArtistTitleNorm],
-       a.[GenreTitleNorm] as [Album.GenreTitleNorm],
-       a.[SongsCount] as [Album.SongsCount], 
-       a.[Year] as [Album.Year],    
-       a.[Duration] as [Album.Duration],       
-       a.[ArtUrl] as [Album.ArtUrl],    
-       a.[LastPlayed] as [Album.LastPlayed],       
-       ta.[ArtistId] as [Artist.ArtistId],
-       ta.[Title] as [Artist.Title],
-       ta.[TitleNorm] as [Artist.TitleNorm],
-       ta.[AlbumsCount] as [Artist.AlbumsCount],
-       ta.[SongsCount] as [Artist.SongsCount],
-       ta.[Duration] as [Artist.Duration],
-       ta.[ArtUrl] as [Artist.ArtUrl],
-       ta.[LastPlayed]  as [Artist.LastPlayed]
+select s.* 
 from [Song] as s
      inner join Genre g on s.GenreTitleNorm = g.TitleNorm
-     inner join Album a on s.[AlbumTitleNorm] = a.[TitleNorm] and coalesce(nullif(s.AlbumArtistTitleNorm, ''), s.[ArtistTitleNorm]) = a.[ArtistTitleNorm]
-     inner join Artist ta on ta.[TitleNorm] = a.[ArtistTitleNorm] 
 where g.GenreId = ?1
-order by a.ArtistTitleNorm, a.TitleNorm, coalesce(nullif(s.Disc, 0), 1), s.Track
+order by coalesce(nullif(s.AlbumArtistTitleNorm, ''), s.[ArtistTitleNorm]), s.AlbumTitleNorm, coalesce(nullif(s.Disc, 0), 1), s.Track
 ";
 
         public async Task<int> GetCountAsync()

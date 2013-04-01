@@ -11,24 +11,32 @@ namespace OutcoldSolutions.GoogleMusic.Models
     {
         public static void UpdateCollection<T>(IList<T> collection, IEnumerable newItems, IEnumerable oldItems)
         {
-            if (oldItems != null)
+            if (newItems == null && oldItems == null)
             {
-                foreach (T songBindingModel in oldItems)
+                collection.Clear();
+                
+            }
+            else
+            {
+                if (oldItems != null)
                 {
-                    if (collection.Contains(songBindingModel))
+                    foreach (T songBindingModel in oldItems)
                     {
-                        collection.Remove(songBindingModel);
+                        if (collection.Contains(songBindingModel))
+                        {
+                            collection.Remove(songBindingModel);
+                        }
                     }
                 }
-            }
 
-            if (newItems != null)
-            {
-                foreach (T songBindingModel in newItems)
+                if (newItems != null)
                 {
-                    if (!collection.Contains(songBindingModel))
+                    foreach (T songBindingModel in newItems)
                     {
-                        collection.Add(songBindingModel);
+                        if (!collection.Contains(songBindingModel))
+                        {
+                            collection.Add(songBindingModel);
+                        }
                     }
                 }
             }

@@ -19,11 +19,12 @@
         <SemanticZoom.ZoomedInView>
             <ListView x:Name="ListView"
                       Margin="0, 40, 0, 0" 
-                      SelectionMode="None"
+                      SelectionMode="Extended"
                       ItemClick="PlaylistItemClick"
                       ItemsSource="{Binding Path=BindingModel.Playlists, Mode=OneWay}"
                       IsItemClickEnabled="True"
-                      Style="{StaticResource PlaylistsListView}" />
+                      Style="{StaticResource PlaylistsListView}"
+                      SelectionChanged="ListViewSelectionChanged"/>
         </SemanticZoom.ZoomedInView>
         <SemanticZoom.ZoomedOutView>
             <ListView x:Name="ListViewGroups"

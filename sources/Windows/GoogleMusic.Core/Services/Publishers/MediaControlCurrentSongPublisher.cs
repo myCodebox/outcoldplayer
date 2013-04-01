@@ -33,7 +33,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
             await this.dispatcher.RunAsync(
                 () =>
                     {
-                        MediaControl.ArtistName = song.Artist.Title;
+                        MediaControl.ArtistName = song.GetSongArtist();
                         MediaControl.TrackName = song.Title;
                         MediaControl.AlbumArt = albumArtUri;
                     });

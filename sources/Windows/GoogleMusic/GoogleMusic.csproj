@@ -130,7 +130,6 @@
     <Compile Include="BindingModels\SongsBindingModel.cs" />
     <Compile Include="BindingModels\StartViewBindingModel.cs" />
     <Compile Include="BindingModels\AuthentificationPageViewBindingModel.cs" />
-    <Compile Include="BindingModels\UserPlaylistsPageViewBindingModel.cs" />
     <Compile Include="Controls\FakeEqualizerControl.cs" />
     <Compile Include="Controls\PlaylistDataTemplateSelector.cs" />
     <Compile Include="Controls\Rating.cs" />

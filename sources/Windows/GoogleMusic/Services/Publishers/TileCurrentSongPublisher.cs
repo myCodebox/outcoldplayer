@@ -77,8 +77,8 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
         private void SetTextElements(XmlNodeList textElements, XmlDocument templateContent, Song song)
         {
             textElements[0].AppendChild(templateContent.CreateTextNode(song.Title));
-            textElements[1].AppendChild(templateContent.CreateTextNode(song.Artist.Title));
-            textElements[2].AppendChild(templateContent.CreateTextNode(song.Album.Title));
+            textElements[1].AppendChild(templateContent.CreateTextNode(song.GetSongArtist()));
+            textElements[2].AppendChild(templateContent.CreateTextNode(song.AlbumTitle));
             textElements[3].AppendChild(templateContent.CreateTextNode(song.Duration.ToPresentString()));
         }
     }

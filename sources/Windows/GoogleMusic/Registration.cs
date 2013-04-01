@@ -49,14 +49,13 @@ namespace OutcoldSolutions.GoogleMusic
                         .InjectionRule<BindingModelBase, PlaylistsPageViewPresenter>()
                         .AsSingleton<PlaylistsPageView>();
             registration.Register<PlaylistsPageViewPresenter>().AsSingleton();
-            registration.Register<PlaylistsPageViewBindingModel>().AsSingleton();
+            registration.Register<PlaylistsPageViewBindingModel>();
 
             // User Playlists view
             registration.Register<IUserPlaylistsPageView>()
                         .InjectionRule<BindingModelBase, UserPlaylistsPageViewPresenter>()
                         .AsSingleton<UserPlaylistsPageView>();
             registration.Register<UserPlaylistsPageViewPresenter>().AsSingleton();
-            registration.Register<UserPlaylistsPageViewBindingModel>().AsSingleton();
 
             // Playlist view (playlist, all artist's songs, system playlists, genre)
             registration.Register<IPlaylistPageView>()
