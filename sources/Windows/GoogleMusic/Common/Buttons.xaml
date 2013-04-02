@@ -24,6 +24,12 @@
         <Setter Property="Content" Value="&#xE102;"/>
     </Style>
 
+    <Style x:Key="PlayPopupMenuButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource PopupMenuButtonStyle}">
+        <Setter Property="AutomationProperties.AutomationId" Value="PlayPopupMenuButtonStyle"/>
+        <Setter Property="AutomationProperties.Name" Value="Play"/>
+        <Setter Property="Content" Value="&#xE102;"/>
+    </Style>
+
     <Style x:Key="PauseAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
         <Setter Property="AutomationProperties.AutomationId" Value="PauseAppBarButton"/>
         <Setter Property="AutomationProperties.Name" Value="Pause"/>
@@ -84,6 +90,12 @@
         <Setter Property="Content" Value="&#xE109;"/>
     </Style>
 
+    <Style x:Key="AddPopupMenuButton" TargetType="ButtonBase" BasedOn="{StaticResource PopupMenuButtonStyle}">
+        <Setter Property="AutomationProperties.AutomationId" Value="AddAppBarButton"/>
+        <Setter Property="AutomationProperties.Name" Value="Add"/>
+        <Setter Property="Content" Value="&#xE109;"/>
+    </Style>
+
     <Style x:Key="EditAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
         <Setter Property="AutomationProperties.AutomationId" Value="EditAppBarButton"/>
         <Setter Property="AutomationProperties.Name" Value="Edit"/>
@@ -124,6 +136,18 @@
         <Setter Property="AutomationProperties.AutomationId" Value="VolumeAppBarButton"/>
         <Setter Property="AutomationProperties.Name" Value="Volume"/>
         <Setter Property="Content" Value="&#xE15D;"/>
+    </Style>
+
+    <Style x:Key="OpenWithAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
+        <Setter Property="AutomationProperties.AutomationId" Value="OpenWithAppBarButton"/>
+        <Setter Property="AutomationProperties.Name" Value="Open With"/>
+        <Setter Property="Content" Value="&#xE17D;"/>
+    </Style>
+
+    <Style x:Key="PageAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
+        <Setter Property="AutomationProperties.AutomationId" Value="PageAppBarButton"/>
+        <Setter Property="AutomationProperties.Name" Value="Page"/>
+        <Setter Property="Content" Value="&#xE132;"/>
     </Style>
 
 </ResourceDictionary>

@@ -31,6 +31,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         Task PlayAsync(int index);
 
+        Task PlayAsync(IEnumerable<Song> songs);
+
         Task PlayAsync();
 
         Task PauseAsync();

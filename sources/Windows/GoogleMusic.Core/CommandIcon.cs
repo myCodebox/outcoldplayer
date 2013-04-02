@@ -11,10 +11,14 @@ namespace OutcoldSolutions.GoogleMusic
 
         public const string Add = "AddAppBarButtonStyle";
 
+        public const string OpenWith = "OpenWithAppBarButtonStyle";
+
         public const string Edit = "EditAppBarButtonStyle";
 
         public const string Delete = "DeleteAppBarButtonStyle";
 
         public const string Remove = "RemoveAppBarButtonStyle";
+
+        public const string Page = "PageAppBarButtonStyle";
     }
 }

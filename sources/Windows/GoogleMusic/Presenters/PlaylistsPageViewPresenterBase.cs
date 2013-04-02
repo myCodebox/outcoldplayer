@@ -15,6 +15,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Services;
+    using OutcoldSolutions.GoogleMusic.Views.Popups;
     using OutcoldSolutions.Presenters;
     using OutcoldSolutions.Views;
 
@@ -38,12 +39,12 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.playQueueService = playQueueService;
 
             this.PlayCommand = new DelegateCommand(this.Play);
-            this.AddToQueueCommand = new DelegateCommand(this.AddToQueue, () => this.BindingModel.SelectedItems.Count > 0);
+            this.QueueCommand = new DelegateCommand(this.Queue, () => this.BindingModel.SelectedItems.Count > 0);
         }
 
         public DelegateCommand PlayCommand { get; private set; }
 
-        public DelegateCommand AddToQueueCommand { get; private set; }
+        public DelegateCommand QueueCommand { get; private set; }
 
         public override void OnNavigatedTo(NavigatedToEventArgs parameter)
         {
@@ -103,7 +104,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         protected virtual IEnumerable<CommandMetadata> GetContextCommands()
         {
-            yield return new CommandMetadata(CommandIcon.Add, "Queue", this.AddToQueueCommand);
+            yield return new CommandMetadata(CommandIcon.OpenWith, "Queue", this.QueueCommand);
         }
 
         private void SelectedItemsOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -122,24 +123,9 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             }
         }
 
-        private async void AddToQueue()
+        private void Queue()
         {
-            try
-            {
-                List<IPlaylist> selectedPlaylists = this.BindingModel.SelectedItems.Select(bm => bm.Playlist).ToList();
-                List<Song> songs = new List<Song>(selectedPlaylists.Sum(p => p.SongsCount));
-                foreach (var selectedPlaylist in selectedPlaylists)
-                {
-                    songs.AddRange(await this.playlistsService.GetSongsAsync(selectedPlaylist));
-                }
-
-                await this.playQueueService.AddRangeAsync(songs);
-                await this.Dispatcher.RunAsync(() => this.BindingModel.ClearSelectedItems());
-            }
-            catch (Exception e)
-            {
-                this.Logger.LogErrorException(e);
-            }
+            this.MainFrame.ShowPopup<IQueueActionsPopupView>(PopupRegion.AppToolBarLeft, new SelectedItems(this.BindingModel.SelectedItems.Select(bm => bm.Playlist).ToList()));
         }
     }
 }

@@ -34,7 +34,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
             this.playQueueService.QueueChanged += async (sender, args) => await this.Dispatcher.RunAsync(this.UpdateSongs);
 
-            this.PlaySelectedSongCommand = new DelegateCommand(this.PlaySelectedSong);
+            //this.SaveAsPlaylistCommand = new DelegateCommand(this.SaveAsPlaylist, () => this.BindingModel.Songs.Count > 0);
             this.RemoveSelectedSongCommand = new DelegateCommand(this.RemoveSelectedSong);
             this.AddToPlaylistCommand = new DelegateCommand(this.AddToPlaylist);
             this.RateSongCommand = new DelegateCommand(this.RateSong);
@@ -42,7 +42,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         public DelegateCommand AddToPlaylistCommand { get; private set; }
 
-        public DelegateCommand PlaySelectedSongCommand { get; set; }
+        public DelegateCommand SaveAsPlaylistCommand { get; private set; }
 
         public DelegateCommand RemoveSelectedSongCommand { get; set; }
 
@@ -68,6 +68,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
             this.BindingModel.SelectedItems.CollectionChanged += this.SelectedSongChanged;
         }
+
+        //protected override IEnumerable<CommandMetadata> GetViewCommands()
+        //{
+        //    yield return new CommandMetadata(CommandIcon.Page, "Save", this.SaveAsPlaylistCommand);
+        //}
 
         protected override async Task LoadDataAsync(NavigatedToEventArgs navigatedToEventArgs)
         {
@@ -129,16 +134,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             }
         }
 
-        private void PlaySelectedSong()
-        {
-            var collection = this.BindingModel.GetSelectedIndexes().ToList();
-            if (collection.Count > 0)
-            {
-                int selectedSongIndex = collection[0];
-                this.Logger.LogTask(this.playQueueService.PlayAsync(selectedSongIndex));
-            }
-        }
-
         private void UpdateSongs()
         {
             this.BindingModel.SetCollection(this.playQueueService.GetQueue());
@@ -146,7 +141,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private void SelectedSongChanged(object sender, NotifyCollectionChangedEventArgs notifyCollectionChangedEventArgs)
         {
-            this.PlaySelectedSongCommand.RaiseCanExecuteChanged();
             this.AddToPlaylistCommand.RaiseCanExecuteChanged();
             this.RemoveSelectedSongCommand.RaiseCanExecuteChanged();
 
@@ -162,7 +156,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private IEnumerable<CommandMetadata> GetContextCommands()
         {
-            yield return new CommandMetadata(CommandIcon.Play, "Play", this.PlaySelectedSongCommand);
+            
             yield return new CommandMetadata(CommandIcon.Add, "Playlist", this.AddToPlaylistCommand);
             yield return new CommandMetadata(CommandIcon.Remove, "Queue", this.RemoveSelectedSongCommand);
         }

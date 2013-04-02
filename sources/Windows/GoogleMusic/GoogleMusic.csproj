@@ -144,6 +144,7 @@
     <Compile Include="Models\CollectionExtensions.cs" />
     <Compile Include="Models\PlaylistTypeEx.cs" />
     <Compile Include="Models\QueueChangeEvent.cs" />
+    <Compile Include="Models\SelectedItems.cs" />
     <Compile Include="Models\TimeSpanEx.cs" />
     <Compile Include="NavigationServiceEx.cs" />
     <Compile Include="PlaylistNavigationRequest.cs" />
@@ -151,6 +152,7 @@
     <Compile Include="Presenters\PlayerViewPresenterBase.cs" />
     <Compile Include="Presenters\PlaylistsPageViewPresenterBase.cs" />
     <Compile Include="Presenters\Popups\PlaylistEditPopupViewPresenter.cs" />
+    <Compile Include="Presenters\Popups\QueueActionsPopupViewPresenter.cs" />
     <Compile Include="Presenters\SnappedPlayerViewPresenter.cs" />
     <Compile Include="Presenters\Popups\PlayerMorePopupViewPresenter.cs" />
     <Compile Include="Presenters\Settings\AppSettingsViewPresenter.cs" />
@@ -236,6 +238,9 @@
     </Compile>
     <Compile Include="Views\Popups\PlaylistEditPopupView.xaml.cs">
       <DependentUpon>PlaylistEditPopupView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Popups\QueueActionsPopupView.xaml.cs">
+      <DependentUpon>QueueActionsPopupView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ReleasesHistoryPageView.xaml.cs">
       <DependentUpon>ReleasesHistoryPageView.xaml</DependentUpon>
@@ -395,6 +400,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Popups\PlaylistEditPopupView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Popups\QueueActionsPopupView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

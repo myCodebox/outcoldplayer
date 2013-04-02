@@ -196,11 +196,6 @@ namespace OutcoldSolutions.GoogleMusic.Services
         
         public async Task PlayAsync(IPlaylist playlist, IEnumerable<Song> songs, int songIndex)
         {
-            if (playlist == null)
-            {
-                throw new ArgumentNullException("playlist");
-            }
-
             await Task.Run(async () =>
             {
                 if (this.State == QueueState.Busy)
@@ -242,6 +237,11 @@ namespace OutcoldSolutions.GoogleMusic.Services
             });
         }
 
+        public Task PlayAsync(IEnumerable<Song> songs)
+        {
+            return this.PlayAsync(null, songs, songIndex: -1);
+        }
+
         public async Task PlayAsync()
         {
             if (this.State == QueueState.Busy)
@@ -267,7 +267,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             {
                 this.publisherService.CancelActiveTasks();
                 await this.mediaElement.StopAsync();
-                this.State = QueueState.Stopped;
+                this.State = this.queueOrder.Count > 0 ? QueueState.Stopped : QueueState.Unknown;
             }
         }
 
@@ -370,6 +370,12 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     this.queueOrder.AddRange(range);
                 }
 
+                if (this.State == QueueState.Unknown && this.queueOrder.Count > 0)
+                {
+                    this.currentQueueIndex = 0;
+                    this.State = QueueState.Stopped;
+                }
+
                 this.RaiseQueueChanged();
             });
         }
@@ -415,7 +421,11 @@ namespace OutcoldSolutions.GoogleMusic.Services
                             }
                             else if (queueIndex == this.currentQueueIndex)
                             {
-                                this.currentQueueIndex--;
+                                if (this.currentQueueIndex > 0 || this.queueOrder.Count == 0)
+                                {
+                                    this.currentQueueIndex--;
+                                }
+
                                 currentSongChanged = true;
                             }
                             else if (queueIndex < this.currentQueueIndex)

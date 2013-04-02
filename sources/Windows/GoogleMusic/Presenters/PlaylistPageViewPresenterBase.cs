@@ -35,12 +35,12 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.metadataEditService = container.Resolve<ISongsService>();
             this.playlistsService = container.Resolve<IPlaylistsService>();
 
-            this.PlaySongCommand = new DelegateCommand(this.Play, () => this.BindingModel != null && this.BindingModel.SongsBindingModel.SelectedItems.Count > 0);
+            this.QueueCommand = new DelegateCommand(this.Queue, () => this.BindingModel != null && this.BindingModel.SongsBindingModel.SelectedItems.Count > 0);
             this.AddToPlaylistCommand = new DelegateCommand(this.AddToPlaylist, () => this.BindingModel != null && this.BindingModel.SongsBindingModel.SelectedItems.Count > 0);
             this.RateSongCommand = new DelegateCommand(this.RateSong);
         }
 
-        public DelegateCommand PlaySongCommand { get; set; }
+        public DelegateCommand QueueCommand { get; set; }
 
         public DelegateCommand AddToPlaylistCommand { get; set; }
 
@@ -92,18 +92,13 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         protected virtual IEnumerable<CommandMetadata> GetContextCommands()
         {
-            yield return new CommandMetadata(CommandIcon.Play, "Play", this.PlaySongCommand);
+            yield return new CommandMetadata(CommandIcon.OpenWith, "Queue", this.QueueCommand);
             yield return new CommandMetadata(CommandIcon.Add, "Playlist", this.AddToPlaylistCommand);
         }
 
-        private void Play()
+        private void Queue()
         {
-            var selectedIndexes = this.BindingModel.SongsBindingModel.GetSelectedIndexes().ToList();
-            if (selectedIndexes.Count > 0)
-            {
-                this.playQueueService.PlayAsync(this.BindingModel.Playlist, this.BindingModel.SongsBindingModel.Songs.Select(s => s.Metadata), selectedIndexes[0]);
-                this.MainFrame.IsBottomAppBarOpen = true;
-            }
+            this.MainFrame.ShowPopup<IQueueActionsPopupView>(PopupRegion.AppToolBarLeft, new SelectedItems(this.BindingModel.SongsBindingModel.GetSelectedSongs().ToList()));
         }
 
         private void AddToPlaylist()
@@ -131,7 +126,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.Dispatcher.RunAsync(
                 () =>
                     {
-                        this.PlaySongCommand.RaiseCanExecuteChanged();
+                        this.QueueCommand.RaiseCanExecuteChanged();
                         this.AddToPlaylistCommand.RaiseCanExecuteChanged();
 
                         if (this.BindingModel.SongsBindingModel.SelectedItems.Count > 0)

@@ -146,7 +146,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
         private void OnSongsUpdated(IEnumerable<Song> updateSongs)
         {
-            if (updateSongs != null)
+            if (updateSongs != null && this.Songs != null)
             {
                 foreach (var updateSong in updateSongs)
                 {
