@@ -78,6 +78,10 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     {
                         await this.NextSongAsync();
                     }
+                    else
+                    {
+                        this.State = QueueState.Stopped;
+                    }
                 };
 
             sessionService.SessionCleared += async (sender, args) =>
