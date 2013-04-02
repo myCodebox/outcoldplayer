@@ -37,7 +37,12 @@ order by p.[TitleNorm]
 ";
 
         private const string SqlUserPlaylistSongs = @"
-select s.*
+select s.*,
+    e.[Id] as [UserPlaylistEntry.Id],
+    e.[PlaylistId] as [UserPlaylistEntry.PlaylistId], 
+    e.[SongId] as [UserPlaylistEntry.SongId],
+    e.[PlaylistOrder] as [UserPlaylistEntry.PlaylistOrder],
+    e.[ProviderEntryId] as [UserPlaylistEntry.ProviderEntryId]
 from [Song] as s
      inner join UserPlaylistEntry e on e.SongId = s.SongId
 where e.[PlaylistId] = ?1

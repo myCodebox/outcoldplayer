@@ -30,7 +30,7 @@ from
 select s.*,
        0 as [IsCollection]
 from [Song] as s
-     inner join Album a on s.AlbumTitleNorm  = a.TitleNorm
+     inner join Album a on s.AlbumTitleNorm  = a.TitleNorm and coalesce(nullif(s.[AlbumArtistTitleNorm], ''), s.[ArtistTitleNorm]) = a.[ArtistTitleNorm]
      inner join Artist ta on a.[ArtistTitleNorm] = ta.[TitleNorm]
 where ta.ArtistId = ?1
 

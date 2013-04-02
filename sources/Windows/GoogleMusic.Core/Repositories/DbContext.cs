@@ -232,19 +232,19 @@ CREATE TRIGGER update_song_lastplayed AFTER UPDATE OF [LastPlayed] ON [Song]
   
     update [UserPlaylist]
     set [LastPlayed] = new.[LastPlayed] 
-    where [PlaylistId] in (select distinct e.[PlaylistId] from [UserPlaylistEntry] e where new.[SongId] = e.[SongId]);
+    where old.[LastPlayed] <> new.[LastPlayed] and [PlaylistId] in (select distinct e.[PlaylistId] from [UserPlaylistEntry] e where new.[SongId] = e.[SongId]);
 
     update [Artist]
     set [LastPlayed] = new.[LastPlayed] 
-    where [TitleNorm] = new.[ArtistTitleNorm] or [TitleNorm] = new.[AlbumArtistTitleNorm];
+    where old.[LastPlayed] <> new.[LastPlayed] and [TitleNorm] = new.[ArtistTitleNorm] or [TitleNorm] = new.[AlbumArtistTitleNorm];
 
     update [Album]
     set [LastPlayed] = new.[LastPlayed] 
-    where [TitleNorm] = new.[AlbumTitleNorm] and [ArtistTitleNorm] = coalesce(nullif(new.AlbumArtistTitleNorm, ''), new.[ArtistTitleNorm]);
+    where old.[LastPlayed] <> new.[LastPlayed] and [TitleNorm] = new.[AlbumTitleNorm] and [ArtistTitleNorm] = coalesce(nullif(new.AlbumArtistTitleNorm, ''), new.[ArtistTitleNorm]);
 
     update [Genre]
     set [LastPlayed] = new.[LastPlayed] 
-    where [TitleNorm] = new.[GenreTitleNorm];
+    where old.[LastPlayed] <> new.[LastPlayed] and [TitleNorm] = new.[GenreTitleNorm];
 
   END;    
 ");
@@ -255,19 +255,19 @@ CREATE TRIGGER update_song_albumarturl AFTER UPDATE OF [AlbumArtUrl] ON [Song]
   
     update [UserPlaylist]
     set [ArtUrl] = new.[AlbumArtUrl] 
-    where [PlaylistId] in (select distinct e.[PlaylistId] from [UserPlaylistEntry] e where new.[SongId] = e.[SongId]);
+    where old.[AlbumArtUrl] <> new.[AlbumArtUrl] and [PlaylistId] in (select distinct e.[PlaylistId] from [UserPlaylistEntry] e where new.[SongId] = e.[SongId]);
 
     update [Artist]
     set [ArtUrl] = new.[AlbumArtUrl] 
-    where [TitleNorm] = new.[ArtistTitleNorm] or [TitleNorm] = new.[AlbumArtistTitleNorm];
+    where old.[AlbumArtUrl] <> new.[AlbumArtUrl] and [TitleNorm] = new.[ArtistTitleNorm] or [TitleNorm] = new.[AlbumArtistTitleNorm];
 
     update [Album]
     set [ArtUrl] = new.[AlbumArtUrl] 
-    where [TitleNorm] = new.[AlbumTitleNorm] and [ArtistTitleNorm] = coalesce(nullif(new.AlbumArtistTitleNorm, ''), new.[ArtistTitleNorm]);
+    where old.[AlbumArtUrl] <> new.[AlbumArtUrl] and [TitleNorm] = new.[AlbumTitleNorm] and [ArtistTitleNorm] = coalesce(nullif(new.AlbumArtistTitleNorm, ''), new.[ArtistTitleNorm]);
 
     update [Genre]
     set [ArtUrl] = new.[AlbumArtUrl] 
-    where [TitleNorm] = new.[GenreTitleNorm];
+    where old.[AlbumArtUrl] <> new.[AlbumArtUrl] and [TitleNorm] = new.[GenreTitleNorm];
 
   END;
 ");
