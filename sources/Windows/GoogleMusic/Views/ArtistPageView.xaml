@@ -11,17 +11,17 @@
     Title="{Binding Path=BindingModel.Artist.Title, Mode=OneWay}"
     Subtitle="Albums">
 
-    <Grid Margin="0, 40, 20, 0"
+    <Grid Margin="0, 40, 0, 0"
           Visibility="{Binding Path=IsDataLoading, Converter={StaticResource BooleanToInvisibilityConverter}}">
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="120" />
-            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="190" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
         <StackPanel Width="150" 
-                    Grid.Column="1">
+                    Margin="40, 0, 0, 0"
+                    Grid.Column="0">
             
             <StackPanel Orientation="Horizontal" Margin="0, 7, 0, 0">
                 <TextBlock Style="{StaticResource TitleTextStyle}" Text="Albums: " />
@@ -41,7 +41,7 @@
         </StackPanel>
         
         <ListView x:Name="ListView"
-                  Grid.Column="2"
+                  Grid.Column="1"
                   Padding="0"
                   ItemsSource="{Binding Path=BindingModel.Albums}"
                   SelectionMode="Extended"
