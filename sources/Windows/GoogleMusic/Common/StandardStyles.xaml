@@ -25,6 +25,8 @@
     <SolidColorBrush x:Key="SliderTrackDecreasePointerOverBackgroundThemeBrush" Color="#369EFF" />
     <SolidColorBrush x:Key="SliderTrackDecreasePressedBackgroundThemeBrush" Color="#369EFF" />
     <SolidColorBrush x:Key="ListViewItemSelectedBackgroundThemeBrush" Color="#369EFF" />
+    <SolidColorBrush x:Key="ListViewItemSelectedPointerOverBackgroundThemeBrush" Color="#369EFF" />
+    <SolidColorBrush x:Key="ListViewItemSelectedPointerOverBorderThemeBrush" Color="#369EFF" />
     
     <x:String x:Key="ChevronGlyph">&#xE26B;</x:String>
     
