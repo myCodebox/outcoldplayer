@@ -52,7 +52,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         public void SelectPlayingSong()
         {
-            this.BindingModel.ClearSelection();
+            this.BindingModel.ClearSelectedItems();
             this.BindingModel.SelectSongByIndex(this.playQueueService.GetCurrentSongIndex());
         }
 
@@ -156,7 +156,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private IEnumerable<CommandMetadata> GetContextCommands()
         {
-            
             yield return new CommandMetadata(CommandIcon.Add, "Playlist", this.AddToPlaylistCommand);
             yield return new CommandMetadata(CommandIcon.Remove, "Queue", this.RemoveSelectedSongCommand);
         }
