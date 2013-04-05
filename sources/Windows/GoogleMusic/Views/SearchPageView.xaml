@@ -11,14 +11,14 @@
     Title="gMusic"
     Subtitle="{Binding Path=BindingModel.Title}">
 
-    <Grid Margin="120, 0, 20, 0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+    <Grid Margin="0, 0, 20, 0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
         <ListView x:Name="Groups"
-                  Margin="0, 40, 0, 20" 
+                  Margin="120, 40, 0, 20" 
                   Grid.Row="0"
                   Visibility="{Binding Path=IsDataLoading, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}"
                   ItemsSource="{Binding Path=BindingModel.Groups, Mode=OneWay}"
@@ -216,6 +216,7 @@
                   ScrollViewer.VerticalScrollBarVisibility="Disabled"
                   IsTapEnabled="False"
                   Margin="0, 20, 0, 20" 
+                  Padding="120, 0, 0 ,0"
                   IsItemClickEnabled="True"
                   ItemClick="ListViewOnItemClick"
                   x:Name="ListView">
