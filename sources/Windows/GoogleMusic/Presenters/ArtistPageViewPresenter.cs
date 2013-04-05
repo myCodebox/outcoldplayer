@@ -5,6 +5,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 {
     using System;
     using System.Collections.Generic;
+    using System.Collections.Specialized;
     using System.Linq;
     using System.Threading.Tasks;
 
@@ -13,7 +14,9 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
+    using OutcoldSolutions.GoogleMusic.Views.Popups;
     using OutcoldSolutions.Presenters;
+    using OutcoldSolutions.Views;
 
     public class ArtistPageViewPresenter : PagePresenterBase<IArtistPageView, ArtistPageViewBindingModel>
     {
@@ -34,11 +37,15 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.albumsRepository = albumsRepository;
             this.PlayCommand = new DelegateCommand(this.Play);
             this.ShowAllCommand = new DelegateCommand(this.ShowAll);
+
+            this.QueueCommand = new DelegateCommand(this.Queue, () => this.BindingModel.SelectedItems.Count > 0);
         }
         
         public DelegateCommand PlayCommand { get; set; }
 
         public DelegateCommand ShowAllCommand { get; set; }
+
+        public DelegateCommand QueueCommand { get; private set; }
 
         public override void OnNavigatingFrom(NavigatingFromEventArgs eventArgs)
         {
@@ -46,6 +53,13 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
             this.BindingModel.Artist = null;
             this.BindingModel.Albums = null;
+        }
+
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+
+            this.BindingModel.SelectedItems.CollectionChanged += this.SelectedItemsOnCollectionChanged;
         }
 
         protected override async Task LoadDataAsync(NavigatedToEventArgs navigatedToEventArgs)
@@ -64,10 +78,29 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         protected override IEnumerable<CommandMetadata> GetViewCommands()
         {
-            yield return new CommandMetadata(CommandIcon.Play, "Play All", this.PlayCommand);
             yield return new CommandMetadata(CommandIcon.List, "Show All", this.ShowAllCommand);
+        }
 
-            // TODO: Will be good to have shuffle all 
+        private void SelectedItemsOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            this.OnSelectedItemsChanged();
+        }
+
+        private void OnSelectedItemsChanged()
+        {
+            if (this.BindingModel.SelectedItems.Count > 0)
+            {
+                this.MainFrame.SetContextCommands(this.GetContextCommands());
+            }
+            else
+            {
+                this.MainFrame.ClearContextCommands();
+            }
+        }
+
+        private IEnumerable<CommandMetadata> GetContextCommands()
+        {
+            yield return new CommandMetadata(CommandIcon.OpenWith, "Queue", this.QueueCommand);
         }
 
         private void ShowAll()
@@ -80,18 +113,12 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             if (this.BindingModel.Artist != null)
             {
                 IPlaylist playlist = commandParameter as Album;
-                if (playlist == null)
-                {
-                    playlist = this.BindingModel.Artist;
-                    this.NavigateToShowAllArtistsSongs();
-                }
-                else
+                if (playlist != null)
                 {
                     this.navigationService.NavigateToPlaylist(playlist);
+                    this.playQueueService.PlayAsync(playlist);
+                    this.MainFrame.IsBottomAppBarOpen = true;
                 }
-
-                this.playQueueService.PlayAsync(playlist);
-                this.MainFrame.IsBottomAppBarOpen = true;
             }
         }
 
@@ -101,6 +128,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             {
                 this.navigationService.NavigateTo<IPlaylistPageView>(new PlaylistNavigationRequest(PlaylistType.Artist, this.BindingModel.Artist.Id));
             }
+        }
+
+        private void Queue()
+        {
+            this.MainFrame.ShowPopup<IQueueActionsPopupView>(PopupRegion.AppToolBarLeft, new SelectedItems(this.BindingModel.SelectedItems.Select(bm => bm.Playlist).ToList()));
         }
     }
 }

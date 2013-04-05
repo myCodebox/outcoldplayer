@@ -52,7 +52,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
             this.playlistsChangeSubscription = this.EventAggregator.GetEvent<PlaylistsChangeEvent>()
                                                     .Where(e => e.PlaylistType == (PlaylistType)parameter.Parameter)
-                                                    .Subscribe((e) => this.Logger.LogTask(this.LoadPlaylists()));
+                                                    .Subscribe((e) => this.Logger.LogTask(this.LoadPlaylistsAsync()));
         }
 
         public override void OnNavigatingFrom(NavigatingFromEventArgs eventArgs)
@@ -73,13 +73,14 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.BindingModel.SelectedItems.CollectionChanged += this.SelectedItemsOnCollectionChanged;
         }
 
-        protected override Task LoadDataAsync(NavigatedToEventArgs navigatedToEventArgs)
+        protected override async Task LoadDataAsync(NavigatedToEventArgs navigatedToEventArgs)
         {
             this.BindingModel.PlaylistType = (PlaylistType)navigatedToEventArgs.Parameter;
-            return this.LoadPlaylists();
+            await this.LoadPlaylistsAsync();
+            await this.Dispatcher.RunAsync(() => this.BindingModel.ClearSelectedItems());
         }
 
-        protected async virtual Task LoadPlaylists()
+        protected async virtual Task LoadPlaylistsAsync()
         {
             var playlists = (await this.playlistsService.GetAllAsync(this.BindingModel.PlaylistType, Order.Name))
                                 .Select(playlist => new PlaylistBindingModel(playlist) { PlayCommand = this.PlayCommand });

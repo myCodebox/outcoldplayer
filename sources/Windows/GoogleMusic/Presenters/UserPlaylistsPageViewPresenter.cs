@@ -46,9 +46,9 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             yield return new CommandMetadata(CommandIcon.Page, "Create", this.AddPlaylistCommand);
         }
 
-        protected async override Task LoadPlaylists()
+        protected async override Task LoadPlaylistsAsync()
         {
-            await base.LoadPlaylists();
+            await base.LoadPlaylistsAsync();
             await this.Dispatcher.RunAsync(() => this.BindingModel.ClearSelectedItems());
         }
 
