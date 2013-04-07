@@ -32,7 +32,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
         {
             base.OnInitialized();
             this.presenter = this.GetPresenter<ArtistPageViewPresenter>();
-            this.presenter.BindingModel.SelectedItems.CollectionChanged += this.SelectedItemsOnCollectionChanged;
         }
 
         private void PlaylistItemClick(object sender, ItemClickEventArgs e)
@@ -44,16 +43,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
             {
                 this.NavigationService.NavigateToPlaylist(album.Playlist);
             }
-        }
-
-        private void SelectedItemsOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            CollectionExtensions.UpdateCollection(this.ListView.SelectedItems, e.NewItems, e.OldItems);
-        }
-
-        private void ListViewSelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            CollectionExtensions.UpdateCollection(this.presenter.BindingModel.SelectedItems, e.AddedItems, e.RemovedItems);
         }
     }
 }

@@ -5,7 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:OutcoldSolutions.GoogleMusic.Controls"
-    xmlns:views="using:OutcoldSolutions.Views"
+    xmlns:views="using:OutcoldSolutions.Views" xmlns:interactivity="using:Windows.UI.Interactivity"
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400"
@@ -87,8 +87,13 @@
                   Margin="40, 0, 0, 20" 
                   ManipulationMode="None"
                   DoubleTapped="ListDoubleTapped"
-                  SelectionChanged="ListViewSelectionChanged"
                   x:Name="ListView">
+
+                <interactivity:Interaction.Behaviors>
+                    <controls:ListViewBaseSelectedItemsBehavior SelectedItems="{Binding Path=BindingModel.SongsBindingModel.SelectedItems, Mode=OneWay}"
+                                                                ForceToShow="True"/>
+                </interactivity:Interaction.Behaviors>
+
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <Grid Height="33">

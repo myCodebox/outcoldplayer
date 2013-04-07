@@ -161,7 +161,7 @@ select
        a.[LastPlayed]  as [Artist.LastPlayed]
 from [Album] x 
      inner join [Artist] as a on x.[ArtistTitleNorm] = a.[TitleNorm]
-     inner join [Song] as s on x.[AlbumTitleNorm] = s.[AlbumTitleNorm]
+     inner join [Song] as s on x.[TitleNorm] = s.[AlbumTitleNorm]
 where s.[SongId] = ?1
 ";
 
