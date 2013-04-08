@@ -18,7 +18,7 @@
 
             <Button Style="{StaticResource ShufflePopupMenuButtonStyle}" 
                     Command="{Binding Path=ShuffleAllCommand, Mode=OneTime}"
-                    AutomationProperties.Name="Shuffle all and play" />
+                    AutomationProperties.Name="Shuffle and play" />
             
             <Button Style="{StaticResource AddPopupMenuButton}" 
                     Command="{Binding Path=AddCommand, Mode=OneTime}"
