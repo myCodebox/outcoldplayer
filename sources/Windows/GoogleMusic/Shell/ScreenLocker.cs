@@ -66,7 +66,7 @@ namespace OutcoldSolutions.GoogleMusic.Shell
                         }
                         catch (Exception e)
                         {
-                            this.logger.LogErrorException(e);
+                            this.logger.Error(e, "Exception while tried to change screen request.");
                         }
                     });
         }

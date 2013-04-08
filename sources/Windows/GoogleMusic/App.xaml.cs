@@ -46,6 +46,7 @@ namespace OutcoldSolutions.GoogleMusic
 #if DEBUG
                 registration.Register<IDebugConsole>().AsSingleton<DebugConsole>();
 #endif
+
                 Registration.RegisterPages(registration);
                 Registration.RegisterSettingViews(registration);
                 Registration.RegisterPopupViews(registration);

@@ -42,6 +42,9 @@
                     <Paragraph>[+] Volume control.</Paragraph>
                     <Paragraph>[+] Snapped View shows songs in queue.</Paragraph>
                     <Paragraph>[+] App startup improvements.</Paragraph>
+                    <Paragraph>[+] Sorting in Playlist and Album views.</Paragraph>
+                    <Paragraph>[+] Add multiple songs / albums to queue.</Paragraph>
+                    <Paragraph>[+] Add multiple songs to playlist.</Paragraph>
                     <Paragraph>[b] Progress ring shows forever when click on song suggestion in search view.</Paragraph>
                 </RichTextBlock>
 

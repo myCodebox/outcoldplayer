@@ -207,8 +207,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
             }
             catch (Exception exception)
             {
-                this.logger.Error("Cannot download album art.");
-                this.logger.LogErrorException(exception);
+                this.logger.Error(exception, "Cannot download album art.");
             }
 
             return albumArtUri;

@@ -91,8 +91,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
             }
             catch (Exception e)
             {
-                this.logger.Error("Exceptin when we tried to update play count on server.");
-                this.logger.LogErrorException(e);
+                this.logger.Error(e, "Exception when we tried to update play count on server.");
             }
         }
     }

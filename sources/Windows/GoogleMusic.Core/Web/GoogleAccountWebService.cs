@@ -56,7 +56,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 }
                 catch (Exception e)
                 {
-                    this.logger.LogErrorException(e);
+                    this.logger.Warning(e, "Exception while tried to get proxy settings");
                 }
             }
 

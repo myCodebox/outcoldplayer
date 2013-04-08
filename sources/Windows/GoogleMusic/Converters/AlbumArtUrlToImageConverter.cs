@@ -17,8 +17,19 @@ namespace OutcoldSolutions.GoogleMusic.Converters
         private const string AlbumArtUrlParameter = "=s130-c-e100";
 
         private readonly Lazy<BitmapImage> unknownAlbumArt256 = new Lazy<BitmapImage>(() => new BitmapImage(new Uri("ms-appx:///Resources/UnknownArt-256.png")));
+        private readonly Lazy<BitmapImage> unknownAlbumArt180 = new Lazy<BitmapImage>(() => new BitmapImage(new Uri("ms-appx:///Resources/UnknownArt-180.png")));
+        private readonly Lazy<BitmapImage> unknownAlbumArt140 = new Lazy<BitmapImage>(() => new BitmapImage(new Uri("ms-appx:///Resources/UnknownArt-140.png")));
         private readonly Lazy<BitmapImage> unknownAlbumArt116 = new Lazy<BitmapImage>(() => new BitmapImage(new Uri("ms-appx:///Resources/UnknownArt-116.png")));
         private readonly Lazy<BitmapImage> unknownAlbumArt90 = new Lazy<BitmapImage>(() => new BitmapImage(new Uri("ms-appx:///Resources/UnknownArt-90.png")));
+        private readonly Lazy<BitmapImage> unknownAlbumArt80 = new Lazy<BitmapImage>(() => new BitmapImage(new Uri("ms-appx:///Resources/UnknownArt-80.png")));
+        private readonly Lazy<BitmapImage> unknownAlbumArt40 = new Lazy<BitmapImage>(() => new BitmapImage(new Uri("ms-appx:///Resources/UnknownArt-40.png")));
+
+        private readonly ILogger logger;
+
+        public AlbumArtUrlToImageConverter()
+        {
+            this.logger = ApplicationBase.Container.Resolve<ILogManager>().CreateLogger("AlbumArtUrlToImageConverter");
+        }
 
         public object Convert(object value, Type targetType, object parameter, string language)
         {
@@ -33,10 +44,18 @@ namespace OutcoldSolutions.GoogleMusic.Converters
                         {
                             case "256":
                                 return this.unknownAlbumArt256.Value;
+                            case "180":
+                                return this.unknownAlbumArt180.Value;
+                            case "140":
+                                return this.unknownAlbumArt140.Value;
                             case "116":
                                 return this.unknownAlbumArt116.Value;
                             case "90":
                                 return this.unknownAlbumArt90.Value;
+                            case "80":
+                                return this.unknownAlbumArt80.Value;
+                            case "40":
+                                return this.unknownAlbumArt40.Value;
                         }
                     }
 
@@ -61,7 +80,7 @@ namespace OutcoldSolutions.GoogleMusic.Converters
             }
             catch (Exception e)
             {
-                ApplicationBase.Container.Resolve<ILogManager>().CreateLogger("AlbumArtUrlToImageConverter").LogErrorException(e);
+                this.logger.Error(e, "Exception while tried to load album art.");
                 return DependencyProperty.UnsetValue;
             }
         }

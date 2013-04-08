@@ -141,6 +141,7 @@
     <Compile Include="Converters\DoubleToTimeConverter.cs" />
     <Compile Include="Converters\StringFormatConverter.cs" />
     <Compile Include="Converters\TimeSpanToTimeConverter.cs" />
+    <Compile Include="Diagnostics\BugSenseLogWriter.cs" />
     <Compile Include="GoogleMusicSettingsServiceExtensions.cs" />
     <Compile Include="MainMenu.cs" />
     <Compile Include="Models\PlaylistTypeEx.cs" />
@@ -314,7 +315,11 @@
     <Content Include="Resources\outcoldsolutions.png" />
     <Content Include="Resources\twitter-logo.png" />
     <Content Include="Resources\UnknownArt-116.png" />
+    <Content Include="Resources\UnknownArt-140.png" />
+    <Content Include="Resources\UnknownArt-180.png" />
     <Content Include="Resources\UnknownArt-256.png" />
+    <Content Include="Resources\UnknownArt-40.png" />
+    <Content Include="Resources\UnknownArt-80.png" />
     <Content Include="Resources\UnknownArt-90.png" />
     <Content Include="Resources\uservoice-logo.png" />
     <Content Include="Resources\uservoice.png" />
@@ -460,13 +465,13 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\..\packages\Newtonsoft.Json.4.5.11\lib\winrt45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="OutcoldSolutions.Framework, Version=1.0.30331.0, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
+    <Reference Include="OutcoldSolutions.Framework, Version=1.0.30407.0, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\OutcoldSolutions.Framework.1.0.30331.0\lib\portable-win+net45+wp80\OutcoldSolutions.Framework.dll</HintPath>
+      <HintPath>..\..\packages\OutcoldSolutions.Framework.1.0.30407.0\lib\portable-win+net45+wp80\OutcoldSolutions.Framework.dll</HintPath>
     </Reference>
-    <Reference Include="OutcoldSolutions.Presentation, Version=1.0.30331.0, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
+    <Reference Include="OutcoldSolutions.Presentation, Version=1.0.30407.0, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\OutcoldSolutions.Presentation.1.0.30331.0\lib\win\OutcoldSolutions.Presentation.dll</HintPath>
+      <HintPath>..\..\packages\OutcoldSolutions.Presentation.1.0.30407.0\lib\win\OutcoldSolutions.Presentation.dll</HintPath>
     </Reference>
     <Reference Include="OutcoldSolutions.SQLite, Version=1.1.30331.42665, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

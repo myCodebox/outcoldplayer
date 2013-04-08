@@ -102,7 +102,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         private void AdControlOnErrorOccurred(object sender, AdErrorEventArgs adErrorEventArgs)
         {
-            this.logger.LogErrorException(adErrorEventArgs.Error);
+            this.logger.Debug("Exception from ad control: {0}.", adErrorEventArgs.Error.Message);
         }
     }
 }

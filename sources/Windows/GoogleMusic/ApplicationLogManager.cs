@@ -10,6 +10,7 @@ namespace OutcoldSolutions.GoogleMusic
     using System.Threading.Tasks;
 
     using OutcoldSolutions.Diagnostics;
+    using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services;
 
@@ -38,8 +39,7 @@ namespace OutcoldSolutions.GoogleMusic
         private void CurrentOnUnhandledException(object sender, UnhandledExceptionEventArgs unhandledExceptionEventArgs)
         {
             var logger = this.logManager.CreateLogger("App");
-            logger.Error("Unhandled exception: {0}.", unhandledExceptionEventArgs.Message);
-            logger.LogErrorException(unhandledExceptionEventArgs.Exception);
+            logger.Error(unhandledExceptionEventArgs.Exception, "Unhandled exception: {0}.", unhandledExceptionEventArgs.Message);
 
             Debug.Assert(false, unhandledExceptionEventArgs.Message);
         }
@@ -64,8 +64,12 @@ namespace OutcoldSolutions.GoogleMusic
             {
                 this.logManager.Writers.AddOrUpdate(typeof(DebugLogWriter), type => new DebugLogWriter(ApplicationBase.Container), (type, writer) => writer);
             }
+            
+#if !DEBUG
+            this.logManager.Writers.AddOrUpdate(typeof(BugSenseLogWriter), type => new BugSenseLogWriter(), (type, writer) => writer);
+#endif
 
-            this.logManager.LogLevel = this.logManager.Writers.Count > 0 ? LogLevel.Info : LogLevel.None;
+            this.logManager.LogLevel = this.logManager.Writers.Count > 1 ? LogLevel.Info : LogLevel.Warning;
         }
     }
 }

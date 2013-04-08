@@ -80,7 +80,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 }
                 catch (Exception exception)
                 {
-                    this.Logger.LogErrorException(exception);
+                    this.Logger.Error(exception, "Exception while tried to authentificate.");
                 }
 
                 if (result != null && result.Succeed)

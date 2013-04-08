@@ -107,8 +107,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
             }
             catch (Exception e)
             {
-                this.logger.Error("Exception while loading stream");
-                this.logger.LogErrorException(e);
+                this.logger.Error(e, "Exception while loading stream");
                 return null;
             }
         }
@@ -409,15 +408,13 @@ namespace OutcoldSolutions.GoogleMusic.Web
                     downloadProgress = 1d;
                     this.RaiseDownloadProgressChanged(downloadProgress);
                 }
-                catch (TaskCanceledException exception)
+                catch (TaskCanceledException)
                 {
-                    this.logger.Error("Downloading task was cancelled");
-                    this.logger.LogDebugException(exception);
+                    this.logger.Debug("Downloading task was cancelled");
                 }
                 catch (Exception exception)
                 {
-                    this.logger.Error("Exception while reading stream");
-                    this.logger.LogErrorException(exception);
+                    this.logger.Error(exception, "Exception while reading stream");
                 }
             }
         }

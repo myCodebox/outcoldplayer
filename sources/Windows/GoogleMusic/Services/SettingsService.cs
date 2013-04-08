@@ -85,7 +85,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 }
                 catch (Exception e)
                 {
-                    this.logger.LogErrorException(e);
+                    this.logger.Error(e, "Cannot get value");
                 }
             }
 
@@ -112,7 +112,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 }
                 catch (Exception e)
                 {
-                    this.logger.LogErrorException(e);
+                    this.logger.Error(e, "Cannot get roaming value");
                 }
             }
 

@@ -75,7 +75,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             }
             catch (Exception e)
             {
-                this.Logger.LogErrorException(e);
+                this.Logger.Error(e, "Exception while update user playlist.");
                 error = true;
             }
 

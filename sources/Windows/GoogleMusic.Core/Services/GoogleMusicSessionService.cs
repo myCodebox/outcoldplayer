@@ -117,8 +117,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     }
                     catch (Exception e)
                     {
-                        this.logger.Error("GetSavedCookiesAsync: Cannot deserialize cookies");
-                        this.logger.LogErrorException(e);
+                        this.logger.Error(e, "GetSavedCookiesAsync: Cannot deserialize cookies");
                     }
                 }
                 else
@@ -158,8 +157,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     }
                     catch (Exception e)
                     {
-                        this.logger.Error("LoadSession: cannot deserialize sessionId.");
-                        this.logger.LogErrorException(e);
+                        this.logger.Error(e, "LoadSession: cannot deserialize sessionId.");
                     }
                 }
             }

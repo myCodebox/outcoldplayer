@@ -503,7 +503,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     }
                     catch (Exception e)
                     {
-                        this.logger.LogErrorException(e);
+                        this.logger.Error(e, "Exception while tried to get song url.");
                     }
 
                     if (songUrl != null)
@@ -538,7 +538,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                             }
                             else
                             {
-                                this.logger.LogErrorException(exception);
+                                this.logger.Error(exception, "Exception while tried to get stream.");
                             }
                         }
 

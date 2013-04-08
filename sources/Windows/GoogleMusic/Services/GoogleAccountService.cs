@@ -42,9 +42,9 @@ namespace OutcoldSolutions.GoogleMusic.Services
                         vault.Remove(credential);
                     }
                 }
-                catch (Exception exception)
+                catch (Exception)
                 {
-                    this.logger.LogDebugException(exception);
+                    this.logger.Debug("Exception while tried to remove credentials");
                 }
 
                 this.logger.Debug("SetUserInfo: Adding new passwrod credentials.");
@@ -73,9 +73,9 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     return new UserInfo(list[0].UserName, list[0].Password) { RememberAccount = true };
                 }
             }
-            catch (Exception exception)
+            catch (Exception)
             {
-                this.logger.LogDebugException(exception);
+                this.logger.Debug("Exception while tried to retrieve user info.");
             }
 
             this.logger.Debug("Password credentials could not find.");
@@ -97,9 +97,9 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     vault.Remove(credential);
                 }
             }
-            catch (Exception exception)
+            catch (Exception)
             {
-                this.logger.LogDebugException(exception);
+                this.logger.Debug("Exception while tried to remove user info.");
             }
         }
     }
