@@ -7,7 +7,6 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
-    using System.Diagnostics;
     using System.Linq;
 
     using OutcoldSolutions.BindingModels;
@@ -196,12 +195,11 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
         private void SortSongs(object obj)
         {
-            Debug.Assert(obj is SongsSorting, "obj is SongsSorting");
-            if (obj is SongsSorting && this.Songs != null)
+            if (obj != null && this.Songs != null)
             {
                 IEnumerable<SongBindingModel> enumerable;
 
-                var songsSorting = (SongsSorting)obj;
+                SongsSorting songsSorting = (SongsSorting)Enum.ToObject(typeof(SongsSorting), obj);
                 switch (songsSorting)
                 {
                     case SongsSorting.Unknown:

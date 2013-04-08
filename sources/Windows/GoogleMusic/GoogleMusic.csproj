@@ -135,6 +135,7 @@
     <Compile Include="Controls\Rating.cs" />
     <Compile Include="Controls\RatingEventArgs.cs" />
     <Compile Include="Controls\ListViewBaseSelectedItemsBehavior.cs" />
+    <Compile Include="Controls\SortableHeaderControl.cs" />
     <Compile Include="Controls\ValueChangedEventArgs.cs" />
     <Compile Include="Converters\AlbumArtUrlToImageConverter.cs" />
     <Compile Include="Converters\DoubleToTimeConverter.cs" />

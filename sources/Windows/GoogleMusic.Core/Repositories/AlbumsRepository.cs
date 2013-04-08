@@ -125,7 +125,7 @@ select
 from [Song] as s 
     inner join [Album] a on s.[AlbumTitleNorm] = a.[TitleNorm]      
     inner join [Artist] ar on ar.[TitleNorm] = s.[ArtistTitleNorm]
-where s.[ArtistTitleNorm] <> s.[AlbumArtistTitleNorm] and ar.[ArtistId] = ?1
+where s.[ArtistTitleNorm] <> coalesce(nullif(s.[AlbumArtistTitleNorm], ''), s.[ArtistTitleNorm]) and ar.[ArtistId] = ?1
 group by a.[AlbumId], a.[Title], a.[TitleNorm], a.[ArtistTitleNorm], a.[Year], a.[ArtUrl], a.[LastPlayed]
 ) as x
 order by x.IsCollection, x.Year 

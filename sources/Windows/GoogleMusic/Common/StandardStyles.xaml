@@ -11,7 +11,8 @@
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:controls="using:OutcoldSolutions.GoogleMusic.Controls">
+    xmlns:controls="using:OutcoldSolutions.GoogleMusic.Controls"
+    xmlns:bindingModels="using:OutcoldSolutions.GoogleMusic.BindingModels">
 
     <!-- Non-brush values that vary across themes -->
 
@@ -801,12 +802,12 @@
                         </VisualStateManager.VisualStateGroups>
 
                         <ContentPresenter x:Name="ContentContainer"
-                                                      ContentTransitions="{TemplateBinding ContentTransitions}"
-                                                      ContentTemplate="{TemplateBinding ContentTemplate}"
-                                                      Content="{TemplateBinding Content}"
-                                                      HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                      VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                                      Margin="{TemplateBinding Padding}" />
+                                          ContentTransitions="{TemplateBinding ContentTransitions}"
+                                          ContentTemplate="{TemplateBinding ContentTemplate}"
+                                          Content="{TemplateBinding Content}"
+                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                          Margin="{TemplateBinding Padding}" />
 
                     </Border>
                 </ControlTemplate>
@@ -818,4 +819,119 @@
         <Setter Property="Foreground" Value="{StaticResource ApplicationThemeBrush}" />
     </Style>
 
+    <Style TargetType="controls:SortableHeaderControl" >
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="VerticalAlignment" Value="Stretch" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:SortableHeaderControl">
+                    <Grid >
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="SortDirection">
+                                <VisualState x:Name="Unknown">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ArrowDown" Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ArrowUp" Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Border" Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="Transparent" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Up">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ArrowDown" Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ArrowUp" Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Border" Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="#2C2C2C" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Down">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ArrowDown" Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ArrowUp" Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Border" Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="#2C2C2C" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <Border x:Name="Border" 
+                                Background="Transparent" 
+                                Grid.ColumnSpan="2" />
+                        
+                        <TextBlock Text="{TemplateBinding Title}" 
+                                   Style="{StaticResource TitleTextStyle}"
+                                   VerticalAlignment="Center"
+                                   Margin="10, 0, 0, 7"/>
+
+                        <Canvas Grid.Column="1" 
+                                HorizontalAlignment="Right" 
+                                VerticalAlignment="Stretch" 
+                                Margin="5, 0, 10, 0"
+                                Width="16"
+                                Height="16">
+                            
+                            <Path x:Name="ArrowDown"
+                                  Fill="{StaticResource ApplicationForegroundThemeBrush}">
+                                <Path.Data>
+                                    <PathGeometry>
+                                        <PathFigure StartPoint="0,0" IsClosed="True">
+                                            <LineSegment Point="16,0" />
+                                            <LineSegment Point="8,8" />
+                                        </PathFigure>
+                                    </PathGeometry>
+                                </Path.Data>
+                            </Path>
+                            <Path x:Name="ArrowUp"
+                                  Fill="{StaticResource ApplicationForegroundThemeBrush}">
+                                <Path.Data>
+                                    <PathGeometry>
+                                        <PathFigure StartPoint="0,8" IsClosed="True">
+                                            <LineSegment Point="8,0" />
+                                            <LineSegment Point="16,8" />
+                                        </PathFigure>
+                                    </PathGeometry>
+                                </Path.Data>
+                            </Path>
+                        </Canvas>
+                        
+                        <Button x:Name="Part_Button" 
+                                HorizontalAlignment="Stretch" 
+                                VerticalAlignment="Stretch" 
+                                Background="Transparent"
+                                Grid.ColumnSpan="2"
+                                Canvas.ZIndex="100">
+                            <Button.Template>
+                                <ControlTemplate>
+                                    <Border Background="{TemplateBinding Background}" />
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                    </Grid>
+                    
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    
 </ResourceDictionary>

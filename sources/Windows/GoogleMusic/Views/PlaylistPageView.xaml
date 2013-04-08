@@ -5,7 +5,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:OutcoldSolutions.GoogleMusic.Controls"
-    xmlns:views="using:OutcoldSolutions.Views" xmlns:interactivity="using:Windows.UI.Interactivity"
+    xmlns:views="using:OutcoldSolutions.Views" 
+    xmlns:interactivity="using:Windows.UI.Interactivity"
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400"
@@ -17,30 +18,67 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-       
+        
+      
         <Border Grid.Row="0" 
                 HorizontalAlignment="Stretch"
                 Margin="40, 20, 20, 0" 
-                Padding="0, 0, 0, 7"
+                Padding="0, 0, 0, 0"
                 Height="35"
                 Background="{StaticResource ListViewItemBorder}"
                 Visibility="{Binding Path=IsDataLoading, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}">
-            <Grid Margin="0, 0, 20, 0">
+            <Grid Margin="0, 0, 0, 0">
                 <Grid.ColumnDefinitions >
                     <ColumnDefinition Width="40" />
                     <ColumnDefinition Width="2*" />
                     <ColumnDefinition Width="80" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="60" />
-                    <ColumnDefinition Width="150" />
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="120" />
                 </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="1" VerticalAlignment="Center" Margin="0, 0, 0, 0" Text="name" TextTrimming="WordEllipsis" Style="{StaticResource TitleTextStyle}" />
-                <TextBlock Grid.Column="2" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="time" HorizontalAlignment="Right" Style="{StaticResource TitleTextStyle}"/>
-                <TextBlock Grid.Column="3" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="artist" TextTrimming="WordEllipsis" Style="{StaticResource TitleTextStyle}"/>
-                <TextBlock Grid.Column="4" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="album" TextTrimming="WordEllipsis" Style="{StaticResource TitleTextStyle}"/>
-                <TextBlock Grid.Column="5" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="plays" HorizontalAlignment="Right" Style="{StaticResource TitleTextStyle}"/>
-                <TextBlock Grid.Column="6" VerticalAlignment="Center" Margin="20, 0, 25, 0" Text="rating" HorizontalAlignment="Left" Style="{StaticResource TitleTextStyle}"/>
+                
+                <controls:SortableHeaderControl Grid.Column="1" 
+                                                SortCommand="{Binding Path=BindingModel.SongsBindingModel.SortCommand}"
+                                                Title="name"
+                                                CurrentSorting="{Binding Path=BindingModel.SongsBindingModel.CurrentSorting, Mode=OneWay}"
+                                                UpSorting="TitleDescending"
+                                                DownSorting="Title" />
+                
+                <controls:SortableHeaderControl Grid.Column="2" 
+                                                SortCommand="{Binding Path=BindingModel.SongsBindingModel.SortCommand}"
+                                                Title="time"
+                                                CurrentSorting="{Binding Path=BindingModel.SongsBindingModel.CurrentSorting, Mode=OneWay}"
+                                                UpSorting="DurationDescending"
+                                                DownSorting="Duration" />
+
+                <controls:SortableHeaderControl Grid.Column="3" 
+                                                SortCommand="{Binding Path=BindingModel.SongsBindingModel.SortCommand}"
+                                                Title="artist"
+                                                CurrentSorting="{Binding Path=BindingModel.SongsBindingModel.CurrentSorting, Mode=OneWay}"
+                                                UpSorting="ArtistDescending"
+                                                DownSorting="Artist" />
+
+                <controls:SortableHeaderControl Grid.Column="4" 
+                                                SortCommand="{Binding Path=BindingModel.SongsBindingModel.SortCommand}"
+                                                Title="album"
+                                                CurrentSorting="{Binding Path=BindingModel.SongsBindingModel.CurrentSorting, Mode=OneWay}"
+                                                UpSorting="AlbumDescending"
+                                                DownSorting="Album" />
+
+                <controls:SortableHeaderControl Grid.Column="5" 
+                                                SortCommand="{Binding Path=BindingModel.SongsBindingModel.SortCommand}"
+                                                Title="plays"
+                                                CurrentSorting="{Binding Path=BindingModel.SongsBindingModel.CurrentSorting, Mode=OneWay}"
+                                                UpSorting="PlaysCountDescending"
+                                                DownSorting="PlaysCount" />
+
+                <controls:SortableHeaderControl Grid.Column="6" 
+                                                SortCommand="{Binding Path=BindingModel.SongsBindingModel.SortCommand}"
+                                                Title="rating"
+                                                CurrentSorting="{Binding Path=BindingModel.SongsBindingModel.CurrentSorting, Mode=OneWay}"
+                                                UpSorting="RatingDescending"
+                                                DownSorting="Rating" />
             </Grid>
         </Border>
         
@@ -74,8 +112,8 @@
                             <ColumnDefinition Width="80" />
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="60" />
-                            <ColumnDefinition Width="170" />
+                            <ColumnDefinition Width="80" />
+                            <ColumnDefinition Width="120" />
                         </Grid.ColumnDefinitions>
 
                         <controls:FakeEqualizerControl 
@@ -85,12 +123,12 @@
                             Visibility="{Binding Path=IsPlaying, Converter={StaticResource BooleanToVisibilityConverter}}" 
                             IsPaused="{Binding Path=State, Converter={StaticResource ValueToBooleanConverter}, ConverterParameter={StaticResource StatePaused}}" />
                         
-                        <TextBlock Grid.Column="1" Style="{StaticResource BasicTextStyle}" VerticalAlignment="Center" Margin="5, 0, 0, 0" Text="{Binding Path=Title, Mode=OneWay}" HorizontalAlignment="Left" TextTrimming="WordEllipsis" />
-                        <TextBlock Grid.Column="2" Style="{StaticResource BasicTextStyle}" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="{Binding Path=Duration, Converter={StaticResource DoubleToTimeConverter}, Mode=OneWay}" HorizontalAlignment="Right"/>
-                        <TextBlock Grid.Column="3" Style="{StaticResource BasicTextStyle}" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="{Binding Path=Artist, Mode=OneWay}" TextTrimming="WordEllipsis" />
-                        <TextBlock Grid.Column="4" Style="{StaticResource BasicTextStyle}" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="{Binding Path=Album, Mode=OneWay}" TextTrimming="WordEllipsis" />
-                        <TextBlock Grid.Column="5" Style="{StaticResource BasicTextStyle}" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="{Binding Path=PlayCount, Mode=OneWay}" HorizontalAlignment="Right" />
-                        <controls:Rating Grid.Column="6" VerticalAlignment="Center" Margin="20, 0, 40, 0" Value="{Binding Path=Rating, Mode=OneWay}" HorizontalAlignment="Right" 
+                        <TextBlock Grid.Column="1" Style="{StaticResource BasicTextStyle}" VerticalAlignment="Center" Margin="10, 0, 10, 0" Text="{Binding Path=Title, Mode=OneWay}" HorizontalAlignment="Left" TextTrimming="WordEllipsis" />
+                        <TextBlock Grid.Column="2" Style="{StaticResource BasicTextStyle}" VerticalAlignment="Center" Margin="10, 0, 10, 0" Text="{Binding Path=Duration, Converter={StaticResource DoubleToTimeConverter}, Mode=OneWay}" HorizontalAlignment="Right"/>
+                        <TextBlock Grid.Column="3" Style="{StaticResource BasicTextStyle}" VerticalAlignment="Center" Margin="10, 0, 10, 0" Text="{Binding Path=Artist, Mode=OneWay}" TextTrimming="WordEllipsis" />
+                        <TextBlock Grid.Column="4" Style="{StaticResource BasicTextStyle}" VerticalAlignment="Center" Margin="10, 0, 10, 0" Text="{Binding Path=Album, Mode=OneWay}" TextTrimming="WordEllipsis" />
+                        <TextBlock Grid.Column="5" Style="{StaticResource BasicTextStyle}" VerticalAlignment="Center" Margin="10, 0, 10, 0" Text="{Binding Path=PlayCount, Mode=OneWay}" HorizontalAlignment="Right" />
+                        <controls:Rating Grid.Column="6" VerticalAlignment="Center" Margin="10, 0, 10, 0" Value="{Binding Path=Rating, Mode=OneWay}" HorizontalAlignment="Right" 
                                             Command="{Binding Path=DataContext.RateSongCommand, ElementName=ListView, Mode=OneTime}"
                                             CommandParameter="{Binding Mode=OneTime}"/>
                     </Grid>

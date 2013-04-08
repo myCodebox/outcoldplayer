@@ -40,7 +40,7 @@ select s.*,
        1 as [IsCollection]
 from [Song] as s    
     inner join [Artist] ar on ar.[TitleNorm] = s.[ArtistTitleNorm]
-where s.[ArtistTitleNorm] <> s.[AlbumArtistTitleNorm] and ar.[ArtistId] = ?1
+where s.[ArtistTitleNorm] <> coalesce(nullif(s.[AlbumArtistTitleNorm], ''), s.[ArtistTitleNorm]) and ar.[ArtistId] = ?1
 ) as x
 order by x.IsCollection, x.Year, x.[AlbumTitleNorm], coalesce(nullif(x.Disc, 0), 1), x.Track 
 ";
