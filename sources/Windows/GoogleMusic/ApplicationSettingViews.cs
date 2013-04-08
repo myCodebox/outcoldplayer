@@ -12,7 +12,7 @@ namespace OutcoldSolutions.GoogleMusic
          public static void Initialize(IApplicationSettingViewsService service)
          {
              service.RegisterSettings<AccountsView>("accounts", "Accounts");
-             service.RegisterSettings<AppSettingsView>("appsettings", "Application Settings");
+             service.RegisterSettings<AppSettingsView>("appsettings", "App Settings");
 
              bool upgradeViewRegistered = false;
              if (!InAppPurchases.HasFeature(GoogleMusicFeatures.All))
@@ -23,6 +23,7 @@ namespace OutcoldSolutions.GoogleMusic
 
              service.RegisterSettings<SupportView>("support", "Support");
              service.RegisterSettings<PrivacyView>("privacy", "Privacy Policy");
+             service.RegisterSettings<LegalView>("legal", "Legal");
 
              InAppPurchases.LicenseChanged += () =>
              {

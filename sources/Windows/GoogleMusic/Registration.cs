@@ -114,6 +114,7 @@ namespace OutcoldSolutions.GoogleMusic
 
             registration.Register<PrivacyView>();
             registration.Register<SupportView>();
+            registration.Register<LegalView>();
         }
 
         public static void RegisterPopupViews(IRegistrationContext registration)

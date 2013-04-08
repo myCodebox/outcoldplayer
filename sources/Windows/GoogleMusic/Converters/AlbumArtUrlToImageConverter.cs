@@ -24,12 +24,7 @@ namespace OutcoldSolutions.GoogleMusic.Converters
         private readonly Lazy<BitmapImage> unknownAlbumArt80 = new Lazy<BitmapImage>(() => new BitmapImage(new Uri("ms-appx:///Resources/UnknownArt-80.png")));
         private readonly Lazy<BitmapImage> unknownAlbumArt40 = new Lazy<BitmapImage>(() => new BitmapImage(new Uri("ms-appx:///Resources/UnknownArt-40.png")));
 
-        private readonly ILogger logger;
-
-        public AlbumArtUrlToImageConverter()
-        {
-            this.logger = ApplicationBase.Container.Resolve<ILogManager>().CreateLogger("AlbumArtUrlToImageConverter");
-        }
+        private readonly Lazy<ILogger> logger = new Lazy<ILogger>(() => ApplicationBase.Container.Resolve<ILogManager>().CreateLogger("AlbumArtUrlToImageConverter"));
 
         public object Convert(object value, Type targetType, object parameter, string language)
         {
@@ -80,7 +75,7 @@ namespace OutcoldSolutions.GoogleMusic.Converters
             }
             catch (Exception e)
             {
-                this.logger.Error(e, "Exception while tried to load album art.");
+                this.logger.Value.Error(e, "Exception while tried to load album art.");
                 return DependencyProperty.UnsetValue;
             }
         }

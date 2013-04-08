@@ -13,7 +13,7 @@
     Subtitle="{Binding Path=BindingModel.Subtitle, Mode=OneWay}">
 
     <SemanticZoom Margin="0, 0, 20, 0"
-                  VerticalAlignment="Top"
+                  VerticalAlignment="Stretch"
                   Visibility="{Binding Path=IsDataLoading, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}" 
                   IsZoomOutButtonEnabled="True" 
                   ViewChangeStarted="SemanticZoom_OnViewChangeStarted" >

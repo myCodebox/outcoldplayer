@@ -15,7 +15,7 @@
             </TransitionCollection>
         </StackPanel.Transitions>
 
-        <ToggleSwitch Margin="0, 20, 0, 0" IsOn="{Binding Path=IsScreenOn, Mode=TwoWay}">Keep display on.</ToggleSwitch>
+        <ToggleSwitch Margin="0, 0, 0, 0" IsOn="{Binding Path=IsScreenOn, Mode=TwoWay}">Keep display on.</ToggleSwitch>
 
         <TextBlock Style="{StaticResource SmallTextStyle}"  Margin="0, 10, 0, 0">
             Depending on system power settings, the display may first be dimmed, then turned off if 

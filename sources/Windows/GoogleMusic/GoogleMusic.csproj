@@ -259,6 +259,9 @@
     <Compile Include="Views\Settings\AppSettingsView.xaml.cs">
       <DependentUpon>AppSettingsView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Settings\LegalView.xaml.cs">
+      <DependentUpon>LegalView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Settings\PrivacyView.xaml.cs">
       <DependentUpon>PrivacyView.xaml</DependentUpon>
     </Compile>
@@ -430,6 +433,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Settings\AppSettingsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\LegalView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
