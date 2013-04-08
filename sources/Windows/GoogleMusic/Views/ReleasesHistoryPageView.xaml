@@ -35,16 +35,16 @@
                     <Run>vNext - Version 2.0</Run>
                 </TextBlock>
                 <RichTextBlock Style="{StaticResource BodyRichTextStyle}">
-                    <Paragraph>[+] Default sorting in Artist view by year.</Paragraph>
+                    <Paragraph>[+] Sorting in Playlist and Album views.</Paragraph>
                     <Paragraph>[+] Show year of album on album tiles.</Paragraph>
                     <Paragraph>[+] Performance improvements (search is instantaneous).</Paragraph>
                     <Paragraph>[+] Interface improvements.</Paragraph>
                     <Paragraph>[+] Volume control.</Paragraph>
                     <Paragraph>[+] Snapped View shows songs in queue.</Paragraph>
                     <Paragraph>[+] App startup improvements.</Paragraph>
-                    <Paragraph>[+] Sorting in Playlist and Album views.</Paragraph>
                     <Paragraph>[+] Add multiple songs / albums to queue.</Paragraph>
                     <Paragraph>[+] Add multiple songs to playlist.</Paragraph>
+                    <Paragraph>[+] Default sorting in Artist view by year.</Paragraph>
                     <Paragraph>[b] Progress ring shows forever when click on song suggestion in search view.</Paragraph>
                 </RichTextBlock>
 
