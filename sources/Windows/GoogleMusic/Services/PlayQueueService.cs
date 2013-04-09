@@ -289,7 +289,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     this.currentQueueIndex++;
                 }
 
-                await this.PlaySongAsyncInternal(this.currentQueueIndex);
+                await this.PlaySongAsyncInternal(this.CurrentSongIndex);
             }
         }
 
@@ -316,7 +316,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     this.currentQueueIndex = this.queueOrder.Count - 1;
                 }
 
-                await this.PlaySongAsyncInternal(this.currentQueueIndex);
+                await this.PlaySongAsyncInternal(this.CurrentSongIndex);
             }
         }
 
