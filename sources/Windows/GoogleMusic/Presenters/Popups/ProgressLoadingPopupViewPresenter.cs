@@ -4,6 +4,8 @@
 namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
@@ -13,6 +15,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
     using OutcoldSolutions.GoogleMusic.Web.Synchronization;
     using OutcoldSolutions.Presenters;
 
+    using Windows.Storage;
     using Windows.UI.Core;
 
     public class ProgressLoadingPopupViewPresenter : ViewPresenterBase<IProgressLoadingPopupView>
@@ -59,6 +62,13 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
 
         private async Task InitializeRepositoriesAsync()
         {
+            // Remove old JSON caches
+            IEnumerable<StorageFile> files = (await ApplicationData.Current.LocalFolder.GetFilesAsync()).Where(x => x.Name.EndsWith(".cache", StringComparison.OrdinalIgnoreCase));
+            foreach (var storageFile in files)
+            {
+                await storageFile.DeleteAsync(StorageDeleteOption.PermanentDelete);
+            }
+
             DbContext dbContext = new DbContext();
             await dbContext.InitializeAsync();
 

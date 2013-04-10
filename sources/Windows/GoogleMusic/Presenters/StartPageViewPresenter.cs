@@ -118,7 +118,17 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
             if (result != null && result.Succeed)
             {
-                await this.OnViewInitializedAsync();
+                var currentVersion = this.settingsService.GetValue<string>("Version", null);
+                bool fCurrentVersion = string.Equals(currentVersion, CurrentVersion, StringComparison.OrdinalIgnoreCase);
+
+                if (fCurrentVersion)
+                {
+                    await this.OnViewInitializedAsync();
+                }
+                else
+                {
+                    this.ShowProgressLoadingPopupView();
+                }
             }
             else
             {
@@ -159,9 +169,10 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             ((IProgressLoadingPopupView)sender).Closed += this.AuthentificationPopupView_Closed;
             await this.OnViewInitializedAsync();
 
+            this.settingsService.SetValue("Version", CurrentVersion);
+
             if (fUpdate)
             {
-                this.settingsService.SetValue("Version", CurrentVersion);
                 this.MainFrame.ShowPopup<IReleasesHistoryPopupView>(PopupRegion.Full);
             }
 
@@ -195,7 +206,15 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 this.initialized = true;
             }
 
-            await this.LoadGroupsAsync();
+            try
+            {
+                await this.LoadGroupsAsync();
+            }
+            catch (Exception e)
+            {
+                this.Logger.Error(e, "Cannot load groups");
+                this.ShowAuthentificationPopupView();
+            }
         }
 
         private async Task LoadGroupsAsync()
