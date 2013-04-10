@@ -13,6 +13,7 @@ namespace OutcoldSolutions.GoogleMusic.Shell
     using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
+    using OutcoldSolutions.GoogleMusic.Views.Popups;
 
     using Windows.ApplicationModel.Search;
     using Windows.Storage.Streams;
@@ -26,8 +27,6 @@ namespace OutcoldSolutions.GoogleMusic.Shell
         private readonly IPlaylistsService playlistsService;
         private readonly ISongsRepository songsRepository;
 
-        private bool isRegistered;
-
         public SearchService(
             INavigationService navigationService, 
             IDispatcher dispatcher,
@@ -38,26 +37,8 @@ namespace OutcoldSolutions.GoogleMusic.Shell
             this.dispatcher = dispatcher;
             this.playlistsService = playlistsService;
             this.songsRepository = songsRepository;
-
-            this.navigationService.NavigatedTo += this.OnNavigatedTo;
         }
-
-        public event EventHandler IsRegisteredChanged;
-
-        public bool IsRegistered
-        {
-            get
-            {
-                return this.isRegistered;
-            }
-
-            private set
-            {
-                this.isRegistered = value;
-                this.RaiseIsRegisteredChanged();
-            }
-        }
-
+        
         public void Activate()
         {
             var searchPane = SearchPane.GetForCurrentView();
@@ -70,39 +51,7 @@ namespace OutcoldSolutions.GoogleMusic.Shell
             searchPane.ShowOnKeyboardInput = value;
         }
 
-        private void OnNavigatedTo(object sender, NavigatedToEventArgs navigatedToEventArgs)
-        {
-            if (navigatedToEventArgs.View is IAuthentificationPageView
-                || navigatedToEventArgs.View is IProgressLoadingView
-                || navigatedToEventArgs.View is IReleasesHistoryPageView
-                || navigatedToEventArgs.View is IInitPageView)
-            {
-                if (this.IsRegistered)
-                {
-                    this.Unregister();
-                    this.IsRegistered = false;
-                }
-            }
-            else
-            {
-                if (!this.IsRegistered)
-                {
-                    this.Register();
-                    this.IsRegistered = true;
-                }
-            }
-        }
-
-        private void RaiseIsRegisteredChanged()
-        {
-            var handler = this.IsRegisteredChanged;
-            if (handler != null)
-            {
-                handler(this, EventArgs.Empty);
-            }
-        }
-
-        private void Register()
+        public void Register()
         {
             var searchPane = SearchPane.GetForCurrentView();
             searchPane.ShowOnKeyboardInput = true;
@@ -111,7 +60,7 @@ namespace OutcoldSolutions.GoogleMusic.Shell
             searchPane.QuerySubmitted += this.SearchPaneOnQuerySubmitted;
         }
 
-        private void Unregister()
+        public void Unregister()
         {
             var searchPane = SearchPane.GetForCurrentView();
             searchPane.ShowOnKeyboardInput = false;

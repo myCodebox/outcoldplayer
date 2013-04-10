@@ -4,9 +4,9 @@
 namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
 {
     using OutcoldSolutions.GoogleMusic.BindingModels.Settings;
+    using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Services.Publishers;
-    using OutcoldSolutions.GoogleMusic.Views;
     using OutcoldSolutions.GoogleMusic.Views.Popups;
     using OutcoldSolutions.GoogleMusic.Web.Lastfm;
     using OutcoldSolutions.Presenters;
@@ -21,7 +21,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
         private readonly ICurrentSongPublisherService publisherService;
         private readonly IApplicationSettingViewsService applicationSettingViewsService;
         private readonly INavigationService navigationService;
-        private readonly ISettingsService settingsService;
 
         public AccountsViewPresenter(
             IGoogleAccountService googleAccountService,
@@ -29,8 +28,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
             ILastfmWebService lastfmWebService,
             ICurrentSongPublisherService publisherService,
             IApplicationSettingViewsService applicationSettingViewsService,
-            INavigationService navigationService,
-            ISettingsService settingsService)
+            INavigationService navigationService)
         {
             this.googleAccountService = googleAccountService;
             this.sessionService = sessionService;
@@ -38,7 +36,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
             this.publisherService = publisherService;
             this.applicationSettingViewsService = applicationSettingViewsService;
             this.navigationService = navigationService;
-            this.settingsService = settingsService;
             this.BindingModel = new AccountViewBindingModel();
             this.ForgetAccountCommand = new DelegateCommand(this.ForgetAccount);
             this.SignOutCommand = new DelegateCommand(this.SignOutAccount);
@@ -113,9 +110,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
 
         private void ReloadSongs()
         {
-            this.settingsService.ResetLibraryFreshness();
-            this.navigationService.ClearHistory();
-            this.navigationService.NavigateTo<IProgressLoadingView>(keepInHistory: false);
+            this.EventAggregator.Publish(new ReloadSongsEvent());
             this.applicationSettingViewsService.Close();
         }
     }

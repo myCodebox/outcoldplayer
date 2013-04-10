@@ -1,17 +1,17 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // Outcold Solutions (http://outcoldman.com)
 // --------------------------------------------------------------------------------------------------------------------
-namespace OutcoldSolutions.GoogleMusic.Views
+namespace OutcoldSolutions.GoogleMusic.Views.Popups
 {
     using OutcoldSolutions.Views;
 
-    public interface IInitPageView : IPageView
+    public interface IProgressLoadingPopupView : IPopupView
     {
     }
 
-    public sealed partial class InitPageView : PageViewBase, IInitPageView
+    public sealed partial class ProgressLoadingPopupView : PopupViewBase, IProgressLoadingPopupView
     {
-        public InitPageView()
+        public ProgressLoadingPopupView()
         {
             this.InitializeComponent();
         }

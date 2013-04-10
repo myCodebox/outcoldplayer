@@ -19,24 +19,6 @@ namespace OutcoldSolutions.GoogleMusic
     {
         public static void RegisterPages(IRegistrationContext registration)
         {
-            // Initialization page
-            registration.Register<IInitPageView>()
-                            .InjectionRule<BindingModelBase, InitPageViewPresenter>()
-                            .As<InitPageView>();
-            registration.Register<InitPageViewPresenter>();
-
-            // Authentification page
-            registration.Register<IAuthentificationPageView>()
-                        .InjectionRule<BindingModelBase, AuthentificationPageViewPresenter>()
-                        .As<AuthentificationPageView>();
-            registration.Register<AuthentificationPageViewPresenter>();
-
-            // Progress loading view
-            registration.Register<IProgressLoadingView>()
-                        .InjectionRule<BindingModelBase, ProgressLoadingPageViewPresenter>()
-                        .As<ProgressLoadingPageView>();
-            registration.Register<ProgressLoadingPageViewPresenter>();
-
             // Start page view
             registration.Register<IStartPageView>()
                         .InjectionRule<BindingModelBase, StartPageViewPresenter>()
@@ -90,12 +72,6 @@ namespace OutcoldSolutions.GoogleMusic
                         .AsSingleton<AlbumPageView>();
             registration.Register<AlbumPageViewPresenter>().AsSingleton();
             registration.Register<PlaylistPageViewBindingModel<Album>>().AsSingleton();
-
-            // The releases history
-            registration.Register<IReleasesHistoryPageView>()
-                        .InjectionRule<BindingModelBase, ReleasesHistoryPageViewPresenter>()
-                        .As<ReleasesHistoryPageView>();
-            registration.Register<ReleasesHistoryPageViewPresenter>();
         }
 
         public static void RegisterSettingViews(IRegistrationContext registration)
@@ -119,6 +95,24 @@ namespace OutcoldSolutions.GoogleMusic
 
         public static void RegisterPopupViews(IRegistrationContext registration)
         {
+            // Authentification popup
+            registration.Register<IAuthentificationPopupView>()
+                        .InjectionRule<BindingModelBase, AuthentificationPopupViewPresenter>()
+                        .As<AuthentificationPopupView>();
+            registration.Register<AuthentificationPopupViewPresenter>();
+
+            // Progress loading view
+            registration.Register<IProgressLoadingPopupView>()
+                        .InjectionRule<BindingModelBase, ProgressLoadingPopupViewPresenter>()
+                        .As<ProgressLoadingPopupView>();
+            registration.Register<ProgressLoadingPopupViewPresenter>();
+
+            // The releases history
+            registration.Register<IReleasesHistoryPopupView>()
+                        .InjectionRule<BindingModelBase, ReleasesHistoryPopupViewPresenter>()
+                        .As<ReleasesHistoryPopupView>();
+            registration.Register<ReleasesHistoryPopupViewPresenter>();
+
             registration.Register<IAddToPlaylistPopupView>()
                         .InjectionRule<BindingModelBase, AddToPlaylistPopupViewPresenter>()
                         .As<AddToPlaylistPopupView>();

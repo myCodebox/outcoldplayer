@@ -181,7 +181,7 @@ namespace OutcoldSolutions.GoogleMusic
                 Container.Resolve<CurrentSongPropertiesUpdateService>();
                 Container.Resolve<ScreenLocker>();
 
-                Container.Resolve<INavigationService>().NavigateTo<IInitPageView>(keepInHistory: false);
+                Container.Resolve<INavigationService>().NavigateTo<IStartPageView>();
 
 #if !DEBUG
                 BugSense.BugSenseHandler.Instance.Init(this, "w8c8d6b5");

@@ -14,7 +14,7 @@
     IsStoreLogoVisible="True">
 
     <views:PageViewBase.Resources>
-        <CollectionViewSource x:Name="Groups" IsSourceGrouped="true" ItemsPath="Playlists" />
+        <CollectionViewSource x:Name="Groups" IsSourceGrouped="true" ItemsPath="Playlists" Source="{Binding Path=BindingModel.Groups}" />
     </views:PageViewBase.Resources>
 
     <Grid Margin="0, 0, 20, 0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
@@ -57,7 +57,7 @@
                     <GroupStyle.HeaderTemplate>
                         <DataTemplate>
                             <Border Height="30">
-                                <Button Margin="0, 0, 160, 0" Click="NavigateTo" Visibility="{Binding Path=Title, Converter={StaticResource NullToInvisibilityConverter}}">
+                                <Button Margin="10, 0, 160, 0" Click="NavigateTo" Visibility="{Binding Path=Title, Converter={StaticResource NullToInvisibilityConverter}}">
                                     <Button.Template>
                                         <ControlTemplate>
                                             <StackPanel Orientation="Horizontal" >

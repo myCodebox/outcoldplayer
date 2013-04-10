@@ -146,6 +146,7 @@
     <Compile Include="MainMenu.cs" />
     <Compile Include="Models\PlaylistTypeEx.cs" />
     <Compile Include="Models\QueueChangeEvent.cs" />
+    <Compile Include="Models\ReloadSongsEvent.cs" />
     <Compile Include="Models\SelectedItems.cs" />
     <Compile Include="Models\TimeSpanEx.cs" />
     <Compile Include="NavigationServiceEx.cs" />
@@ -176,17 +177,16 @@
     <Compile Include="Shell\PlayProgressEventArgs.cs" />
     <Compile Include="Presenters\AlbumPageViewPresenter.cs" />
     <Compile Include="Presenters\ArtistPageViewPresenter.cs" />
-    <Compile Include="Presenters\AuthentificationPageViewPresenter.cs" />
+    <Compile Include="Presenters\Popups\AuthentificationPopupViewPresenter.cs" />
     <Compile Include="Presenters\CurrentPlaylistPageViewPresenter.cs" />
-    <Compile Include="Presenters\InitPageViewPresenter.cs" />
     <Compile Include="Presenters\PlaylistPageViewPresenterBase.cs" />
     <Compile Include="Presenters\Popups\AddToPlaylistPopupViewPresenter.cs" />
     <Compile Include="Presenters\Popups\LastfmAuthentificationPresenter.cs" />
     <Compile Include="Presenters\PlayerViewPresenter.cs" />
     <Compile Include="Presenters\PlaylistsPageViewPresenter.cs" />
     <Compile Include="Presenters\PlaylistPageViewPresenter.cs" />
-    <Compile Include="Presenters\ProgressLoadingPageViewPresenter.cs" />
-    <Compile Include="Presenters\ReleasesHistoryPageViewPresenter.cs" />
+    <Compile Include="Presenters\Popups\ProgressLoadingPopupViewPresenter.cs" />
+    <Compile Include="Presenters\Popups\ReleasesHistoryPopupViewPresenter.cs" />
     <Compile Include="Presenters\SearchPageViewPresenter.cs" />
     <Compile Include="Presenters\Settings\AccountsViewPresenter.cs" />
     <Compile Include="Presenters\StartPageViewPresenter.cs" />
@@ -207,9 +207,6 @@
     <Compile Include="Views\CurrentPlaylistPageView.xaml.cs">
       <DependentUpon>CurrentPlaylistPageView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\InitPageView.xaml.cs">
-      <DependentUpon>InitPageView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\LinksRegionView.xaml.cs">
       <DependentUpon>LinksRegionView.xaml</DependentUpon>
     </Compile>
@@ -224,8 +221,8 @@
       <DependentUpon>LastfmAuthentificationView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Views\AuthentificationPageView.xaml.cs">
-      <DependentUpon>AuthentificationPageView.xaml</DependentUpon>
+    <Compile Include="Views\Popups\AuthentificationPopupView.xaml.cs">
+      <DependentUpon>AuthentificationPopupView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PlayerView.xaml.cs">
       <DependentUpon>PlayerView.xaml</DependentUpon>
@@ -246,11 +243,11 @@
     <Compile Include="Views\Popups\QueueActionsPopupView.xaml.cs">
       <DependentUpon>QueueActionsPopupView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\ReleasesHistoryPageView.xaml.cs">
-      <DependentUpon>ReleasesHistoryPageView.xaml</DependentUpon>
+    <Compile Include="Views\Popups\ReleasesHistoryPopupView.xaml.cs">
+      <DependentUpon>ReleasesHistoryPopupView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\ProgressLoadingPageView.xaml.cs">
-      <DependentUpon>ProgressLoadingPageView.xaml</DependentUpon>
+    <Compile Include="Views\Popups\ProgressLoadingPopupView.xaml.cs">
+      <DependentUpon>ProgressLoadingPopupView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SearchPageView.xaml.cs">
       <DependentUpon>SearchPageView.xaml</DependentUpon>
@@ -370,10 +367,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\InitPageView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\LinksRegionView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -390,7 +383,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\AuthentificationPageView.xaml">
+    <Page Include="Views\Popups\AuthentificationPopupView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -418,11 +411,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\ReleasesHistoryPageView.xaml">
+    <Page Include="Views\Popups\ReleasesHistoryPopupView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\ProgressLoadingPageView.xaml">
+    <Page Include="Views\Popups\ProgressLoadingPopupView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

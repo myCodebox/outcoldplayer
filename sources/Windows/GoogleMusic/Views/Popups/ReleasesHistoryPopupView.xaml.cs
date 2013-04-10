@@ -2,17 +2,17 @@
 // Outcold Solutions (http://outcoldman.com)
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace OutcoldSolutions.GoogleMusic.Views
+namespace OutcoldSolutions.GoogleMusic.Views.Popups
 {
     using OutcoldSolutions.Views;
 
-    public interface IReleasesHistoryPageView : IPageView
+    public interface IReleasesHistoryPopupView : IPopupView
     {
     }
 
-    public sealed partial class ReleasesHistoryPageView : PageViewBase, IReleasesHistoryPageView
+    public sealed partial class ReleasesHistoryPopupView : PopupViewBase, IReleasesHistoryPopupView
     {
-        public ReleasesHistoryPageView()
+        public ReleasesHistoryPopupView()
         {
             this.InitializeComponent();
         }

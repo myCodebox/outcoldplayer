@@ -20,26 +20,10 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
     public sealed partial class StartPageView : PageViewBase, IStartPageView
     {
-        private StartPageViewPresenter presenter;
-
         public StartPageView()
         {
             this.InitializeComponent();
             this.TrackItemsControl(this.GridView);
-        }
-
-        public override void OnUnfreeze(NavigatedToEventArgs eventArgs)
-        {
-            base.OnUnfreeze(eventArgs);
-
-            this.Groups.Source = this.presenter.BindingModel.Groups;
-        }
-
-        protected override void OnInitialized()
-        {
-            base.OnInitialized();
-
-            this.presenter = this.GetPresenter<StartPageViewPresenter>();
         }
 
         private void PlaylistItemClick(object sender, ItemClickEventArgs e)

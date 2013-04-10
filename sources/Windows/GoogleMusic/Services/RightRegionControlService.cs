@@ -7,6 +7,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
     using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Views;
+    using OutcoldSolutions.GoogleMusic.Views.Popups;
     using OutcoldSolutions.Shell;
     using OutcoldSolutions.Views;
 
@@ -15,7 +16,6 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
     public class RightRegionControlService 
     {
-        private readonly INavigationService navigationService;
         private readonly IMainFrameRegionProvider regionProvider;
         private readonly IApplicationSettingViewsService settingsCommands;
         private readonly ILogger logger;
@@ -25,26 +25,15 @@ namespace OutcoldSolutions.GoogleMusic.Services
         private HyperlinkButton adControlRemoveButton;
 
         public RightRegionControlService(
-            INavigationService navigationService,
             ILogManager logManager,
             IMainFrameRegionProvider regionProvider,
             IApplicationSettingViewsService settingsCommands)
         {
             this.logger = logManager.CreateLogger("RightRegionControlService");
-            this.navigationService = navigationService;
             this.regionProvider = regionProvider;
             this.settingsCommands = settingsCommands;
 
             InAppPurchases.LicenseChanged += this.UpdateAdControl;
-
-            this.navigationService.NavigatedTo += (sender, args) =>
-                {
-                    var isVisible = !(args.View is IAuthentificationPageView) 
-                                    && !(args.View is IInitPageView)
-                                    && !(args.View is IProgressLoadingView);
-
-                    this.regionProvider.SetVisibility(MainFrameRegion.Right, isVisible);
-                };
         }
 
         private void UpdateAdControl()

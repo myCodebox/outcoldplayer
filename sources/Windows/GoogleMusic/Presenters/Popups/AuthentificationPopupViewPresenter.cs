@@ -1,30 +1,25 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // Outcold Solutions (http://outcoldman.com)
 // --------------------------------------------------------------------------------------------------------------------
-namespace OutcoldSolutions.GoogleMusic.Presenters
+namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
 {
     using System;
-    using System.Threading.Tasks;
 
-    using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services;
-    using OutcoldSolutions.GoogleMusic.Views;
+    using OutcoldSolutions.GoogleMusic.Views.Popups;
     using OutcoldSolutions.Presenters;
 
-    public class AuthentificationPageViewPresenter : PagePresenterBase<IAuthentificationPageView>
+    public class AuthentificationPopupViewPresenter : ViewPresenterBase<IAuthentificationPopupView>
     {
-        private readonly INavigationService navigationService;
         private readonly IGoogleAccountService googleAccountService;
         private readonly IAuthentificationService authentificationService;
 
-        public AuthentificationPageViewPresenter(
-            INavigationService navigationService,
+        public AuthentificationPopupViewPresenter(
             IGoogleAccountService googleAccountService,
             IAuthentificationService authentificationService)
         {
-            this.navigationService = navigationService;
             this.googleAccountService = googleAccountService;
             this.authentificationService = authentificationService;
             this.BindingModel = new AuthentificationPageViewBindingModel();
@@ -32,6 +27,15 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.SignInCommand = new DelegateCommand(this.SignIn, () => !this.BindingModel.IsSigningIn);
 
             this.BindingModel.Subscribe(() => this.BindingModel.IsSigningIn, (sender, args) => this.SignInCommand.RaiseCanExecuteChanged());
+        }
+
+        public AuthentificationPageViewBindingModel BindingModel { get; private set; }
+
+        public DelegateCommand SignInCommand { get; private set; }
+
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
 
             var userInfo = this.googleAccountService.GetUserInfo();
             if (userInfo != null)
@@ -40,15 +44,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 this.BindingModel.Email = userInfo.Email;
                 this.BindingModel.RememberAccount = userInfo.RememberAccount;
             }
-        }
-
-        public AuthentificationPageViewBindingModel BindingModel { get; private set; }
-
-        public DelegateCommand SignInCommand { get; private set; }
-
-        protected override Task LoadDataAsync(NavigatedToEventArgs navigatedToEventArgs)
-        {
-            return Task.Delay(0);
         }
 
         private async void SignIn()
@@ -96,7 +91,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     this.Logger.Debug("Saving user info and password.");
                     this.googleAccountService.SetUserInfo(userInfo);
 
-                    this.navigationService.NavigateTo<IProgressLoadingView>();
+                    this.View.Close();
                 }
                 else
                 {
