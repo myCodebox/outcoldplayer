@@ -71,7 +71,7 @@ namespace OutcoldSolutions.GoogleMusic.Converters
                     }
                 }
 
-                return new BitmapImage(new Uri(url));
+                return url;
             }
             catch (Exception e)
             {
