@@ -126,7 +126,18 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private void Queue()
         {
-            this.MainFrame.ShowPopup<IQueueActionsPopupView>(PopupRegion.AppToolBarLeft, new SelectedItems(this.BindingModel.SelectedItems.Select(bm => bm.Playlist).ToList()));
+            this.MainFrame.ShowPopup<IQueueActionsPopupView>(
+                PopupRegion.AppToolBarLeft,
+                new SelectedItems(this.BindingModel.SelectedItems.Select(bm => bm.Playlist).ToList())).Closed += this.QueueActionsPopupView_Closed;
+        }
+
+        private void QueueActionsPopupView_Closed(object sender, EventArgs eventArgs)
+        {
+            ((IPopupView)sender).Closed -= this.QueueActionsPopupView_Closed;
+            if (eventArgs is QueueActionsCompletedEventArgs)
+            {
+                this.BindingModel.ClearSelectedItems();
+            }
         }
     }
 }

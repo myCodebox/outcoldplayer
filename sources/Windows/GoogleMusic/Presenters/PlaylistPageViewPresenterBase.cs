@@ -98,7 +98,18 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private void Queue()
         {
-            this.MainFrame.ShowPopup<IQueueActionsPopupView>(PopupRegion.AppToolBarLeft, new SelectedItems(this.BindingModel.SongsBindingModel.GetSelectedSongs().ToList()));
+            this.MainFrame.ShowPopup<IQueueActionsPopupView>(
+                PopupRegion.AppToolBarLeft,
+                new SelectedItems(this.BindingModel.SongsBindingModel.GetSelectedSongs().ToList())).Closed += this.QueueActionsPopupView_Closed;
+        }
+
+        private void QueueActionsPopupView_Closed(object sender, EventArgs eventArgs)
+        {
+            ((IPopupView)sender).Closed -= this.QueueActionsPopupView_Closed;
+            if (eventArgs is QueueActionsCompletedEventArgs)
+            {
+                this.BindingModel.SongsBindingModel.ClearSelectedItems();
+            }
         }
 
         private void AddToPlaylist()
@@ -106,7 +117,18 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             var selectedSongs = this.BindingModel.SongsBindingModel.GetSelectedSongs().ToList();
             if (selectedSongs.Count > 0)
             {
-                this.MainFrame.ShowPopup<IAddToPlaylistPopupView>(PopupRegion.AppToolBarLeft, selectedSongs);
+                this.MainFrame.ShowPopup<IAddToPlaylistPopupView>(
+                    PopupRegion.AppToolBarLeft,
+                    selectedSongs).Closed += this.AddToPlaylistPopupView_Closed;
+            }
+        }
+
+        private void AddToPlaylistPopupView_Closed(object sender, EventArgs eventArgs)
+        {
+            ((IPopupView)sender).Closed -= this.AddToPlaylistPopupView_Closed;
+            if (eventArgs is AddToPlaylistCompletedEventArgs)
+            {
+                this.BindingModel.SongsBindingModel.ClearSelectedItems();
             }
         }
 

@@ -3,6 +3,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Presenters
 {
+    using System;
     using System.Collections.Generic;
     using System.Collections.Specialized;
     using System.Diagnostics;
@@ -93,7 +94,18 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             var selectedSongs = this.BindingModel.GetSelectedSongs().ToList();
             if (selectedSongs != null)
             {
-                this.MainFrame.ShowPopup<IAddToPlaylistPopupView>(PopupRegion.AppToolBarLeft, selectedSongs);
+                this.MainFrame.ShowPopup<IAddToPlaylistPopupView>(
+                    PopupRegion.AppToolBarLeft, 
+                    selectedSongs).Closed += this.AddToPlaylist_Closed;
+            }
+        }
+
+        private void AddToPlaylist_Closed(object sender, EventArgs eventArgs)
+        {
+            ((IPopupView)sender).Closed -= this.AddToPlaylist_Closed;
+            if (eventArgs is AddToPlaylistCompletedEventArgs)
+            {
+                this.BindingModel.ClearSelectedItems();
             }
         }
 

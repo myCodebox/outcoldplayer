@@ -65,7 +65,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
         public void AddToPlaylist(AddToSongMusicPlaylist playlist)
         {
             this.Logger.LogTask(this.userPlaylistsService.AddSongsAsync(playlist.Playlist, this.Songs));
-            this.View.Close();
+            this.View.Close(new AddToPlaylistCompletedEventArgs());
         }
 
         protected override void OnInitialized()

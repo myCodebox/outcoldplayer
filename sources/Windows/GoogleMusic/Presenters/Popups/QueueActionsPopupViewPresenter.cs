@@ -38,21 +38,23 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
 
         private async void Play()
         {
-            this.View.Close();
+            this.View.Close(new QueueActionsCompletedEventArgs());
+
             this.playQueueService.IsShuffled = false;
             await this.PlaySelectedItemsAsync();
         }
 
         private async void ShuffleAll()
         {
-            this.View.Close();
+            this.View.Close(new QueueActionsCompletedEventArgs());
+
             this.playQueueService.IsShuffled = true;
             await this.PlaySelectedItemsAsync();
         }
 
         private async void Add()
         {
-            this.View.Close();
+            this.View.Close(new QueueActionsCompletedEventArgs());
 
             var songs = await this.GetAllSongsAsync();
             await this.playQueueService.AddRangeAsync(songs);

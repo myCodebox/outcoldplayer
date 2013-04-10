@@ -21,7 +21,7 @@ namespace OutcoldSolutions.GoogleMusic.Views.Popups
         {
             this.InitializeComponent();
         }
-
+        
         protected override void OnInitialized()
         {
             base.OnInitialized();
