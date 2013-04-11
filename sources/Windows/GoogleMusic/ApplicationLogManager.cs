@@ -69,7 +69,7 @@ namespace OutcoldSolutions.GoogleMusic
             this.logManager.Writers.AddOrUpdate(typeof(BugSenseLogWriter), type => new BugSenseLogWriter(), (type, writer) => writer);
 #endif
 
-            this.logManager.LogLevel = this.logManager.Writers.Count > 1 ? LogLevel.Info : LogLevel.Warning;
+            this.logManager.LogLevel = (isLoggingOn || Debugger.IsAttached) ? LogLevel.Info : LogLevel.Warning;
         }
     }
 }
