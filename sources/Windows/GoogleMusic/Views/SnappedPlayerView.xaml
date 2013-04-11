@@ -30,12 +30,13 @@
                     Orientation="Horizontal"
                     Grid.Row="0" >
 
-                <Image Height="180" 
-                   Width="180" 
-                   Margin="20, 20, 0, 0"
-                   Source="{Binding Path=BindingModel.CurrentSong.AlbumArtUrl, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=180, Mode=OneWay}"
-                   Stretch="None"/>
-
+                <controls2:AlbumArtControl Margin="20, 20, 0, 0"
+                                           Height="180" 
+                                           Width="180" 
+                                           ImageSize="180" 
+                                           Canvas.ZIndex="1"
+                                           ImageSource="{Binding Path=BindingModel.CurrentSong.AlbumArtUrl, Mode=OneWay}" />
+                
                 <StackPanel Orientation="Vertical"
                         HorizontalAlignment="Right"
                         Width="120"

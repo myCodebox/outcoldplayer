@@ -933,5 +933,47 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <Style TargetType="controls:AlbumArtControl">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:AlbumArtControl">
+                    <Canvas Height="{TemplateBinding ImageSize}" Width="{TemplateBinding ImageSize}" >
+
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="State">
+                                <VisualState x:Name="BackgroundImage">
+                                    <Storyboard>
+                                        <FadeOutThemeAnimation Storyboard.TargetName="Part_AlbumArtImage" />
+                                        <FadeInThemeAnimation Storyboard.TargetName="Part_BackgroundImage" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="AlbumArtImage">
+                                    <Storyboard>
+                                        <FadeInThemeAnimation Storyboard.TargetName="Part_AlbumArtImage"   />
+                                        <FadeOutThemeAnimation Storyboard.TargetName="Part_BackgroundImage"  />
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                                
+                        </VisualStateManager.VisualStateGroups>
+
+                        <Image Height="{TemplateBinding ImageSize}" 
+                               Width="{TemplateBinding ImageSize}" 
+                               Canvas.ZIndex="0"
+                               Stretch="None"
+                               x:Name="Part_BackgroundImage"/>
+
+                        <Image Height="{TemplateBinding ImageSize}" 
+                               Width="{TemplateBinding ImageSize}" 
+                               Canvas.ZIndex="1"
+                               Stretch="None"
+                               x:Name="Part_AlbumArtImage" />
+                        
+                    </Canvas>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
     
 </ResourceDictionary>
