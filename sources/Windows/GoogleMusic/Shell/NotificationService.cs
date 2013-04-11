@@ -10,9 +10,16 @@ namespace OutcoldSolutions.GoogleMusic.Shell
 
     public class NotificationService : INotificationService
     {
+        private readonly IDispatcher dispatcher;
+
+        public NotificationService(IDispatcher dispatcher)
+        {
+            this.dispatcher = dispatcher;
+        }
+
         public Task ShowMessageAsync(string message)
         {
-            return new MessageDialog(message).ShowAsync().AsTask();
+            return this.dispatcher.RunAsync(async () => { await new MessageDialog(message).ShowAsync().AsTask(); });
         }
     }
 }

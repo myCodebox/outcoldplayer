@@ -207,6 +207,13 @@
         <Setter Property="ScrollViewer.ZoomMode" Value="Disabled" />
     </Style>
 
+    <SolidColorBrush x:Key="ListViewItemPlaceholderBackgroundThemeBrush" Color="#646464" />
+
+    <LinearGradientBrush x:Key="ApplicationPageBackgroundThemeBrush">
+        <GradientStop Color="#56565B" Offset="0" />
+        <GradientStop Color="#1D1D1D" Offset="1" />
+    </LinearGradientBrush>
+    
     <!-- Page layout roots typically use entrance animations and a theme-appropriate background color -->
 
     <Style x:Key="LayoutRootStyle" TargetType="Panel">

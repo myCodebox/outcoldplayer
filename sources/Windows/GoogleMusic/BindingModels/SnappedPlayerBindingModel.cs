@@ -16,7 +16,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         private readonly IEventAggregator eventAggregator;
         private readonly IDispatcher dispatcher;
 
-        private bool isQueueEmpty;
+        private bool isQueueEmpty = true;
 
         public SnappedPlayerBindingModel(
             SongsBindingModel songsBindingModel,

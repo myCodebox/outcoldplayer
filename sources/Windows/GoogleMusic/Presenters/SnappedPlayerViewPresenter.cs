@@ -47,10 +47,12 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                         }
                     });
 
-            this.queueService.StateChanged += async (sender, args) => await this.Dispatcher.RunAsync(() => 
+            this.queueService.StateChanged += async (sender, args) => await this.Dispatcher.RunAsync(async () => 
                 {
                     this.RepeatAllCommand.RaiseCanExecuteChanged();
                     this.ShuffleCommand.RaiseCanExecuteChanged();
+
+                    await this.View.ScrollIntoCurrentSongAsync();
                 });
         }
 

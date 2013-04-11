@@ -30,12 +30,19 @@
                     Orientation="Horizontal"
                     Grid.Row="0" >
 
-                <controls2:AlbumArtControl Margin="20, 20, 0, 0"
-                                           Height="180" 
-                                           Width="180" 
-                                           ImageSize="180" 
-                                           Canvas.ZIndex="1"
-                                           ImageSource="{Binding Path=BindingModel.CurrentSong.AlbumArtUrl, Mode=OneWay}" />
+                <Button Margin="20, 20, 0, 0" Height="180" Width="180" Click="CurrentSongButtonClick" >
+                    <Button.Template>
+                        <ControlTemplate>
+                            <controls2:AlbumArtControl Height="180" 
+                                                       Width="180" 
+                                                       ImageSize="180" 
+                                                       Canvas.ZIndex="1"
+                                                       ImageSource="{Binding Path=BindingModel.CurrentSong.AlbumArtUrl, Mode=OneWay}" />
+                        </ControlTemplate>
+                        
+                    </Button.Template>
+                </Button>
+                
                 
                 <StackPanel Orientation="Vertical"
                         HorizontalAlignment="Right"
@@ -126,17 +133,31 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <TextBlock Grid.Row="0" 
-                       Grid.ColumnSpan="2" 
-                       Style="{StaticResource TitleTextStyle}" 
-                       Text="{Binding Path=BindingModel.CurrentSong.Title, Mode=OneWay}" 
-                       TextWrapping="NoWrap" 
-                       TextTrimming="WordEllipsis"/>
-                <TextBlock Grid.Row="1" 
-                       Style="{StaticResource SubtitleTextStyle}" 
-                       Text="{Binding Path=BindingModel.CurrentSong.ArtistTitle, Mode=OneWay}" 
-                       TextWrapping="NoWrap" 
-                       TextTrimming="WordEllipsis"/>
+                <Button Grid.Row="0" Grid.ColumnSpan="2" Click="CurrentSongButtonClick" >
+                    <Button.Template>
+                        <ControlTemplate>
+                            <Border Background="Transparent">
+                                <TextBlock Style="{StaticResource TitleTextStyle}" 
+                                           Text="{Binding Path=BindingModel.CurrentSong.Title, Mode=OneWay}" 
+                                           TextWrapping="NoWrap" 
+                                           TextTrimming="WordEllipsis"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+
+                <Button Grid.Row="1" Click="CurrentSongButtonClick" >
+                    <Button.Template>
+                        <ControlTemplate>
+                            <Border Background="Transparent">
+                                <TextBlock Style="{StaticResource SubtitleTextStyle}" 
+                                           Text="{Binding Path=BindingModel.CurrentSong.ArtistTitle, Mode=OneWay}" 
+                                           TextWrapping="NoWrap" 
+                                           TextTrimming="WordEllipsis"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
 
                 <controls2:Rating Grid.Row="1"
                               Grid.Column="1" 
@@ -224,6 +245,7 @@
                       HorizontalAlignment="Stretch"
                       HorizontalContentAlignment="Stretch"
                       IsTapEnabled="False"
+                      x:Name="ListView"
                       Margin="20, 0, 10, 20" 
                       DoubleTapped="ListDoubleTapped"
                       ManipulationMode="None">

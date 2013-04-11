@@ -4,7 +4,10 @@
 
 namespace OutcoldSolutions.GoogleMusic.Views
 {
+    using System;
     using System.ComponentModel;
+    using System.Linq;
+    using System.Threading.Tasks;
 
     using Microsoft.Advertising.WinRT.UI;
 
@@ -15,19 +18,21 @@ namespace OutcoldSolutions.GoogleMusic.Views
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.Views;
 
+    using Windows.UI.Core;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Input;
 
     public interface ISnappedPlayerView : IView
     {
+        Task ScrollIntoCurrentSongAsync();
     }
 
     public sealed partial class SnappedPlayerView : ViewBase, ISnappedPlayerView
     {
         private readonly ILogger logger;
         private AdControl adControl;
-        private PlayerBindingModel playerBindingModel;
+        private SnappedPlayerBindingModel playerBindingModel;
 
         public SnappedPlayerView()
         {
@@ -37,8 +42,31 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
             InAppPurchases.LicenseChanged += this.UpdateAdControl;
             this.UpdateAdControl();
-
+            
             this.Loaded += this.OnLoaded;
+        }
+
+        public async Task ScrollIntoCurrentSongAsync()
+        {
+            await Task.Run(
+                async () =>
+                {
+                    if (this.playerBindingModel != null 
+                        && this.playerBindingModel.CurrentSong != null
+                        && this.playerBindingModel.SongsBindingModel.Songs != null)
+                    {
+                        await this.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, this.UpdateLayout);
+                        var currentSongBindingModel = this.playerBindingModel.SongsBindingModel.Songs
+                            .FirstOrDefault(x => x.Metadata.SongId == this.playerBindingModel.CurrentSong.SongId);
+                        await this.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => this.ListView.ScrollIntoView(currentSongBindingModel));
+                    }
+                });
+        }
+
+        protected override Windows.Foundation.Size ArrangeOverride(Windows.Foundation.Size finalSize)
+        {
+            Task task = this.ScrollIntoCurrentSongAsync();
+            return base.ArrangeOverride(finalSize);
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -118,6 +146,11 @@ namespace OutcoldSolutions.GoogleMusic.Views
                     this.GetPresenter<SnappedPlayerViewPresenter>().PlaySong(songBindingModel);
                 }
             }
+        }
+
+        private async void CurrentSongButtonClick(object sender, RoutedEventArgs e)
+        {
+            await this.ScrollIntoCurrentSongAsync();
         }
     }
 }

@@ -6,6 +6,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Net;
     using System.Threading.Tasks;
 
     using OutcoldSolutions.Diagnostics;
@@ -500,6 +501,10 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     try
                     {
                         songUrl = await this.songsWebService.GetSongUrlAsync(song.ProviderSongId);
+                    }
+                    catch (WebException e)
+                    {
+                        this.logger.Debug("Exception while tried to get song url: {0}", e);
                     }
                     catch (Exception e)
                     {
