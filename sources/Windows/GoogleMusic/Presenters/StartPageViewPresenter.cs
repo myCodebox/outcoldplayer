@@ -290,7 +290,14 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             {
                 this.MainFrame.IsBottomAppBarOpen = true;
                 this.Logger.LogTask(this.playQueueService.PlayAsync(playlist));
-                this.navigationService.NavigateToPlaylist(playlist);
+                if (playlist.PlaylistType == PlaylistType.Artist)
+                {
+                    this.navigationService.NavigateTo<IPlaylistPageView>(new PlaylistNavigationRequest(playlist.PlaylistType, playlist.Id));
+                }
+                else
+                {
+                    this.navigationService.NavigateToPlaylist(playlist);
+                }
             }
         }
 
