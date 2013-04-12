@@ -19,6 +19,7 @@
     <SolidColorBrush x:Name="ApplicationThemeBrush" Color="#207CB0" />
     <SolidColorBrush x:Name="TextHighlightedBrush" Color="#369EFF" />
 
+    <SolidColorBrush x:Key="SliderTrackBackgroundThemeBrush" Color="#383838" />
     <SolidColorBrush x:Key="ProgressBarForegroundThemeBrush" Color="#369EFF" />
     <SolidColorBrush x:Key="ProgressBarIndeterminateForegroundThemeBrush" Color="#369EFF" />
     <SolidColorBrush x:Key="SliderTrackDecreaseBackgroundThemeBrush" Color="#369EFF" />
@@ -249,9 +250,16 @@
                                 <Setter Property="Template">
                                     <Setter.Value>
                                         <ControlTemplate TargetType="Thumb">
-                                            <Canvas Width="15" Height="15" Margin="0, -1, 0, 0">
-                                                <Ellipse Canvas.Top="0"
-                                                         Canvas.Left="0"
+                                            <Canvas Width="35" Height="35" Margin="-10, -11, 0, 0" Background="Transparent">
+                                                <Rectangle Fill="Transparent" 
+                                                           Width="35" 
+                                                           Height="35"  
+                                                           Canvas.Top="0"
+                                                           Canvas.Left="0"
+                                                           Canvas.ZIndex="0"/>
+                                                <Ellipse Canvas.Top="10"
+                                                         Canvas.Left="10"
+                                                         Canvas.ZIndex="10"
                                                          Width="15" 
                                                          Height="15" 
                                                          Fill="{TemplateBinding BorderBrush}" />
