@@ -56,8 +56,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
                     await this.View.ScrollIntoCurrentSongAsync();
                 });
-
-            
         }
 
         public DelegateCommand ShuffleCommand { get; set; }

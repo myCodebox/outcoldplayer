@@ -39,6 +39,18 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.RemoveSelectedSongCommand = new DelegateCommand(this.RemoveSelectedSong);
             this.AddToPlaylistCommand = new DelegateCommand(this.AddToPlaylist);
             this.RateSongCommand = new DelegateCommand(this.RateSong);
+
+            this.playQueueService.StateChanged += async (sender, args) => await this.Dispatcher.RunAsync(async () => 
+                {
+                    if (this.BindingModel.Songs != null && args.CurrentSong != null)
+                    {
+                        var currentSong = this.BindingModel.Songs.FirstOrDefault(x => x.Metadata.SongId == args.CurrentSong.SongId);
+                        if (currentSong != null)
+                        {
+                            await this.View.ScrollIntoCurrentSongAsync(currentSong);
+                        }
+                    }
+                });
         }
 
         public DelegateCommand AddToPlaylistCommand { get; private set; }

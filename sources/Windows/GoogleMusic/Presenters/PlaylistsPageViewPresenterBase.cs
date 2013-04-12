@@ -15,9 +15,12 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Services;
+    using OutcoldSolutions.GoogleMusic.Views;
     using OutcoldSolutions.GoogleMusic.Views.Popups;
     using OutcoldSolutions.Presenters;
     using OutcoldSolutions.Views;
+
+    using Windows.UI.Core;
 
     public abstract class PlaylistsPageViewPresenterBase<TView, TPlaylistsPageViewBindingModel> : PagePresenterBase<TView, TPlaylistsPageViewBindingModel>
         where TView : IPageView
@@ -118,8 +121,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             IPlaylist playlist = commandParameter as IPlaylist;
             if (playlist != null)
             {
-                this.navigationService.NavigateToPlaylist(playlist);
-                this.playQueueService.PlayAsync(playlist);
+                this.Logger.LogTask(this.playQueueService.PlayAsync(playlist));
+                this.navigationService.NavigateTo<ICurrentPlaylistPageView>();
                 this.MainFrame.IsBottomAppBarOpen = true;
             }
         }

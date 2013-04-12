@@ -4,15 +4,20 @@
 
 namespace OutcoldSolutions.GoogleMusic.Views
 {
+    using System;
+    using System.Threading.Tasks;
+
     using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Presenters;
     using OutcoldSolutions.Views;
 
+    using Windows.UI.Core;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Input;
 
     public interface ICurrentPlaylistPageView : IPageView
     {
+        Task ScrollIntoCurrentSongAsync(SongBindingModel songBindingModel);
     }
 
     public sealed partial class CurrentPlaylistPageView : PageViewBase, ICurrentPlaylistPageView
@@ -23,6 +28,24 @@ namespace OutcoldSolutions.GoogleMusic.Views
         {
             this.InitializeComponent();
             this.TrackItemsControl(this.ListView);
+        }
+
+        public async Task ScrollIntoCurrentSongAsync(SongBindingModel songBindingModel)
+        {
+            await Task.Run(
+                async () =>
+                    {
+                        if (this.presenter != null && songBindingModel != null)
+                        {
+                            SongsBindingModel songsBindingModel = this.presenter.BindingModel;
+                            if (songsBindingModel != null 
+                                && songsBindingModel.Songs != null)
+                            {
+                                await this.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, this.UpdateLayout);
+                                await this.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => this.ListView.ScrollIntoView(songBindingModel));
+                            }
+                        }
+                    });
         }
 
         protected override void OnInitialized()
