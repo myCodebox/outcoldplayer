@@ -5,13 +5,19 @@
 namespace OutcoldSolutions.GoogleMusic.Diagnostics
 {
     using System;
+    using System.Collections.Generic;
 
     using OutcoldSolutions.Diagnostics;
 
+    using Windows.UI.Core;
+
     public class BugSenseLogWriter : ILogWriter
     {
-        public BugSenseLogWriter()
+        private readonly IDispatcher dispatcher;
+
+        public BugSenseLogWriter(IDispatcher dispatcher)
         {
+            this.dispatcher = dispatcher;
             this.IsEnabled = true;
         }
 
@@ -35,7 +41,26 @@ namespace OutcoldSolutions.GoogleMusic.Diagnostics
                     message = messageFormat;
                 }
 
-                BugSense.BugSenseHandler.Instance.LogException(exception, context, message);
+                this.dispatcher.RunAsync(
+                    CoreDispatcherPriority.Low, 
+                    () =>
+                    {
+                        try
+                        {
+                            BugSense.BugSenseHandler.Instance.LogException(
+                                exception,
+                                new Dictionary<string, string>()
+                                    {
+                                        { "level", level.ToString() },
+                                        { "context", context },
+                                        { "message", message }
+                                    });
+                        }
+                        catch
+                        {
+                        }
+                    });
+                
             }
         }
     }

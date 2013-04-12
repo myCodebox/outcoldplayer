@@ -5,12 +5,12 @@
 namespace OutcoldSolutions.GoogleMusic
 {
     using System;
-    using System.Diagnostics;
     using System.Threading.Tasks;
+
+    using BugSense;
 
     using OutcoldSolutions.BindingModels;
     using OutcoldSolutions.Controls;
-    using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Presenters.Popups;
@@ -184,7 +184,8 @@ namespace OutcoldSolutions.GoogleMusic
                 Container.Resolve<INavigationService>().NavigateTo<IStartPageView>();
 
 #if !DEBUG
-                BugSense.BugSenseHandler.Instance.Init(this, "w8c8d6b5");
+                BugSense.BugSenseHandler.Instance.Init(
+                    this, "w8c8d6b5", new NotificationOptions() { Type = enNotificationType.None, HandleWhileDebugging = true });
 #endif
             }
         }

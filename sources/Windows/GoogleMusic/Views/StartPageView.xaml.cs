@@ -8,7 +8,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
-    using OutcoldSolutions.GoogleMusic.Presenters;
     using OutcoldSolutions.Views;
 
     using Windows.UI.Xaml;

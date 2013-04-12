@@ -19,15 +19,20 @@ namespace OutcoldSolutions.GoogleMusic
     public class ApplicationLogManager
     {
         private readonly ILogManager logManager;
-
         private readonly ISettingsService settingsService;
+        private readonly IDispatcher dispatcher;
 
-        public ApplicationLogManager(ILogManager logManager, ISettingsService settingsService, IEventAggregator eventAggregator)
+        public ApplicationLogManager(
+            ILogManager logManager, 
+            ISettingsService settingsService,
+            IEventAggregator eventAggregator,
+            IDispatcher dispatcher)
         {
             Application.Current.UnhandledException += this.CurrentOnUnhandledException;
 
             this.logManager = logManager;
             this.settingsService = settingsService;
+            this.dispatcher = dispatcher;
 
             eventAggregator.GetEvent<SettingsChangeEvent>()
                            .Where(e => string.Equals(e.Key, "IsLoggingOn", StringComparison.OrdinalIgnoreCase))
@@ -66,7 +71,7 @@ namespace OutcoldSolutions.GoogleMusic
             }
             
 #if !DEBUG
-            this.logManager.Writers.AddOrUpdate(typeof(BugSenseLogWriter), type => new BugSenseLogWriter(), (type, writer) => writer);
+            this.logManager.Writers.AddOrUpdate(typeof(BugSenseLogWriter), type => new BugSenseLogWriter(this.dispatcher), (type, writer) => writer);
 #endif
 
             this.logManager.LogLevel = (isLoggingOn || Debugger.IsAttached) ? LogLevel.Info : LogLevel.Warning;
