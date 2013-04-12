@@ -42,12 +42,15 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
             this.playQueueService.StateChanged += async (sender, args) => await this.Dispatcher.RunAsync(async () => 
                 {
-                    if (this.BindingModel.Songs != null && args.CurrentSong != null)
+                    if (this.BindingModel.SelectedItems.Count == 0)
                     {
-                        var currentSong = this.BindingModel.Songs.FirstOrDefault(x => x.Metadata.SongId == args.CurrentSong.SongId);
-                        if (currentSong != null)
+                        if (this.BindingModel.Songs != null && args.CurrentSong != null)
                         {
-                            await this.View.ScrollIntoCurrentSongAsync(currentSong);
+                            var currentSong = this.BindingModel.Songs.FirstOrDefault(x => x.Metadata.SongId == args.CurrentSong.SongId);
+                            if (currentSong != null)
+                            {
+                                await this.View.ScrollIntoCurrentSongAsync(currentSong);
+                            }
                         }
                     }
                 });
