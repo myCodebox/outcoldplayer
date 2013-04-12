@@ -81,7 +81,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     if (args.State == QueueState.Busy || args.State == QueueState.Stopped)
                     {
                         this.BindingModel.CurrentPosition = 0d;
-                        this.BindingModel.TotalSeconds = 0d;
+                        this.BindingModel.TotalSeconds = 1.0d;
                     }
 
                     this.BindingModel.CurrentSong = args.CurrentSong == null ? null : new SongBindingModel(args.CurrentSong);
