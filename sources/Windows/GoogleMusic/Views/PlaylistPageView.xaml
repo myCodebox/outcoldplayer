@@ -35,7 +35,7 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="80" />
-                    <ColumnDefinition Width="120" />
+                    <ColumnDefinition Width="150" />
                 </Grid.ColumnDefinitions>
                 
                 <controls:SortableHeaderControl Grid.Column="1" 
@@ -113,7 +113,7 @@
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="80" />
-                            <ColumnDefinition Width="120" />
+                            <ColumnDefinition Width="150" />
                         </Grid.ColumnDefinitions>
 
                         <controls:FakeEqualizerControl 
@@ -128,7 +128,7 @@
                         <TextBlock Grid.Column="3" Style="{StaticResource BasicTextStyle}" VerticalAlignment="Center" Margin="10, 0, 10, 0" Text="{Binding Path=Artist, Mode=OneWay}" TextTrimming="WordEllipsis" />
                         <TextBlock Grid.Column="4" Style="{StaticResource BasicTextStyle}" VerticalAlignment="Center" Margin="10, 0, 10, 0" Text="{Binding Path=Album, Mode=OneWay}" TextTrimming="WordEllipsis" />
                         <TextBlock Grid.Column="5" Style="{StaticResource BasicTextStyle}" VerticalAlignment="Center" Margin="10, 0, 10, 0" Text="{Binding Path=PlayCount, Mode=OneWay}" HorizontalAlignment="Right" />
-                        <controls:Rating Grid.Column="6" VerticalAlignment="Center" Margin="10, 0, 10, 0" Value="{Binding Path=Rating, Mode=OneWay}" HorizontalAlignment="Right" 
+                        <controls:Rating Grid.Column="6" VerticalAlignment="Center" Margin="10, 0, 10, 0" Value="{Binding Path=Rating, Mode=OneWay}" HorizontalAlignment="Left" 
                                             Command="{Binding Path=DataContext.RateSongCommand, ElementName=ListView, Mode=OneTime}"
                                             CommandParameter="{Binding Mode=OneTime}"/>
                     </Grid>

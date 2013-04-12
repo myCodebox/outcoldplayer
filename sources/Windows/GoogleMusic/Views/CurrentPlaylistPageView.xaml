@@ -24,7 +24,7 @@
                 Height="35"
                 Background="{StaticResource ListViewItemBorder}"
                 Visibility="{Binding Path=IsDataLoading, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}">
-            <Grid Margin="0, 0, 20, 0">
+            <Grid Margin="0, 0, 0, 0">
                 <Grid.ColumnDefinitions >
                     <ColumnDefinition Width="40" />
                     <ColumnDefinition Width="2*" />
@@ -39,7 +39,7 @@
                 <TextBlock Grid.Column="3" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="artist" TextTrimming="WordEllipsis" Style="{StaticResource TitleTextStyle}"/>
                 <TextBlock Grid.Column="4" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="album" TextTrimming="WordEllipsis" Style="{StaticResource TitleTextStyle}"/>
                 <TextBlock Grid.Column="5" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="plays" HorizontalAlignment="Right" Style="{StaticResource TitleTextStyle}"/>
-                <TextBlock Grid.Column="6" VerticalAlignment="Center" Margin="20, 0, 25, 0" Text="rating" HorizontalAlignment="Left" Style="{StaticResource TitleTextStyle}"/>
+                <TextBlock Grid.Column="6" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="rating" HorizontalAlignment="Left" Style="{StaticResource TitleTextStyle}"/>
             </Grid>
         </Border>
        
@@ -69,7 +69,7 @@
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="60" />
-                            <ColumnDefinition Width="170" />
+                            <ColumnDefinition Width="150" />
                         </Grid.ColumnDefinitions>
 
                         <controls:FakeEqualizerControl 
@@ -84,7 +84,7 @@
                         <TextBlock Grid.Column="3" Style="{StaticResource BasicTextStyle}" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="{Binding Path=Artist, Mode=OneWay}" TextTrimming="WordEllipsis" />
                         <TextBlock Grid.Column="4" Style="{StaticResource BasicTextStyle}" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="{Binding Path=Album, Mode=OneWay}" TextTrimming="WordEllipsis" />
                         <TextBlock Grid.Column="5" Style="{StaticResource BasicTextStyle}" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="{Binding Path=PlayCount, Mode=OneWay}" HorizontalAlignment="Right" />
-                        <controls:Rating Grid.Column="6" VerticalAlignment="Center" Margin="20, 0, 40, 0" Value="{Binding Path=Rating, Mode=OneWay}" HorizontalAlignment="Right" 
+                        <controls:Rating Grid.Column="6" VerticalAlignment="Center" Margin="20, 0, 0, 0" Value="{Binding Path=Rating, Mode=OneWay}" HorizontalAlignment="Left" 
                                             Command="{Binding Path=DataContext.RateSongCommand, ElementName=ListView, Mode=OneTime}"
                                             CommandParameter="{Binding Mode=OneTime}"/>
                     </Grid>
