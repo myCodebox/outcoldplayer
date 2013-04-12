@@ -6,8 +6,6 @@ namespace OutcoldSolutions.GoogleMusic.Services
     using Microsoft.Advertising.WinRT.UI;
 
     using OutcoldSolutions.Diagnostics;
-    using OutcoldSolutions.GoogleMusic.Views;
-    using OutcoldSolutions.GoogleMusic.Views.Popups;
     using OutcoldSolutions.Shell;
     using OutcoldSolutions.Views;
 
@@ -33,6 +31,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             this.regionProvider = regionProvider;
             this.settingsCommands = settingsCommands;
 
+            this.UpdateAdControl();
             InAppPurchases.LicenseChanged += this.UpdateAdControl;
         }
 

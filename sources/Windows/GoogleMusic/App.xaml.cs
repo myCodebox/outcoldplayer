@@ -5,12 +5,14 @@
 namespace OutcoldSolutions.GoogleMusic
 {
     using System;
+    using System.Diagnostics;
     using System.Threading.Tasks;
 
     using BugSense;
 
     using OutcoldSolutions.BindingModels;
     using OutcoldSolutions.Controls;
+    using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Presenters.Popups;
