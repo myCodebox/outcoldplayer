@@ -592,11 +592,15 @@
     </Style>
 
     <Style TargetType="controls:Rating" >
+        <Setter Property="FillBrush" Value="#CCCCCC" />
+        <Setter Property="EmptyBrush" Value="#555555" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate>
+                <ControlTemplate TargetType="controls:Rating">
                     <StackPanel Orientation="Horizontal">
                         <StackPanel.Resources>
+                            <SolidColorBrush Color="White" x:Key="HoverBrush" />
+                            
                             <Style TargetType="Button" >
                                 <Setter Property="Transitions">
                                     <Setter.Value>
@@ -618,6 +622,78 @@
                             </Style>
                         </StackPanel.Resources>
 
+
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="Hover">
+                                <VisualState x:Name="NoHover" />
+                                <VisualState x:Name="Start1Hover">
+                                    <Storyboard >
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Star1" Storyboard.TargetProperty="Foreground" >
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource HoverBrush}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Start2Hover">
+                                    <Storyboard >
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Star1" Storyboard.TargetProperty="Foreground" >
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource HoverBrush}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Star2" Storyboard.TargetProperty="Foreground" >
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource HoverBrush}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Start3Hover">
+                                    <Storyboard >
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Star1" Storyboard.TargetProperty="Foreground" >
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource HoverBrush}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Star2" Storyboard.TargetProperty="Foreground" >
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource HoverBrush}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Star3" Storyboard.TargetProperty="Foreground" >
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource HoverBrush}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Start4Hover">
+                                    <Storyboard >
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Star1" Storyboard.TargetProperty="Foreground" >
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource HoverBrush}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Star2" Storyboard.TargetProperty="Foreground" >
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource HoverBrush}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Star3" Storyboard.TargetProperty="Foreground" >
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource HoverBrush}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Star4" Storyboard.TargetProperty="Foreground" >
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource HoverBrush}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Start5Hover">
+                                    <Storyboard >
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Star1" Storyboard.TargetProperty="Foreground" >
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource HoverBrush}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Star2" Storyboard.TargetProperty="Foreground" >
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource HoverBrush}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Star3" Storyboard.TargetProperty="Foreground" >
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource HoverBrush}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Star4" Storyboard.TargetProperty="Foreground" >
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource HoverBrush}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Star5" Storyboard.TargetProperty="Foreground" >
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource HoverBrush}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        
                         <Button x:Name="Star1" />
                         <Button x:Name="Star2" />
                         <Button x:Name="Star3" />

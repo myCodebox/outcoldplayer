@@ -4,6 +4,7 @@
 namespace OutcoldSolutions.GoogleMusic.Controls
 {
     using System;
+    using System.Globalization;
     using System.Windows.Input;
 
     using Windows.UI;
@@ -12,6 +13,12 @@ namespace OutcoldSolutions.GoogleMusic.Controls
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Media;
 
+    [TemplateVisualState(GroupName = "Hover", Name = "Start1Hover")]
+    [TemplateVisualState(GroupName = "Hover", Name = "Start2Hover")] 
+    [TemplateVisualState(GroupName = "Hover", Name = "Start3Hover")] 
+    [TemplateVisualState(GroupName = "Hover", Name = "Start4Hover")] 
+    [TemplateVisualState(GroupName = "Hover", Name = "Start5Hover")] 
+    [TemplateVisualState(GroupName = "Hover", Name = "NoHover")] 
     public class Rating : Control
     {
         public static readonly DependencyProperty ValueProperty = 
@@ -121,6 +128,9 @@ namespace OutcoldSolutions.GoogleMusic.Controls
                             }
                         }
                     };
+
+                this.stars[i].PointerEntered += (sender, args) => VisualStateManager.GoToState(this, string.Format(CultureInfo.InvariantCulture, "Start{0}Hover", value), false);
+                this.PointerExited += (sender, args) => VisualStateManager.GoToState(this, "NoHover", false);
             }
 
             this.UpdateStars(this.Value);
@@ -141,14 +151,7 @@ namespace OutcoldSolutions.GoogleMusic.Controls
             {
                 if (this.stars[i] != null)
                 {
-                    if (i < newValue)
-                    {
-                        this.stars[i].Foreground = this.FillBrush;
-                    }
-                    else
-                    {
-                        this.stars[i].Foreground = this.EmptyBrush;
-                    }
+                    this.stars[i].Foreground = i < newValue ? this.FillBrush : this.EmptyBrush;
                 }
             }
         }
