@@ -4,7 +4,6 @@
 namespace OutcoldSolutions.GoogleMusic.BindingModels
 {
     using OutcoldSolutions.BindingModels;
-    using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services;
 
     public class PlayerBindingModel : BindingModelBase
@@ -15,7 +14,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         private double currentPosition;
         private double downloadProgress;
 
-        private Song currentSong;
+        private SongBindingModel currentSong;
         
         public bool IsPlaying
         {
@@ -42,7 +41,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             }
         }
 
-        public Song CurrentSong
+        public SongBindingModel CurrentSong
         {
             get
             {

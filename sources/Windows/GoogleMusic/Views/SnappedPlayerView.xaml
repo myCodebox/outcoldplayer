@@ -37,7 +37,7 @@
                                                        Width="180" 
                                                        ImageSize="180" 
                                                        Canvas.ZIndex="1"
-                                                       ImageSource="{Binding Path=BindingModel.CurrentSong.AlbumArtUrl, Mode=OneWay}" />
+                                                       ImageSource="{Binding Path=BindingModel.CurrentSong.Metadata.AlbumArtUrl, Mode=OneWay}" />
                         </ControlTemplate>
                         
                     </Button.Template>
@@ -151,7 +151,7 @@
                         <ControlTemplate>
                             <Border Background="Transparent">
                                 <TextBlock Style="{StaticResource SubtitleTextStyle}" 
-                                           Text="{Binding Path=BindingModel.CurrentSong.ArtistTitle, Mode=OneWay}" 
+                                           Text="{Binding Path=BindingModel.CurrentSong.Artist, Mode=OneWay}" 
                                            TextWrapping="NoWrap" 
                                            TextTrimming="WordEllipsis"/>
                             </Border>
@@ -161,10 +161,10 @@
 
                 <controls2:Rating Grid.Row="1"
                               Grid.Column="1" 
-                              x:Name="Rating" 
                               HorizontalAlignment="Right" 
                               VerticalAlignment="Bottom"
                               Margin="0, 0, 0, -10"
+                              Value="{Binding Path=BindingModel.CurrentSong.Rating, Mode=OneWay}"
                               ValueChanged="RatingOnValueChanged"
                               Visibility="{Binding Path=BindingModel.CurrentSong, Mode=OneWay, Converter={StaticResource NullToInvisibilityConverter}}"/>
             </Grid>

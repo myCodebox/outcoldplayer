@@ -4,6 +4,8 @@
 namespace OutcoldSolutions.GoogleMusic.Presenters
 {
     using System;
+    using System.Linq;
+    using System.Reactive.Linq;
 
     using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.BindingModels;
@@ -54,6 +56,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
                     await this.View.ScrollIntoCurrentSongAsync();
                 });
+
+            
         }
 
         public DelegateCommand ShuffleCommand { get; set; }
@@ -80,6 +84,22 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                                 this.BindingModel.IsQueueEmpty = this.BindingModel.SongsBindingModel.Songs == null
                                                                  || this.BindingModel.SongsBindingModel.Songs.Count == 0;
                             }));
+
+            this.EventAggregator.GetEvent<SongsUpdatedEvent>()
+                           .Subscribe(async (e) => await this.Dispatcher.RunAsync(() =>
+                               {
+                                   if (this.BindingModel.CurrentSong != null)
+                                   {
+                                       var currentSongUpdated =
+                                           e.UpdatedSongs.FirstOrDefault(
+                                               s => s.SongId == this.BindingModel.CurrentSong.Metadata.SongId);
+
+                                       if (currentSongUpdated != null)
+                                       {
+                                           this.BindingModel.CurrentSong.Metadata = currentSongUpdated;
+                                       }
+                                   }
+                               }));
         }
     }
 }

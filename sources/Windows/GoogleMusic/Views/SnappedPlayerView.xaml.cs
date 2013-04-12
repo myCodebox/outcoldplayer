@@ -57,7 +57,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
                     {
                         await this.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, this.UpdateLayout);
                         var currentSongBindingModel = this.playerBindingModel.SongsBindingModel.Songs
-                            .FirstOrDefault(x => x.Metadata.SongId == this.playerBindingModel.CurrentSong.SongId);
+                            .FirstOrDefault(x => x.Metadata.SongId == this.playerBindingModel.CurrentSong.Metadata.SongId);
                         await this.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => this.ListView.ScrollIntoView(currentSongBindingModel));
                     }
                 });
@@ -73,13 +73,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
         {
             this.Loaded -= this.OnLoaded;
             this.playerBindingModel = this.GetPresenter<SnappedPlayerViewPresenter>().BindingModel;
-            this.playerBindingModel.Subscribe(() => this.playerBindingModel.CurrentSong, this.SongChanged);
-        }
-
-        private void SongChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)
-        {
-            var currentSong = this.playerBindingModel.CurrentSong;
-            this.Rating.Value = (currentSong != null) ? currentSong.Rating : 0;
         }
 
         private void UpdateAdControl()
@@ -125,7 +118,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
             {
                 if (currentSong.Rating != e.NewValue)
                 {
-                    this.logger.LogTask(ApplicationBase.Container.Resolve<ISongsService>().UpdateRatingAsync(currentSong, (byte)e.NewValue));
+                    this.logger.LogTask(ApplicationBase.Container.Resolve<ISongsService>().UpdateRatingAsync(currentSong.Metadata, (byte)e.NewValue));
                 }
             }
         }

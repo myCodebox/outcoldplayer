@@ -45,7 +45,7 @@
                                                   Width="80" 
                                                   ImageSize="80" 
                                                   Canvas.ZIndex="1"
-                                                  ImageSource="{Binding Path=BindingModel.CurrentSong.AlbumArtUrl, Mode=OneWay}" />
+                                                  ImageSource="{Binding Path=BindingModel.CurrentSong.Metadata.AlbumArtUrl, Mode=OneWay}" />
                     </ControlTemplate>
                 </Button.Template>
             </Button>
@@ -77,7 +77,7 @@
                             <TextBlock Grid.Column="2"
                                        Style="{StaticResource SubtitleTextStyle}" 
                                        Margin="10, 0, 0, 0" 
-                                       Text="{Binding Path=BindingModel.CurrentSong.ArtistTitle, Mode=OneWay}" 
+                                       Text="{Binding Path=BindingModel.CurrentSong.Artist, Mode=OneWay}" 
                                        TextWrapping="NoWrap" 
                                        TextTrimming="WordEllipsis"/>
                         </Grid>

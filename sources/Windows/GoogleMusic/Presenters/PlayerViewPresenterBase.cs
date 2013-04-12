@@ -84,7 +84,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                         this.BindingModel.TotalSeconds = 0d;
                     }
 
-                    this.BindingModel.CurrentSong = args.CurrentSong;
+                    this.BindingModel.CurrentSong = args.CurrentSong == null ? null : new SongBindingModel(args.CurrentSong);
                     this.BindingModel.State = args.State;
                     this.UpdateCommands();
                 });
