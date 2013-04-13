@@ -1066,5 +1066,104 @@
             </Setter.Value>
         </Setter>
     </Style>
-    
+
+    <!-- Main Menu List -->
+    <DataTemplate x:Key="ListViewMainMenuItemTemplate">
+        <Grid>
+            <Image Height="100" 
+                   Width="100" 
+                   Stretch="None" 
+                   Source="{Binding Path=Content.Icon}" 
+                   Margin="0, 10, 10, 0"
+                   HorizontalAlignment="Right"
+                   VerticalAlignment="Top"/>
+            
+            
+            <TextBlock Text="{Binding Path=Content.Title, Mode=OneTime}" 
+                   VerticalAlignment="Bottom" 
+                   Margin="12, 0, 0, 10" 
+                   Style="{StaticResource TitleTextStyle}" />
+
+        </Grid>
+        
+    </DataTemplate>
+
+    <Style x:Key="ListViewMainMenu" TargetType="ListView">
+        <Setter Property="Transitions">
+            <Setter.Value>
+                <TransitionCollection />
+            </Setter.Value>
+        </Setter>
+        <Setter Property="ItemContainerTransitions">
+            <Setter.Value>
+                <TransitionCollection />
+            </Setter.Value>
+        </Setter>
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
+                    <WrapGrid Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="ItemTemplate" Value="{StaticResource ListViewMainMenuItemTemplate}" />
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Disabled"/>
+        <Setter Property="ScrollViewer.HorizontalScrollMode" Value="Disabled"/>
+        <Setter Property="ScrollViewer.VerticalScrollMode" Value="Disabled"/>
+        <Setter Property="Height" Value="Auto"/>
+        <Setter Property="SelectionMode" Value="None"/>
+        <Setter Property="IsItemClickEnabled" Value="True"/>
+        <Setter Property="Margin" Value="20, 0, 0, 10"/>
+        <Setter Property="ItemContainerStyle">
+            <Setter.Value>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="Transitions">
+                        <Setter.Value>
+                            <TransitionCollection />
+                        </Setter.Value>
+                    </Setter>
+                    <Setter Property="Margin" Value="0, 0, 15, 15" />
+                    <Setter Property="Padding" Value="0" />
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ListViewItem">
+
+                                <Border Width="156" Height="98" Background="#FF3F3F3F" x:Name="MainBorder">
+
+                                    <VisualStateManager.VisualStateGroups>
+                                        <VisualStateGroup x:Name="CommonStates">
+                                            <VisualState x:Name="Normal" />
+                                            <VisualState x:Name="Pressed">
+                                                <Storyboard>
+                                                    <PointerDownThemeAnimation TargetName="MainBorder" />
+                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="MainBorder" Storyboard.TargetProperty="Background">
+                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="#242424"/>
+                                                    </ObjectAnimationUsingKeyFrames>
+                                                </Storyboard>
+                                            </VisualState>
+                                            <VisualState x:Name="PointerOver">
+                                                <Storyboard>
+                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="MainBorder" Storyboard.TargetProperty="Background">
+                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="#242424"/>
+                                                    </ObjectAnimationUsingKeyFrames>
+                                                </Storyboard>
+                                            </VisualState>
+                                            <VisualState x:Name="PointerOverPressed" />
+                                            <VisualState x:Name="Disabled" />
+                                        </VisualStateGroup>
+                                    </VisualStateManager.VisualStateGroups>
+
+                                    <ContentPresenter Content="{TemplateBinding Content}" />
+
+                                </Border>
+
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
 </ResourceDictionary>

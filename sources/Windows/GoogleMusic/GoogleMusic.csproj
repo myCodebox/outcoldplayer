@@ -314,10 +314,16 @@
     <Content Include="Assets\WideLogo.scale-140.png" />
     <Content Include="Assets\WideLogo.scale-180.png" />
     <Content Include="Assets\WideLogo.scale-80.png" />
+    <Content Include="Resources\albums.png" />
+    <Content Include="Resources\artists.png" />
+    <Content Include="Resources\genres.png" />
+    <Content Include="Resources\home.png" />
     <Content Include="Resources\in-app-purchase.xml" />
     <Content Include="Resources\lastfm_Logo.png" />
     <Content Include="Resources\logo460.png" />
     <Content Include="Resources\outcoldsolutions.png" />
+    <Content Include="Resources\playlists.png" />
+    <Content Include="Resources\queue.png" />
     <Content Include="Resources\twitter-logo.png" />
     <Content Include="Resources\UnknownArt-116.png" />
     <Content Include="Resources\UnknownArt-140.png" />
