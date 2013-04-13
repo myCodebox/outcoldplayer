@@ -42,8 +42,8 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 var source = this.cancellationTokenSource;
                 if (source != null)
                 {
-                    this.client.CancelPendingRequests();
                     source.Cancel();
+                    this.client.CancelPendingRequests();
                 }
 
                 source = this.cancellationTokenSource = new CancellationTokenSource();
@@ -408,13 +408,20 @@ namespace OutcoldSolutions.GoogleMusic.Web
                     downloadProgress = 1d;
                     this.RaiseDownloadProgressChanged(downloadProgress);
                 }
-                catch (TaskCanceledException)
+                catch (OperationCanceledException exception)
                 {
-                    this.logger.Debug("Downloading task was cancelled");
+                    this.logger.Debug("Downloading task was cancelled: {0}.", exception);
                 }
                 catch (Exception exception)
                 {
-                    this.logger.Error(exception, "Exception while reading stream");
+                    if (cancellationToken.IsCancellationRequested)
+                    {
+                        this.logger.Debug("Downloading task was cancelled {0}.", exception);
+                    }
+                    else
+                    {
+                        this.logger.Error(exception, "Exception while reading stream.");
+                    }
                 }
             }
         }
