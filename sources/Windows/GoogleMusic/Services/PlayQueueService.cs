@@ -85,15 +85,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     }
                 };
 
-            sessionService.SessionCleared += async (sender, args) =>
-                {
-                    await this.StopAsync();
-                    this.queueOrder.Clear();
-                    this.songsQueue.Clear();
-                    this.currentQueueIndex = -1;
-                    this.currentSongStream = null;
-                    this.currentPlaylist = null;
-                };
+            sessionService.SessionCleared += async (sender, args) => { await ClearQueueAsync(); };
+            eventAggregator.GetEvent<ReloadSongsEvent>().Subscribe(async (e) => { await ClearQueueAsync(); });
         }
 
         public event EventHandler QueueChanged;
@@ -678,6 +671,17 @@ namespace OutcoldSolutions.GoogleMusic.Services
             {
                 handler(this, EventArgs.Empty);
             }
+        }
+
+        private async Task ClearQueueAsync()
+        {
+            await this.StopAsync();
+            this.queueOrder.Clear();
+            this.songsQueue.Clear();
+            this.currentQueueIndex = -1;
+            this.currentSongStream = null;
+            this.currentPlaylist = null;
+            this.RaiseQueueChanged();
         }
     }
 }
