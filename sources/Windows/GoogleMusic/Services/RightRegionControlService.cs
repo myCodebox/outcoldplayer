@@ -9,8 +9,10 @@ namespace OutcoldSolutions.GoogleMusic.Services
     using OutcoldSolutions.Shell;
     using OutcoldSolutions.Views;
 
+    using Windows.UI;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
+    using Windows.UI.Xaml.Media;
 
     public class RightRegionControlService 
     {
@@ -18,8 +20,9 @@ namespace OutcoldSolutions.GoogleMusic.Services
         private readonly IApplicationSettingViewsService settingsCommands;
         private readonly ILogger logger;
 
+        private HyperlinkButton adReplacementButton;
         private AdControl adControl;
-        private StackPanel adControlHost;
+        private Canvas adControlHost;
         private HyperlinkButton adControlRemoveButton;
 
         public RightRegionControlService(
@@ -47,13 +50,23 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     this.adControl = null;
                     this.adControlHost = null;
                     this.adControlRemoveButton = null;
+                    this.adReplacementButton = null;
                 }
             }
             else
             {
                 if (this.adControl == null)
                 {
-                    this.adControlHost = new StackPanel();
+                    this.adControlHost = new Canvas() { Width = 170, Height = 700 };
+
+                    this.adReplacementButton = new HyperlinkButton
+                                                   {
+                                                       Style = (Style)Application.Current.Resources["RightRegionAdReplacement"]
+                                                   };
+
+                    this.adControlHost.Children.Add(this.adReplacementButton);
+                    Canvas.SetZIndex(this.adReplacementButton, 0);
+                    Canvas.SetTop(this.adReplacementButton, 20);
 
                     this.adControl = new AdControl
                     {
@@ -61,22 +74,25 @@ namespace OutcoldSolutions.GoogleMusic.Services
                         AdUnitId = "111663",
                         Width = 160,
                         Height = 600,
-                        VerticalAlignment = VerticalAlignment.Top,
-                        Margin = new Thickness(0, 20, 10, 0),
                         UseStaticAnchor = true
                     };
 
                     this.adControl.ErrorOccurred += this.AdControlOnErrorOccurred;
                     this.adControlHost.Children.Add(this.adControl);
+                    Canvas.SetZIndex(this.adControl, 100);
+                    Canvas.SetTop(this.adControl, 20);
 
                     this.adControlRemoveButton = new HyperlinkButton()
                                                      {
                                                          Content = "Remove Ads",
-                                                         HorizontalAlignment = HorizontalAlignment.Center
+                                                         HorizontalAlignment = HorizontalAlignment.Center,
+                                                         Width = 160,
+                                                         HorizontalContentAlignment = HorizontalAlignment.Center
                                                      };
 
                     this.adControlRemoveButton.Click += this.AdControlRemoveButtonOnClick;
                     this.adControlHost.Children.Add(this.adControlRemoveButton);
+                    Canvas.SetTop(this.adControlRemoveButton, 620);
 
                     this.regionProvider.SetContent(MainFrameRegion.Right, this.adControlHost);
                 }

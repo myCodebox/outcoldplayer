@@ -12,7 +12,8 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:OutcoldSolutions.GoogleMusic.Controls"
-    xmlns:bindingModels="using:OutcoldSolutions.GoogleMusic.BindingModels">
+    xmlns:bindingModels="using:OutcoldSolutions.GoogleMusic.BindingModels"
+    xmlns:ui="using:Microsoft.Advertising.WinRT.UI">
 
     <!-- Non-brush values that vary across themes -->
 
@@ -1166,4 +1167,37 @@
         </Setter>
     </Style>
 
+    <Style TargetType="HyperlinkButton" x:Key="RightRegionAdReplacement">
+        <Setter Property="NavigateUri" Value="https://twitter.com/gMusicW" />
+        <Setter Property="Height" Value="600" />
+        <Setter Property="Width" Value="160" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="HyperlinkButton">
+                    <Image Source="http://outcoldsolutions.com/resources/rightpane.png" 
+                           Stretch="None" 
+                           Height="600" 
+                           Width="160" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="HyperlinkButton" x:Key="SnappedViewAdReplacement">
+        <Setter Property="NavigateUri" Value="https://twitter.com/gMusicW" />
+        <Setter Property="Height" Value="60" />
+        <Setter Property="Width" Value="292" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="HyperlinkButton">
+                    <Image Source="http://outcoldsolutions.com/resources/snappedview.png" 
+                           Stretch="None" 
+                           Height="60" 
+                           Width="292"/>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    
 </ResourceDictionary>

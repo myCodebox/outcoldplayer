@@ -5,7 +5,6 @@
 namespace OutcoldSolutions.GoogleMusic.Views
 {
     using System;
-    using System.ComponentModel;
     using System.Linq;
     using System.Threading.Tasks;
 
@@ -33,6 +32,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
         private readonly ILogger logger;
         private AdControl adControl;
         private SnappedPlayerBindingModel playerBindingModel;
+        private HyperlinkButton adReplacementButton;
 
         public SnappedPlayerView()
         {
@@ -84,12 +84,24 @@ namespace OutcoldSolutions.GoogleMusic.Views
                     this.SnappedGrid.Children.Remove(this.adControl);
                     this.adControl.ErrorOccurred -= this.AdControlOnErrorOccurred;
                     this.adControl = null;
+
+                    this.SnappedGrid.Children.Remove(this.adReplacementButton);
+                    this.adReplacementButton = null;
                 }
             }
             else
             {
                 if (this.adControl == null)
                 {
+                    this.adReplacementButton = new HyperlinkButton
+                    {
+                        Style = (Style)Application.Current.Resources["SnappedViewAdReplacement"]
+                    };
+
+                    Grid.SetRow(this.adReplacementButton, 6);
+                    Canvas.SetZIndex(this.adReplacementButton, 0);
+                    this.SnappedGrid.Children.Add(this.adReplacementButton);
+
                     this.adControl = new AdControl
                     {
                         ApplicationId = "8eb9e14b-2133-40db-9500-14eff7c05aab",
@@ -99,8 +111,10 @@ namespace OutcoldSolutions.GoogleMusic.Views
                         HorizontalAlignment = HorizontalAlignment.Center,
                         UseStaticAnchor = true
                     };
+
                     this.adControl.ErrorOccurred += this.AdControlOnErrorOccurred;
                     Grid.SetRow(this.adControl, 6);
+                    Canvas.SetZIndex(this.adControl, 100);
                     this.SnappedGrid.Children.Add(this.adControl);
                 }
             }
