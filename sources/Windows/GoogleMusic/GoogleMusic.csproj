@@ -317,6 +317,7 @@
     <Content Include="Resources\albums.png" />
     <Content Include="Resources\artists.png" />
     <Content Include="Resources\genres.png" />
+    <Content Include="Resources\gmusic.splashscreen.png" />
     <Content Include="Resources\home.png" />
     <Content Include="Resources\in-app-purchase.xml" />
     <Content Include="Resources\lastfm_Logo.png" />
