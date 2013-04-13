@@ -10,7 +10,7 @@
             <Image Source="ms-appx:///Assets/SplashScreen.png" Width="620" Height="300" />
         </StackPanel>
 
-        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0, 300, 0, 0">
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0, 400, 0, 0">
 
             <ProgressBar Maximum="1" 
                          Value="{Binding Path=BindingModel.Progress, Mode=OneWay}" 

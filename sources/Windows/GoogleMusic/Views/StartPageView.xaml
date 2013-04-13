@@ -9,8 +9,7 @@
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400"
-    Title="gMusic"
-    Subtitle="Home"
+    Title="Home"
     IsStoreLogoVisible="True">
 
     <views:PageViewBase.Resources>
