@@ -176,27 +176,52 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
         public async Task<TResult> GetAsync<TResult>(string url, bool signUrl = true) where TResult : CommonResponse
         {
-            HttpResponseMessage responseMessage = await this.GetAsync(url, signUrl);
+            HttpResponseMessage responseMessage = null;
 
-            // This means that google asked us to relogin. Let's try again this request.
-            if (responseMessage.StatusCode == HttpStatusCode.Found)
+            try
             {
                 responseMessage = await this.GetAsync(url, signUrl);
+
+                // This means that google asked us to relogin. Let's try again this request.
+                if (responseMessage.StatusCode == HttpStatusCode.Found)
+                {
+                    responseMessage = await this.GetAsync(url, signUrl);
+                }
+
+                responseMessage.EnsureSuccessStatusCode();
+
+                TResult result = await responseMessage.Content.ReadAsJsonObject<TResult>();
+
+                if (result.ReloadXsrf.HasValue && result.ReloadXsrf.Value)
+                {
+                    await this.RefreshXtAsync();
+
+                    responseMessage = await this.GetAsync(url, signUrl);
+
+                    responseMessage.EnsureSuccessStatusCode();
+
+                    result = await responseMessage.Content.ReadAsJsonObject<TResult>();
+                }
+
+                return result;
             }
-
-            responseMessage.EnsureSuccessStatusCode();
-
-            TResult result = await responseMessage.Content.ReadAsJsonObject<TResult>();
-
-            if (result.ReloadXsrf.HasValue && result.ReloadXsrf.Value)
+            catch (HttpRequestException exception)
             {
-                await this.RefreshXtAsync();
+                HttpStatusCode statusCode = 0;
+                if (responseMessage != null)
+                {
+                    statusCode = responseMessage.StatusCode;
+                }
 
-                responseMessage = await this.GetAsync(url, signUrl);
-                result = await responseMessage.Content.ReadAsJsonObject<TResult>();
+                throw new WebRequestException(
+                    string.Format(
+                        CultureInfo.CurrentCulture,
+                        "Exception while we tried to get resposne for url (GET) '{0}'. {1}",
+                        url,
+                        exception.Message),
+                    exception,
+                    statusCode);
             }
-
-            return result;
         }
 
         public async Task<TResult> PostAsync<TResult>(
@@ -206,51 +231,76 @@ namespace OutcoldSolutions.GoogleMusic.Web
             bool forceJsonBody = true,
             bool signUrl = true) where TResult : CommonResponse
         {
-            if (forceJsonBody && (formData == null || !formData.ContainsKey("json")))
-            {
-                var jsonBody = new StringBuilder();
+            HttpResponseMessage responseMessage = null;
 
-                jsonBody.Append("{");
-                if (jsonProperties != null)
+            try
+            {
+                if (forceJsonBody && (formData == null || !formData.ContainsKey("json")))
                 {
-                    foreach (var jsonProperty in jsonProperties)
+                    var jsonBody = new StringBuilder();
+
+                    jsonBody.Append("{");
+                    if (jsonProperties != null)
                     {
-                        jsonBody.AppendFormat("\"{0}\":{1},", jsonProperty.Key, jsonProperty.Value);
+                        foreach (var jsonProperty in jsonProperties)
+                        {
+                            jsonBody.AppendFormat("\"{0}\":{1},", jsonProperty.Key, jsonProperty.Value);
+                        }
                     }
+
+                    jsonBody.AppendFormat("\"sessionId\":{0}", JsonConvert.ToString(this.sessionService.GetSession().SessionId));
+                    jsonBody.Append("}");
+
+                    if (formData == null)
+                    {
+                        formData = new Dictionary<string, string>();
+                    }
+
+                    formData.Add("json", jsonBody.ToString());
                 }
 
-                jsonBody.AppendFormat("\"sessionId\":{0}", JsonConvert.ToString(this.sessionService.GetSession().SessionId));
-                jsonBody.Append("}");
+                responseMessage = await this.PostAsync(url, formData, signUrl);
 
-                if (formData == null)
+                // This means that google asked us to relogin. Let's try again this request.
+                if (responseMessage.StatusCode == HttpStatusCode.Found)
                 {
-                    formData = new Dictionary<string, string>();
+                    responseMessage = await this.PostAsync(url, formData, signUrl);
                 }
 
-                formData.Add("json", jsonBody.ToString());
-            }
+                responseMessage.EnsureSuccessStatusCode();
 
-            HttpResponseMessage responseMessage = await this.PostAsync(url, formData, signUrl);
-            
-            // This means that google asked us to relogin. Let's try again this request.
-            if (responseMessage.StatusCode == HttpStatusCode.Found)
+                TResult result = await responseMessage.Content.ReadAsJsonObject<TResult>();
+
+                if (result.ReloadXsrf.HasValue && result.ReloadXsrf.Value)
+                {
+                    await this.RefreshXtAsync();
+
+                    responseMessage = await this.PostAsync(url, formData, signUrl);
+
+                    responseMessage.EnsureSuccessStatusCode();
+
+                    result = await responseMessage.Content.ReadAsJsonObject<TResult>();
+                }
+
+                return result;
+            }
+            catch (HttpRequestException exception)
             {
-                responseMessage = await this.PostAsync(url, formData, signUrl);
+                HttpStatusCode statusCode = 0;
+                if (responseMessage != null)
+                {
+                    statusCode = responseMessage.StatusCode;
+                }
+
+                throw new WebRequestException(
+                    string.Format(
+                        CultureInfo.CurrentCulture,
+                        "Exception while we tried to get resposne for url (POST) '{0}'. {1}",
+                        url,
+                        exception.Message),
+                    exception,
+                    statusCode);
             }
-
-            responseMessage.EnsureSuccessStatusCode();
-
-            TResult result = await responseMessage.Content.ReadAsJsonObject<TResult>();
-
-            if (result.ReloadXsrf.HasValue && result.ReloadXsrf.Value)
-            {
-                await this.RefreshXtAsync();
-
-                responseMessage = await this.PostAsync(url, formData, signUrl);
-                result = await responseMessage.Content.ReadAsJsonObject<TResult>();
-            }
-
-            return result;
         }
 
         public async Task RefreshXtAsync()

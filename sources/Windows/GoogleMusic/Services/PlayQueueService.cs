@@ -502,9 +502,16 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     {
                         songUrl = await this.songsWebService.GetSongUrlAsync(song.ProviderSongId);
                     }
-                    catch (WebException e)
+                    catch (WebRequestException e)
                     {
-                        this.logger.Debug("Exception while tried to get song url: {0}", e);
+                        if (e.StatusCode == HttpStatusCode.Forbidden)
+                        {
+                            this.logger.Debug("Exception while tried to get song url: {0}", e);
+                        }
+                        else
+                        {
+                            this.logger.Error(e, "Exception while tried to get song url.");
+                        }
                     }
                     catch (Exception e)
                     {
