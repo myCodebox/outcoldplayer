@@ -90,7 +90,7 @@ namespace OutcoldSolutions.GoogleMusic.Controls
 
                     if (e.RemovedItems != null)
                     {
-                        var removedItems = e.AddedItems.Where(collection.Contains).ToList();
+                        var removedItems = e.RemovedItems.Where(collection.Contains).ToList();
 
                         foreach (object item in removedItems)
                         {
