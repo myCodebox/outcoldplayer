@@ -7,6 +7,7 @@ namespace OutcoldSolutions.GoogleMusic.Controls
     using System;
     using System.Collections;
     using System.Collections.Specialized;
+    using System.Linq;
     using System.Threading.Tasks;
 
     using Windows.UI.Core;
@@ -24,6 +25,8 @@ namespace OutcoldSolutions.GoogleMusic.Controls
 
         public static readonly DependencyProperty ForceToShowProperty = DependencyProperty.Register(
             "ForceToShow", typeof(bool), typeof(ListViewBaseSelectedItemsBehavior), new PropertyMetadata(false));
+
+        private bool freezed = false;
 
         public INotifyCollectionChanged SelectedItems
         {
@@ -69,6 +72,11 @@ namespace OutcoldSolutions.GoogleMusic.Controls
 
         private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (this.freezed)
+            {
+                return;
+            }
+
             var collection = this.SelectedItems as IList;
             if (collection != null)
             {
@@ -78,33 +86,40 @@ namespace OutcoldSolutions.GoogleMusic.Controls
                 }
                 else
                 {
+                    this.freezed = true;
+
                     if (e.RemovedItems != null)
                     {
-                        foreach (object item in e.RemovedItems)
+                        var removedItems = e.AddedItems.Where(collection.Contains).ToList();
+
+                        foreach (object item in removedItems)
                         {
-                            if (collection.Contains(item))
-                            {
-                                collection.Remove(item);
-                            }
+                            collection.Remove(item);
                         }
                     }
 
                     if (e.AddedItems != null)
                     {
-                        foreach (object item in e.AddedItems)
+                        var addedItems = e.AddedItems.Where(x => !collection.Contains(x)).ToList();
+
+                        foreach (object item in addedItems)
                         {
-                            if (!collection.Contains(item))
-                            {
-                                collection.Add(item);
-                            }
+                            collection.Add(item);
                         }
                     }
+
+                    this.freezed = false;
                 }
             }
         }
 
         private async void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
+            if (this.freezed)
+            {
+                return;
+            }
+
             if (this.AssociatedObject != null)
             {
                 if (e.NewItems == null && e.OldItems == null)
@@ -113,6 +128,8 @@ namespace OutcoldSolutions.GoogleMusic.Controls
                 }
                 else
                 {
+                    this.freezed = true;
+
                     if (e.OldItems != null)
                     {
                         foreach (object item in e.OldItems)
@@ -134,9 +151,11 @@ namespace OutcoldSolutions.GoogleMusic.Controls
                             }
                         }
                     }
+
+                    this.freezed = false;
                 }
 
-                if (this.ForceToShow && e.NewItems != null && e.NewItems.Count > 0)
+                if (this.ForceToShow && e.NewItems != null && this.AssociatedObject.SelectedItems.Count == 1)
                 {
                     await Task.Yield();
 
@@ -161,7 +180,7 @@ namespace OutcoldSolutions.GoogleMusic.Controls
                     }
                 }
 
-                if (this.ForceToShow && this.AssociatedObject.SelectedItems.Count > 0)
+                if (this.ForceToShow && this.AssociatedObject.SelectedItems.Count == 1)
                 {
                     await Task.Yield();
 
