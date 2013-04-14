@@ -14,6 +14,7 @@
     <DefaultLanguage>en-US</DefaultLanguage>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{BC8A1FFA-BEE3-4634-8014-F334798102B3};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <AllowedReferenceRelatedFileExtensions>.pdb;.pri</AllowedReferenceRelatedFileExtensions>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -99,71 +100,50 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="ApplicationBase.cs" />
+    <Compile Include="Models\PlaylistsChangeEvent.cs" />
+    <Compile Include="Models\SongExtensions.cs" />
+    <Compile Include="Models\SongsUpdatedEvent.cs" />
     <Compile Include="CommandIcon.cs" />
-    <Compile Include="CommandMetadata.cs" />
-    <Compile Include="Controls\ListViewBaseEx.cs" />
-    <Compile Include="DataPageViewBase.cs" />
-    <Compile Include="DateTimeExtensions.cs" />
-    <Compile Include="DelegateCommand.cs" />
-    <Compile Include="Diagnostics\DebugLogWriter.cs" />
-    <Compile Include="Diagnostics\TaskLogger.cs" />
-    <Compile Include="DispatcherContainer.cs" />
-    <Compile Include="IApplicationToolbar.cs" />
-    <Compile Include="IDataPageView.cs" />
-    <Compile Include="INavigationService.cs" />
-    <Compile Include="IPagePresenterBase.cs" />
-    <Compile Include="IPageView.cs" />
-    <Compile Include="IPopupView.cs" />
-    <Compile Include="IView.cs" />
-    <Compile Include="IViewRegionProvider.cs" />
-    <Compile Include="Models\SongsGrouping.cs" />
-    <Compile Include="Models\Search.cs" />
-    <Compile Include="IDispatcher.cs" />
+    <Compile Include="Models\PlaylistType.cs" />
+    <Compile Include="Models\SettingsChangeEvent.cs" />
+    <Compile Include="Models\SystemPlaylistType.cs" />
     <Compile Include="Models\Album.cs" />
+    <Compile Include="Models\StringEx.cs" />
+    <Compile Include="Models\SystemPlaylist.cs" />
     <Compile Include="Models\Artist.cs" />
     <Compile Include="Models\Genre.cs" />
-    <Compile Include="Models\MusicPlaylist.cs" />
-    <Compile Include="Models\Playlist.cs" />
+    <Compile Include="Models\IPlaylist.cs" />
+    <Compile Include="Models\SystemPlaylistTypeExtensions.cs" />
+    <Compile Include="Models\UserPlaylist.cs" />
+    <Compile Include="Models\UserPlaylistEntry.cs" />
+    <Compile Include="Models\Search.cs" />
+    <Compile Include="BindingModels\SongBindingModel.cs" />
     <Compile Include="Models\Song.cs" />
-    <Compile Include="Models\SongMetadata.cs" />
+    <Compile Include="Models\SongState.cs" />
     <Compile Include="Models\StreamType.cs" />
-    <Compile Include="Models\SystemPlaylist.cs" />
     <Compile Include="Models\UserInfo.cs" />
     <Compile Include="Models\UserSession.cs" />
-    <Compile Include="NavigatedToEventArgs.cs" />
-    <Compile Include="NavigatingFromEventArgs.cs" />
-    <Compile Include="NavigationService.cs" />
-    <Compile Include="PageBase.cs" />
-    <Compile Include="PagePresenterBase.cs" />
-    <Compile Include="PageViewBase.cs" />
-    <Compile Include="PopupViewBase.cs" />
-    <Compile Include="PresenterBase.cs" />
+    <Compile Include="ProgressExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Repositories\IMusicPlaylistRepository.cs" />
-    <Compile Include="Repositories\ISongsRepository.cs" />
-    <Compile Include="Services\ISongsCacheService.cs" />
-    <Compile Include="Services\SongMetadataEditService.cs" />
-    <Compile Include="Services\SongsCache.cs" />
-    <Compile Include="Services\SongsCacheService.cs" />
+    <Compile Include="Repositories\AlbumsRepository.cs" />
+    <Compile Include="Repositories\ArtistsRepository.cs" />
+    <Compile Include="Repositories\DbContext.cs" />
+    <Compile Include="Repositories\GenresRepository.cs" />
+    <Compile Include="Repositories\IPlaylistRepository.cs" />
+    <Compile Include="Repositories\RepositoryBase.cs" />
+    <Compile Include="Repositories\SystemPlaylistsRepository.cs" />
+    <Compile Include="Services\PlaylistsService.cs" />
+    <Compile Include="Services\SongsService.cs" />
     <Compile Include="Repositories\SongsRepository.cs" />
-    <Compile Include="Repositories\AlbumCollection.cs" />
-    <Compile Include="Repositories\ArtistCollection.cs" />
     <Compile Include="Services\AuthentificationService.cs" />
     <Compile Include="Services\DataProtectService.cs" />
-    <Compile Include="Repositories\GenreCollection.cs" />
-    <Compile Include="Repositories\IPlaylistCollection.cs" />
     <Compile Include="Services\IAuthentificationService.cs" />
     <Compile Include="Services\IDataProtectService.cs" />
-    <Compile Include="Services\IPlaylistCollectionsService.cs" />
     <Compile Include="Services\ISettingsService.cs" />
     <Compile Include="Services\IGoogleAccountService.cs" />
     <Compile Include="Services\IGoogleMusicSessionService.cs" />
-    <Compile Include="Repositories\MusicPlaylistCollection.cs" />
-    <Compile Include="Repositories\MusicPlaylistRepository.cs" />
+    <Compile Include="Repositories\UserPlaylistsRepository.cs" />
     <Compile Include="Repositories\Order.cs" />
-    <Compile Include="Repositories\PlaylistCollectionBase.cs" />
-    <Compile Include="Services\PlaylistCollectionsService.cs" />
     <Compile Include="Services\Publishers\CurrentSongPublisherService.cs" />
     <Compile Include="Services\Publishers\GoogleMusicCurrentSongPublisher.cs" />
     <Compile Include="Services\Publishers\ICurrentSongPublisher.cs" />
@@ -173,21 +153,18 @@
     <Compile Include="Services\Publishers\PublisherType.cs" />
     <Compile Include="Services\SettingsValueChangedEventArgs.cs" />
     <Compile Include="Services\GoogleMusicSessionService.cs" />
-    <Compile Include="Repositories\SystemPlaylistCollection.cs" />
-    <Compile Include="ViewBase.cs" />
-    <Compile Include="ViewPresenterBase.cs" />
-    <Compile Include="VisualTreeHelperEx.cs" />
+    <Compile Include="Services\UserPlaylistsService.cs" />
+    <Compile Include="SettingsServiceExtensions.cs" />
     <Compile Include="Web\CookieContainerWrapper.cs" />
     <Compile Include="Web\GoogleAccountWebService.cs" />
+    <Compile Include="Web\Synchronization\GoogleMusicSongEx.cs" />
+    <Compile Include="Web\Synchronization\GoogleMusicSynchronizationService.cs" />
     <Compile Include="Web\GoogleMusicWebService.cs" />
-    <Compile Include="Web\HttpContentExtensions.cs" />
     <Compile Include="Web\IGoogleAccountWebService.cs" />
     <Compile Include="Web\ICookieManager.cs" />
     <Compile Include="Web\IGoogleMusicWebService.cs" />
     <Compile Include="Web\IMediaStreamDownloadService.cs" />
     <Compile Include="Web\INetworkRandomAccessStream.cs" />
-    <Compile Include="Web\IPlaylistsWebService.cs" />
-    <Compile Include="Web\ISongWebService.cs" />
     <Compile Include="Web\Lastfm\ErrorResp.cs" />
     <Compile Include="Web\Lastfm\GetSessionResp.cs" />
     <Compile Include="Web\Lastfm\ILastfmAccountWebService.cs" />
@@ -197,7 +174,6 @@
     <Compile Include="Web\Lastfm\LastfmSessionResponse.cs" />
     <Compile Include="Web\Lastfm\LastfmWebService.cs" />
     <Compile Include="Web\Lastfm\TokenResp.cs" />
-    <Compile Include="Web\LoggerWebExtensions.cs" />
     <Compile Include="Web\MediaStreamDownloadService.cs" />
     <Compile Include="Web\Models\AddPlaylistResp.cs" />
     <Compile Include="Web\Models\AddSongResp.cs" />
@@ -214,26 +190,53 @@
     <Compile Include="Web\Models\StatusResp.cs" />
     <Compile Include="Web\Models\CommonResponse.cs" />
     <Compile Include="Web\PlaylistsWebService.cs" />
-    <Compile Include="Web\SongWebService.cs" />
-    <Compile Include="Web\WebServiceBase.cs" />
+    <Compile Include="Web\SongsWebService.cs" />
+    <Compile Include="Web\Synchronization\InitialSynchronization.cs" />
+    <Compile Include="Web\Synchronization\SongsUpdateStatus.cs" />
+    <Compile Include="Web\Synchronization\UserPlaylistsUpdateStatus.cs" />
+    <Compile Include="Web\WebRequestException.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\..\packages\Newtonsoft.Json.4.5.11\lib\winrt45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="OutcoldSolutions.Framework, Version=1.0.30217.29236, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\OutcoldSolutions.Framework.1.0.30217.29236\lib\portable-win+net45+sl40+wp71\OutcoldSolutions.Framework.dll</HintPath>
+      <HintPath>..\..\packages\Newtonsoft.Json.5.0.3\lib\netcore45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="OutcoldSolutions.Presentation, Version=1.0.30217.29423, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
+    <Reference Include="OutcoldSolutions.Framework, Version=1.0.30413.1, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\OutcoldSolutions.Presentation.1.0.30217.29423\lib\win\OutcoldSolutions.Presentation.dll</HintPath>
+      <HintPath>..\..\packages\OutcoldSolutions.Framework.1.0.30413.1\lib\portable-win+net45+wp80\OutcoldSolutions.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="OutcoldSolutions.Presentation, Version=1.0.30413.1, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\OutcoldSolutions.Presentation.1.0.30413.1\lib\win\OutcoldSolutions.Presentation.dll</HintPath>
+    </Reference>
+    <Reference Include="OutcoldSolutions.SQLite, Version=1.1.30331.42665, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\OutcoldSolutions.SQLite.1.1.30331.0\lib\win\OutcoldSolutions.SQLite.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.Core, Version=2.1.30214.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Rx-Core.2.1.30214.0\lib\NetCore45\System.Reactive.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.Interfaces, Version=2.1.30214.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Rx-Interfaces.2.1.30214.0\lib\NetCore45\System.Reactive.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.Linq, Version=2.1.30214.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Rx-Linq.2.1.30214.0\lib\NetCore45\System.Reactive.Linq.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <SDKReference Include="Microsoft.VCLibs, version=11.0">
+      <Name>Microsoft Visual C++ Runtime Package</Name>
+    </SDKReference>
+    <SDKReference Include="SQLite.WinRT, Version=3.7.16.2">
+      <Name>SQLite for Windows Runtime %28SQLite.WinRT, Version=3.7.16.2%29</Name>
+    </SDKReference>
+  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '11.0' ">
     <VisualStudioVersion>11.0</VisualStudioVersion>
   </PropertyGroup>

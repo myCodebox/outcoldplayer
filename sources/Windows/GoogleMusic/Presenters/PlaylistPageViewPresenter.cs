@@ -3,23 +3,28 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Presenters
 {
+    using System;
     using System.Collections.Generic;
-    using System.Threading.Tasks;
+    using System.Linq;
 
+    using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Models;
-    using OutcoldSolutions.GoogleMusic.Repositories;
+    using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
 
-    public class PlaylistPageViewPresenter : PlaylistPageViewPresenterBase<IPlaylistPageView, Playlist>
+    public class PlaylistPageViewPresenter : PlaylistPageViewPresenterBase<IPlaylistPageView, IPlaylist>
     {
-        private readonly IMusicPlaylistRepository musicPlaylistRepository;
+        private readonly IUserPlaylistsService userPlaylistsService;
+        private readonly IPlaylistsService playlistsService;
 
         public PlaylistPageViewPresenter(
-            IDependencyResolverContainer container, 
-            IMusicPlaylistRepository musicPlaylistRepository)
+            IDependencyResolverContainer container,
+            IUserPlaylistsService userPlaylistsService,
+            IPlaylistsService playlistsService)
             : base(container)
         {
-            this.musicPlaylistRepository = musicPlaylistRepository;
+            this.userPlaylistsService = userPlaylistsService;
+            this.playlistsService = playlistsService;
             this.RemoveFromPlaylistCommand = new DelegateCommand(this.RemoveFromPlaylist);
         }
 
@@ -28,7 +33,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         protected override IEnumerable<CommandMetadata> GetContextCommands()
         {
             var commandMetadatas = base.GetContextCommands();
-            if (this.BindingModel.Playlist is MusicPlaylist)
+            if (this.BindingModel.Playlist is UserPlaylist)
             {
                 commandMetadatas = new List<CommandMetadata>(commandMetadatas)
                                        {
@@ -39,30 +44,32 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             return commandMetadatas;
         }
 
-        private void RemoveFromPlaylist()
+        private async void RemoveFromPlaylist()
         {
-            var selectedSongIndex = this.BindingModel.SelectedSongIndex;
-            if (selectedSongIndex >= 0 && !this.IsDataLoading && this.BindingModel.Playlist is MusicPlaylist)
+            var selectedSongs = this.BindingModel.SongsBindingModel.GetSelectedSongs().ToList();
+            if (selectedSongs.Count > 0 && !this.IsDataLoading && this.BindingModel.Playlist is UserPlaylist)
             {
-                this.IsDataLoading = true;
-                var musicPlaylist = (MusicPlaylist)this.BindingModel.Playlist;
+                await this.Dispatcher.RunAsync(() => { this.IsDataLoading = true; });
+                var userPlaylist = (UserPlaylist)this.BindingModel.Playlist;
 
-                this.musicPlaylistRepository.RemoveEntry(
-                    musicPlaylist.Id, musicPlaylist.EntriesIds[selectedSongIndex]).ContinueWith(
-                        t =>
-                            {
-                                this.IsDataLoading = false;
-                                if (this.BindingModel.Playlist.Songs.Count > 0)
-                                {
-                                    if (this.BindingModel.Playlist.Songs.Count <= selectedSongIndex)
-                                    {
-                                        selectedSongIndex--;
-                                    }
+                IEnumerable<Song> songs = null;
 
-                                    this.BindingModel.SelectedSongIndex = selectedSongIndex;
-                                }
-                            },
-                        TaskScheduler.FromCurrentSynchronizationContext());
+                try
+                {
+                    await this.userPlaylistsService.RemoveSongsAsync(userPlaylist, selectedSongs);
+                    songs = await this.playlistsService.GetSongsAsync(PlaylistType.UserPlaylist, userPlaylist.Id);
+                }
+                catch (Exception e)
+                {
+                    this.Logger.Error(e, "Exception while tried to remove songs.");
+                }
+
+                await this.Dispatcher.RunAsync(
+                        () =>
+                        {
+                            this.BindingModel.SongsBindingModel.SetCollection(songs);
+                            this.IsDataLoading = false;
+                        });
             }
         }
     }

@@ -1,31 +1,51 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// Outcold Solutions (http://outcoldman.com)
+// OutcoldSolutions (http://outcoldsolutions.com)
 // --------------------------------------------------------------------------------------------------------------------
+
 namespace OutcoldSolutions.GoogleMusic.Models
 {
-    using System.Collections.Generic;
-    using System.Linq;
+    using System;
 
-    public class SystemPlaylist : Playlist
+    public class SystemPlaylist : IPlaylist
     {
-        public SystemPlaylist(string name, SystemPlaylistType type, IEnumerable<Song> songs)
-            : base(
-            name,
-            songs.ToList())
+        public SystemPlaylistType SystemPlaylistType { get; set; }
+
+        public int Id
         {
-            this.Type = type;
-            this.AlbumArtUrl = null;
+            get
+            {
+                return (int)this.SystemPlaylistType;
+            }
         }
 
-        public enum SystemPlaylistType
+        public PlaylistType PlaylistType 
         {
-            AllSongs,
-
-            HighlyRated,
-
-            LastAdded
+            get
+            {
+                return PlaylistType.SystemPlaylist;
+            }
         }
 
-        public SystemPlaylistType Type { get; set; }
+        public string Title
+        {
+            get
+            {
+                return this.SystemPlaylistType.ToTitle();
+            }
+
+            set
+            {
+            }
+        }
+
+        public string TitleNorm { get; set; }
+
+        public int SongsCount { get; set; }
+
+        public TimeSpan Duration { get; set; }
+
+        public Uri ArtUrl { get; set; }
+
+        public DateTime LastPlayed { get; set; }
     }
 }

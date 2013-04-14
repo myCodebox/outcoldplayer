@@ -1,0 +1,30 @@
+﻿<views:PopupViewBase
+    x:Class="OutcoldSolutions.GoogleMusic.Views.Popups.QueueActionsPopupView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:views="using:OutcoldSolutions.Views" 
+    mc:Ignorable="d"
+    Height="240"
+    Width="240">
+
+    <Border Background="{StaticResource AppBarBackgroundThemeBrush}">
+        <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" Margin="30, 20, 30, 0" >
+
+            <Button Style="{StaticResource PlayPopupMenuButtonStyle}" 
+                    Command="{Binding Path=PlayCommand, Mode=OneTime}"
+                    AutomationProperties.Name="Play selected" />
+
+            <Button Style="{StaticResource ShufflePopupMenuButtonStyle}" 
+                    Command="{Binding Path=ShuffleAllCommand, Mode=OneTime}"
+                    AutomationProperties.Name="Shuffle and play" />
+            
+            <Button Style="{StaticResource AddPopupMenuButton}" 
+                    Command="{Binding Path=AddCommand, Mode=OneTime}"
+                    AutomationProperties.Name="Add to queue" />
+            
+        </StackPanel>
+    </Border>
+    
+</views:PopupViewBase>

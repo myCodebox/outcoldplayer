@@ -1,0 +1,22 @@
+﻿<views:PopupViewBase
+    x:Class="OutcoldSolutions.GoogleMusic.Views.Popups.PlaylistEditPopupView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:views="using:OutcoldSolutions.Views"
+    mc:Ignorable="d"
+    Width="340" 
+    Height="140">
+
+    <Border Padding="20" Background="{StaticResource AppBarBackgroundThemeBrush}" Width="340" Height="140">
+        <StackPanel Width="300">
+            <TextBox Text="{Binding Path=Title, Mode=OneWay}" x:Name="TextBoxPlaylistName" KeyUp="TextBoxPlaylistNameKeyUp" KeyDown="TextBoxPlaylistNameOnKeyDown" />
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0, 20, 0, 0">
+                <Button Width="80" Command="{Binding Path=SaveCommand, Mode=OneTime}">Save</Button>
+                <Button Width="80" Margin="20, 0, 0, 0" Command="{Binding Path=CancelCommand, Mode=OneTime}">Cancel</Button>
+            </StackPanel>
+        </StackPanel>
+    </Border>
+    
+</views:PopupViewBase>

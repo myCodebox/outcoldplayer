@@ -16,6 +16,7 @@
     <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
     <AppxPackageDir>C:\Users\Den\Repositories\GoogleMusic\WinAppPackages\</AppxPackageDir>
     <PackageCertificateThumbprint>A11C9603F7F61E61F208F3B2B392F509B544CF6A</PackageCertificateThumbprint>
+    <AllowedReferenceRelatedFileExtensions>.pdb;.pri</AllowedReferenceRelatedFileExtensions>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -106,57 +107,98 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ApplicationLogManager.cs" />
+    <Compile Include="ApplicationSettingViews.cs" />
     <Compile Include="BindingModels\ArtistPageViewBindingModel.cs" />
-    <Compile Include="BindingModels\CurrentPlaylistPageViewBindingModel.cs" />
+    <Compile Include="BindingModels\LinksRegionBindingModel.cs" />
+    <Compile Include="BindingModels\SnappedPlayerBindingModel.cs" />
     <Compile Include="BindingModels\PlaylistPageViewBindingModel.cs" />
     <Compile Include="BindingModels\PlaylistResultBindingModel.cs" />
     <Compile Include="BindingModels\PlaylistsGroupBindingModel.cs" />
-    <Compile Include="BindingModels\MainViewBindingModel.cs" />
     <Compile Include="BindingModels\PlayerBindingModel.cs" />
     <Compile Include="BindingModels\PlaylistBindingModel.cs" />
     <Compile Include="BindingModels\PlaylistsPageViewBindingModel.cs" />
     <Compile Include="BindingModels\Popups\LastfmAuthentificationBindingModel.cs" />
-    <Compile Include="BindingModels\ProgressLoadingBindingModel.cs" />
+    <Compile Include="BindingModels\Popups\PlayerMorePopupViewBindingModel.cs" />
+    <Compile Include="BindingModels\ProgressLoadingPageViewBindingModel.cs" />
     <Compile Include="BindingModels\SearchPageViewBindingModel.cs" />
     <Compile Include="BindingModels\SearchGroupBindingModel.cs" />
     <Compile Include="BindingModels\SearchResultBindingModel.cs" />
     <Compile Include="BindingModels\Settings\AccountViewBindingModel.cs" />
     <Compile Include="BindingModels\Settings\SupportBindingModel.cs" />
     <Compile Include="BindingModels\SongResultBindingModel.cs" />
-    <Compile Include="BindingModels\SongsBindingModelBase.cs" />
+    <Compile Include="BindingModels\SongsBindingModel.cs" />
     <Compile Include="BindingModels\StartViewBindingModel.cs" />
-    <Compile Include="BindingModels\UserAuthentificationBindingModel.cs" />
-    <Compile Include="Controls\AppBarToggleButton.cs" />
+    <Compile Include="BindingModels\AuthentificationPageViewBindingModel.cs" />
+    <Compile Include="Controls\AlbumArtControl.cs" />
+    <Compile Include="Controls\FakeEqualizerControl.cs" />
+    <Compile Include="Controls\PlaylistDataTemplateSelector.cs" />
     <Compile Include="Controls\Rating.cs" />
     <Compile Include="Controls\RatingEventArgs.cs" />
+    <Compile Include="Controls\ListViewBaseSelectedItemsBehavior.cs" />
+    <Compile Include="Controls\SortableHeaderControl.cs" />
     <Compile Include="Controls\ValueChangedEventArgs.cs" />
     <Compile Include="Converters\AlbumArtUrlToImageConverter.cs" />
     <Compile Include="Converters\DoubleToTimeConverter.cs" />
     <Compile Include="Converters\StringFormatConverter.cs" />
-    <Compile Include="Models\PlaylistsRequest.cs" />
+    <Compile Include="Converters\TimeSpanToTimeConverter.cs" />
+    <Compile Include="Diagnostics\BugSenseLogWriter.cs" />
+    <Compile Include="GoogleMusicSettingsServiceExtensions.cs" />
+    <Compile Include="MainMenu.cs" />
+    <Compile Include="Models\PackageVersionExtensions.cs" />
+    <Compile Include="Models\PlaylistTypeEx.cs" />
+    <Compile Include="Models\QueueChangeEvent.cs" />
+    <Compile Include="Models\ReloadSongsEvent.cs" />
+    <Compile Include="Models\SelectedItems.cs" />
     <Compile Include="Models\TimeSpanEx.cs" />
-    <Compile Include="PlaylistViewResolver.cs" />
+    <Compile Include="NavigationServiceEx.cs" />
+    <Compile Include="PlaylistNavigationRequest.cs" />
+    <Compile Include="Presenters\LinksRegionViewPresenter.cs" />
+    <Compile Include="Presenters\PlayerViewPresenterBase.cs" />
+    <Compile Include="Presenters\PlaylistsPageViewPresenterBase.cs" />
+    <Compile Include="Presenters\Popups\PlaylistEditPopupViewPresenter.cs" />
+    <Compile Include="Presenters\Popups\ProgressLoadingCloseEventArgs.cs" />
+    <Compile Include="Presenters\Popups\QueueActionsPopupViewPresenter.cs" />
+    <Compile Include="Presenters\SnappedPlayerViewPresenter.cs" />
+    <Compile Include="Presenters\Popups\PlayerMorePopupViewPresenter.cs" />
+    <Compile Include="Presenters\Settings\AppSettingsViewPresenter.cs" />
+    <Compile Include="Presenters\Settings\UpgradeViewPresenter.cs" />
+    <Compile Include="Presenters\UserPlaylistsPageViewPresenter.cs" />
+    <Compile Include="Registration.cs" />
+    <Compile Include="Services\CurrentSongPropertiesUpdateService.cs" />
+    <Compile Include="Services\IPlayQueueService.cs" />
+    <Compile Include="Services\PlayQueueService.cs" />
+    <Compile Include="Services\QueueState.cs" />
+    <Compile Include="Services\StateChangedEventArgs.cs" />
+    <Compile Include="Shell\IMediaElementContainer.cs" />
+    <Compile Include="Shell\INotificationService.cs" />
+    <Compile Include="Shell\MediaControlIntegration.cs" />
+    <Compile Include="Shell\MediaElementContainer.cs" />
+    <Compile Include="Shell\MediaEndedEventArgs.cs" />
+    <Compile Include="Shell\MediaEndedReason.cs" />
+    <Compile Include="Shell\NotificationService.cs" />
+    <Compile Include="Shell\PlayProgressEventArgs.cs" />
     <Compile Include="Presenters\AlbumPageViewPresenter.cs" />
     <Compile Include="Presenters\ArtistPageViewPresenter.cs" />
-    <Compile Include="Presenters\AuthentificationPresenter.cs" />
+    <Compile Include="Presenters\Popups\AuthentificationPopupViewPresenter.cs" />
     <Compile Include="Presenters\CurrentPlaylistPageViewPresenter.cs" />
     <Compile Include="Presenters\PlaylistPageViewPresenterBase.cs" />
     <Compile Include="Presenters\Popups\AddToPlaylistPopupViewPresenter.cs" />
     <Compile Include="Presenters\Popups\LastfmAuthentificationPresenter.cs" />
-    <Compile Include="Presenters\MainViewPresenter.cs" />
     <Compile Include="Presenters\PlayerViewPresenter.cs" />
     <Compile Include="Presenters\PlaylistsPageViewPresenter.cs" />
     <Compile Include="Presenters\PlaylistPageViewPresenter.cs" />
-    <Compile Include="Presenters\ProgressLoadingPresenter.cs" />
+    <Compile Include="Presenters\Popups\ProgressLoadingPopupViewPresenter.cs" />
+    <Compile Include="Presenters\Popups\ReleasesHistoryPopupViewPresenter.cs" />
     <Compile Include="Presenters\SearchPageViewPresenter.cs" />
-    <Compile Include="Presenters\Settings\AccountPageViewPresenter.cs" />
+    <Compile Include="Presenters\Settings\AccountsViewPresenter.cs" />
     <Compile Include="Presenters\StartPageViewPresenter.cs" />
-    <Compile Include="Services\ICurrentPlaylistService.cs" />
-    <Compile Include="Services\ISearchService.cs" />
-    <Compile Include="Services\ISettingsCommands.cs" />
+    <Compile Include="Services\InAppPurchases.cs" />
+    <Compile Include="Services\RightRegionControlService.cs" />
+    <Compile Include="Shell\ISearchService.cs" />
     <Compile Include="Services\Publishers\TileCurrentSongPublisher.cs" />
-    <Compile Include="Services\SearchService.cs" />
-    <Compile Include="Services\SettingsCommands.cs" />
+    <Compile Include="Shell\ScreenLocker.cs" />
+    <Compile Include="Shell\SearchService.cs" />
     <Compile Include="Services\SettingsService.cs" />
     <Compile Include="Services\GoogleAccountService.cs" />
     <Compile Include="Views\AlbumPageView.xaml.cs">
@@ -168,20 +210,22 @@
     <Compile Include="Views\CurrentPlaylistPageView.xaml.cs">
       <DependentUpon>CurrentPlaylistPageView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\IAuthentificationView.cs" />
-    <Compile Include="Views\IProgressLoadingView.cs" />
+    <Compile Include="Views\LinksRegionView.xaml.cs">
+      <DependentUpon>LinksRegionView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\LogoView.xaml.cs">
+      <DependentUpon>LogoView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Popups\AddToPlaylistCompletedEventArgs.cs" />
     <Compile Include="Views\Popups\AddToPlaylistPopupView.xaml.cs">
       <DependentUpon>AddToPlaylistPopupView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Popups\LastfmAuthentificationView.xaml.cs">
       <DependentUpon>LastfmAuthentificationView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\MainView.xaml.cs">
-      <DependentUpon>MainView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Views\AuthentificationView.xaml.cs">
-      <DependentUpon>AuthentificationView.xaml</DependentUpon>
+    <Compile Include="Views\Popups\AuthentificationPopupView.xaml.cs">
+      <DependentUpon>AuthentificationPopupView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PlayerView.xaml.cs">
       <DependentUpon>PlayerView.xaml</DependentUpon>
@@ -192,17 +236,33 @@
     <Compile Include="Views\PlaylistPageView.xaml.cs">
       <DependentUpon>PlaylistPageView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\WhatIsNewView.xaml.cs">
-      <DependentUpon>WhatIsNewView.xaml</DependentUpon>
+    <Compile Include="Views\Popups\PlayerMorePopupView.xaml.cs">
+      <DependentUpon>PlayerMorePopupView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\ProgressLoadingView.xaml.cs">
-      <DependentUpon>ProgressLoadingView.xaml</DependentUpon>
+    <Compile Include="Views\Popups\PlaylistEditPopupView.xaml.cs">
+      <DependentUpon>PlaylistEditPopupView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Popups\QueueActionsCompletedEventArgs.cs" />
+    <Compile Include="Views\Popups\QueueActionsPopupView.xaml.cs">
+      <DependentUpon>QueueActionsPopupView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Popups\ReleasesHistoryPopupView.xaml.cs">
+      <DependentUpon>ReleasesHistoryPopupView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Popups\ProgressLoadingPopupView.xaml.cs">
+      <DependentUpon>ProgressLoadingPopupView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SearchPageView.xaml.cs">
       <DependentUpon>SearchPageView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Settings\AccountPageView.xaml.cs">
-      <DependentUpon>AccountPageView.xaml</DependentUpon>
+    <Compile Include="Views\Settings\AccountsView.xaml.cs">
+      <DependentUpon>AccountsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\AppSettingsView.xaml.cs">
+      <DependentUpon>AppSettingsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\LegalView.xaml.cs">
+      <DependentUpon>LegalView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\PrivacyView.xaml.cs">
       <DependentUpon>PrivacyView.xaml</DependentUpon>
@@ -218,6 +278,9 @@
     </Compile>
     <Compile Include="Views\StartPageView.xaml.cs">
       <DependentUpon>StartPageView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\UserPlaylistsPageView.xaml.cs">
+      <DependentUpon>UserPlaylistsPageView.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -242,7 +305,9 @@
     <Content Include="Assets\SmallLogo.targetsize-256.png" />
     <Content Include="Assets\SmallLogo.targetsize-32.png" />
     <Content Include="Assets\SmallLogo.targetsize-48.png" />
-    <Content Include="Assets\SplashScreen.png" />
+    <Content Include="Assets\SplashScreen.scale-100.png" />
+    <Content Include="Assets\SplashScreen.scale-140.png" />
+    <Content Include="Assets\SplashScreen.scale-180.png" />
     <Content Include="Assets\StoreLogo.scale-100.png" />
     <None Include="Package.StoreAssociation.xml" />
     <Content Include="Assets\StoreLogo.scale-140.png" />
@@ -251,13 +316,26 @@
     <Content Include="Assets\WideLogo.scale-140.png" />
     <Content Include="Assets\WideLogo.scale-180.png" />
     <Content Include="Assets\WideLogo.scale-80.png" />
+    <Content Include="Resources\albums.png" />
+    <Content Include="Resources\artists.png" />
+    <Content Include="Resources\genres.png" />
+    <Content Include="Resources\gmusic.splashscreen.png" />
+    <Content Include="Resources\home.png" />
     <Content Include="Resources\in-app-purchase.xml" />
     <Content Include="Resources\lastfm_Logo.png" />
     <Content Include="Resources\logo460.png" />
+    <Content Include="Resources\outcoldsolutions.png" />
+    <Content Include="Resources\playlists.png" />
+    <Content Include="Resources\queue.png" />
     <Content Include="Resources\twitter-logo.png" />
     <Content Include="Resources\UnknownArt-116.png" />
+    <Content Include="Resources\UnknownArt-140.png" />
+    <Content Include="Resources\UnknownArt-180.png" />
     <Content Include="Resources\UnknownArt-256.png" />
+    <Content Include="Resources\UnknownArt-40.png" />
+    <Content Include="Resources\UnknownArt-80.png" />
     <Content Include="Resources\UnknownArt-90.png" />
+    <Content Include="Resources\uservoice-logo.png" />
     <Content Include="Resources\uservoice.png" />
   </ItemGroup>
   <ItemGroup>
@@ -280,6 +358,11 @@
       <Generator>MSBuild:Compile</Generator>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Page>
+    <Page Include="Common\Models.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Page>
     <Page Include="Common\StandardStyles.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -296,6 +379,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\LinksRegionView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\LogoView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Popups\AddToPlaylistPopupView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -304,11 +395,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\MainView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\AuthentificationView.xaml">
+    <Page Include="Views\Popups\AuthentificationPopupView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -324,11 +411,23 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\WhatIsNewView.xaml">
+    <Page Include="Views\Popups\PlayerMorePopupView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\ProgressLoadingView.xaml">
+    <Page Include="Views\Popups\PlaylistEditPopupView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Popups\QueueActionsPopupView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Popups\ReleasesHistoryPopupView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Popups\ProgressLoadingPopupView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -336,7 +435,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Settings\AccountPageView.xaml">
+    <Page Include="Views\Settings\AccountsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\AppSettingsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\LegalView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -360,23 +467,56 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\UserPlaylistsPageView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\..\packages\Newtonsoft.Json.4.5.11\lib\winrt45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="BugSense-W8">
+      <HintPath>..\..\packages\BugSense.W8.3.4\lib\win\BugSense-W8.dll</HintPath>
     </Reference>
-    <Reference Include="OutcoldSolutions.Framework, Version=1.0.30217.29236, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\OutcoldSolutions.Framework.1.0.30217.29236\lib\portable-win+net45+sl40+wp71\OutcoldSolutions.Framework.dll</HintPath>
+      <HintPath>..\..\packages\Newtonsoft.Json.5.0.3\lib\netcore45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="OutcoldSolutions.Presentation, Version=1.0.30217.29423, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
+    <Reference Include="OutcoldSolutions.Framework, Version=1.0.30413.1, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\OutcoldSolutions.Presentation.1.0.30217.29423\lib\win\OutcoldSolutions.Presentation.dll</HintPath>
+      <HintPath>..\..\packages\OutcoldSolutions.Framework.1.0.30413.1\lib\portable-win+net45+wp80\OutcoldSolutions.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="OutcoldSolutions.Presentation, Version=1.0.30413.1, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\OutcoldSolutions.Presentation.1.0.30413.1\lib\win\OutcoldSolutions.Presentation.dll</HintPath>
+    </Reference>
+    <Reference Include="OutcoldSolutions.SQLite, Version=1.1.30331.42665, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\OutcoldSolutions.SQLite.1.1.30331.0\lib\win\OutcoldSolutions.SQLite.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.Core, Version=2.1.30214.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Rx-Core.2.1.30214.0\lib\NetCore45\System.Reactive.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.Interfaces, Version=2.1.30214.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Rx-Interfaces.2.1.30214.0\lib\NetCore45\System.Reactive.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.Linq, Version=2.1.30214.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Rx-Linq.2.1.30214.0\lib\NetCore45\System.Reactive.Linq.dll</HintPath>
+    </Reference>
+    <Reference Include="Windows.UI.Interactivity">
+      <HintPath>..\..\packages\Windows.UI.Interactivity.1.3.0.0\lib\win8\Windows.UI.Interactivity.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <SDKReference Include="Microsoft.VCLibs, version=11.0">
+      <Name>Microsoft Visual C++ Runtime Package</Name>
+    </SDKReference>
     <SDKReference Include="MSAdvertisingXaml, Version=6.1">
       <Name>MSAdvertisingXaml</Name>
+    </SDKReference>
+    <SDKReference Include="SQLite.WinRT, Version=3.7.16.2">
+      <Name>SQLite for Windows Runtime %28SQLite.WinRT, Version=3.7.16.2%29</Name>
     </SDKReference>
   </ItemGroup>
   <ItemGroup>
@@ -387,6 +527,9 @@
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '11.0' ">
     <VisualStudioVersion>11.0</VisualStudioVersion>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

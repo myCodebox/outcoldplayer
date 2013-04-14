@@ -28,12 +28,12 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
             }
         }
 
-        public async Task PublishAsync(Song song, Playlist currentPlaylist, Uri albumArtUri, CancellationToken cancellationToken)
+        public async Task PublishAsync(Song song, IPlaylist currentPlaylist, Uri albumArtUri, CancellationToken cancellationToken)
         {
             await this.dispatcher.RunAsync(
                 () =>
                     {
-                        MediaControl.ArtistName = song.Artist;
+                        MediaControl.ArtistName = song.GetSongArtist();
                         MediaControl.TrackName = song.Title;
                         MediaControl.AlbumArt = albumArtUri;
                     });

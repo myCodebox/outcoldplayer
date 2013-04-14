@@ -1,36 +1,42 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// Outcold Solutions (http://outcoldman.com)
+// OutcoldSolutions (http://outcoldsolutions.com)
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.BindingModels
 {
     using System.Collections.Generic;
-    using System.Collections.ObjectModel;
 
     using OutcoldSolutions.GoogleMusic.Models;
-
+    
     public class PlaylistsGroupBindingModel
     {
-        public PlaylistsGroupBindingModel(string title, int playlistsCount, IEnumerable<PlaylistBindingModel> playlists, PlaylistsRequest request)
+        public PlaylistsGroupBindingModel(
+            string title,
+            int itemsCount,
+            IList<PlaylistBindingModel> playlists,
+            PlaylistType type)
         {
             this.Title = title;
-            this.Playlists = new ObservableCollection<PlaylistBindingModel>(playlists);
-            this.PlaylistsCount = playlistsCount;
-            this.Request = request;
+            this.Playlists = playlists;
+            this.ItemsCount = itemsCount;
+            this.Request = type;
         }
 
-        public PlaylistsGroupBindingModel(string title, int playlistsCount, IEnumerable<PlaylistBindingModel> playlists)
+        public PlaylistsGroupBindingModel(
+            string title,
+            int itemsCount,
+            IList<PlaylistBindingModel> playlists)
         {
             this.Title = title;
-            this.PlaylistsCount = playlistsCount;
-            this.Playlists = new ObservableCollection<PlaylistBindingModel>(playlists);
+            this.ItemsCount = itemsCount;
+            this.Playlists = playlists;
         }
 
         public string Title { get; private set; }
 
-        public int PlaylistsCount { get; private set; }
+        public int ItemsCount { get; private set; }
 
-        public ObservableCollection<PlaylistBindingModel> Playlists { get; private set; }
+        public IList<PlaylistBindingModel> Playlists { get; private set; }
 
-        public PlaylistsRequest Request { get; set; }
+        public PlaylistType Request { get; set; }
     }
 }

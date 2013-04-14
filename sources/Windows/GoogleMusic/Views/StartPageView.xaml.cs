@@ -7,37 +7,22 @@ namespace OutcoldSolutions.GoogleMusic.Views
     using System.Diagnostics;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
-    using OutcoldSolutions.GoogleMusic.Presenters;
+    using OutcoldSolutions.GoogleMusic.Models;
+    using OutcoldSolutions.Views;
 
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
 
-    public interface IStartPageView : IDataPageView
+    public interface IStartPageView : IPageView
     {
     }
 
-    public sealed partial class StartPageView : DataPageViewBase, IStartPageView
+    public sealed partial class StartPageView : PageViewBase, IStartPageView
     {
-        private StartPageViewPresenter presenter;
-
         public StartPageView()
         {
             this.InitializeComponent();
-            this.TrackListViewBase(this.GridView);
-        }
-
-        public override void OnUnfreeze(NavigatedToEventArgs eventArgs)
-        {
-            base.OnUnfreeze(eventArgs);
-
-            this.Groups.Source = this.presenter.BindingModel.Groups;
-        }
-
-        protected override void OnInitialized()
-        {
-            base.OnInitialized();
-
-            this.presenter = this.GetPresenter<StartPageViewPresenter>();
+            this.TrackItemsControl(this.GridView);
         }
 
         private void PlaylistItemClick(object sender, ItemClickEventArgs e)
@@ -47,7 +32,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
             Debug.Assert(album != null, "album != null");
             if (album != null)
             {
-                this.NavigationService.NavigateToView<PlaylistViewResolver>(album.Playlist);
+                this.NavigationService.NavigateToPlaylist(album.Playlist);
             }
         }
         
@@ -59,7 +44,14 @@ namespace OutcoldSolutions.GoogleMusic.Views
                 var groupBindingModel = frameworkElement.DataContext as PlaylistsGroupBindingModel;
                 if (groupBindingModel != null)
                 {
-                    this.NavigationService.NavigateTo<IPlaylistsPageView>(groupBindingModel.Request);
+                    if (groupBindingModel.Request == PlaylistType.UserPlaylist)
+                    {
+                        this.NavigationService.NavigateTo<IUserPlaylistsPageView>(PlaylistType.UserPlaylist);
+                    }
+                    else
+                    {
+                        this.NavigationService.NavigateTo<IPlaylistsPageView>(groupBindingModel.Request);
+                    }
                 }
             }
         }

@@ -1,46 +1,53 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// Outcold Solutions (http://outcoldman.com)
+// OutcoldSolutions (http://outcoldsolutions.com)
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Models
 {
-    using System.Collections.Generic;
-    using System.Linq;
+    using System;
 
-    public class Album : Playlist
+    using SQLite;
+
+    [Table("Album")]
+    public class Album : IPlaylist
     {
-        public Album(List<Song> songs)
-            : base(null, songs)
+        [PrimaryKey, AutoIncrement, Column("AlbumId")]
+        public int Id { get; set; }
+
+        [Ignore]
+        public PlaylistType PlaylistType
         {
-            var song = songs.FirstOrDefault(x => !string.IsNullOrWhiteSpace(x.Metadata.AlbumArtist))
-                   ?? songs.FirstOrDefault(x => !string.IsNullOrWhiteSpace(x.Metadata.Artist));
-            if (song != null)
+            get
             {
-                this.Artist = string.IsNullOrWhiteSpace(song.Metadata.AlbumArtist) ? song.Metadata.Artist : song.Metadata.AlbumArtist;
-            }
-
-            song = songs.FirstOrDefault(x => x.Metadata.Year > 0);
-            if (song != null)
-            {
-                this.Year = song.Metadata.Year;
-            }
-
-            song = songs.FirstOrDefault(x => !string.IsNullOrEmpty(x.Metadata.Album));
-            if (song != null)
-            {
-                this.Title = song.Metadata.Album;
-            }
-
-            song = songs.FirstOrDefault(x => !string.IsNullOrEmpty(x.Metadata.Genre));
-            if (song != null)
-            {
-                this.Genre = song.Metadata.Genre;
+                return PlaylistType.Album;
             }
         }
 
-        public string Artist { get; private set; }
+        public string Title { get; set; }
 
-        public int Year { get; private set; }
+        [Indexed]
+        public string TitleNorm { get; set; }
+        
+        [Indexed]
+        public string ArtistTitleNorm { get; set; }
 
-        public string Genre { get; private set; }
+        [Indexed]
+        public string GenreTitleNorm { get; set; }
+
+        public int SongsCount { get; set; }
+
+        public ushort? Year { get; set; }
+
+        public TimeSpan Duration { get; set; }
+
+        public Uri ArtUrl { get; set; }
+
+        [Ignore]
+        public bool IsCollection { get; set; }
+
+        [Indexed]
+        public DateTime LastPlayed { get; set; }
+
+        [Reference]
+        public Artist Artist { get; set; }
     }
 }

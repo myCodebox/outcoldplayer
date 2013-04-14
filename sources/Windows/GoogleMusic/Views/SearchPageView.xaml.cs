@@ -3,23 +3,24 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Views
 {
+    using OutcoldSolutions.Controls;
     using OutcoldSolutions.GoogleMusic.BindingModels;
-    using OutcoldSolutions.GoogleMusic.Controls;
+    using OutcoldSolutions.Views;
 
     using Windows.UI.Xaml.Controls;
 
-    public interface ISearchView : IDataPageView
+    public interface ISearchPageView : IPageView
     {
     }
 
-    public sealed partial class SearchPageView : DataPageViewBase, ISearchView
+    public sealed partial class SearchPageView : PageViewBase, ISearchPageView
     {
         private const string SelectedIndex = "Groups_SelectedIndex";
 
         public SearchPageView()
         {
             this.InitializeComponent();
-            this.TrackListViewBase(this.ListView);
+            this.TrackItemsControl(this.ListView);
         }
 
         public override void OnDataLoading(NavigatedToEventArgs eventArgs)
@@ -62,11 +63,11 @@ namespace OutcoldSolutions.GoogleMusic.Views
         {
             if (e.ClickedItem is SongResultBindingModel)
             {
-                this.NavigationService.NavigateTo<IAlbumPageView>(((SongResultBindingModel)e.ClickedItem).Result);
+                this.NavigationService.NavigateTo<IAlbumPageView>(((SongResultBindingModel)e.ClickedItem).Result.Metadata.SongId);
             }
             else if (e.ClickedItem is PlaylistResultBindingModel)
             {
-                this.NavigationService.NavigateToView<PlaylistViewResolver>(((PlaylistResultBindingModel)e.ClickedItem).Result);
+                this.NavigationService.NavigateToPlaylist(((PlaylistResultBindingModel)e.ClickedItem).Result);
             }
         }
 

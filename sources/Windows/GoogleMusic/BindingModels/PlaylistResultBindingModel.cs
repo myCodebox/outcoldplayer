@@ -10,15 +10,15 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
     public class PlaylistResultBindingModel : SearchResultBindingModel
     {
-        private readonly Playlist result;
+        private readonly IPlaylist result;
 
-        public PlaylistResultBindingModel(string search, Playlist result)
+        public PlaylistResultBindingModel(string search, IPlaylist result)
             : base(search, result.Title)
         {
             this.result = result;
         }
 
-        public Playlist Result
+        public IPlaylist Result
         {
             get
             {
@@ -30,7 +30,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         {
             get
             {
-                return string.Format(CultureInfo.CurrentCulture, "{0} songs", this.result.Songs.Count);
+                return string.Format(CultureInfo.CurrentCulture, "{0} songs", this.result.SongsCount);
             }
         }
 
@@ -38,27 +38,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         {
             get
             {
-                if (this.result is Album)
-                {
-                    return "Album";
-                }
-
-                if (this.result is Artist)
-                {
-                    return "Artist";
-                }
-
-                if (this.result is Genre)
-                {
-                    return "Genre";
-                }
-
-                if (this.result is MusicPlaylist)
-                {
-                    return "Playlist";
-                }
-
-                return null;
+                return this.Result.PlaylistType.ToTitle();
             }
         }
 
@@ -66,7 +46,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         {
             get
             {
-                return this.result.AlbumArtUrl;
+                return this.result.ArtUrl;
             }
         }
     }

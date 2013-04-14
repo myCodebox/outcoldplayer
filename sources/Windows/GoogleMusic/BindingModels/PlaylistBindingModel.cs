@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// Outcold Solutions (http://outcoldman.com)
+// OutcoldSolutions (http://outcoldsolutions.com)
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.BindingModels
 {
@@ -7,11 +7,11 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
     using OutcoldSolutions.GoogleMusic.Models;
 
-    public class PlaylistBindingModel : BindingModelBase
+    public class PlaylistBindingModel 
     {
-        private readonly Playlist playlist;
+        private readonly IPlaylist playlist;
 
-        public PlaylistBindingModel(Playlist playlist)
+        public PlaylistBindingModel(IPlaylist playlist)
         {
             if (playlist == null)
             {
@@ -23,15 +23,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
         public DelegateCommand PlayCommand { get; set; }
 
-        public bool IsAlbum
-        {
-            get
-            {
-                return this.playlist is Album;
-            }
-        }
-
-        public Playlist Playlist
+        public IPlaylist Playlist
         {
             get
             {

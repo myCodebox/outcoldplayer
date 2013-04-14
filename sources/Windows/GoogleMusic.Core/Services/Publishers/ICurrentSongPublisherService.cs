@@ -13,7 +13,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
 
         void RemovePublishers<TPublisherType>() where TPublisherType : ICurrentSongPublisher;
 
-        Task PublishAsync(Song song, Playlist currentPlaylist);
+        Task PublishAsync(Song song, IPlaylist currentPlaylist);
 
         void CancelActiveTasks();
     }

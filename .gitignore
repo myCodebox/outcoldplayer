@@ -16,3 +16,5 @@ WinAppPackages
 *.opensdf
 *.sdf
 Thumbs.db
+*.psess
+*.vspx

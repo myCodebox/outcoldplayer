@@ -7,6 +7,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
     using System.Threading;
     using System.Threading.Tasks;
 
+    using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
 
     using Windows.Data.Xml.Dom;
@@ -26,7 +27,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
             get { return PublisherType.ImmediatelyWithAlbumArt; }
         }
 
-        public Task PublishAsync(Song song, Playlist currentPlaylist, Uri albumArtUri, CancellationToken cancellationToken)
+        public Task PublishAsync(Song song, IPlaylist currentPlaylist, Uri albumArtUri, CancellationToken cancellationToken)
         {
             return Task.Factory.StartNew(() =>
                 {
@@ -42,7 +43,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
 
                     var tileNotification = new TileNotification(wideTileTemplate)
                                                {
-                                                   ExpirationTime = DateTimeOffset.UtcNow.AddSeconds(song.Duration),
+                                                   ExpirationTime = DateTimeOffset.UtcNow.Add(song.Duration),
                                                    Tag = CurrentSongTileTag
                                                };
 
@@ -76,9 +77,9 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
         private void SetTextElements(XmlNodeList textElements, XmlDocument templateContent, Song song)
         {
             textElements[0].AppendChild(templateContent.CreateTextNode(song.Title));
-            textElements[1].AppendChild(templateContent.CreateTextNode(song.Artist));
-            textElements[2].AppendChild(templateContent.CreateTextNode(song.Album));
-            textElements[3].AppendChild(templateContent.CreateTextNode(TimeSpan.FromSeconds(song.Duration).ToPresentString()));
+            textElements[1].AppendChild(templateContent.CreateTextNode(song.GetSongArtist()));
+            textElements[2].AppendChild(templateContent.CreateTextNode(song.AlbumTitle));
+            textElements[3].AppendChild(templateContent.CreateTextNode(song.Duration.ToPresentString()));
         }
     }
 }

@@ -1,17 +1,24 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// Outcold Solutions (http://outcoldman.com)
+// OutcoldSolutions (http://outcoldsolutions.com)
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.BindingModels
 {
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
 
+    using OutcoldSolutions.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
 
     public class ArtistPageViewBindingModel : BindingModelBase
     {
+        private readonly ObservableCollection<PlaylistBindingModel> selectedItems;
         private Artist artist;
+        private IList<PlaylistBindingModel> albums;
 
-        private List<PlaylistBindingModel> albums;
+        public ArtistPageViewBindingModel()
+        {
+            this.selectedItems = new ObservableCollection<PlaylistBindingModel>();
+        }
 
         public Artist Artist
         {
@@ -22,12 +29,11 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
             set
             {
-                this.artist = value;
-                this.RaiseCurrentPropertyChanged();
+                this.SetValue(ref this.artist, value);
             }
         }
 
-        public List<PlaylistBindingModel> Albums
+        public IList<PlaylistBindingModel> Albums
         {
             get
             {
@@ -36,8 +42,23 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
             set
             {
-                this.albums = value;
-                this.RaiseCurrentPropertyChanged();
+                this.SetValue(ref this.albums, value);
+            }
+        }
+
+        public ObservableCollection<PlaylistBindingModel> SelectedItems
+        {
+            get
+            {
+                return this.selectedItems;
+            }
+        }
+
+        public void ClearSelectedItems()
+        {
+            if (this.selectedItems.Count > 0)
+            {
+                this.selectedItems.Clear();
             }
         }
     }

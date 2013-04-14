@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -36,23 +37,38 @@
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Newtonsoft.Json.4.5.11\lib\net40\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.5.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
       <HintPath>..\packages\NUnit.2.6.2\lib\nunit.framework.dll</HintPath>
     </Reference>
-    <Reference Include="OutcoldSolutions.Framework, Version=1.0.30217.29236, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
+    <Reference Include="OutcoldSolutions.Framework, Version=1.0.30413.1, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\OutcoldSolutions.Framework.1.0.30217.29236\lib\portable-win+net45+sl40+wp71\OutcoldSolutions.Framework.dll</HintPath>
+      <HintPath>..\packages\OutcoldSolutions.Framework.1.0.30413.1\lib\portable-win+net45+wp80\OutcoldSolutions.Framework.dll</HintPath>
     </Reference>
-    <Reference Include="OutcoldSolutions.SuitesBase, Version=1.0.30217.29423, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
+    <Reference Include="OutcoldSolutions.SQLite">
+      <HintPath>..\packages\OutcoldSolutions.SQLite.1.1.30331.0\lib\net45\OutcoldSolutions.SQLite.dll</HintPath>
+    </Reference>
+    <Reference Include="OutcoldSolutions.SuitesBase, Version=1.0.30413.1, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\OutcoldSolutions.SuitesBase.1.0.30217.29423\lib\net45\OutcoldSolutions.SuitesBase.dll</HintPath>
+      <HintPath>..\packages\OutcoldSolutions.SuitesBase.1.0.30413.1\lib\net45\OutcoldSolutions.SuitesBase.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Net.Http.WebRequest" />
+    <Reference Include="System.Reactive.Core, Version=2.1.30214.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Rx-Core.2.1.30214.0\lib\Net45\System.Reactive.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.Interfaces, Version=2.1.30214.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Rx-Interfaces.2.1.30214.0\lib\Net45\System.Reactive.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.Linq, Version=2.1.30214.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Rx-Linq.2.1.30214.0\lib\Net45\System.Reactive.Linq.dll</HintPath>
+    </Reference>
     <Reference Include="System.Runtime" />
     <Reference Include="System.Runtime.WindowsRuntime, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -70,14 +86,8 @@
     <Reference Include="Windows" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Windows\GoogleMusic.Core\DateTimeExtensions.cs">
-      <Link>_sources\DateTimeExtensions.cs</Link>
-    </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Diagnostics\DebugLogWriter.cs">
-      <Link>_sources\Diagnostics\DebugLogWriter.cs</Link>
-    </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\IDispatcher.cs">
-      <Link>_sources\IDispatcher.cs</Link>
+    <Compile Include="..\Windows\GoogleMusic.Core\BindingModels\SongBindingModel.cs">
+      <Link>_sources\BindingModels\SongBindingModel.cs</Link>
     </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Models\Album.cs">
       <Link>_sources\Models\Album.cs</Link>
@@ -88,71 +98,101 @@
     <Compile Include="..\Windows\GoogleMusic.Core\Models\Genre.cs">
       <Link>_sources\Models\Genre.cs</Link>
     </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Models\MusicPlaylist.cs">
-      <Link>_sources\Models\MusicPlaylist.cs</Link>
+    <Compile Include="..\Windows\GoogleMusic.Core\Models\IPlaylist.cs">
+      <Link>_sources\Models\IPlaylist.cs</Link>
     </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Models\Playlist.cs">
-      <Link>_sources\Models\Playlist.cs</Link>
+    <Compile Include="..\Windows\GoogleMusic.Core\Models\PlaylistsChangeEvent.cs">
+      <Link>_sources\Models\PlaylistsChangeEvent.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Models\PlaylistType.cs">
+      <Link>_sources\Models\PlaylistType.cs</Link>
     </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Models\Search.cs">
       <Link>_sources\Models\Search.cs</Link>
     </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Models\SettingsChangeEvent.cs">
+      <Link>_sources\Models\SettingsChangeEvent.cs</Link>
+    </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Models\Song.cs">
       <Link>_sources\Models\Song.cs</Link>
     </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Models\SongMetadata.cs">
-      <Link>_sources\Models\SongMetadata.cs</Link>
+    <Compile Include="..\Windows\GoogleMusic.Core\Models\SongState.cs">
+      <Link>_sources\Models\SongState.cs</Link>
     </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Models\SongsGrouping.cs">
-      <Link>_sources\Models\SongsGrouping.cs</Link>
+    <Compile Include="..\Windows\GoogleMusic.Core\Models\SongsUpdatedEvent.cs">
+      <Link>_sources\Models\SongsUpdatedEvent.cs</Link>
     </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Models\StreamType.cs">
       <Link>_sources\Models\StreamType.cs</Link>
     </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Models\StringEx.cs">
+      <Link>_sources\Models\StringEx.cs</Link>
+    </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Models\SystemPlaylist.cs">
       <Link>_sources\Models\SystemPlaylist.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Models\SystemPlaylistType.cs">
+      <Link>_sources\Models\SystemPlaylistType.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Models\SystemPlaylistTypeExtensions.cs">
+      <Link>_sources\Models\SystemPlaylistTypeExtensions.cs</Link>
     </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Models\UserInfo.cs">
       <Link>_sources\Models\UserInfo.cs</Link>
     </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Models\UserPlaylist.cs">
+      <Link>_sources\Models\UserPlaylist.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Models\UserPlaylistEntry.cs">
+      <Link>_sources\Models\UserPlaylistEntry.cs</Link>
+    </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Models\UserSession.cs">
       <Link>_sources\Models\UserSession.cs</Link>
     </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Repositories\AlbumCollection.cs">
-      <Link>_sources\Repositories\AlbumCollection.cs</Link>
+    <Compile Include="..\Windows\GoogleMusic.Core\Repositories\AlbumsRepository.cs">
+      <Link>_sources\Repositories\AlbumsRepository.cs</Link>
     </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Repositories\ArtistCollection.cs">
-      <Link>_sources\Repositories\ArtistCollection.cs</Link>
+    <Compile Include="..\Windows\GoogleMusic.Core\Repositories\ArtistsRepository.cs">
+      <Link>_sources\Repositories\ArtistsRepository.cs</Link>
     </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Repositories\GenreCollection.cs">
-      <Link>_sources\Repositories\GenreCollection.cs</Link>
+    <Compile Include="..\Windows\GoogleMusic.Core\Repositories\DbContext.cs">
+      <Link>_sources\Repositories\DbContext.cs</Link>
     </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Repositories\IMusicPlaylistRepository.cs">
-      <Link>_sources\Repositories\IMusicPlaylistRepository.cs</Link>
+    <Compile Include="..\Windows\GoogleMusic.Core\Repositories\GenresRepository.cs">
+      <Link>_sources\Repositories\GenresRepository.cs</Link>
     </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Repositories\IPlaylistCollection.cs">
-      <Link>_sources\Repositories\IPlaylistCollection.cs</Link>
-    </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Repositories\ISongsRepository.cs">
-      <Link>_sources\Repositories\ISongsRepository.cs</Link>
-    </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Repositories\MusicPlaylistCollection.cs">
-      <Link>_sources\Repositories\MusicPlaylistCollection.cs</Link>
-    </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Repositories\MusicPlaylistRepository.cs">
-      <Link>_sources\Repositories\MusicPlaylistRepository.cs</Link>
+    <Compile Include="..\Windows\GoogleMusic.Core\Repositories\IPlaylistRepository.cs">
+      <Link>_sources\Repositories\IPlaylistRepository.cs</Link>
     </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Repositories\Order.cs">
       <Link>_sources\Repositories\Order.cs</Link>
     </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Repositories\PlaylistCollectionBase.cs">
-      <Link>_sources\Repositories\PlaylistCollectionBase.cs</Link>
+    <Compile Include="..\Windows\GoogleMusic.Core\Repositories\RepositoryBase.cs">
+      <Link>_sources\Repositories\RepositoryBase.cs</Link>
     </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Repositories\SongsRepository.cs">
       <Link>_sources\Repositories\SongsRepository.cs</Link>
     </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Repositories\SystemPlaylistCollection.cs">
-      <Link>_sources\Repositories\SystemPlaylistCollection.cs</Link>
+    <Compile Include="..\Windows\GoogleMusic.Core\Repositories\SystemPlaylistsRepository.cs">
+      <Link>_sources\Repositories\SystemPlaylistsRepository.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Repositories\UserPlaylistsRepository.cs">
+      <Link>_sources\Repositories\UserPlaylistsRepository.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Services\AuthentificationService.cs">
+      <Link>_sources\Services\AuthentificationService.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Services\DataProtectService.cs">
+      <Link>_sources\Services\DataProtectService.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Services\GoogleMusicSessionService.cs">
+      <Link>_sources\Services\GoogleMusicSessionService.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Services\IAuthentificationService.cs">
+      <Link>_sources\Services\IAuthentificationService.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Services\IDataProtectService.cs">
+      <Link>_sources\Services\IDataProtectService.cs</Link>
     </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Services\IGoogleAccountService.cs">
       <Link>_sources\Services\IGoogleAccountService.cs</Link>
@@ -160,17 +200,11 @@
     <Compile Include="..\Windows\GoogleMusic.Core\Services\IGoogleMusicSessionService.cs">
       <Link>_sources\Services\IGoogleMusicSessionService.cs</Link>
     </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Services\IPlaylistCollectionsService.cs">
-      <Link>_sources\Services\IPlaylistCollectionsService.cs</Link>
-    </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Services\ISettingsService.cs">
       <Link>_sources\Services\ISettingsService.cs</Link>
     </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Services\ISongsCacheService.cs">
-      <Link>_sources\Services\ISongsCacheService.cs</Link>
-    </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Services\PlaylistCollectionsService.cs">
-      <Link>_sources\Services\PlaylistCollectionsService.cs</Link>
+    <Compile Include="..\Windows\GoogleMusic.Core\Services\PlaylistsService.cs">
+      <Link>_sources\Services\PlaylistsService.cs</Link>
     </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Services\Publishers\CurrentSongPublisherService.cs">
       <Link>_sources\Services\Publishers\CurrentSongPublisherService.cs</Link>
@@ -187,11 +221,8 @@
     <Compile Include="..\Windows\GoogleMusic.Core\Services\SettingsValueChangedEventArgs.cs">
       <Link>_sources\Services\SettingsValueChangedEventArgs.cs</Link>
     </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Services\SongsCache.cs">
-      <Link>_sources\Services\SongsCache.cs</Link>
-    </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Services\SongsCacheService.cs">
-      <Link>_sources\Services\SongsCacheService.cs</Link>
+    <Compile Include="..\Windows\GoogleMusic.Core\Services\UserPlaylistsService.cs">
+      <Link>_sources\Services\UserPlaylistsService.cs</Link>
     </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Web\CookieContainerWrapper.cs">
       <Link>_sources\Web\CookieContainerWrapper.cs</Link>
@@ -201,9 +232,6 @@
     </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Web\GoogleMusicWebService.cs">
       <Link>_sources\Web\GoogleMusicWebService.cs</Link>
-    </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Web\HttpContentExtensions.cs">
-      <Link>_sources\Web\HttpContentExtensions.cs</Link>
     </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Web\ICookieManager.cs">
       <Link>_sources\Web\ICookieManager.cs</Link>
@@ -219,12 +247,6 @@
     </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Web\INetworkRandomAccessStream.cs">
       <Link>_sources\Web\INetworkRandomAccessStream.cs</Link>
-    </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Web\IPlaylistsWebService.cs">
-      <Link>_sources\Web\IPlaylistsWebService.cs</Link>
-    </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Web\ISongWebService.cs">
-      <Link>_sources\Web\ISongWebService.cs</Link>
     </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Web\Lastfm\ErrorResp.cs">
       <Link>_sources\Web\Lastfm\ErrorResp.cs</Link>
@@ -252,9 +274,6 @@
     </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Web\Lastfm\TokenResp.cs">
       <Link>_sources\Web\Lastfm\TokenResp.cs</Link>
-    </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Web\LoggerWebExtensions.cs">
-      <Link>_sources\Web\LoggerWebExtensions.cs</Link>
     </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Web\MediaStreamDownloadService.cs">
       <Link>_sources\Web\MediaStreamDownloadService.cs</Link>
@@ -304,24 +323,22 @@
     <Compile Include="..\Windows\GoogleMusic.Core\Web\PlaylistsWebService.cs">
       <Link>_sources\Web\PlaylistsWebService.cs</Link>
     </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Web\SongWebService.cs">
-      <Link>_sources\Web\SongWebService.cs</Link>
+    <Compile Include="..\Windows\GoogleMusic.Core\Web\SongsWebService.cs">
+      <Link>_sources\Web\SongsWebService.cs</Link>
     </Compile>
-    <Compile Include="..\Windows\GoogleMusic.Core\Web\WebServiceBase.cs">
-      <Link>_sources\Web\WebServiceBase.cs</Link>
+    <Compile Include="..\Windows\GoogleMusic.Core\Web\WebRequestException.cs">
+      <Link>_sources\Web\WebRequestException.cs</Link>
     </Compile>
     <Compile Include="GoogleMusicSuitesBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Repositories\SongsRepositorySuites.cs" />
     <Compile Include="Services\SongStubs.cs" />
-    <Compile Include="Repositories\AlbumCollectionSuites.cs" />
     <Compile Include="Services\Pubslishers\CurrentSongPublisherServiceSuites.cs" />
     <Compile Include="SuitesConstants.cs" />
     <Compile Include="Web\CookieContainerWrapperSuites.cs" />
     <Compile Include="Web\GoogleAccountWebServiceSuites.cs" />
     <Compile Include="Web\PlaylistsWebServiceSuites.cs" />
-    <Compile Include="Web\HttpContentExtensionsSuites.cs" />
     <Compile Include="Web\Lastfm\LastfmAccountWebServiceSuites.cs" />
+    <Compile Include="Web\SongSerializationSuites.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

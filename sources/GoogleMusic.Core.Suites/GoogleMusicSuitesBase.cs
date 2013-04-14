@@ -3,15 +3,23 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Suites
 {
-    using OutcoldSolutions.GoogleMusic.Diagnostics;
+    using System.Diagnostics;
+
+    using OutcoldSolutions.Diagnostics;
 
     public class GoogleMusicSuitesBase : SuitesBase
     {
-        public override void SetUp()
+        public GoogleMusicSuitesBase()
+            : base(new DebugConsole())
         {
-            base.SetUp();
+        }
 
-            this.LogManager.Writers.AddOrUpdate(typeof(DebugLogWriter), type => new DebugLogWriter(), (type, writer) => writer);
+        private class DebugConsole : IDebugConsole
+        {
+            public void WriteLine(string message)
+            {
+                Debug.WriteLine(message);
+            }
         }
     }
 }

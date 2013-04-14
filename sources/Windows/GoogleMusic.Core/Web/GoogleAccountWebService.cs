@@ -12,6 +12,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
     using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Web.Models;
+    using OutcoldSolutions.Web;
 
     public class GoogleAccountWebService : WebServiceBase, IGoogleAccountWebService
     {
@@ -55,7 +56,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 }
                 catch (Exception e)
                 {
-                    this.logger.LogErrorException(e);
+                    this.logger.Warning(e, "Exception while tried to get proxy settings");
                 }
             }
 

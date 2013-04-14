@@ -3,106 +3,28 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.BindingModels
 {
-    using OutcoldSolutions.GoogleMusic.Models;
+    using OutcoldSolutions.BindingModels;
+    using OutcoldSolutions.GoogleMusic.Services;
 
-    public enum PlayState
+    public class PlayerBindingModel : BindingModelBase
     {
-        Stop = 0,
-
-        Play = 1,
-
-        Pause = 2
-    }
-
-    public class PlayerBindingModel : SongsBindingModelBase
-    {
-        private int currentSongIndex = -1;
-        private PlayState playState = PlayState.Stop;
-
-        private bool isShuffleEnabled = false;
-        private bool isRepeatAllEnabled = false;
-        private bool isLockScreenEnabled = false;
-
-        private bool isBusy = false;
+        private QueueState playState = QueueState.Unknown;
 
         private double totalSeconds = 1;
         private double currentPosition;
         private double downloadProgress;
 
-        public DelegateCommand SkipBackCommand { get; set; }
-
-        public DelegateCommand PlayCommand { get; set; }
-
-        public DelegateCommand PauseCommand { get; set; }
-
-        public DelegateCommand SkipAheadCommand { get; set; }
-
-        public DelegateCommand ShuffleCommand { get; set; }
-
-        public DelegateCommand RepeatAllCommand { get; set; }
-
-        public DelegateCommand LockScreenCommand { get; set; }
-
-        public bool IsShuffleEnabled
-        {
-            get
-            {
-                return this.isShuffleEnabled;
-            }
-
-            set
-            {
-                if (this.isShuffleEnabled != value)
-                {
-                    this.isShuffleEnabled = value;
-                    this.RaiseCurrentPropertyChanged();
-                }
-            }
-        }
-
-        public bool IsRepeatAllEnabled
-        {
-            get
-            {
-                return this.isRepeatAllEnabled;
-            }
-
-            set
-            {
-                if (this.isRepeatAllEnabled != value)
-                {
-                    this.isRepeatAllEnabled = value;
-                    this.RaiseCurrentPropertyChanged();
-                }
-            }
-        }
-
-        public bool IsLockScreenEnabled
-        {
-            get
-            {
-                return this.isLockScreenEnabled;
-            }
-
-            set
-            {
-                if (this.isLockScreenEnabled != value)
-                {
-                    this.isLockScreenEnabled = value;
-                    this.RaiseCurrentPropertyChanged();
-                }
-            }
-        }
-
+        private SongBindingModel currentSong;
+        
         public bool IsPlaying
         {
             get
             {
-                return this.playState == PlayState.Play;
+                return this.playState == QueueState.Play;
             }
         }
 
-        public PlayState State
+        public QueueState State
         {
             get
             {
@@ -111,53 +33,24 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
             set
             {
-                if (this.playState != value)
+                if (this.SetValue(ref this.playState, value))
                 {
-                    this.playState = value;
-                    this.RaiseCurrentPropertyChanged();
                     this.RaisePropertyChanged(() => this.IsPlaying);
+                    this.RaisePropertyChanged(() => this.IsBusy);
                 }
             }
         }
 
-        public int CurrentSongIndex
+        public SongBindingModel CurrentSong
         {
             get
             {
-                return this.currentSongIndex;
+                return this.currentSong;
             }
 
             set
             {
-                var currentSong = this.CurrentSong;
-                if (currentSong != null)
-                {
-                    currentSong.IsPlaying = false;
-                }
-
-                this.currentSongIndex = value;
-
-                currentSong = this.CurrentSong;
-                if (currentSong != null)
-                {
-                    currentSong.IsPlaying = true;
-                }
-
-                this.RaiseCurrentPropertyChanged();
-                this.RaisePropertyChanged(() => this.CurrentSong);
-            }
-        }
-
-        public Song CurrentSong
-        {
-            get
-            {
-                if (this.currentSongIndex >= 0 && this.currentSongIndex < this.Songs.Count)
-                {
-                    return this.Songs[this.currentSongIndex];
-                }
-
-                return null;
+                this.SetValue(ref this.currentSong, value);
             }
         }
 
@@ -165,17 +58,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         {
             get
             {
-                return this.isBusy;
-            }
-
-            set
-            {
-                if (this.isBusy != value)
-                {
-                    this.isBusy = value;
-                    this.RaiseCurrentPropertyChanged();
-                    this.UpdateBindingModel();
-                }
+                return this.playState == QueueState.Busy;
             }
         }
 
@@ -188,8 +71,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
             set
             {
-                this.totalSeconds = value;
-                this.RaiseCurrentPropertyChanged();
+                this.SetValue(ref this.totalSeconds, value);
             }
         }
 
@@ -202,8 +84,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
             set
             {
-                this.currentPosition = value;
-                this.RaiseCurrentPropertyChanged();
+                this.SetValue(ref this.currentPosition, value);
             }
         }
 
@@ -216,9 +97,10 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
             set
             {
-                this.downloadProgress = value;
-                this.RaiseCurrentPropertyChanged();
-                this.RaisePropertyChanged(() => this.IsDownloaded);
+                if (this.SetValue(ref this.downloadProgress, value))
+                {
+                    this.RaisePropertyChanged(() => this.IsDownloaded);
+                }
             }
         }
 
@@ -228,14 +110,6 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             {
                 return this.DownloadProgress <= 0.001 || this.DownloadProgress >= 0.999;
             }
-        }
-
-        public void UpdateBindingModel()
-        {
-            this.PauseCommand.RaiseCanExecuteChanged();
-            this.PlayCommand.RaiseCanExecuteChanged();
-            this.SkipAheadCommand.RaiseCanExecuteChanged();
-            this.SkipBackCommand.RaiseCanExecuteChanged();
         }
     }
 }

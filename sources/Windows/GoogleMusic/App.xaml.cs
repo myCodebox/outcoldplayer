@@ -6,33 +6,38 @@ namespace OutcoldSolutions.GoogleMusic
 {
     using System;
     using System.Diagnostics;
+    using System.Globalization;
     using System.Threading.Tasks;
 
+    using BugSense;
+
+    using OutcoldSolutions.BindingModels;
+    using OutcoldSolutions.Controls;
     using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.BindingModels;
-    using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Models;
-    using OutcoldSolutions.GoogleMusic.Presenters;
     using OutcoldSolutions.GoogleMusic.Presenters.Popups;
-    using OutcoldSolutions.GoogleMusic.Presenters.Settings;
     using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Services.Publishers;
+    using OutcoldSolutions.GoogleMusic.Shell;
     using OutcoldSolutions.GoogleMusic.Views;
     using OutcoldSolutions.GoogleMusic.Views.Popups;
-    using OutcoldSolutions.GoogleMusic.Views.Settings;
     using OutcoldSolutions.GoogleMusic.Web;
     using OutcoldSolutions.GoogleMusic.Web.Lastfm;
+    using OutcoldSolutions.GoogleMusic.Web.Synchronization;
+    using OutcoldSolutions.Shell;
+    using OutcoldSolutions.Views;
 
-    using Windows.UI.Core;
+    using Windows.ApplicationModel;
     using Windows.UI.Notifications;
     using Windows.UI.Xaml;
+    using Windows.UI.Xaml.Controls;
+    using Windows.UI.Xaml.Media;
+    using Windows.UI.Xaml.Media.Imaging;
 
     public sealed partial class App : ApplicationBase
     {
-        private ILogManager logManager;
-        private ISettingsService settingsService;
-
         public App()
         {
             this.InitializeComponent();
@@ -40,184 +45,155 @@ namespace OutcoldSolutions.GoogleMusic
 
         protected override void InitializeApplication()
         {
-            MainView mainView = Window.Current.Content as MainView;
+            this.Resources["ApplicationName"] = string.Format(CultureInfo.CurrentCulture, "gMusic {0}", Package.Current.Id.Version.ToVersionString());
 
-            // Do not repeat app initialization when the Window already has content,
-            // just ensure that the window is active
-            if (mainView == null)
+            using (var registration = Container.Registration())
             {
-                using (var registration = Container.Registration())
-                {
-                    registration.Register<ILogManager>().AsSingleton<LogManager>();
+#if DEBUG
+                registration.Register<IDebugConsole>().AsSingleton<DebugConsole>();
+#endif
 
-                    registration.Register<INavigationService>().AsSingleton<NavigationService>();
+                Registration.RegisterPages(registration);
+                Registration.RegisterSettingViews(registration);
+                Registration.RegisterPopupViews(registration);
+                Registration.RegisterViews(registration);
 
-                    registration.Register<PlaylistViewResolver>();
+                registration.Register<SongsBindingModel>();
 
-                    registration.Register<IMainView>()
-                                .And<IMediaElemenetContainerView>()
-                                .And<IApplicationToolbar>()
-                                .InjectionRule<PresenterBase, MainViewPresenter>()
-                                .AsSingleton<MainView>();
+                // Settings
+                registration.Register<ISearchService>().AsSingleton<SearchService>();
 
-                    registration.Register<MainViewPresenter>();
+                registration.Register<ILastfmAuthentificationView>()
+                            .InjectionRule<BindingModelBase, LastfmAuthentificationPresenter>()
+                            .As<LastfmAuthentificationPageView>();
+                registration.Register<LastfmAuthentificationPresenter>();
 
-                    registration.Register<IAuthentificationView>()
-                                .InjectionRule<PresenterBase, AuthentificationPresenter>()
-                                .As<AuthentificationPageView>();
-                    registration.Register<AuthentificationPresenter>();
+                // Services
+                registration.Register<IDataProtectService>().AsSingleton<DataProtectService>();
+                registration.Register<IGoogleAccountWebService>().As<GoogleAccountWebService>();
+                registration.Register<IGoogleMusicWebService>().AsSingleton<GoogleMusicWebService>();
+                registration.Register<IGoogleAccountService>().AsSingleton<GoogleAccountService>();
+                registration.Register<IAuthentificationService>().As<AuthentificationService>();
+                registration.Register<IPlaylistsWebService>().As<PlaylistsWebService>();
+                registration.Register<ISongsWebService>().AsSingleton<SongsWebService>();
+                registration.Register<ISettingsService>().AsSingleton<SettingsService>();
+                registration.Register<IGoogleMusicSessionService>().AsSingleton<GoogleMusicSessionService>();
 
-                    registration.Register<IStartPageView>()
-                                .InjectionRule<PresenterBase, StartPageViewPresenter>()
-                                .AsSingleton<StartPageView>();
-                    registration.Register<StartPageViewPresenter>().AsSingleton();
-                    registration.Register<StartViewBindingModel>().AsSingleton();
+                registration.Register<IMediaStreamDownloadService>().AsSingleton<MediaStreamDownloadService>();
 
-                    registration.Register<IPlaylistsPageView>()
-                                .InjectionRule<PresenterBase, PlaylistsPageViewPresenter>()
-                                .AsSingleton<PlaylistsPageView>();
-                    registration.Register<PlaylistsPageViewPresenter>().AsSingleton();
-                    registration.Register<PlaylistsPageViewBindingModel>().AsSingleton();
-
-                    registration.Register<IPlaylistPageView>()
-                                .InjectionRule<PresenterBase, PlaylistPageViewPresenter>()
-                                .AsSingleton<PlaylistPageView>();
-                    registration.Register<PlaylistPageViewPresenter>().AsSingleton();
-                    registration.Register<PlaylistPageViewBindingModel<Playlist>>().AsSingleton();
-
-                    registration.Register<ICurrentPlaylistPageView>()
-                                .InjectionRule<PresenterBase, CurrentPlaylistPageViewPresenter>()
-                                .AsSingleton<CurrentPlaylistPageView>();
-                    registration.Register<CurrentPlaylistPageViewPresenter>().AsSingleton();
-                    registration.Register<CurrentPlaylistPageViewBindingModel>().AsSingleton();
-
-                    registration.Register<IProgressLoadingView>()
-                                .InjectionRule<PresenterBase, ProgressLoadingPresenter>()
-                                .As<ProgressLoadingPageView>();
-                    registration.Register<ProgressLoadingPresenter>();
-
-                    registration.Register<ISearchView>()
-                                .InjectionRule<PresenterBase, SearchPageViewPresenter>()
-                                .AsSingleton<SearchPageView>();
-                    registration.Register<SearchPageViewPresenter>().AsSingleton();
-                    registration.Register<SearchPageViewBindingModel>().AsSingleton();
-
-                    registration.Register<IArtistPageView>()
-                                .InjectionRule<PresenterBase, ArtistPageViewPresenter>()
-                                .AsSingleton<ArtistPageView>();
-                    registration.Register<ArtistPageViewPresenter>().AsSingleton(); 
-                    registration.Register<ArtistPageViewBindingModel>().AsSingleton(); 
-
-                    registration.Register<IAlbumPageView>()
-                                .InjectionRule<PresenterBase, AlbumPageViewPresenter>()
-                                .AsSingleton<AlbumPageView>();
-                    registration.Register<AlbumPageViewPresenter>().AsSingleton();
-                    registration.Register<PlaylistPageViewBindingModel<Album>>().AsSingleton();
-
-                    registration.Register<ICurrentPlaylistService>()
-                                .And<PlayerViewPresenter>()
-                                .AsSingleton<PlayerViewPresenter>();
-
-                    registration.Register<IWhatIsNewView>().As<WhatIsNewView>();
-
-                    registration.Register<IAddToPlaylistPopupView>()
-                                .InjectionRule<PresenterBase, AddToPlaylistPopupViewPresenter>()
-                                .As<AddToPlaylistPopupView>();
-                    registration.Register<AddToPlaylistPopupViewPresenter>();
-
-                    // Settings
-                    registration.Register<ISettingsCommands>().AsSingleton<SettingsCommands>();
-                    registration.Register<ISearchService>().AsSingleton<SearchService>();
-
-                    // Settings views
-                    registration.Register<AccountPageView>()
-                                .InjectionRule<PresenterBase, AccountPageViewPresenter>();
-                    registration.Register<AccountPageViewPresenter>();
-
-                    registration.Register<ILastfmAuthentificationView>()
-                                .InjectionRule<PresenterBase, LastfmAuthentificationPresenter>()
-                                .As<LastfmAuthentificationPageView>();
-                    registration.Register<LastfmAuthentificationPresenter>();
-
-                    // Services
-                    registration.Register<IDataProtectService>().AsSingleton<DataProtectService>();
-                    registration.Register<IGoogleAccountWebService>().As<GoogleAccountWebService>();
-                    registration.Register<IGoogleMusicWebService>().AsSingleton<GoogleMusicWebService>();
-                    registration.Register<IGoogleAccountService>().AsSingleton<GoogleAccountService>();
-                    registration.Register<IAuthentificationService>().As<AuthentificationService>();
-                    registration.Register<IPlaylistsWebService>().As<PlaylistsWebService>();
-                    registration.Register<ISongWebService>().AsSingleton<SongWebService>();
-                    registration.Register<ISettingsService>().AsSingleton<SettingsService>();
-                    registration.Register<IGoogleMusicSessionService>().AsSingleton<GoogleMusicSessionService>();
-
-                    registration.Register<IMediaStreamDownloadService>().AsSingleton<MediaStreamDownloadService>();
-
-                    registration.Register<IDispatcher>()
-                                .AsSingleton(new DispatcherContainer(CoreWindow.GetForCurrentThread().Dispatcher));
-
-                    registration.Register<ILastfmWebService>().AsSingleton<LastfmWebService>();
-                    registration.Register<ILastfmAccountWebService>().As<LastfmAccountWebService>();
-
-                    // Publishers
-                    registration.Register<ICurrentSongPublisherService>().AsSingleton<CurrentSongPublisherService>();
-                    registration.Register<GoogleMusicCurrentSongPublisher>().AsSingleton();
-                    registration.Register<MediaControlCurrentSongPublisher>().AsSingleton();
-                    registration.Register<TileCurrentSongPublisher>().AsSingleton();
-                    registration.Register<LastFmCurrentSongPublisher>().AsSingleton();
-
-                    // Songs Repositories and Services
-                    registration.Register<ISongsRepository>().AsSingleton<SongsRepository>();
-                    registration.Register<IMusicPlaylistRepository>().AsSingleton<MusicPlaylistRepository>();
-                    registration.Register<IPlaylistCollection<Album>>().AsSingleton<AlbumCollection>();
-                    registration.Register<IPlaylistCollection<Artist>>().AsSingleton<ArtistCollection>();
-                    registration.Register<IPlaylistCollection<Genre>>().AsSingleton<GenreCollection>();
-                    registration.Register<IPlaylistCollection<SystemPlaylist>>().AsSingleton<SystemPlaylistCollection>();
-                    registration.Register<IPlaylistCollection<MusicPlaylist>>().AsSingleton<MusicPlaylistCollection>();
-                    registration.Register<IPlaylistCollectionsService>().AsSingleton<PlaylistCollectionsService>();
-
-                    registration.Register<ISongsCacheService>().AsSingleton<SongsCacheService>();
-
-                    registration.Register<ISongMetadataEditService>().AsSingleton<SongMetadataEditService>();
-                }
-
-                this.logManager = Container.Resolve<ILogManager>();
-                this.settingsService = Container.Resolve<ISettingsService>();
-
-                this.UpdateLogLevel();
-                this.settingsService.ValueChanged += (sender, eventArgs) =>
-                    {
-                        if (string.Equals(eventArgs.Key, "IsLoggingOn", StringComparison.OrdinalIgnoreCase))
-                        {
-                            Task.Factory.StartNew(this.UpdateLogLevel);
-                        }
-                    };
-
-                // Create a Frame to act as the navigation context and navigate to the first page
-                mainView = (MainView)Container.Resolve<IMainView>();
-
-                Container.Resolve<INavigationService>().RegisterRegionProvider(mainView);
-
-                Container.Resolve<IGoogleMusicSessionService>().LoadSession();
-
-                // Place the frame in the current Window
-                Window.Current.Content = mainView;
+                registration.Register<ILastfmWebService>().AsSingleton<LastfmWebService>();
+                registration.Register<ILastfmAccountWebService>().As<LastfmAccountWebService>();
 
                 // Publishers
-                var currentSongPublisherService = Container.Resolve<ICurrentSongPublisherService>();
-                currentSongPublisherService.AddPublisher<GoogleMusicCurrentSongPublisher>();
-                currentSongPublisherService.AddPublisher<MediaControlCurrentSongPublisher>();
-                currentSongPublisherService.AddPublisher<TileCurrentSongPublisher>();
+                registration.Register<ICurrentSongPublisherService>().AsSingleton<CurrentSongPublisherService>();
+                registration.Register<GoogleMusicCurrentSongPublisher>().AsSingleton();
+                registration.Register<MediaControlCurrentSongPublisher>().AsSingleton();
+                registration.Register<TileCurrentSongPublisher>().AsSingleton();
+                registration.Register<LastFmCurrentSongPublisher>().AsSingleton();
 
-                if (Container.Resolve<ILastfmWebService>().RestoreSession())
-                {
-                    currentSongPublisherService.AddPublisher<LastFmCurrentSongPublisher>();
-                }
+                // Songs Repositories and Services
+                registration.Register<ISongsRepository>().AsSingleton<SongsRepository>();
+                registration.Register<IUserPlaylistsRepository>().And<IPlaylistRepository<UserPlaylist>>().AsSingleton<UserPlaylistsRepository>();
+                registration.Register<IArtistsRepository>().And<IPlaylistRepository<Artist>>().AsSingleton<ArtistsRepository>();
+                registration.Register<IAlbumsRepository>().And<IPlaylistRepository<Album>>().AsSingleton<AlbumsRepository>();
+                registration.Register<IGenresRepository>().And<IPlaylistRepository<Genre>>().AsSingleton<GenresRepository>();
+                registration.Register<ISystemPlaylistsRepository>().And<IPlaylistRepository<SystemPlaylist>>().AsSingleton<SystemPlaylistsRepository>();
+                registration.Register<IPlaylistsService>().AsSingleton<PlaylistsService>();
+                registration.Register<IUserPlaylistsService>().AsSingleton<UserPlaylistsService>();
 
-                Container.Resolve<ISettingsCommands>().Register();
+                registration.Register<IInitialSynchronization>().As<InitialSynchronization>();
+
+                registration.Register<ISongsService>().AsSingleton<SongsService>();
+
+                registration.Register<RightRegionControlService>().AsSingleton();
+                registration.Register<ApplicationLogManager>().AsSingleton();
+
+                registration.Register<MediaElement>()
+                            .AsSingleton(
+                                new MediaElement()
+                                    {
+                                        IsLooping = false,
+                                        AutoPlay = true,
+                                        AudioCategory = AudioCategory.BackgroundCapableMedia
+                                    });
+
+                registration.Register<IMediaElementContainer>()
+                            .AsSingleton<MediaElementContainer>();
+
+                registration.Register<IPlayQueueService>()
+                            .AsSingleton<PlayQueueService>();
+
+                registration.Register<INotificationService>()
+                            .AsSingleton<NotificationService>();
+
+                registration.Register<MediaControlIntegration>();
+                registration.Register<CurrentSongPropertiesUpdateService>();
+
+                registration.Register<IGoogleMusicSynchronizationService>()
+                            .AsSingleton<GoogleMusicSynchronizationService>();
+
+                registration.Register<ScreenLocker>();
             }
 
-            // Ensure the current window is active
-            Window.Current.Activate();
+            Container.Resolve<ApplicationLogManager>();
+
+            Container.Resolve<IGoogleMusicSessionService>().LoadSession();
+
+            // Publishers
+            var currentSongPublisherService = Container.Resolve<ICurrentSongPublisherService>();
+            currentSongPublisherService.AddPublisher<GoogleMusicCurrentSongPublisher>();
+            currentSongPublisherService.AddPublisher<MediaControlCurrentSongPublisher>();
+            currentSongPublisherService.AddPublisher<TileCurrentSongPublisher>();
+
+            if (Container.Resolve<ILastfmWebService>().RestoreSession())
+            {
+                currentSongPublisherService.AddPublisher<LastFmCurrentSongPublisher>();
+            }
+
+            Container.Resolve<ISearchService>();
+        }
+
+        protected override void OnActivated(bool isFirstTimeActivated)
+        {
+            if (isFirstTimeActivated)
+            {
+                Container.Resolve<RightRegionControlService>();
+
+                var mainFrameRegionProvider = Container.Resolve<IMainFrameRegionProvider>();
+                mainFrameRegionProvider.SetContent(
+                    MainFrameRegion.Background,
+                    new Image()
+                    {
+                        Source = new BitmapImage(new Uri("ms-appx:///Resources/logo460.png")),
+                        Height = 460,
+                        Width = 460,
+                        Margin = new Thickness(20),
+                        HorizontalAlignment = HorizontalAlignment.Right,
+                        VerticalAlignment = VerticalAlignment.Top,
+                        Opacity = 0.02
+                    });
+
+                mainFrameRegionProvider.SetContent(MainFrameRegion.BottomAppBarRightZone, Container.Resolve<IPlayerView>());
+                mainFrameRegionProvider.SetContent(MainFrameRegion.SnappedView, Container.Resolve<ISnappedPlayerView>());
+                mainFrameRegionProvider.SetContent(MainFrameRegion.TopAppBarRightZone, new LogoView());
+
+                var page = (Page)Window.Current.Content;
+                VisualTreeHelperEx.GetVisualChild<Panel>(page).Children.Add(Container.Resolve<MediaElement>());
+
+                MainMenu.Initialize(Container.Resolve<IMainFrame>());
+                ApplicationSettingViews.Initialize(Container.Resolve<IApplicationSettingViewsService>());
+
+                Container.Resolve<MediaControlIntegration>();
+                Container.Resolve<CurrentSongPropertiesUpdateService>();
+                Container.Resolve<ScreenLocker>();
+
+                Container.Resolve<INavigationService>().NavigateTo<IStartPageView>();
+
+#if !DEBUG
+                BugSense.BugSenseHandler.Instance.Init(
+                    this, "w8c8d6b5", new NotificationOptions() { Type = enNotificationType.None, HandleWhileDebugging = true });
+#endif
+            }
         }
 
         protected override async Task OnSuspendingAsync()
@@ -231,33 +207,18 @@ namespace OutcoldSolutions.GoogleMusic
             }
 
             Container.Resolve<ILastfmWebService>().SaveCurrentSession();
-            await Container.Resolve<ISongsRepository>().SaveToCacheAsync();
 
             TileUpdateManager.CreateTileUpdaterForApplication().Clear();
         }
 
-        private void UpdateLogLevel()
+#if DEBUG
+        private class DebugConsole : IDebugConsole
         {
-            var isLoggingOn = this.settingsService.GetValue("IsLoggingOn", defaultValue: false);
-            if (isLoggingOn)
+            public void WriteLine(string message)
             {
-                this.logManager.Writers.AddOrUpdate(typeof(FileLogWriter), type => new FileLogWriter(), (type, writer) => writer);
+                Debug.WriteLine(message);
             }
-            else
-            {
-                ILogWriter fileLogWriter;
-                if (this.logManager.Writers.TryRemove(typeof(FileLogWriter), out fileLogWriter))
-                {
-                    ((FileLogWriter)fileLogWriter).Dispose();
-                }
-            }
-
-            if (Debugger.IsAttached)
-            {
-                this.logManager.Writers.AddOrUpdate(typeof(DebugLogWriter), type => new DebugLogWriter(), (type, writer) => writer);
-            }
-
-            this.logManager.LogLevel = this.logManager.Writers.Count > 0 ? LogLevel.Info : LogLevel.None;
         }
+#endif
     }
 }

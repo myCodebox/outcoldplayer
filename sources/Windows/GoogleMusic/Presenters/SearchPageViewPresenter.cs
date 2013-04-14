@@ -12,20 +12,19 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
+    using OutcoldSolutions.Presenters;
 
-    public class SearchPageViewPresenter : PagePresenterBase<ISearchView, SearchPageViewBindingModel>
+    public class SearchPageViewPresenter : PagePresenterBase<ISearchPageView, SearchPageViewBindingModel>
     {
         private readonly ISongsRepository songsRepository;
-        private readonly IPlaylistCollectionsService collectionsService;
+        private readonly IPlaylistsService playlistsService;
 
         public SearchPageViewPresenter(
-            IDependencyResolverContainer container,
             ISongsRepository songsRepository,
-            IPlaylistCollectionsService collectionsService)
-            : base(container)
+            IPlaylistsService playlistsService)
         {
             this.songsRepository = songsRepository;
-            this.collectionsService = collectionsService;
+            this.playlistsService = playlistsService;
         }
 
         protected override async Task LoadDataAsync(NavigatedToEventArgs navigatedToEventArgs)
@@ -39,57 +38,48 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.BindingModel.Groups = searchGroupBindingModels;
         }
 
-        public async Task<List<SearchGroupBindingModel>> Search(string query)
+        private async Task<List<SearchGroupBindingModel>> Search(string query)
         {
             var results = new List<SearchGroupBindingModel>();
 
-            var artists = (await this.collectionsService.GetCollection<Artist>().SearchAsync(query))
-                    .Select(x => new PlaylistResultBindingModel(query, x))
-                    .Cast<SearchResultBindingModel>()
-                    .ToList();
+            var types = new[] { PlaylistType.Artist, PlaylistType.Album, PlaylistType.Genre, PlaylistType.UserPlaylist };
+            bool hasUserPlaylistsResults = false;
 
-            if (artists.Count > 0)
+            foreach (var playlistType in types)
             {
-                results.Add(new SearchGroupBindingModel("Artists", artists));
+                var playlists = (await this.playlistsService.SearchAsync(playlistType, query))
+                   .Select(x => new PlaylistResultBindingModel(query, x))
+                   .Cast<SearchResultBindingModel>()
+                   .ToList();
+
+                if (playlists.Count > 0)
+                {
+                    if (playlistType == PlaylistType.UserPlaylist)
+                    {
+                        hasUserPlaylistsResults = true;
+                    }
+
+                    results.Add(new SearchGroupBindingModel(playlistType.ToTitle(), playlists));
+                }
             }
 
-            var albums = (await this.collectionsService.GetCollection<Album>().SearchAsync(query))
-                    .Select(x => new PlaylistResultBindingModel(query, x))
-                    .Cast<SearchResultBindingModel>()
-                    .ToList();
-
-            if (albums.Count > 0)
-            {
-                results.Add(new SearchGroupBindingModel("Albums", albums));
-            }
-
-            var genres = (await this.collectionsService.GetCollection<Genre>().SearchAsync(query))
-                    .Select(x => new PlaylistResultBindingModel(query, x))
-                    .Cast<SearchResultBindingModel>()
-                    .ToList();
-
-            if (genres.Count > 0)
-            {
-                results.Add(new SearchGroupBindingModel("Genres", genres));
-            }
-
-            var songs = this.songsRepository.GetAll().Where(
-                x => Models.Search.Contains(x.Title, query)).Select(x => new SongResultBindingModel(query, x)).Cast<SearchResultBindingModel>().ToList();
+            var songs = (await this.songsRepository.SearchAsync(query))
+                        .Select(x => new SongResultBindingModel(query, new SongBindingModel(x)))
+                        .Cast<SearchResultBindingModel>()
+                        .ToList();
 
             if (songs.Count > 0)
             {
-                results.Add(new SearchGroupBindingModel("Songs", songs));
-            }
+                var item = new SearchGroupBindingModel("Songs", songs);
 
-            var playlists =
-                (await this.collectionsService.GetCollection<MusicPlaylist>().SearchAsync(query))
-                    .Select(x => new PlaylistResultBindingModel(query, x))
-                    .Cast<SearchResultBindingModel>()
-                    .ToList();
-
-            if (playlists.Count > 0)
-            {
-                results.Add(new SearchGroupBindingModel("Playlists", playlists));
+                if (hasUserPlaylistsResults)
+                {
+                    results.Insert(results.Count - 1, item);
+                }
+                else
+                {
+                    results.Add(item);
+                }
             }
 
             return results;

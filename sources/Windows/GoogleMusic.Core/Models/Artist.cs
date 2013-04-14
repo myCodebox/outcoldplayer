@@ -1,54 +1,41 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// Outcold Solutions (http://outcoldman.com)
+// OutcoldSolutions (http://outcoldsolutions.com)
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Models
 {
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
 
-    public class Artist : Playlist
+    using SQLite;
+
+    [Table("Artist")]
+    public class Artist : IPlaylist
     {
-        public Artist(List<Song> songs)
-            : this(songs, false)
-        {
-            var song = songs.FirstOrDefault(x => !string.IsNullOrWhiteSpace(x.Metadata.AlbumArtist))
-                   ?? songs.FirstOrDefault(x => !string.IsNullOrWhiteSpace(x.Metadata.Artist));
+        [PrimaryKey, AutoIncrement, Column("ArtistId")]
+        public int Id { get; set; }
 
-            if (song != null)
+        [Ignore]
+        public PlaylistType PlaylistType
+        {
+            get
             {
-                this.Title = string.IsNullOrWhiteSpace(song.Metadata.AlbumArtist) ? song.Metadata.Artist : song.Metadata.AlbumArtist;
+                return PlaylistType.Artist;
             }
         }
 
-        public Artist(List<Song> songs, bool useArtist)
-            : base(
-                null, 
-                songs.OrderBy(s => s.Metadata.Album, StringComparer.CurrentCultureIgnoreCase)
-                    .ThenBy(s => Math.Max(s.Metadata.Disc, (byte)1))
-                    .ThenBy(s => s.Metadata.Track).ToList())
-        {
-            Song song;
+        public string Title { get; set; }
 
-            if (useArtist)
-            {
-                song = songs.FirstOrDefault(x => !string.IsNullOrWhiteSpace(x.Metadata.Artist));
+        [Indexed]
+        public string TitleNorm { get; set; }
 
-                if (song != null)
-                {
-                    this.Title = song.Metadata.Artist;
-                }
-            }
-            else
-            {
-                song = songs.FirstOrDefault(x => !string.IsNullOrWhiteSpace(x.Metadata.AlbumArtist))
-                           ?? songs.FirstOrDefault(x => !string.IsNullOrWhiteSpace(x.Metadata.Artist));
+        public int AlbumsCount { get; set; }
 
-                if (song != null)
-                {
-                    this.Title = string.IsNullOrWhiteSpace(song.Metadata.AlbumArtist) ? song.Metadata.Artist : song.Metadata.AlbumArtist;
-                }
-            }
-        }
+        public int SongsCount { get; set; }
+
+        public TimeSpan Duration { get; set; }
+
+        public Uri ArtUrl { get; set; }
+
+        [Indexed]
+        public DateTime LastPlayed { get; set; }
     }
 }

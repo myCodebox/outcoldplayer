@@ -4,29 +4,35 @@
 
 namespace OutcoldSolutions.GoogleMusic.Views
 {
-    using System.ComponentModel;
+    using System;
+    using System.Linq;
+    using System.Threading.Tasks;
 
     using Microsoft.Advertising.WinRT.UI;
 
     using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Controls;
-    using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Presenters;
     using OutcoldSolutions.GoogleMusic.Services;
+    using OutcoldSolutions.Views;
 
-    using Windows.ApplicationModel.Store;
-    using Windows.UI.ViewManagement;
+    using Windows.UI.Core;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
+    using Windows.UI.Xaml.Input;
 
-    public sealed partial class SnappedPlayerView : UserControl
+    public interface ISnappedPlayerView : IView
+    {
+        Task ScrollIntoCurrentSongAsync();
+    }
+
+    public sealed partial class SnappedPlayerView : ViewBase, ISnappedPlayerView
     {
         private readonly ILogger logger;
-
         private AdControl adControl;
-
-        private PlayerBindingModel playerBindingModel;
+        private SnappedPlayerBindingModel playerBindingModel;
+        private HyperlinkButton adReplacementButton;
 
         public SnappedPlayerView()
         {
@@ -34,63 +40,68 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
             this.logger = ApplicationBase.Container.Resolve<ILogManager>().CreateLogger("SnappedPlayerView");
 
-#if DEBUG
-            CurrentAppSimulator.LicenseInformation.LicenseChanged += this.UpdateAdControl;
-#else
-            CurrentApp.LicenseInformation.LicenseChanged += this.UpdateAdControl;
-#endif
+            InAppPurchases.LicenseChanged += this.UpdateAdControl;
             this.UpdateAdControl();
-
+            
             this.Loaded += this.OnLoaded;
+        }
+
+        public async Task ScrollIntoCurrentSongAsync()
+        {
+            await Task.Run(
+                async () =>
+                {
+                    if (this.playerBindingModel != null 
+                        && this.playerBindingModel.CurrentSong != null
+                        && this.playerBindingModel.SongsBindingModel.Songs != null)
+                    {
+                        await this.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, this.UpdateLayout);
+                        var currentSongBindingModel = this.playerBindingModel.SongsBindingModel.Songs
+                            .FirstOrDefault(x => x.Metadata.SongId == this.playerBindingModel.CurrentSong.Metadata.SongId);
+                        await this.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => this.ListView.ScrollIntoView(currentSongBindingModel));
+                    }
+                });
+        }
+
+        protected override Windows.Foundation.Size ArrangeOverride(Windows.Foundation.Size finalSize)
+        {
+            Task task = this.ScrollIntoCurrentSongAsync();
+            return base.ArrangeOverride(finalSize);
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             this.Loaded -= this.OnLoaded;
-            var playerViewPresenter = this.DataContext as PlayerViewPresenter;
-            if (playerViewPresenter != null)
-            {
-                this.playerBindingModel = playerViewPresenter.BindingModel;
-                this.playerBindingModel.Subscribe(() => this.playerBindingModel.CurrentSong, this.SongChanged);
-            }
-        }
-
-        private void SongChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)
-        {
-            var currentSong = this.playerBindingModel.CurrentSong;
-            this.Rating.Value = (currentSong != null) ? currentSong.Rating : 0;
-        }
-
-        private bool IsAdFree()
-        {
-#if DEBUG
-            return (CurrentAppSimulator.LicenseInformation.ProductLicenses.ContainsKey("AdFreeUnlimited")
-                && CurrentAppSimulator.LicenseInformation.ProductLicenses["AdFreeUnlimited"].IsActive)
-                || (CurrentAppSimulator.LicenseInformation.ProductLicenses.ContainsKey("Ultimate")
-                && CurrentAppSimulator.LicenseInformation.ProductLicenses["Ultimate"].IsActive);
-#else
-            return (CurrentApp.LicenseInformation.ProductLicenses.ContainsKey("AdFreeUnlimited")
-                && CurrentApp.LicenseInformation.ProductLicenses["AdFreeUnlimited"].IsActive)
-                || (CurrentApp.LicenseInformation.ProductLicenses.ContainsKey("Ultimate")
-                && CurrentApp.LicenseInformation.ProductLicenses["Ultimate"].IsActive);
-#endif
+            this.playerBindingModel = this.GetPresenter<SnappedPlayerViewPresenter>().BindingModel;
         }
 
         private void UpdateAdControl()
         {
-            if (this.IsAdFree())
+            if (InAppPurchases.HasFeature(GoogleMusicFeatures.AdFree))
             {
                 if (this.adControl != null)
                 {
                     this.SnappedGrid.Children.Remove(this.adControl);
-                    this.adControl.ErrorOccurred -= AdControlOnErrorOccurred;
+                    this.adControl.ErrorOccurred -= this.AdControlOnErrorOccurred;
                     this.adControl = null;
+
+                    this.SnappedGrid.Children.Remove(this.adReplacementButton);
+                    this.adReplacementButton = null;
                 }
             }
             else
             {
                 if (this.adControl == null)
                 {
+                    this.adReplacementButton = new HyperlinkButton
+                    {
+                        Style = (Style)Application.Current.Resources["SnappedViewAdReplacement"]
+                    };
+
+                    Grid.SetRow(this.adReplacementButton, 6);
+                    Canvas.SetZIndex(this.adReplacementButton, 0);
+                    this.SnappedGrid.Children.Add(this.adReplacementButton);
+
                     this.adControl = new AdControl
                     {
                         ApplicationId = "8eb9e14b-2133-40db-9500-14eff7c05aab",
@@ -100,8 +111,10 @@ namespace OutcoldSolutions.GoogleMusic.Views
                         HorizontalAlignment = HorizontalAlignment.Center,
                         UseStaticAnchor = true
                     };
-                    this.adControl.ErrorOccurred += AdControlOnErrorOccurred;
-                    Grid.SetRow(this.adControl, 7);
+
+                    this.adControl.ErrorOccurred += this.AdControlOnErrorOccurred;
+                    Grid.SetRow(this.adControl, 6);
+                    Canvas.SetZIndex(this.adControl, 100);
                     this.SnappedGrid.Children.Add(this.adControl);
                 }
             }
@@ -109,31 +122,42 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
         private void AdControlOnErrorOccurred(object sender, AdErrorEventArgs adErrorEventArgs)
         {
-            this.logger.LogErrorException(adErrorEventArgs.Error);
-        }
-
-        private void AddToQueue(object sender, RoutedEventArgs e)
-        {
-            if (ApplicationView.TryUnsnap())
-            {
-                ApplicationBase.Container.Resolve<INavigationService>().NavigateTo<IStartPageView>();
-            }
+            this.logger.Debug("Exception from ad control {0}", adErrorEventArgs.Error.Message);
         }
 
         private void RatingOnValueChanged(object sender, ValueChangedEventArgs e)
         {
-            var playerViewPresenter = this.DataContext as PlayerViewPresenter;
-            if (playerViewPresenter != null)
+            var currentSong = this.GetPresenter<SnappedPlayerViewPresenter>().BindingModel.CurrentSong;
+            if (currentSong != null)
             {
-                var currentSong = playerViewPresenter.BindingModel.CurrentSong;
-                if (currentSong != null)
+                if (currentSong.Rating != e.NewValue)
                 {
-                    if (currentSong.Rating != e.NewValue)
-                    {
-                        this.logger.LogTask(ApplicationBase.Container.Resolve<ISongMetadataEditService>().UpdateRatingAsync(currentSong, (byte)e.NewValue));
-                    }
+                    this.logger.LogTask(ApplicationBase.Container.Resolve<ISongsService>().UpdateRatingAsync(currentSong.Metadata, (byte)e.NewValue));
                 }
             }
+        }
+
+        private void VolumeButtonClick(object sender, RoutedEventArgs e)
+        {
+            this.VolumePopup.IsOpen = true;
+        }
+
+        private void ListDoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+        {
+            var frameworkElement = e.OriginalSource as FrameworkElement;
+            if (frameworkElement != null)
+            {
+                var songBindingModel = frameworkElement.DataContext as SongBindingModel;
+                if (songBindingModel != null)
+                {
+                    this.GetPresenter<SnappedPlayerViewPresenter>().PlaySong(songBindingModel);
+                }
+            }
+        }
+
+        private async void CurrentSongButtonClick(object sender, RoutedEventArgs e)
+        {
+            await this.ScrollIntoCurrentSongAsync();
         }
     }
 }

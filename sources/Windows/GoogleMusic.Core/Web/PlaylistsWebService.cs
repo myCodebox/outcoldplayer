@@ -12,6 +12,23 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
     using OutcoldSolutions.GoogleMusic.Web.Models;
 
+    public interface IPlaylistsWebService
+    {
+        Task<GoogleMusicPlaylists> GetAllAsync();
+
+        Task<GoogleMusicPlaylist> GetAsync(string playlistId);
+
+        Task<AddPlaylistResp> CreateAsync(string name);
+
+        Task<bool> DeleteAsync(string id);
+
+        Task<bool> ChangeNameAsync(string id, string name);
+
+        Task<AddSongResp> AddSongsAsync(string playlistId, string[] songIds);
+
+        Task<bool> RemoveSongsAsync(string playlistId, string[] songId, string[] entryId);
+    }
+
     public class PlaylistsWebService : IPlaylistsWebService
     {
         private const string PlaylistsUrl = "services/loadplaylist";
@@ -34,7 +51,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
             return await this.googleMusicWebService.PostAsync<GoogleMusicPlaylists>(PlaylistsUrl);
         }
 
-        public async Task<GoogleMusicPlaylist> GetAsync(Guid playlistId)
+        public async Task<GoogleMusicPlaylist> GetAsync(string playlistId)
         {
             var jsonProperties = new Dictionary<string, string>
                                         {
@@ -58,7 +75,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
             return await this.googleMusicWebService.PostAsync<AddPlaylistResp>(AddPlaylistUrl, jsonProperties: jsonProperties);
         }
 
-        public async Task<bool> DeleteAsync(Guid id)
+        public async Task<bool> DeleteAsync(string id)
         {
             var jsonProperties = new Dictionary<string, string>
                                         {
@@ -72,7 +89,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
             return deletePlaylistResp.DeleteId == id;
         }
 
-        public async Task<bool> ChangeNameAsync(Guid id, string name)
+        public async Task<bool> ChangeNameAsync(string id, string name)
         {
             var jsonProperties = new Dictionary<string, string>
                                         {
@@ -84,7 +101,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
             return !response.Success.HasValue || response.Success.Value;
         }
 
-        public async Task<AddSongResp> AddSongAsync(Guid playlistId, IEnumerable<Guid> songIds)
+        public async Task<AddSongResp> AddSongsAsync(string playlistId, string[] songIds)
         {
             if (songIds == null)
             {
@@ -94,19 +111,34 @@ namespace OutcoldSolutions.GoogleMusic.Web
             var jsonProperties = new Dictionary<string, string>
                                         {
                                             { "playlistId", JsonConvert.ToString(playlistId) },
-                                            { "songRefs", JsonConvert.SerializeObject(songIds.Select(x => new { id = x, type = 1 } ).ToArray()) }
+                                            { "songRefs", JsonConvert.SerializeObject(songIds.Select(x => new { id = x, type = 1 }).ToArray()) }
                                         };
 
             return await this.googleMusicWebService.PostAsync<AddSongResp>(AddToPlaylistUrl, jsonProperties: jsonProperties);
         }
 
-        public async Task<bool> RemoveSongAsync(Guid playlistId, Guid songId, Guid entryId)
+        public async Task<bool> RemoveSongsAsync(string playlistId, string[] songIds, string[] entryIds)
         {
+            if (songIds == null)
+            {
+                throw new ArgumentNullException("songIds");
+            }
+
+            if (entryIds == null)
+            {
+                throw new ArgumentNullException("entryIds");
+            }
+
+            if (songIds.Length != entryIds.Length)
+            {
+                throw new ArgumentException("Different lengths of collections: songIds and entries Ids.", "entryIds");
+            }
+
             var jsonProperties = new Dictionary<string, string>
                                         {
                                             { "listId", JsonConvert.ToString(playlistId) },
-                                            { "songIds", JsonConvert.SerializeObject(new[] { songId }) },
-                                            { "entryIds", JsonConvert.SerializeObject(new[] { entryId }) }
+                                            { "songIds", JsonConvert.SerializeObject(songIds) },
+                                            { "entryIds", JsonConvert.SerializeObject(entryIds) }
                                         };
 
             var response = await this.googleMusicWebService.PostAsync<CommonResponse>(DeleteSongUrl, jsonProperties: jsonProperties);

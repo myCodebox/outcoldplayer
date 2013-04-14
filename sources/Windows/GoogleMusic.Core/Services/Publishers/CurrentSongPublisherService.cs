@@ -33,7 +33,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
 
         private readonly HttpClient httpImageDownloadClient = new HttpClient() { Timeout = TimeSpan.FromSeconds(5) };
 
-        private readonly int delayPublishersHoldUp;
+        private readonly int delayPublishersHoldUp = 15000;
 
         private CancellationTokenSource cancellationTokenSource;
 
@@ -71,7 +71,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
             }
         }
 
-        public async Task PublishAsync(Song song, Playlist currentPlaylist)
+        public async Task PublishAsync(Song song, IPlaylist currentPlaylist)
         {
             CancellationTokenSource source;
 
@@ -97,11 +97,11 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
             }
         }
 
-        private async Task PublishAsync(Song song, Playlist currentPlaylist, CancellationToken cancellationToken)
+        private async Task PublishAsync(Song song, IPlaylist currentPlaylist, CancellationToken cancellationToken)
         {
             if (this.logger.IsDebugEnabled)
             {
-                this.logger.Debug("PublishAsync: Add new task for publishing: SongId: {0}, PlaylistType: {1}.", song.Metadata.Id, currentPlaylist.GetType());
+                this.logger.Debug("PublishAsync: Add new task for publishing: ProviderSongId: {0}, PlaylistType: {1}.", song.ProviderSongId, currentPlaylist == null ? null : currentPlaylist.GetType());
             }
 
             Task<Uri> getAlbumArtTak = this.GetAlbumArtUri(song);
@@ -138,11 +138,11 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
 
             if (!delayPublishers.Any())
             {
-                this.logger.Debug("PublishAsync: no delay publishers, return.", song.Metadata.Id, currentPlaylist.GetType());
+                this.logger.Debug("PublishAsync: no delay publishers, return.", song.ProviderSongId, currentPlaylist == null ? null : currentPlaylist.GetType());
                 return;
             }
 
-            await Task.Delay(Math.Min(this.delayPublishersHoldUp, (int)(0.3 * song.Metadata.Duration.TotalMilliseconds)), cancellationToken);
+            await Task.Delay(Math.Min(this.delayPublishersHoldUp, (int)(0.3 * song.Duration.TotalMilliseconds)), cancellationToken);
 
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -172,10 +172,10 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
 
             await Task.WhenAll(immediately, delay);
 
-            this.logger.Debug("PublishAsync completed for SongId: {0}, PlaylistType: {1}.", song.Metadata.Id, currentPlaylist.GetType());
+            this.logger.Debug("PublishAsync completed for ProviderSongId: {0}, PlaylistType: {1}.", song.ProviderSongId, currentPlaylist == null ? null : currentPlaylist.GetType());
         }
 
-        private async Task PublishAsync(IEnumerable<Lazy<ICurrentSongPublisher>> publishers, Song song, Playlist currentPlaylist, Uri albumArtUri, CancellationToken cancellationToken)
+        private async Task PublishAsync(IEnumerable<Lazy<ICurrentSongPublisher>> publishers, Song song, IPlaylist currentPlaylist, Uri albumArtUri, CancellationToken cancellationToken)
         {
             await Task.WhenAll(publishers.Select(x => x.Value.PublishAsync(song, currentPlaylist, albumArtUri, cancellationToken)).Where(task => task != null));
         }
@@ -188,12 +188,12 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
             {
                 if (this.logger.IsDebugEnabled)
                 {
-                    this.logger.Debug("Song album art: {0}.", song.Metadata.AlbumArtUrl);
+                    this.logger.Debug("Song album art: {0}.", song.AlbumArtUrl);
                 }
 
-                if (song.Metadata.AlbumArtUrl != null)
+                if (song.AlbumArtUrl != null)
                 {
-                    byte[] bytes = await this.httpImageDownloadClient.GetByteArrayAsync(song.Metadata.AlbumArtUrl);
+                    byte[] bytes = await this.httpImageDownloadClient.GetByteArrayAsync(song.AlbumArtUrl);
                     var localFolder = ApplicationData.Current.LocalFolder;
 
                     var folder = await localFolder.CreateFolderAsync(AlbumArtCacheFolder, CreationCollisionOption.OpenIfExists);
@@ -207,8 +207,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
             }
             catch (Exception exception)
             {
-                this.logger.Error("Cannot download album art.");
-                this.logger.LogErrorException(exception);
+                this.logger.Error(exception, "Cannot download album art.");
             }
 
             return albumArtUri;

@@ -1,110 +1,78 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// Outcold Solutions (http://outcoldman.com)
+// OutcoldSolutions (http://outcoldsolutions.com)
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Models
 {
-    public class Song : BindingModelBase
+    using System;
+
+    using SQLite;
+
+    [Table("Song")]
+    public class Song
     {
-        private SongMetadata metadata;
+        [PrimaryKey, AutoIncrement]
+        public int SongId { get; set; }
 
-        private bool isPlaying;
+        public string ProviderSongId { get; set; }
 
-        public Song(SongMetadata metadata)
-        {
-            this.metadata = metadata;
-        }
+        public string Title { get; set; }
 
-        public string Title
-        {
-            get
-            {
-                return this.Metadata.Title;
-            }
-        }
+        [Indexed]
+        public string TitleNorm { get; set; }
 
-        public double Duration
-        {
-            get
-            {
-                return this.Metadata.Duration.TotalSeconds;
-            }
-        }
+        public TimeSpan Duration { get; set; }
 
-        public string Artist
-        {
-            get
-            {
-                return this.Metadata.Artist;
-            }
-        }
+        public string Composer { get; set; }
 
-        public string Album
-        {
-            get
-            {
-                return this.Metadata.Album;
-            }
-        }
+        public ushort PlayCount { get; set; }
 
-        public ushort PlayCount
-        {
-            get
-            {
-                return this.Metadata.PlayCount;
-            }
+        public byte Rating { get; set; }
 
-            set
-            {
-                this.Metadata.PlayCount = value;
-                this.RaiseCurrentPropertyChanged();
-            }
-        }
+        public ushort? Disc { get; set; }
+                     
+        public ushort? TotalDiscs { get; set; }
+                     
+        public ushort? Track { get; set; }
+                     
+        public ushort? TotalTracks { get; set; }
+                     
+        public ushort? Year { get; set; }
 
-        public int Rating
-        {
-            get
-            {
-                return this.Metadata.Rating;
-            }
+        public Uri AlbumArtUrl { get; set; }
 
-            set
-            {
-                this.Metadata.Rating = (byte)value;
-                this.RaiseCurrentPropertyChanged();
-            }
-        }
+        [Indexed]
+        public DateTime LastPlayed { get; set; }
 
-        public SongMetadata Metadata
-        {
-            get
-            {
-                return this.metadata;
-            }
+        [Indexed]
+        public DateTime CreationDate { get; set; }
 
-            set
-            {
-                this.metadata = value;
-                this.RaisePropertyChanged(() => this.Title);
-                this.RaisePropertyChanged(() => this.Duration);
-                this.RaisePropertyChanged(() => this.Artist);
-                this.RaisePropertyChanged(() => this.Album);
-                this.RaisePropertyChanged(() => this.PlayCount);
-                this.RaisePropertyChanged(() => this.Rating);
-            }
-        }
+        public string Comment { get; set; }
 
-        public bool IsPlaying
-        {
-            get
-            {
-                return this.isPlaying;
-            }
+        public ushort Bitrate { get; set; }
 
-            set
-            {
-                this.isPlaying = value;
-                this.RaiseCurrentPropertyChanged();
-            }
-        }
+        public StreamType StreamType { get; set; }
+       
+        [Reference]
+        public UserPlaylistEntry UserPlaylistEntry { get; set; }
+
+        public string AlbumArtistTitle { get; set; }
+
+        [Indexed]
+        public string AlbumArtistTitleNorm { get; set; }
+
+        public string ArtistTitle { get; set; }
+
+        [Indexed]
+        public string ArtistTitleNorm { get; set; }
+
+        public string AlbumTitle { get; set; }
+
+        [Indexed]
+        public string AlbumTitleNorm { get; set; }
+
+        public string GenreTitle { get; set; }
+
+        [Indexed]
+        public string GenreTitleNorm { get; set; }
     }
 }

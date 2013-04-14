@@ -1,102 +1,141 @@
-﻿<googleMusic:DataPageViewBase
+﻿<views:PageViewBase
     x:Class="OutcoldSolutions.GoogleMusic.Views.PlaylistPageView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:controls="using:OutcoldSolutions.GoogleMusic.Controls" xmlns:googleMusic="using:OutcoldSolutions.GoogleMusic"
+    xmlns:controls="using:OutcoldSolutions.GoogleMusic.Controls"
+    xmlns:views="using:OutcoldSolutions.Views" 
+    xmlns:interactivity="using:Windows.UI.Interactivity"
     mc:Ignorable="d"
     d:DesignHeight="300"
-    d:DesignWidth="400">
+    d:DesignWidth="400"
+    Title="{Binding Path=BindingModel.Playlist.Title, Mode=OneWay}"
+    Subtitle="{Binding Path=BindingModel.Type, Mode=OneWay}">
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="100" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-
-        <Grid VerticalAlignment="Bottom" Margin="120, 0, 20, 0" HorizontalAlignment="Left" >
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-
-            <TextBlock Style="{StaticResource HeaderTextStyle}" 
-                       Text="{Binding Path=BindingModel.Playlist.Title, Mode=OneWay}" 
-                       VerticalAlignment="Bottom" 
-                       TextWrapping="NoWrap" 
-                       TextTrimming="WordEllipsis" />
-
-            <TextBlock Style="{StaticResource SubheaderTextStyle}" Grid.Column="1" VerticalAlignment="Bottom" Margin="20, 0, 0, 0" Text="{Binding Path=BindingModel.Type, Mode=OneWay}"/>
-            
-        </Grid>
- 
-        <Grid Grid.Row="1" Margin="40, 20, 20, 20" HorizontalAlignment="Stretch" >
-            <Grid.ColumnDefinitions >
-                <ColumnDefinition Width="45" />
-                <ColumnDefinition Width="2*" />
-                <ColumnDefinition Width="80" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="60" />
-                <ColumnDefinition Width="155" />
-            </Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="1" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="name" TextTrimming="WordEllipsis" Style="{StaticResource TitleTextStyle}" />
-            <TextBlock Grid.Column="2" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="time" HorizontalAlignment="Right" Style="{StaticResource TitleTextStyle}"/>
-            <TextBlock Grid.Column="3" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="artist" TextTrimming="WordEllipsis" Style="{StaticResource TitleTextStyle}"/>
-            <TextBlock Grid.Column="4" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="album" TextTrimming="WordEllipsis" Style="{StaticResource TitleTextStyle}"/>
-            <TextBlock Grid.Column="5" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="plays" HorizontalAlignment="Right" Style="{StaticResource TitleTextStyle}"/>
-            <TextBlock Grid.Column="6" VerticalAlignment="Center" Margin="20, 0, 25, 0" Text="rating" HorizontalAlignment="Left" Style="{StaticResource TitleTextStyle}"/>
-        </Grid>
-
-        <ProgressRing Grid.Row="2" IsActive="{Binding Path=IsDataLoading, Mode=OneWay}"   />
         
-        <ListView Grid.Row="2"
+      
+        <Border Grid.Row="0" 
+                HorizontalAlignment="Stretch"
+                Margin="40, 20, 20, 0" 
+                Padding="0, 0, 0, 0"
+                Height="35"
+                Background="{StaticResource ListViewItemBorder}"
+                Visibility="{Binding Path=IsDataLoading, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}">
+            <Grid Margin="0, 0, 0, 0">
+                <Grid.ColumnDefinitions >
+                    <ColumnDefinition Width="40" />
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="150" />
+                </Grid.ColumnDefinitions>
+                
+                <controls:SortableHeaderControl Grid.Column="1" 
+                                                SortCommand="{Binding Path=BindingModel.SongsBindingModel.SortCommand}"
+                                                Title="name"
+                                                CurrentSorting="{Binding Path=BindingModel.SongsBindingModel.CurrentSorting, Mode=OneWay}"
+                                                UpSorting="TitleDescending"
+                                                DownSorting="Title" />
+                
+                <controls:SortableHeaderControl Grid.Column="2" 
+                                                SortCommand="{Binding Path=BindingModel.SongsBindingModel.SortCommand}"
+                                                Title="time"
+                                                CurrentSorting="{Binding Path=BindingModel.SongsBindingModel.CurrentSorting, Mode=OneWay}"
+                                                UpSorting="DurationDescending"
+                                                DownSorting="Duration" />
+
+                <controls:SortableHeaderControl Grid.Column="3" 
+                                                SortCommand="{Binding Path=BindingModel.SongsBindingModel.SortCommand}"
+                                                Title="artist"
+                                                CurrentSorting="{Binding Path=BindingModel.SongsBindingModel.CurrentSorting, Mode=OneWay}"
+                                                UpSorting="ArtistDescending"
+                                                DownSorting="Artist" />
+
+                <controls:SortableHeaderControl Grid.Column="4" 
+                                                SortCommand="{Binding Path=BindingModel.SongsBindingModel.SortCommand}"
+                                                Title="album"
+                                                CurrentSorting="{Binding Path=BindingModel.SongsBindingModel.CurrentSorting, Mode=OneWay}"
+                                                UpSorting="AlbumDescending"
+                                                DownSorting="Album" />
+
+                <controls:SortableHeaderControl Grid.Column="5" 
+                                                SortCommand="{Binding Path=BindingModel.SongsBindingModel.SortCommand}"
+                                                Title="plays"
+                                                CurrentSorting="{Binding Path=BindingModel.SongsBindingModel.CurrentSorting, Mode=OneWay}"
+                                                UpSorting="PlaysCountDescending"
+                                                DownSorting="PlaysCount" />
+
+                <controls:SortableHeaderControl Grid.Column="6" 
+                                                SortCommand="{Binding Path=BindingModel.SongsBindingModel.SortCommand}"
+                                                Title="rating"
+                                                CurrentSorting="{Binding Path=BindingModel.SongsBindingModel.CurrentSorting, Mode=OneWay}"
+                                                UpSorting="RatingDescending"
+                                                DownSorting="Rating" />
+            </Grid>
+        </Border>
+        
+        <ListView Grid.Row="1"
                   Visibility="{Binding Path=IsDataLoading, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}"
-                  ItemsSource="{Binding Path=BindingModel.Playlist.Songs, Mode=OneWay}"
-                  SelectedIndex="{Binding Path=BindingModel.SelectedSongIndex, Mode=TwoWay}"
-                  SelectionMode="Single"
+                  ItemsSource="{Binding Path=BindingModel.SongsBindingModel.Songs, Mode=OneWay}"
+                  SelectionMode="Extended"
                   HorizontalAlignment="Stretch"
                   HorizontalContentAlignment="Stretch"
                   IsTapEnabled="False"
-                  Margin="40, 0, 0, 20" 
+                  Margin="40, 0, 20, 20" 
                   DoubleTapped="ListDoubleTapped"
                   ManipulationMode="None"
                   x:Name="ListView">
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem">
-                    <Setter Property="HorizontalAlignment" Value="Stretch" />
-                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                    <Setter Property="Margin" Value="0"/>
-                    <Setter Property="Padding" Value="0"/>
-                </Style>
-            </ListView.ItemContainerStyle>
+
+            <interactivity:Interaction.Behaviors>
+                <controls:ListViewBaseSelectedItemsBehavior SelectedItems="{Binding Path=BindingModel.SongsBindingModel.SelectedItems, Mode=OneWay}"
+                                                            ForceToShow="True"/>
+            </interactivity:Interaction.Behaviors>
+
+            <ListView.Transitions>
+                <TransitionCollection />
+            </ListView.Transitions>
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <Grid VerticalAlignment="Center" Margin="0, 10, 0, 0">
+
+                    <Grid Height="33">
                         <Grid.ColumnDefinitions >
-                            <ColumnDefinition Width="40" />
+                            <ColumnDefinition Width="35" />
                             <ColumnDefinition Width="2*" />
                             <ColumnDefinition Width="80" />
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="60" />
-                            <ColumnDefinition Width="170" />
+                            <ColumnDefinition Width="80" />
+                            <ColumnDefinition Width="150" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Margin="20, 0, 0, 0" Text="{StaticResource PlayingGlyph}" FontFamily="Segoe UI Symbol" Visibility="{Binding Path=IsPlaying, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                        <TextBlock Grid.Column="1" Margin="20, 0, 0, 0" Text="{Binding Path=Title, Mode=OneWay}" HorizontalAlignment="Left" VerticalAlignment="Center" TextTrimming="WordEllipsis" />
-                        <TextBlock Grid.Column="2" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="{Binding Path=Duration, Converter={StaticResource DoubleToTimeConverter}, Mode=OneWay}" HorizontalAlignment="Right"/>
-                        <TextBlock Grid.Column="3" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="{Binding Path=Artist, Mode=OneWay}" TextTrimming="WordEllipsis" />
-                        <TextBlock Grid.Column="4" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="{Binding Path=Album, Mode=OneWay}" TextTrimming="WordEllipsis" />
-                        <TextBlock Grid.Column="5" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="{Binding Path=PlayCount, Mode=OneWay}" HorizontalAlignment="Right" />
-                        <controls:Rating Grid.Column="6" VerticalAlignment="Center" Margin="20, -3, 40, 0" Value="{Binding Path=Rating, Mode=OneWay}" HorizontalAlignment="Right" 
-                                         Command="{Binding Path=DataContext.RateSongCommand, ElementName=ListView, Mode=OneTime}"
-                                         CommandParameter="{Binding Mode=OneTime}"/>
+
+                        <controls:FakeEqualizerControl 
+                            Grid.Column="0" 
+                            HorizontalAlignment="Center" 
+                            VerticalAlignment="Center" 
+                            Visibility="{Binding Path=IsPlaying, Converter={StaticResource BooleanToVisibilityConverter}}" 
+                            IsPaused="{Binding Path=State, Converter={StaticResource ValueToBooleanConverter}, ConverterParameter={StaticResource StatePaused}}" />
+                        
+                        <TextBlock Grid.Column="1" Style="{StaticResource BasicTextStyle}" VerticalAlignment="Center" Margin="10, 0, 10, 0" Text="{Binding Path=Title, Mode=OneWay}" HorizontalAlignment="Left" TextTrimming="WordEllipsis" />
+                        <TextBlock Grid.Column="2" Style="{StaticResource BasicTextStyle}" VerticalAlignment="Center" Margin="10, 0, 10, 0" Text="{Binding Path=Duration, Converter={StaticResource DoubleToTimeConverter}, Mode=OneWay}" HorizontalAlignment="Right"/>
+                        <TextBlock Grid.Column="3" Style="{StaticResource BasicTextStyle}" VerticalAlignment="Center" Margin="10, 0, 10, 0" Text="{Binding Path=Artist, Mode=OneWay}" TextTrimming="WordEllipsis" />
+                        <TextBlock Grid.Column="4" Style="{StaticResource BasicTextStyle}" VerticalAlignment="Center" Margin="10, 0, 10, 0" Text="{Binding Path=Album, Mode=OneWay}" TextTrimming="WordEllipsis" />
+                        <TextBlock Grid.Column="5" Style="{StaticResource BasicTextStyle}" VerticalAlignment="Center" Margin="10, 0, 10, 0" Text="{Binding Path=PlayCount, Mode=OneWay}" HorizontalAlignment="Right" />
+                        <controls:Rating Grid.Column="6" VerticalAlignment="Center" Margin="10, 0, 10, 0" Value="{Binding Path=Rating, Mode=OneWay}" HorizontalAlignment="Left" 
+                                            Command="{Binding Path=DataContext.RateSongCommand, ElementName=ListView, Mode=OneTime}"
+                                            CommandParameter="{Binding Mode=OneTime}"/>
                     </Grid>
+                    
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
         
     </Grid>
-</googleMusic:DataPageViewBase>
+</views:PageViewBase>

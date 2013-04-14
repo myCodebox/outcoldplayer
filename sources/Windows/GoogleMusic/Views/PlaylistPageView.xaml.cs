@@ -3,24 +3,27 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Views
 {
+    using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Presenters;
+    using OutcoldSolutions.Views;
 
+    using Windows.UI.Xaml;
     using Windows.UI.Xaml.Input;
 
-    public interface IPlaylistPageView : IDataPageView
+    public interface IPlaylistPageView : IPageView
     {
     }
 
-    public sealed partial class PlaylistPageView : DataPageViewBase, IPlaylistPageView
+    public sealed partial class PlaylistPageView : PageViewBase, IPlaylistPageView
     {
         private PlaylistPageViewPresenter presenter;
 
         public PlaylistPageView()
         {
             this.InitializeComponent();
-            this.TrackListViewBase(this.ListView);
+            this.TrackItemsControl(this.ListView);
         }
-        
+
         protected override void OnInitialized()
         {
             base.OnInitialized();
@@ -30,9 +33,14 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
         private void ListDoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
         {
-            if (this.presenter.PlaySongCommand.CanExecute())
+            var frameworkElement = e.OriginalSource as FrameworkElement;
+            if (frameworkElement != null)
             {
-                this.presenter.PlaySongCommand.Execute();
+                var songBindingModel = frameworkElement.DataContext as SongBindingModel;
+                if (songBindingModel != null)
+                {
+                    this.presenter.PlaySong(songBindingModel);
+                }
             }
         }
     }

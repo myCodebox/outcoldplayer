@@ -1,23 +1,39 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// Outcold Solutions (http://outcoldman.com)
+// OutcoldSolutions (http://outcoldsolutions.com)
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Models
 {
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
 
-    public class Genre : Playlist
+    using SQLite;
+
+    [Table("Genre")]
+    public class Genre : IPlaylist
     {
-        public Genre(string name, List<Song> songs)
-            : base(
-                name,
-                songs.OrderBy(s => s.Metadata.Artist, StringComparer.CurrentCultureIgnoreCase)
-                     .ThenBy(s => s.Metadata.Album, StringComparer.CurrentCultureIgnoreCase)
-                     .ThenBy(s => Math.Max(s.Metadata.Disc, (byte)1))
-                     .ThenBy(s => s.Metadata.Track)
-                     .ToList())
+        [PrimaryKey, AutoIncrement, Column("GenreId")]
+        public int Id { get; set; }
+
+        [Ignore]
+        public PlaylistType PlaylistType
         {
+            get
+            {
+                return PlaylistType.Genre;
+            }
         }
+
+        public string Title { get; set; }
+
+        [Indexed]
+        public string TitleNorm { get; set; }
+
+        public int SongsCount { get; set; }
+
+        public TimeSpan Duration { get; set; }
+
+        public Uri ArtUrl { get; set; }
+
+        [Indexed]
+        public DateTime LastPlayed { get; set; }
     }
 }

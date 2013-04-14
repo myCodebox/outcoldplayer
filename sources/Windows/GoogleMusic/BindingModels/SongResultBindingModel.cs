@@ -9,15 +9,15 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
     public class SongResultBindingModel : SearchResultBindingModel
     {
-        private readonly Song result;
+        private readonly SongBindingModel result;
 
-        public SongResultBindingModel(string search, Song result)
+        public SongResultBindingModel(string search, SongBindingModel result)
             : base(search, result.Title)
         {
             this.result = result;
         }
 
-        public Song Result
+        public SongBindingModel Result
         {
             get
             {

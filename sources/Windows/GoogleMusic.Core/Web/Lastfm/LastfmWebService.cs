@@ -13,6 +13,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Lastfm
     using System.Threading.Tasks;
 
     using OutcoldSolutions.Diagnostics;
+    using OutcoldSolutions.Web;
 
     using Windows.Security.Credentials;
     using Windows.Security.Cryptography;
@@ -138,9 +139,9 @@ namespace OutcoldSolutions.GoogleMusic.Web.Lastfm
                     }
                 }
             }
-            catch (Exception exception)
+            catch (Exception)
             {
-                this.logger.LogDebugException(exception);
+                this.logger.Debug("Could not restore session.");
             }
 
             return false;
@@ -172,7 +173,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Lastfm
             }
             catch (Exception exception)
             {
-                this.logger.LogDebugException(exception);
+                this.logger.Error(exception, "Exception while tried to ClearAllPasswordCredentials.");
             }
         }
 

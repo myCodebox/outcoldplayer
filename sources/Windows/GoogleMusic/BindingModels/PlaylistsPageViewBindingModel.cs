@@ -1,79 +1,118 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// Outcold Solutions (http://outcoldman.com)
+// OutcoldSolutions (http://outcoldsolutions.com)
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.BindingModels
 {
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using System.Linq;
+
+    using OutcoldSolutions.BindingModels;
+    using OutcoldSolutions.GoogleMusic.Models;
 
     public class PlaylistsPageViewBindingModel : BindingModelBase
     {
-        private int count;
-        private string title;
-        private bool isEditable;
-        private PlaylistBindingModel selectedItem;
+        private readonly ObservableCollection<PlaylistBindingModel> selectedItems;
+        private IList<PlaylistBindingModel> playlists;
+        private IList<PlaylistsGroupBindingModel> groups;
 
-        public int Count
+        private PlaylistType playlistType;
+
+        public PlaylistsPageViewBindingModel()
         {
-            get
-            {
-                return this.count;
-            }
-
-            set
-            {
-                if (this.count != value)
-                {
-                    this.count = value;
-                    this.RaiseCurrentPropertyChanged();
-                }
-            }
+            this.selectedItems = new ObservableCollection<PlaylistBindingModel>();
         }
 
         public string Title
         {
             get
             {
-                return this.title;
+                return this.PlaylistType.ToPluralTitle();
+            }
+        }
+
+        public string Subtitle
+        {
+            get
+            {
+                return this.Playlists == null ? string.Empty : this.Playlists.Count.ToString();
+            }
+        }
+
+        public PlaylistType PlaylistType
+        {
+            get
+            {
+                return this.playlistType;
             }
 
             set
             {
-                if (this.title != value)
+                if (this.SetValue(ref this.playlistType, value))
                 {
-                    this.title = value;
-                    this.RaiseCurrentPropertyChanged();
+                    this.RaisePropertyChanged(() => this.Title);
                 }
             }
         }
 
-        public bool IsEditable
+        public IList<PlaylistBindingModel> Playlists
         {
             get
             {
-                return this.isEditable;
+                return this.playlists;
             }
 
             set
             {
-                this.isEditable = value;
-                this.RaiseCurrentPropertyChanged();
+                if (this.SetValue(ref this.playlists, value))
+                {
+                    this.RecalculateGroups();
+                    this.RaisePropertyChanged(() => this.Subtitle);
+                }
             }
         }
 
-        public PlaylistBindingModel SelectedItem
+        public IList<PlaylistsGroupBindingModel> Groups
         {
             get
             {
-                return this.selectedItem;
+                return this.groups;
             }
 
             set
             {
-                this.selectedItem = value;
-                this.RaiseCurrentPropertyChanged();
+                this.SetValue(ref this.groups, value);
             }
         }
 
-        public List<PlaylistsGroupBindingModel> Groups { get; set; }
+        public ObservableCollection<PlaylistBindingModel> SelectedItems
+        {
+            get
+            {
+                return this.selectedItems;
+            }
+        }
+
+        public void ClearSelectedItems()
+        {
+            if (this.selectedItems.Count > 0)
+            {
+                this.selectedItems.Clear();
+            }
+        }
+
+        private void RecalculateGroups()
+        {
+            if (this.Playlists == null)
+            {
+                this.Groups = null;
+            }
+            else
+            {
+                this.Groups = this.Playlists.GroupBy(p => p.Playlist.Title.Length > 0 ? char.ToUpper(p.Playlist.Title[0]) : ' ')
+                                                        .Select(g => new PlaylistsGroupBindingModel(g.Key.ToString(), g.Count(), g.ToList()))
+                                                        .ToList();
+            }
+        }
     }
 }

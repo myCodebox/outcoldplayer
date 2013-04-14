@@ -3,12 +3,17 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.BindingModels
 {
+    using OutcoldSolutions.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
 
-    public class PlaylistPageViewBindingModel<TPlaylist> : BindingModelBase where TPlaylist : Playlist
+    public class PlaylistPageViewBindingModel<TPlaylist> : BindingModelBase where TPlaylist : class, IPlaylist
     {
         private TPlaylist playlist;
-        private int selectedSongIndex = -1;
+
+        public PlaylistPageViewBindingModel(SongsBindingModel songsBindingModel)
+        {
+            this.SongsBindingModel = songsBindingModel;
+        }
 
         public TPlaylist Playlist
         {
@@ -19,66 +24,24 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
             set
             {
-                this.playlist = value;
-                this.RaiseCurrentPropertyChanged();
+                this.SetValue(ref this.playlist, value);
                 this.RaisePropertyChanged(() => this.Type);
-                this.SelectedSongIndex = -1;
             }
         }
+
+        public SongsBindingModel SongsBindingModel { get; private set; }
 
         public string Type
         {
             get
             {
-                if (this.playlist is Album)
+                if (this.Playlist == null)
                 {
-                    return "Album";
+                    return null;
                 }
 
-                if (this.playlist is Artist)
-                {
-                    return "Artist";
-                }
-
-                if (this.playlist is Genre)
-                {
-                    return "Genre";
-                }
-
-                if (this.playlist is MusicPlaylist)
-                {
-                    return "Playlist";
-                }
-
-                return null;
-            }
-        }
-
-        public Song SelectedSong
-        {
-            get
-            {
-                if (this.SelectedSongIndex >= 0 && this.SelectedSongIndex < this.playlist.Songs.Count)
-                {
-                    return this.playlist.Songs[this.SelectedSongIndex];
-                }
-
-                return null;
-            }
-        }
-
-        public int SelectedSongIndex
-        {
-            get
-            {
-                return this.selectedSongIndex;
-            }
-
-            set
-            {
-                this.selectedSongIndex = value;
-                this.RaiseCurrentPropertyChanged();
-                this.RaisePropertyChanged(() => this.SelectedSong);
+                // TODO:  Create converter for PlaylistType
+                return this.Playlist.PlaylistType.ToTitle();
             }
         }
     }

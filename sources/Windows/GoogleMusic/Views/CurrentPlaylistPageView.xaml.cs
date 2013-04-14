@@ -4,47 +4,48 @@
 
 namespace OutcoldSolutions.GoogleMusic.Views
 {
-    using System.Linq;
+    using System;
+    using System.Threading.Tasks;
 
-    using OutcoldSolutions.GoogleMusic.Models;
+    using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Presenters;
+    using OutcoldSolutions.Views;
 
-    using Windows.UI.Xaml.Controls;
+    using Windows.UI.Core;
+    using Windows.UI.Xaml;
     using Windows.UI.Xaml.Input;
 
-    public interface ICurrentPlaylistPageView : IDataPageView
+    public interface ICurrentPlaylistPageView : IPageView
     {
-        void SelectPlayingSong();
+        Task ScrollIntoCurrentSongAsync(SongBindingModel songBindingModel);
     }
 
-    public sealed partial class CurrentPlaylistPageView : DataPageViewBase, ICurrentPlaylistPageView
+    public sealed partial class CurrentPlaylistPageView : PageViewBase, ICurrentPlaylistPageView
     {
         private CurrentPlaylistPageViewPresenter presenter;
 
         public CurrentPlaylistPageView()
         {
             this.InitializeComponent();
-            this.TrackListViewBase(this.ListView);
+            this.TrackItemsControl(this.ListView);
         }
 
-        public override void OnDataLoading(NavigatedToEventArgs eventArgs)
+        public async Task ScrollIntoCurrentSongAsync(SongBindingModel songBindingModel)
         {
-            base.OnDataLoading(eventArgs);
-
-            this.ListView.ItemsSource = null;
-        }
-
-        public override void OnDataLoaded(NavigatedToEventArgs eventArgs)
-        {
-            base.OnDataLoaded(eventArgs);
-
-            this.ListView.ItemsSource = this.presenter.BindingModel.Songs;
-            this.UpdateSelectedSong();
-        }
-
-        public void SelectPlayingSong()
-        {
-            this.presenter.SelectPlayingSong();
+            await Task.Run(
+                async () =>
+                    {
+                        if (this.presenter != null && songBindingModel != null)
+                        {
+                            SongsBindingModel songsBindingModel = this.presenter.BindingModel;
+                            if (songsBindingModel != null 
+                                && songsBindingModel.Songs != null)
+                            {
+                                await this.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, this.UpdateLayout);
+                                await this.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => this.ListView.ScrollIntoView(songBindingModel));
+                            }
+                        }
+                    });
         }
 
         protected override void OnInitialized()
@@ -52,39 +53,18 @@ namespace OutcoldSolutions.GoogleMusic.Views
             base.OnInitialized();
 
             this.presenter = this.GetPresenter<CurrentPlaylistPageViewPresenter>();
-            this.presenter.BindingModel.Subscribe(
-                () => this.presenter.BindingModel.SelectedSongIndex,
-                (sender, args) => this.UpdateSelectedSong());
         }
 
         private void ListDoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
         {
-            if (this.presenter.PlaySelectedSongCommand.CanExecute())
+            var frameworkElement = e.OriginalSource as FrameworkElement;
+            if (frameworkElement != null)
             {
-                this.presenter.PlaySelectedSongCommand.Execute();
-            }
-        }
-
-        private void ListViewSelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (e.AddedItems.Count == 0)
-            {
-                this.presenter.BindingModel.SelectedSongIndex = -1;
-            }
-            else
-            {
-                this.presenter.BindingModel.SelectedSongIndex =
-                    this.presenter.BindingModel.Songs.IndexOf((Song)e.AddedItems.First());
-            }
-        }
-
-        private void UpdateSelectedSong()
-        {
-            var selectedSongIndex = this.presenter.BindingModel.SelectedSongIndex;
-            if (this.ListView.Items != null && this.ListView.Items.Count > selectedSongIndex)
-            {
-                this.ListView.ScrollIntoView(this.presenter.BindingModel.SelectedSong);
-                this.ListView.SelectedIndex = selectedSongIndex;
+                var songBindingModel = frameworkElement.DataContext as SongBindingModel;
+                if (songBindingModel != null)
+                {
+                    this.presenter.PlaySong(songBindingModel);
+                }
             }
         }
     }

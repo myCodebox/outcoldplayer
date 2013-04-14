@@ -3,12 +3,10 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Web.Models
 {
-    using System;
-
     public class SongRatingResp
     {
-        public Guid Id { get; set; }
+        public string Id { get; set; }
 
-        public int Rating { get; set; }
+        public byte Rating { get; set; }
     }
 }
