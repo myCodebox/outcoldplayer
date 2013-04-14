@@ -32,7 +32,10 @@
     <SolidColorBrush x:Key="ListViewItemSelectedPointerOverBorderThemeBrush" Color="#369EFF" />
     
     <x:String x:Key="ChevronGlyph">&#xE26B;</x:String>
-    
+
+    <SolidColorBrush x:Key="HyperlinkForegroundThemeBrush" Color="#207CB0" />
+    <SolidColorBrush x:Key="HyperlinkPointerOverForegroundThemeBrush" Color="#369EFF" />
+    <SolidColorBrush x:Key="HyperlinkPressedForegroundThemeBrush" Color="#369EFF" />
 
     <!-- Item templates -->
 
@@ -905,10 +908,6 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-    </Style>
-
-    <Style TargetType="HyperlinkButton">
-        <Setter Property="Foreground" Value="{StaticResource ApplicationThemeBrush}" />
     </Style>
 
     <Style TargetType="controls:SortableHeaderControl" >
