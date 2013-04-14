@@ -21,26 +21,28 @@
             </Grid.RowDefinitions>
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                
                 <Image Source="ms-appx:///Assets/SmallLogo.png" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,0,10,0" Width="30" Height="30"></Image>
-                <TextBlock Style="{StaticResource SubheaderTextStyle}" HorizontalAlignment="Center" Margin="0,-5,0,0">gMusic v1.3.1</TextBlock>
+                <TextBlock Style="{StaticResource SubheaderTextStyle}" HorizontalAlignment="Center" Margin="0,-5,0,0" Text="{StaticResource ApplicationName}" />
+
             </StackPanel>
 
             <TextBlock Grid.Row="1" Style="{StaticResource BodyTextStyle}"  Margin="0, 20, 0, 0" >
-            Congratulations! You just installed new version 1.3.1. You can find the list of new feature [+] and fixed bugs [b] below:
+            Congratulations! You just installed new version of gMusic. You can find the list of new feature [+] and fixed bugs [b] below:
             </TextBlock>
 
             <ScrollViewer Grid.Row="2" Margin="0, 20, 0, 0">
                 <StackPanel>
                     <TextBlock Style="{StaticResource TitleTextStyle}" Margin="0, 10, 0, 0" >
-                    <Run>vNext - Version 2.0</Run>
+                    <Run>04/14/2013 - Version 2.0</Run>
                     </TextBlock>
                     <RichTextBlock Style="{StaticResource BodyRichTextStyle}">
                         <Paragraph>[+] Sorting in Playlist and Album views.</Paragraph>
+                        <Paragraph>[+] Snapped View shows songs in queue.</Paragraph>
                         <Paragraph>[+] Show year of album on album tiles.</Paragraph>
                         <Paragraph>[+] Performance improvements (search is instantaneous).</Paragraph>
                         <Paragraph>[+] Interface improvements.</Paragraph>
                         <Paragraph>[+] Volume control.</Paragraph>
-                        <Paragraph>[+] Snapped View shows songs in queue.</Paragraph>
                         <Paragraph>[+] App startup improvements.</Paragraph>
                         <Paragraph>[+] Add multiple songs / albums to queue.</Paragraph>
                         <Paragraph>[+] Add multiple songs to playlist.</Paragraph>

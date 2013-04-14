@@ -326,6 +326,9 @@
     <Compile Include="..\Windows\GoogleMusic.Core\Web\SongsWebService.cs">
       <Link>_sources\Web\SongsWebService.cs</Link>
     </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Web\WebRequestException.cs">
+      <Link>_sources\Web\WebRequestException.cs</Link>
+    </Compile>
     <Compile Include="GoogleMusicSuitesBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\SongStubs.cs" />

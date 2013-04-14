@@ -6,17 +6,22 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Net;
     using System.Threading.Tasks;
 
+    using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views.Popups;
+    using OutcoldSolutions.GoogleMusic.Web;
     using OutcoldSolutions.GoogleMusic.Web.Synchronization;
     using OutcoldSolutions.Presenters;
 
     using Windows.Storage;
+    using Windows.System;
     using Windows.UI.Core;
+    using Windows.UI.Popups;
 
     public class ProgressLoadingPopupViewPresenter : ViewPresenterBase<IProgressLoadingPopupView>
     {
@@ -25,7 +30,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
         private readonly IInitialSynchronization initialSynchronization;
 
         public ProgressLoadingPopupViewPresenter(
-            ISettingsService settingsService, IInitialSynchronization initialSynchronization)
+            ISettingsService settingsService, 
+            IInitialSynchronization initialSynchronization)
         {
             this.settingsService = settingsService;
             this.initialSynchronization = initialSynchronization;
@@ -47,17 +53,45 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
         {
             this.BindingModel.IsFailed = false;
 
+            bool isFailed = false;
+            bool showErrorInfo = false;
+
             try
             {
                 await this.InitializeRepositoriesAsync();
             }
             catch (Exception e)
             {
-                this.Logger.Error(e, "Exception while tried to initialize repositories.");
-
-                this.BindingModel.Message = "Cannot load data. Verify your network connection.";
-                this.BindingModel.IsFailed = true;
+                var webRequestException = e as WebRequestException;
+                if (webRequestException != null && webRequestException.StatusCode == HttpStatusCode.Forbidden)
+                {
+                    showErrorInfo = true;
+                }
+                else
+                {
+                    isFailed = true;
+                    this.Logger.Error(e, "Exception while tried to initialize repositories.");
+                }
             }
+            
+            await this.Dispatcher.RunAsync(
+                    async () =>
+                    {
+                        if (showErrorInfo)
+                        {
+                            await this.ShowErrorInfoAsync();
+                            this.View.Close(new ProgressLoadingCloseEventArgs(isFailed: true));
+                        }
+                        else if (isFailed)
+                        {
+                            this.BindingModel.Message = "Cannot load data. Verify your network connection.";
+                            this.BindingModel.IsFailed = true;
+                        }
+                        else
+                        {
+                            this.View.Close(new ProgressLoadingCloseEventArgs(isFailed: false));
+                        }
+                    });
         }
 
         private async Task InitializeRepositoriesAsync()
@@ -87,11 +121,23 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
                 };
 
             this.settingsService.ResetLibraryFreshness();
+
             await this.initialSynchronization.InitializeAsync(progress);
-
+            
             await progress.SafeReportAsync(1.0);
+        }
 
-            this.View.Close();
+        private Task ShowErrorInfoAsync()
+        {
+            var dialog = new MessageDialog("Impossible to load data from Google Music. Please verify that you subscribed to Google Music services.");
+            dialog.Commands.Add(
+                new UICommand(
+                    "Go to Goole Play Music",
+                    (cmd) => this.Logger.LogTask(Launcher.LaunchUriAsync(new Uri("https://play.google.com/music/listen")).AsTask())));
+
+            dialog.Commands.Add(new UICommand("Cancel"));
+            
+            return dialog.ShowAsync().AsTask();
         }
     }
 }

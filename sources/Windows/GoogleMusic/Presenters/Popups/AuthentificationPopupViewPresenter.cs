@@ -18,7 +18,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
 
         public AuthentificationPopupViewPresenter(
             IGoogleAccountService googleAccountService,
-            IAuthentificationService authentificationService)
+            IAuthentificationService authentificationService,
+            IGoogleMusicSessionService googleMusicSession)
         {
             this.googleAccountService = googleAccountService;
             this.authentificationService = authentificationService;

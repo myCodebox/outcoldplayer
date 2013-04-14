@@ -145,6 +145,7 @@
     <Compile Include="Diagnostics\BugSenseLogWriter.cs" />
     <Compile Include="GoogleMusicSettingsServiceExtensions.cs" />
     <Compile Include="MainMenu.cs" />
+    <Compile Include="Models\PackageVersionExtensions.cs" />
     <Compile Include="Models\PlaylistTypeEx.cs" />
     <Compile Include="Models\QueueChangeEvent.cs" />
     <Compile Include="Models\ReloadSongsEvent.cs" />
@@ -156,6 +157,7 @@
     <Compile Include="Presenters\PlayerViewPresenterBase.cs" />
     <Compile Include="Presenters\PlaylistsPageViewPresenterBase.cs" />
     <Compile Include="Presenters\Popups\PlaylistEditPopupViewPresenter.cs" />
+    <Compile Include="Presenters\Popups\ProgressLoadingCloseEventArgs.cs" />
     <Compile Include="Presenters\Popups\QueueActionsPopupViewPresenter.cs" />
     <Compile Include="Presenters\SnappedPlayerViewPresenter.cs" />
     <Compile Include="Presenters\Popups\PlayerMorePopupViewPresenter.cs" />

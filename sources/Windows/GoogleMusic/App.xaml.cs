@@ -6,6 +6,7 @@ namespace OutcoldSolutions.GoogleMusic
 {
     using System;
     using System.Diagnostics;
+    using System.Globalization;
     using System.Threading.Tasks;
 
     using BugSense;
@@ -28,6 +29,7 @@ namespace OutcoldSolutions.GoogleMusic
     using OutcoldSolutions.Shell;
     using OutcoldSolutions.Views;
 
+    using Windows.ApplicationModel;
     using Windows.UI.Notifications;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
@@ -43,6 +45,8 @@ namespace OutcoldSolutions.GoogleMusic
 
         protected override void InitializeApplication()
         {
+            this.Resources["ApplicationName"] = string.Format(CultureInfo.CurrentCulture, "gMusic {0}", Package.Current.Id.Version.ToVersionString());
+
             using (var registration = Container.Registration())
             {
 #if DEBUG

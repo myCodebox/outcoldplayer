@@ -12,6 +12,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
+    using OutcoldSolutions.GoogleMusic.Presenters.Popups;
     using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Shell;
@@ -20,6 +21,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using OutcoldSolutions.Presenters;
     using OutcoldSolutions.Views;
 
+    using Windows.ApplicationModel;
     using Windows.System;
     using Windows.UI.Popups;
 
@@ -31,7 +33,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private const string DoNotAskToReviewKey = "DoNotAskToReviewKey";
         private const string CountOfStartsBeforeReview = "CountOfStartsBeforeReview";
 
-        private const string CurrentVersion = "2.0.0.3";
 
         private readonly ISettingsService settingsService;
         private readonly IAuthentificationService authentificationService;
@@ -119,7 +120,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             if (result != null && result.Succeed)
             {
                 var currentVersion = this.settingsService.GetValue<string>("Version", null);
-                bool fCurrentVersion = string.Equals(currentVersion, CurrentVersion, StringComparison.OrdinalIgnoreCase);
+                bool fCurrentVersion = string.Equals(currentVersion, Package.Current.Id.Version.ToVersionString(), StringComparison.OrdinalIgnoreCase);
 
                 if (fCurrentVersion)
                 {
@@ -162,14 +163,22 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private async void ProgressLoadingPopupView_Closed(object sender, EventArgs eventArgs)
         {
-            var currentVersion = this.settingsService.GetValue<string>("Version", null);
-            bool fCurrentVersion = string.Equals(currentVersion, CurrentVersion, StringComparison.OrdinalIgnoreCase);
-            bool fUpdate = !fCurrentVersion && currentVersion != null;
-
             ((IProgressLoadingPopupView)sender).Closed += this.AuthentificationPopupView_Closed;
+
+            var progressLoadingCloseEventArgs = eventArgs as ProgressLoadingCloseEventArgs;
+            if (progressLoadingCloseEventArgs != null && progressLoadingCloseEventArgs.IsFailed)
+            {
+                this.sessionService.ClearSession();
+                return;
+            }
+
+            var currentVersion = this.settingsService.GetValue<string>("Version", null);
+            bool fCurrentVersion = string.Equals(currentVersion, Package.Current.Id.Version.ToVersionString(), StringComparison.OrdinalIgnoreCase);
+            bool fUpdate = !fCurrentVersion && currentVersion != null;
+            
             await this.OnViewInitializedAsync();
 
-            this.settingsService.SetValue("Version", CurrentVersion);
+            this.settingsService.SetValue("Version", Package.Current.Id.Version.ToVersionString());
 
             if (fUpdate)
             {
