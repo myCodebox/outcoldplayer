@@ -119,54 +119,70 @@
   </resheader>
   <data name="AlbumPageView.Subtitle" xml:space="preserve">
     <value>Album</value>
+    <comment>01.png</comment>
   </data>
   <data name="AlbumPageView_DurationSumLabel.Text" xml:space="preserve">
     <value>Duration:</value>
+    <comment>01.png</comment>
   </data>
   <data name="AlbumPageView_SongsCountLabel.Text" xml:space="preserve">
     <value>Songs:</value>
+    <comment>01.png</comment>
   </data>
   <data name="ArtistPageView.Subtitle" xml:space="preserve">
     <value>Artist</value>
+    <comment>02.png</comment>
   </data>
   <data name="ArtistPageView_AlbumsCountLabel.Text" xml:space="preserve">
     <value>Albums:</value>
+    <comment>02.png</comment>
   </data>
   <data name="ArtistPageView_DurationSumLabel.Text" xml:space="preserve">
     <value>Duration:</value>
+    <comment>02.png</comment>
   </data>
   <data name="ArtistPageView_SongsCountLabel.Text" xml:space="preserve">
     <value>Songs:</value>
+    <comment>02.png</comment>
   </data>
   <data name="ArtistTile_Albums.Text" xml:space="preserve">
     <value>albums</value>
+    <comment>13.png</comment>
   </data>
   <data name="Authorization_EmailLabel.Text" xml:space="preserve">
     <value>Email:</value>
+    <comment>03.png</comment>
   </data>
   <data name="Authorization_Error_AccountDeleted" xml:space="preserve">
     <value>The user account has been deleted.</value>
+    <comment>DO NOT TRANSLATE</comment>
   </data>
   <data name="Authorization_Error_AccountDisabled" xml:space="preserve">
     <value>The user account has been disabled.</value>
+    <comment>DO NOT TRANSLATE</comment>
   </data>
   <data name="Authorization_Error_BadAuthentication" xml:space="preserve">
     <value>Username or password is not recognized. If you are using 2-step authentication you need to use one of the generated passwords.</value>
   </data>
   <data name="Authorization_Error_CaptchaRequired" xml:space="preserve">
     <value>A CAPTCHA is required.</value>
+    <comment>DO NOT TRANSLATE</comment>
   </data>
   <data name="Authorization_Error_NotVerified" xml:space="preserve">
     <value>The account email address has not been verified. The user will need to access their Google account directly to resolve the issue before logging in using a non-Google application.</value>
+    <comment>DO NOT TRANSLATE</comment>
   </data>
   <data name="Authorization_Error_ServiceDisabled" xml:space="preserve">
     <value>The user's access to the specified service has been disabled.</value>
+    <comment>DO NOT TRANSLATE</comment>
   </data>
   <data name="Authorization_Error_ServiceUnavailable" xml:space="preserve">
     <value>The service is not available; try again later.</value>
+    <comment>DO NOT TRANSLATE</comment>
   </data>
   <data name="Authorization_Error_TermsNotAgreed" xml:space="preserve">
     <value>The user has not agreed to terms. The user will need to access their Google account directly to resolve the issue before logging in using a non-Google application.</value>
+    <comment>DO NOT TRANSLATE</comment>
   </data>
   <data name="Authorization_Error_UnexpectedError" xml:space="preserve">
     <value>Could not authentificate. Please check network connection.</value>
@@ -179,29 +195,35 @@
   </data>
   <data name="Authorization_GoToGoogleMusicLink.Text" xml:space="preserve">
     <value>Go to Google Music</value>
+    <comment>03.png</comment>
   </data>
   <data name="Authorization_PasswordLabel.Text" xml:space="preserve">
     <value>Password:</value>
+    <comment>03.png</comment>
   </data>
   <data name="Authorization_PasswordStorageInformation.Text" xml:space="preserve">
     <value>Password will be stored in encrypted Windows Storage.</value>
+    <comment>03.png</comment>
   </data>
   <data name="Authorization_RememberAccountCheckBox.Content" xml:space="preserve">
     <value>Remember account</value>
+    <comment>03.png</comment>
   </data>
   <data name="Authorization_SignInButton.Content" xml:space="preserve">
     <value>Sign in</value>
+    <comment>03.png</comment>
   </data>
   <data name="Authorization_SignInInfo.Text" xml:space="preserve">
-    <value>To use gMusic player you need to provide your Google Account's email and password. 
-If you do not have one, you need to create Google Account. 
-Please make sure that you have subscribed to Google Music service. For more details go to the Google Music site.</value>
+    <value>To use gMusic player you need to provide your Google Account's email and password. If you do not have one, you need to create Google Account. Please make sure that you have subscribed to Google Music service. For more details go to the Google Music site.</value>
+    <comment>03.png</comment>
   </data>
   <data name="Authorization_SignInTitle.Text" xml:space="preserve">
     <value>Sign in</value>
+    <comment>03.png</comment>
   </data>
   <data name="HyperLink_RemoveAds" xml:space="preserve">
     <value>Remove Ads</value>
+    <comment>02.png</comment>
   </data>
   <data name="LastFmAuthentification_CancelButton.Content" xml:space="preserve">
     <value>Cancel</value>
@@ -232,6 +254,7 @@ Please make sure that you have subscribed to Google Music service. For more deta
   </data>
   <data name="Loading_LoadingMusicLibrary" xml:space="preserve">
     <value>Loading music library...</value>
+    <comment>04.png</comment>
   </data>
   <data name="Loading_MessageBox_Failed.CancelButton" xml:space="preserve">
     <value>Cancel</value>
@@ -244,21 +267,27 @@ Please make sure that you have subscribed to Google Music service. For more deta
   </data>
   <data name="MainMenu_Albums" xml:space="preserve">
     <value>Albums</value>
+    <comment>06.png</comment>
   </data>
   <data name="MainMenu_Artists" xml:space="preserve">
     <value>Artists</value>
+    <comment>06.png</comment>
   </data>
   <data name="MainMenu_Genres" xml:space="preserve">
     <value>Genres</value>
+    <comment>06.png</comment>
   </data>
   <data name="MainMenu_Home" xml:space="preserve">
     <value>Home</value>
+    <comment>06.png</comment>
   </data>
   <data name="MainMenu_Playlists" xml:space="preserve">
     <value>Playlists</value>
+    <comment>06.png</comment>
   </data>
   <data name="MainMenu_Queue" xml:space="preserve">
     <value>Queue</value>
+    <comment>06.png</comment>
   </data>
   <data name="MessageBox_DeletePlaylistMessage" xml:space="preserve">
     <value>Are you sure want to delete selected playlists?</value>
@@ -283,36 +312,45 @@ Please make sure that you have subscribed to Google Music service. For more deta
   </data>
   <data name="Model_Album_Plural_Title" xml:space="preserve">
     <value>Albums</value>
+    <comment>15.png</comment>
   </data>
   <data name="Model_Album_Title" xml:space="preserve">
     <value>Album</value>
+    <comment>15.png</comment>
   </data>
   <data name="Model_Artist_Plural_Title" xml:space="preserve">
     <value>Artists</value>
+    <comment>15.png</comment>
   </data>
   <data name="Model_Artist_Title" xml:space="preserve">
     <value>Artist</value>
+    <comment>16.png</comment>
   </data>
   <data name="Model_Genre_Plural_Title" xml:space="preserve">
     <value>Genres</value>
+    <comment>15.png</comment>
   </data>
   <data name="Model_Genre_Title" xml:space="preserve">
     <value>Genre</value>
   </data>
   <data name="Model_Song_Plural_Title" xml:space="preserve">
     <value>Songs</value>
+    <comment>15.png</comment>
   </data>
   <data name="Model_Song_Title" xml:space="preserve">
     <value>Song</value>
+    <comment>15.png</comment>
   </data>
   <data name="Model_UserPlaylist_Plural_Title" xml:space="preserve">
     <value>Playlists</value>
+    <comment>15.png</comment>
   </data>
   <data name="Model_UserPlaylist_Title" xml:space="preserve">
     <value>Playlist</value>
   </data>
   <data name="Player_BufferingLabel.Text" xml:space="preserve">
     <value>Buffering</value>
+    <comment>13.png</comment>
   </data>
   <data name="Player_CannotPlay" xml:space="preserve">
     <value>Cannot play right now. Make sure that you don't use current account on different device at the same time. Try after couple minutes.</value>
@@ -322,30 +360,39 @@ Please make sure that you have subscribed to Google Music service. For more deta
   </data>
   <data name="Player_RepeatAllButton.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>Repeat All</value>
+    <comment>12.png</comment>
   </data>
   <data name="Player_ShuffleButton.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>Shuffle</value>
+    <comment>12.png</comment>
   </data>
   <data name="Player_VolumeTitle.Text" xml:space="preserve">
     <value>Volume</value>
+    <comment>12.png</comment>
   </data>
   <data name="PlaylistEdit_CancelButton.Content" xml:space="preserve">
     <value>Cancel</value>
+    <comment>11.png</comment>
   </data>
   <data name="PlaylistEdit_SaveButton.Content" xml:space="preserve">
     <value>Save</value>
+    <comment>11.png</comment>
   </data>
   <data name="QueueActions_AddToQueue.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>Add to queue</value>
+    <comment>10.png</comment>
   </data>
   <data name="QueueActions_Play.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>Play selected</value>
+    <comment>10.png</comment>
   </data>
   <data name="QueueActions_ShuffleAndPlay.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>Shuffle and play</value>
+    <comment>10.png</comment>
   </data>
   <data name="QueuePageView.Title" xml:space="preserve">
     <value>Queue</value>
+    <comment>14.png</comment>
   </data>
   <data name="QueueSongsList_SongAlbum.Text" xml:space="preserve">
     <value>album</value>
@@ -382,143 +429,188 @@ Please make sure that you have subscribed to Google Music service. For more deta
   </data>
   <data name="SearchItem_SongsFormat" xml:space="preserve">
     <value>{0} songs</value>
+    <comment>15.png</comment>
   </data>
   <data name="SearchPageView_AllTitle" xml:space="preserve">
     <value>All</value>
+    <comment>15.png</comment>
   </data>
   <data name="SearchPageView_SongsTitle" xml:space="preserve">
     <value>Songs</value>
+    <comment>15.png</comment>
   </data>
   <data name="SearchPageView_SubtitleFormat" xml:space="preserve">
     <value>Results for "{0}"</value>
+    <comment>15.png</comment>
   </data>
   <data name="SettingsAccountTitle" xml:space="preserve">
     <value>Accounts</value>
+    <comment>05.png</comment>
   </data>
   <data name="SettingsAccount_AccountCleared" xml:space="preserve">
     <value>Username and password were cleared.</value>
+    <comment>Show on 07.png when user will click on Sign out.</comment>
   </data>
   <data name="SettingsAccount_AccountClearedButYouAreSignedIn" xml:space="preserve">
     <value>Username and password were cleared. You are still signed in, on next application start gMusic can still use your Token and Session keys, to delete them click on Sign Out button.</value>
+    <comment>Show on 07.png when user will click on Forget account.</comment>
   </data>
   <data name="SettingsAccount_DoesNotStorePassword.Text" xml:space="preserve">
     <value>gMusic does not store email and password of current Google Account.</value>
+    <comment>The same location as 'SettingsAccount_StorePasswordInProtectedStore.Text' on 07.png</comment>
   </data>
   <data name="SettingsAccount_ForgetAccountButton.Content" xml:space="preserve">
     <value>Forget account</value>
+    <comment>07.png</comment>
   </data>
   <data name="SettingsAccount_LastFmAccountLabel.Text" xml:space="preserve">
     <value>Linked Last.fm account (gMusic sends updates for your "Recently Listened Tracks" list):</value>
+    <comment>07.png</comment>
   </data>
   <data name="SettingsAccount_LastFmBeta.Text" xml:space="preserve">
     <value>*Last.fm scrobbing available to all users, while this feature is in beta version.</value>
+    <comment>07.png</comment>
   </data>
   <data name="SettingsAccount_LastFmInfo.Text" xml:space="preserve">
     <value>gMusic can update your "Recently Listened Tracks" list on Last.fm while you are listening music in application. To do this you need to link Last.fm account.</value>
+    <comment>Show instead of 'SettingsAccount_LastFmAccountLabel.Text' on 07.png when Last.fm account is not linked.</comment>
   </data>
   <data name="SettingsAccount_LinkLastFmAccountButton.Content" xml:space="preserve">
     <value>Link Last.fm account</value>
+    <comment>Show instead of 'SettingsAccount_UnlinkLastFmAccountButton.Content' when last fm account is not linked.</comment>
   </data>
   <data name="SettingsAccount_NotLoginIn.Text" xml:space="preserve">
     <value>You are not logged in.</value>
+    <comment>Show instead of 'SettingsAccount_YouAreLoggedIn.Text' when user is not logged in.</comment>
   </data>
   <data name="SettingsAccount_RefreshButton.Content" xml:space="preserve">
     <value>Refresh</value>
+    <comment>07.png</comment>
   </data>
   <data name="SettingsAccount_RefreshLabel.Text" xml:space="preserve">
     <value>Refresh music from Google Play</value>
+    <comment>07.png</comment>
   </data>
   <data name="SettingsAccount_SignOutButton.Content" xml:space="preserve">
     <value>Sign out</value>
+    <comment>07.png</comment>
   </data>
   <data name="SettingsAccount_StorePasswordInProtectedStore.Text" xml:space="preserve">
     <value>gMusic stores email and password in protected Windows store.</value>
+    <comment>07.png</comment>
   </data>
   <data name="SettingsAccount_UnlinkLastFmAccountButton.Content" xml:space="preserve">
     <value>Unlink Last.fm account</value>
+    <comment>07.png</comment>
   </data>
   <data name="SettingsAccount_YouAreLoggedIn.Text" xml:space="preserve">
     <value>You are logged in with Google Account:</value>
+    <comment>07.png</comment>
   </data>
   <data name="SettingsAppSettingsTitle" xml:space="preserve">
     <value>App settings</value>
+    <comment>05.png</comment>
   </data>
   <data name="SettingsAppSettings_KeepDisplayOnDescription.Text" xml:space="preserve">
     <value>Depending on system power settings, the display may first be dimmed, then turned off if 
 Windows does not detect any user activity for a certain amount of time. 
 This setting allows to prevent this when gMusic application is in foreground (on screen).</value>
+    <comment>08.png</comment>
   </data>
   <data name="SettingsAppSettings_KeepDisplayOnLabel.Header" xml:space="preserve">
     <value>Keep display on.</value>
+    <comment>08.png</comment>
   </data>
   <data name="SettingsLegalTitle" xml:space="preserve">
     <value>Legal</value>
+    <comment>05.png</comment>
   </data>
   <data name="SettingsPrivacyPolicyTitle" xml:space="preserve">
     <value>Privacy Policy</value>
+    <comment>05.png</comment>
   </data>
   <data name="SettingsSupportTitle" xml:space="preserve">
     <value>Support</value>
+    <comment>05.png</comment>
   </data>
   <data name="SettingsUpgradeTitle" xml:space="preserve">
     <value>Upgrade</value>
+    <comment>05.png</comment>
   </data>
   <data name="SettingsUpgrade_AddFreePackageButton.Content" xml:space="preserve">
     <value>Ad Free (unlimited)</value>
+    <comment>09.png</comment>
   </data>
   <data name="SettingsUpgrade_AddFreePackageDescription.Text" xml:space="preserve">
     <value>You can buy for $1.99 AdFree package, which will remove all advertisements (limited offer):</value>
+    <comment>09.png</comment>
   </data>
   <data name="SettingsUpgrade_RemoveAdsTitle.Text" xml:space="preserve">
     <value>Do you want to remove advertisements from gMusic?</value>
+    <comment>09.png</comment>
   </data>
   <data name="SettingsUpgrade_ThankYou.Text" xml:space="preserve">
     <value>Thank You!</value>
+    <comment>09.png</comment>
   </data>
   <data name="SettingsUpgrade_UltimatePackageButton.Content" xml:space="preserve">
     <value>Ultimate (unlimited)</value>
+    <comment>09.png</comment>
   </data>
   <data name="SettingsUpgrade_UltimatePackageDescription.Text" xml:space="preserve">
     <value>Or you can spend $4.99 for Ultimate package. This package does not offer any additional features now (other than Ad Free package has). 
 But it will contains all additional features, which we will ship in future (limited offer):</value>
+    <comment>09.png</comment>
   </data>
   <data name="SongsList_SongAlbum.Title" xml:space="preserve">
     <value>album</value>
+    <comment>14.png</comment>
   </data>
   <data name="SongsList_SongArtist.Title" xml:space="preserve">
     <value>artist</value>
+    <comment>14.png</comment>
   </data>
   <data name="SongsList_SongDuration.Title" xml:space="preserve">
     <value>time</value>
+    <comment>14.png</comment>
   </data>
   <data name="SongsList_SongPlayCounts.Title" xml:space="preserve">
     <value>plays</value>
+    <comment>14.png</comment>
   </data>
   <data name="SongsList_SongRating.Title" xml:space="preserve">
     <value>rating</value>
+    <comment>14.png</comment>
   </data>
   <data name="SongsList_SongTitle.Title" xml:space="preserve">
     <value>name</value>
+    <comment>14.png</comment>
   </data>
   <data name="StartPageView.Title" xml:space="preserve">
     <value>Home</value>
   </data>
   <data name="Toolbar_CreateButton" xml:space="preserve">
     <value>Create</value>
+    <comment>10.png</comment>
   </data>
   <data name="Toolbar_DeleteButton" xml:space="preserve">
     <value>Delete</value>
+    <comment>10.png</comment>
   </data>
   <data name="Toolbar_PlaylistButton" xml:space="preserve">
     <value>Playlist</value>
+    <comment>14.png</comment>
   </data>
   <data name="Toolbar_QueueButton" xml:space="preserve">
     <value>Queue</value>
+    <comment>10.png</comment>
   </data>
   <data name="Toolbar_RenameButton" xml:space="preserve">
     <value>Rename</value>
+    <comment>10.png</comment>
   </data>
   <data name="Toolbar_ShowAllButton" xml:space="preserve">
     <value>Show All</value>
+    <comment>16.png</comment>
   </data>
 </root>
