@@ -7,22 +7,24 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using System.Collections.Generic;
     using System.Linq;
 
-    using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
 
     public class PlaylistPageViewPresenter : PlaylistPageViewPresenterBase<IPlaylistPageView, IPlaylist>
     {
+        private readonly IApplicationResources resources;
         private readonly IUserPlaylistsService userPlaylistsService;
         private readonly IPlaylistsService playlistsService;
 
         public PlaylistPageViewPresenter(
             IDependencyResolverContainer container,
+            IApplicationResources resources,
             IUserPlaylistsService userPlaylistsService,
             IPlaylistsService playlistsService)
             : base(container)
         {
+            this.resources = resources;
             this.userPlaylistsService = userPlaylistsService;
             this.playlistsService = playlistsService;
             this.RemoveFromPlaylistCommand = new DelegateCommand(this.RemoveFromPlaylist);
@@ -37,7 +39,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             {
                 commandMetadatas = new List<CommandMetadata>(commandMetadatas)
                                        {
-                                           new CommandMetadata(CommandIcon.Remove, "Playlist", this.RemoveFromPlaylistCommand)
+                                           new CommandMetadata(CommandIcon.Remove, this.resources.GetString("Toolbar_PlaylistButton"), this.RemoveFromPlaylistCommand)
                                        };
             }
 

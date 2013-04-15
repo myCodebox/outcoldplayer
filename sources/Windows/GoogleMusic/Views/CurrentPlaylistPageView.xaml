@@ -9,7 +9,8 @@
     mc:Ignorable="d"
     d:DesignHeight="600"
     d:DesignWidth="800"
-    Title="Queue">
+    Title="Queue"
+    x:Uid="QueuePageView">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -34,12 +35,48 @@
                     <ColumnDefinition Width="60" />
                     <ColumnDefinition Width="150" />
                 </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="1" VerticalAlignment="Center" Margin="0, 0, 0, 0" Text="name" TextTrimming="WordEllipsis" Style="{StaticResource TitleTextStyle}" />
-                <TextBlock Grid.Column="2" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="time" HorizontalAlignment="Right" Style="{StaticResource TitleTextStyle}"/>
-                <TextBlock Grid.Column="3" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="artist" TextTrimming="WordEllipsis" Style="{StaticResource TitleTextStyle}"/>
-                <TextBlock Grid.Column="4" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="album" TextTrimming="WordEllipsis" Style="{StaticResource TitleTextStyle}"/>
-                <TextBlock Grid.Column="5" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="plays" HorizontalAlignment="Right" Style="{StaticResource TitleTextStyle}"/>
-                <TextBlock Grid.Column="6" VerticalAlignment="Center" Margin="20, 0, 0, 0" Text="rating" HorizontalAlignment="Left" Style="{StaticResource TitleTextStyle}"/>
+                <TextBlock Grid.Column="1" 
+                           VerticalAlignment="Center"
+                           Margin="0, 0, 0, 0" 
+                           Text="name" 
+                           TextTrimming="WordEllipsis" 
+                           Style="{StaticResource TitleTextStyle}"
+                           x:Uid="QueueSongsList_SongTitle"/>
+                <TextBlock Grid.Column="2" 
+                           VerticalAlignment="Center" 
+                           Margin="20, 0, 0, 0" 
+                           Text="time" 
+                           HorizontalAlignment="Right" 
+                           Style="{StaticResource TitleTextStyle}"
+                           x:Uid="QueueSongsList_SongDuration"/>
+                <TextBlock Grid.Column="3" 
+                           VerticalAlignment="Center" 
+                           Margin="20, 0, 0, 0" 
+                           Text="artist" 
+                           TextTrimming="WordEllipsis" 
+                           Style="{StaticResource TitleTextStyle}"
+                           x:Uid="QueueSongsList_SongArtist"/>
+                <TextBlock Grid.Column="4" 
+                           VerticalAlignment="Center" 
+                           Margin="20, 0, 0, 0" 
+                           Text="album" 
+                           TextTrimming="WordEllipsis" 
+                           Style="{StaticResource TitleTextStyle}"
+                           x:Uid="QueueSongsList_SongAlbum"/>
+                <TextBlock Grid.Column="5" 
+                           VerticalAlignment="Center" 
+                           Margin="20, 0, 0, 0" 
+                           Text="plays" 
+                           HorizontalAlignment="Right" 
+                           Style="{StaticResource TitleTextStyle}"
+                           x:Uid="QueueSongsList_SongPlayCounts"/>
+                <TextBlock Grid.Column="6" 
+                           VerticalAlignment="Center" 
+                           Margin="20, 0, 0, 0" 
+                           Text="rating" 
+                           HorizontalAlignment="Left" 
+                           Style="{StaticResource TitleTextStyle}"
+                           x:Uid="QueueSongsList_SongRating"/>
             </Grid>
         </Border>
        

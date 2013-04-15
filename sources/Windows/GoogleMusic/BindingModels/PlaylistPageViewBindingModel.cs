@@ -10,7 +10,10 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
     {
         private TPlaylist playlist;
 
-        public PlaylistPageViewBindingModel(SongsBindingModel songsBindingModel)
+        private string playlistType;
+
+        public PlaylistPageViewBindingModel(
+            SongsBindingModel songsBindingModel)
         {
             this.SongsBindingModel = songsBindingModel;
         }
@@ -35,13 +38,12 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         {
             get
             {
-                if (this.Playlist == null)
-                {
-                    return null;
-                }
+                return this.playlistType;
+            }
 
-                // TODO:  Create converter for PlaylistType
-                return this.Playlist.PlaylistType.ToTitle();
+            set
+            {
+                this.SetValue(ref this.playlistType, value);
             }
         }
     }

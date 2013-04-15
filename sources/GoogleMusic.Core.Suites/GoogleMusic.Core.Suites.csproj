@@ -89,6 +89,9 @@
     <Compile Include="..\Windows\GoogleMusic.Core\BindingModels\SongBindingModel.cs">
       <Link>_sources\BindingModels\SongBindingModel.cs</Link>
     </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\IApplicationResources.cs">
+      <Link>_sources\IApplicationResources.cs</Link>
+    </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Models\Album.cs">
       <Link>_sources\Models\Album.cs</Link>
     </Compile>

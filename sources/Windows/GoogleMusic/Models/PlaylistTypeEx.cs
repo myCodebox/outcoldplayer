@@ -6,35 +6,35 @@ namespace OutcoldSolutions.GoogleMusic.Models
 {
     internal static class PlaylistTypeEx
     {
-        public static string ToTitle(this PlaylistType playlistType)
+        public static string GetTitle(this IApplicationResources resources, PlaylistType playlistType)
         {
             switch (playlistType)
             {
                 case PlaylistType.Album:
-                    return "Album";
+                    return resources.GetString("Model_Album_Title");
                 case PlaylistType.Artist:
-                    return "Artist";
+                    return resources.GetString("Model_Artist_Title");
                 case PlaylistType.Genre:
-                    return "Genre";
+                    return resources.GetString("Model_Genre_Title");
                 case PlaylistType.UserPlaylist:
-                    return "Playlist";
+                    return resources.GetString("Model_UserPlaylist_Title");
                 default:
                     return null;
             }
         }
 
-        public static string ToPluralTitle(this PlaylistType playlistType)
+        public static string GetPluralTitle(this IApplicationResources resources, PlaylistType playlistType)
         {
             switch (playlistType)
             {
                 case PlaylistType.Album:
-                    return "Albums";
+                    return resources.GetString("Model_Album_Plural_Title");
                 case PlaylistType.Artist:
-                    return "Artists";
+                    return resources.GetString("Model_Artist_Plural_Title");
                 case PlaylistType.Genre:
-                    return "Genres";
+                    return resources.GetString("Model_Genre_Plural_Title");
                 case PlaylistType.UserPlaylist:
-                    return "Playlists";
+                    return resources.GetString("Model_UserPlaylist_Plural_Title");
                 default:
                     return null;
             }

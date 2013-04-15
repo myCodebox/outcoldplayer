@@ -13,8 +13,19 @@
         <StackPanel Width="300">
             <TextBox Text="{Binding Path=Title, Mode=OneWay}" x:Name="TextBoxPlaylistName" KeyUp="TextBoxPlaylistNameKeyUp" KeyDown="TextBoxPlaylistNameOnKeyDown" />
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0, 20, 0, 0">
-                <Button Width="80" Command="{Binding Path=SaveCommand, Mode=OneTime}">Save</Button>
-                <Button Width="80" Margin="20, 0, 0, 0" Command="{Binding Path=CancelCommand, Mode=OneTime}">Cancel</Button>
+                <Button MinWidth="80" 
+                        Width="Auto"
+                        Command="{Binding Path=SaveCommand, Mode=OneTime}" 
+                        x:Uid="PlaylistEdit_SaveButton">
+                    Save
+                </Button>
+                <Button MinWidth="80" 
+                        Width="Auto"
+                        Margin="20, 0, 0, 0" 
+                        Command="{Binding Path=CancelCommand, Mode=OneTime}" 
+                        x:Uid="PlaylistEdit_CancelButton">
+                    Cancel
+                </Button>
             </StackPanel>
         </StackPanel>
     </Border>

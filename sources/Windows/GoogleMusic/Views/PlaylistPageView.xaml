@@ -43,42 +43,48 @@
                                                 Title="name"
                                                 CurrentSorting="{Binding Path=BindingModel.SongsBindingModel.CurrentSorting, Mode=OneWay}"
                                                 UpSorting="TitleDescending"
-                                                DownSorting="Title" />
+                                                DownSorting="Title" 
+                                                x:Uid="SongsList_SongTitle"/>
                 
                 <controls:SortableHeaderControl Grid.Column="2" 
                                                 SortCommand="{Binding Path=BindingModel.SongsBindingModel.SortCommand}"
                                                 Title="time"
                                                 CurrentSorting="{Binding Path=BindingModel.SongsBindingModel.CurrentSorting, Mode=OneWay}"
                                                 UpSorting="DurationDescending"
-                                                DownSorting="Duration" />
+                                                DownSorting="Duration"
+                                                x:Uid="SongsList_SongDuration"/>
 
                 <controls:SortableHeaderControl Grid.Column="3" 
                                                 SortCommand="{Binding Path=BindingModel.SongsBindingModel.SortCommand}"
                                                 Title="artist"
                                                 CurrentSorting="{Binding Path=BindingModel.SongsBindingModel.CurrentSorting, Mode=OneWay}"
                                                 UpSorting="ArtistDescending"
-                                                DownSorting="Artist" />
+                                                DownSorting="Artist"
+                                                x:Uid="SongsList_SongArtist"/>
 
                 <controls:SortableHeaderControl Grid.Column="4" 
                                                 SortCommand="{Binding Path=BindingModel.SongsBindingModel.SortCommand}"
                                                 Title="album"
                                                 CurrentSorting="{Binding Path=BindingModel.SongsBindingModel.CurrentSorting, Mode=OneWay}"
                                                 UpSorting="AlbumDescending"
-                                                DownSorting="Album" />
+                                                DownSorting="Album" 
+                                                x:Uid="SongsList_SongAlbum"/>
 
                 <controls:SortableHeaderControl Grid.Column="5" 
                                                 SortCommand="{Binding Path=BindingModel.SongsBindingModel.SortCommand}"
                                                 Title="plays"
                                                 CurrentSorting="{Binding Path=BindingModel.SongsBindingModel.CurrentSorting, Mode=OneWay}"
                                                 UpSorting="PlaysCountDescending"
-                                                DownSorting="PlaysCount" />
+                                                DownSorting="PlaysCount"
+                                                x:Uid="SongsList_SongPlayCounts"/>
 
                 <controls:SortableHeaderControl Grid.Column="6" 
                                                 SortCommand="{Binding Path=BindingModel.SongsBindingModel.SortCommand}"
                                                 Title="rating"
                                                 CurrentSorting="{Binding Path=BindingModel.SongsBindingModel.CurrentSorting, Mode=OneWay}"
                                                 UpSorting="RatingDescending"
-                                                DownSorting="Rating" />
+                                                DownSorting="Rating" 
+                                                x:Uid="SongsList_SongRating"/>
             </Grid>
         </Border>
         

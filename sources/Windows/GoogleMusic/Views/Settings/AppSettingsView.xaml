@@ -15,9 +15,12 @@
             </TransitionCollection>
         </StackPanel.Transitions>
 
-        <ToggleSwitch Margin="0, 0, 0, 0" IsOn="{Binding Path=IsScreenOn, Mode=TwoWay}">Keep display on.</ToggleSwitch>
+        <ToggleSwitch Margin="0, 0, 0, 0" 
+                      IsOn="{Binding Path=IsScreenOn, Mode=TwoWay}"
+                      x:Uid="SettingsAppSettings_KeepDisplayOnLabel" >Keep display on.</ToggleSwitch>
 
-        <TextBlock Style="{StaticResource SmallTextStyle}"  Margin="0, 10, 0, 0">
+        <TextBlock Style="{StaticResource SmallTextStyle}"  Margin="0, 10, 0, 0"
+                   x:Uid="SettingsAppSettings_KeepDisplayOnDescription">
             Depending on system power settings, the display may first be dimmed, then turned off if 
             Windows does not detect any user activity for a certain amount of time. 
             This setting allows to prevent this when gMusic application is in foreground (on screen).

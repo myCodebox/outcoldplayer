@@ -19,6 +19,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
     public class PlayQueueService : IPlayQueueService
     {
         private readonly ILogger logger;
+        private readonly IApplicationResources resources;
         private readonly IMediaElementContainer mediaElement;
         private readonly ISettingsService settingsService;
         private readonly ICurrentSongPublisherService publisherService;
@@ -47,6 +48,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         public PlayQueueService(
             ILogManager logManager,
+            IApplicationResources resources,
             IMediaElementContainer mediaElement,
             ISettingsService settingsService,
             IMediaStreamDownloadService downloadService,
@@ -58,6 +60,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             IEventAggregator eventAggregator)
         {
             this.logger = logManager.CreateLogger("PlayQueueService");
+            this.resources = resources;
             this.mediaElement = mediaElement;
             this.settingsService = settingsService;
             this.downloadService = downloadService;
@@ -578,7 +581,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                             this.logger.Debug("Could not get url for song {0}.", song.ProviderSongId);
                         }
 
-                        this.logger.LogTask(this.notificationService.ShowMessageAsync("Cannot play right now. Make sure that you don't use current account on different device at the same time. Try after couple minutes."));
+                        this.logger.LogTask(this.notificationService.ShowMessageAsync(this.resources.GetString("Player_CannotPlay")));
                     }
                 }
             }

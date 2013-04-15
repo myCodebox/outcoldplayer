@@ -9,13 +9,12 @@ namespace OutcoldSolutions.GoogleMusic.Services
     using OutcoldSolutions.Shell;
     using OutcoldSolutions.Views;
 
-    using Windows.UI;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
-    using Windows.UI.Xaml.Media;
 
     public class RightRegionControlService 
     {
+        private readonly IApplicationResources resources;
         private readonly IMainFrameRegionProvider regionProvider;
         private readonly IApplicationSettingViewsService settingsCommands;
         private readonly ILogger logger;
@@ -27,10 +26,12 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         public RightRegionControlService(
             ILogManager logManager,
+            IApplicationResources resources,
             IMainFrameRegionProvider regionProvider,
             IApplicationSettingViewsService settingsCommands)
         {
             this.logger = logManager.CreateLogger("RightRegionControlService");
+            this.resources = resources;
             this.regionProvider = regionProvider;
             this.settingsCommands = settingsCommands;
 
@@ -84,7 +85,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
                     this.adControlRemoveButton = new HyperlinkButton()
                                                      {
-                                                         Content = "Remove Ads",
+                                                         Content = this.resources.GetString("HyperLink_RemoveAds"),
                                                          HorizontalAlignment = HorizontalAlignment.Center,
                                                          Width = 160,
                                                          HorizontalContentAlignment = HorizontalAlignment.Center

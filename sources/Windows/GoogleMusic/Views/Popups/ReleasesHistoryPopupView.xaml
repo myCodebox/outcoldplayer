@@ -27,8 +27,8 @@
 
             </StackPanel>
 
-            <TextBlock Grid.Row="1" Style="{StaticResource BodyTextStyle}"  Margin="0, 20, 0, 0" >
-            Congratulations! You just installed new version of gMusic. You can find the list of new feature [+] and fixed bugs [b] below:
+            <TextBlock Grid.Row="1" Style="{StaticResource BodyTextStyle}"  Margin="0, 20, 0, 0" x:Uid="ReleaseHistory_Subtitle" >
+                Congratulations! You just installed new version of gMusic. You can find the list of new feature [+] and fixed bugs [b] below:
             </TextBlock>
 
             <ScrollViewer Grid.Row="2" Margin="0, 20, 0, 0">
@@ -145,7 +145,11 @@
                     </HyperlinkButton.Template>
                 </HyperlinkButton>
 
-                <TextBlock Style="{StaticResource BodyTextStyle}" VerticalAlignment="Center" Margin="10, 0, 0, 0">UserVoice is the best way to tell us what features you want to see in next versions of gMusic.</TextBlock>
+                <TextBlock Style="{StaticResource BodyTextStyle}" VerticalAlignment="Center" 
+                           Margin="10, 0, 0, 0" 
+                           x:Uid="ReleaseHistory_UserVoice">
+                    UserVoice is the best way to tell us what features you want to see in next versions of gMusic.
+                </TextBlock>
             </StackPanel>
 
             <StackPanel Grid.Row="4" Orientation="Horizontal" Margin="0, 20, 0, 40">
@@ -163,13 +167,30 @@
                     </HyperlinkButton.Template>
                 </HyperlinkButton>
 
-                <TextBlock Style="{StaticResource BodyTextStyle}" VerticalAlignment="Center" Margin="10, 0, 0, 0">Follow us on twitter to know about our plans.</TextBlock>
+                <TextBlock Style="{StaticResource BodyTextStyle}" 
+                           VerticalAlignment="Center" 
+                           Margin="10, 0, 0, 0" 
+                           x:Uid="ReleaseHistory_Twitter">
+                    Follow us on twitter to know about our plans.
+                </TextBlock>
             </StackPanel>
 
 
-            <TextBlock Grid.Row="5" Style="{StaticResource TitleTextStyle}" Margin="0, 0, 0, 0" >Thank you for using gMusic application!</TextBlock>
+            <TextBlock Grid.Row="5" 
+                       Style="{StaticResource TitleTextStyle}" 
+                       Margin="0, 0, 0, 0" 
+                       x:Uid="RelaseHistory_ThankYou">
+                Thank you for using gMusic application!
+            </TextBlock>
 
-            <Button Grid.Row="5" HorizontalAlignment="Right" Width="80" Margin="0, 0, 20, 0" Command="{Binding Path=LeavePageCommand, Mode=OneTime}">OK</Button>
+            <Button Grid.Row="5" 
+                    HorizontalAlignment="Right" 
+                    Width="80" 
+                    Margin="0, 0, 20, 0" 
+                    Command="{Binding Path=LeavePageCommand, Mode=OneTime}" 
+                    x:Uid="ReleaseHistory_OkButton">
+                OK
+            </Button>
         </Grid>
     </Border>
     

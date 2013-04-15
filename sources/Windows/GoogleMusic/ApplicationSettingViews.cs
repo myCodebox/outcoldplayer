@@ -9,21 +9,21 @@ namespace OutcoldSolutions.GoogleMusic
 
     public static class ApplicationSettingViews
     {
-         public static void Initialize(IApplicationSettingViewsService service)
+         public static void Initialize(IApplicationSettingViewsService service, IApplicationResources resources)
          {
-             service.RegisterSettings<AccountsView>("accounts", "Accounts");
-             service.RegisterSettings<AppSettingsView>("appsettings", "App Settings");
+             service.RegisterSettings<AccountsView>("accounts", resources.GetString("SettingsAccountTitle"));
+             service.RegisterSettings<AppSettingsView>("appsettings", resources.GetString("SettingsAppSettingsTitle"));
 
              bool upgradeViewRegistered = false;
              if (!InAppPurchases.HasFeature(GoogleMusicFeatures.All))
              {
-                 service.RegisterSettings<UpgradeView>("upgrade", "Upgrade");
+                 service.RegisterSettings<UpgradeView>("upgrade", resources.GetString("SettingsUpgradeTitle"));
                  upgradeViewRegistered = true;
              }
 
-             service.RegisterSettings<SupportView>("support", "Support");
-             service.RegisterSettings<PrivacyView>("privacy", "Privacy Policy");
-             service.RegisterSettings<LegalView>("legal", "Legal");
+             service.RegisterSettings<SupportView>("support", resources.GetString("SettingsSupportTitle"));
+             service.RegisterSettings<PrivacyView>("privacy",  resources.GetString("SettingsPrivacyPolicyTitle"));
+             service.RegisterSettings<LegalView>("legal", resources.GetString("SettingsLegalTitle"));
 
              InAppPurchases.LicenseChanged += () =>
              {
@@ -31,7 +31,7 @@ namespace OutcoldSolutions.GoogleMusic
                  {
                      if (!upgradeViewRegistered)
                      {
-                         service.RegisterSettings<UpgradeView>("upgrade", "Upgrade", ApplicationSettingLayoutType.Standard, "accounts");
+                         service.RegisterSettings<UpgradeView>("upgrade", "SettingsUpgradeTitle", ApplicationSettingLayoutType.Standard, "accounts");
                          upgradeViewRegistered = true;
                      }
                  }

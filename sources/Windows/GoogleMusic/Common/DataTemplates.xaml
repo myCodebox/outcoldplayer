@@ -54,7 +54,7 @@
                     <TextBlock Text="{Binding Path=Playlist.Title, Mode=OneWay}"  Style="{StaticResource BodyTextStyle}" TextWrapping="Wrap" TextTrimming="WordEllipsis" MaxHeight="40"/>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{Binding Path=Playlist.AlbumsCount, Mode=OneTime}" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" />
-                        <TextBlock Text=" albums" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" />
+                        <TextBlock Margin="7, 0, 0, 0"  x:Uid="ArtistTile_Albums" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" />
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{Binding Path=Playlist.Duration, Mode=OneTime, Converter={StaticResource TimeSpanToTimeConverter}}" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
