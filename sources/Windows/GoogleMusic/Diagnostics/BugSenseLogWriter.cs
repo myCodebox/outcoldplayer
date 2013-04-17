@@ -63,6 +63,7 @@ namespace OutcoldSolutions.GoogleMusic.Diagnostics
 
                             if (exception.InnerException != null)
                             {
+                                logExtra.Add("hresult", exception.HResult.ToString(CultureInfo.InvariantCulture));
                                 logExtra.Add("exceptionType", exception.GetType().FullName);
                                 logExtra.Add("innerExceptionType", exception.InnerException.GetType().FullName);
                                 logExtra.Add("innerException", exception.InnerException.Message);

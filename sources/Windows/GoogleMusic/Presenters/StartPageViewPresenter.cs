@@ -250,7 +250,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                                 return this.CreateGroup(t.ToPluralTitle(), count, playlists, t);
                             })));
 
-            await this.Dispatcher.RunAsync(() => { this.BindingModel.Groups = groups.ToList(); });
+            await this.Dispatcher.RunAsync(() => { this.BindingModel.Groups = groups.Where(g => g.Playlists.Count > 0).ToList(); });
         }
 
         private void SelectedItemsOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)

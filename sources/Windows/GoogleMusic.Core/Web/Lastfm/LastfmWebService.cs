@@ -137,15 +137,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Lastfm
             }
             catch (Exception exception)
             {
-                // Element not found. (Exception from HRESULT: 0x80070490)
-                if (exception.HResult != 0x80070490)
-                {
-                    this.logger.Error(exception, "Could not restore session.");
-                }
-                else
-                {
-                    this.logger.Debug("Could not restore session. Element not found.");
-                }
+                this.logger.Error(exception, "Exception while tried to ClearAllPasswordCredentials.");
             }
 
             return false;
@@ -177,15 +169,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Lastfm
             }
             catch (Exception exception)
             {
-                // Element not found. (Exception from HRESULT: 0x80070490)
-                if (exception.HResult != 0x80070490)
-                {
-                    this.logger.Error(exception, "Exception while tried to ClearAllPasswordCredentials.");
-                }
-                else
-                {
-                    this.logger.Debug("ClearAllPasswordCredentials: Element not found.");
-                }
+                this.logger.Error(exception, "Exception while tried to ClearAllPasswordCredentials.");
             }
         }
 
