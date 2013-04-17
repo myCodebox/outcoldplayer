@@ -165,7 +165,6 @@
     <Compile Include="Presenters\Settings\UpgradeViewPresenter.cs" />
     <Compile Include="Presenters\UserPlaylistsPageViewPresenter.cs" />
     <Compile Include="Registration.cs" />
-    <Compile Include="Services\CurrentSongPropertiesUpdateService.cs" />
     <Compile Include="Services\IPlayQueueService.cs" />
     <Compile Include="Services\PlayQueueService.cs" />
     <Compile Include="Services\QueueState.cs" />

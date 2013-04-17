@@ -127,7 +127,6 @@ namespace OutcoldSolutions.GoogleMusic
                             .AsSingleton<NotificationService>();
 
                 registration.Register<MediaControlIntegration>();
-                registration.Register<CurrentSongPropertiesUpdateService>();
 
                 registration.Register<IGoogleMusicSynchronizationService>()
                             .AsSingleton<GoogleMusicSynchronizationService>();
@@ -184,7 +183,6 @@ namespace OutcoldSolutions.GoogleMusic
                 ApplicationSettingViews.Initialize(Container.Resolve<IApplicationSettingViewsService>());
 
                 Container.Resolve<MediaControlIntegration>();
-                Container.Resolve<CurrentSongPropertiesUpdateService>();
                 Container.Resolve<ScreenLocker>();
 
                 Container.Resolve<INavigationService>().NavigateTo<IStartPageView>();
