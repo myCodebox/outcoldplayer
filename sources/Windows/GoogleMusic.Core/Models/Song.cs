@@ -24,7 +24,7 @@ namespace OutcoldSolutions.GoogleMusic.Models
 
         public string Composer { get; set; }
 
-        public ushort PlayCount { get; set; }
+        public uint PlayCount { get; set; }
 
         public byte Rating { get; set; }
 

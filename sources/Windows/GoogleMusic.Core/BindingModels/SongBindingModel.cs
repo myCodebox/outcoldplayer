@@ -48,7 +48,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             }
         }
 
-        public ushort PlayCount
+        public uint PlayCount
         {
             get
             {
