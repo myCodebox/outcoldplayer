@@ -114,7 +114,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Lastfm
 
         public bool RestoreSession()
         {
-             PasswordVault vault = new PasswordVault();
+            PasswordVault vault = new PasswordVault();
 
             // Remove old
             try
@@ -130,18 +130,22 @@ namespace OutcoldSolutions.GoogleMusic.Web.Lastfm
                     {
 
                         this.sessionToken = keys[0];
-                        this.currentSession = new Session()
-                                                  {
-                                                      Key = keys[1],
-                                                      Name = session.UserName
-                                                  };
+                        this.currentSession = new Session() { Key = keys[1], Name = session.UserName };
                         return true;
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception exception)
             {
-                this.logger.Debug("Could not restore session.");
+                // Element not found. (Exception from HRESULT: 0x80070490)
+                if (exception.HResult != 0x80070490)
+                {
+                    this.logger.Error(exception, "Could not restore session.");
+                }
+                else
+                {
+                    this.logger.Debug("Could not restore session. Element not found.");
+                }
             }
 
             return false;
@@ -173,7 +177,15 @@ namespace OutcoldSolutions.GoogleMusic.Web.Lastfm
             }
             catch (Exception exception)
             {
-                this.logger.Error(exception, "Exception while tried to ClearAllPasswordCredentials.");
+                // Element not found. (Exception from HRESULT: 0x80070490)
+                if (exception.HResult != 0x80070490)
+                {
+                    this.logger.Error(exception, "Exception while tried to ClearAllPasswordCredentials.");
+                }
+                else
+                {
+                    this.logger.Debug("ClearAllPasswordCredentials: Element not found.");
+                }
             }
         }
 
