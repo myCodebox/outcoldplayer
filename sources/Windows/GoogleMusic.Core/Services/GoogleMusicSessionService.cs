@@ -94,7 +94,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             if (applicationDataContainer != null)
             {
                 object cookies;
-                if (applicationDataContainer.Values.TryGetValue(CookiesKey, out cookies))
+                if (applicationDataContainer.Values.TryGetValue(CookiesKey, out cookies) && cookies is string)
                 {
                     try
                     {
@@ -117,7 +117,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     }
                     catch (Exception e)
                     {
-                        this.logger.Error(e, "GetSavedCookiesAsync: Cannot deserialize cookies");
+                        this.logger.Error(e, "GetSavedCookiesAsync: Cannot deserialize cookies. Protected cookies: '{0}'", cookies);
                     }
                 }
                 else
