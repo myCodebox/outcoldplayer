@@ -42,6 +42,7 @@
                         <Paragraph>[b] gMusic can fail to load library, if some song plays count more than one milliard.</Paragraph>
                         <Paragraph>[b] Library synchronization can be broken if google stores empty playlists.</Paragraph>
                         <Paragraph>[b] Music library initialization can be broken if google contains not unique song identities.</Paragraph>
+                        <Paragraph>[b] After purchase app can crash if user will click on Upgrade second time.</Paragraph>
                     </RichTextBlock>
                     
                     <TextBlock Style="{StaticResource TitleTextStyle}" Margin="0, 10, 0, 0" >

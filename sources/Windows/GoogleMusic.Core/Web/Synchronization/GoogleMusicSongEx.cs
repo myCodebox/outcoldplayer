@@ -7,7 +7,6 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
 
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Web.Models;
-    using OutcoldSolutions.Models;
 
     public static class GoogleMusicSongEx
     {

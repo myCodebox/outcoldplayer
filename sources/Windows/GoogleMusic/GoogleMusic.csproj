@@ -145,7 +145,6 @@
     <Compile Include="Diagnostics\BugSenseLogWriter.cs" />
     <Compile Include="GoogleMusicSettingsServiceExtensions.cs" />
     <Compile Include="MainMenu.cs" />
-    <Compile Include="Models\PackageVersionExtensions.cs" />
     <Compile Include="Models\PlaylistTypeEx.cs" />
     <Compile Include="Models\QueueChangeEvent.cs" />
     <Compile Include="Models\ReloadSongsEvent.cs" />
@@ -479,13 +478,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Newtonsoft.Json.5.0.3\lib\netcore45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="OutcoldSolutions.Framework, Version=1.0.30413.1, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
+    <Reference Include="OutcoldSolutions.Framework, Version=1.0.30417.0, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\OutcoldSolutions.Framework.1.0.30413.1\lib\portable-win+net45+wp80\OutcoldSolutions.Framework.dll</HintPath>
+      <HintPath>..\..\packages\OutcoldSolutions.Framework.1.0.30417.0\lib\portable-win+net45+wp80\OutcoldSolutions.Framework.dll</HintPath>
     </Reference>
-    <Reference Include="OutcoldSolutions.Presentation, Version=1.0.30413.1, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
+    <Reference Include="OutcoldSolutions.Presentation, Version=1.0.30417.0, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\OutcoldSolutions.Presentation.1.0.30413.1\lib\win\OutcoldSolutions.Presentation.dll</HintPath>
+      <HintPath>..\..\packages\OutcoldSolutions.Presentation.1.0.30417.0\lib\win\OutcoldSolutions.Presentation.dll</HintPath>
     </Reference>
     <Reference Include="OutcoldSolutions.SQLite, Version=1.1.30331.42665, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

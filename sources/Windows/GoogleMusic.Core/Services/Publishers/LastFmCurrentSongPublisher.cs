@@ -10,7 +10,6 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
 
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Web.Lastfm;
-    using OutcoldSolutions.Models;
 
     public class LastFmCurrentSongPublisher : ICurrentSongPublisher
     {
