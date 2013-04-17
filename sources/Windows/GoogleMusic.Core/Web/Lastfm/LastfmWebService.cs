@@ -128,7 +128,6 @@ namespace OutcoldSolutions.GoogleMusic.Web.Lastfm
                     var keys = session.Password.Split(new[] { ":::" }, StringSplitOptions.RemoveEmptyEntries);
                     if (keys.Length == 2)
                     {
-
                         this.sessionToken = keys[0];
                         this.currentSession = new Session() { Key = keys[1], Name = session.UserName };
                         return true;
@@ -137,7 +136,14 @@ namespace OutcoldSolutions.GoogleMusic.Web.Lastfm
             }
             catch (Exception exception)
             {
-                this.logger.Error(exception, "Exception while tried to ClearAllPasswordCredentials.");
+                if (((uint)exception.HResult) != 0x80070490)
+                {
+                    this.logger.Error(exception, "Exception while tried to ClearAllPasswordCredentials.");
+                }
+                else
+                {
+                    this.logger.Debug("RestoreSession: Not found.");
+                }
             }
 
             return false;
@@ -169,7 +175,14 @@ namespace OutcoldSolutions.GoogleMusic.Web.Lastfm
             }
             catch (Exception exception)
             {
-                this.logger.Error(exception, "Exception while tried to ClearAllPasswordCredentials.");
+                if (((uint)exception.HResult) != 0x80070490)
+                {
+                    this.logger.Error(exception, "Exception while tried to ClearAllPasswordCredentials.");
+                }
+                else
+                {
+                    this.logger.Debug("ClearAllPasswordCredentials: Not found.");
+                }
             }
         }
 

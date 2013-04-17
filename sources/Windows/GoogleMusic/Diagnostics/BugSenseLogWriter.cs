@@ -58,13 +58,13 @@ namespace OutcoldSolutions.GoogleMusic.Diagnostics
                                                {
                                                    { "level", level.ToString() },
                                                    { "context", context },
-                                                   { "message", message }
+                                                   { "message", message },
+                                                   { "hresult", exception.HResult.ToString("X", CultureInfo.InvariantCulture) },
+                                                   { "exceptionType", exception.GetType().FullName }
                                                };
 
                             if (exception.InnerException != null)
                             {
-                                logExtra.Add("hresult", exception.HResult.ToString(CultureInfo.InvariantCulture));
-                                logExtra.Add("exceptionType", exception.GetType().FullName);
                                 logExtra.Add("innerExceptionType", exception.InnerException.GetType().FullName);
                                 logExtra.Add("innerException", exception.InnerException.Message);
                                 logExtra.Add("innerExceptionStackTrace", exception.InnerException.StackTrace);
