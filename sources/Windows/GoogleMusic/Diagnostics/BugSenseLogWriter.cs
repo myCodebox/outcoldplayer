@@ -48,6 +48,12 @@ namespace OutcoldSolutions.GoogleMusic.Diagnostics
                     {
                         try
                         {
+                            var aggregateException = exception as AggregateException;
+                            if (aggregateException != null)
+                            {
+                                exception = aggregateException.Flatten();
+                            }
+
                             var logExtra = new Dictionary<string, string>()
                                                {
                                                    { "level", level.ToString() },

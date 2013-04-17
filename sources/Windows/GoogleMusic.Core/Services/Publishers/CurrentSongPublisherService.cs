@@ -196,14 +196,26 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
                     byte[] bytes = await this.httpImageDownloadClient.GetByteArrayAsync(song.AlbumArtUrl);
                     var localFolder = ApplicationData.Current.LocalFolder;
 
-                    var folder = await localFolder.CreateFolderAsync(AlbumArtCacheFolder, CreationCollisionOption.OpenIfExists);
+                    var folder =
+                        await localFolder.CreateFolderAsync(AlbumArtCacheFolder, CreationCollisionOption.OpenIfExists);
 
-                    var file = await folder.CreateFileAsync(CurrentAlbumArtFile, CreationCollisionOption.ReplaceExisting);
+                    var file =
+                        await folder.CreateFileAsync(CurrentAlbumArtFile, CreationCollisionOption.ReplaceExisting);
 
                     await FileIO.WriteBytesAsync(file, bytes);
 
-                    albumArtUri = new Uri(string.Format(CultureInfo.InvariantCulture, "ms-appdata:///local/{0}/{1}", AlbumArtCacheFolder, CurrentAlbumArtFile));
+                    albumArtUri =
+                        new Uri(
+                            string.Format(
+                                CultureInfo.InvariantCulture,
+                                "ms-appdata:///local/{0}/{1}",
+                                AlbumArtCacheFolder,
+                                CurrentAlbumArtFile));
                 }
+            }
+            catch (TaskCanceledException)
+            {
+                throw;
             }
             catch (Exception exception)
             {
