@@ -20,8 +20,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using OutcoldSolutions.Presenters;
     using OutcoldSolutions.Views;
 
-    using Windows.UI.Core;
-
     public abstract class PlaylistsPageViewPresenterBase<TView, TPlaylistsPageViewBindingModel> : PagePresenterBase<TView, TPlaylistsPageViewBindingModel>
         where TView : IPageView
         where TPlaylistsPageViewBindingModel : PlaylistsPageViewBindingModel

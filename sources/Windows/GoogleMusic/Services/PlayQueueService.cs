@@ -16,11 +16,14 @@ namespace OutcoldSolutions.GoogleMusic.Services
     using OutcoldSolutions.GoogleMusic.Web;
     using OutcoldSolutions.GoogleMusic.Web.Models;
 
-    public class PlayQueueService : IPlayQueueService
+    using Windows.Storage.Streams;
+
+    internal class PlayQueueService : IPlayQueueService
     {
         private readonly ILogger logger;
         private readonly IMediaElementContainer mediaElement;
         private readonly ISettingsService settingsService;
+        private readonly ISongsCachingService songsCachingService;
         private readonly ICurrentSongPublisherService publisherService;
         private readonly ISongsWebService songsWebService;
         private readonly INotificationService notificationService;
@@ -32,9 +35,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         private readonly Random random = new Random((int)DateTime.Now.Ticks);
 
-        private readonly IMediaStreamDownloadService downloadService;
 
-        private INetworkRandomAccessStream currentSongStream;
+        private IRandomAccessStreamWithContentType currentSongStream;
         private int currentQueueIndex; // From queueOrder
 
         private IPlaylist currentPlaylist;
@@ -49,7 +51,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             ILogManager logManager,
             IMediaElementContainer mediaElement,
             ISettingsService settingsService,
-            IMediaStreamDownloadService downloadService,
+            ISongsCachingService songsCachingService,
             ICurrentSongPublisherService publisherService,
             ISongsWebService songsWebService,
             INotificationService notificationService,
@@ -60,7 +62,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             this.logger = logManager.CreateLogger("PlayQueueService");
             this.mediaElement = mediaElement;
             this.settingsService = settingsService;
-            this.downloadService = downloadService;
+            this.songsCachingService = songsCachingService;
             this.publisherService = publisherService;
             this.songsWebService = songsWebService;
             this.notificationService = notificationService;
@@ -468,6 +470,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         private async Task PlaySongAsyncInternal(int songIndex)
         {
+            await this.mediaElement.StopAsync();
+
             var queueIndex = this.queueOrder.IndexOf(songIndex);
 
             if (this.logger.IsDebugEnabled)
@@ -489,69 +493,37 @@ namespace OutcoldSolutions.GoogleMusic.Services
                         this.logger.Debug("Getting url for song '{0}'.", song.ProviderSongId);
                     }
 
-                    GoogleMusicSongUrl songUrl = null;
 
-                    try
+                    var stream = await this.songsCachingService.GetStreamAsync(song);
+                    if (stream != null)
                     {
-                        songUrl = await this.songsWebService.GetSongUrlAsync(song.ProviderSongId);
-                    }
-                    catch (WebRequestException e)
-                    {
-                        if (e.StatusCode == HttpStatusCode.Forbidden)
-                        {
-                            this.logger.Debug("Exception while tried to get song url: {0}", e);
-                        }
-                        else
-                        {
-                            this.logger.Error(e, "Exception while tried to get song url.");
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        this.logger.Error(e, "Exception while tried to get song url.");
-                    }
-
-                    if (songUrl != null)
-                    {
-                        if (this.logger.IsDebugEnabled)
-                        {
-                            this.logger.Debug("Getting stream by url '{0}'.", songUrl.Url);
-                        }
-
                         if (this.currentSongStream != null)
                         {
                             this.logger.Debug("Current song is not null. Disposing current stream.");
 
-                            await this.mediaElement.StopAsync();
+                            var networkRandomAccessStream = this.currentSongStream as INetworkRandomAccessStream;
+                            if (networkRandomAccessStream != null)
+                            {
+                                networkRandomAccessStream.DownloadProgressChanged -= this.CurrentSongStreamOnDownloadProgressChanged;
+                            }
 
-                            this.currentSongStream.DownloadProgressChanged -= this.CurrentSongStreamOnDownloadProgressChanged;
                             this.currentSongStream.Dispose();
                             this.currentSongStream = null;
-                        }
-
-                        INetworkRandomAccessStream stream = null;
-
-                        try
-                        {
-                            stream = await this.downloadService.GetStreamAsync(songUrl.Url);
-                        }
-                        catch (Exception exception)
-                        {
-                            if (exception is TaskCanceledException)
-                            {
-                                this.logger.Debug("GetStreamAsync was cancelled.");
-                            }
-                            else
-                            {
-                                this.logger.Error(exception, "Exception while tried to get stream.");
-                            }
                         }
 
                         this.currentSongStream = stream;
 
                         if (this.currentSongStream != null)
                         {
-                            this.currentSongStream.DownloadProgressChanged += this.CurrentSongStreamOnDownloadProgressChanged;
+                            var networkRandomAccessStream = this.currentSongStream as INetworkRandomAccessStream;
+                            if (networkRandomAccessStream != null)
+                            {
+                                networkRandomAccessStream.DownloadProgressChanged += this.CurrentSongStreamOnDownloadProgressChanged;
+                            }
+                            else
+                            {
+                                this.PredownloadNextSong();
+                            }
 
                             await this.mediaElement.PlayAsync(this.currentSongStream, this.currentSongStream.ContentType);
 
@@ -642,6 +614,22 @@ namespace OutcoldSolutions.GoogleMusic.Services
         private void CurrentSongStreamOnDownloadProgressChanged(object sender, double e)
         {
             this.RaiseDownloadProgress(e);
+
+            if (Math.Abs(1 - e) < 0.0001)
+            {
+                this.PredownloadNextSong();
+            }
+        }
+
+        private async void PredownloadNextSong()
+        {
+            if ((this.currentQueueIndex + 1) < this.queueOrder.Count)
+            {
+                int nextIndex = this.currentQueueIndex + 1;
+                var nextSong = this.songsQueue[this.queueOrder[nextIndex]];
+
+                await this.songsCachingService.QueueForDownloadAsync(new[] { nextSong }, isPriorityZero: true);
+            }
         }
 
         private void RaiseStateChanged(StateChangedEventArgs e)

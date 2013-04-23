@@ -33,7 +33,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private const string DoNotAskToReviewKey = "DoNotAskToReviewKey";
         private const string CountOfStartsBeforeReview = "CountOfStartsBeforeReview";
 
-
         private readonly ISettingsService settingsService;
         private readonly IAuthentificationService authentificationService;
         private readonly IPlayQueueService playQueueService;
@@ -215,6 +214,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 this.initialized = true;
             }
 
+            bool loadFailed = false;
+
             try
             {
                 await this.LoadGroupsAsync();
@@ -222,6 +223,12 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             catch (Exception e)
             {
                 this.Logger.Error(e, "Cannot load groups");
+                loadFailed = true;
+            }
+
+            if (loadFailed)
+            {
+                await this.DeinitializeAsync();
                 this.ShowAuthentificationPopupView();
             }
         }

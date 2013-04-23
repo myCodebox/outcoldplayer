@@ -100,6 +100,7 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Models\CachedSong.cs" />
     <Compile Include="Models\PlaylistsChangeEvent.cs" />
     <Compile Include="Models\SongExtensions.cs" />
     <Compile Include="Models\SongsUpdatedEvent.cs" />
@@ -127,6 +128,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\AlbumsRepository.cs" />
     <Compile Include="Repositories\ArtistsRepository.cs" />
+    <Compile Include="Repositories\CachedSongsRepository.cs" />
     <Compile Include="Repositories\DbContext.cs" />
     <Compile Include="Repositories\GenresRepository.cs" />
     <Compile Include="Repositories\IPlaylistRepository.cs" />
@@ -201,13 +203,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Newtonsoft.Json.5.0.3\lib\netcore45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="OutcoldSolutions.Framework, Version=1.0.30417.0, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
+    <Reference Include="OutcoldSolutions.Framework, Version=1.0.30422.0, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\OutcoldSolutions.Framework.1.0.30417.0\lib\portable-win+net45+wp80\OutcoldSolutions.Framework.dll</HintPath>
+      <HintPath>..\..\packages\OutcoldSolutions.Framework.1.0.30422.0\lib\portable-win+net45+wp80\OutcoldSolutions.Framework.dll</HintPath>
     </Reference>
-    <Reference Include="OutcoldSolutions.Presentation, Version=1.0.30417.0, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
+    <Reference Include="OutcoldSolutions.Presentation, Version=1.0.30422.0, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\OutcoldSolutions.Presentation.1.0.30417.0\lib\win\OutcoldSolutions.Presentation.dll</HintPath>
+      <HintPath>..\..\packages\OutcoldSolutions.Presentation.1.0.30422.0\lib\win\OutcoldSolutions.Presentation.dll</HintPath>
     </Reference>
     <Reference Include="OutcoldSolutions.SQLite, Version=1.1.30331.42665, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

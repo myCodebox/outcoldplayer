@@ -92,6 +92,7 @@ namespace OutcoldSolutions.GoogleMusic
                 registration.Register<LastFmCurrentSongPublisher>().AsSingleton();
 
                 // Songs Repositories and Services
+                registration.Register<ICachedSongsRepository>().AsSingleton<CachedSongsRepository>();
                 registration.Register<ISongsRepository>().AsSingleton<SongsRepository>();
                 registration.Register<IUserPlaylistsRepository>().And<IPlaylistRepository<UserPlaylist>>().AsSingleton<UserPlaylistsRepository>();
                 registration.Register<IArtistsRepository>().And<IPlaylistRepository<Artist>>().AsSingleton<ArtistsRepository>();
@@ -107,6 +108,8 @@ namespace OutcoldSolutions.GoogleMusic
 
                 registration.Register<RightRegionControlService>().AsSingleton();
                 registration.Register<ApplicationLogManager>().AsSingleton();
+
+                registration.Register<ISongsCachingService>().AsSingleton<SongsCachingService>();
 
                 registration.Register<MediaElement>()
                             .AsSingleton(
