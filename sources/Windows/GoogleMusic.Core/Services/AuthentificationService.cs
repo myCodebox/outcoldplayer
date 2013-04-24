@@ -4,7 +4,6 @@
 namespace OutcoldSolutions.GoogleMusic.Services
 {
     using System;
-    using System.Collections.Generic;
     using System.Linq;
     using System.Net;
     using System.Threading.Tasks;
@@ -14,19 +13,18 @@ namespace OutcoldSolutions.GoogleMusic.Services
     using OutcoldSolutions.GoogleMusic.Web;
     using OutcoldSolutions.GoogleMusic.Web.Models;
 
-    using Windows.ApplicationModel.Resources;
-
     public class AuthentificationService : IAuthentificationService
     {
         private readonly ILogger logger;
+
+        private readonly IApplicationResources resources;
         private readonly IGoogleAccountService googleAccountService;
         private readonly IGoogleMusicSessionService sessionService;
         private readonly IGoogleAccountWebService googleAccountWebService;
         private readonly IGoogleMusicWebService googleMusicWebService;
 
-        private readonly ResourceLoader resourceLoader = new ResourceLoader("CoreResources");
-
         public AuthentificationService(
+            IApplicationResources resources,
             ILogManager logManager,
             IGoogleAccountService googleAccountService,
             IGoogleMusicSessionService sessionService,
@@ -34,6 +32,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             IGoogleMusicWebService googleMusicWebService)
         {
             this.logger = logManager.CreateLogger("AuthentificationService");
+            this.resources = resources;
             this.googleAccountService = googleAccountService;
             this.sessionService = sessionService;
             this.googleAccountWebService = googleAccountWebService;
@@ -93,7 +92,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             }
 
             this.logger.Error("CheckAuthentificationAsync: showing 'Login_Unknown'.");
-            return AuthentificationResult.FailedResult(this.resourceLoader.GetString("Login_Unknown"));
+            return AuthentificationResult.FailedResult(this.resources.GetString("Authorization_Error_Unknown"));
         }
 
         private string GetErrorMessage(GoogleAuthResponse.ErrorResponseCode errorResponseCode)
@@ -101,23 +100,23 @@ namespace OutcoldSolutions.GoogleMusic.Services
             switch (errorResponseCode)
             {
                 case GoogleAuthResponse.ErrorResponseCode.BadAuthentication:
-                    return this.resourceLoader.GetString("Login_BadAuthentication");
+                    return this.resources.GetString("Authorization_Error_BadAuthentication");
                 case GoogleAuthResponse.ErrorResponseCode.NotVerified:
-                    return this.resourceLoader.GetString("Login_NotVerified");
+                    return this.resources.GetString("Authorization_Error_NotVerified");
                 case GoogleAuthResponse.ErrorResponseCode.TermsNotAgreed:
-                    return this.resourceLoader.GetString("Login_TermsNotAgreed");
+                    return this.resources.GetString("Authorization_Error_TermsNotAgreed");
                 case GoogleAuthResponse.ErrorResponseCode.CaptchaRequired:
-                    return this.resourceLoader.GetString("Login_CaptchaRequired");
+                    return this.resources.GetString("Authorization_Error_CaptchaRequired");
                 case GoogleAuthResponse.ErrorResponseCode.Unknown:
-                    return this.resourceLoader.GetString("Login_Unknown");
+                    return this.resources.GetString("Authorization_Error_Unknown");
                 case GoogleAuthResponse.ErrorResponseCode.AccountDeleted:
-                    return this.resourceLoader.GetString("Login_AccountDeleted");
+                    return this.resources.GetString("Authorization_Error_AccountDeleted");
                 case GoogleAuthResponse.ErrorResponseCode.AccountDisabled:
-                    return this.resourceLoader.GetString("Login_AccountDisabled");
+                    return this.resources.GetString("Authorization_Error_AccountDisabled");
                 case GoogleAuthResponse.ErrorResponseCode.ServiceDisabled:
-                    return this.resourceLoader.GetString("Login_ServiceDisabled");
+                    return this.resources.GetString("Authorization_Error_ServiceDisabled");
                 case GoogleAuthResponse.ErrorResponseCode.ServiceUnavailable:
-                    return this.resourceLoader.GetString("Login_ServiceUnavailable");
+                    return this.resources.GetString("Authorization_Error_ServiceUnavailable");
                 default:
                     throw new NotSupportedException("Value is not supported: " + errorResponseCode.ToString());
             }

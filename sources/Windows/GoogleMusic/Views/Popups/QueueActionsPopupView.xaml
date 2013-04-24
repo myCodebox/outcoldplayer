@@ -7,21 +7,24 @@
     xmlns:views="using:OutcoldSolutions.Views" 
     mc:Ignorable="d"
     Height="240"
-    Width="240">
+    Width="Auto">
 
     <Border Background="{StaticResource AppBarBackgroundThemeBrush}">
         <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" Margin="30, 20, 30, 0" >
 
             <Button Style="{StaticResource PlayPopupMenuButtonStyle}" 
                     Command="{Binding Path=PlayCommand, Mode=OneTime}"
+                    x:Uid="QueueActions_Play"
                     AutomationProperties.Name="Play selected" />
 
             <Button Style="{StaticResource ShufflePopupMenuButtonStyle}" 
                     Command="{Binding Path=ShuffleAllCommand, Mode=OneTime}"
+                    x:Uid="QueueActions_ShuffleAndPlay"
                     AutomationProperties.Name="Shuffle and play" />
             
             <Button Style="{StaticResource AddPopupMenuButton}" 
                     Command="{Binding Path=AddCommand, Mode=OneTime}"
+                    x:Uid="QueueActions_AddToQueue"
                     AutomationProperties.Name="Add to queue" />
             
         </StackPanel>

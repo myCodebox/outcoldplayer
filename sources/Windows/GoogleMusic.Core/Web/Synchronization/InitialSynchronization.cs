@@ -196,7 +196,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
         {
             foreach (var song in songs)
             {
-                this.songEntities.Add(song.ProviderSongId, song);
+                this.songEntities[song.ProviderSongId] = song;
             }
         }
     }

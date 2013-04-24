@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>OutcoldSolutions.GoogleMusic</RootNamespace>
     <AssemblyName>gMusic</AssemblyName>
-    <DefaultLanguage>en-US</DefaultLanguage>
+    <DefaultLanguage>en</DefaultLanguage>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{BC8A1FFA-BEE3-4634-8014-F334798102B3};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <PackageCertificateKeyFile>GoogleMusic_StoreKey.pfx</PackageCertificateKeyFile>
@@ -145,7 +145,6 @@
     <Compile Include="Diagnostics\BugSenseLogWriter.cs" />
     <Compile Include="GoogleMusicSettingsServiceExtensions.cs" />
     <Compile Include="MainMenu.cs" />
-    <Compile Include="Models\PackageVersionExtensions.cs" />
     <Compile Include="Models\PlaylistTypeEx.cs" />
     <Compile Include="Models\QueueChangeEvent.cs" />
     <Compile Include="Models\ReloadSongsEvent.cs" />
@@ -165,11 +164,12 @@
     <Compile Include="Presenters\Settings\UpgradeViewPresenter.cs" />
     <Compile Include="Presenters\UserPlaylistsPageViewPresenter.cs" />
     <Compile Include="Registration.cs" />
-    <Compile Include="Services\CurrentSongPropertiesUpdateService.cs" />
     <Compile Include="Services\IPlayQueueService.cs" />
     <Compile Include="Services\PlayQueueService.cs" />
     <Compile Include="Services\QueueState.cs" />
+    <Compile Include="Services\SongsCachingService.cs" />
     <Compile Include="Services\StateChangedEventArgs.cs" />
+    <Compile Include="Shell\ApplicationResources.cs" />
     <Compile Include="Shell\IMediaElementContainer.cs" />
     <Compile Include="Shell\INotificationService.cs" />
     <Compile Include="Shell\MediaControlIntegration.cs" />
@@ -290,7 +290,8 @@
     <None Include="GoogleMusic_StoreKey.pfx" />
     <None Include="GoogleMusic_TemporaryKey.pfx" />
     <None Include="packages.config" />
-    <PRIResource Include="CoreResources.resw" />
+    <PRIResource Include="Strings\ru\Resources.resw" />
+    <PRIResource Include="Strings\en\Resources.resw" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\Logo.scale-100.png" />
@@ -480,13 +481,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Newtonsoft.Json.5.0.3\lib\netcore45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="OutcoldSolutions.Framework, Version=1.0.30413.1, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
+    <Reference Include="OutcoldSolutions.Framework, Version=1.0.30422.0, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\OutcoldSolutions.Framework.1.0.30413.1\lib\portable-win+net45+wp80\OutcoldSolutions.Framework.dll</HintPath>
+      <HintPath>..\..\packages\OutcoldSolutions.Framework.1.0.30422.0\lib\portable-win+net45+wp80\OutcoldSolutions.Framework.dll</HintPath>
     </Reference>
-    <Reference Include="OutcoldSolutions.Presentation, Version=1.0.30413.1, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
+    <Reference Include="OutcoldSolutions.Presentation, Version=1.0.30422.0, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\OutcoldSolutions.Presentation.1.0.30413.1\lib\win\OutcoldSolutions.Presentation.dll</HintPath>
+      <HintPath>..\..\packages\OutcoldSolutions.Presentation.1.0.30422.0\lib\win\OutcoldSolutions.Presentation.dll</HintPath>
     </Reference>
     <Reference Include="OutcoldSolutions.SQLite, Version=1.1.30331.42665, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -525,6 +526,7 @@
       <Name>GoogleMusic.Core</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '11.0' ">
     <VisualStudioVersion>11.0</VisualStudioVersion>
   </PropertyGroup>

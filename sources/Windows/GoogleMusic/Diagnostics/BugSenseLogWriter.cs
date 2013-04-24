@@ -6,6 +6,7 @@ namespace OutcoldSolutions.GoogleMusic.Diagnostics
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
 
     using OutcoldSolutions.Diagnostics;
 
@@ -47,14 +48,31 @@ namespace OutcoldSolutions.GoogleMusic.Diagnostics
                     {
                         try
                         {
+                            var aggregateException = exception as AggregateException;
+                            if (aggregateException != null)
+                            {
+                                exception = aggregateException.Flatten();
+                            }
+
+                            var logExtra = new Dictionary<string, string>()
+                                               {
+                                                   { "level", level.ToString() },
+                                                   { "context", context },
+                                                   { "message", message },
+                                                   { "hresult", exception.HResult.ToString("X", CultureInfo.InvariantCulture) },
+                                                   { "exceptionType", exception.GetType().FullName }
+                                               };
+
+                            if (exception.InnerException != null)
+                            {
+                                logExtra.Add("innerExceptionType", exception.InnerException.GetType().FullName);
+                                logExtra.Add("innerException", exception.InnerException.Message);
+                                logExtra.Add("innerExceptionStackTrace", exception.InnerException.StackTrace);
+                            }
+
                             BugSense.BugSenseHandler.Instance.LogException(
                                 exception,
-                                new Dictionary<string, string>()
-                                    {
-                                        { "level", level.ToString() },
-                                        { "context", context },
-                                        { "message", message }
-                                    });
+                                logExtra);
                         }
                         catch
                         {

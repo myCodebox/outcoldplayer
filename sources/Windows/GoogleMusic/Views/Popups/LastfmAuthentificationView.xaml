@@ -19,8 +19,8 @@
                            TextWrapping="Wrap" />
 
             <HyperlinkButton Click="NavigateToLastfm"
-                                 Visibility="{Binding Path=IsLinkVisible, Converter={StaticResource BooleanToVisibilityConverter}}" 
-                                 Content="{Binding Path=LinkUrl, Mode=OneWay}"/>
+                             Visibility="{Binding Path=IsLinkVisible, Converter={StaticResource BooleanToVisibilityConverter}}" 
+                             Content="{Binding Path=LinkUrl, Mode=OneWay}"/>
 
             <Button Content="Cancel" Click="CancelButtonClick" Margin="0, 40, 0, 0" HorizontalAlignment="Right" />
         </StackPanel>

@@ -5,33 +5,25 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
 {
     using System;
     using System.Collections.Generic;
-    using System.Globalization;
     using System.Linq;
-    using System.Net.Http;
     using System.Threading;
     using System.Threading.Tasks;
 
     using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Models;
 
-    using Windows.Storage;
-
     public class CurrentSongPublisherService : ICurrentSongPublisherService
     {
         private const string DelayPublishersSettingsKey = "DelayPublishersHoldUp";
-
-        private const string AlbumArtCacheFolder = "AlbumArtCache";
-        private const string CurrentAlbumArtFile = "current.jpg";
 
         private readonly object locker = new object();
 
         private readonly ILogger logger;
         private readonly IDependencyResolverContainer container;
+        private readonly IAlbumArtCacheService albumArtCacheService;
         private readonly ISettingsService settingsService;
 
         private readonly List<Lazy<ICurrentSongPublisher>> songPublishers = new List<Lazy<ICurrentSongPublisher>>();
-
-        private readonly HttpClient httpImageDownloadClient = new HttpClient() { Timeout = TimeSpan.FromSeconds(5) };
 
         private readonly int delayPublishersHoldUp = 15000;
 
@@ -40,10 +32,12 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
         public CurrentSongPublisherService(
             ILogManager logManager, 
             ISettingsService settingsService,
-            IDependencyResolverContainer container)
+            IDependencyResolverContainer container,
+            IAlbumArtCacheService albumArtCacheService)
         {
             this.settingsService = settingsService;
             this.container = container;
+            this.albumArtCacheService = albumArtCacheService;
             this.logger = logManager.CreateLogger("CurrentSongPublisherService");
 
             this.delayPublishersHoldUp = this.settingsService.GetValue(DelayPublishersSettingsKey, defaultValue: 15000);
@@ -193,17 +187,13 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
 
                 if (song.AlbumArtUrl != null)
                 {
-                    byte[] bytes = await this.httpImageDownloadClient.GetByteArrayAsync(song.AlbumArtUrl);
-                    var localFolder = ApplicationData.Current.LocalFolder;
-
-                    var folder = await localFolder.CreateFolderAsync(AlbumArtCacheFolder, CreationCollisionOption.OpenIfExists);
-
-                    var file = await folder.CreateFileAsync(CurrentAlbumArtFile, CreationCollisionOption.ReplaceExisting);
-
-                    await FileIO.WriteBytesAsync(file, bytes);
-
-                    albumArtUri = new Uri(string.Format(CultureInfo.InvariantCulture, "ms-appdata:///local/{0}/{1}", AlbumArtCacheFolder, CurrentAlbumArtFile));
+                    string cachedFile = await this.albumArtCacheService.GetCachedImageAsync(song.AlbumArtUrl.ChangeSize(size: 116));
+                    albumArtUri = AlbumArtUrlExtensions.ToLocalUri(cachedFile);
                 }
+            }
+            catch (TaskCanceledException)
+            {
+                throw;
             }
             catch (Exception exception)
             {

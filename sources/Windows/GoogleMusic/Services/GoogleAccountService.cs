@@ -42,9 +42,16 @@ namespace OutcoldSolutions.GoogleMusic.Services
                         vault.Remove(credential);
                     }
                 }
-                catch (Exception)
+                catch (Exception exception)
                 {
-                    this.logger.Debug("Exception while tried to remove credentials");
+                    if (((uint)exception.HResult) != 0x80070490)
+                    {
+                        this.logger.Error(exception, "Exception while tried to SetUserInfo.");
+                    }
+                    else
+                    {
+                        this.logger.Debug("SetUserInfo: Not found.");
+                    }
                 }
 
                 this.logger.Debug("SetUserInfo: Adding new passwrod credentials.");
@@ -73,9 +80,16 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     return new UserInfo(list[0].UserName, list[0].Password) { RememberAccount = true };
                 }
             }
-            catch (Exception)
+            catch (Exception exception)
             {
-                this.logger.Debug("Exception while tried to retrieve user info.");
+                if (((uint)exception.HResult) != 0x80070490)
+                {
+                    this.logger.Error(exception, "Exception while tried to GetUserInfo.");
+                }
+                else
+                {
+                    this.logger.Debug("GetUserInfo: Not found.");
+                }
             }
 
             this.logger.Debug("Password credentials could not find.");
@@ -97,9 +111,16 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     vault.Remove(credential);
                 }
             }
-            catch (Exception)
+            catch (Exception exception)
             {
-                this.logger.Debug("Exception while tried to remove user info.");
+                if (((uint)exception.HResult) != 0x80070490)
+                {
+                    this.logger.Error(exception, "Exception while tried to ClearUserInfo.");
+                }
+                else
+                {
+                    this.logger.Debug("ClearUserInfo: Not found.");
+                }
             }
         }
     }

@@ -74,6 +74,8 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
                 await connection.CreateTableAsync<Album>();
                 await connection.CreateTableAsync<Genre>();
                 await connection.CreateTableAsync<Artist>();
+                await connection.CreateTableAsync<CachedSong>();
+                await connection.CreateTableAsync<CachedAlbumArt>();
 
                 await connection.ExecuteAsync(@"CREATE TABLE [Enumerator] (Id integer primary key autoincrement not null);");
                 await connection.ExecuteAsync(@"INSERT INTO [Enumerator] DEFAULT VALUES;");

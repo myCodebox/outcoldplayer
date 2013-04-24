@@ -10,7 +10,8 @@
     d:DesignHeight="300"
     d:DesignWidth="400"
     Title="{Binding Path=BindingModel.Artist.Title, Mode=OneWay}"
-    Subtitle="Albums">
+    Subtitle="Albums"
+    x:Uid="ArtistPageView">
 
     <Grid Margin="0, 40, 0, 0"
           Visibility="{Binding Path=IsDataLoading, Converter={StaticResource BooleanToInvisibilityConverter}}">
@@ -25,17 +26,17 @@
                     Grid.Column="0">
             
             <StackPanel Orientation="Horizontal" Margin="0, 7, 0, 0">
-                <TextBlock Style="{StaticResource TitleTextStyle}" Text="Albums: " />
+                <TextBlock Style="{StaticResource TitleTextStyle}" Text="Albums: " x:Uid="ArtistPageView_AlbumsCountLabel" />
                 <TextBlock Style="{StaticResource SubtitleTextStyle}" Margin="7, 0, 0, 0" Text="{Binding Path=BindingModel.Artist.AlbumsCount, Mode=OneWay}" />
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" Margin="0, 7, 0, 0">
-                <TextBlock Style="{StaticResource TitleTextStyle}" Text="Songs: " />
+                <TextBlock Style="{StaticResource TitleTextStyle}" Text="Songs: " x:Uid="ArtistPageView_SongsCountLabel" />
                 <TextBlock Style="{StaticResource SubtitleTextStyle}" Margin="7, 0, 0, 0" Text="{Binding Path=BindingModel.Artist.SongsCount, Mode=OneWay}" />
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" Margin="0, 7, 0, 0">
-                <TextBlock Style="{StaticResource TitleTextStyle}" Text="Duration: " />
+                <TextBlock Style="{StaticResource TitleTextStyle}" Text="Duration: " x:Uid="ArtistPageView_DurationSumLabel" />
                 <TextBlock Style="{StaticResource SubtitleTextStyle}" Margin="7, 0, 0, 0" Text="{Binding Path=BindingModel.Artist.Duration, Converter={StaticResource TimeSpanToTimeConverter}, Mode=OneWay}" />
             </StackPanel>
 

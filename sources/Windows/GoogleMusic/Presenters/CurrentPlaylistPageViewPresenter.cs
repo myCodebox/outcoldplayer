@@ -21,14 +21,17 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
     public class CurrentPlaylistPageViewPresenter : PagePresenterBase<ICurrentPlaylistPageView>
     {
+        private readonly IApplicationResources resources;
         private readonly IPlayQueueService playQueueService;
         private readonly ISongsService metadataEditService;
 
         public CurrentPlaylistPageViewPresenter(
+            IApplicationResources resources,
             IPlayQueueService playQueueService,
             ISongsService metadataEditService,
             SongsBindingModel songsBindingModel)
         {
+            this.resources = resources;
             this.playQueueService = playQueueService;
             this.metadataEditService = metadataEditService;
             this.BindingModel = songsBindingModel;
@@ -183,8 +186,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private IEnumerable<CommandMetadata> GetContextCommands()
         {
-            yield return new CommandMetadata(CommandIcon.Add, "Playlist", this.AddToPlaylistCommand);
-            yield return new CommandMetadata(CommandIcon.Remove, "Queue", this.RemoveSelectedSongCommand);
+            yield return new CommandMetadata(CommandIcon.Add, this.resources.GetString("Toolbar_PlaylistButton"), this.AddToPlaylistCommand);
+            yield return new CommandMetadata(CommandIcon.Remove, this.resources.GetString("Toolbar_QueueButton"), this.RemoveSelectedSongCommand);
         }
     }
 }

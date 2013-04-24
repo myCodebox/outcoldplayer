@@ -76,7 +76,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
 
                         if (googleSong.Deleted)
                         {
-                            connection.Delete(songId);
+                            connection.Delete<Song>(songId);
                             songsDeleted++;
                         }
                         else
@@ -194,51 +194,54 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
                 List<UserPlaylistEntry> newEntries = new List<UserPlaylistEntry>();
                 List<UserPlaylistEntry> updatedEntries = new List<UserPlaylistEntry>();
 
-                for (int songIndex = 0; songIndex < googlePlaylist.Playlist.Count; songIndex++)
+                if (googlePlaylist.Playlist != null)
                 {
-                    var song = googlePlaylist.Playlist[songIndex];
-                    var storedSong = userPlaylistSongs.FirstOrDefault(s =>
-                                    string.Equals(s.ProviderSongId, song.Id, StringComparison.OrdinalIgnoreCase) &&
-                                    string.Equals(s.UserPlaylistEntry.ProviderEntryId, song.PlaylistEntryId, StringComparison.OrdinalIgnoreCase));
-
-                    if (storedSong != null)
+                    for (int songIndex = 0; songIndex < googlePlaylist.Playlist.Count; songIndex++)
                     {
-                        if (storedSong.UserPlaylistEntry.PlaylistOrder != songIndex)
-                        {
-                            if (this.logger.IsDebugEnabled)
-                            {
-                                this.logger.Debug(
-                                    "UpdateUserPlaylistsAsync: order was changed for entry id {0} (playlist id - {1}).",
-                                    storedSong.UserPlaylistEntry.ProviderEntryId,
-                                    providerPlaylistId);
-                            }
+                        var song = googlePlaylist.Playlist[songIndex];
+                        var storedSong = userPlaylistSongs.FirstOrDefault(s =>
+                                        string.Equals(s.ProviderSongId, song.Id, StringComparison.OrdinalIgnoreCase) &&
+                                        string.Equals(s.UserPlaylistEntry.ProviderEntryId, song.PlaylistEntryId, StringComparison.OrdinalIgnoreCase));
 
-                            storedSong.UserPlaylistEntry.PlaylistOrder = songIndex;
-                            updatedEntries.Add(storedSong.UserPlaylistEntry);
-                            playlistUpdated = true;
-                        }
-
-                        userPlaylistSongs.Remove(storedSong);
-                    }
-                    else
-                    {
-                        storedSong = await this.Connection.FindAsync<Song>(x => x.ProviderSongId == song.Id);
                         if (storedSong != null)
                         {
-                            playlistUpdated = true;
-                            var entry = new UserPlaylistEntry
+                            if (storedSong.UserPlaylistEntry.PlaylistOrder != songIndex)
                             {
-                                PlaylistOrder = songIndex,
-                                SongId = storedSong.SongId,
-                                ProviderEntryId = song.PlaylistEntryId,
-                                PlaylistId = userPlaylist.Id
-                            };
+                                if (this.logger.IsDebugEnabled)
+                                {
+                                    this.logger.Debug(
+                                        "UpdateUserPlaylistsAsync: order was changed for entry id {0} (playlist id - {1}).",
+                                        storedSong.UserPlaylistEntry.ProviderEntryId,
+                                        providerPlaylistId);
+                                }
 
-                            newEntries.Add(entry);
+                                storedSong.UserPlaylistEntry.PlaylistOrder = songIndex;
+                                updatedEntries.Add(storedSong.UserPlaylistEntry);
+                                playlistUpdated = true;
+                            }
+
+                            userPlaylistSongs.Remove(storedSong);
                         }
                         else
                         {
-                            this.logger.Warning("Stored song is null, could not find song for id '{0}' in playlist '{1}'.", song.Id, providerPlaylistId);
+                            storedSong = await this.Connection.FindAsync<Song>(x => x.ProviderSongId == song.Id);
+                            if (storedSong != null)
+                            {
+                                playlistUpdated = true;
+                                var entry = new UserPlaylistEntry
+                                {
+                                    PlaylistOrder = songIndex,
+                                    SongId = storedSong.SongId,
+                                    ProviderEntryId = song.PlaylistEntryId,
+                                    PlaylistId = userPlaylist.Id
+                                };
+
+                                newEntries.Add(entry);
+                            }
+                            else
+                            {
+                                this.logger.Warning("Stored song is null, could not find song for id '{0}' in playlist '{1}'.", song.Id, providerPlaylistId);
+                            }
                         }
                     }
                 }

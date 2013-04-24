@@ -16,86 +16,99 @@
         </StackPanel.Transitions>
 
         <TextBlock Style="{StaticResource BodyTextStyle}"
-                               Visibility="{Binding Path=BindingModel.HasSession, Converter={StaticResource BooleanToInvisibilityConverter}}">
-                        You are not logged in.
+                   Visibility="{Binding Path=BindingModel.HasSession, Converter={StaticResource BooleanToInvisibilityConverter}}"
+                   x:Uid="SettingsAccount_NotLoginIn">
+            You are not logged in.
         </TextBlock>
 
         <TextBlock Style="{StaticResource BodyTextStyle}"
-                               Visibility="{Binding Path=BindingModel.AccountName, Converter={StaticResource NullToInvisibilityConverter}}">
-                        You are logged in with Google Account:
+                   Visibility="{Binding Path=BindingModel.AccountName, Converter={StaticResource NullToInvisibilityConverter}}"
+                   x:Uid="SettingsAccount_YouAreLoggedIn">
+            You are logged in with Google Account:
         </TextBlock>
 
         <TextBlock Text="{Binding Path=BindingModel.AccountName, Mode=OneWay}" 
-                               Style="{StaticResource TitleTextStyle}"  
-                               Visibility="{Binding Path=BindingModel.AccountName, Converter={StaticResource NullToInvisibilityConverter}}"
-                               Margin="0, 10, 0, 0"/>
+                   Style="{StaticResource TitleTextStyle}"  
+                   Visibility="{Binding Path=BindingModel.AccountName, Converter={StaticResource NullToInvisibilityConverter}}"
+                   Margin="0, 10, 0, 0"/>
 
         <Button Command="{Binding Path=SignOutCommand}" 
-                            Visibility="{Binding Path=BindingModel.HasSession, Converter={StaticResource BooleanToVisibilityConverter}}"
-                            Content="Sign out" 
-                            Margin="0, 20, 0, 0"/>
+                Visibility="{Binding Path=BindingModel.HasSession, Converter={StaticResource BooleanToVisibilityConverter}}"
+                Content="Sign out" 
+                Margin="0, 20, 0, 0"
+                x:Uid="SettingsAccount_SignOutButton"/>
 
         <TextBlock Style="{StaticResource BodyTextStyle}"
-                               Margin="0, 40, 0, 0"
-                               Visibility="{Binding Path=BindingModel.HasSession, Converter={StaticResource NullToInvisibilityConverter}}">
-                        Refresh music from Google Play:
+                   Margin="0, 40, 0, 0"
+                   Visibility="{Binding Path=BindingModel.HasSession, Converter={StaticResource NullToInvisibilityConverter}}"
+                   x:Uid="SettingsAccount_RefreshLabel">
+            Refresh music from Google Play:
         </TextBlock>
 
         <Button Command="{Binding Path=ReloadSongsCommand}" 
-                            Visibility="{Binding Path=BindingModel.HasSession, Converter={StaticResource BooleanToVisibilityConverter}}"
-                            Content="Refresh" 
-                            Margin="0, 20, 0, 0"/>
+                Visibility="{Binding Path=BindingModel.HasSession, Converter={StaticResource BooleanToVisibilityConverter}}"
+                Content="Refresh" 
+                Margin="0, 20, 0, 0"
+                x:Uid="SettingsAccount_RefreshButton"/>
 
         <TextBlock Style="{StaticResource BodyTextStyle}" 
-                               Margin="0, 40, 0, 0"
-                               Visibility="{Binding Path=BindingModel.IsRemembered, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}">
-                        gMusic does not store email and password of current Google Account.
+                   Margin="0, 40, 0, 0"
+                   Visibility="{Binding Path=BindingModel.IsRemembered, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}"
+                   x:Uid="SettingsAccount_DoesNotStorePassword">
+            gMusic does not store email and password of current Google Account.
         </TextBlock>
 
         <TextBlock Style="{StaticResource BodyTextStyle}" 
-                               Margin="0, 40, 0, 0"
-                               Visibility="{Binding Path=BindingModel.IsRemembered, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
-                        gMusic stores email and password in protected Windows store.
+                   Margin="0, 40, 0, 0"
+                   Visibility="{Binding Path=BindingModel.IsRemembered, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                   x:Uid="SettingsAccount_StorePasswordInProtectedStore">
+            gMusic stores email and password in protected Windows store.
         </TextBlock>
 
         <Button Command="{Binding Path=ForgetAccountCommand}" 
-                            Content="Forget account" 
-                            Margin="0, 20, 0, 0"
-                            Visibility="{Binding Path=BindingModel.IsRemembered, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                Content="Forget account" 
+                Margin="0, 20, 0, 0"
+                Visibility="{Binding Path=BindingModel.IsRemembered, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                x:Uid="SettingsAccount_ForgetAccountButton"/>
 
         <TextBlock Style="{StaticResource BodyTextStyle}" Text="{Binding Path=BindingModel.Message, Mode=OneWay}" Margin="0, 20, 0, 0"
-                               Visibility="{Binding Path=BindingModel.Message, Mode=OneWay, Converter={StaticResource NullToInvisibilityConverter}}"/>
+                   Visibility="{Binding Path=BindingModel.Message, Mode=OneWay, Converter={StaticResource NullToInvisibilityConverter}}"/>
 
         <Image Margin="0, 60, 0, 0" Source="ms-appx:///Resources/lastfm_Logo.png" Width="100" Height="25" HorizontalAlignment="Left" />
 
         <TextBlock Style="{StaticResource BodyTextStyle}" Margin="0, 20, 0, 0"
-                               Visibility="{Binding Path=BindingModel.LastfmAccountName, Converter={StaticResource NullToVisibilityConverter}}">
-                        gMusic can update your "Recently Listened Tracks" list on Last.fm while you are listening music in application. To do this you need to link Last.fm account.
+                   Visibility="{Binding Path=BindingModel.LastfmAccountName, Converter={StaticResource NullToVisibilityConverter}}"
+                   x:Uid="SettingsAccount_LastFmInfo">
+            gMusic can update your "Recently Listened Tracks" list on Last.fm while you are listening music in application. To do this you need to link Last.fm account.
         </TextBlock>
 
         <TextBlock Style="{StaticResource BodyTextStyle}"
-                               Margin="0, 20, 0, 0"
-                               Visibility="{Binding Path=BindingModel.LastfmAccountName, Converter={StaticResource NullToInvisibilityConverter}}">
-                        Linked Last.fm account (gMusic sends updates for your "Recently Listened Tracks" list):
+                   Margin="0, 20, 0, 0"
+                   Visibility="{Binding Path=BindingModel.LastfmAccountName, Converter={StaticResource NullToInvisibilityConverter}}"
+                   x:Uid="SettingsAccount_LastFmAccountLabel">
+            Linked Last.fm account (gMusic sends updates for your "Recently Listened Tracks" list):
         </TextBlock>
 
         <TextBlock Text="{Binding Path=BindingModel.LastfmAccountName, Mode=OneWay}" 
-                               Style="{StaticResource TitleTextStyle}"  
-                               Visibility="{Binding Path=BindingModel.LastfmAccountName, Converter={StaticResource NullToInvisibilityConverter}}"
-                               Margin="0, 10, 0, 0"/>
+                   Style="{StaticResource TitleTextStyle}"  
+                   Visibility="{Binding Path=BindingModel.LastfmAccountName, Converter={StaticResource NullToInvisibilityConverter}}"
+                   Margin="0, 10, 0, 0"/>
 
         <Button Command="{Binding Path=LastfmUnlinkCommand}" 
-                            Content="Unlink Last.fm account" 
-                            Margin="0, 20, 0, 0"
-                            Visibility="{Binding Path=BindingModel.LastfmAccountName, Mode=OneWay, Converter={StaticResource NullToInvisibilityConverter}}"/>
+                Content="Unlink Last.fm account" 
+                Margin="0, 20, 0, 0"
+                Visibility="{Binding Path=BindingModel.LastfmAccountName, Mode=OneWay, Converter={StaticResource NullToInvisibilityConverter}}"
+                x:Uid="SettingsAccount_UnlinkLastFmAccountButton"/>
 
         <Button Command="{Binding Path=LastfmLinkCommand}" 
-                            Content="Link Last.fm account" 
-                            Margin="0, 20, 0, 0"
-                            Visibility="{Binding Path=BindingModel.LastfmAccountName, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"/>
+                Content="Link Last.fm account" 
+                Margin="0, 20, 0, 0"
+                Visibility="{Binding Path=BindingModel.LastfmAccountName, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
+                x:Uid="SettingsAccount_LinkLastFmAccountButton"/>
 
-        <TextBlock Style="{StaticResource BodyTextStyle}" Margin="0, 10, 0, 40">
-                        *Last.fm scrobbing available to all users, while this feature is in beta version.
+        <TextBlock Style="{StaticResource BodyTextStyle}" Margin="0, 10, 0, 40"
+                   x:Uid="SettingsAccount_LastFmBeta">
+            *Last.fm scrobbing available to all users, while this feature is in beta version.
         </TextBlock>
 
     </StackPanel>

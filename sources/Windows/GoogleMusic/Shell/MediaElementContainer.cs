@@ -7,6 +7,7 @@ namespace OutcoldSolutions.GoogleMusic.Shell
     using System.Threading.Tasks;
 
     using OutcoldSolutions.Diagnostics;
+    using OutcoldSolutions.GoogleMusic.Services;
 
     using Windows.Storage.Streams;
     using Windows.UI.Core;
@@ -15,7 +16,10 @@ namespace OutcoldSolutions.GoogleMusic.Shell
 
     public class MediaElementContainer : IMediaElementContainer
     {
+        private const string MediaElementVolumeKey = "MediaElementVolume";
+
         private readonly MediaElement mediaElement;
+        private readonly ISettingsService settingsService;
         private readonly IDispatcher dispatcher;
         private readonly ILogger logger;
 
@@ -24,14 +28,18 @@ namespace OutcoldSolutions.GoogleMusic.Shell
         public MediaElementContainer(
             ILogManager logManager, 
             MediaElement mediaElement,
+            ISettingsService settingsService,
             IDispatcher dispatcher)
         {
             this.logger = logManager.CreateLogger("MediaElementContainer");
             this.mediaElement = mediaElement;
+            this.settingsService = settingsService;
             this.dispatcher = dispatcher;
             this.mediaElement.MediaFailed += this.MediaElementOnMediaFailed;
             this.mediaElement.MediaEnded += this.MediaElementOnMediaEnded;
             this.mediaElement.MediaOpened += this.MediaElementOnMediaOpened;
+
+            this.mediaElement.Volume = this.settingsService.GetValue(MediaElementVolumeKey, 1d);
 
             this.timer.Interval = TimeSpan.FromMilliseconds(500);
             this.timer.Tick += this.TimerOnTick;
@@ -51,6 +59,7 @@ namespace OutcoldSolutions.GoogleMusic.Shell
             set
             {
                 this.mediaElement.Volume = value;
+                this.settingsService.SetValue(MediaElementVolumeKey, value);
             }
         }
 

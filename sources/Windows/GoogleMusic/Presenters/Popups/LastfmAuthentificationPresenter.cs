@@ -16,21 +16,24 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
 
     public class LastfmAuthentificationPresenter : ViewPresenterBase<ILastfmAuthentificationView>
     {
+        private readonly IApplicationResources resources;
         private readonly ILastfmAccountWebService accountWebService;
         private readonly ICurrentSongPublisherService publisherService;
 
         private string token;
 
         public LastfmAuthentificationPresenter(
+            IApplicationResources resources,
             ILastfmAccountWebService accountWebService,
             ICurrentSongPublisherService publisherService)
         {
+            this.resources = resources;
             this.accountWebService = accountWebService;
             this.publisherService = publisherService;
             this.BindingModel = new LastfmAuthentificationBindingModel
                                     {
                                         IsLoading = true,
-                                        Message = "You will be transferred to the last.fm authentication page, where you will be asked to give permissions to gMusic application."
+                                        Message = this.resources.GetString("LastFmAuthentification_Instruction")
                                     };
 
             this.accountWebService.GetTokenAsync().ContinueWith(
@@ -51,7 +54,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
         public void GetSession()
         {
             this.BindingModel.IsLoading = true;
-            this.BindingModel.Message = "Linking Last.fm account...";
+            this.BindingModel.Message = this.resources.GetString("LastFmAuthentification_Linking");
             this.BindingModel.IsLinkVisible = false;
 
             this.accountWebService.GetSessionAsync(this.token).ContinueWith(
@@ -64,8 +67,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
                         }
                         else
                         {
-                            this.BindingModel.Message =
-                                "Cannot link Last.fm account to gMusic application. Please make sure that you gave permissions to gMusic application on Last.fm site. Use link below to do this:";
+                            this.BindingModel.Message = this.resources.GetString("LastFmAuthentification_Unsuccess");
                             this.BindingModel.IsLinkVisible = true;
                             this.BindingModel.IsLoading = false;
                         }

@@ -60,6 +60,8 @@ namespace OutcoldSolutions.GoogleMusic
 
                 registration.Register<SongsBindingModel>();
 
+                registration.Register<IApplicationResources>().AsSingleton<ApplicationResources>();
+
                 // Settings
                 registration.Register<ISearchService>().AsSingleton<SearchService>();
 
@@ -92,6 +94,7 @@ namespace OutcoldSolutions.GoogleMusic
                 registration.Register<LastFmCurrentSongPublisher>().AsSingleton();
 
                 // Songs Repositories and Services
+                registration.Register<ICachedSongsRepository>().AsSingleton<CachedSongsRepository>();
                 registration.Register<ISongsRepository>().AsSingleton<SongsRepository>();
                 registration.Register<IUserPlaylistsRepository>().And<IPlaylistRepository<UserPlaylist>>().AsSingleton<UserPlaylistsRepository>();
                 registration.Register<IArtistsRepository>().And<IPlaylistRepository<Artist>>().AsSingleton<ArtistsRepository>();
@@ -100,6 +103,8 @@ namespace OutcoldSolutions.GoogleMusic
                 registration.Register<ISystemPlaylistsRepository>().And<IPlaylistRepository<SystemPlaylist>>().AsSingleton<SystemPlaylistsRepository>();
                 registration.Register<IPlaylistsService>().AsSingleton<PlaylistsService>();
                 registration.Register<IUserPlaylistsService>().AsSingleton<UserPlaylistsService>();
+                registration.Register<IAlbumArtCacheService>().AsSingleton<AlbumArtCacheService>();
+                registration.Register<ICachedAlbumArtsRepository>().AsSingleton<CachedAlbumArtsRepository>();
 
                 registration.Register<IInitialSynchronization>().As<InitialSynchronization>();
 
@@ -107,6 +112,8 @@ namespace OutcoldSolutions.GoogleMusic
 
                 registration.Register<RightRegionControlService>().AsSingleton();
                 registration.Register<ApplicationLogManager>().AsSingleton();
+
+                registration.Register<ISongsCachingService>().AsSingleton<SongsCachingService>();
 
                 registration.Register<MediaElement>()
                             .AsSingleton(
@@ -127,7 +134,6 @@ namespace OutcoldSolutions.GoogleMusic
                             .AsSingleton<NotificationService>();
 
                 registration.Register<MediaControlIntegration>();
-                registration.Register<CurrentSongPropertiesUpdateService>();
 
                 registration.Register<IGoogleMusicSynchronizationService>()
                             .AsSingleton<GoogleMusicSynchronizationService>();
@@ -180,11 +186,10 @@ namespace OutcoldSolutions.GoogleMusic
                 var page = (Page)Window.Current.Content;
                 VisualTreeHelperEx.GetVisualChild<Panel>(page).Children.Add(Container.Resolve<MediaElement>());
 
-                MainMenu.Initialize(Container.Resolve<IMainFrame>());
-                ApplicationSettingViews.Initialize(Container.Resolve<IApplicationSettingViewsService>());
+                MainMenu.Initialize(Container.Resolve<IMainFrame>(), Container.Resolve<IApplicationResources>());
+                ApplicationSettingViews.Initialize(Container.Resolve<IApplicationSettingViewsService>(), Container.Resolve<IApplicationResources>());
 
                 Container.Resolve<MediaControlIntegration>();
-                Container.Resolve<CurrentSongPropertiesUpdateService>();
                 Container.Resolve<ScreenLocker>();
 
                 Container.Resolve<INavigationService>().NavigateTo<IStartPageView>();

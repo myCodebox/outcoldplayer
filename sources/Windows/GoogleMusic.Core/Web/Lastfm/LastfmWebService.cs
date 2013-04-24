@@ -114,7 +114,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Lastfm
 
         public bool RestoreSession()
         {
-             PasswordVault vault = new PasswordVault();
+            PasswordVault vault = new PasswordVault();
 
             // Remove old
             try
@@ -128,20 +128,22 @@ namespace OutcoldSolutions.GoogleMusic.Web.Lastfm
                     var keys = session.Password.Split(new[] { ":::" }, StringSplitOptions.RemoveEmptyEntries);
                     if (keys.Length == 2)
                     {
-
                         this.sessionToken = keys[0];
-                        this.currentSession = new Session()
-                                                  {
-                                                      Key = keys[1],
-                                                      Name = session.UserName
-                                                  };
+                        this.currentSession = new Session() { Key = keys[1], Name = session.UserName };
                         return true;
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception exception)
             {
-                this.logger.Debug("Could not restore session.");
+                if (((uint)exception.HResult) != 0x80070490)
+                {
+                    this.logger.Error(exception, "Exception while tried to ClearAllPasswordCredentials.");
+                }
+                else
+                {
+                    this.logger.Debug("RestoreSession: Not found.");
+                }
             }
 
             return false;
@@ -173,7 +175,14 @@ namespace OutcoldSolutions.GoogleMusic.Web.Lastfm
             }
             catch (Exception exception)
             {
-                this.logger.Error(exception, "Exception while tried to ClearAllPasswordCredentials.");
+                if (((uint)exception.HResult) != 0x80070490)
+                {
+                    this.logger.Error(exception, "Exception while tried to ClearAllPasswordCredentials.");
+                }
+                else
+                {
+                    this.logger.Debug("ClearAllPasswordCredentials: Not found.");
+                }
             }
         }
 

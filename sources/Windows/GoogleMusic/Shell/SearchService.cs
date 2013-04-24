@@ -13,7 +13,6 @@ namespace OutcoldSolutions.GoogleMusic.Shell
     using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
-    using OutcoldSolutions.GoogleMusic.Views.Popups;
 
     using Windows.ApplicationModel.Search;
     using Windows.Storage.Streams;
@@ -22,21 +21,27 @@ namespace OutcoldSolutions.GoogleMusic.Shell
     {
         private const int MaxResults = 5;
 
+        private readonly IApplicationResources resources;
         private readonly INavigationService navigationService;
         private readonly IDispatcher dispatcher;
         private readonly IPlaylistsService playlistsService;
         private readonly ISongsRepository songsRepository;
+        private readonly IAlbumArtCacheService albumArtCacheService;
 
         public SearchService(
+            IApplicationResources resources,
             INavigationService navigationService, 
             IDispatcher dispatcher,
             IPlaylistsService playlistsService,
-            ISongsRepository songsRepository)
+            ISongsRepository songsRepository,
+            IAlbumArtCacheService albumArtCacheService)
         {
+            this.resources = resources;
             this.navigationService = navigationService;
             this.dispatcher = dispatcher;
             this.playlistsService = playlistsService;
             this.songsRepository = songsRepository;
+            this.albumArtCacheService = albumArtCacheService;
         }
         
         public void Activate()
@@ -79,7 +84,7 @@ namespace OutcoldSolutions.GoogleMusic.Shell
             var searchPaneSuggestionsRequestDeferral = args.Request.GetDeferral();
             this.SearchAsync(args)
                 .ContinueWith(
-                x =>
+                async x =>
                 {
                     foreach (var item in x.Result)
                     {
@@ -99,8 +104,8 @@ namespace OutcoldSolutions.GoogleMusic.Shell
                             IRandomAccessStreamReference randomAccessStreamReference = null;
                             if (searchResult.AlbumArtUrl != null)
                             {
-                                randomAccessStreamReference =
-                                    RandomAccessStreamReference.CreateFromUri(searchResult.AlbumArtUrl);
+                                var pathToImage = await this.albumArtCacheService.GetCachedImageAsync(searchResult.AlbumArtUrl.ChangeSize(size: 116));
+                                randomAccessStreamReference = RandomAccessStreamReference.CreateFromUri(AlbumArtUrlExtensions.ToLocalUri(pathToImage));
                             }
                             else
                             {
@@ -172,7 +177,7 @@ namespace OutcoldSolutions.GoogleMusic.Shell
 
                 if (songs.Count > 0)
                 {
-                    result.Add(new SearchTitle("Songs"));
+                    result.Add(new SearchTitle(this.resources.GetString("Model_Song_Plural_Title")));
                     foreach (var song in songs)
                     {
                         result.Add(new SearchResult(
@@ -204,13 +209,13 @@ namespace OutcoldSolutions.GoogleMusic.Shell
             {
                 if (!titleAdded)
                 {
-                    result.Add(new SearchTitle(playlistType.ToTitle()));
+                    result.Add(new SearchTitle(this.resources.GetTitle(playlist.PlaylistType)));
                     titleAdded = true;
                 }
 
                 result.Add(new SearchResult(
                     playlist.Title,
-                    string.Format(CultureInfo.CurrentCulture, "{0} songs", playlist.SongsCount),
+                    string.Format(CultureInfo.CurrentCulture, this.resources.GetString("SearchItem_SongsFormat"), playlist.SongsCount),
                     string.Format(CultureInfo.CurrentCulture, "{0}:{1}", playlistType, playlist.Id),
                     playlist.ArtUrl));
             }

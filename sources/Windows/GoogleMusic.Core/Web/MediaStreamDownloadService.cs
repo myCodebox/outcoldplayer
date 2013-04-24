@@ -32,6 +32,8 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
         public async Task<INetworkRandomAccessStream> GetStreamAsync(string url)
         {
+            CancellationTokenSource source = null;
+
             try
             {
                 if (this.logger.IsDebugEnabled)
@@ -39,10 +41,10 @@ namespace OutcoldSolutions.GoogleMusic.Web
                     this.logger.Debug("Stream requested at url '{0}'.", url);
                 }
 
-                var source = this.cancellationTokenSource;
-                if (source != null)
+                var previousCancellationTokenSource = this.cancellationTokenSource;
+                if (previousCancellationTokenSource != null)
                 {
-                    source.Cancel();
+                    previousCancellationTokenSource.Cancel();
                     this.client.CancelPendingRequests();
                 }
 
@@ -107,7 +109,11 @@ namespace OutcoldSolutions.GoogleMusic.Web
             }
             catch (Exception e)
             {
-                this.logger.Error(e, "Exception while loading stream");
+                if (source == null || !source.IsCancellationRequested)
+                {
+                    this.logger.Error(e, "Exception while loading stream");
+                }
+
                 return null;
             }
         }

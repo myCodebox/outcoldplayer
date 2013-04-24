@@ -292,14 +292,20 @@ namespace OutcoldSolutions.GoogleMusic.Web
                     statusCode = responseMessage.StatusCode;
                 }
 
-                throw new WebRequestException(
-                    string.Format(
-                        CultureInfo.CurrentCulture,
-                        "Exception while we tried to get resposne for url (POST) '{0}'. {1}",
-                        url,
-                        exception.Message),
-                    exception,
-                    statusCode);
+                StringBuilder errorMessage = new StringBuilder();
+                errorMessage.AppendFormat(
+                    CultureInfo.CurrentCulture,
+                    "Exception while we tried to get resposne for url (POST) '{0}'. {1}",
+                    url,
+                    exception.Message);
+
+                if (responseMessage != null && responseMessage.StatusCode == HttpStatusCode.Found)
+                {
+                    errorMessage.AppendFormat(
+                        CultureInfo.CurrentCulture, ". 302: Moved to '{0}'", responseMessage.Headers.Location.LocalPath);
+                }
+
+                throw new WebRequestException(errorMessage.ToString(), exception, statusCode);
             }
         }
 

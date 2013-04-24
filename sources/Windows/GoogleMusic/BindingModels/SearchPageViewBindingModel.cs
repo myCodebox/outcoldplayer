@@ -10,30 +10,18 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
     public class SearchPageViewBindingModel : BindingModelBase
     {
         private List<SearchGroupBindingModel> groups;
-
-        private string query;
-
-        public string Query
-        {
-            get
-            {
-                return this.query;
-            }
-
-            set
-            {
-                if (this.SetValue(ref this.query, value))
-                {
-                    this.RaisePropertyChanged(() => this.Title);
-                }
-            }
-        }
+        private string title;
 
         public string Title
         {
             get
             {
-                return string.Format("Results for \"{0}\"", this.Query);
+                return this.title;
+            }
+
+            set
+            {
+                this.SetValue(ref this.title, value);
             }
         }
 

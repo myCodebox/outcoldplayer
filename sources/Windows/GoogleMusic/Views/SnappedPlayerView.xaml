@@ -100,6 +100,7 @@
 
                                  <TextBlock Margin="0, 5, 0, 0"
                                             Text="Volume" 
+                                            x:Uid="Player_VolumeTitle"
                                             Style="{StaticResource SmallTextStyle}"
                                             Grid.Row="1"
                                             Grid.Column="0"/>
@@ -205,7 +206,8 @@
                         Grid.Column="1" 
                         HorizontalAlignment="Right" 
                         Visibility="{Binding Path=BindingModel.IsDownloaded, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}">
-                    <TextBlock HorizontalAlignment="Left" Style="{StaticResource SmallTextStyle}">Buffering (</TextBlock>
+                    <TextBlock HorizontalAlignment="Left" Style="{StaticResource SmallTextStyle}" x:Uid="Player_BufferingLabel">Buffering</TextBlock>
+                    <TextBlock HorizontalAlignment="Left" Style="{StaticResource SmallTextStyle}" Margin="7, 0, 0, 0">(</TextBlock>
                     <TextBlock Style="{StaticResource SmallTextStyle}"  
                                         Text="{Binding Path=BindingModel.DownloadProgress, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter=P0}"
                                         HorizontalAlignment="Stretch"
@@ -308,7 +310,7 @@
                     VerticalAlignment="Center"
                     Grid.RowSpan="7" 
                     Visibility="{Binding Path=BindingModel.IsQueueEmpty, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
-            <TextBlock Style="{StaticResource BodyTextStyle}">Queue is empty</TextBlock>
+            <TextBlock Style="{StaticResource BodyTextStyle}" x:Uid="Player_QueueEmpty">Queue is empty</TextBlock>
             <Button Style="{StaticResource AddAppBarButtonStyle}" Command="{Binding Path=AddToQueueCommand, Mode=OneTime}" />
         </StackPanel>
     </Grid>

@@ -25,14 +25,16 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
 
     public class ProgressLoadingPopupViewPresenter : ViewPresenterBase<IProgressLoadingPopupView>
     {
+        private readonly IApplicationResources resources;
         private readonly ISettingsService settingsService;
-
         private readonly IInitialSynchronization initialSynchronization;
 
         public ProgressLoadingPopupViewPresenter(
+            IApplicationResources resources,
             ISettingsService settingsService, 
             IInitialSynchronization initialSynchronization)
         {
+            this.resources = resources;
             this.settingsService = settingsService;
             this.initialSynchronization = initialSynchronization;
             this.BindingModel = new ProgressLoadingPageViewBindingModel();
@@ -84,7 +86,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
                         }
                         else if (isFailed)
                         {
-                            this.BindingModel.Message = "Cannot load data. Verify your network connection.";
+                            this.BindingModel.Message = this.resources.GetString("Loading_Error_Failed");
                             this.BindingModel.IsFailed = true;
                         }
                         else
@@ -110,7 +112,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
                 () =>
                     {
                         this.BindingModel.Progress = 0;
-                        this.BindingModel.Message = "Loading music library...";
+                        this.BindingModel.Message = this.resources.GetString("Loading_LoadingMusicLibrary");
                     });
 
             Progress<double> progress = new Progress<double>();
@@ -129,13 +131,13 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
 
         private Task ShowErrorInfoAsync()
         {
-            var dialog = new MessageDialog("Impossible to load data from Google Music. Please verify that you subscribed to Google Music services.");
+            var dialog = new MessageDialog(this.resources.GetString("Loading_MessageBox_Failed.Message"));
             dialog.Commands.Add(
                 new UICommand(
-                    "Go to Goole Play Music",
+                    this.resources.GetString("Loading_MessageBox_Failed.OkButton"),
                     (cmd) => this.Logger.LogTask(Launcher.LaunchUriAsync(new Uri("https://play.google.com/music/listen")).AsTask())));
 
-            dialog.Commands.Add(new UICommand("Cancel"));
+            dialog.Commands.Add(new UICommand(this.resources.GetString("Loading_MessageBox_Failed.CancelButton")));
             
             return dialog.ShowAsync().AsTask();
         }
