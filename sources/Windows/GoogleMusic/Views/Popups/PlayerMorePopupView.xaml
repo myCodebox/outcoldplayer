@@ -36,6 +36,7 @@
 
                 <TextBlock Margin="0, 5, 0, 0"
                            Text="Volume" 
+                           x:Uid="Player_VolumeTitle"
                            Style="{StaticResource SmallTextStyle}"
                            Grid.Row="1"
                            Grid.Column="0"/>
@@ -53,10 +54,14 @@
 
             <controls:AppBarToggleButton Style="{StaticResource ShufflePopupMenuButtonStyle}" 
                                          IsChecked="{Binding Path=BindingModel.IsShuffleEnabled, Mode=TwoWay}"
-                                         Command="{Binding Path=ShuffleCommand, Mode=OneTime}"/>
+                                         Command="{Binding Path=ShuffleCommand, Mode=OneTime}"
+                                         AutomationProperties.Name="Player_Shuffle"
+                                         x:Uid="Player_ShuffleButton"/>
             <controls:AppBarToggleButton Style="{StaticResource RepeatAllPopupMenuButtonStyle}" 
                                          IsChecked="{Binding Path=BindingModel.IsRepeatAllEnabled, Mode=TwoWay}"
-                                         Command="{Binding Path=RepeatAllCommand, Mode=OneTime}"/>
+                                         Command="{Binding Path=RepeatAllCommand, Mode=OneTime}"
+                                         x:Uid="Player_RepeatAllButton"
+                                         AutomationProperties.Name="Player_RepeatAll"/>
             
         </StackPanel>
     </Border>

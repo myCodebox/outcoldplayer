@@ -10,7 +10,8 @@
     d:DesignHeight="300"
     d:DesignWidth="400"
     Title="Home"
-    IsStoreLogoVisible="True">
+    IsStoreLogoVisible="True"
+    x:Uid="StartPageView">
 
     <views:PageViewBase.Resources>
         <CollectionViewSource x:Name="Groups" IsSourceGrouped="true" ItemsPath="Playlists" Source="{Binding Path=BindingModel.Groups}" />

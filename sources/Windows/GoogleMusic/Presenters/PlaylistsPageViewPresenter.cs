@@ -10,10 +10,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     public class PlaylistsPageViewPresenter : PlaylistsPageViewPresenterBase<IPlaylistsPageView, PlaylistsPageViewBindingModel>
     {
         public PlaylistsPageViewPresenter(
+            IApplicationResources resources,
             IPlaylistsService playlistsService,
             INavigationService navigationService,
             IPlayQueueService playQueueService)
-            : base(playlistsService, navigationService, playQueueService)
+            : base(resources, playlistsService, navigationService, playQueueService)
         {
         }
     }

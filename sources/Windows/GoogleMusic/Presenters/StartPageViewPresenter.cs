@@ -33,6 +33,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private const string DoNotAskToReviewKey = "DoNotAskToReviewKey";
         private const string CountOfStartsBeforeReview = "CountOfStartsBeforeReview";
 
+        private readonly IApplicationResources resources;
+
         private readonly ISettingsService settingsService;
         private readonly IAuthentificationService authentificationService;
         private readonly IPlayQueueService playQueueService;
@@ -45,6 +47,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private bool initialized = false;
 
         public StartPageViewPresenter(
+            IApplicationResources resources,
             ISettingsService settingsService,
             IAuthentificationService authentificationService,
             INavigationService navigationService,
@@ -54,6 +57,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             IGoogleMusicSessionService sessionService,
             ISearchService searchService)
         {
+            this.resources = resources;
             this.settingsService = settingsService;
             this.authentificationService = authentificationService;
             this.playQueueService = playQueueService;
@@ -254,7 +258,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                                 int count = await countTask;
                                 IEnumerable<IPlaylist> playlists = await getAllTask;
 
-                                return this.CreateGroup(t.ToPluralTitle(), count, playlists, t);
+                                return this.CreateGroup(this.resources.GetPluralTitle(t), count, playlists, t);
                             })));
 
             await this.Dispatcher.RunAsync(() => { this.BindingModel.Groups = groups.Where(g => g.Playlists.Count > 0).ToList(); });
@@ -279,7 +283,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private IEnumerable<CommandMetadata> GetContextCommands()
         {
-            yield return new CommandMetadata(CommandIcon.OpenWith, "Queue", this.QueueCommand);
+            yield return new CommandMetadata(CommandIcon.OpenWith, this.resources.GetString("Toolbar_QueueButton"), this.QueueCommand);
         }
 
         private PlaylistsGroupBindingModel CreateGroup(string title, int playlistsCount, IEnumerable<IPlaylist> playlists, PlaylistType type)
@@ -345,10 +349,10 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private Task VerifyToReview()
         {
-            var dialog = new MessageDialog("If you are enjoy using gMusic appication, would you mind taking a moment to rate it? Good ratings help us a lot. It won't take more than a minute. Thanks for your support!");
+            var dialog = new MessageDialog(this.resources.GetString("MessageBox_ReviewMessage"));
             dialog.Commands.Add(
                 new UICommand(
-                    "Rate",
+                    this.resources.GetString("MessageBox_ReviewButtonRate"),
                     (cmd) =>
                     {
                         this.settingsService.SetRoamingValue<bool>(DoNotAskToReviewKey, true);
@@ -357,13 +361,13 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
             dialog.Commands.Add(
                 new UICommand(
-                    "No, thanks",
+                    this.resources.GetString("MessageBox_ReviewButtonNoThanks"),
                     (cmd) =>
                     this.settingsService.SetRoamingValue<bool>(DoNotAskToReviewKey, true)));
 
             dialog.Commands.Add(
                 new UICommand(
-                    "Remind me later",
+                    this.resources.GetString("MessageBox_ReviewButtonRemind"),
                     (cmd) =>
                     this.settingsService.SetRoamingValue<int>(CountOfStartsBeforeReview, 0)));
 

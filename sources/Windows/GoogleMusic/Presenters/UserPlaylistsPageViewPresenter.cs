@@ -20,15 +20,18 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
     public class UserPlaylistsPageViewPresenter : PlaylistsPageViewPresenterBase<IUserPlaylistsPageView, PlaylistsPageViewBindingModel>
     {
+        private readonly IApplicationResources resources;
         private readonly IUserPlaylistsService userPlaylistsService;
         
         public UserPlaylistsPageViewPresenter(
+            IApplicationResources resources,
             INavigationService navigationService,
             IPlayQueueService playQueueService,
             IPlaylistsService playlistsService,
             IUserPlaylistsService userPlaylistsService)
-            : base(playlistsService, navigationService, playQueueService)
+            : base(resources, playlistsService, navigationService, playQueueService)
         {
+            this.resources = resources;
             this.userPlaylistsService = userPlaylistsService;
             this.AddPlaylistCommand = new DelegateCommand(this.AddPlaylist);
             this.EditPlaylistCommand = new DelegateCommand(this.EditPlaylist, () => this.BindingModel.SelectedItems.Count == 1);
@@ -43,7 +46,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         protected override IEnumerable<CommandMetadata> GetViewCommands()
         {
-            yield return new CommandMetadata(CommandIcon.Page, "Create", this.AddPlaylistCommand);
+            yield return new CommandMetadata(CommandIcon.Page, this.resources.GetString("Toolbar_CreateButton"), this.AddPlaylistCommand);
         }
 
         protected async override Task LoadPlaylistsAsync()
@@ -68,8 +71,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 yield return commandMetadata;
             }
 
-            yield return new CommandMetadata(CommandIcon.Edit, "Rename", this.EditPlaylistCommand);
-            yield return new CommandMetadata(CommandIcon.Delete, "Delete", this.DeletePlaylistsCommand);
+            yield return new CommandMetadata(CommandIcon.Edit, this.resources.GetString("Toolbar_RenameButton"), this.EditPlaylistCommand);
+            yield return new CommandMetadata(CommandIcon.Delete, this.resources.GetString("Toolbar_DeleteButton"), this.DeletePlaylistsCommand);
         }
 
         private void AddPlaylist()
@@ -89,12 +92,12 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         {
             if (this.DeletePlaylistsCommand.CanExecute())
             {
-                var yesUiCommand = new UICommand("Yes");
-                var noUiCommand = new UICommand("No");
+                var yesUiCommand = new UICommand(this.resources.GetString("MessageBox_DeletePlaylistYes"));
+                var noUiCommand = new UICommand(this.resources.GetString("MessageBox_DeletePlaylistNo"));
 
                 var playlists = this.BindingModel.SelectedItems.Select(bm => bm.Playlist).ToList();
 
-                MessageDialog dialog = new MessageDialog("Are you sure want to delete selected playlists?");
+                MessageDialog dialog = new MessageDialog(this.resources.GetString("MessageBox_DeletePlaylistMessage"));
                 dialog.Commands.Add(yesUiCommand);
                 dialog.Commands.Add(noUiCommand);
                 dialog.DefaultCommandIndex = 0;

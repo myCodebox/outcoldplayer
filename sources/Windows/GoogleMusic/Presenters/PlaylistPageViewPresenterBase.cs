@@ -28,12 +28,14 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private readonly IPlayQueueService playQueueService;
         private readonly ISongsService metadataEditService;
         private readonly IPlaylistsService playlistsService;
+        private readonly IApplicationResources resources;
 
         public PlaylistPageViewPresenterBase(IDependencyResolverContainer container)
         {
             this.playQueueService = container.Resolve<IPlayQueueService>();
             this.metadataEditService = container.Resolve<ISongsService>();
             this.playlistsService = container.Resolve<IPlaylistsService>();
+            this.resources = container.Resolve<IApplicationResources>();
 
             this.QueueCommand = new DelegateCommand(this.Queue, () => this.BindingModel != null && this.BindingModel.SongsBindingModel.SelectedItems.Count > 0);
             this.AddToPlaylistCommand = new DelegateCommand(this.AddToPlaylist, () => this.BindingModel != null && this.BindingModel.SongsBindingModel.SelectedItems.Count > 0);
@@ -52,6 +54,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
             this.BindingModel.SongsBindingModel.SetCollection(null);
             this.BindingModel.Playlist = default(TPlaylist);
+            this.BindingModel.Type = null;
         }
 
         public void PlaySong(SongBindingModel songBindingModel)
@@ -87,13 +90,14 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     {
                         this.BindingModel.SongsBindingModel.SetCollection(songs);
                         this.BindingModel.Playlist = (TPlaylist)playlist;
+                        this.BindingModel.Type = this.resources.GetTitle(playlist.PlaylistType);
                     });
         }
 
         protected virtual IEnumerable<CommandMetadata> GetContextCommands()
         {
-            yield return new CommandMetadata(CommandIcon.OpenWith, "Queue", this.QueueCommand);
-            yield return new CommandMetadata(CommandIcon.Add, "Playlist", this.AddToPlaylistCommand);
+            yield return new CommandMetadata(CommandIcon.OpenWith, this.resources.GetString("Toolbar_QueueButton"), this.QueueCommand);
+            yield return new CommandMetadata(CommandIcon.Add, this.resources.GetString("Toolbar_PlaylistButton"), this.AddToPlaylistCommand);
         }
 
         private void Queue()

@@ -24,6 +24,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         where TView : IPageView
         where TPlaylistsPageViewBindingModel : PlaylistsPageViewBindingModel
     {
+        private readonly IApplicationResources resources;
         private readonly IPlaylistsService playlistsService;
         private readonly INavigationService navigationService;
         private readonly IPlayQueueService playQueueService;
@@ -31,10 +32,12 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private IDisposable playlistsChangeSubscription;
 
         protected PlaylistsPageViewPresenterBase(
+            IApplicationResources resources,
             IPlaylistsService playlistsService,
             INavigationService navigationService,
             IPlayQueueService playQueueService)
         {
+            this.resources = resources;
             this.playlistsService = playlistsService;
             this.navigationService = navigationService;
             this.playQueueService = playQueueService;
@@ -77,6 +80,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         protected override async Task LoadDataAsync(NavigatedToEventArgs navigatedToEventArgs)
         {
             this.BindingModel.PlaylistType = (PlaylistType)navigatedToEventArgs.Parameter;
+            this.BindingModel.Title = this.resources.GetPluralTitle(this.BindingModel.PlaylistType);
             await this.LoadPlaylistsAsync();
             await this.Dispatcher.RunAsync(() => this.BindingModel.ClearSelectedItems());
         }
@@ -106,7 +110,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         protected virtual IEnumerable<CommandMetadata> GetContextCommands()
         {
-            yield return new CommandMetadata(CommandIcon.OpenWith, "Queue", this.QueueCommand);
+            yield return new CommandMetadata(CommandIcon.OpenWith, this.resources.GetString("Toolbar_QueueButton"), this.QueueCommand);
         }
 
         private void SelectedItemsOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)

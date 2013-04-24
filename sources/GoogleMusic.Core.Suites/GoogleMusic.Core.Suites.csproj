@@ -89,11 +89,23 @@
     <Compile Include="..\Windows\GoogleMusic.Core\BindingModels\SongBindingModel.cs">
       <Link>_sources\BindingModels\SongBindingModel.cs</Link>
     </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\IApplicationResources.cs">
+      <Link>_sources\IApplicationResources.cs</Link>
+    </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Models\Album.cs">
       <Link>_sources\Models\Album.cs</Link>
     </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Models\AlbumArtUrlExtensions.cs">
+      <Link>_sources\Models\AlbumArtUrlExtensions.cs</Link>
+    </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Models\Artist.cs">
       <Link>_sources\Models\Artist.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Models\CachedAlbumArt.cs">
+      <Link>_sources\Models\CachedAlbumArt.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Models\CachedSong.cs">
+      <Link>_sources\Models\CachedSong.cs</Link>
     </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Models\Genre.cs">
       <Link>_sources\Models\Genre.cs</Link>
@@ -187,6 +199,9 @@
     </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Services\GoogleMusicSessionService.cs">
       <Link>_sources\Services\GoogleMusicSessionService.cs</Link>
+    </Compile>
+    <Compile Include="..\Windows\GoogleMusic.Core\Services\IAlbumArtCacheService.cs">
+      <Link>_sources\Services\IAlbumArtCacheService.cs</Link>
     </Compile>
     <Compile Include="..\Windows\GoogleMusic.Core\Services\IAuthentificationService.cs">
       <Link>_sources\Services\IAuthentificationService.cs</Link>

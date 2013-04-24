@@ -20,17 +20,20 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
     public class ArtistPageViewPresenter : PagePresenterBase<IArtistPageView, ArtistPageViewBindingModel>
     {
+        private readonly IApplicationResources resources;
         private readonly IPlayQueueService playQueueService;
         private readonly INavigationService navigationService;
         private readonly IPlaylistsService playlistsService;
         private readonly IAlbumsRepository albumsRepository;
 
         public ArtistPageViewPresenter(
+            IApplicationResources resources,
             IPlayQueueService playQueueService,
             INavigationService navigationService,
             IPlaylistsService playlistsService,
             IAlbumsRepository albumsRepository)
         {
+            this.resources = resources;
             this.playQueueService = playQueueService;
             this.navigationService = navigationService;
             this.playlistsService = playlistsService;
@@ -78,7 +81,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         protected override IEnumerable<CommandMetadata> GetViewCommands()
         {
-            yield return new CommandMetadata(CommandIcon.List, "Show All", this.ShowAllCommand);
+            yield return new CommandMetadata(CommandIcon.List, this.resources.GetString("Toolbar_ShowAllButton"), this.ShowAllCommand);
         }
 
         private void SelectedItemsOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -100,7 +103,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private IEnumerable<CommandMetadata> GetContextCommands()
         {
-            yield return new CommandMetadata(CommandIcon.OpenWith, "Queue", this.QueueCommand);
+            yield return new CommandMetadata(CommandIcon.OpenWith, this.resources.GetString("Toolbar_QueueButton"), this.QueueCommand);
         }
 
         private void ShowAll()

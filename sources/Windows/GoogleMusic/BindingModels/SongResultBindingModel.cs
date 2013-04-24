@@ -5,16 +5,19 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 {
     using System;
 
-    using OutcoldSolutions.GoogleMusic.Models;
-
     public class SongResultBindingModel : SearchResultBindingModel
     {
         private readonly SongBindingModel result;
+        private readonly string subtitle;
 
-        public SongResultBindingModel(string search, SongBindingModel result)
+        public SongResultBindingModel(
+            string search, 
+            SongBindingModel result,
+            string subtitle)
             : base(search, result.Title)
         {
             this.result = result;
+            this.subtitle = subtitle;
         }
 
         public SongBindingModel Result
@@ -37,7 +40,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         {
             get
             {
-                return "Song";
+                return this.subtitle;
             }
         }
 

@@ -100,6 +100,7 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="IApplicationResources.cs" />
     <Compile Include="Models\AlbumArtUrlExtensions.cs" />
     <Compile Include="Models\CachedAlbumArt.cs" />
     <Compile Include="Models\CachedSong.cs" />
@@ -138,6 +139,7 @@
     <Compile Include="Repositories\RepositoryBase.cs" />
     <Compile Include="Repositories\SystemPlaylistsRepository.cs" />
     <Compile Include="Services\AlbumArtCacheService.cs" />
+    <Compile Include="Services\IAlbumArtCacheService.cs" />
     <Compile Include="Services\PlaylistsService.cs" />
     <Compile Include="Services\SongsService.cs" />
     <Compile Include="Repositories\SongsRepository.cs" />

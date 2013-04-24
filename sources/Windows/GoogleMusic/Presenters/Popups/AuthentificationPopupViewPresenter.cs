@@ -8,19 +8,22 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
     using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services;
+    using OutcoldSolutions.GoogleMusic.Shell;
     using OutcoldSolutions.GoogleMusic.Views.Popups;
     using OutcoldSolutions.Presenters;
 
     public class AuthentificationPopupViewPresenter : ViewPresenterBase<IAuthentificationPopupView>
     {
+        private readonly IApplicationResources resources;
         private readonly IGoogleAccountService googleAccountService;
         private readonly IAuthentificationService authentificationService;
-
+       
         public AuthentificationPopupViewPresenter(
+            IApplicationResources resources,
             IGoogleAccountService googleAccountService,
-            IAuthentificationService authentificationService,
-            IGoogleMusicSessionService googleMusicSession)
+            IAuthentificationService authentificationService)
         {
+            this.resources = resources;
             this.googleAccountService = googleAccountService;
             this.authentificationService = authentificationService;
             this.BindingModel = new AuthentificationPageViewBindingModel();
@@ -60,7 +63,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
             if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
             {
                 this.Logger.Warning("Cannot login. Email or password are not provided.");
-                this.BindingModel.ErrorMessage = "Please provide email and password first.";
+                this.BindingModel.ErrorMessage = this.resources.GetString("Authorization_Error_UserNameAndPassword");
             }
             else
             {
@@ -103,7 +106,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
                     }
                     else
                     {
-                        this.BindingModel.ErrorMessage = "Could not authentificate. Please check network connection.";
+                        this.BindingModel.ErrorMessage = this.resources.GetString("Authorization_Error_UnexpectedError");
                     }
                 }
             }

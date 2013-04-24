@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>OutcoldSolutions.GoogleMusic</RootNamespace>
     <AssemblyName>gMusic</AssemblyName>
-    <DefaultLanguage>en-US</DefaultLanguage>
+    <DefaultLanguage>en</DefaultLanguage>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{BC8A1FFA-BEE3-4634-8014-F334798102B3};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <PackageCertificateKeyFile>GoogleMusic_StoreKey.pfx</PackageCertificateKeyFile>
@@ -169,6 +169,7 @@
     <Compile Include="Services\QueueState.cs" />
     <Compile Include="Services\SongsCachingService.cs" />
     <Compile Include="Services\StateChangedEventArgs.cs" />
+    <Compile Include="Shell\ApplicationResources.cs" />
     <Compile Include="Shell\IMediaElementContainer.cs" />
     <Compile Include="Shell\INotificationService.cs" />
     <Compile Include="Shell\MediaControlIntegration.cs" />
@@ -289,7 +290,8 @@
     <None Include="GoogleMusic_StoreKey.pfx" />
     <None Include="GoogleMusic_TemporaryKey.pfx" />
     <None Include="packages.config" />
-    <PRIResource Include="CoreResources.resw" />
+    <PRIResource Include="Strings\ru\Resources.resw" />
+    <PRIResource Include="Strings\en\Resources.resw" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\Logo.scale-100.png" />
@@ -524,6 +526,7 @@
       <Name>GoogleMusic.Core</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '11.0' ">
     <VisualStudioVersion>11.0</VisualStudioVersion>
   </PropertyGroup>

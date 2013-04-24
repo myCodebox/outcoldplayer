@@ -4,18 +4,25 @@
 namespace OutcoldSolutions.GoogleMusic.BindingModels
 {
     using System;
-    using System.Globalization;
 
     using OutcoldSolutions.GoogleMusic.Models;
 
     public class PlaylistResultBindingModel : SearchResultBindingModel
     {
         private readonly IPlaylist result;
+        private readonly string description;
+        private readonly string subtitle;
 
-        public PlaylistResultBindingModel(string search, IPlaylist result)
+        public PlaylistResultBindingModel(
+            string search, 
+            IPlaylist result,
+            string description,
+            string subtitle)
             : base(search, result.Title)
         {
             this.result = result;
+            this.description = description;
+            this.subtitle = subtitle;
         }
 
         public IPlaylist Result
@@ -30,7 +37,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         {
             get
             {
-                return string.Format(CultureInfo.CurrentCulture, "{0} songs", this.result.SongsCount);
+                return this.subtitle;
             }
         }
 
@@ -38,7 +45,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         {
             get
             {
-                return this.Result.PlaylistType.ToTitle();
+                return this.description;
             }
         }
 

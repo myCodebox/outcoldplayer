@@ -18,34 +18,49 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <TextBlock Style="{StaticResource HeaderTextStyle}">Sign in</TextBlock>
+                <TextBlock Style="{StaticResource HeaderTextStyle}" 
+                           x:Uid="Authorization_SignInTitle" >
+                    Sign In
+                </TextBlock>
 
-                <TextBlock Grid.Row="1" Margin="0, 20, 0, 0" TextWrapping="Wrap" Style="{StaticResource SmallTextStyle}">
+                <TextBlock Grid.Row="1" 
+                           Margin="0, 20, 0, 0" 
+                           TextWrapping="Wrap" 
+                           Style="{StaticResource SmallTextStyle}" 
+                           x:Uid="Authorization_SignInInfo">
                     To use gMusic player you need to provide your Google Account's email and password. 
                     If you do not have one, you need to create Google Account. 
                     Please make sure that you have subscribed to Google Music service. For more details go to the Google Music site.
                 </TextBlock>
 
                 <StackPanel Width="400" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" >
-                    <TextBlock Style="{StaticResource BasicTextStyle}" >Email:</TextBlock>
+                    <TextBlock Style="{StaticResource BasicTextStyle}" 
+                               x:Uid="Authorization_EmailLabel" >
+                        Email:
+                    </TextBlock>
                     <TextBox Text="{Binding Path=BindingModel.Email, Mode=TwoWay}" 
                              InputScope="EmailSmtpAddress" 
                              IsEnabled="{Binding Path=BindingModel.IsSigningIn, Mode=OneWay, Converter={StaticResource InvertBooleanConverter}}"/>
 
-                    <TextBlock Margin="0, 20, 0, 0"  Style="{StaticResource BasicTextStyle}">Password:</TextBlock>
+                    <TextBlock Margin="0, 20, 0, 0"  Style="{StaticResource BasicTextStyle}" 
+                               x:Uid="Authorization_PasswordLabel">
+                        Password:
+                    </TextBlock>
                     <PasswordBox Password="{Binding Path=BindingModel.Password, Mode=TwoWay}" 
                                  IsPasswordRevealButtonEnabled="True"
                                  IsEnabled="{Binding Path=BindingModel.IsSigningIn, Mode=OneWay, Converter={StaticResource InvertBooleanConverter}}"/>
 
                     <CheckBox HorizontalAlignment="Right" Margin="0, 7 ,0 ,0" 
                               IsChecked="{Binding Path=BindingModel.RememberAccount, Mode=TwoWay}" 
-                              IsEnabled="{Binding Path=BindingModel.IsSigningIn, Mode=OneWay, Converter={StaticResource InvertBooleanConverter}}">
+                              IsEnabled="{Binding Path=BindingModel.IsSigningIn, Mode=OneWay, Converter={StaticResource InvertBooleanConverter}}"
+                              x:Uid="Authorization_RememberAccountCheckBox">
                         Remember account
                     </CheckBox>
                 </StackPanel>
 
                 <TextBlock Grid.Row="2" Margin="0, -90, 0, 0" TextWrapping="Wrap" Width="400" TextAlignment="Right"
-                        Style="{StaticResource SmallTextStyle}">
+                           Style="{StaticResource SmallTextStyle}"
+                           x:Uid="Authorization_PasswordStorageInformation">
                     Password will be stored in encrypted Windows Storage.
                 </TextBlock>
 
@@ -55,14 +70,16 @@
 
                 <HyperlinkButton Grid.Row="2" HorizontalAlignment="Left" NavigateUri="https://play.google.com/music">
                     <StackPanel>
-                        <TextBlock FontSize="14">Go to Google Music</TextBlock>
+                        <TextBlock FontSize="14" 
+                                   x:Uid="Authorization_GoToGoogleMusicLink">Go to Google Music</TextBlock>
                         <TextBlock FontSize="12">https://play.google.com/music</TextBlock>
                     </StackPanel> 
                 </HyperlinkButton>
 
                 <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
                     <ProgressRing IsActive="{Binding Path=BindingModel.IsSigningIn, Mode=OneWay}" />
-                    <Button Width="80" Margin="10, 0, 0, 0" Command="{Binding Path=SignInCommand, Mode=OneTime}">
+                    <Button Width="80" Margin="10, 0, 0, 0" Command="{Binding Path=SignInCommand, Mode=OneTime}"
+                            x:Uid="Authorization_SignInButton">
                         Sign in
                     </Button>
                 </StackPanel>

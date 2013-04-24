@@ -15,6 +15,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
 
     public class AccountsViewPresenter : ViewPresenterBase<IView>
     {
+        private readonly IApplicationResources resources;
         private readonly IGoogleAccountService googleAccountService;
         private readonly IGoogleMusicSessionService sessionService;
         private readonly ILastfmWebService lastfmWebService;
@@ -23,6 +24,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
         private readonly INavigationService navigationService;
 
         public AccountsViewPresenter(
+            IApplicationResources resources,
             IGoogleAccountService googleAccountService,
             IGoogleMusicSessionService sessionService,
             ILastfmWebService lastfmWebService,
@@ -30,6 +32,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
             IApplicationSettingViewsService applicationSettingViewsService,
             INavigationService navigationService)
         {
+            this.resources = resources;
             this.googleAccountService = googleAccountService;
             this.sessionService = sessionService;
             this.lastfmWebService = lastfmWebService;
@@ -78,12 +81,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
             
             if (this.BindingModel.HasSession)
             {
-                this.BindingModel.Message =
-                    "Username and password were cleared. You are still signed in, on next application start gMusic can still use your Token and Session keys, to delete them click on Sign Out button.";
+                this.BindingModel.Message = this.resources.GetString("SettingsAccount_AccountClearedButYouAreSignedIn");
             }
             else
             {
-                this.BindingModel.Message = "Username and password were cleared.";
+                this.BindingModel.Message = this.resources.GetString("SettingsAccount_AccountCleared");
             }
 
             this.BindingModel.IsRemembered = false;

@@ -86,7 +86,7 @@
             </Button>
 
             <StackPanel Grid.Column="1" 
-                        Margin="5, 0, 10, 0"
+                        Margin="5, 0, 0, 0"
                         Orientation="Vertical"
                         Visibility="{Binding Path=BindingModel.CurrentSong, Mode=OneWay, Converter={StaticResource NullToInvisibilityConverter}}">
 
@@ -97,7 +97,8 @@
                 </StackPanel>
 
                 <StackPanel Margin="0, 10, 0, 0" Orientation="Horizontal" Visibility="{Binding Path=BindingModel.IsDownloaded, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}">
-                    <TextBlock HorizontalAlignment="Left" Style="{StaticResource SmallTextStyle}">Buffering (</TextBlock>
+                    <TextBlock HorizontalAlignment="Left" Style="{StaticResource SmallTextStyle}" x:Uid="Player_BufferingLabel">Buffering (</TextBlock>
+                    <TextBlock HorizontalAlignment="Left" Style="{StaticResource SmallTextStyle}" Margin="7, 0, 0, 0">(</TextBlock>
                     <TextBlock Style="{StaticResource SmallTextStyle}"  
                            Text="{Binding Path=BindingModel.DownloadProgress, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter=P0}"
                            HorizontalAlignment="Stretch"

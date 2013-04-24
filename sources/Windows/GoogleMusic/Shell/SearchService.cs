@@ -21,6 +21,7 @@ namespace OutcoldSolutions.GoogleMusic.Shell
     {
         private const int MaxResults = 5;
 
+        private readonly IApplicationResources resources;
         private readonly INavigationService navigationService;
         private readonly IDispatcher dispatcher;
         private readonly IPlaylistsService playlistsService;
@@ -28,12 +29,14 @@ namespace OutcoldSolutions.GoogleMusic.Shell
         private readonly IAlbumArtCacheService albumArtCacheService;
 
         public SearchService(
+            IApplicationResources resources,
             INavigationService navigationService, 
             IDispatcher dispatcher,
             IPlaylistsService playlistsService,
             ISongsRepository songsRepository,
             IAlbumArtCacheService albumArtCacheService)
         {
+            this.resources = resources;
             this.navigationService = navigationService;
             this.dispatcher = dispatcher;
             this.playlistsService = playlistsService;
@@ -174,7 +177,7 @@ namespace OutcoldSolutions.GoogleMusic.Shell
 
                 if (songs.Count > 0)
                 {
-                    result.Add(new SearchTitle("Songs"));
+                    result.Add(new SearchTitle(this.resources.GetString("Model_Song_Plural_Title")));
                     foreach (var song in songs)
                     {
                         result.Add(new SearchResult(
@@ -206,13 +209,13 @@ namespace OutcoldSolutions.GoogleMusic.Shell
             {
                 if (!titleAdded)
                 {
-                    result.Add(new SearchTitle(playlistType.ToTitle()));
+                    result.Add(new SearchTitle(this.resources.GetTitle(playlist.PlaylistType)));
                     titleAdded = true;
                 }
 
                 result.Add(new SearchResult(
                     playlist.Title,
-                    string.Format(CultureInfo.CurrentCulture, "{0} songs", playlist.SongsCount),
+                    string.Format(CultureInfo.CurrentCulture, this.resources.GetString("SearchItem_SongsFormat"), playlist.SongsCount),
                     string.Format(CultureInfo.CurrentCulture, "{0}:{1}", playlistType, playlist.Id),
                     playlist.ArtUrl));
             }

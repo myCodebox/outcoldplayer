@@ -15,8 +15,8 @@
         </StackPanel.Transitions>
 
         <TextBlock Style="{StaticResource BodyTextStyle}">
-                        Do you want to send feedback? Please, do. 
-                        UserVoice is the best way to tell us what features you want to see in next versions of gMusic.
+            Do you want to send feedback? Please, do. 
+            UserVoice is the best way to tell us what features you want to see in next versions of gMusic.
         </TextBlock>
 
         <Button Click="UserVoiceClick" Margin="0, 20, 0, 0" >
@@ -24,7 +24,7 @@
         </Button>
 
         <TextBlock Style="{StaticResource BodyTextStyle}"  Margin="0, 20, 0, 0">
-                        Or you can just send email to:
+            Or you can just send email to:
         </TextBlock>
 
         <HyperlinkButton Padding="0" NavigateUri="mailto:gMusic@OutcoldSolutions.com">
@@ -32,7 +32,7 @@
         </HyperlinkButton>
 
         <TextBlock Style="{StaticResource BodyTextStyle}"  Margin="0, 20, 0, 0">
-                        Follow us on twitter to know about our plans:
+            Follow us on twitter to know about our plans:
         </TextBlock>
 
         <Button Click="TwitterFollowClick" Margin="0, 20, 0, 0">
@@ -43,15 +43,15 @@
         </Button>
 
         <TextBlock Style="{StaticResource BodyTextStyle}"  Margin="0, 20, 0, 0">
-                        Sometimes we can ask you to enable logging to help us find bugs and unexpected behaviors with gMusic. 
-                        We are sorry, if this happend with you. 
-                        And thank you for your help.
+            Sometimes we can ask you to enable logging to help us find bugs and unexpected behaviors with gMusic. 
+            We are sorry, if this happend with you. 
+            And thank you for your help.
         </TextBlock>
 
         <ToggleSwitch Margin="0, 20, 0, 0" IsOn="{Binding Path=IsLoggingOn, Mode=TwoWay}">Logging</ToggleSwitch>
 
         <TextBlock Style="{StaticResource BodyTextStyle}"  Margin="0, 0, 0, 0"  Visibility="{Binding Path=IsLoggingOn, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" >
-                        Log folder:
+            Log folder:
         </TextBlock>
         <TextBox IsReadOnly="True"
                              Margin="0, 10, 0, 0" 

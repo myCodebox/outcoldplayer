@@ -1,0 +1,505 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AlbumPageView.Subtitle" xml:space="preserve">
+    <value>Альбом</value>
+  </data>
+  <data name="AlbumPageView_DurationSumLabel.Text" xml:space="preserve">
+    <value>Время:</value>
+  </data>
+  <data name="AlbumPageView_SongsCountLabel.Text" xml:space="preserve">
+    <value>Кол-во песен:</value>
+  </data>
+  <data name="ArtistPageView.Subtitle" xml:space="preserve">
+    <value>Артист</value>
+  </data>
+  <data name="ArtistPageView_AlbumsCountLabel.Text" xml:space="preserve">
+    <value>Кол-во альбомов:</value>
+  </data>
+  <data name="ArtistPageView_DurationSumLabel.Text" xml:space="preserve">
+    <value>Время:</value>
+  </data>
+  <data name="ArtistPageView_SongsCountLabel.Text" xml:space="preserve">
+    <value>Кол-во песен:</value>
+  </data>
+  <data name="ArtistTile_Albums.Text" xml:space="preserve">
+    <value>альбом(ов)</value>
+  </data>
+  <data name="Authorization_EmailLabel.Text" xml:space="preserve">
+    <value>Email:</value>
+  </data>
+  <data name="Authorization_Error_AccountDeleted" xml:space="preserve">
+    <value>Аккаунт был удален.</value>
+  </data>
+  <data name="Authorization_Error_AccountDisabled" xml:space="preserve">
+    <value>Аккаунт заблокирован.</value>
+  </data>
+  <data name="Authorization_Error_BadAuthentication" xml:space="preserve">
+    <value>Не удалось найти аккаунт с указанным email и паролем. Если вы используете 2-шаговую аутентификацию со своим Google аккаунтом, то вам необходимо использовать один из сгенерированных паролей.</value>
+  </data>
+  <data name="Authorization_Error_UnexpectedError" xml:space="preserve">
+    <value>Не удалось авторизоваться. Проверьте интернет соединение.</value>
+  </data>
+  <data name="Authorization_Error_Unknown" xml:space="preserve">
+    <value>Ну удалось авторизоваться. Убедитесь, что вы активировали Google Play Music сервис, а так же, что сервис доступен в вашем регионе.</value>
+  </data>
+  <data name="Authorization_Error_UserNameAndPassword" xml:space="preserve">
+    <value>Сначала введите email и пароль.</value>
+  </data>
+  <data name="Authorization_GoToGoogleMusicLink.Text" xml:space="preserve">
+    <value>Перейти на Google Music</value>
+  </data>
+  <data name="Authorization_PasswordLabel.Text" xml:space="preserve">
+    <value>Пароль:</value>
+  </data>
+  <data name="Authorization_PasswordStorageInformation.Text" xml:space="preserve">
+    <value>Пароль будет храниться в защищенном хранилище.</value>
+  </data>
+  <data name="Authorization_RememberAccountCheckBox.Content" xml:space="preserve">
+    <value>Запомнить пользователя</value>
+  </data>
+  <data name="Authorization_SignInButton.Content" xml:space="preserve">
+    <value>Войти</value>
+  </data>
+  <data name="Authorization_SignInInfo.Text" xml:space="preserve">
+    <value>Для того, чтобы использовать gMusic плейер, авторизуйтесь при помощи Google аккаунта (например, username@gmail.com). Перед тем как воспользоваться gMusic плеером, убедитесь, пожалуйста,что вы зарегистрированы в системе Google Music (воспользуйтесь ссылкой внизу,чтобы убедиться).</value>
+  </data>
+  <data name="Authorization_SignInTitle.Text" xml:space="preserve">
+    <value>Авторизация</value>
+  </data>
+  <data name="HyperLink_RemoveAds" xml:space="preserve">
+    <value>Удалить рекламу</value>
+  </data>
+  <data name="LastFmAuthentification_CancelButton.Content" xml:space="preserve">
+    <value>Отмена</value>
+  </data>
+  <data name="LastFmAuthentification_Instruction" xml:space="preserve">
+    <value>Вы будете перенаправлены на страницу last.fm, где вас попросят дать права на доступ к аккаунту нашему приложению.</value>
+  </data>
+  <data name="LastFmAuthentification_Linking" xml:space="preserve">
+    <value>Соединяем аккаунт Last.fm...</value>
+  </data>
+  <data name="LastFmAuthentification_Unsuccess" xml:space="preserve">
+    <value>Не удалост присоединить аккаунт Last.fm. Убедитесь, что вы дали разренения на использование вашего аккаунта нашим приложением. Воспользуйтесь ссылкой внизу:</value>
+  </data>
+  <data name="LinksRegion_FailedToUpdate" xml:space="preserve">
+    <value>Не удалось обновить библиотеку...</value>
+  </data>
+  <data name="LinksRegion_Updated" xml:space="preserve">
+    <value>Библиотека обновлена</value>
+  </data>
+  <data name="LinksRegion_UpdatingPlaylists" xml:space="preserve">
+    <value>Обновляем плейлисты...</value>
+  </data>
+  <data name="LinksRegion_UpdatingSongs" xml:space="preserve">
+    <value>Обновляем песни...</value>
+  </data>
+  <data name="Loading_Error_Failed" xml:space="preserve">
+    <value>Не удалось загрузить библиотеку. Проверьте интернет соединение.</value>
+  </data>
+  <data name="Loading_LoadingMusicLibrary" xml:space="preserve">
+    <value>Загружаем музыкальную библиотеку...</value>
+  </data>
+  <data name="Loading_MessageBox_Failed.CancelButton" xml:space="preserve">
+    <value>Отмена</value>
+  </data>
+  <data name="Loading_MessageBox_Failed.Message" xml:space="preserve">
+    <value>Не удалось загрузить библиотеку. Проверьте, что вы подписаны на Google Music сервис.</value>
+  </data>
+  <data name="Loading_MessageBox_Failed.OkButton" xml:space="preserve">
+    <value>Перейти на Google Music</value>
+  </data>
+  <data name="MainMenu_Albums" xml:space="preserve">
+    <value>Альбомы</value>
+  </data>
+  <data name="MainMenu_Artists" xml:space="preserve">
+    <value>Артисты</value>
+  </data>
+  <data name="MainMenu_Genres" xml:space="preserve">
+    <value>Жанры</value>
+  </data>
+  <data name="MainMenu_Home" xml:space="preserve">
+    <value>Главная</value>
+  </data>
+  <data name="MainMenu_Playlists" xml:space="preserve">
+    <value>Плейлисты</value>
+  </data>
+  <data name="MainMenu_Queue" xml:space="preserve">
+    <value>Очередь</value>
+  </data>
+  <data name="MessageBox_DeletePlaylistMessage" xml:space="preserve">
+    <value>Вы уверены, что хотите удалить выбранный(ые) плейлисты?</value>
+  </data>
+  <data name="MessageBox_DeletePlaylistNo" xml:space="preserve">
+    <value>Нет</value>
+  </data>
+  <data name="MessageBox_DeletePlaylistYes" xml:space="preserve">
+    <value>Да</value>
+  </data>
+  <data name="MessageBox_ReviewButtonNoThanks" xml:space="preserve">
+    <value>Нет, спасибо</value>
+  </data>
+  <data name="MessageBox_ReviewButtonRate" xml:space="preserve">
+    <value>Оценить</value>
+  </data>
+  <data name="MessageBox_ReviewButtonRemind" xml:space="preserve">
+    <value>Напомнить позже</value>
+  </data>
+  <data name="MessageBox_ReviewMessage" xml:space="preserve">
+    <value>Если вам нравится наше приложение, не могли бы вы оценить его в Windows Store? Хорошие рейтинги помогают нашему приложению развиваться. Спасибо, заранее!</value>
+  </data>
+  <data name="Model_Album_Plural_Title" xml:space="preserve">
+    <value>Альбомы</value>
+  </data>
+  <data name="Model_Album_Title" xml:space="preserve">
+    <value>Альбом</value>
+  </data>
+  <data name="Model_Artist_Plural_Title" xml:space="preserve">
+    <value>Артисты</value>
+  </data>
+  <data name="Model_Artist_Title" xml:space="preserve">
+    <value>Артист</value>
+  </data>
+  <data name="Model_Genre_Plural_Title" xml:space="preserve">
+    <value>Жанры</value>
+  </data>
+  <data name="Model_Genre_Title" xml:space="preserve">
+    <value>Жанр</value>
+  </data>
+  <data name="Model_Song_Plural_Title" xml:space="preserve">
+    <value>Песни</value>
+  </data>
+  <data name="Model_Song_Title" xml:space="preserve">
+    <value>Песня</value>
+  </data>
+  <data name="Model_UserPlaylist_Plural_Title" xml:space="preserve">
+    <value>Плейлисты</value>
+  </data>
+  <data name="Model_UserPlaylist_Title" xml:space="preserve">
+    <value>Плейлист</value>
+  </data>
+  <data name="Player_BufferingLabel.Text" xml:space="preserve">
+    <value>Загружается</value>
+  </data>
+  <data name="Player_CannotPlay" xml:space="preserve">
+    <value>Невозможно проигрывать треки в данный момент. Убедитесь, что вы не слушаете музыку с Google Music на каком-нибудь другом устройстве. Попробуйте снова через несколько минут.</value>
+  </data>
+  <data name="Player_QueueEmpty.Text" xml:space="preserve">
+    <value>Очередь пуста</value>
+  </data>
+  <data name="Player_RepeatAllButton.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Повторять все</value>
+  </data>
+  <data name="Player_ShuffleButton.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Произвольно</value>
+  </data>
+  <data name="Player_VolumeTitle.Text" xml:space="preserve">
+    <value>Громкость</value>
+  </data>
+  <data name="PlaylistEdit_CancelButton.Content" xml:space="preserve">
+    <value>Отмена</value>
+  </data>
+  <data name="PlaylistEdit_SaveButton.Content" xml:space="preserve">
+    <value>Сохранить</value>
+  </data>
+  <data name="QueueActions_AddToQueue.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Добавить в очередь</value>
+  </data>
+  <data name="QueueActions_Play.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Играть выбранное</value>
+  </data>
+  <data name="QueueActions_ShuffleAndPlay.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Перемешать и играть</value>
+  </data>
+  <data name="QueuePageView.Title" xml:space="preserve">
+    <value>Очередь проигрывания</value>
+  </data>
+  <data name="QueueSongsList_SongAlbum.Text" xml:space="preserve">
+    <value>альбом</value>
+  </data>
+  <data name="QueueSongsList_SongArtist.Text" xml:space="preserve">
+    <value>artist</value>
+  </data>
+  <data name="QueueSongsList_SongDuration.Text" xml:space="preserve">
+    <value>время</value>
+  </data>
+  <data name="QueueSongsList_SongPlayCounts.Text" xml:space="preserve">
+    <value>кол-во</value>
+  </data>
+  <data name="QueueSongsList_SongRating.Text" xml:space="preserve">
+    <value>оценка</value>
+  </data>
+  <data name="QueueSongsList_SongTitle.Text" xml:space="preserve">
+    <value>название</value>
+  </data>
+  <data name="RelaseHistory_ThankYou.Text" xml:space="preserve">
+    <value>Спасибо за то, что выбрали gMusic!</value>
+  </data>
+  <data name="ReleaseHistory_OkButton.Content" xml:space="preserve">
+    <value>Ok</value>
+  </data>
+  <data name="ReleaseHistory_Subtitle.Text" xml:space="preserve">
+    <value>Поздравляем! Вы только что обновили версию gMusic. Внизу вы найдете список изменений, где [+] это дополнения, [b] это исправления:</value>
+  </data>
+  <data name="ReleaseHistory_Twitter.Text" xml:space="preserve">
+    <value>Подпишитесь на наш twitter, чтобы быть в курсе последних новостей.</value>
+  </data>
+  <data name="ReleaseHistory_UserVoice.Text" xml:space="preserve">
+    <value>UserVoice -это лучшее место, где вы можете предложить нам что-то исправить или дополнить.</value>
+  </data>
+  <data name="SearchItem_SongsFormat" xml:space="preserve">
+    <value>Песен: {0} </value>
+  </data>
+  <data name="SearchPageView_AllTitle" xml:space="preserve">
+    <value>Все</value>
+  </data>
+  <data name="SearchPageView_SongsTitle" xml:space="preserve">
+    <value>Песни</value>
+  </data>
+  <data name="SearchPageView_SubtitleFormat" xml:space="preserve">
+    <value>Результаты поиска "{0}"</value>
+  </data>
+  <data name="SettingsAccountTitle" xml:space="preserve">
+    <value>Аккаунты</value>
+  </data>
+  <data name="SettingsAccount_AccountCleared" xml:space="preserve">
+    <value>Информация об аккаунте удалена.</value>
+  </data>
+  <data name="SettingsAccount_AccountClearedButYouAreSignedIn" xml:space="preserve">
+    <value>Информация об аккаунте удалена, но вы до сих пор авторизованы при помощи этого аккаунта, чтобы окончательно забыть этот аккаунт, используйте так же кнопку "Выйти".</value>
+  </data>
+  <data name="SettingsAccount_DoesNotStorePassword.Text" xml:space="preserve">
+    <value>gMusic не хранит ваши данные.</value>
+  </data>
+  <data name="SettingsAccount_ForgetAccountButton.Content" xml:space="preserve">
+    <value>Забыть аккаунт.</value>
+  </data>
+  <data name="SettingsAccount_LastFmAccountLabel.Text" xml:space="preserve">
+    <value>Соединенный Last.fm аккаунт:</value>
+  </data>
+  <data name="SettingsAccount_LastFmBeta.Text" xml:space="preserve">
+    <value>*Last.fm предоставляет для всех пользователей gMusic, пока он находиться в beta версии.</value>
+  </data>
+  <data name="SettingsAccount_LastFmInfo.Text" xml:space="preserve">
+    <value>gMusic может интегрироваться с сервисом last.fm, чтобы обновлять информацию о том, что вы слушаете. Чтобы воспользоваться, вам необходимо соединить last.fm аккаунт:</value>
+  </data>
+  <data name="SettingsAccount_LinkLastFmAccountButton.Content" xml:space="preserve">
+    <value>Соединить Last.fm аккаунт</value>
+  </data>
+  <data name="SettingsAccount_NotLoginIn.Text" xml:space="preserve">
+    <value>Вы не авторизованы.</value>
+  </data>
+  <data name="SettingsAccount_RefreshButton.Content" xml:space="preserve">
+    <value>Обновить</value>
+  </data>
+  <data name="SettingsAccount_RefreshLabel.Text" xml:space="preserve">
+    <value>Обновить музыкальную библиотеку</value>
+  </data>
+  <data name="SettingsAccount_SignOutButton.Content" xml:space="preserve">
+    <value>Выйти</value>
+  </data>
+  <data name="SettingsAccount_StorePasswordInProtectedStore.Text" xml:space="preserve">
+    <value>gMusic хранит ваш аккаунт и пароль в защищенном хранилище Windows.</value>
+  </data>
+  <data name="SettingsAccount_UnlinkLastFmAccountButton.Content" xml:space="preserve">
+    <value>Отсоединить Last.fm аккаунт</value>
+  </data>
+  <data name="SettingsAccount_YouAreLoggedIn.Text" xml:space="preserve">
+    <value>Ваш Google аккаунт:</value>
+  </data>
+  <data name="SettingsAppSettingsTitle" xml:space="preserve">
+    <value>Настройки</value>
+  </data>
+  <data name="SettingsAppSettings_KeepDisplayOnDescription.Text" xml:space="preserve">
+    <value>В зависимости от настроек системы, Windows может отключать монитор и отправять компьютер в спящий режим, который не позволяет проигрывать музыку. Данная настройка позволяет предотвратить это поведение, когда приложение находится на переднем плане.</value>
+  </data>
+  <data name="SettingsAppSettings_KeepDisplayOnLabel.Header" xml:space="preserve">
+    <value>Оставлять экран включенным.</value>
+  </data>
+  <data name="SettingsLegalTitle" xml:space="preserve">
+    <value>Правовая информация</value>
+  </data>
+  <data name="SettingsPrivacyPolicyTitle" xml:space="preserve">
+    <value>Политика конфеденциальности</value>
+  </data>
+  <data name="SettingsSupportTitle" xml:space="preserve">
+    <value>Поддержка</value>
+  </data>
+  <data name="SettingsUpgradeTitle" xml:space="preserve">
+    <value>Удалить рекламу</value>
+  </data>
+  <data name="SettingsUpgrade_AddFreePackageButton.Content" xml:space="preserve">
+    <value>Без рекламы (безлимитный)</value>
+  </data>
+  <data name="SettingsUpgrade_AddFreePackageDescription.Text" xml:space="preserve">
+    <value>Вы можете купить пакет без рекламы за $1.99, который удалит всю рекламу из приложения:</value>
+  </data>
+  <data name="SettingsUpgrade_RemoveAdsTitle.Text" xml:space="preserve">
+    <value>Вы может удалить рекламу из приложения.</value>
+  </data>
+  <data name="SettingsUpgrade_ThankYou.Text" xml:space="preserve">
+    <value>Спасибо!</value>
+  </data>
+  <data name="SettingsUpgrade_UltimatePackageButton.Content" xml:space="preserve">
+    <value>Ultimate (безлимитный)</value>
+  </data>
+  <data name="SettingsUpgrade_UltimatePackageDescription.Text" xml:space="preserve">
+    <value>А так же вы можете купить пакет Ultimate за $4.99. Данный пакет не дает никаких дополнительных преимуществ на данный момент (включает в себя пакет без рекламы). 
+Но, как только мы введем дополнительные платные функции, данный пакет будет включать их все:</value>
+  </data>
+  <data name="SongsList_SongAlbum.Title" xml:space="preserve">
+    <value>альбом</value>
+  </data>
+  <data name="SongsList_SongArtist.Title" xml:space="preserve">
+    <value>артист</value>
+  </data>
+  <data name="SongsList_SongDuration.Title" xml:space="preserve">
+    <value>время</value>
+  </data>
+  <data name="SongsList_SongPlayCounts.Title" xml:space="preserve">
+    <value>кол-во</value>
+  </data>
+  <data name="SongsList_SongRating.Title" xml:space="preserve">
+    <value>оценка</value>
+  </data>
+  <data name="SongsList_SongTitle.Title" xml:space="preserve">
+    <value>название</value>
+  </data>
+  <data name="StartPageView.Title" xml:space="preserve">
+    <value>Главная</value>
+  </data>
+  <data name="Toolbar_CreateButton" xml:space="preserve">
+    <value>Создать</value>
+  </data>
+  <data name="Toolbar_DeleteButton" xml:space="preserve">
+    <value>Удалить</value>
+  </data>
+  <data name="Toolbar_PlaylistButton" xml:space="preserve">
+    <value>Плейлист</value>
+  </data>
+  <data name="Toolbar_QueueButton" xml:space="preserve">
+    <value>Очередь</value>
+  </data>
+  <data name="Toolbar_RenameButton" xml:space="preserve">
+    <value>Переименовать</value>
+  </data>
+  <data name="Toolbar_ShowAllButton" xml:space="preserve">
+    <value>Все</value>
+  </data>
+</root>

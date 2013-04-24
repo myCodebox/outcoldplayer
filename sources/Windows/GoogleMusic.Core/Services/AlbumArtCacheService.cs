@@ -16,11 +16,6 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
     using Windows.Storage;
 
-    public interface IAlbumArtCacheService
-    {
-        Task<string> GetCachedImageAsync(Uri url);
-    }
-
     public class AlbumArtCacheService : IAlbumArtCacheService
     {
         private const string AlbumArtCacheFolder = "AlbumArtCache";
