@@ -13,7 +13,6 @@ namespace OutcoldSolutions.GoogleMusic.Shell
     using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
-    using OutcoldSolutions.GoogleMusic.Views.Popups;
 
     using Windows.ApplicationModel.Search;
     using Windows.Storage.Streams;
@@ -26,17 +25,20 @@ namespace OutcoldSolutions.GoogleMusic.Shell
         private readonly IDispatcher dispatcher;
         private readonly IPlaylistsService playlistsService;
         private readonly ISongsRepository songsRepository;
+        private readonly IAlbumArtCacheService albumArtCacheService;
 
         public SearchService(
             INavigationService navigationService, 
             IDispatcher dispatcher,
             IPlaylistsService playlistsService,
-            ISongsRepository songsRepository)
+            ISongsRepository songsRepository,
+            IAlbumArtCacheService albumArtCacheService)
         {
             this.navigationService = navigationService;
             this.dispatcher = dispatcher;
             this.playlistsService = playlistsService;
             this.songsRepository = songsRepository;
+            this.albumArtCacheService = albumArtCacheService;
         }
         
         public void Activate()
@@ -79,7 +81,7 @@ namespace OutcoldSolutions.GoogleMusic.Shell
             var searchPaneSuggestionsRequestDeferral = args.Request.GetDeferral();
             this.SearchAsync(args)
                 .ContinueWith(
-                x =>
+                async x =>
                 {
                     foreach (var item in x.Result)
                     {
@@ -99,8 +101,8 @@ namespace OutcoldSolutions.GoogleMusic.Shell
                             IRandomAccessStreamReference randomAccessStreamReference = null;
                             if (searchResult.AlbumArtUrl != null)
                             {
-                                randomAccessStreamReference =
-                                    RandomAccessStreamReference.CreateFromUri(searchResult.AlbumArtUrl);
+                                var pathToImage = await this.albumArtCacheService.GetCachedImageAsync(searchResult.AlbumArtUrl.ChangeSize(size: 116));
+                                randomAccessStreamReference = RandomAccessStreamReference.CreateFromUri(AlbumArtUrlExtensions.ToLocalUri(pathToImage));
                             }
                             else
                             {

@@ -7,17 +7,20 @@ namespace OutcoldSolutions.GoogleMusic.Converters
     using System.Globalization;
 
     using OutcoldSolutions.Diagnostics;
+    using OutcoldSolutions.GoogleMusic.Models;
+    using OutcoldSolutions.GoogleMusic.Services;
 
+    using Windows.Storage;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Data;
+    using Windows.UI.Xaml.Media.Imaging;
 
     public class AlbumArtUrlToImageConverter : IValueConverter
     {
-        private const string AlbumArtUrlParameter = "=s130-c-e100";
-
         private const string UnknownAlbumArtFormat = "ms-appx:///Resources/UnknownArt-{0}.png";
 
         private readonly Lazy<ILogger> logger = new Lazy<ILogger>(() => ApplicationBase.Container.Resolve<ILogManager>().CreateLogger("AlbumArtUrlToImageConverter"));
+        private readonly Lazy<IAlbumArtCacheService> cacheService = new Lazy<IAlbumArtCacheService>(() => ApplicationBase.Container.Resolve<IAlbumArtCacheService>());
 
         public object Convert(object value, Type targetType, object parameter, string language)
         {
@@ -34,21 +37,15 @@ namespace OutcoldSolutions.GoogleMusic.Converters
                     return string.Format(CultureInfo.InvariantCulture, UnknownAlbumArtFormat, 116);
                 }
 
-                string url = uri.ToString();
-
+                var result = new BitmapImage();
                 if (parameter != null)
                 {
-                    if (url.LastIndexOf(AlbumArtUrlParameter, StringComparison.OrdinalIgnoreCase) == (url.Length - AlbumArtUrlParameter.Length))
-                    {
-                        url = string.Format(
-                            CultureInfo.InvariantCulture,
-                            "{0}=s{1}-c-e100",
-                            url.Substring(0, url.Length - AlbumArtUrlParameter.Length),
-                            parameter);
-                    }
+                    uri = uri.ChangeSize(uint.Parse(parameter.ToString()));
                 }
 
-                return url;
+                this.GetImageAsync(result, uri);
+
+                return result;
             }
             catch (Exception e)
             {
@@ -60,6 +57,20 @@ namespace OutcoldSolutions.GoogleMusic.Converters
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
             throw new NotImplementedException();
+        }
+
+        private async void GetImageAsync(BitmapImage image, Uri uri)
+        {
+            try
+            {
+                string path = await this.cacheService.Value.GetCachedImageAsync(uri);
+                var file = await ApplicationData.Current.LocalFolder.GetFileAsync(path);
+                image.SetSource(await file.OpenReadAsync());
+            }
+            catch (Exception e)
+            {
+                this.logger.Value.Error(e, "Exception while tried to load album art with GetImageAsync.");
+            }
         }
     }
 }

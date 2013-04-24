@@ -100,6 +100,8 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Models\AlbumArtUrlExtensions.cs" />
+    <Compile Include="Models\CachedAlbumArt.cs" />
     <Compile Include="Models\CachedSong.cs" />
     <Compile Include="Models\PlaylistsChangeEvent.cs" />
     <Compile Include="Models\SongExtensions.cs" />
@@ -128,12 +130,14 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\AlbumsRepository.cs" />
     <Compile Include="Repositories\ArtistsRepository.cs" />
+    <Compile Include="Repositories\CachedAlbumArtsRepository.cs" />
     <Compile Include="Repositories\CachedSongsRepository.cs" />
     <Compile Include="Repositories\DbContext.cs" />
     <Compile Include="Repositories\GenresRepository.cs" />
     <Compile Include="Repositories\IPlaylistRepository.cs" />
     <Compile Include="Repositories\RepositoryBase.cs" />
     <Compile Include="Repositories\SystemPlaylistsRepository.cs" />
+    <Compile Include="Services\AlbumArtCacheService.cs" />
     <Compile Include="Services\PlaylistsService.cs" />
     <Compile Include="Services\SongsService.cs" />
     <Compile Include="Repositories\SongsRepository.cs" />

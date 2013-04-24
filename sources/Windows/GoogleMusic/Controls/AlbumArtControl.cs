@@ -66,8 +66,14 @@ namespace OutcoldSolutions.GoogleMusic.Controls
             {
                 if (this.ImageSource != null)
                 {
-                    string imageUrl = (string)Converter.Convert(this.ImageSource, typeof(ImageSource), this.ImageSize, string.Empty);
-                    this.albumArtImage.Source = new BitmapImage(new Uri(imageUrl));
+                    object convert = Converter.Convert(this.ImageSource, typeof(ImageSource), this.ImageSize, string.Empty);
+                    BitmapImage source = convert as BitmapImage;
+                    if (source == null)
+                    {
+                        source = new BitmapImage(new Uri((string)convert));
+                    }
+
+                    this.albumArtImage.Source = source;
                 }
                 else
                 {
