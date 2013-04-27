@@ -9,6 +9,8 @@ namespace OutcoldSolutions.GoogleMusic.Models
 
     public static class AlbumArtUrlExtensions
     {
+        public const uint DefaultAlbumArtSize = 130;
+
         private const string AlbumArtUrlParameter = "=s130-c-e100";
 
         public static Uri ChangeSize(this Uri uri, uint size)

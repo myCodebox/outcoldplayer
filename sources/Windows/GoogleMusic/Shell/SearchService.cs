@@ -104,7 +104,7 @@ namespace OutcoldSolutions.GoogleMusic.Shell
                             IRandomAccessStreamReference randomAccessStreamReference = null;
                             if (searchResult.AlbumArtUrl != null)
                             {
-                                var pathToImage = await this.albumArtCacheService.GetCachedImageAsync(searchResult.AlbumArtUrl.ChangeSize(size: 116));
+                                var pathToImage = await this.albumArtCacheService.GetCachedImageAsync(searchResult.AlbumArtUrl, size: 116);
                                 randomAccessStreamReference = RandomAccessStreamReference.CreateFromUri(AlbumArtUrlExtensions.ToLocalUri(pathToImage));
                             }
                             else

@@ -38,12 +38,13 @@ namespace OutcoldSolutions.GoogleMusic.Converters
                 }
 
                 var result = new BitmapImage();
+                uint size = AlbumArtUrlExtensions.DefaultAlbumArtSize;
                 if (parameter != null)
                 {
-                    uri = uri.ChangeSize(uint.Parse(parameter.ToString()));
+                    size = uint.Parse(parameter.ToString());
                 }
 
-                this.GetImageAsync(result, uri);
+                this.GetImageAsync(result, uri, size);
 
                 return result;
             }
@@ -59,11 +60,11 @@ namespace OutcoldSolutions.GoogleMusic.Converters
             throw new NotImplementedException();
         }
 
-        private async void GetImageAsync(BitmapImage image, Uri uri)
+        private async void GetImageAsync(BitmapImage image, Uri uri, uint size)
         {
             try
             {
-                string path = await this.cacheService.Value.GetCachedImageAsync(uri);
+                string path = await this.cacheService.Value.GetCachedImageAsync(uri, size);
                 var file = await ApplicationData.Current.LocalFolder.GetFileAsync(path);
                 image.SetSource(await file.OpenReadAsync());
             }

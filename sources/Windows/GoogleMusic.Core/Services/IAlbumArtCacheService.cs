@@ -9,6 +9,6 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
     public interface IAlbumArtCacheService
     {
-        Task<string> GetCachedImageAsync(Uri url);
+        Task<string> GetCachedImageAsync(Uri url, uint size);
     }
 }

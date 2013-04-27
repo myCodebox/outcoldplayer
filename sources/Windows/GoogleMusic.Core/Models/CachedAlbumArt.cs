@@ -13,6 +13,9 @@ namespace OutcoldSolutions.GoogleMusic.Models
         [PrimaryKey]
         public Uri AlbumArtUrl { get; set; }
 
+        [PrimaryKey]
+        public uint Size { get; set; }
+
         public string Path { get; set; }
     }
 }
