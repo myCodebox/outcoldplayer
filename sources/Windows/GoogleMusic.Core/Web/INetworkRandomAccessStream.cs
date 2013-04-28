@@ -4,11 +4,15 @@
 namespace OutcoldSolutions.GoogleMusic.Web
 {
     using System;
+    using System.Threading.Tasks;
 
+    using Windows.Storage;
     using Windows.Storage.Streams;
 
     public interface INetworkRandomAccessStream : IRandomAccessStreamWithContentType
     {
         event EventHandler<double> DownloadProgressChanged;
+
+        Task SaveToFileAsync(IStorageFile file);
     }
 }

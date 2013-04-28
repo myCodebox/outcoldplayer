@@ -14,6 +14,8 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
     {
         Task<Song> GetSongAsync(int songId);
 
+        Task<Song> FindAsync(string providerSongId);
+
         Task<IList<Song>> SearchAsync(string searchQuery, uint? take = null);
 
         Task UpdateAsync(IEnumerable<Song> songs);
@@ -37,6 +39,11 @@ select s.*
 from [Song] as s
 where s.[SongId] = ?1
 ";
+
+        public Task<Song> FindAsync(string providerSongId)
+        {
+            return this.Connection.Table<Song>().Where(s => s.ProviderSongId == providerSongId).FirstOrDefaultAsync();
+        }
 
         public async Task<IList<Song>> SearchAsync(string searchQuery, uint? take = null)
         {

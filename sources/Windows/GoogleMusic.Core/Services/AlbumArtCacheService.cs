@@ -70,15 +70,17 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
                                         using (var imageStream = await this.httpClient.GetStreamAsync(url.ChangeSize(size)))
                                         {
-                                            var targetStream = await file.OpenAsync(FileAccessMode.ReadWrite);
-                                            using (Stream fileStream = targetStream.AsStreamForWrite())
+                                            using (var targetStream = await file.OpenAsync(FileAccessMode.ReadWrite))
                                             {
-                                                await imageStream.CopyToAsync(fileStream);
-                                                await fileStream.FlushAsync();
+                                                using (Stream fileStream = targetStream.AsStreamForWrite())
+                                                {
+                                                    await imageStream.CopyToAsync(fileStream);
+                                                    await fileStream.FlushAsync();
+                                                }
                                             }
                                         }
 
-                                        downloadedCache = new CachedAlbumArt() { AlbumArtUrl = url, Size = size, Path = Path.Combine(subFolderName, fileName) };
+                                        downloadedCache = new CachedAlbumArt() { AlbumArtUrl = url, Size = size, FileName = fileName };
 
                                         await this.cachedAlbumArtsRepository.AddAsync(downloadedCache);
                                     }
@@ -95,7 +97,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 }
             }
 
-            return Path.Combine(AlbumArtCacheFolder, cache.Path);
+            return Path.Combine(AlbumArtCacheFolder, cache.FileName.Substring(0, 1), cache.FileName);
         }
 
         private async void DeleteRemovedItems()
@@ -103,7 +105,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             var removedItems = await this.cachedAlbumArtsRepository.GetRemovedCachedItemsAsync();
             foreach (var cache in removedItems)
             {
-                var file = await StorageFile.GetFileFromPathAsync(Path.Combine(AlbumArtCacheFolder, cache.Path));
+                var file = await StorageFile.GetFileFromPathAsync(Path.Combine(AlbumArtCacheFolder, cache.FileName.Substring(0, 1), cache.FileName));
                 if (file != null)
                 {
                     try

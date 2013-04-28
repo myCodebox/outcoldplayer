@@ -14,6 +14,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
     using OutcoldSolutions.Diagnostics;
 
     using Windows.Foundation;
+    using Windows.Storage;
     using Windows.Storage.Streams;
 
     public class MediaStreamDownloadService : IMediaStreamDownloadService
@@ -128,7 +129,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
             private readonly int contentLength;
 
             private readonly byte[] readBuffer = new byte[DefaultBufferSize];
-            private byte[] data;
+            private readonly byte[] data;
 
             private CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
             private Stream networkStream;
@@ -179,7 +180,10 @@ namespace OutcoldSolutions.GoogleMusic.Web
             {
                 get
                 {
-                    return true;
+                    lock (this.locker)
+                    {
+                        return this.currentPosition < (ulong)this.contentLength;
+                    }
                 }
             }
 
@@ -217,6 +221,16 @@ namespace OutcoldSolutions.GoogleMusic.Web
                     this.logger.Warning("set_Size is not supported.");
                     throw new NotSupportedException();
                 }
+            }
+
+            public async Task SaveToFileAsync(IStorageFile file)
+            {
+                if (this.readPosition < (ulong)this.contentLength)
+                {
+                    throw new NotSupportedException("File is still in downloading state.");
+                }
+
+                await FileIO.WriteBytesAsync(file, this.data);
             }
 
             public void Dispose()
@@ -310,7 +324,6 @@ namespace OutcoldSolutions.GoogleMusic.Web
                     lock (this.locker)
                     {
                         this.DownloadProgressChanged = null;
-                        this.data = null;
                     }
                 }
             }
@@ -411,6 +424,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
                         }
                     }
 
+                    this.readPosition = (ulong)this.contentLength;
                     downloadProgress = 1d;
                     this.RaiseDownloadProgressChanged(downloadProgress);
                 }

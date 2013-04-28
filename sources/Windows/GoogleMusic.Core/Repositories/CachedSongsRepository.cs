@@ -57,7 +57,7 @@ select t.*,
     s.[GenreTitleNorm] as [Song.GenreTitleNorm]
 from [CachedSong] as t
      inner join [Song] s on s.SongId = t.SongId
-where t.[Path] is null
+where t.[FileName] is null
 order by t.[TaskAdded]
 limit 1
 ";

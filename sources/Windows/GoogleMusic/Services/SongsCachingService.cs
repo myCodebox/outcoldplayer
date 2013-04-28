@@ -34,33 +34,35 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         private readonly ISongsWebService songsWebService;
         private readonly ICachedSongsRepository cacheTasksRepository;
+        private readonly ISongsRepository songsRepository;
         private readonly IMediaStreamDownloadService mediaStreamDownloadService;
 
         private readonly ILogger logger;
-
         private readonly BackgroundDownloader backgroundDownloader = new BackgroundDownloader();
+
+        private StorageFolder cacheFolder;
 
         public SongsCachingService(
             ILogManager logManager,
             ISongsWebService songsWebService,
             ICachedSongsRepository cacheTasksRepository,
+            ISongsRepository songsRepository,
             IMediaStreamDownloadService mediaStreamDownloadService)
         {
             this.logger = logManager.CreateLogger("SongsCachingService");
             this.songsWebService = songsWebService;
             this.cacheTasksRepository = cacheTasksRepository;
+            this.songsRepository = songsRepository;
             this.mediaStreamDownloadService = mediaStreamDownloadService;
-
-            // this.DownloadAsync();
         }
 
         public async Task<IRandomAccessStreamWithContentType> GetStreamAsync(Song song)
         {
             var cache = await this.cacheTasksRepository.FindAsync(song);
-            if (cache != null && !string.IsNullOrEmpty(cache.Path))
+            if (cache != null && !string.IsNullOrEmpty(cache.FileName))
             {
                 // TODO: Catch exception if file does not exist
-                var storageFile = await StorageFile.GetFileFromPathAsync(cache.Path);
+                var storageFile = await StorageFile.GetFileFromPathAsync(this.GetFullPath(cache.FileName));
                 return await storageFile.OpenReadAsync();
             }
 
@@ -95,7 +97,15 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
                 try
                 {
-                    return await this.mediaStreamDownloadService.GetStreamAsync(songUrl.Url);
+                    var stream = await this.mediaStreamDownloadService.GetStreamAsync(songUrl.Url);
+                    stream.DownloadProgressChanged += async (sender, d) =>
+                        {
+                            if (Math.Abs(1 - d) <= 0.0001)
+                            {
+                                await this.OnCurrentSongDownloadCompletedAsync(stream, song);
+                            }
+                        };
+                    return stream;
                 }
                 catch (Exception exception)
                 {
@@ -131,20 +141,38 @@ namespace OutcoldSolutions.GoogleMusic.Services
             }
         }
 
+        private async Task OnCurrentSongDownloadCompletedAsync(INetworkRandomAccessStream randomAccessStream, Song song)
+        {
+            await this.InitializeCacheFolderAsync();
+
+            var cache = await this.cacheTasksRepository.FindAsync(song);
+            if (cache == null || string.IsNullOrEmpty(cache.FileName))
+            {
+                var songFolder = await this.cacheFolder.CreateFolderAsync(song.ProviderSongId.Substring(0, 1), CreationCollisionOption.OpenIfExists);
+                var file = await songFolder.CreateFileAsync(song.ProviderSongId, CreationCollisionOption.ReplaceExisting);
+                await randomAccessStream.SaveToFileAsync(file);
+
+                if (cache == null)
+                {
+                    cache = new CachedSong() { FileName = file.Name, SongId = song.SongId, TaskAdded = DateTime.Now };
+                    await this.cacheTasksRepository.AddAsync(cache);
+                }
+                else
+                {
+                    cache.FileName = file.Name;
+                    await this.cacheTasksRepository.UpdateAsync(cache);
+                }
+            }
+        }
+
         private async void DownloadAsync()
         {
-            IReadOnlyList<DownloadOperation> currentDownloads = await BackgroundDownloader.GetCurrentDownloadsAsync();
-            if (currentDownloads != null)
-            {
-                await Task.WhenAll(currentDownloads.Select(x => x.StartAsync().AsTask()));
-            }
+            await this.InitializeCacheFolderAsync();
 
             CachedSong nextTask;
             while ((nextTask = await this.cacheTasksRepository.GetNextAsync()) != null)
             {
-                var localFolder = ApplicationData.Current.LocalFolder;
-                var cacheFolder = await localFolder.CreateFolderAsync(SongsCacheFolder, CreationCollisionOption.OpenIfExists);
-                var cacheGroupFolder = await cacheFolder.CreateFolderAsync(nextTask.Song.ProviderSongId.Substring(0, 1), CreationCollisionOption.OpenIfExists);
+                var cacheGroupFolder = await this.cacheFolder.CreateFolderAsync(nextTask.Song.ProviderSongId.Substring(0, 1), CreationCollisionOption.OpenIfExists);
 
                 var songUrl = await this.songsWebService.GetSongUrlAsync(nextTask.Song.ProviderSongId);
                 if (songUrl != null)
@@ -153,7 +181,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     var downloadOperation = this.backgroundDownloader.CreateDownload(new Uri(songUrl.Url), songCacheFile);
                     await downloadOperation.StartAsync().AsTask();
 
-                    nextTask.Path = songCacheFile.Path;
+                    nextTask.FileName = Path.GetFileName(songCacheFile.Path);
                     await this.cacheTasksRepository.UpdateAsync(nextTask);
                 }
                 else
@@ -162,6 +190,49 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     break;
                 }
             }
+        }
+
+        private async Task FinishCaching()
+        {
+            IReadOnlyList<DownloadOperation> currentDownloads = await BackgroundDownloader.GetCurrentDownloadsAsync();
+            if (currentDownloads != null)
+            {
+                await Task.WhenAll(currentDownloads.Select(x => x.StartAsync().AsTask()));
+
+                foreach (var downloadOperation in currentDownloads)
+                {
+                    string fileName = Path.GetFileName(downloadOperation.ResultFile.Path);
+                    var song = await this.songsRepository.FindAsync(fileName);
+                    if (song != null)
+                    {
+                        var cache = await this.cacheTasksRepository.FindAsync(song);
+                        if (cache != null)
+                        {
+                            cache.FileName = fileName;
+                            await this.cacheTasksRepository.UpdateAsync(cache);
+                        }
+                        else
+                        {
+                            await downloadOperation.ResultFile.DeleteAsync(StorageDeleteOption.PermanentDelete);
+                        }
+                    }
+                }
+            }
+        }
+
+        private async Task InitializeCacheFolderAsync()
+        {
+            if (this.cacheFolder == null)
+            {
+                var localFolder = ApplicationData.Current.LocalFolder;
+                this.cacheFolder = await localFolder.CreateFolderAsync(SongsCacheFolder, CreationCollisionOption.OpenIfExists);
+                await this.FinishCaching();
+            }
+        }
+
+        private string GetFullPath(string fileName)
+        {
+            return Path.Combine(ApplicationData.Current.LocalFolder.Path, SongsCacheFolder, fileName.Substring(0, 1), fileName);
         }
     }
 }

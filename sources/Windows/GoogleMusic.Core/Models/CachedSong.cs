@@ -15,7 +15,7 @@ namespace OutcoldSolutions.GoogleMusic.Models
 
         public DateTime TaskAdded { get; set; }
 
-        public string Path { get; set; }
+        public string FileName { get; set; }
 
         [Reference]
         public Song Song { get; set; }

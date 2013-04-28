@@ -16,6 +16,6 @@ namespace OutcoldSolutions.GoogleMusic.Models
         [PrimaryKey]
         public uint Size { get; set; }
 
-        public string Path { get; set; }
+        public string FileName { get; set; }
     }
 }
