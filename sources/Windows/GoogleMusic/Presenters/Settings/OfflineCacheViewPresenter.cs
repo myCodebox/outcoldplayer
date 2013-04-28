@@ -26,46 +26,50 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
             this.albumArtCacheService = albumArtCacheService;
             this.songsCachingService = songsCachingService;
             this.BindingModel = new OfflineCacheViewBindingModel { IsLoading = true };
-            this.ClearAlbumCacheCommand = new DelegateCommand(this.ClearAlbumCache, () => !this.BindingModel.IsLoading);
+            this.ClearAlbumArtsCacheCommand = new DelegateCommand(this.ClearAlbumArtsCache, () => !this.BindingModel.IsLoading);
+            this.ClearSongsCacheCommand = new DelegateCommand(this.ClearSongsCache, () => !this.BindingModel.IsLoading);
         }
 
         public OfflineCacheViewBindingModel BindingModel { get; private set; }
 
-        public DelegateCommand ClearAlbumCacheCommand { get; private set; }
+        public DelegateCommand ClearAlbumArtsCacheCommand { get; private set; }
+
+        public DelegateCommand ClearSongsCacheCommand { get; private set; }
 
         protected async override void OnInitialized()
         {
             base.OnInitialized();
 
-            await this.Dispatcher.RunAsync(() =>
-                {
-                    this.BindingModel.IsLoading = true;
-                    this.ClearAlbumCacheCommand.RaiseCanExecuteChanged();
-                });
+            await this.UpdateLoadingState(isLoading: true);
             await this.LoadFolderSizesAsync();
-            await this.Dispatcher.RunAsync(() =>
-                    {
-                        this.BindingModel.IsLoading = false;
-                        this.ClearAlbumCacheCommand.RaiseCanExecuteChanged();
-                    });
+            await this.UpdateLoadingState(isLoading: false);
         }
 
-        private async void ClearAlbumCache()
+        private async void ClearAlbumArtsCache()
         {
-            await this.Dispatcher.RunAsync(() =>
-            {
-                this.BindingModel.IsLoading = true;
-                this.ClearAlbumCacheCommand.RaiseCanExecuteChanged();
-            });
-
+            await this.UpdateLoadingState(isLoading: true);
             await this.albumArtCacheService.ClearCacheAsync();
             await this.LoadAlbumArtsCacheFolderSizeAsync();
+            await this.UpdateLoadingState(isLoading: false);
+        }
 
-            await this.Dispatcher.RunAsync(() =>
-            {
-                this.BindingModel.IsLoading = false;
-                this.ClearAlbumCacheCommand.RaiseCanExecuteChanged();
-            });
+        private async void ClearSongsCache()
+        {
+            await this.UpdateLoadingState(isLoading: true);
+            await this.songsCachingService.ClearCacheAsync();
+            await this.LoadSongsCacheFolderSizeAsync();
+            await this.UpdateLoadingState(isLoading: false);
+        }
+
+        private async Task UpdateLoadingState(bool isLoading)
+        {
+            await this.Dispatcher.RunAsync(
+                () =>
+                    {
+                        this.BindingModel.IsLoading = isLoading;
+                        this.ClearAlbumArtsCacheCommand.RaiseCanExecuteChanged();
+                        this.ClearSongsCacheCommand.RaiseCanExecuteChanged();
+                    });
         }
 
         private async Task LoadFolderSizesAsync()

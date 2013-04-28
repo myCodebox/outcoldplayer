@@ -22,6 +22,8 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
         Task<CachedSong> GetNextAsync();
 
         Task<CachedSong> FindAsync(Song song);
+
+        Task ClearCacheAsync();
     }
 
     public class CachedSongsRepository : RepositoryBase, ICachedSongsRepository
@@ -105,6 +107,11 @@ where s.SongId is null
         public async Task<CachedSong> FindAsync(Song song)
         {
             return await this.Connection.Table<CachedSong>().Where(c => song.SongId == c.SongId).FirstOrDefaultAsync();
+        }
+
+        public Task ClearCacheAsync()
+        {
+            return this.Connection.RunInTransactionAsync(c => c.DeleteAll<CachedSong>());
         }
     }
 }
