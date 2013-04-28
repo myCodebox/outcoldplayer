@@ -26,34 +26,82 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
             this.albumArtCacheService = albumArtCacheService;
             this.songsCachingService = songsCachingService;
             this.BindingModel = new OfflineCacheViewBindingModel { IsLoading = true };
+            this.ClearAlbumCacheCommand = new DelegateCommand(this.ClearAlbumCache, () => !this.BindingModel.IsLoading);
         }
 
         public OfflineCacheViewBindingModel BindingModel { get; private set; }
+
+        public DelegateCommand ClearAlbumCacheCommand { get; private set; }
 
         protected async override void OnInitialized()
         {
             base.OnInitialized();
 
-            this.BindingModel.AlbumArtCacheSize = 0;
-            this.BindingModel.SongsCacheSize = 0;
+            await this.Dispatcher.RunAsync(() =>
+                {
+                    this.BindingModel.IsLoading = true;
+                    this.ClearAlbumCacheCommand.RaiseCanExecuteChanged();
+                });
+            await this.LoadFolderSizesAsync();
+            await this.Dispatcher.RunAsync(() =>
+                    {
+                        this.BindingModel.IsLoading = false;
+                        this.ClearAlbumCacheCommand.RaiseCanExecuteChanged();
+                    });
+        }
 
-            StorageFolder albumArtCacheFolder = await this.albumArtCacheService.GetCacheFolderAsync();
-            foreach (var subfolder in await albumArtCacheFolder.GetFoldersAsync())
+        private async void ClearAlbumCache()
+        {
+            await this.Dispatcher.RunAsync(() =>
             {
-                var basicProperties = await Task.WhenAll((await subfolder.GetFilesAsync()).Select(f => f.GetBasicPropertiesAsync().AsTask()).ToArray());
-                long folderSize = basicProperties.Sum(p => (long)p.Size);
-                await this.Dispatcher.RunAsync(() => this.BindingModel.AlbumArtCacheSize += folderSize);
-            }
+                this.BindingModel.IsLoading = true;
+                this.ClearAlbumCacheCommand.RaiseCanExecuteChanged();
+            });
+
+            await this.albumArtCacheService.ClearCacheAsync();
+            await this.LoadAlbumArtsCacheFolderSizeAsync();
+
+            await this.Dispatcher.RunAsync(() =>
+            {
+                this.BindingModel.IsLoading = false;
+                this.ClearAlbumCacheCommand.RaiseCanExecuteChanged();
+            });
+        }
+
+        private async Task LoadFolderSizesAsync()
+        {
+            await this.LoadAlbumArtsCacheFolderSizeAsync();
+            await this.LoadSongsCacheFolderSizeAsync();
+        }
+
+        private async Task LoadSongsCacheFolderSizeAsync()
+        {
+            this.BindingModel.SongsCacheSize = 0;
 
             StorageFolder songsCacheFolder = await this.songsCachingService.GetCacheFolderAsync();
             foreach (var subfolder in await songsCacheFolder.GetFoldersAsync())
             {
-                var basicProperties = await Task.WhenAll((await subfolder.GetFilesAsync()).Select(f => f.GetBasicPropertiesAsync().AsTask()).ToArray());
+                var basicProperties =
+                    await
+                    Task.WhenAll((await subfolder.GetFilesAsync()).Select(f => f.GetBasicPropertiesAsync().AsTask()).ToArray());
                 long folderSize = basicProperties.Sum(p => (long)p.Size);
                 await this.Dispatcher.RunAsync(() => this.BindingModel.SongsCacheSize += folderSize);
             }
+        }
 
-            this.BindingModel.IsLoading = false;
+        private async Task LoadAlbumArtsCacheFolderSizeAsync()
+        {
+            this.BindingModel.AlbumArtCacheSize = 0;
+
+            StorageFolder albumArtCacheFolder = await this.albumArtCacheService.GetCacheFolderAsync();
+            foreach (var subfolder in await albumArtCacheFolder.GetFoldersAsync())
+            {
+                var basicProperties =
+                    await
+                    Task.WhenAll((await subfolder.GetFilesAsync()).Select(f => f.GetBasicPropertiesAsync().AsTask()).ToArray());
+                long folderSize = basicProperties.Sum(p => (long)p.Size);
+                await this.Dispatcher.RunAsync(() => this.BindingModel.AlbumArtCacheSize += folderSize);
+            }
         }
     }
 }

@@ -18,6 +18,8 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
         Task<IList<CachedAlbumArt>> GetRemovedCachedItemsAsync();
 
         Task DeleteCachedItemsAsync(IEnumerable<CachedAlbumArt> cachedAlbumArts);
+
+        Task ClearCacheAsync();
     }
 
     public class CachedAlbumArtsRepository : RepositoryBase, ICachedAlbumArtsRepository
@@ -52,6 +54,11 @@ from CachedAlbumArt c
                             c.Delete<CachedAlbumArt>(cachedAlbumArt);
                         }
                     });
+        }
+
+        public Task ClearCacheAsync()
+        {
+            return this.Connection.RunInTransactionAsync(c => c.DeleteAll<CachedAlbumArt>());
         }
     }
 }

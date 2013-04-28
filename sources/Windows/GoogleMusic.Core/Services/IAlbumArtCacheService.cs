@@ -14,5 +14,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
         Task<string> GetCachedImageAsync(Uri url, uint size);
 
         Task<StorageFolder> GetCacheFolderAsync();
+
+        Task ClearCacheAsync();
     }
 }
