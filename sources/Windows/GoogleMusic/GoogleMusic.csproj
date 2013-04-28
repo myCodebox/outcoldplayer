@@ -111,6 +111,7 @@
     <Compile Include="ApplicationSettingViews.cs" />
     <Compile Include="BindingModels\ArtistPageViewBindingModel.cs" />
     <Compile Include="BindingModels\LinksRegionBindingModel.cs" />
+    <Compile Include="BindingModels\Settings\OfflineCacheViewBindingModel.cs" />
     <Compile Include="BindingModels\SnappedPlayerBindingModel.cs" />
     <Compile Include="BindingModels\PlaylistPageViewBindingModel.cs" />
     <Compile Include="BindingModels\PlaylistResultBindingModel.cs" />
@@ -140,6 +141,7 @@
     <Compile Include="Controls\ValueChangedEventArgs.cs" />
     <Compile Include="Converters\AlbumArtUrlToImageConverter.cs" />
     <Compile Include="Converters\DoubleToTimeConverter.cs" />
+    <Compile Include="Converters\SizeToStringConverter.cs" />
     <Compile Include="Converters\StringFormatConverter.cs" />
     <Compile Include="Converters\TimeSpanToTimeConverter.cs" />
     <Compile Include="Diagnostics\BugSenseLogWriter.cs" />
@@ -158,6 +160,7 @@
     <Compile Include="Presenters\Popups\PlaylistEditPopupViewPresenter.cs" />
     <Compile Include="Presenters\Popups\ProgressLoadingCloseEventArgs.cs" />
     <Compile Include="Presenters\Popups\QueueActionsPopupViewPresenter.cs" />
+    <Compile Include="Presenters\Settings\OfflineCacheViewPresenter.cs" />
     <Compile Include="Presenters\SnappedPlayerViewPresenter.cs" />
     <Compile Include="Presenters\Popups\PlayerMorePopupViewPresenter.cs" />
     <Compile Include="Presenters\Settings\AppSettingsViewPresenter.cs" />
@@ -263,6 +266,9 @@
     </Compile>
     <Compile Include="Views\Settings\LegalView.xaml.cs">
       <DependentUpon>LegalView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\OfflineCacheView.xaml.cs">
+      <DependentUpon>OfflineCacheView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\PrivacyView.xaml.cs">
       <DependentUpon>PrivacyView.xaml</DependentUpon>
@@ -445,6 +451,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Settings\LegalView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\OfflineCacheView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

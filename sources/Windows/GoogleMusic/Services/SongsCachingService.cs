@@ -26,6 +26,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
         Task<IRandomAccessStreamWithContentType> GetStreamAsync(Song song);
 
         Task QueueForDownloadAsync(IEnumerable<Song> song, bool isPriorityZero);
+
+        Task<StorageFolder> GetCacheFolderAsync();
     }
 
     internal class SongsCachingService : ISongsCachingService
@@ -139,6 +141,12 @@ namespace OutcoldSolutions.GoogleMusic.Services
             {
                 this.DownloadAsync();
             }
+        }
+
+        public async Task<StorageFolder> GetCacheFolderAsync()
+        {
+            await this.InitializeCacheFolderAsync();
+            return this.cacheFolder;
         }
 
         private async Task OnCurrentSongDownloadCompletedAsync(INetworkRandomAccessStream randomAccessStream, Song song)

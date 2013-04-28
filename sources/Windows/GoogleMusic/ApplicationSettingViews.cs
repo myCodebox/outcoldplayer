@@ -13,6 +13,7 @@ namespace OutcoldSolutions.GoogleMusic
          {
              service.RegisterSettings<AccountsView>("accounts", resources.GetString("SettingsAccountTitle"));
              service.RegisterSettings<AppSettingsView>("appsettings", resources.GetString("SettingsAppSettingsTitle"));
+             service.RegisterSettings<OfflineCacheView>("offlinecache", resources.GetString("OfflineCacheAppSettingsTitle"));
 
              bool upgradeViewRegistered = false;
              if (!InAppPurchases.HasFeature(GoogleMusicFeatures.All))

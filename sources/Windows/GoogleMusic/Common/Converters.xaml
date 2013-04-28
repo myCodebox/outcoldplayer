@@ -8,5 +8,6 @@
     <converters:DoubleToTimeConverter x:Key="DoubleToTimeConverter"/>
     <converters:TimeSpanToTimeConverter x:Key="TimeSpanToTimeConverter" />
     <converters:AlbumArtUrlToImageConverter x:Key="AlbumArtUrlToImageConverter" />
-
+    <converters:SizeToStringConverter x:Key="SizeToStringConverter" />
+    
 </ResourceDictionary>

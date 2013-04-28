@@ -84,6 +84,10 @@ namespace OutcoldSolutions.GoogleMusic
                             .InjectionRule<BindingModelBase, AppSettingsViewPresenter>();
             registration.Register<AppSettingsViewPresenter>();
 
+            registration.Register<OfflineCacheView>()
+                            .InjectionRule<BindingModelBase, OfflineCacheViewPresenter>();
+            registration.Register<OfflineCacheViewPresenter>();
+
             registration.Register<UpgradeView>()
                         .InjectionRule<BindingModelBase, UpgradeViewPresenter>();
             registration.Register<UpgradeViewPresenter>();

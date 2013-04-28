@@ -348,6 +348,9 @@
   <data name="Model_UserPlaylist_Title" xml:space="preserve">
     <value>Playlist</value>
   </data>
+  <data name="OfflineCacheAppSettingsTitle" xml:space="preserve">
+    <value>Offline cache</value>
+  </data>
   <data name="Player_BufferingLabel.Text" xml:space="preserve">
     <value>Buffering</value>
     <comment>13.png</comment>

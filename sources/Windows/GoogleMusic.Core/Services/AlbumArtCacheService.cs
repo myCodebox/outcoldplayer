@@ -39,12 +39,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         public async Task<string> GetCachedImageAsync(Uri url, uint size)
         {
-            if (this.cacheFolder == null)
-            {
-                var localFolder = ApplicationData.Current.LocalFolder;
-                this.cacheFolder = await localFolder.CreateFolderAsync(AlbumArtCacheFolder, CreationCollisionOption.OpenIfExists);
-                this.DeleteRemovedItems();
-            }
+            await this.InitializeCacheFolderAsync();
 
             CachedAlbumArt cache = await this.cachedAlbumArtsRepository.FindAsync(url, size);
             if (cache == null)
@@ -62,7 +57,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                                     CachedAlbumArt downloadedCache = await this.cachedAlbumArtsRepository.FindAsync(url, size);
                                     if (downloadedCache == null)
                                     {
-                                        string fileName = Guid.NewGuid().ToString() + ".jpg";
+                                        string fileName = Guid.NewGuid().ToString();
                                         string subFolderName = fileName.Substring(0, 1);
 
                                         var folder = await this.cacheFolder.CreateFolderAsync(subFolderName, CreationCollisionOption.OpenIfExists);
@@ -98,6 +93,23 @@ namespace OutcoldSolutions.GoogleMusic.Services
             }
 
             return Path.Combine(AlbumArtCacheFolder, cache.FileName.Substring(0, 1), cache.FileName);
+        }
+
+        public async Task<StorageFolder> GetCacheFolderAsync()
+        {
+            await this.InitializeCacheFolderAsync();
+            return this.cacheFolder;
+        }
+
+        private async Task InitializeCacheFolderAsync()
+        {
+            if (this.cacheFolder == null)
+            {
+                var localFolder = ApplicationData.Current.LocalFolder;
+                this.cacheFolder =
+                    await localFolder.CreateFolderAsync(AlbumArtCacheFolder, CreationCollisionOption.OpenIfExists);
+                this.DeleteRemovedItems();
+            }
         }
 
         private async void DeleteRemovedItems()

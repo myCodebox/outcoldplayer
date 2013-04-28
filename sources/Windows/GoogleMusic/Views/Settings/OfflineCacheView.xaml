@@ -1,0 +1,40 @@
+﻿<views:ViewBase
+    x:Class="OutcoldSolutions.GoogleMusic.Views.Settings.OfflineCacheView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:views="using:OutcoldSolutions.Views"
+    mc:Ignorable="d"
+    d:DesignHeight="300"
+    d:DesignWidth="400">
+    <StackPanel>
+        <StackPanel.Transitions>
+            <TransitionCollection>
+                <EntranceThemeTransition FromHorizontalOffset="120" />
+            </TransitionCollection>
+        </StackPanel.Transitions>
+
+        <Border Height="10">
+            <ProgressBar IsIndeterminate="True" Visibility="{Binding Path=BindingModel.IsLoading, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+        </Border>
+        
+        <TextBlock Style="{StaticResource BodyTextStyle}">
+            Album arts cache size:
+        </TextBlock>
+
+        <TextBlock Style="{StaticResource BodyTextStyle}"
+                   Text="{Binding Path=BindingModel.AlbumArtCacheSize, Mode=OneWay, Converter={StaticResource SizeToStringConverter}}"
+                   Margin="0, 10, 0, 0"/>
+
+        <TextBlock Style="{StaticResource BodyTextStyle}"
+                   Margin="0, 40, 0, 0">
+            Songs cache size:
+        </TextBlock>
+
+        <TextBlock Style="{StaticResource BodyTextStyle}"
+                   Text="{Binding Path=BindingModel.SongsCacheSize, Mode=OneWay, Converter={StaticResource SizeToStringConverter}}"
+                   Margin="0, 10, 0, 0"/>
+
+    </StackPanel>
+</views:ViewBase>
