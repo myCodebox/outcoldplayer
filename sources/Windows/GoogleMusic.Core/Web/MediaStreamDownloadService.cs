@@ -131,9 +131,10 @@ namespace OutcoldSolutions.GoogleMusic.Web
             private readonly byte[] readBuffer = new byte[DefaultBufferSize];
             private readonly byte[] data;
 
+            private readonly Task readTask;
+
             private CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
             private Stream networkStream;
-            private Task readTask;
 
             private ulong currentPosition;
             private ulong readPosition;
@@ -159,12 +160,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
                 this.readTask =
                     Task.Factory.StartNew(() => this.SafeDownloadSream(cancellationToken), cancellationToken)
-                        .ContinueWith(
-                            t =>
-                                {
-                                    this.DisposeNetworkDownloader();
-                                    this.readTask = null;
-                                });
+                        .ContinueWith(t => this.DisposeNetworkDownloader());
             }
 
             ~MemoryRandomAccessStream()
@@ -221,6 +217,11 @@ namespace OutcoldSolutions.GoogleMusic.Web
                     this.logger.Warning("set_Size is not supported.");
                     throw new NotSupportedException();
                 }
+            }
+
+            public Task DownloadAsync()
+            {
+                return this.readTask;
             }
 
             public async Task SaveToFileAsync(IStorageFile file)
@@ -332,7 +333,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
             {
                 lock (this.locker)
                 {
-                    if (this.readTask != null && !this.cancellationTokenSource.IsCancellationRequested)
+                    if (this.readTask != null && this.cancellationTokenSource != null && !this.cancellationTokenSource.IsCancellationRequested)
                     {
                         try
                         {
@@ -344,7 +345,6 @@ namespace OutcoldSolutions.GoogleMusic.Web
                         }
                     }
 
-                    this.readTask = null;
                     this.cancellationTokenSource = null;
 
                     if (this.networkStream != null)

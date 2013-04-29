@@ -7,8 +7,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
     using System;
     using System.Collections.Generic;
     using System.IO;
-    using System.Linq;
     using System.Net;
+    using System.Threading;
     using System.Threading.Tasks;
 
     using OutcoldSolutions.Diagnostics;
@@ -17,7 +17,6 @@ namespace OutcoldSolutions.GoogleMusic.Services
     using OutcoldSolutions.GoogleMusic.Web;
     using OutcoldSolutions.GoogleMusic.Web.Models;
 
-    using Windows.Networking.BackgroundTransfer;
     using Windows.Storage;
     using Windows.Storage.Streams;
 
@@ -25,7 +24,9 @@ namespace OutcoldSolutions.GoogleMusic.Services
     {
         Task<IRandomAccessStreamWithContentType> GetStreamAsync(Song song);
 
-        Task QueueForDownloadAsync(IEnumerable<Song> song, bool isPriorityZero);
+        Task PredownloadStreamAsync(Song song);
+
+        Task QueueForDownloadAsync(IEnumerable<Song> song);
 
         Task<StorageFolder> GetCacheFolderAsync();
 
@@ -38,38 +39,169 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         private readonly ISongsWebService songsWebService;
         private readonly ICachedSongsRepository songsCacheRepository;
-        private readonly ISongsRepository songsRepository;
         private readonly IMediaStreamDownloadService mediaStreamDownloadService;
 
         private readonly ILogger logger;
-        private readonly BackgroundDownloader backgroundDownloader = new BackgroundDownloader();
+
+        private readonly SemaphoreSlim currentDownloadStreamMutex = new SemaphoreSlim(1);
+        private readonly SemaphoreSlim downloadTaskMutex = new SemaphoreSlim(1);
 
         private StorageFolder cacheFolder;
+
+        private INetworkRandomAccessStream currentDownloadStream;
+        private Song currentDownloadSong;
+
+        private Task downloadTask;
+        private CancellationTokenSource downloadTaskCancellationToken;
 
         public SongsCachingService(
             ILogManager logManager,
             ISongsWebService songsWebService,
             ICachedSongsRepository songsCacheRepository,
-            ISongsRepository songsRepository,
             IMediaStreamDownloadService mediaStreamDownloadService)
         {
             this.logger = logManager.CreateLogger("SongsCachingService");
             this.songsWebService = songsWebService;
             this.songsCacheRepository = songsCacheRepository;
-            this.songsRepository = songsRepository;
             this.mediaStreamDownloadService = mediaStreamDownloadService;
         }
 
         public async Task<IRandomAccessStreamWithContentType> GetStreamAsync(Song song)
         {
-            var cache = await this.songsCacheRepository.FindAsync(song);
-            if (cache != null && !string.IsNullOrEmpty(cache.FileName))
+            if (song == null)
             {
-                // TODO: Catch exception if file does not exist
-                var storageFile = await StorageFile.GetFileFromPathAsync(this.GetFullPath(cache.FileName));
-                return await storageFile.OpenReadAsync();
+                throw new ArgumentNullException("song");
             }
 
+            await this.currentDownloadStreamMutex.WaitAsync().ConfigureAwait(continueOnCapturedContext: false);
+
+            try
+            {
+                var cache = await this.songsCacheRepository.FindAsync(song);
+                if (cache != null && !string.IsNullOrEmpty(cache.FileName))
+                {
+                    // TODO: Catch exception if file does not exist
+                    var storageFile = await StorageFile.GetFileFromPathAsync(this.GetFullPath(cache.FileName));
+                    return await storageFile.OpenReadAsync();
+                }
+
+                if (this.currentDownloadSong != null && this.currentDownloadSong.SongId == song.SongId)
+                {
+                    return this.currentDownloadStream;
+                }
+            }
+            finally
+            {
+                this.currentDownloadStreamMutex.Release();
+            }
+
+            await this.CancelDownloadTaskAsync();
+
+            INetworkRandomAccessStream networkRandomAccessStream = await this.GetNetworkStreamAsync(song);
+
+            await this.SetCurrentStreamAsync(song, networkRandomAccessStream);
+
+            if (networkRandomAccessStream != null)
+            {
+                this.HandleStreamDownload(networkRandomAccessStream, song);
+            }
+
+            return networkRandomAccessStream;
+        }
+
+        public async Task PredownloadStreamAsync(Song song)
+        {
+            if (song == null)
+            {
+                throw new ArgumentNullException("song");
+            }
+
+            await this.currentDownloadStreamMutex.WaitAsync().ConfigureAwait(continueOnCapturedContext: false);
+
+            try
+            {
+                var cache = await this.songsCacheRepository.FindAsync(song);
+                if (cache != null && !string.IsNullOrEmpty(cache.FileName))
+                {
+                    return;
+                }
+
+                if (this.currentDownloadSong != null && this.currentDownloadSong.SongId == song.SongId)
+                {
+                    return;
+                }
+            }
+            finally
+            {
+                this.currentDownloadStreamMutex.Release();
+            }
+
+            await this.CancelDownloadTaskAsync();
+
+            INetworkRandomAccessStream networkRandomAccessStream = await this.GetNetworkStreamAsync(song);
+
+            await this.SetCurrentStreamAsync(song, networkRandomAccessStream);
+
+            if (networkRandomAccessStream != null)
+            {
+                this.HandleStreamDownload(networkRandomAccessStream, song);
+            }
+        }
+
+        public async Task QueueForDownloadAsync(IEnumerable<Song> songs)
+        {
+            if (songs == null)
+            {
+                throw new ArgumentNullException("songs");
+            }
+
+            foreach (var song in songs)
+            {
+                await this.songsCacheRepository.AddAsync(
+                        new CachedSong
+                            {
+                                SongId = song.SongId, 
+                                TaskAdded = DateTime.Now,
+                                IsAddedByUser = true
+                            });
+            }
+
+            await this.StartDownloadTaskAsync();
+        }
+
+        public async Task<StorageFolder> GetCacheFolderAsync()
+        {
+            await this.InitializeCacheFolderAsync();
+            return this.cacheFolder;
+        }
+
+        public async Task ClearCacheAsync()
+        {
+            await this.InitializeCacheFolderAsync();
+            await this.songsCacheRepository.ClearCacheAsync();
+            foreach (var storageItem in await this.cacheFolder.GetItemsAsync())
+            {
+                await storageItem.DeleteAsync(StorageDeleteOption.PermanentDelete);
+            }
+        }
+
+        private async Task SetCurrentStreamAsync(Song song, INetworkRandomAccessStream networkRandomAccessStream)
+        {
+            await this.currentDownloadStreamMutex.WaitAsync().ConfigureAwait(continueOnCapturedContext: false);
+
+            try
+            {
+                this.currentDownloadStream = networkRandomAccessStream;
+                this.currentDownloadSong = song;
+            }
+            finally
+            {
+                this.currentDownloadStreamMutex.Release();
+            }
+        }
+
+        private async Task<INetworkRandomAccessStream> GetNetworkStreamAsync(Song song)
+        {
             GoogleMusicSongUrl songUrl = null;
 
             try
@@ -102,13 +234,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 try
                 {
                     var stream = await this.mediaStreamDownloadService.GetStreamAsync(songUrl.Url);
-                    stream.DownloadProgressChanged += async (sender, d) =>
-                        {
-                            if (Math.Abs(1 - d) <= 0.0001)
-                            {
-                                await this.OnCurrentSongDownloadCompletedAsync(stream, song);
-                            }
-                        };
+                    this.HandleStreamDownload(stream, song);
                     return stream;
                 }
                 catch (Exception exception)
@@ -127,125 +253,170 @@ namespace OutcoldSolutions.GoogleMusic.Services
             return null;
         }
 
-        public async Task QueueForDownloadAsync(IEnumerable<Song> songs, bool isPriorityZero)
+        private async void HandleStreamDownload(INetworkRandomAccessStream stream, Song song)
         {
-            if (songs == null)
-            {
-                throw new ArgumentNullException("songs");
-            }
-
-            foreach (var song in songs)
-            {
-                await this.songsCacheRepository.AddAsync(new CachedSong { SongId = song.SongId, TaskAdded = DateTime.Now });
-            }
-
-            if (isPriorityZero)
-            {
-                this.DownloadAsync();
-            }
+            await this.HandleStreamDownloadAsync(stream, song);
+            await this.StartDownloadTaskAsync();
         }
 
-        public async Task<StorageFolder> GetCacheFolderAsync()
-        {
-            await this.InitializeCacheFolderAsync();
-            return this.cacheFolder;
-        }
-
-        public async Task ClearCacheAsync()
-        {
-            await this.songsCacheRepository.ClearCacheAsync();
-            foreach (var storageItem in await this.cacheFolder.GetItemsAsync())
-            {
-                await storageItem.DeleteAsync(StorageDeleteOption.PermanentDelete);
-            }
-        }
-
-        private async Task OnCurrentSongDownloadCompletedAsync(INetworkRandomAccessStream randomAccessStream, Song song)
+        private async Task HandleStreamDownloadAsync(INetworkRandomAccessStream stream, Song song)
         {
             await this.InitializeCacheFolderAsync();
 
-            var cache = await this.songsCacheRepository.FindAsync(song);
-            if (cache == null || string.IsNullOrEmpty(cache.FileName))
+            try
             {
-                var songFolder = await this.cacheFolder.CreateFolderAsync(song.ProviderSongId.Substring(0, 1), CreationCollisionOption.OpenIfExists);
-                var file = await songFolder.CreateFileAsync(song.ProviderSongId, CreationCollisionOption.ReplaceExisting);
-                await randomAccessStream.SaveToFileAsync(file);
+                await stream.DownloadAsync();
 
-                if (cache == null)
+                await this.currentDownloadStreamMutex.WaitAsync().ConfigureAwait(continueOnCapturedContext: false);
+
+                try
                 {
-                    cache = new CachedSong() { FileName = file.Name, SongId = song.SongId, TaskAdded = DateTime.Now };
-                    await this.songsCacheRepository.AddAsync(cache);
-                }
-                else
-                {
-                    cache.FileName = file.Name;
-                    await this.songsCacheRepository.UpdateAsync(cache);
-                }
-            }
-        }
-
-        private async void DownloadAsync()
-        {
-            await this.InitializeCacheFolderAsync();
-            await this.FinishCachingAsync();
-
-            CachedSong nextTask;
-            while ((nextTask = await this.songsCacheRepository.GetNextAsync()) != null)
-            {
-                var cacheGroupFolder = await this.cacheFolder.CreateFolderAsync(nextTask.Song.ProviderSongId.Substring(0, 1), CreationCollisionOption.OpenIfExists);
-
-                var songUrl = await this.songsWebService.GetSongUrlAsync(nextTask.Song.ProviderSongId);
-                if (songUrl != null)
-                {
-                    var songCacheFile = await cacheGroupFolder.CreateFileAsync(nextTask.Song.ProviderSongId, CreationCollisionOption.ReplaceExisting);
-                    var downloadOperation = this.backgroundDownloader.CreateDownload(new Uri(songUrl.Url), songCacheFile);
-                    await downloadOperation.StartAsync().AsTask();
-
-                    nextTask.FileName = Path.GetFileName(songCacheFile.Path);
-                    await this.songsCacheRepository.UpdateAsync(nextTask);
-                }
-                else
-                {
-                    // TODO: Show error that could not download.
-                    break;
-                }
-            }
-        }
-
-        private async Task FinishCachingAsync()
-        {
-            IReadOnlyList<DownloadOperation> currentDownloads = await BackgroundDownloader.GetCurrentDownloadsAsync();
-            if (currentDownloads != null)
-            {
-                await Task.WhenAll(currentDownloads.Select(x => x.AttachAsync().AsTask()));
-
-                foreach (var downloadOperation in currentDownloads)
-                {
-                    string fileName = Path.GetFileName(downloadOperation.ResultFile.Path);
-                    var song = await this.songsRepository.FindAsync(fileName);
-                    if (song != null)
+                    var cache = await this.songsCacheRepository.FindAsync(song);
+                    if (cache == null || string.IsNullOrEmpty(cache.FileName))
                     {
-                        var cache = await this.songsCacheRepository.FindAsync(song);
-                        if (cache != null)
+                        var songFolder = await this.cacheFolder.CreateFolderAsync(song.ProviderSongId.Substring(0, 1), CreationCollisionOption.OpenIfExists);
+                        var file = await songFolder.CreateFileAsync(song.ProviderSongId, CreationCollisionOption.ReplaceExisting);
+                        await stream.SaveToFileAsync(file);
+
+                        if (cache == null)
                         {
-                            cache.FileName = fileName;
-                            await this.songsCacheRepository.UpdateAsync(cache);
+                            cache = new CachedSong() { FileName = file.Name, SongId = song.SongId, TaskAdded = DateTime.Now };
+                            await this.songsCacheRepository.AddAsync(cache);
                         }
                         else
                         {
-                            await downloadOperation.ResultFile.DeleteAsync(StorageDeleteOption.PermanentDelete);
+                            cache.FileName = file.Name;
+                            await this.songsCacheRepository.UpdateAsync(cache);
                         }
                     }
+
+                    this.currentDownloadStream = null;
+                    this.currentDownloadSong = null;
                 }
+                finally
+                {
+                    this.currentDownloadStreamMutex.Release(1);
+                }
+
+                await this.InitializeCacheFolderAsync();
+            }
+            catch (Exception exception)
+            {
+                if (exception is TaskCanceledException)
+                {
+                    this.logger.Debug("HandleStreamDownload was cancelled.");
+                }
+                else
+                {
+                    this.logger.Error(exception, "Exception while tried to HandleStreamDownload.");
+                }
+            }
+        }
+
+        private async Task StartDownloadTaskAsync()
+        {
+            await this.downloadTaskMutex.WaitAsync().ConfigureAwait(continueOnCapturedContext: false);
+
+            try
+            {
+                if (this.downloadTask == null)
+                {
+                    this.downloadTaskCancellationToken = new CancellationTokenSource();
+                    this.downloadTask = this.DownloadAsync(this.downloadTaskCancellationToken.Token);
+                }
+            }
+            finally
+            {
+                this.downloadTaskMutex.Release(1);
+            }
+        }
+
+        private async Task CancelDownloadTaskAsync()
+        {
+            await this.downloadTaskMutex.WaitAsync().ConfigureAwait(continueOnCapturedContext: false);
+
+            try
+            {
+                if (this.downloadTaskCancellationToken != null)
+                {
+                    this.downloadTaskCancellationToken.Cancel();
+                }
+
+                this.downloadTask = null;
+            }
+            finally
+            {
+                this.downloadTaskMutex.Release(1);
+            }
+        }
+
+        private async Task DownloadAsync(CancellationToken cancellationToken)
+        {
+            try
+            {
+                await this.InitializeCacheFolderAsync();
+
+                CachedSong nextTask;
+                while ((nextTask = await this.songsCacheRepository.GetNextAsync()) != null)
+                {
+                    if (cancellationToken.IsCancellationRequested)
+                    {
+                        break;
+                    }
+
+                    var stream = await this.GetNetworkStreamAsync(nextTask.Song);
+                    
+                    if (stream == null)
+                    {
+                        // TODO: Show something to user.
+                        break;
+                    }
+                    else
+                    {
+                        await this.SetCurrentStreamAsync(nextTask.Song, stream);
+                        await this.HandleStreamDownloadAsync(stream, nextTask.Song);
+                    }
+                }
+            }
+            catch (Exception exception)
+            {
+                if (exception is TaskCanceledException)
+                {
+                    this.logger.Debug("DownloadAsync was cancelled.");
+                }
+                else
+                {
+                    this.logger.Error(exception, "Exception while tried to DownloadAsync.");
+                }
+            }
+
+            await this.downloadTaskMutex.WaitAsync().ConfigureAwait(continueOnCapturedContext: false);
+
+            try
+            {
+                this.downloadTask = null;
+            }
+            finally
+            {
+                this.downloadTaskMutex.Release(1);
             }
         }
 
         private async Task InitializeCacheFolderAsync()
         {
-            if (this.cacheFolder == null)
+            await this.currentDownloadStreamMutex.WaitAsync().ConfigureAwait(continueOnCapturedContext: false);
+
+            try
             {
-                var localFolder = ApplicationData.Current.LocalFolder;
-                this.cacheFolder = await localFolder.CreateFolderAsync(SongsCacheFolder, CreationCollisionOption.OpenIfExists);
+                if (this.cacheFolder == null)
+                {
+                    var localFolder = ApplicationData.Current.LocalFolder;
+                    this.cacheFolder = await localFolder.CreateFolderAsync(SongsCacheFolder, CreationCollisionOption.OpenIfExists);
+                }
+            }
+            finally
+            {
+                this.currentDownloadStreamMutex.Release(1);
             }
         }
 

@@ -17,6 +17,8 @@ namespace OutcoldSolutions.GoogleMusic.Models
 
         public string FileName { get; set; }
 
+        public bool IsAddedByUser { get; set; }
+
         [Reference]
         public Song Song { get; set; }
     }

@@ -631,7 +631,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 int nextIndex = this.currentQueueIndex + 1;
                 var nextSong = this.songsQueue[this.queueOrder[nextIndex]];
 
-                await this.songsCachingService.QueueForDownloadAsync(new[] { nextSong }, isPriorityZero: true);
+                await this.songsCachingService.PredownloadStreamAsync(nextSong);
             }
         }
 
