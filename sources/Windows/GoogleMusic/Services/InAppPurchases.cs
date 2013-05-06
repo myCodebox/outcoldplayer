@@ -15,6 +15,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
     {
         None = 0,
         AdFree = 1,
+        Offline = 2,
         All = 0xFFFFFFF
     }
 

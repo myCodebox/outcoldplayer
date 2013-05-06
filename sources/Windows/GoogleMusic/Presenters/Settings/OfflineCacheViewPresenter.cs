@@ -9,23 +9,33 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
 
     using OutcoldSolutions.GoogleMusic.BindingModels.Settings;
     using OutcoldSolutions.GoogleMusic.Services;
+    using OutcoldSolutions.GoogleMusic.Shell;
     using OutcoldSolutions.Presenters;
     using OutcoldSolutions.Views;
 
     using Windows.Storage;
 
-    internal class OfflineCacheViewPresenter : ViewPresenterBase<IView>
+    internal class OfflineCacheViewPresenter : DisposableViewPresenterBase<IView>
     {
         private readonly IAlbumArtCacheService albumArtCacheService;
         private readonly ISongsCachingService songsCachingService;
+        private readonly ISearchService searchService;
 
         public OfflineCacheViewPresenter(
             IAlbumArtCacheService albumArtCacheService,
-            ISongsCachingService songsCachingService)
+            ISongsCachingService songsCachingService, 
+            OfflineCacheViewBindingModel bindingModel,
+            ISearchService searchService)
         {
             this.albumArtCacheService = albumArtCacheService;
             this.songsCachingService = songsCachingService;
-            this.BindingModel = new OfflineCacheViewBindingModel { IsLoading = true };
+            this.searchService = searchService;
+            this.BindingModel = bindingModel;
+
+            this.BindingModel.IsLoading = true;
+
+            this.searchService.SetShowOnKeyboardInput(false);
+
             this.ClearAlbumArtsCacheCommand = new DelegateCommand(this.ClearAlbumArtsCache, () => !this.BindingModel.IsLoading);
             this.ClearSongsCacheCommand = new DelegateCommand(this.ClearSongsCache, () => !this.BindingModel.IsLoading);
         }
@@ -43,6 +53,13 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
             await this.UpdateLoadingState(isLoading: true);
             await this.LoadFolderSizesAsync();
             await this.UpdateLoadingState(isLoading: false);
+        }
+
+        protected override void OnDisposing()
+        {
+            base.OnDisposing();
+
+            this.searchService.SetShowOnKeyboardInput(true);
         }
 
         private async void ClearAlbumArtsCache()

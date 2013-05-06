@@ -40,6 +40,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
         private readonly ISongsWebService songsWebService;
         private readonly ICachedSongsRepository songsCacheRepository;
         private readonly IMediaStreamDownloadService mediaStreamDownloadService;
+        private readonly ISettingsService settingsService;
 
         private readonly ILogger logger;
 
@@ -58,12 +59,14 @@ namespace OutcoldSolutions.GoogleMusic.Services
             ILogManager logManager,
             ISongsWebService songsWebService,
             ICachedSongsRepository songsCacheRepository,
-            IMediaStreamDownloadService mediaStreamDownloadService)
+            IMediaStreamDownloadService mediaStreamDownloadService,
+            ISettingsService settingsService)
         {
             this.logger = logManager.CreateLogger("SongsCachingService");
             this.songsWebService = songsWebService;
             this.songsCacheRepository = songsCacheRepository;
             this.mediaStreamDownloadService = mediaStreamDownloadService;
+            this.settingsService = settingsService;
         }
 
         public async Task<IRandomAccessStreamWithContentType> GetStreamAsync(Song song)
@@ -101,7 +104,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
             await this.SetCurrentStreamAsync(song, networkRandomAccessStream);
 
-            if (networkRandomAccessStream != null)
+            if (networkRandomAccessStream != null
+                && this.settingsService.GetAutomaticCache())
             {
                 this.HandleStreamDownload(networkRandomAccessStream, song);
             }
@@ -142,7 +146,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
             await this.SetCurrentStreamAsync(song, networkRandomAccessStream);
 
-            if (networkRandomAccessStream != null)
+            if (networkRandomAccessStream != null
+                && this.settingsService.GetAutomaticCache())
             {
                 this.HandleStreamDownload(networkRandomAccessStream, song);
             }
@@ -233,9 +238,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
                 try
                 {
-                    var stream = await this.mediaStreamDownloadService.GetStreamAsync(songUrl.Url);
-                    this.HandleStreamDownload(stream, song);
-                    return stream;
+                    return await this.mediaStreamDownloadService.GetStreamAsync(songUrl.Url);
                 }
                 catch (Exception exception)
                 {
@@ -390,7 +393,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 }
             }
 
-            await this.downloadTaskMutex.WaitAsync().ConfigureAwait(continueOnCapturedContext: false);
+            await this.downloadTaskMutex.WaitAsync(cancellationToken).ConfigureAwait(continueOnCapturedContext: false);
 
             try
             {
