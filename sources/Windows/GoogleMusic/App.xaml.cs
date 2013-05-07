@@ -115,6 +115,8 @@ namespace OutcoldSolutions.GoogleMusic
 
                 registration.Register<ISongsCachingService>().AsSingleton<SongsCachingService>();
 
+                registration.Register<IApplicationStateService>().AsSingleton<ApplicationStateService>();
+
                 registration.Register<MediaElement>()
                             .AsSingleton(
                                 new MediaElement()

@@ -4,6 +4,7 @@
 namespace OutcoldSolutions.GoogleMusic.Services
 {
     using System;
+    using System.Reflection;
 
     using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Models;
@@ -138,7 +139,11 @@ namespace OutcoldSolutions.GoogleMusic.Services
         private T ParseValue<T>(object value)
         {
             var clrType = typeof(T);
-            if (clrType == DateTimeType || clrType == DateTimeNullableType)
+            if (clrType.GetTypeInfo().IsEnum)
+            {
+                return (T)Enum.Parse(clrType, value.ToString());
+            }
+            else if (clrType == DateTimeType || clrType == DateTimeNullableType)
             {
                 return (T)(object)DateTime.FromBinary((long)value);
             }
@@ -161,12 +166,17 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         private object ToObject<T>(T value)
         {
-            if (typeof(T) == DateTimeType)
+            Type type = typeof(T);
+            if (type.GetTypeInfo().IsEnum)
+            {
+                return Convert.ToInt32(value);
+            }
+            else if (type == DateTimeType)
             {
                 long binaryValue = ((DateTime)(object)value).ToBinary();
                 return binaryValue;
             }
-            else if (typeof(T) == DateTimeNullableType)
+            else if (type == DateTimeNullableType)
             {
                 if (value == null)
                 {

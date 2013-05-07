@@ -7,7 +7,7 @@
     xmlns:views="using:OutcoldSolutions.Views"
     xmlns:controls="using:OutcoldSolutions.Controls"
     mc:Ignorable="d"
-    Height="240"
+    Height="300"
     Width="260">
 
     <Border Background="{StaticResource AppBarBackgroundThemeBrush}">
@@ -51,6 +51,9 @@
 
             </Grid>
 
+            <controls:AppBarToggleButton IsChecked="{Binding Path=BindingModel.IsOnlineMode, Mode=TwoWay}" 
+                                         Style="{StaticResource GlobePopupMenuButtonStyle}"
+                                         AutomationProperties.Name="Online mode"/>
 
             <controls:AppBarToggleButton Style="{StaticResource ShufflePopupMenuButtonStyle}" 
                                          IsChecked="{Binding Path=BindingModel.IsShuffleEnabled, Mode=TwoWay}"

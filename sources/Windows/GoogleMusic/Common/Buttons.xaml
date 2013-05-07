@@ -156,4 +156,10 @@
         <Setter Property="Content" Value="&#xE118;"/>
     </Style>
 
+    <Style x:Key="GlobePopupMenuButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource PopupMenuButtonStyle}">
+        <Setter Property="AutomationProperties.AutomationId" Value="GlobeAppBarButton"/>
+        <Setter Property="AutomationProperties.Name" Value="Globe"/>
+        <Setter Property="Content" Value="&#xE12B;"/>
+    </Style>
+
 </ResourceDictionary>

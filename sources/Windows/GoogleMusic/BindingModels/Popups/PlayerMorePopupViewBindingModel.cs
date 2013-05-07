@@ -16,17 +16,20 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels.Popups
         private readonly IMediaElementContainer mediaElementContainer;
         private readonly IPlayQueueService playQueueService;
         private readonly IEventAggregator eventAggregator;
+        private readonly IApplicationStateService stateService;
         private readonly IDispatcher dispatcher;
 
         public PlayerMorePopupViewBindingModel(
             IMediaElementContainer mediaElementContainer,
             IPlayQueueService playQueueService,
             IEventAggregator eventAggregator,
+            IApplicationStateService stateService,
             IDispatcher dispatcher)
         {
             this.mediaElementContainer = mediaElementContainer;
             this.playQueueService = playQueueService;
             this.eventAggregator = eventAggregator;
+            this.stateService = stateService;
             this.dispatcher = dispatcher;
 
             this.RegisterForDispose(this.eventAggregator.GetEvent<QueueChangeEvent>().Subscribe(
@@ -35,6 +38,9 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels.Popups
                                     this.RaisePropertyChanged(() => this.IsShuffleEnabled);
                                     this.RaisePropertyChanged(() => this.IsRepeatAllEnabled);
                                 })));
+
+            this.RegisterForDispose(this.eventAggregator.GetEvent<ApplicationStateChangeEvent>().Subscribe(
+                async (e) => await this.dispatcher.RunAsync(() => this.RaisePropertyChanged(() => this.IsOnlineMode))));
         }
 
         public bool IsShuffleEnabled
@@ -73,6 +79,19 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels.Popups
             set
             {
                 this.mediaElementContainer.Volume = value;
+            }
+        }
+
+        public bool IsOnlineMode
+        {
+            get
+            {
+                return this.stateService.CurrentState == ApplicationState.Online;
+            }
+
+            set
+            {
+                this.stateService.CurrentState = value ? ApplicationState.Online : ApplicationState.Offline;
             }
         }
     }
