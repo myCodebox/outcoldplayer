@@ -24,24 +24,28 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private readonly IApplicationResources resources;
         private readonly IPlayQueueService playQueueService;
         private readonly ISongsService metadataEditService;
+        private readonly ISongsCachingService cachingService;
 
-        public CurrentPlaylistPageViewPresenter(
+        internal CurrentPlaylistPageViewPresenter(
             IApplicationResources resources,
             IPlayQueueService playQueueService,
             ISongsService metadataEditService,
+            ISongsCachingService cachingService,
             SongsBindingModel songsBindingModel)
         {
             this.resources = resources;
             this.playQueueService = playQueueService;
             this.metadataEditService = metadataEditService;
+            this.cachingService = cachingService;
             this.BindingModel = songsBindingModel;
 
             this.playQueueService.QueueChanged += async (sender, args) => await this.Dispatcher.RunAsync(this.UpdateSongs);
 
             //this.SaveAsPlaylistCommand = new DelegateCommand(this.SaveAsPlaylist, () => this.BindingModel.Songs.Count > 0);
-            this.RemoveSelectedSongCommand = new DelegateCommand(this.RemoveSelectedSong);
-            this.AddToPlaylistCommand = new DelegateCommand(this.AddToPlaylist);
+            this.RemoveSelectedSongCommand = new DelegateCommand(this.RemoveSelectedSong, () => this.BindingModel.SelectedItems.Count > 0);
+            this.AddToPlaylistCommand = new DelegateCommand(this.AddToPlaylist, () => this.BindingModel.SelectedItems.Count > 0);
             this.RateSongCommand = new DelegateCommand(this.RateSong);
+            this.DownloadCommand = new DelegateCommand(this.Download, () => this.BindingModel.SelectedItems.Count  > 0);
 
             this.playQueueService.StateChanged += async (sender, args) => await this.Dispatcher.RunAsync(async () => 
                 {
@@ -66,6 +70,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         public DelegateCommand RemoveSelectedSongCommand { get; set; }
 
         public DelegateCommand RateSongCommand { get; set; }
+
+        public DelegateCommand DownloadCommand { get; set; }
 
         public SongsBindingModel BindingModel { get; set; }
 
@@ -127,6 +133,19 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             }
         }
 
+        private async void Download()
+        {
+            try
+            {
+                await this.cachingService.QueueForDownloadAsync(this.BindingModel.GetSelectedSongs());
+                this.BindingModel.ClearSelectedItems();
+            }
+            catch (Exception e)
+            {
+                this.Logger.Error(e, "Cannot add songs to download queue");
+            }
+        }
+
         private void RateSong(object parameter)
         {
             var ratingEventArgs = parameter as RatingEventArgs;
@@ -182,12 +201,18 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             {
                 this.MainFrame.ClearContextCommands();
             }
+
+            this.AddToPlaylistCommand.RaiseCanExecuteChanged();
+            // this.SaveAsPlaylistCommand.RaiseCanExecuteChanged();
+            this.DownloadCommand.RaiseCanExecuteChanged();
+            this.RemoveSelectedSongCommand.RaiseCanExecuteChanged();
         }
 
         private IEnumerable<CommandMetadata> GetContextCommands()
         {
             yield return new CommandMetadata(CommandIcon.Add, this.resources.GetString("Toolbar_PlaylistButton"), this.AddToPlaylistCommand);
             yield return new CommandMetadata(CommandIcon.Remove, this.resources.GetString("Toolbar_QueueButton"), this.RemoveSelectedSongCommand);
+            yield return new CommandMetadata(CommandIcon.Download, this.resources.GetString("Toolbar_KeepLocal"), this.DownloadCommand);
         }
     }
 }

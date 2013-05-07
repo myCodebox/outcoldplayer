@@ -23,12 +23,14 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
 
         Task<CachedSong> FindAsync(Song song);
 
+        Task<IList<CachedSong>> GetAllQueuedTasksAsync();
+
         Task ClearCacheAsync();
     }
 
     public class CachedSongsRepository : RepositoryBase, ICachedSongsRepository
     {
-        private const string SqlNextTask = @"
+        private const string SqlAllQuiredCaches = @"
 select t.*,
     s.[SongId] as [Song.SongId],
     s.[ProviderSongId] as [Song.ProviderSongId],
@@ -61,7 +63,6 @@ from [CachedSong] as t
      inner join [Song] s on s.SongId = t.SongId
 where t.[FileName] is null
 order by t.[TaskAdded]
-limit 1
 ";
 
         private const string SqlAllDeadCacheTasks = @"
@@ -101,7 +102,12 @@ where s.SongId is null
 
         public async Task<CachedSong> GetNextAsync()
         {
-            return (await this.Connection.QueryAsync<CachedSong>(SqlNextTask)).FirstOrDefault();
+            return (await this.Connection.QueryAsync<CachedSong>(SqlAllQuiredCaches + " limit 1")).FirstOrDefault();
+        }
+
+        public async Task<IList<CachedSong>> GetAllQueuedTasksAsync()
+        {
+            return await this.Connection.QueryAsync<CachedSong>(SqlAllQuiredCaches);
         }
 
         public async Task<CachedSong> FindAsync(Song song)

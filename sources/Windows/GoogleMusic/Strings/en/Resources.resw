@@ -600,6 +600,9 @@ But it will contains all additional features, which we will ship in future (limi
     <value>Delete</value>
     <comment>10.png</comment>
   </data>
+  <data name="Toolbar_KeepLocal" xml:space="preserve">
+    <value>Keep local</value>
+  </data>
   <data name="Toolbar_PlaylistButton" xml:space="preserve">
     <value>Playlist</value>
     <comment>14.png</comment>

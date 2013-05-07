@@ -28,8 +28,9 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             INavigationService navigationService,
             IPlayQueueService playQueueService,
             IPlaylistsService playlistsService,
-            IUserPlaylistsService userPlaylistsService)
-            : base(resources, playlistsService, navigationService, playQueueService)
+            IUserPlaylistsService userPlaylistsService,
+            ISongsCachingService cachingService)
+            : base(resources, playlistsService, navigationService, playQueueService, cachingService)
         {
             this.resources = resources;
             this.userPlaylistsService = userPlaylistsService;

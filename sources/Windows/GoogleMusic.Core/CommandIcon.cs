@@ -20,5 +20,7 @@ namespace OutcoldSolutions.GoogleMusic
         public const string Remove = "RemoveAppBarButtonStyle";
 
         public const string Page = "PageAppBarButtonStyle";
+
+        public const string Download = "DownloadAppBarButtonStyle";
     }
 }

@@ -20,7 +20,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
     using Windows.Storage;
     using Windows.Storage.Streams;
 
-    internal interface ISongsCachingService
+    public interface ISongsCachingService
     {
         Task<IRandomAccessStreamWithContentType> GetStreamAsync(Song song);
 
@@ -31,6 +31,10 @@ namespace OutcoldSolutions.GoogleMusic.Services
         Task<StorageFolder> GetCacheFolderAsync();
 
         Task ClearCacheAsync();
+
+        Task CancelTaskAsync(CachedSong cachedSong);
+
+        Task<IList<CachedSong>> GetAllActiveTasksAsync();
     }
 
     internal class SongsCachingService : ISongsCachingService
@@ -190,6 +194,40 @@ namespace OutcoldSolutions.GoogleMusic.Services
             }
         }
 
+        public async Task CancelTaskAsync(CachedSong cachedSong)
+        {
+            await this.downloadTaskMutex.WaitAsync().ConfigureAwait(continueOnCapturedContext: false);
+
+            try
+            {
+                if (this.downloadTaskCancellationToken != null)
+                {
+                    this.downloadTaskCancellationToken.Cancel();
+                }
+
+                this.downloadTask = null;
+                this.currentDownloadSong = null;
+            }
+            finally
+            {
+                this.currentDownloadStreamMutex.Release();
+            }
+
+            var refreshedCache = await this.songsCacheRepository.FindAsync(cachedSong.Song);
+            if (!string.IsNullOrEmpty(refreshedCache.FileName))
+            {
+                var storageFile = await StorageFile.GetFileFromPathAsync(this.GetFullPath(refreshedCache.FileName));
+                await storageFile.DeleteAsync(StorageDeleteOption.PermanentDelete);
+            }
+
+            await this.songsCacheRepository.RemoveAsync(refreshedCache);
+        }
+
+        public Task<IList<CachedSong>> GetAllActiveTasksAsync()
+        {
+            return this.songsCacheRepository.GetAllQueuedTasksAsync();
+        }
+
         private async Task SetCurrentStreamAsync(Song song, INetworkRandomAccessStream networkRandomAccessStream)
         {
             await this.currentDownloadStreamMutex.WaitAsync().ConfigureAwait(continueOnCapturedContext: false);
@@ -346,6 +384,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 }
 
                 this.downloadTask = null;
+                this.currentDownloadSong = null;
             }
             finally
             {

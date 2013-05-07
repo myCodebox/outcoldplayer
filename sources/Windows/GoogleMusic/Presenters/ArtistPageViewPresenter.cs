@@ -25,23 +25,27 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private readonly INavigationService navigationService;
         private readonly IPlaylistsService playlistsService;
         private readonly IAlbumsRepository albumsRepository;
+        private readonly ISongsCachingService cachingService;
 
-        public ArtistPageViewPresenter(
+        internal ArtistPageViewPresenter(
             IApplicationResources resources,
             IPlayQueueService playQueueService,
             INavigationService navigationService,
             IPlaylistsService playlistsService,
-            IAlbumsRepository albumsRepository)
+            IAlbumsRepository albumsRepository,
+            ISongsCachingService cachingService)
         {
             this.resources = resources;
             this.playQueueService = playQueueService;
             this.navigationService = navigationService;
             this.playlistsService = playlistsService;
             this.albumsRepository = albumsRepository;
+            this.cachingService = cachingService;
             this.PlayCommand = new DelegateCommand(this.Play);
             this.ShowAllCommand = new DelegateCommand(this.ShowAll);
 
             this.QueueCommand = new DelegateCommand(this.Queue, () => this.BindingModel.SelectedItems.Count > 0);
+            this.DownloadCommand = new DelegateCommand(this.Download, () => this.BindingModel.SelectedItems.Count > 0);
         }
         
         public DelegateCommand PlayCommand { get; set; }
@@ -49,6 +53,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         public DelegateCommand ShowAllCommand { get; set; }
 
         public DelegateCommand QueueCommand { get; private set; }
+
+        public DelegateCommand DownloadCommand { get; set; }
 
         public override void OnNavigatingFrom(NavigatingFromEventArgs eventArgs)
         {
@@ -104,6 +110,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private IEnumerable<CommandMetadata> GetContextCommands()
         {
             yield return new CommandMetadata(CommandIcon.OpenWith, this.resources.GetString("Toolbar_QueueButton"), this.QueueCommand);
+            yield return new CommandMetadata(CommandIcon.Download, this.resources.GetString("Toolbar_KeepLocal"), this.DownloadCommand);
         }
 
         private void ShowAll()
@@ -146,6 +153,26 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             if (eventArgs is QueueActionsCompletedEventArgs)
             {
                 this.BindingModel.ClearSelectedItems();
+            }
+        }
+
+        private async void Download()
+        {
+            try
+            {
+                IEnumerable<Song> songs = Enumerable.Empty<Song>();
+
+                foreach (var playlistBindingModel in this.BindingModel.SelectedItems)
+                {
+                    songs = songs.Union(await this.playlistsService.GetSongsAsync(playlistBindingModel.Playlist));
+                }
+
+                await this.cachingService.QueueForDownloadAsync(songs);
+                this.BindingModel.ClearSelectedItems();
+            }
+            catch (Exception e)
+            {
+                this.Logger.Error(e, "Cannot add songs to download queue");
             }
         }
     }

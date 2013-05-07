@@ -28,6 +28,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private readonly IPlaylistsService playlistsService;
         private readonly INavigationService navigationService;
         private readonly IPlayQueueService playQueueService;
+        private readonly ISongsCachingService cachingService;
 
         private IDisposable playlistsChangeSubscription;
 
@@ -35,20 +36,25 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             IApplicationResources resources,
             IPlaylistsService playlistsService,
             INavigationService navigationService,
-            IPlayQueueService playQueueService)
+            IPlayQueueService playQueueService,
+            ISongsCachingService cachingService)
         {
             this.resources = resources;
             this.playlistsService = playlistsService;
             this.navigationService = navigationService;
             this.playQueueService = playQueueService;
+            this.cachingService = cachingService;
 
             this.PlayCommand = new DelegateCommand(this.Play);
             this.QueueCommand = new DelegateCommand(this.Queue, () => this.BindingModel.SelectedItems.Count > 0);
+            this.DownloadCommand = new DelegateCommand(this.Download, () => this.BindingModel.SelectedItems.Count > 0);
         }
 
         public DelegateCommand PlayCommand { get; private set; }
 
         public DelegateCommand QueueCommand { get; private set; }
+
+        public DelegateCommand DownloadCommand { get; private set; }
 
         public override void OnNavigatedTo(NavigatedToEventArgs parameter)
         {
@@ -111,6 +117,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         protected virtual IEnumerable<CommandMetadata> GetContextCommands()
         {
             yield return new CommandMetadata(CommandIcon.OpenWith, this.resources.GetString("Toolbar_QueueButton"), this.QueueCommand);
+            yield return new CommandMetadata(CommandIcon.Download, this.resources.GetString("Toolbar_KeepLocal"), this.DownloadCommand);
         }
 
         private void SelectedItemsOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -142,6 +149,26 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             if (eventArgs is QueueActionsCompletedEventArgs)
             {
                 this.BindingModel.ClearSelectedItems();
+            }
+        }
+
+        private async void Download()
+        {
+            try
+            {
+                IEnumerable<Song> songs = Enumerable.Empty<Song>();
+
+                foreach (var playlistBindingModel in this.BindingModel.SelectedItems)
+                {
+                    songs = songs.Union(await this.playlistsService.GetSongsAsync(playlistBindingModel.Playlist));
+                }
+
+                await this.cachingService.QueueForDownloadAsync(songs);
+                this.BindingModel.ClearSelectedItems();
+            }
+            catch (Exception e)
+            {
+                this.Logger.Error(e, "Cannot add songs to download queue");
             }
         }
     }

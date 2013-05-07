@@ -142,6 +142,7 @@
     <Compile Include="Converters\AlbumArtUrlToImageConverter.cs" />
     <Compile Include="Converters\DoubleToTimeConverter.cs" />
     <Compile Include="Converters\SizeToStringConverter.cs" />
+    <Compile Include="Converters\SongToArtistConverter.cs" />
     <Compile Include="Converters\StringFormatConverter.cs" />
     <Compile Include="Converters\TimeSpanToTimeConverter.cs" />
     <Compile Include="Diagnostics\BugSenseLogWriter.cs" />

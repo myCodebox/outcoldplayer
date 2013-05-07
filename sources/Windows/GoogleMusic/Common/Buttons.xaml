@@ -150,4 +150,10 @@
         <Setter Property="Content" Value="&#xE132;"/>
     </Style>
 
+    <Style x:Key="DownloadAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
+        <Setter Property="AutomationProperties.AutomationId" Value="DownloadAppBarButton"/>
+        <Setter Property="AutomationProperties.Name" Value="Keep local"/>
+        <Setter Property="Content" Value="&#xE118;"/>
+    </Style>
+
 </ResourceDictionary>

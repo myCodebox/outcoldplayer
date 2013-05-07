@@ -9,5 +9,6 @@
     <converters:TimeSpanToTimeConverter x:Key="TimeSpanToTimeConverter" />
     <converters:AlbumArtUrlToImageConverter x:Key="AlbumArtUrlToImageConverter" />
     <converters:SizeToStringConverter x:Key="SizeToStringConverter" />
+    <converters:SongToArtistConverter x:Key="SongToArtistConverter" />
     
 </ResourceDictionary>

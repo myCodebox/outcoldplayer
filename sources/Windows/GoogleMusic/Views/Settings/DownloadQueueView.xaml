@@ -9,6 +9,61 @@
     
     <Grid>
 
+        <ListView Visibility="{Binding Path=IsLoading, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}"
+                  ItemsSource="{Binding Path=QueuedTasks, Mode=OneWay}"
+                  SelectionMode="None"
+                  HorizontalAlignment="Stretch"
+                  HorizontalContentAlignment="Stretch"
+                  IsTapEnabled="False"
+                  ManipulationMode="None">
+            <ListView.ItemTemplate>
+
+                <DataTemplate>
+
+                    <Grid Height="44" Margin="0, 5, 20, 5">
+                        <Grid.ColumnDefinitions >
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="20" />
+                            <RowDefinition Height="20" />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Column="0" 
+                                   Grid.ColumnSpan="2"
+                                   Grid.Row="0"
+                                   Style="{StaticResource TitleTextStyle}" 
+                                   VerticalAlignment="Center" 
+                                   Margin="5, 0, 0, 0" 
+                                   Text="{Binding Path=Song.Title, Mode=OneWay}" 
+                                   HorizontalAlignment="Left" 
+                                   TextTrimming="WordEllipsis" />
+
+                        <TextBlock Grid.Column="0" 
+                                   Grid.Row="1"
+                                   Style="{StaticResource SubtitleTextStyle}" 
+                                   VerticalAlignment="Center" 
+                                   Margin="5, 0, 0, 0" 
+                                   Text="{Binding Path=Song, Converter={StaticResource SongToArtistConverter}, Mode=OneWay}" 
+                                   TextTrimming="WordEllipsis" />
+
+                        <TextBlock Grid.Column="1" 
+                                   Grid.Row="1"
+                                   Style="{StaticResource BasicTextStyle}" 
+                                   VerticalAlignment="Center" 
+                                   Margin="10, 0, 0, 0" 
+                                   Text="{Binding Path=Song.Duration, Converter={StaticResource TimeSpanToTimeConverter}, Mode=OneWay}" 
+                                   HorizontalAlignment="Right"/>
+
+                    </Grid>
+
+                </DataTemplate>
+
+            </ListView.ItemTemplate>
+         </ListView>
+
     </Grid>
     
 </views:ViewBase>
