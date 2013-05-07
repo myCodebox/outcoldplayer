@@ -9,51 +9,57 @@
     d:DesignHeight="600"
     d:DesignWidth="400">
 
-    <StackPanel>
-        <StackPanel.Resources>
-            <x:String x:Key="UltimatePackageName">Ultimate</x:String>
-            <x:String x:Key="AddFreeUnlimitedPackageName">AdFreeUnlimited</x:String>
-        </StackPanel.Resources>
-        
-        <StackPanel.Transitions>
-            <TransitionCollection>
-                <EntranceThemeTransition FromHorizontalOffset="120" />
-            </TransitionCollection>
-        </StackPanel.Transitions>
-
-        <TextBlock Style="{StaticResource BodyTextStyle}"
-                   x:Uid="SettingsUpgrade_RemoveAdsTitle">
-            Do you want to remove advertisements from gMusic?
-        </TextBlock>
-
-        <TextBlock Style="{StaticResource BodyTextStyle}" 
-                   Margin="0, 20, 0, 0"
-                   x:Uid="SettingsUpgrade_AddFreePackageDescription">
-            You can buy for $1.99 AdFree package, which will remove all advertisements (limited offer):
-        </TextBlock>
-
-        <Button Margin="0, 20, 0, 0" Command="{Binding Path=BuyPackageCommand, Mode=OneTime}"
-                CommandParameter="{StaticResource AddFreeUnlimitedPackageName}"
-                x:Uid="SettingsUpgrade_AddFreePackageButton">
-            Ad Free (unlimited)
-        </Button>
-
-        <TextBlock Style="{StaticResource BodyTextStyle}"  Margin="0, 40, 0, 0"
-                   x:Uid="SettingsUpgrade_UltimatePackageDescription">
-            Or you can spend $4.99 for Ultimate package. This package does not offer any additional features now (other than Ad Free package has). 
-            But it will contains all additional features, which we will ship in future (limited offer):
-        </TextBlock>
-
-        <Button Margin="0, 20, 0, 0" Command="{Binding Path=BuyPackageCommand, Mode=OneTime}"
-                CommandParameter="{StaticResource UltimatePackageName}"
-                x:Uid="SettingsUpgrade_UltimatePackageButton">
-            Ultimate (unlimited)
-        </Button>
-
-        <TextBlock Style="{StaticResource BodyTextStyle}"  Margin="0, 40, 0, 0"
-                   x:Uid="SettingsUpgrade_ThankYou">
-            Thank you!
-        </TextBlock>
-    </StackPanel>
+    <ScrollViewer VerticalScrollMode="Auto" 
+                  VerticalScrollBarVisibility="Auto"
+                  HorizontalScrollMode="Disabled" >
     
+        <StackPanel>
+            <StackPanel.Resources>
+                <x:String x:Key="UltimatePackageName">Ultimate</x:String>
+                <x:String x:Key="AddFreeUnlimitedPackageName">AdFreeUnlimited</x:String>
+            </StackPanel.Resources>
+        
+            <StackPanel.Transitions>
+                <TransitionCollection>
+                    <EntranceThemeTransition FromHorizontalOffset="120" />
+                </TransitionCollection>
+            </StackPanel.Transitions>
+
+            <TextBlock Style="{StaticResource BodyTextStyle}"
+                       x:Uid="SettingsUpgrade_RemoveAdsTitle">
+                Do you want to remove advertisements from gMusic?
+            </TextBlock>
+
+            <TextBlock Style="{StaticResource BodyTextStyle}" 
+                       Margin="0, 20, 0, 0"
+                       x:Uid="SettingsUpgrade_AddFreePackageDescription">
+                You can buy for $1.99 AdFree package, which will remove all advertisements (limited offer):
+            </TextBlock>
+
+            <Button Margin="0, 20, 0, 0" Command="{Binding Path=BuyPackageCommand, Mode=OneTime}"
+                    CommandParameter="{StaticResource AddFreeUnlimitedPackageName}"
+                    x:Uid="SettingsUpgrade_AddFreePackageButton">
+                Ad Free (unlimited)
+            </Button>
+
+            <TextBlock Style="{StaticResource BodyTextStyle}"  Margin="0, 40, 0, 0"
+                       x:Uid="SettingsUpgrade_UltimatePackageDescription">
+                Or you can spend $4.99 for Ultimate package. This package does not offer any additional features now (other than Ad Free package has). 
+                But it will contains all additional features, which we will ship in future (limited offer):
+            </TextBlock>
+
+            <Button Margin="0, 20, 0, 0" Command="{Binding Path=BuyPackageCommand, Mode=OneTime}"
+                    CommandParameter="{StaticResource UltimatePackageName}"
+                    x:Uid="SettingsUpgrade_UltimatePackageButton">
+                Ultimate (unlimited)
+            </Button>
+
+            <TextBlock Style="{StaticResource BodyTextStyle}"  Margin="0, 40, 0, 0"
+                       x:Uid="SettingsUpgrade_ThankYou">
+                Thank you!
+            </TextBlock>
+        </StackPanel>
+
+    </ScrollViewer>
+        
 </views:ViewBase>

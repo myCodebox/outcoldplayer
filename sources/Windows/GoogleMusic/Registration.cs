@@ -90,6 +90,10 @@ namespace OutcoldSolutions.GoogleMusic
             registration.Register<OfflineCacheViewPresenter>();
             registration.Register<OfflineCacheViewBindingModel>();
 
+            registration.Register<DownloadQueueView>()
+                            .InjectionRule<BindingModelBase, DownloadQueueViewPresenter>();
+            registration.Register<DownloadQueueViewPresenter>();
+
             registration.Register<UpgradeView>()
                         .InjectionRule<BindingModelBase, UpgradeViewPresenter>();
             registration.Register<UpgradeViewPresenter>();

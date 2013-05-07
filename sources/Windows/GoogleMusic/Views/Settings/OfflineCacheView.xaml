@@ -8,59 +8,71 @@
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400">
-    <StackPanel>
-        <StackPanel.Transitions>
-            <TransitionCollection>
-                <EntranceThemeTransition FromHorizontalOffset="120" />
-            </TransitionCollection>
-        </StackPanel.Transitions>
 
-        <Border Height="10">
-            <ProgressBar IsIndeterminate="True" Visibility="{Binding Path=BindingModel.IsLoading, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
-        </Border>
+    <ScrollViewer VerticalScrollMode="Auto" 
+                  VerticalScrollBarVisibility="Auto"
+                  HorizontalScrollMode="Disabled" >
+
+        <StackPanel>
+            <StackPanel.Transitions>
+                <TransitionCollection>
+                    <EntranceThemeTransition FromHorizontalOffset="120" />
+                </TransitionCollection>
+            </StackPanel.Transitions>
+
+            <Border Height="10">
+                <ProgressBar IsIndeterminate="True" Visibility="{Binding Path=BindingModel.IsLoading, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            </Border>
         
-        <TextBlock Style="{StaticResource BodyTextStyle}">
-            Album arts cache size:
-        </TextBlock>
+            <TextBlock Style="{StaticResource BodyTextStyle}">
+                Album arts cache size:
+            </TextBlock>
 
-        <TextBlock Style="{StaticResource BodyTextStyle}"
-                   Text="{Binding Path=BindingModel.AlbumArtCacheSize, Mode=OneWay, Converter={StaticResource SizeToStringConverter}}"
-                   Margin="0, 10, 0, 0"/>
+            <TextBlock Style="{StaticResource BodyTextStyle}"
+                       Text="{Binding Path=BindingModel.AlbumArtCacheSize, Mode=OneWay, Converter={StaticResource SizeToStringConverter}}"
+                       Margin="0, 10, 0, 0"/>
 
-        <Button Command="{Binding Path=ClearAlbumArtsCacheCommand}" 
-                Content="Clear album arts cache" 
-                Margin="0, 20, 0, 0"/>
+            <Button Command="{Binding Path=ClearAlbumArtsCacheCommand}" 
+                    Content="Clear album arts cache" 
+                    Margin="0, 20, 0, 0"/>
 
-        <TextBlock Style="{StaticResource BodyTextStyle}"
-                   Margin="0, 40, 0, 0">
-            Songs cache size:
-        </TextBlock>
+            <TextBlock Style="{StaticResource BodyTextStyle}"
+                       Margin="0, 40, 0, 0">
+                Songs cache size:
+            </TextBlock>
 
-        <TextBlock Style="{StaticResource BodyTextStyle}"
-                   Text="{Binding Path=BindingModel.SongsCacheSize, Mode=OneWay, Converter={StaticResource SizeToStringConverter}}"
-                   Margin="0, 10, 0, 0"/>
+            <TextBlock Style="{StaticResource BodyTextStyle}"
+                       Text="{Binding Path=BindingModel.SongsCacheSize, Mode=OneWay, Converter={StaticResource SizeToStringConverter}}"
+                       Margin="0, 10, 0, 0"/>
 
-        <Button Command="{Binding Path=ClearSongsCacheCommand}" 
-                Content="Clear songs cache" 
-                Margin="0, 20, 0, 0"/>
+            <Button Command="{Binding Path=ClearSongsCacheCommand}" 
+                    Content="Clear songs cache" 
+                    Margin="0, 20, 0, 0"/>
 
-        <ToggleSwitch IsOn="{Binding Path=BindingModel.AutomaticCache, Mode=TwoWay}"
-                      Margin="0, 40, 0, 0"
-                      IsEnabled="{Binding Path=BindingModel.IsCacheEditable, Mode=OneTime}">
-            Automatic cache
-        </ToggleSwitch>
+            <ToggleSwitch IsOn="{Binding Path=BindingModel.AutomaticCache, Mode=TwoWay}"
+                          Margin="0, 40, 0, 0"
+                          IsEnabled="{Binding Path=BindingModel.IsCacheEditable, Mode=OneTime}">
+                Automatic cache
+            </ToggleSwitch>
 
-        <TextBlock Style="{StaticResource BodyTextStyle}"
-                   Margin="0, 40, 0, 0">
-            Maximum songs in cache:
-        </TextBlock>
+            <TextBlock Style="{StaticResource BodyTextStyle}"
+                       Margin="0, 40, 0, 0">
+                Maximum songs in cache:
+            </TextBlock>
 
-        <TextBox InputScope="Number" 
-                 Margin="0, 20, 0, 0"
-                 MaxLength="5"
-                 Text="{Binding Path=BindingModel.MaximumCacheSize, Mode=TwoWay}"
-                 IsEnabled="{Binding Path=BindingModel.IsCacheEditable, Mode=OneTime}"
-                 KeyDown="TextBlockMaxCacheSize_OnKeyDown"/>
+            <TextBox InputScope="Number" 
+                     Margin="0, 20, 0, 0"
+                     MaxLength="5"
+                     Text="{Binding Path=BindingModel.MaximumCacheSize, Mode=TwoWay}"
+                     IsEnabled="{Binding Path=BindingModel.IsCacheEditable, Mode=OneTime}"
+                     KeyDown="TextBlockMaxCacheSize_OnKeyDown"/>
+
+            <Button Command="{Binding Path=ShowDownloadQueueCommand}" 
+                    Content="Download queue" 
+                    Margin="0, 40, 0, 0"/>
+
+        </StackPanel>
         
-    </StackPanel>
+        </ScrollViewer>
+        
 </views:ViewBase>

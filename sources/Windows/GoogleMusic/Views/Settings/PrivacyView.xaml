@@ -7,32 +7,40 @@
     mc:Ignorable="d"
     d:DesignHeight="600"
     d:DesignWidth="350">
-    <StackPanel>
-        <StackPanel.Transitions>
-            <TransitionCollection>
-                <EntranceThemeTransition FromHorizontalOffset="120" />
-            </TransitionCollection>
-        </StackPanel.Transitions>
+    
+    <ScrollViewer VerticalScrollMode="Auto" 
+                  VerticalScrollBarVisibility="Auto"
+                  HorizontalScrollMode="Disabled" >
+    
+        <StackPanel>
+            <StackPanel.Transitions>
+                <TransitionCollection>
+                    <EntranceThemeTransition FromHorizontalOffset="120" />
+                </TransitionCollection>
+            </StackPanel.Transitions>
 
-        <TextBlock Style="{StaticResource BodyTextStyle}">
-                        To use gMusic player you need to provide your Google Account's email and password. 
-                        If you do not have one, you need to create Google Account. Please make sure that you have subscribed to Google Music service. 
-                        For more details go to the Google Music site.
-        </TextBlock>
+            <TextBlock Style="{StaticResource BodyTextStyle}">
+                            To use gMusic player you need to provide your Google Account's email and password. 
+                            If you do not have one, you need to create Google Account. Please make sure that you have subscribed to Google Music service. 
+                            For more details go to the Google Music site.
+            </TextBlock>
 
-        <TextBlock Style="{StaticResource BodyTextStyle}" Margin="0, 20, 0, 0">
-                        gMusic can store your Google Account user name and password, you will be asked on the authentication page if you want to do this or not. 
-                        Password will be stored in encrypted Windows Storage.
-        </TextBlock>
+            <TextBlock Style="{StaticResource BodyTextStyle}" Margin="0, 20, 0, 0">
+                            gMusic can store your Google Account user name and password, you will be asked on the authentication page if you want to do this or not. 
+                            Password will be stored in encrypted Windows Storage.
+            </TextBlock>
 
-        <TextBlock Style="{StaticResource BodyTextStyle}" Margin="0, 20, 0, 0">
-                        We do not collect any personal information. But we can collect application health information, which does not include any personal information, 
-                        and this can be collected only by turning on special settings in Support tab.
-        </TextBlock>
+            <TextBlock Style="{StaticResource BodyTextStyle}" Margin="0, 20, 0, 0">
+                            We do not collect any personal information. But we can collect application health information, which does not include any personal information, 
+                            and this can be collected only by turning on special settings in Support tab.
+            </TextBlock>
 
-        <TextBlock Style="{StaticResource BodyTextStyle}" Margin="0, 20, 0, 0">
-                        Because this is client for Google Music Services you need to be acquainted with Google Account Privacy Policy.
-        </TextBlock>
+            <TextBlock Style="{StaticResource BodyTextStyle}" Margin="0, 20, 0, 0">
+                            Because this is client for Google Music Services you need to be acquainted with Google Account Privacy Policy.
+            </TextBlock>
 
-    </StackPanel>
+        </StackPanel>
+        
+    </ScrollViewer>
+    
 </UserControl>

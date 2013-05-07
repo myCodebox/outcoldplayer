@@ -11,6 +11,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Shell;
     using OutcoldSolutions.Presenters;
+    using OutcoldSolutions.Shell;
     using OutcoldSolutions.Views;
 
     using Windows.Storage;
@@ -21,15 +22,19 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
         private readonly ISongsCachingService songsCachingService;
         private readonly ISearchService searchService;
 
+        private readonly IApplicationSettingViewsService applicationSettingViewsService;
+
         public OfflineCacheViewPresenter(
             IAlbumArtCacheService albumArtCacheService,
             ISongsCachingService songsCachingService, 
             OfflineCacheViewBindingModel bindingModel,
-            ISearchService searchService)
+            ISearchService searchService,
+            IApplicationSettingViewsService applicationSettingViewsService)
         {
             this.albumArtCacheService = albumArtCacheService;
             this.songsCachingService = songsCachingService;
             this.searchService = searchService;
+            this.applicationSettingViewsService = applicationSettingViewsService;
             this.BindingModel = bindingModel;
 
             this.BindingModel.IsLoading = true;
@@ -38,6 +43,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
 
             this.ClearAlbumArtsCacheCommand = new DelegateCommand(this.ClearAlbumArtsCache, () => !this.BindingModel.IsLoading);
             this.ClearSongsCacheCommand = new DelegateCommand(this.ClearSongsCache, () => !this.BindingModel.IsLoading);
+            this.ShowDownloadQueueCommand = new DelegateCommand(this.ShowDownloadQueue);
         }
 
         public OfflineCacheViewBindingModel BindingModel { get; private set; }
@@ -45,6 +51,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
         public DelegateCommand ClearAlbumArtsCacheCommand { get; private set; }
 
         public DelegateCommand ClearSongsCacheCommand { get; private set; }
+
+        public DelegateCommand ShowDownloadQueueCommand { get; private set; }
 
         protected async override void OnInitialized()
         {
@@ -60,6 +68,12 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
             base.OnDisposing();
 
             this.searchService.SetShowOnKeyboardInput(true);
+        }
+
+        private void ShowDownloadQueue()
+        {
+            this.applicationSettingViewsService.Close();
+            this.applicationSettingViewsService.Show("downloadqueue");
         }
 
         private async void ClearAlbumArtsCache()

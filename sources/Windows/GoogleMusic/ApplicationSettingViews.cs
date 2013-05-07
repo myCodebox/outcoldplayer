@@ -23,7 +23,7 @@ namespace OutcoldSolutions.GoogleMusic
              }
 
              service.RegisterSettings<SupportView>("support", resources.GetString("SettingsSupportTitle"));
-             service.RegisterSettings<PrivacyView>("privacy",  resources.GetString("SettingsPrivacyPolicyTitle"));
+             service.RegisterSettings<PrivacyView>("privacy", resources.GetString("SettingsPrivacyPolicyTitle"));
              service.RegisterSettings<LegalView>("legal", resources.GetString("SettingsLegalTitle"));
 
              InAppPurchases.LicenseChanged += () =>
@@ -45,9 +45,12 @@ namespace OutcoldSolutions.GoogleMusic
                      }
                  }
              };
+
 #if DEBUG
              InAppPurchases.SimulatorInAppPurchasesInitialization();
 #endif
+
+             service.RegisterSettings<DownloadQueueView>("downloadqueue", "Download queue", ApplicationSettingLayoutType.Large, null, visibleInSettings: false);
          }
     }
 }
