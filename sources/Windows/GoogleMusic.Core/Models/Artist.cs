@@ -29,6 +29,8 @@ namespace OutcoldSolutions.GoogleMusic.Models
 
         public int AlbumsCount { get; set; }
 
+        public int OfflineAlbumsCount { get; set; }
+
         public int SongsCount { get; set; }
 
         public int OfflineSongsCount { get; set; }
