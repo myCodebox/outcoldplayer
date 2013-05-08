@@ -139,6 +139,7 @@
     <Compile Include="Repositories\RepositoryBase.cs" />
     <Compile Include="Repositories\SystemPlaylistsRepository.cs" />
     <Compile Include="Services\AlbumArtCacheService.cs" />
+    <Compile Include="Services\ApplicationStateService.cs" />
     <Compile Include="Services\IAlbumArtCacheService.cs" />
     <Compile Include="Services\PlaylistsService.cs" />
     <Compile Include="Services\SongsService.cs" />

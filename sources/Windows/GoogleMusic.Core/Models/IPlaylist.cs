@@ -17,7 +17,11 @@ namespace OutcoldSolutions.GoogleMusic.Models
 
         int SongsCount { get; set; }
 
+        int OfflineSongsCount { get; set; }
+
         TimeSpan Duration { get; set; }
+
+        TimeSpan OfflineDuration { get; set; }
 
         Uri ArtUrl { get; set; }
 

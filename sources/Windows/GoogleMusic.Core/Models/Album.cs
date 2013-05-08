@@ -35,9 +35,13 @@ namespace OutcoldSolutions.GoogleMusic.Models
 
         public int SongsCount { get; set; }
 
+        public int OfflineSongsCount { get; set; }
+
         public ushort? Year { get; set; }
 
         public TimeSpan Duration { get; set; }
+
+        public TimeSpan OfflineDuration { get; set; }
 
         public Uri ArtUrl { get; set; }
 

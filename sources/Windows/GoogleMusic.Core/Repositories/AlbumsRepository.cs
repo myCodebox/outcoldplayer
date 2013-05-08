@@ -11,6 +11,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.Models;
+    using OutcoldSolutions.GoogleMusic.Services;
 
     public interface IAlbumsRepository : IPlaylistRepository<Album>
     {
@@ -165,26 +166,35 @@ from [Album] x
 where s.[SongId] = ?1
 ";
 
-        private readonly Dictionary<Order, string> orderStatements = new Dictionary<Order, string>()
+        private const string SqlAlbumCount = @"select count(*) from [Album] x ";
+
+        private static readonly Dictionary<Order, string> OrderStatements = new Dictionary<Order, string>()
                                                                 {
                                                                     { Order.Name,  " order by x.[TitleNorm]" },
                                                                     { Order.LastPlayed,  " order by x.[LastPlayed] desc" }
                                                                 };
 
+        private readonly IApplicationStateService stateService;
+
+        public AlbumsRepository(IApplicationStateService stateService)
+        {
+            this.stateService = stateService;
+        }
+
         public async Task<int> GetCountAsync()
         {
-            return await this.Connection.Table<Album>().CountAsync();
+            return await this.Connection.ExecuteScalarAsync<int>(SqlAlbumCount);
         }
 
         public async Task<IList<Album>> GetAllAsync(Order order, uint? take = null)
         {
-            if (!this.orderStatements.ContainsKey(order))
+            if (!OrderStatements.ContainsKey(order))
             {
                 throw new ArgumentOutOfRangeException("order");
             }
 
             var sql = new StringBuilder(SqlAllAlbums);
-            sql.Append(this.orderStatements[order]);
+            sql.Append(OrderStatements[order]);
 
             if (take.HasValue)
             {
