@@ -68,7 +68,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                                                  TitleNorm = resp.Title.Normalize()
                                              };
 
-                await this.repository.InstertAsync(userPlaylist);
+                await this.repository.InsertAsync(userPlaylist);
 
                 this.eventAggregator.Publish(PlaylistsChangeEvent.New(PlaylistType.UserPlaylist).AddAddedPlaylists(userPlaylist));
 

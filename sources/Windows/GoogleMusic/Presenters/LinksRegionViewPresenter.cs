@@ -8,6 +8,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
     using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.BindingModels;
+    using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Shell;
     using OutcoldSolutions.GoogleMusic.Web.Synchronization;
     using OutcoldSolutions.Presenters;
@@ -17,6 +18,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
     public class LinksRegionViewPresenter : ViewPresenterBase<IView>
     {
+        private readonly IApplicationStateService stateService;
         private readonly IApplicationResources resources;
         private readonly IDispatcher dispatcher;
         private readonly IGoogleMusicSynchronizationService googleMusicSynchronizationService;
@@ -25,11 +27,13 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private int synchronizationTime = 0; // we don't want to synchronize playlists each time, so we will do it on each 6 time
 
         public LinksRegionViewPresenter(
+            IApplicationStateService stateService,
             IApplicationResources resources,
             ISearchService searchService,
             IDispatcher dispatcher,
             IGoogleMusicSynchronizationService googleMusicSynchronizationService)
         {
+            this.stateService = stateService;
             this.resources = resources;
             this.dispatcher = dispatcher;
             this.googleMusicSynchronizationService = googleMusicSynchronizationService;
@@ -56,39 +60,44 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private async Task Synchronize()
         {
-            await this.dispatcher.RunAsync(
-                () =>
+            await this.dispatcher.RunAsync(() => this.synchronizationTimer.Stop());
+
+            if (this.stateService.IsOnline())
+            {
+                await this.dispatcher.RunAsync(
+                    () =>
                     {
-                        this.synchronizationTimer.Stop();
                         this.BindingModel.IsSynchronizing = true;
                         this.BindingModel.UpdatingText = this.resources.GetString("LinksRegion_UpdatingSongs");
                     });
 
-            bool error = false;
+                bool error = false;
 
-            try
-            {
-                await this.googleMusicSynchronizationService.UpdateSongsAsync();
-
-                if (this.synchronizationTime == 0)
+                try
                 {
-                    await this.dispatcher.RunAsync(() => { this.BindingModel.UpdatingText = this.resources.GetString("LinksRegion_UpdatingPlaylists"); });
-                    await this.googleMusicSynchronizationService.UpdateUserPlaylistsAsync();
+                    await this.googleMusicSynchronizationService.UpdateSongsAsync();
+
+                    if (this.synchronizationTime == 0)
+                    {
+                        await this.dispatcher.RunAsync(() => { this.BindingModel.UpdatingText = this.resources.GetString("LinksRegion_UpdatingPlaylists"); });
+                        await this.googleMusicSynchronizationService.UpdateUserPlaylistsAsync();
+                    }
                 }
-            }
-            catch (Exception e)
-            {
-                this.Logger.Error(e, "Exception while update user playlist.");
-                error = true;
+                catch (Exception e)
+                {
+                    this.Logger.Error(e, "Exception while update user playlist.");
+                    error = true;
+                }
+
+                await this.dispatcher.RunAsync(
+                         () =>
+                         {
+                             this.BindingModel.IsSynchronizing = false;
+                             this.BindingModel.UpdatingText = error ? this.resources.GetString("LinksRegion_FailedToUpdate") : this.resources.GetString("LinksRegion_Updated");
+                         });
+                await Task.Delay(TimeSpan.FromSeconds(2));
             }
 
-            await this.dispatcher.RunAsync(
-                     () =>
-                     {
-                         this.BindingModel.IsSynchronizing = false;
-                         this.BindingModel.UpdatingText = error ? this.resources.GetString("LinksRegion_FailedToUpdate") : this.resources.GetString("LinksRegion_Updated");
-                     });
-            await Task.Delay(TimeSpan.FromSeconds(2));
             await this.dispatcher.RunAsync(
                      () =>
                      {

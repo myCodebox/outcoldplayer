@@ -145,7 +145,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
                                                TitleNorm = googleUserPlaylist.Title.Normalize()
                                            };
 
-                    await this.userPlaylistsRepository.InstertAsync(userPlaylist);
+                    await this.userPlaylistsRepository.InsertAsync(userPlaylist);
 
                     if (googleUserPlaylist.Playlist != null)
                     {

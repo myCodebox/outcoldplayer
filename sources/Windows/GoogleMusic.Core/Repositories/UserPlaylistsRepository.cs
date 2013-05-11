@@ -9,10 +9,11 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.Models;
+    using OutcoldSolutions.GoogleMusic.Services;
 
     public interface IUserPlaylistsRepository : IPlaylistRepository<UserPlaylist>
     {
-        Task InstertAsync(UserPlaylist userPlaylist);
+        Task InsertAsync(UserPlaylist userPlaylist);
 
         Task DeleteAsync(UserPlaylist userPlaylist);
 
@@ -32,7 +33,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
         private const string SqlSearchPlaylists = @"
 select p.*
 from [UserPlaylist] as p  
-where p.[TitleNorm] like ?1
+where (?1 = 1 or x.[OfflineSongsCount] > 0) and p.[TitleNorm] like ?2
 order by p.[TitleNorm]
 ";
 
@@ -45,7 +46,7 @@ select s.*,
     e.[ProviderEntryId] as [UserPlaylistEntry.ProviderEntryId]
 from [Song] as s
      inner join UserPlaylistEntry e on e.SongId = s.SongId
-where e.[PlaylistId] = ?1
+where (?1 = 1 or s.IsCached = 1) and e.[PlaylistId] = ?2
 order by e.[PlaylistOrder]
 ";
 
@@ -53,14 +54,33 @@ order by e.[PlaylistOrder]
 DELETE FROM [UserPlaylistEntry] WHERE PlaylistId = ?1
 ";
 
+        private readonly IApplicationStateService stateService;
+
+        public UserPlaylistsRepository(IApplicationStateService stateService)
+        {
+            this.stateService = stateService;
+        }
+
         public async Task<int> GetCountAsync()
         {
-            return await this.Connection.Table<UserPlaylist>().CountAsync();
+            var query = this.Connection.Table<UserPlaylist>();
+
+            if (this.stateService.IsOffline())
+            {
+                query = query.Where(a => a.OfflineSongsCount > 0);
+            }
+
+            return await query.CountAsync();
         }
 
         public async Task<IList<UserPlaylist>> GetAllAsync(Order order, uint? take = null)
         {
-            var query = this.Connection.Table<UserPlaylist>(); 
+            var query = this.Connection.Table<UserPlaylist>();
+
+            if (this.stateService.IsOffline())
+            {
+                query = query.Where(a => a.OfflineSongsCount > 0);
+            }
 
             if (order == Order.Name)
             {
@@ -81,12 +101,19 @@ DELETE FROM [UserPlaylistEntry] WHERE PlaylistId = ?1
 
         public async Task<UserPlaylist> GetAsync(int id)
         {
-            return await this.Connection.Table<UserPlaylist>().Where(a => a.Id == id).FirstOrDefaultAsync();
+            var query = this.Connection.Table<UserPlaylist>().Where(a => a.Id == id);
+
+            if (this.stateService.IsOffline())
+            {
+                query = query.Where(a => a.OfflineSongsCount > 0);
+            }
+
+            return await query.FirstOrDefaultAsync();
         }
 
-        public async Task<IList<Song>> GetSongsAsync(int id)
+        public async Task<IList<Song>> GetSongsAsync(int id, bool includeAll = false)
         {
-            return await this.Connection.QueryAsync<Song>(SqlUserPlaylistSongs, id);
+            return await this.Connection.QueryAsync<Song>(SqlUserPlaylistSongs, includeAll || this.stateService.IsOnline(), id);
         }
 
         public async Task<IList<UserPlaylist>> SearchAsync(string searchQuery, uint? take)
@@ -100,10 +127,10 @@ DELETE FROM [UserPlaylistEntry] WHERE PlaylistId = ?1
                 sql.AppendFormat(" limit {0}", take.Value);
             }
 
-            return await this.Connection.QueryAsync<UserPlaylist>(sql.ToString(), string.Format("%{0}%", searchQueryNorm));
+            return await this.Connection.QueryAsync<UserPlaylist>(sql.ToString(), this.stateService.IsOnline(), string.Format("%{0}%", searchQueryNorm));
         }
         
-        public Task InstertAsync(UserPlaylist userPlaylist)
+        public Task InsertAsync(UserPlaylist userPlaylist)
         {
             return this.Connection.InsertAsync(userPlaylist);
         }

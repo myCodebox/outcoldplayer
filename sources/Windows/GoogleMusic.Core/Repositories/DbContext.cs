@@ -283,7 +283,7 @@ CREATE TRIGGER update_song_albumarturl AFTER UPDATE OF [AlbumArtUrl] ON [Song]
 ");
 
                 await connection.ExecuteAsync(@"
-CREATE TRIGGER update_song_parenttitlesupdate AFTER UPDATE OF [AlbumTitleNorm], [GenreTitleNorm], [ArtistAlbumTitleNorm], [ArtistTitleNorm] ON [Song]
+CREATE TRIGGER update_song_parenttitlesupdate AFTER UPDATE OF [AlbumTitleNorm], [GenreTitleNorm], [AlbumArtistTitleNorm], [ArtistTitleNorm] ON [Song]
   BEGIN  
 
     -------------- DELETE -------------------
@@ -462,6 +462,11 @@ CREATE TRIGGER update_song_parenttitlesupdate AFTER UPDATE OF [AlbumTitleNorm], 
       [OfflineDuration] = [UserPlaylist].[OfflineDuration] + (select sum(s.Duration) from Song s inner join UserPlaylistEntry as e on e.SongId = s.[SongId] and e.PlaylistId = [UserPlaylist].[PlaylistId] where s.SongId = new.SongId)  
     where nullif(new.FileName, '') is not null and exists (select * from UserPlaylistEntry as e where e.SongId = new.SongId and e.PlaylistId = [UserPlaylist].[PlaylistId]);
 
+    update [Song]    
+    set     
+       [IsCached] = 1       
+    where nullif(new.FileName, '') is not null and [Song].SongId = new.SongId;
+
   END;");
 
                 await connection.ExecuteAsync(@"CREATE TRIGGER delete_cachedsong AFTER DELETE ON CachedSong
@@ -497,6 +502,11 @@ CREATE TRIGGER update_song_parenttitlesupdate AFTER UPDATE OF [AlbumTitleNorm], 
       [OfflineDuration] = [UserPlaylist].[OfflineDuration] - (select sum(s.Duration) from Song s inner join UserPlaylistEntry as e on e.SongId = s.[SongId] and e.PlaylistId = [UserPlaylist].[PlaylistId] where s.SongId = old.SongId)  
     where nullif(old.FileName, '') is not null and exists (select * from UserPlaylistEntry as e where e.SongId = old.SongId and e.PlaylistId = [UserPlaylist].[PlaylistId]);
 
+    update [Song]    
+    set     
+       [IsCached] = 0     
+    where [Song].SongId = old.SongId;
+
   END;");
 
                 await connection.ExecuteAsync(@"CREATE TRIGGER update_cachedsong AFTER UPDATE ON CachedSong
@@ -531,6 +541,11 @@ CREATE TRIGGER update_song_parenttitlesupdate AFTER UPDATE OF [AlbumTitleNorm], 
       [OfflineSongsCount] = [UserPlaylist].[OfflineSongsCount] + (select count(*) from UserPlaylistEntry as e where e.PlaylistId = [UserPlaylist].[PlaylistId] and e.SongId = old.SongId),
       [OfflineDuration] = [UserPlaylist].[OfflineDuration] + (select sum(s.Duration) from Song s inner join UserPlaylistEntry as e on e.SongId = s.[SongId] and e.PlaylistId = [UserPlaylist].[PlaylistId] where s.SongId = old.SongId)  
     where nullif(old.FileName, '') is null and nullif(new.[FileName], '') is not null and new.SongId = old.SongId and exists (select * from UserPlaylistEntry as e where e.SongId = old.SongId and e.PlaylistId = [UserPlaylist].[PlaylistId]);
+
+    update [Song]    
+    set     
+       [IsCached] = 1       
+    where nullif(old.FileName, '') is null and nullif(new.[FileName], '') is not null and [Song].SongId = new.SongId;
 
   END;");
 

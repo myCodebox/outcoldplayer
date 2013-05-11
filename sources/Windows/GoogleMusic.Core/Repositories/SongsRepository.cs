@@ -9,12 +9,11 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.Models;
+    using OutcoldSolutions.GoogleMusic.Services;
 
     public interface ISongsRepository
     {
         Task<Song> GetSongAsync(int songId);
-
-        Task<Song> FindAsync(string providerSongId);
 
         Task<IList<Song>> SearchAsync(string searchQuery, uint? take = null);
 
@@ -30,19 +29,21 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
         private const string SqlSearchSongs = @"
 select s.* 
 from [Song] as s
-where s.[TitleNorm] like ?1
+where (?1 = 1 or s.[IsCached] = 1) and s.[TitleNorm] like ?2
 order by s.[TitleNorm]
 ";
 
         private const string SqlSong = @"
 select s.* 
 from [Song] as s
-where s.[SongId] = ?1
+where (?1 = 1 or s.[IsCached] = 1) and s.[SongId] = ?2
 ";
 
-        public Task<Song> FindAsync(string providerSongId)
+        private readonly IApplicationStateService stateService;
+
+        public SongsRepository(IApplicationStateService stateService)
         {
-            return this.Connection.Table<Song>().Where(s => s.ProviderSongId == providerSongId).FirstOrDefaultAsync();
+            this.stateService = stateService;
         }
 
         public async Task<IList<Song>> SearchAsync(string searchQuery, uint? take = null)
@@ -56,7 +57,7 @@ where s.[SongId] = ?1
                 sql.AppendFormat(" limit {0}", take.Value);
             }
 
-            return await this.Connection.QueryAsync<Song>(sql.ToString(), string.Format("%{0}%", searchQueryNorm));
+            return await this.Connection.QueryAsync<Song>(sql.ToString(), this.stateService.IsOnline(), string.Format("%{0}%", searchQueryNorm));
         }
 
         public Task UpdateAsync(IEnumerable<Song> songs)
@@ -82,7 +83,7 @@ where s.[SongId] = ?1
 
         public async Task<Song> GetSongAsync(int songId)
         {
-            return (await this.Connection.QueryAsync<Song>(SqlSong, songId)).FirstOrDefault();
+            return (await this.Connection.QueryAsync<Song>(SqlSong, this.stateService.IsOnline(), songId)).FirstOrDefault();
         }
     }
 }

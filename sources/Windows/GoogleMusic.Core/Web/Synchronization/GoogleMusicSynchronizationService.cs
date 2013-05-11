@@ -190,11 +190,11 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
                         TitleNorm = googlePlaylist.Title.Normalize()
                     };
 
-                    await this.userPlaylistsRepository.InstertAsync(userPlaylist);
+                    await this.userPlaylistsRepository.InsertAsync(userPlaylist);
                     newPlaylists++;
                 }
 
-                var userPlaylistSongs = await this.userPlaylistsRepository.GetSongsAsync(userPlaylist.Id);
+                var userPlaylistSongs = await this.userPlaylistsRepository.GetSongsAsync(userPlaylist.Id, includeAll: true);
 
                 List<UserPlaylistEntry> newEntries = new List<UserPlaylistEntry>();
                 List<UserPlaylistEntry> updatedEntries = new List<UserPlaylistEntry>();

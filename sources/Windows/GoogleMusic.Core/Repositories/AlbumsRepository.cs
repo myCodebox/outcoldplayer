@@ -15,7 +15,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
 
     public interface IAlbumsRepository : IPlaylistRepository<Album>
     {
-        Task<IList<Album>> GetArtistAlbumsAsync(int atistId);
+        Task<IList<Album>> GetArtistAlbumsAsync(int artistId);
 
         Task<Album> FindSongAlbumAsync(int songId);
     }
@@ -43,7 +43,8 @@ select
        a.[ArtUrl] as [Artist.ArtUrl],
        a.[LastPlayed]  as [Artist.LastPlayed]
 from [Album] x 
-     inner join [Artist] as a on x.[ArtistTitleNorm] = a.[TitleNorm]      
+     inner join [Artist] as a on x.[ArtistTitleNorm] = a.[TitleNorm]  
+where (?1 = 1 or x.[OfflineSongsCount] > 0) 
 ";
 
        private const string SqlSearchAlbums = @"
@@ -68,7 +69,7 @@ select
        a.[LastPlayed]  as [Artist.LastPlayed]
 from [Album] x 
      inner join [Artist] as a on x.[ArtistTitleNorm] = a.[TitleNorm]
-where x.[TitleNorm] like ?1
+where (?1 = 1 or x.[OfflineSongsCount] > 0) and x.[TitleNorm] like ?2
 order by x.[TitleNorm]
 ";
 
@@ -99,7 +100,7 @@ select
        0 as [IsCollection]
 from [Album] x 
      inner join [Artist] as a on x.[ArtistTitleNorm] = a.[TitleNorm]     
-where a.[ArtistId] = ?1
+where (?1 = 1 or x.[OfflineSongsCount] > 0) and a.[ArtistId] = ?2
 
 union
 
@@ -126,7 +127,8 @@ select
 from [Song] as s 
     inner join [Album] a on s.[AlbumTitleNorm] = a.[TitleNorm]      
     inner join [Artist] ar on ar.[TitleNorm] = s.[ArtistTitleNorm]
-where s.[ArtistTitleNorm] <> coalesce(nullif(s.[AlbumArtistTitleNorm], ''), s.[ArtistTitleNorm]) and ar.[ArtistId] = ?1
+where (?1 = 1 or s.IsCached = 1) and
+    s.[ArtistTitleNorm] <> coalesce(nullif(s.[AlbumArtistTitleNorm], ''), s.[ArtistTitleNorm]) and ar.[ArtistId] = ?2
 group by a.[AlbumId], a.[Title], a.[TitleNorm], a.[ArtistTitleNorm], a.[Year], a.[ArtUrl], a.[LastPlayed]
 ) as x
 order by x.IsCollection, x.Year 
@@ -136,7 +138,7 @@ order by x.IsCollection, x.Year
 select s.* 
 from [Song] as s
      inner join Album a on s.[AlbumTitleNorm] = a.[TitleNorm] and coalesce(nullif(s.AlbumArtistTitleNorm, ''), s.[ArtistTitleNorm]) = a.[ArtistTitleNorm]
-where a.AlbumId = ?1
+where  (?1 = 1 or s.[IsCached] = 1) and a.AlbumId = ?2
 order by coalesce(nullif(s.Disc, 0), 1), s.Track
 ";
 
@@ -163,10 +165,10 @@ select
 from [Album] x 
      inner join [Artist] as a on x.[ArtistTitleNorm] = a.[TitleNorm]
      inner join [Song] as s on x.[TitleNorm] = s.[AlbumTitleNorm]
-where s.[SongId] = ?1
+where (?1 = 1 or x.[OfflineSongsCount] > 0) and s.[SongId] = ?2
 ";
 
-        private const string SqlAlbumCount = @"select count(*) from [Album] x ";
+        private const string SqlAlbumCount = @"select count(*) from [Album] x where ?1 = 1 or x.[OfflineSongsCount] > 0";
 
         private static readonly Dictionary<Order, string> OrderStatements = new Dictionary<Order, string>()
                                                                 {
@@ -183,7 +185,7 @@ where s.[SongId] = ?1
 
         public async Task<int> GetCountAsync()
         {
-            return await this.Connection.ExecuteScalarAsync<int>(SqlAlbumCount);
+            return await this.Connection.ExecuteScalarAsync<int>(SqlAlbumCount, this.stateService.IsOnline());
         }
 
         public async Task<IList<Album>> GetAllAsync(Order order, uint? take = null)
@@ -201,17 +203,17 @@ where s.[SongId] = ?1
                 sql.AppendFormat(" limit {0}", take.Value);
             }
 
-            return await this.Connection.QueryAsync<Album>(sql.ToString());
+            return await this.Connection.QueryAsync<Album>(sql.ToString(), this.stateService.IsOnline());
         }
 
-        public async Task<IList<Album>> GetArtistAlbumsAsync(int atistId)
+        public async Task<IList<Album>> GetArtistAlbumsAsync(int artistId)
         {
-            return await this.Connection.QueryAsync<Album>(SqlArtistAlbums, atistId);
+            return await this.Connection.QueryAsync<Album>(SqlArtistAlbums, this.stateService.IsOnline(), artistId);
         }
 
         public async Task<Album> FindSongAlbumAsync(int songId)
         {
-            return (await this.Connection.QueryAsync<Album>(SqlSongAlbum, songId)).FirstOrDefault();
+            return (await this.Connection.QueryAsync<Album>(SqlSongAlbum, this.stateService.IsOnline(), songId)).FirstOrDefault();
         }
 
         public async Task<IList<Album>> SearchAsync(string searchQuery, uint? take)
@@ -225,20 +227,20 @@ where s.[SongId] = ?1
                 sql.AppendFormat(" limit {0}", take.Value);
             }
 
-            return await this.Connection.QueryAsync<Album>(sql.ToString(), string.Format("%{0}%", searchQueryNorm));
+            return await this.Connection.QueryAsync<Album>(sql.ToString(), this.stateService.IsOnline(), string.Format("%{0}%", searchQueryNorm));
         }
 
         public async Task<Album> GetAsync(int id)
         {
             var sql = new StringBuilder(SqlAllAlbums);
-            sql.Append(" where x.[AlbumId] == ?1 ");
+            sql.Append(" and x.[AlbumId] == ?2 ");
 
-            return (await this.Connection.QueryAsync<Album>(sql.ToString(), id)).FirstOrDefault();
+            return (await this.Connection.QueryAsync<Album>(sql.ToString(), this.stateService.IsOnline(), id)).FirstOrDefault();
         }
 
-        public async Task<IList<Song>> GetSongsAsync(int id)
+        public async Task<IList<Song>> GetSongsAsync(int id, bool includeAll = false)
         {
-            return await this.Connection.QueryAsync<Song>(SqlAlbumsSongs, id);
+            return await this.Connection.QueryAsync<Song>(SqlAlbumsSongs, includeAll || this.stateService.IsOnline(), id);
         }
     }
 }

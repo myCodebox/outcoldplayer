@@ -74,5 +74,7 @@ namespace OutcoldSolutions.GoogleMusic.Models
 
         [Indexed]
         public string GenreTitleNorm { get; set; }
+
+        public bool IsCached { get; set; }
     }
 }

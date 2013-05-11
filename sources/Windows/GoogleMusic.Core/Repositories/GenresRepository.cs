@@ -9,6 +9,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.Models;
+    using OutcoldSolutions.GoogleMusic.Services;
 
     public interface IGenresRepository : IPlaylistRepository<Genre>
     {
@@ -19,7 +20,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
         private const string SqlSearchGenres = @"
 select x.*
 from [Genre] as x  
-where x.[TitleNorm] like ?1
+where (?1 = 1 or x.[OfflineSongsCount] > 0) and x.[TitleNorm] like ?2
 order by x.[TitleNorm]
 ";
 
@@ -27,18 +28,37 @@ order by x.[TitleNorm]
 select s.* 
 from [Song] as s
      inner join Genre g on s.GenreTitleNorm = g.TitleNorm
-where g.GenreId = ?1
+where (?1 = 1 or s.[IsCached] = 1) and g.GenreId = ?2
 order by coalesce(nullif(s.AlbumArtistTitleNorm, ''), s.[ArtistTitleNorm]), s.AlbumTitleNorm, coalesce(nullif(s.Disc, 0), 1), s.Track
 ";
+        
+        private readonly IApplicationStateService stateService;
+
+        public GenresRepository(IApplicationStateService stateService)
+        {
+            this.stateService = stateService;
+        }
 
         public async Task<int> GetCountAsync()
         {
-            return await this.Connection.Table<Genre>().CountAsync();
+            var query = this.Connection.Table<Genre>();
+
+            if (this.stateService.IsOffline())
+            {
+                query = query.Where(a => a.OfflineSongsCount > 0);
+            }
+
+            return await query.CountAsync();
         }
 
         public async Task<IList<Genre>> GetAllAsync(Order order, uint? take = null)
         {
             var query = this.Connection.Table<Genre>();
+
+            if (this.stateService.IsOffline())
+            {
+                query = query.Where(a => a.OfflineSongsCount > 0);
+            }
 
             if (order == Order.Name)
             {
@@ -68,17 +88,24 @@ order by coalesce(nullif(s.AlbumArtistTitleNorm, ''), s.[ArtistTitleNorm]), s.Al
                 sql.AppendFormat(" limit {0}", take.Value);
             }
 
-            return await this.Connection.QueryAsync<Genre>(sql.ToString(), string.Format("%{0}%", searchQueryNorm));
+            return await this.Connection.QueryAsync<Genre>(sql.ToString(), this.stateService.IsOnline(), string.Format("%{0}%", searchQueryNorm));
         }
 
         public async Task<Genre> GetAsync(int id)
         {
-            return await this.Connection.Table<Genre>().Where(a => a.Id == id).FirstOrDefaultAsync();
+            var query = this.Connection.Table<Genre>().Where(a => a.Id == id);
+
+            if (this.stateService.IsOffline())
+            {
+                query = query.Where(a => a.OfflineSongsCount > 0);
+            }
+
+            return await query.FirstOrDefaultAsync();
         }
 
-        public async Task<IList<Song>> GetSongsAsync(int id)
+        public async Task<IList<Song>> GetSongsAsync(int id, bool includeAll = false)
         {
-            return await this.Connection.QueryAsync<Song>(SqlGenreSongs, id);
+            return await this.Connection.QueryAsync<Song>(SqlGenreSongs, includeAll || this.stateService.IsOnline(), id);
         }
     }
 }

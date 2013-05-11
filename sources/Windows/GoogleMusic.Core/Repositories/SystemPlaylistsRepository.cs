@@ -9,14 +9,14 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
     using System.Linq;
     using System.Threading.Tasks;
 
-    using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
+    using OutcoldSolutions.GoogleMusic.Services;
 
     public interface ISystemPlaylistsRepository : IPlaylistRepository<SystemPlaylist>
     {
         Task<SystemPlaylist> GetAsync(SystemPlaylistType systemPlaylistType);
 
-        Task<IList<Song>> GetSongsAsync(SystemPlaylistType systemPlaylistType);
+        Task<IList<Song>> GetSongsAsync(SystemPlaylistType systemPlaylistType, bool includeAll = false);
 
         Task<IList<SystemPlaylist>> GetAllAsync();
     }
@@ -26,77 +26,87 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
         private const int HighlyRatedValue = 4;
         private const int LastAddedSongsCount = 500;
 
-        private const string SqlHiglyRatedSongsPlaylits = @"
-select count(*) as SongsCount, sum(s.[Duration]) as Duration, ?2 as [SystemPlaylistType]
+        private const string SqlHiglyRatedSongsPlaylists = @"
+select count(*) as SongsCount, sum(s.[Duration]) as Duration, ?3 as [SystemPlaylistType]
 from [Song] as s
-where s.[Rating] >= ?1 
+where (?1 = 1 or s.[IsCached] = 1) and s.[Rating] >= ?2 
 ";
 
         private const string SqlLastAddedPlaylist = @"
-select count(*) as SongsCount, sum(x.[Duration]) as Duration, ?2 as [SystemPlaylistType] from 
+select count(*) as SongsCount, sum(x.[Duration]) as Duration, ?3 as [SystemPlaylistType] from 
 (
   select *
   from [Song] as s  
+  where (?1 = 1 or s.[IsCached] = 1) 
   order by s.[CreationDate] desc
-  limit ?1
+  limit ?2
 ) as x
 ";
 
         private const string SqlAllSongsPlaylist = @"
-select count(*) as SongsCount, sum(s.[Duration]) as Duration, ?1 as [SystemPlaylistType] from [Song] as s
+select count(*) as SongsCount, sum(s.[Duration]) as Duration, ?2 as [SystemPlaylistType] from [Song] as s where (?1 = 1 or s.[IsCached] = 1) 
 ";
 
         private const string SqlAllSongs = @"
 select s.* 
 from [Song] as s
+where (?1 = 1 or s.[IsCached] = 1) 
 order by coalesce(nullif(s.AlbumArtistTitleNorm, ''), s.[ArtistTitleNorm]), s.[AlbumTitleNorm], coalesce(nullif(s.Disc, 0), 1), s.Track
 ";
 
         private const string SqlHighlyRatedSongs = @"
 select s.* 
 from [Song] as s
-where s.[Rating] >= ?1 
+where (?1 = 1 or s.[IsCached] = 1) and s.[Rating] >= ?2
 order by s.TitleNorm
 ";
 
         private const string SqlLastAddedSongs = @"
 select *
 from [Song] as x  
+where (?1 = 1 or s.[IsCached] = 1)
 order by x.[CreationDate] desc
 limit ?1
 ";
 
+        private readonly IApplicationStateService stateService;
+
+        public SystemPlaylistsRepository(IApplicationStateService stateService)
+        {
+            this.stateService = stateService;
+        }
+
         public async Task<SystemPlaylist> GetHighlyRatedPlaylistAsync()
         {
-            return (await this.Connection.QueryAsync<SystemPlaylist>(SqlHiglyRatedSongsPlaylits, HighlyRatedValue, SystemPlaylistType.HighlyRated)).First();
+            return (await this.Connection.QueryAsync<SystemPlaylist>(SqlHiglyRatedSongsPlaylists, this.stateService.IsOnline(), HighlyRatedValue, SystemPlaylistType.HighlyRated)).First();
         }
 
         public async Task<SystemPlaylist> GetLastAddedSongsPlaylistAsync()
         {
-            return (await this.Connection.QueryAsync<SystemPlaylist>(SqlLastAddedPlaylist, LastAddedSongsCount, SystemPlaylistType.LastAdded)).First();
+            return (await this.Connection.QueryAsync<SystemPlaylist>(SqlLastAddedPlaylist, this.stateService.IsOnline(), LastAddedSongsCount, SystemPlaylistType.LastAdded)).First();
         }
 
         public async Task<SystemPlaylist> GetAllSongsPlaylistAsync()
         {
-            return (await this.Connection.QueryAsync<SystemPlaylist>(SqlAllSongsPlaylist, SystemPlaylistType.AllSongs)).First();
+            return (await this.Connection.QueryAsync<SystemPlaylist>(SqlAllSongsPlaylist, this.stateService.IsOnline(), SystemPlaylistType.AllSongs)).First();
         }
 
 
-        public Task<IList<Song>> GetSongsAsync(int id)
+        public Task<IList<Song>> GetSongsAsync(int id, bool includeAll = false)
         {
-            return this.GetSongsAsync((SystemPlaylistType)id);
+            return this.GetSongsAsync((SystemPlaylistType)id, includeAll);
         }
 
-        public Task<IList<Song>> GetSongsAsync(SystemPlaylistType systemPlaylistType)
+        public Task<IList<Song>> GetSongsAsync(SystemPlaylistType systemPlaylistType, bool includeAll = false)
         {
             switch (systemPlaylistType)
             {
                 case SystemPlaylistType.AllSongs:
-                    return this.GetAllSongsAsync();
+                    return this.GetAllSongsAsync(includeAll);
                 case SystemPlaylistType.HighlyRated:
-                    return this.GetHighlyRatedSongsAsync();
+                    return this.GetHighlyRatedSongsAsync(includeAll);
                 case SystemPlaylistType.LastAdded:
-                    return this.GetLastAddedSongsAsync();
+                    return this.GetLastAddedSongsAsync(includeAll);
                 default:
                     throw new ArgumentOutOfRangeException("systemPlaylistType");
             }
@@ -145,19 +155,19 @@ limit ?1
             }
         }
 
-        private async Task<IList<Song>> GetAllSongsAsync()
+        private async Task<IList<Song>> GetAllSongsAsync(bool includeAll = false)
         {
-            return await this.Connection.QueryAsync<Song>(SqlAllSongs);
+            return await this.Connection.QueryAsync<Song>(SqlAllSongs, includeAll || this.stateService.IsOnline());
         }
 
-        private async Task<IList<Song>> GetHighlyRatedSongsAsync()
+        private async Task<IList<Song>> GetHighlyRatedSongsAsync(bool includeAll = false)
         {
-            return await this.Connection.QueryAsync<Song>(SqlHighlyRatedSongs, HighlyRatedValue);
+            return await this.Connection.QueryAsync<Song>(SqlHighlyRatedSongs, includeAll || this.stateService.IsOnline(), HighlyRatedValue);
         }
 
-        private async Task<IList<Song>> GetLastAddedSongsAsync()
+        private async Task<IList<Song>> GetLastAddedSongsAsync(bool includeAll = false)
         {
-            return await this.Connection.QueryAsync<Song>(SqlLastAddedSongs, LastAddedSongsCount);
+            return await this.Connection.QueryAsync<Song>(SqlLastAddedSongs, includeAll || this.stateService.IsOnline(), LastAddedSongsCount);
         }
     }
 }
