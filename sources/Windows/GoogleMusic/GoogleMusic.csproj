@@ -140,7 +140,10 @@
     <Compile Include="Controls\SortableHeaderControl.cs" />
     <Compile Include="Controls\ValueChangedEventArgs.cs" />
     <Compile Include="Converters\AlbumArtUrlToImageConverter.cs" />
+    <Compile Include="Converters\ArtistAlbumsCountConverter.cs" />
     <Compile Include="Converters\DoubleToTimeConverter.cs" />
+    <Compile Include="Converters\PlaylistDurationConverter.cs" />
+    <Compile Include="Converters\PlaylistSongsCountConverter.cs" />
     <Compile Include="Converters\SizeToStringConverter.cs" />
     <Compile Include="Converters\SongToArtistConverter.cs" />
     <Compile Include="Converters\StringFormatConverter.cs" />

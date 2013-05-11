@@ -10,5 +10,8 @@
     <converters:AlbumArtUrlToImageConverter x:Key="AlbumArtUrlToImageConverter" />
     <converters:SizeToStringConverter x:Key="SizeToStringConverter" />
     <converters:SongToArtistConverter x:Key="SongToArtistConverter" />
+    <converters:PlaylistDurationConverter x:Key="PlaylistDurationConverter" />
+    <converters:PlaylistSongsCountConverter x:Key="PlaylistSongsCountConverter" />
+    <converters:ArtistAlbumsCountConverter x:Key="ArtistAlbumsCountConverter" />
     
 </ResourceDictionary>
