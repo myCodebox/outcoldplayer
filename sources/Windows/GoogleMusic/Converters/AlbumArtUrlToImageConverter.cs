@@ -21,6 +21,7 @@ namespace OutcoldSolutions.GoogleMusic.Converters
 
         private readonly Lazy<ILogger> logger = new Lazy<ILogger>(() => ApplicationBase.Container.Resolve<ILogManager>().CreateLogger("AlbumArtUrlToImageConverter"));
         private readonly Lazy<IAlbumArtCacheService> cacheService = new Lazy<IAlbumArtCacheService>(() => ApplicationBase.Container.Resolve<IAlbumArtCacheService>());
+        private readonly Lazy<IApplicationStateService> stateService = new Lazy<IApplicationStateService>(() => ApplicationBase.Container.Resolve<IApplicationStateService>());
 
         public object Convert(object value, Type targetType, object parameter, string language)
         {
@@ -65,7 +66,17 @@ namespace OutcoldSolutions.GoogleMusic.Converters
             try
             {
                 string path = await this.cacheService.Value.GetCachedImageAsync(uri, size);
-                var file = await ApplicationData.Current.LocalFolder.GetFileAsync(path);
+                
+                StorageFile file;
+                if (string.IsNullOrEmpty(path))
+                {
+                    file = await StorageFile.GetFileFromPathAsync(string.Format(CultureInfo.InvariantCulture, UnknownAlbumArtFormat, size));
+                }
+                else
+                {
+                    file = await ApplicationData.Current.LocalFolder.GetFileAsync(path);
+                }
+
                 image.SetSource(await file.OpenReadAsync());
             }
             catch (Exception e)

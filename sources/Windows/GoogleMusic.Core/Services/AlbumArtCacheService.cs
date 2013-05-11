@@ -22,6 +22,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
         private const string AlbumArtCacheFolder = "AlbumArtCache";
 
         private readonly ILogger logger;
+        private readonly IApplicationStateService stateService;
         private readonly ICachedAlbumArtsRepository cachedAlbumArtsRepository;
 
         private readonly SemaphoreSlim semaphoreSlim = new SemaphoreSlim(2);
@@ -31,9 +32,11 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         public AlbumArtCacheService(
             ILogManager logManager, 
+            IApplicationStateService stateService,
             ICachedAlbumArtsRepository cachedAlbumArtsRepository)
         {
             this.logger = logManager.CreateLogger("AlbumArtCacheService");
+            this.stateService = stateService;
             this.cachedAlbumArtsRepository = cachedAlbumArtsRepository;
         }
 
@@ -42,6 +45,12 @@ namespace OutcoldSolutions.GoogleMusic.Services
             await this.InitializeCacheFolderAsync();
 
             CachedAlbumArt cache = await this.cachedAlbumArtsRepository.FindAsync(url, size);
+
+            if (cache == null && this.stateService.IsOffline())
+            {
+                return null;
+            }
+
             if (cache == null)
             {
                 await this.semaphoreSlim.WaitAsync().ConfigureAwait(continueOnCapturedContext: false);

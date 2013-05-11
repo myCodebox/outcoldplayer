@@ -15,17 +15,20 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
     public class GoogleMusicCurrentSongPublisher : ICurrentSongPublisher
     {
         private readonly ILogger logger;
+        private readonly IApplicationStateService stateService;
         private readonly ISongsWebService songsWebService;
         private readonly ISongsRepository songsRepository;
         private readonly IEventAggregator eventAggregator;
 
         public GoogleMusicCurrentSongPublisher(
             ILogManager logManager,
+            IApplicationStateService stateService,
             ISongsWebService songsWebService,
             ISongsRepository songsRepository,
             IEventAggregator eventAggregator)
         {
             this.logger = logManager.CreateLogger("GoogleMusicCurrentSongPublisher");
+            this.stateService = stateService;
             this.songsWebService = songsWebService;
             this.songsRepository = songsRepository;
             this.eventAggregator = eventAggregator;
@@ -63,9 +66,18 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
                 }
             }
 
-            await Task.WhenAll(
-                this.RecordLocalAsync(song, playCount),
-                this.RecordOnServerAsync(song.ProviderSongId, playlistId, updateRecentAlbum, updateRecentPlaylist, playCount));
+            var recordLocalAsync = this.RecordLocalAsync(song, playCount);
+
+            if (this.stateService.IsOnline())
+            {
+                var recordOnServerAsync = this.RecordOnServerAsync(
+                    song.ProviderSongId, playlistId, updateRecentAlbum, updateRecentPlaylist, playCount);
+                await Task.WhenAll(recordLocalAsync, recordOnServerAsync);
+            }
+            else
+            {
+                await recordLocalAsync;
+            }
 
             this.logger.Debug("PublishAsync: Song playing published to GoogleMusic services. ProviderSongId: {0}. Plays count: {1}.", song.ProviderSongId, playCount);
         }

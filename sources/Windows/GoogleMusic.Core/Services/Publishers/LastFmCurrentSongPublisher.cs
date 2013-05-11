@@ -13,10 +13,14 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
 
     public class LastFmCurrentSongPublisher : ICurrentSongPublisher
     {
+        private readonly IApplicationStateService stateService;
         private readonly ILastfmWebService webService;
 
-        public LastFmCurrentSongPublisher(ILastfmWebService webService)
+        public LastFmCurrentSongPublisher(
+            IApplicationStateService stateService,
+            ILastfmWebService webService)
         {
+            this.stateService = stateService;
             this.webService = webService;
         }
 
@@ -27,11 +31,13 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
 
         public async Task PublishAsync(Song song, IPlaylist currentPlaylist, Uri imageUri, CancellationToken cancellationToken)
         {
-            var startPlaying = DateTime.UtcNow;
+            if (this.stateService.IsOnline())
+            {
+                var startPlaying = DateTime.UtcNow;
 
-            cancellationToken.ThrowIfCancellationRequested();
-            
-            var parameters = new Dictionary<string, string>()
+                cancellationToken.ThrowIfCancellationRequested();
+
+                var parameters = new Dictionary<string, string>()
                                  {
                                      { "artist", song.ArtistTitle },
                                      { "track", song.Title },
@@ -40,35 +46,36 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
                                      { "duration", ((int)song.Duration.TotalSeconds).ToString("D") }
                                  };
 
-            if (!string.IsNullOrEmpty(song.AlbumArtistTitle)
-                && string.Equals(song.AlbumArtistTitle, song.ArtistTitle, StringComparison.OrdinalIgnoreCase))
-            {
-                parameters.Add("albumArtist", song.AlbumArtistTitle);
-            }
+                if (!string.IsNullOrEmpty(song.AlbumArtistTitle)
+                    && string.Equals(song.AlbumArtistTitle, song.ArtistTitle, StringComparison.OrdinalIgnoreCase))
+                {
+                    parameters.Add("albumArtist", song.AlbumArtistTitle);
+                }
 
-            Task nowPlayingTask = this.webService.CallAsync("track.updateNowPlaying", new Dictionary<string, string>(parameters));
-
-            cancellationToken.ThrowIfCancellationRequested();
-
-            // Last.fm only accept songs with > 30 seconds
-            if (song.Duration.TotalSeconds >= 30)
-            {
-                // 4 minutes or half of the track
-                await Task.Delay(Math.Min(4 * 60 * 1000, (int)(song.Duration.TotalMilliseconds / 2)), cancellationToken);
+                Task nowPlayingTask = this.webService.CallAsync("track.updateNowPlaying", new Dictionary<string, string>(parameters));
 
                 cancellationToken.ThrowIfCancellationRequested();
 
-                var scrobbleParameters = new Dictionary<string, string>(parameters)
+                // Last.fm only accept songs with > 30 seconds
+                if (song.Duration.TotalSeconds >= 30)
+                {
+                    // 4 minutes or half of the track
+                    await Task.Delay(Math.Min(4 * 60 * 1000, (int)(song.Duration.TotalMilliseconds / 2)), cancellationToken);
+
+                    cancellationToken.ThrowIfCancellationRequested();
+
+                    var scrobbleParameters = new Dictionary<string, string>(parameters)
                                              {
                                                  { "timestamp", ((int)(startPlaying.ToUnixFileTime() / 1000)).ToString("D") }
                                              };
 
-                await this.webService.CallAsync("track.scrobble", scrobbleParameters);
+                    await this.webService.CallAsync("track.scrobble", scrobbleParameters);
+                }
+
+                cancellationToken.ThrowIfCancellationRequested();
+
+                await nowPlayingTask;
             }
-
-            cancellationToken.ThrowIfCancellationRequested();
-
-            await nowPlayingTask;
         }
     }
 }

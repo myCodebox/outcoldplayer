@@ -188,7 +188,10 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
                 if (song.AlbumArtUrl != null)
                 {
                     string cachedFile = await this.albumArtCacheService.GetCachedImageAsync(song.AlbumArtUrl, size: 116);
-                    albumArtUri = AlbumArtUrlExtensions.ToLocalUri(cachedFile);
+                    if (!string.IsNullOrEmpty(cachedFile))
+                    {
+                        albumArtUri = AlbumArtUrlExtensions.ToLocalUri(cachedFile);
+                    }
                 }
             }
             catch (TaskCanceledException)

@@ -105,7 +105,14 @@ namespace OutcoldSolutions.GoogleMusic.Shell
                             if (searchResult.AlbumArtUrl != null)
                             {
                                 var pathToImage = await this.albumArtCacheService.GetCachedImageAsync(searchResult.AlbumArtUrl, size: 116);
-                                randomAccessStreamReference = RandomAccessStreamReference.CreateFromUri(AlbumArtUrlExtensions.ToLocalUri(pathToImage));
+                                if (string.IsNullOrEmpty(pathToImage))
+                                {
+                                    randomAccessStreamReference = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx:///Assets/SmallLogo.png"));
+                                }
+                                else
+                                {
+                                    randomAccessStreamReference = RandomAccessStreamReference.CreateFromUri(AlbumArtUrlExtensions.ToLocalUri(pathToImage));
+                                }
                             }
                             else
                             {
