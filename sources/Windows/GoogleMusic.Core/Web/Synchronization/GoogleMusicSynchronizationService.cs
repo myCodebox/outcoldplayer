@@ -122,6 +122,11 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
             var googlePlaylists = await allUserPlaylistsAsync;
             var existingPlaylists = await allStoredUserPlaylistsAsync;
 
+            if (googlePlaylists.Success.HasValue && !googlePlaylists.Success.Value)
+            {
+                throw new ApplicationException("PlaylistsWebService:GetAllAsync returns unsuccessful result");
+            }
+
             return await this.UpdateUserPlaylistsInternalAsync(existingPlaylists, googlePlaylists.Playlists ?? Enumerable.Empty<GoogleMusicPlaylist>());
         }
 

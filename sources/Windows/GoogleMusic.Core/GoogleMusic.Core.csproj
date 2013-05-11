@@ -100,6 +100,7 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="ApplicationException.cs" />
     <Compile Include="IApplicationResources.cs" />
     <Compile Include="Models\AlbumArtUrlExtensions.cs" />
     <Compile Include="Models\CachedAlbumArt.cs" />
