@@ -29,7 +29,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private readonly ISongsService metadataEditService;
         private readonly IPlaylistsService playlistsService;
         private readonly IApplicationResources resources;
-        private ISongsCachingService cachingService;
+        private readonly ISongsCachingService cachingService;
 
         public PlaylistPageViewPresenterBase(IDependencyResolverContainer container)
         {

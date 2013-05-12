@@ -141,6 +141,7 @@ namespace OutcoldSolutions.GoogleMusic
                             .AsSingleton<GoogleMusicSynchronizationService>();
 
                 registration.Register<ScreenLocker>();
+                registration.Register<ApplicationStateChangeHandler>();
             }
 
             Container.Resolve<ApplicationLogManager>();
@@ -166,6 +167,8 @@ namespace OutcoldSolutions.GoogleMusic
             if (isFirstTimeActivated)
             {
                 Container.Resolve<RightRegionControlService>();
+
+                Container.Resolve<ApplicationStateChangeHandler>();
 
                 var mainFrameRegionProvider = Container.Resolve<IMainFrameRegionProvider>();
                 mainFrameRegionProvider.SetContent(
