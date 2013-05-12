@@ -43,7 +43,7 @@
                     <ControlTemplate>
                         <controls:AlbumArtControl Height="80" 
                                                   Width="80" 
-                                                  ImageSize="80" 
+                                                  ImageSize="116" 
                                                   Canvas.ZIndex="1"
                                                   ImageSource="{Binding Path=BindingModel.CurrentSong.Metadata.AlbumArtUrl, Mode=OneWay}" />
                     </ControlTemplate>

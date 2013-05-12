@@ -25,9 +25,9 @@
 
             <Image 
                Margin="0, 32, 0, 32" 
-               Height="140" 
-               Width="140" 
-               Source="{Binding Path=BindingModel.Playlist.ArtUrl, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=140, Mode=OneWay}"
+               Height="116" 
+               Width="116" 
+               Source="{Binding Path=BindingModel.Playlist.ArtUrl, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=116, Mode=OneWay}"
                Stretch="None"/>
 
             <TextBlock Style="{StaticResource TitleTextStyle}" Text="{Binding Path=BindingModel.Playlist.Title, Mode=OneWay}" TextWrapping="Wrap" TextTrimming="WordEllipsis" />
@@ -38,12 +38,12 @@
 
             <StackPanel Orientation="Horizontal" Margin="0, 7, 0, 0">
                 <TextBlock Style="{StaticResource TitleTextStyle}" Text="Songs: " x:Uid="AlbumPageView_SongsCountLabel" />
-                <TextBlock Style="{StaticResource SubtitleTextStyle}" Margin="7, 0, 0, 0" Text="{Binding Path=BindingModel.Playlist.SongsCount, Mode=OneWay}" />
+                <TextBlock Style="{StaticResource SubtitleTextStyle}" Margin="7, 0, 0, 0" Text="{Binding Path=BindingModel.Playlist, Converter={StaticResource PlaylistSongsCountConverter}, Mode=OneWay}" />
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" Margin="0, 7, 0, 0">
                 <TextBlock Style="{StaticResource TitleTextStyle}" Text="Duration: " x:Uid="AlbumPageView_DurationSumLabel" />
-                <TextBlock Style="{StaticResource SubtitleTextStyle}" Margin="7, 0, 0, 0" Text="{Binding Path=BindingModel.Playlist.Duration, Converter={StaticResource TimeSpanToTimeConverter}, Mode=OneWay}" />
+                <TextBlock Style="{StaticResource SubtitleTextStyle}" Margin="7, 0, 0, 0" Text="{Binding Path=BindingModel.Playlist, Converter={StaticResource PlaylistDurationConverter}, Mode=OneWay}" />
             </StackPanel>
 
         </StackPanel>

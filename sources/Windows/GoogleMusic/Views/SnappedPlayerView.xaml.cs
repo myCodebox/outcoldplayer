@@ -137,11 +137,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
             }
         }
 
-        private void VolumeButtonClick(object sender, RoutedEventArgs e)
-        {
-            this.VolumePopup.IsOpen = true;
-        }
-
         private void ListDoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
         {
             var frameworkElement = e.OriginalSource as FrameworkElement;
