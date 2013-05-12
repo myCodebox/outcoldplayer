@@ -43,7 +43,9 @@ select
        a.[SongsCount] as [Artist.SongsCount],
        a.[Duration] as [Artist.Duration],
        a.[ArtUrl] as [Artist.ArtUrl],
-       a.[LastPlayed]  as [Artist.LastPlayed]
+       a.[LastPlayed]  as [Artist.LastPlayed],
+       a.[OfflineSongsCount]  as [Artist.OfflineSongsCount],
+       a.[OfflineDuration]  as [Artist.OfflineDuration]
 from [Album] x 
      inner join [Artist] as a on x.[ArtistTitleNorm] = a.[TitleNorm]  
 where (?1 = 1 or x.[OfflineSongsCount] > 0) 
@@ -70,7 +72,9 @@ select
        a.[SongsCount] as [Artist.SongsCount],
        a.[Duration] as [Artist.Duration],
        a.[ArtUrl] as [Artist.ArtUrl],
-       a.[LastPlayed]  as [Artist.LastPlayed]
+       a.[LastPlayed]  as [Artist.LastPlayed],
+       a.[OfflineSongsCount]  as [Artist.OfflineSongsCount],
+       a.[OfflineDuration]  as [Artist.OfflineDuration]
 from [Album] x 
      inner join [Artist] as a on x.[ArtistTitleNorm] = a.[TitleNorm]
 where (?1 = 1 or x.[OfflineSongsCount] > 0) and x.[TitleNorm] like ?2
@@ -103,8 +107,8 @@ select
        a.[Duration] as [Artist.Duration],
        a.[ArtUrl] as [Artist.ArtUrl],
        a.[LastPlayed]  as [Artist.LastPlayed],
-       ar.[OfflineSongsCount]  as [Artist.OfflineSongsCount],
-       ar.[OfflineDuration]  as [Artist.OfflineDuration],
+       a.[OfflineSongsCount]  as [Artist.OfflineSongsCount],
+       a.[OfflineDuration]  as [Artist.OfflineDuration],
        0 as [IsCollection]
 from [Album] x 
      inner join [Artist] as a on x.[ArtistTitleNorm] = a.[TitleNorm]     

@@ -335,7 +335,9 @@
     <Content Include="Resources\genres.png" />
     <Content Include="Resources\gmusic.splashscreen.png" />
     <Content Include="Resources\home.png" />
-    <Content Include="Resources\in-app-purchase.xml" />
+    <Content Include="Resources\in-app-purchase.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Resources\lastfm_Logo.png" />
     <Content Include="Resources\logo460.png" />
     <Content Include="Resources\outcoldsolutions.png" />
