@@ -66,7 +66,7 @@ select *
 from [Song] as x  
 where (?1 = 1 or x.[IsCached] = 1)
 order by x.[CreationDate] desc
-limit ?1
+limit ?2
 ";
 
         private readonly IApplicationStateService stateService;
