@@ -1199,4 +1199,14 @@
         </Setter>
     </Style>
     
+    <Style TargetType="TextBlock" x:Key="SongCachedIconTextBlock">
+        <Setter Property="HorizontalAlignment" Value="Right" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="FontSize" Value="{StaticResource ControlContentThemeFontSize}" />
+        <Setter Property="FontFamily" Value="Segoe UI Symbol" />
+        <Setter Property="Text" Value="&#xE1C9;" />
+        <Setter Property="Margin" Value="5, 2, 0, 0" />
+        <Setter Property="TextTrimming" Value="None" />
+    </Style>
+    
 </ResourceDictionary>

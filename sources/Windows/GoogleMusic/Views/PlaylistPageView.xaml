@@ -128,8 +128,18 @@
                             VerticalAlignment="Center" 
                             Visibility="{Binding Path=IsPlaying, Converter={StaticResource BooleanToVisibilityConverter}}" 
                             IsPaused="{Binding Path=State, Converter={StaticResource ValueToBooleanConverter}, ConverterParameter={StaticResource StatePaused}}" />
-                        
-                        <TextBlock Grid.Column="1" Style="{StaticResource BasicTextStyle}" VerticalAlignment="Center" Margin="10, 0, 10, 0" Text="{Binding Path=Title, Mode=OneWay}" HorizontalAlignment="Left" TextTrimming="WordEllipsis" />
+
+                        <Grid Grid.Column="1" Margin="10, 0, 10, 0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Style="{StaticResource BasicTextStyle}" Text="{Binding Path=Title, Mode=OneWay}" HorizontalAlignment="Left" VerticalAlignment="Center" TextTrimming="WordEllipsis" />
+                            <TextBlock Grid.Column="1" 
+                                       Style="{StaticResource SongCachedIconTextBlock}"
+                                       Visibility="{Binding Path=Metadata.IsCached, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                        </Grid>
                         <TextBlock Grid.Column="2" Style="{StaticResource BasicTextStyle}" VerticalAlignment="Center" Margin="10, 0, 10, 0" Text="{Binding Path=Duration, Converter={StaticResource DoubleToTimeConverter}, Mode=OneWay}" HorizontalAlignment="Right"/>
                         <TextBlock Grid.Column="3" Style="{StaticResource BasicTextStyle}" VerticalAlignment="Center" Margin="10, 0, 10, 0" Text="{Binding Path=Artist, Mode=OneWay}" TextTrimming="WordEllipsis" />
                         <TextBlock Grid.Column="4" Style="{StaticResource BasicTextStyle}" VerticalAlignment="Center" Margin="10, 0, 10, 0" Text="{Binding Path=Album, Mode=OneWay}" TextTrimming="WordEllipsis" />

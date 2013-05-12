@@ -22,6 +22,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private readonly IApplicationResources resources;
         private readonly IDispatcher dispatcher;
         private readonly IGoogleMusicSynchronizationService googleMusicSynchronizationService;
+        private readonly ISongsCachingService cachingService;
 
         private readonly DispatcherTimer synchronizationTimer;
         private int synchronizationTime = 0; // we don't want to synchronize playlists each time, so we will do it on each 6 time
@@ -31,12 +32,14 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             IApplicationResources resources,
             ISearchService searchService,
             IDispatcher dispatcher,
-            IGoogleMusicSynchronizationService googleMusicSynchronizationService)
+            IGoogleMusicSynchronizationService googleMusicSynchronizationService,
+            ISongsCachingService cachingService)
         {
             this.stateService = stateService;
             this.resources = resources;
             this.dispatcher = dispatcher;
             this.googleMusicSynchronizationService = googleMusicSynchronizationService;
+            this.cachingService = cachingService;
             this.ShowSearchCommand = new DelegateCommand(searchService.Activate);
             this.BindingModel = new LinksRegionBindingModel();
 

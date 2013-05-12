@@ -158,7 +158,19 @@
                                 Visibility="{Binding Path=IsPlaying, Converter={StaticResource BooleanToVisibilityConverter}}"  />
                             
                             <TextBlock Grid.Column="1" Style="{StaticResource BasicTextStyle}" Margin="10, 0, 10, 0" Text="{Binding Path=Track, Mode=OneWay}" HorizontalAlignment="Right" VerticalAlignment="Center" />
-                            <TextBlock Grid.Column="2" Style="{StaticResource BasicTextStyle}" Margin="10, 0, 10, 0" Text="{Binding Path=Title, Mode=OneWay}" HorizontalAlignment="Left" VerticalAlignment="Center" TextTrimming="WordEllipsis" />
+
+                            <Grid Grid.Column="2" Margin="10, 0, 10, 0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                
+                                <TextBlock Style="{StaticResource BasicTextStyle}" Text="{Binding Path=Title, Mode=OneWay}" HorizontalAlignment="Left" VerticalAlignment="Center" TextTrimming="WordEllipsis" />
+                                <TextBlock Grid.Column="1" 
+                                           Style="{StaticResource SongCachedIconTextBlock}"
+                                           Visibility="{Binding Path=Metadata.IsCached, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                            </Grid>
+                            
                             <TextBlock Grid.Column="3" Style="{StaticResource BasicTextStyle}" VerticalAlignment="Center" Margin="10, 0, 10, 0" Text="{Binding Path=Duration, Converter={StaticResource DoubleToTimeConverter}, Mode=OneWay}" HorizontalAlignment="Right"/>
                             <TextBlock Grid.Column="4" Style="{StaticResource BasicTextStyle}" VerticalAlignment="Center" Margin="10, 0, 10, 0" Text="{Binding Path=Artist, Mode=OneWay}" TextTrimming="WordEllipsis" />
                             <TextBlock Grid.Column="5" Style="{StaticResource BasicTextStyle}" VerticalAlignment="Center" Margin="10, 0, 10, 0" Text="{Binding Path=PlayCount, Mode=OneWay}" HorizontalAlignment="Right" />
