@@ -13,6 +13,8 @@ namespace OutcoldSolutions.GoogleMusic
         private const string AutomaticCacheKey = "AutomaticCache";
         private const string MaximumCacheSizeKey = "MaximumCacheSize";
 
+        private const int MaximumOfflineSongsCount = 30;
+
         public static DateTime? GetLibraryFreshnessDate(this ISettingsService @this)
         {
             if (@this == null)
@@ -70,7 +72,12 @@ namespace OutcoldSolutions.GoogleMusic
                 throw new ArgumentNullException("this");
             }
 
-            return @this.GetValue<uint>(MaximumCacheSizeKey, defaultValue: 100);
+            if (InAppPurchases.HasFeature(GoogleMusicFeatures.Offline))
+            {
+                return @this.GetValue<uint>(MaximumCacheSizeKey, defaultValue: MaximumOfflineSongsCount);
+            }
+
+            return MaximumOfflineSongsCount;
         }
 
         public static void SetMaximumCacheSize(this ISettingsService @this, uint value)

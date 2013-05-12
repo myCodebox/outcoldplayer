@@ -49,13 +49,13 @@
                     Content="Clear songs cache" 
                     Margin="0, 20, 0, 0"/>
 
-            <ToggleSwitch IsOn="{Binding Path=BindingModel.AutomaticCache, Mode=TwoWay}"
+            <!--<ToggleSwitch IsOn="{Binding Path=BindingModel.AutomaticCache, Mode=TwoWay}"
                           Margin="0, 40, 0, 0"
                           IsEnabled="{Binding Path=BindingModel.IsCacheEditable, Mode=OneTime}">
                 Automatic cache
-            </ToggleSwitch>
+            </ToggleSwitch>-->
 
-            <TextBlock Style="{StaticResource BodyTextStyle}"
+            <!--<TextBlock Style="{StaticResource BodyTextStyle}"
                        Margin="0, 40, 0, 0">
                 Maximum songs in cache:
             </TextBlock>
@@ -65,8 +65,8 @@
                      MaxLength="5"
                      Text="{Binding Path=BindingModel.MaximumCacheSize, Mode=TwoWay}"
                      IsEnabled="{Binding Path=BindingModel.IsCacheEditable, Mode=OneTime}"
-                     KeyDown="TextBlockMaxCacheSize_OnKeyDown"/>
-
+                     KeyDown="TextBlockMaxCacheSize_OnKeyDown"/>-->
+            
             <Button Command="{Binding Path=ShowDownloadQueueCommand}" 
                     Content="Download queue" 
                     Margin="0, 40, 0, 0"/>

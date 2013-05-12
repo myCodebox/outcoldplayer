@@ -201,7 +201,6 @@
     <Compile Include="Presenters\SearchPageViewPresenter.cs" />
     <Compile Include="Presenters\Settings\AccountsViewPresenter.cs" />
     <Compile Include="Presenters\StartPageViewPresenter.cs" />
-    <Compile Include="Services\InAppPurchases.cs" />
     <Compile Include="Services\RightRegionControlService.cs" />
     <Compile Include="Shell\ISearchService.cs" />
     <Compile Include="Services\Publishers\TileCurrentSongPublisher.cs" />
