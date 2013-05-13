@@ -168,7 +168,7 @@
                                 <TextBlock Style="{StaticResource BasicTextStyle}" Text="{Binding Path=Title, Mode=OneWay}" HorizontalAlignment="Left" VerticalAlignment="Center" TextTrimming="WordEllipsis" />
                                 <TextBlock Grid.Column="1" 
                                            Style="{StaticResource SongCachedIconTextBlock}"
-                                           Visibility="{Binding Path=Metadata.IsCached, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                           Visibility="{Binding Path=IsCached, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
                             </Grid>
                             
                             <TextBlock Grid.Column="3" Style="{StaticResource BasicTextStyle}" VerticalAlignment="Center" Margin="10, 0, 10, 0" Text="{Binding Path=Duration, Converter={StaticResource DoubleToTimeConverter}, Mode=OneWay}" HorizontalAlignment="Right"/>

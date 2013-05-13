@@ -8,6 +8,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Linq;
+    using System.Reactive.Linq;
 
     using OutcoldSolutions.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
@@ -56,6 +57,14 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
             eventAggregator.GetEvent<SongsUpdatedEvent>()
                            .Subscribe(async (e) => await this.dispatcher.RunAsync(() => this.OnSongsUpdated(e.UpdatedSongs)));
+
+            eventAggregator.GetEvent<SongCachingChangeEvent>()
+                           .Where(e => e.EventType == SongCachingChangeEventType.FinishDownloading)
+                           .Subscribe(async (e) => await this.dispatcher.RunAsync(() => this.UpdateIfSongCached(e.Song)));
+
+            eventAggregator.GetEvent<CachingChangeEvent>()
+                           .Where(e => e.EventType == SongCachingChangeEventType.ClearCache)
+                           .Subscribe(async (e) => await this.dispatcher.RunAsync(this.ClearAllIsCachedIcons));
         }
 
         public DelegateCommand SortCommand { get; set; }
@@ -154,6 +163,29 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
                     {
                         songBindingModel.Metadata = updateSong;
                     }
+                }
+            }
+        }
+
+        private void UpdateIfSongCached(Song song)
+        {
+            if (song != null && this.Songs != null)
+            {
+                var songBindingModel = this.Songs.FirstOrDefault(s => s.Metadata.SongId == song.SongId);
+                if (songBindingModel != null)
+                {
+                    songBindingModel.IsCached = true;
+                }
+            }
+        }
+
+        private void ClearAllIsCachedIcons()
+        {
+            if (this.Songs != null)
+            {
+                foreach (var songBindingModel in this.Songs.Where(s => s.IsCached))
+                {
+                    songBindingModel.IsCached = false;
                 }
             }
         }

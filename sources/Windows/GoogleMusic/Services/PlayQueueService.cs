@@ -496,7 +496,6 @@ namespace OutcoldSolutions.GoogleMusic.Services
                         this.logger.Debug("Getting url for song '{0}'.", song.ProviderSongId);
                     }
 
-
                     var stream = await this.songsCachingService.GetStreamAsync(song);
                     if (stream != null)
                     {

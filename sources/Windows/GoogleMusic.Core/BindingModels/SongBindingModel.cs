@@ -72,6 +72,20 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             }
         }
 
+        public bool IsCached
+        {
+            get
+            {
+                return this.Metadata.IsCached;
+            }
+
+            set
+            {
+                this.Metadata.IsCached = value;
+                this.RaiseCurrentPropertyChanged();
+            }
+        }
+
         public Song Metadata
         {
             get
@@ -82,12 +96,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             set
             {
                 this.metadata = value;
-                this.RaisePropertyChanged(() => this.Title);
-                this.RaisePropertyChanged(() => this.Duration);
-                this.RaisePropertyChanged(() => this.Artist);
-                this.RaisePropertyChanged(() => this.Album);
-                this.RaisePropertyChanged(() => this.PlayCount);
-                this.RaisePropertyChanged(() => this.Rating);
+                this.RaiseAllPropertiesChanged();
             }
         }
 
@@ -112,6 +121,16 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             {
                 return this.songState == SongState.Playing || this.songState == SongState.Paused;
             }
+        }
+
+        public void RaiseAllPropertiesChanged()
+        {
+            this.RaisePropertyChanged(() => this.Title);
+            this.RaisePropertyChanged(() => this.Duration);
+            this.RaisePropertyChanged(() => this.Artist);
+            this.RaisePropertyChanged(() => this.Album);
+            this.RaisePropertyChanged(() => this.PlayCount);
+            this.RaisePropertyChanged(() => this.Rating);
         }
     }
 }

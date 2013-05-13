@@ -27,17 +27,17 @@
             
             <StackPanel Orientation="Horizontal" Margin="0, 7, 0, 0">
                 <TextBlock Style="{StaticResource TitleTextStyle}" Text="Albums: " x:Uid="ArtistPageView_AlbumsCountLabel" />
-                <TextBlock Style="{StaticResource SubtitleTextStyle}" Margin="7, 0, 0, 0" Text="{Binding Path=BindingModel.Artist.AlbumsCount, Mode=OneWay}" />
+                <TextBlock Style="{StaticResource SubtitleTextStyle}" Margin="7, 0, 0, 0" Text="{Binding Path=BindingModel.Artist, Converter={StaticResource ArtistAlbumsCountConverter}, Mode=OneWay}" />
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" Margin="0, 7, 0, 0">
                 <TextBlock Style="{StaticResource TitleTextStyle}" Text="Songs: " x:Uid="ArtistPageView_SongsCountLabel" />
-                <TextBlock Style="{StaticResource SubtitleTextStyle}" Margin="7, 0, 0, 0" Text="{Binding Path=BindingModel.Artist.SongsCount, Mode=OneWay}" />
+                <TextBlock Style="{StaticResource SubtitleTextStyle}" Margin="7, 0, 0, 0" Text="{Binding Path=BindingModel.Artist, Converter={StaticResource PlaylistSongsCountConverter}, Mode=OneWay}" />
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" Margin="0, 7, 0, 0">
                 <TextBlock Style="{StaticResource TitleTextStyle}" Text="Duration: " x:Uid="ArtistPageView_DurationSumLabel" />
-                <TextBlock Style="{StaticResource SubtitleTextStyle}" Margin="7, 0, 0, 0" Text="{Binding Path=BindingModel.Artist.Duration, Converter={StaticResource TimeSpanToTimeConverter}, Mode=OneWay}" />
+                <TextBlock Style="{StaticResource SubtitleTextStyle}" Margin="7, 0, 0, 0" Text="{Binding Path=BindingModel.Artist, Converter={StaticResource PlaylistDurationConverter}, Mode=OneWay}" />
             </StackPanel>
 
         </StackPanel>
