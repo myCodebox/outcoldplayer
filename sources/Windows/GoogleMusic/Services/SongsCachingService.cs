@@ -84,6 +84,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
         private readonly ICachedSongsRepository songsCacheRepository;
         private readonly ISongsRepository songsRepository;
         private readonly IMediaStreamDownloadService mediaStreamDownloadService;
+        private readonly IAlbumArtCacheService albumArtCacheService;
         private readonly IEventAggregator eventAggregator;
         private readonly ILogger logger;
 
@@ -105,6 +106,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             ICachedSongsRepository songsCacheRepository,
             ISongsRepository songsRepository,
             IMediaStreamDownloadService mediaStreamDownloadService,
+            IAlbumArtCacheService albumArtCacheService,
             IEventAggregator eventAggregator)
         {
             this.logger = logManager.CreateLogger("SongsCachingService");
@@ -112,9 +114,10 @@ namespace OutcoldSolutions.GoogleMusic.Services
             this.songsCacheRepository = songsCacheRepository;
             this.songsRepository = songsRepository;
             this.mediaStreamDownloadService = mediaStreamDownloadService;
+            this.albumArtCacheService = albumArtCacheService;
             this.eventAggregator = eventAggregator;
 
-            //this.StartDownloadTaskWihDelay();
+            this.StartDownloadTaskWihDelay();
         }
 
         public async Task<IRandomAccessStreamWithContentType> GetStreamAsync(Song song)
@@ -586,6 +589,11 @@ namespace OutcoldSolutions.GoogleMusic.Services
                         await this.SetCurrentStreamAsync(nextTask.Song, stream);
                         await this.InitializeCacheFolderAsync();
                         await stream.DownloadAsync();
+
+                        if (nextTask.Song.AlbumArtUrl != null)
+                        {
+                            await this.albumArtCacheService.GetCachedImageAsync(nextTask.Song.AlbumArtUrl, size: 116);
+                        }
 
                         if (cancellationToken.IsCancellationRequested)
                         {

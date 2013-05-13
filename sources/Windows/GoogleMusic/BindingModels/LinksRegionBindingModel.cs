@@ -8,32 +8,32 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
     public class LinksRegionBindingModel : BindingModelBase 
     {
-        private bool isSynchronizing;
-        private string updatingText;
+        private bool showProgressRing;
+        private string messageText;
 
-        public bool IsSynchronizing
+        public bool ShowProgressRing
         {
             get
             {
-                return this.isSynchronizing;
+                return this.showProgressRing;
             }
 
             set
             {
-                this.SetValue(ref this.isSynchronizing, value);
+                this.SetValue(ref this.showProgressRing, value);
             }
         }
 
-        public string UpdatingText
+        public string MessageText
         {
             get
             {
-                return this.updatingText;
+                return this.messageText;
             }
 
             set
             {
-                this.SetValue(ref this.updatingText, value);
+                this.SetValue(ref this.messageText, value);
             }
         }
     }

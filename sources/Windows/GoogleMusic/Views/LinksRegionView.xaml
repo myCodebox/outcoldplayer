@@ -10,17 +10,24 @@
     d:DesignWidth="400">
 
     <StackPanel Orientation="Horizontal">
-        
+ 
         <StackPanel Orientation="Horizontal" 
                     VerticalAlignment="Top" 
                     Margin="0, 5, 20, 0" >
             <ProgressRing VerticalAlignment="Center" 
-                         IsActive="{Binding Path=BindingModel.IsSynchronizing}" 
+                         IsActive="{Binding Path=BindingModel.ShowProgressRing}" 
                          Margin="0, 0, 10, 0"/>
 
-            <TextBlock VerticalAlignment="Center" 
-                       Text="{Binding Path=BindingModel.UpdatingText, Mode=OneWay}" 
-                       Style="{StaticResource BasicTextStyle}"/>
+            <Button Visibility="{Binding Path=BindingModel.IsDownloading}" VerticalAlignment="Center"
+                Command="{Binding Path= NavigateToDownloadQueue, Mode=OneTime}">
+                <Button.Template>
+                    <ControlTemplate>
+                        <TextBlock Text="{Binding Path=BindingModel.MessageText, Mode=OneWay}" 
+                               Style="{StaticResource BasicTextStyle}"/>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+            
         </StackPanel>
 
         <Button Margin="0, -15, 0, 0" Style="{StaticResource SearchPopupMenuButtonStyle}" 

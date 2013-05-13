@@ -3,6 +3,10 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.BindingModels.Settings
 {
+    using System;
+    using System.Collections.ObjectModel;
+    using System.Collections.Specialized;
+
     using OutcoldSolutions.BindingModels;
     using OutcoldSolutions.GoogleMusic.Services;
 
@@ -10,10 +14,12 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels.Settings
     {
         private readonly ISettingsService settingsService;
 
+        private ObservableCollection<CachedSongBindingModel> queuedTasks;
+
         private bool isLoading;
         private long albumArtCacheSize;
         private long songsCacheSize;
-        
+
         public OfflineCacheViewBindingModel(ISettingsService settingsService)
         {
             this.settingsService = settingsService;
@@ -90,6 +96,43 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels.Settings
             {
                 return InAppPurchases.HasFeature(GoogleMusicFeatures.Offline);
             }
+        }
+
+        public ObservableCollection<CachedSongBindingModel> QueuedTasks
+        {
+            get
+            {
+                return this.queuedTasks;
+            }
+
+            set
+            {
+                if (this.queuedTasks != null)
+                {
+                    this.queuedTasks.CollectionChanged -= QueuedTasksOnCollectionChanged;
+                }
+
+                this.SetValue(ref this.queuedTasks, value);
+                this.RaisePropertyChanged(() => this.IsQueueEmpty);
+
+                if (this.queuedTasks != null)
+                {
+                    this.queuedTasks.CollectionChanged += QueuedTasksOnCollectionChanged;
+                }
+            }
+        }
+
+        public bool IsQueueEmpty
+        {
+            get
+            {
+                return this.queuedTasks != null && this.queuedTasks.Count == 0;
+            }
+        }
+
+        private void QueuedTasksOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs eventArgs)
+        {
+            this.RaisePropertyChanged(() => this.IsQueueEmpty);
         }
     }
 }

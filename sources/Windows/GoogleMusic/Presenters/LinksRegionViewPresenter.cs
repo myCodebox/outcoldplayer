@@ -12,6 +12,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using OutcoldSolutions.GoogleMusic.Shell;
     using OutcoldSolutions.GoogleMusic.Web.Synchronization;
     using OutcoldSolutions.Presenters;
+    using OutcoldSolutions.Shell;
     using OutcoldSolutions.Views;
 
     using Windows.UI.Xaml;
@@ -27,12 +28,15 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private readonly DispatcherTimer synchronizationTimer;
         private int synchronizationTime = 0; // we don't want to synchronize playlists each time, so we will do it on each 6 time
 
+        private bool isDownloading = false;
+
         public LinksRegionViewPresenter(
             IApplicationStateService stateService,
             IApplicationResources resources,
             ISearchService searchService,
             IDispatcher dispatcher,
             IGoogleMusicSynchronizationService googleMusicSynchronizationService,
+            IApplicationSettingViewsService applicationSettingViewsService,
             ISongsCachingService cachingService)
         {
             this.stateService = stateService;
@@ -41,6 +45,14 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.googleMusicSynchronizationService = googleMusicSynchronizationService;
             this.cachingService = cachingService;
             this.ShowSearchCommand = new DelegateCommand(searchService.Activate);
+            this.NavigateToDownloadQueue = new DelegateCommand(async () =>
+            {
+                if (this.isDownloading)
+                {
+                    await this.dispatcher.RunAsync(() => applicationSettingViewsService.Show("offlinecache"));
+                }
+            });
+
             this.BindingModel = new LinksRegionBindingModel();
 
             this.synchronizationTimer = new DispatcherTimer { Interval = TimeSpan.FromMinutes(5) };
@@ -54,7 +66,56 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         public DelegateCommand ShowSearchCommand { get; private set; }
 
+        public DelegateCommand NavigateToDownloadQueue { get; private set; }
+
         public LinksRegionBindingModel BindingModel { get; set; }
+
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+
+            this.EventAggregator.GetEvent<CachingChangeEvent>()
+                                .Subscribe(async e => await this.dispatcher.RunAsync(() => this.OnCachingEvent(e.EventType)));
+        }
+
+        private async void OnCachingEvent(SongCachingChangeEventType eventType)
+        {
+            switch (eventType)
+            {
+                case SongCachingChangeEventType.StartDownloading:
+                {
+                    this.isDownloading = true;
+                    await this.Dispatcher.RunAsync(() =>
+                    {
+                        this.BindingModel.ShowProgressRing = true;
+                        this.BindingModel.MessageText = "Downloading songs to local cache...";
+                    });
+                    break;
+                }
+                case SongCachingChangeEventType.FailedToDownload:
+                {
+                    this.isDownloading = false;
+                    await this.Dispatcher.RunAsync(() =>
+                    {
+                        this.BindingModel.ShowProgressRing = false;
+                        this.BindingModel.MessageText = null;
+                    });
+                    break;
+                }
+                case SongCachingChangeEventType.ClearCache:
+                case SongCachingChangeEventType.FinishDownloading:
+                case SongCachingChangeEventType.DownloadCanceled:
+                {
+                    this.isDownloading = false;
+                    await this.Dispatcher.RunAsync(() =>
+                    {
+                        this.BindingModel.ShowProgressRing = false;
+                        this.BindingModel.MessageText = null;
+                    });
+                    break;
+                }
+            }
+        }
 
         private async void SynchronizationTimerOnTick(object sender, object o)
         {
@@ -65,13 +126,13 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         {
             await this.dispatcher.RunAsync(() => this.synchronizationTimer.Stop());
 
-            if (this.stateService.IsOnline())
+            if (this.stateService.IsOnline() && !this.isDownloading)
             {
                 await this.dispatcher.RunAsync(
                     () =>
                     {
-                        this.BindingModel.IsSynchronizing = true;
-                        this.BindingModel.UpdatingText = this.resources.GetString("LinksRegion_UpdatingSongs");
+                        this.BindingModel.ShowProgressRing = true;
+                        this.BindingModel.MessageText = this.resources.GetString("LinksRegion_UpdatingSongs");
                     });
 
                 bool error = false;
@@ -82,7 +143,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
                     if (this.synchronizationTime == 0)
                     {
-                        await this.dispatcher.RunAsync(() => { this.BindingModel.UpdatingText = this.resources.GetString("LinksRegion_UpdatingPlaylists"); });
+                        await this.dispatcher.RunAsync(() => { this.BindingModel.MessageText = this.resources.GetString("LinksRegion_UpdatingPlaylists"); });
                         await this.googleMusicSynchronizationService.UpdateUserPlaylistsAsync();
                     }
                 }
@@ -95,8 +156,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 await this.dispatcher.RunAsync(
                          () =>
                          {
-                             this.BindingModel.IsSynchronizing = false;
-                             this.BindingModel.UpdatingText = error ? this.resources.GetString("LinksRegion_FailedToUpdate") : this.resources.GetString("LinksRegion_Updated");
+                             this.BindingModel.ShowProgressRing = false;
+                             this.BindingModel.MessageText = error ? this.resources.GetString("LinksRegion_FailedToUpdate") : this.resources.GetString("LinksRegion_Updated");
                          });
                 await Task.Delay(TimeSpan.FromSeconds(2));
             }
@@ -111,7 +172,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                          }
 
                          this.synchronizationTimer.Start();
-                         this.BindingModel.UpdatingText = string.Empty;
+                         this.BindingModel.MessageText = string.Empty;
                      });
         }
     }

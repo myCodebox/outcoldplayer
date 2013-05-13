@@ -13,7 +13,7 @@ namespace OutcoldSolutions.GoogleMusic
          {
              service.RegisterSettings<AccountsView>("accounts", resources.GetString("SettingsAccountTitle"));
              service.RegisterSettings<AppSettingsView>("appsettings", resources.GetString("SettingsAppSettingsTitle"));
-             service.RegisterSettings<OfflineCacheView>("offlinecache", resources.GetString("OfflineCacheAppSettingsTitle"));
+             service.RegisterSettings<OfflineCacheView>("offlinecache", resources.GetString("OfflineCacheAppSettingsTitle"), ApplicationSettingLayoutType.Large);
 
              bool upgradeViewRegistered = false;
              if (!InAppPurchases.HasFeature(GoogleMusicFeatures.All))
@@ -49,8 +49,6 @@ namespace OutcoldSolutions.GoogleMusic
 #if DEBUG
              InAppPurchases.SimulatorInAppPurchasesInitialization();
 #endif
-
-             service.RegisterSettings<DownloadQueueView>("downloadqueue", "Download queue", ApplicationSettingLayoutType.Large, null, visibleInSettings: false);
          }
     }
 }
