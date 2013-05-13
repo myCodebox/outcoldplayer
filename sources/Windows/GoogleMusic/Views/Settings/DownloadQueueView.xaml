@@ -8,8 +8,20 @@
     mc:Ignorable="d">
     
     <Grid>
-
-        <ListView Visibility="{Binding Path=IsLoading, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}"
+        <Grid.Resources>
+            <Style TargetType="TextBlock" x:Key="DeleteTextBlock">
+                <Setter Property="HorizontalAlignment" Value="Center" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="FontSize" Value="20" />
+                <Setter Property="FontFamily" Value="Segoe UI Symbol" />
+                <Setter Property="Text" Value="&#xE106;" />
+                <Setter Property="TextTrimming" Value="None" />
+                <Setter Property="Foreground" Value="IndianRed" />
+            </Style>
+        </Grid.Resources>
+        
+        <ListView x:Name="ListView"
+                  Visibility="{Binding Path=IsLoading, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}"
                   ItemsSource="{Binding Path=QueuedTasks, Mode=OneWay}"
                   SelectionMode="None"
                   HorizontalAlignment="Stretch"
@@ -20,8 +32,9 @@
 
                 <DataTemplate>
 
-                    <Grid Height="44" Margin="0, 5, 20, 5">
+                    <Grid MinHeight="44" Margin="0, 5, 20, 5">
                         <Grid.ColumnDefinitions >
+                            <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
@@ -29,34 +42,56 @@
                         <Grid.RowDefinitions>
                             <RowDefinition Height="20" />
                             <RowDefinition Height="20" />
+                            <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
-                        <TextBlock Grid.Column="0" 
+                        <Button Grid.RowSpan="3"
+                                Height="30" Width="30" Margin="7" VerticalAlignment="Top"
+                                Command="{Binding Path=DataContext.CancelTaskCommand, ElementName=ListView}"
+                                CommandParameter="{Binding Mode=OneTime}">
+                            <Button.Template>
+                                <ControlTemplate>
+                                    <TextBlock Style="{StaticResource DeleteTextBlock}" />
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                        
+                        <TextBlock Grid.Column="1" 
                                    Grid.ColumnSpan="2"
                                    Grid.Row="0"
                                    Style="{StaticResource TitleTextStyle}" 
                                    VerticalAlignment="Center" 
                                    Margin="5, 0, 0, 0" 
-                                   Text="{Binding Path=Song.Title, Mode=OneWay}" 
+                                   Text="{Binding Path=CachedSong.Song.Title, Mode=OneWay}" 
                                    HorizontalAlignment="Left" 
-                                   TextTrimming="WordEllipsis" />
-
-                        <TextBlock Grid.Column="0" 
-                                   Grid.Row="1"
-                                   Style="{StaticResource SubtitleTextStyle}" 
-                                   VerticalAlignment="Center" 
-                                   Margin="5, 0, 0, 0" 
-                                   Text="{Binding Path=Song, Converter={StaticResource SongToArtistConverter}, Mode=OneWay}" 
                                    TextTrimming="WordEllipsis" />
 
                         <TextBlock Grid.Column="1" 
                                    Grid.Row="1"
+                                   Style="{StaticResource SubtitleTextStyle}" 
+                                   VerticalAlignment="Center" 
+                                   Margin="5, 0, 0, 0" 
+                                   Text="{Binding Path=CachedSong.Song, Converter={StaticResource SongToArtistConverter}, Mode=OneWay}" 
+                                   TextTrimming="WordEllipsis" />
+
+                        <TextBlock Grid.Column="2" 
+                                   Grid.Row="1"
                                    Style="{StaticResource BasicTextStyle}" 
                                    VerticalAlignment="Center" 
                                    Margin="10, 0, 0, 0" 
-                                   Text="{Binding Path=Song.Duration, Converter={StaticResource TimeSpanToTimeConverter}, Mode=OneWay}" 
+                                   Text="{Binding Path=CachedSong.Song.Duration, Converter={StaticResource TimeSpanToTimeConverter}, Mode=OneWay}" 
                                    HorizontalAlignment="Right"/>
 
+                        <ProgressBar Grid.Row="2"
+                                     Grid.Column="1"
+                                     Grid.ColumnSpan="2"
+                                     VerticalAlignment="Bottom"
+                                     HorizontalAlignment="Stretch"
+                                     Value="{Binding Path=DownloadProgress, Mode=OneWay}" 
+                                     Minimum="0" 
+                                     Maximum="1" 
+                                     Margin="0, 5, 0, 0"
+                                     Visibility="{Binding Path=IsDownloading, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                     </Grid>
 
                 </DataTemplate>

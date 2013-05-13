@@ -35,6 +35,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
         Task CancelTaskAsync(CachedSong cachedSong);
 
         Task<IList<CachedSong>> GetAllActiveTasksAsync();
+
+        Task<Tuple<INetworkRandomAccessStream, Song>> GetCurrentTaskAsync();
     }
 
     public enum SongCachingChangeEventType
@@ -43,7 +45,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
         StartDownloading = 2,
         FinishDownloading = 3,
         FailedToDownload = 4,
-        ClearCache = 5
+        DownloadCanceled = 5,
+        ClearCache = 6
     }
 
     public class CachingChangeEvent
@@ -110,6 +113,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
             this.songsRepository = songsRepository;
             this.mediaStreamDownloadService = mediaStreamDownloadService;
             this.eventAggregator = eventAggregator;
+
+            //this.StartDownloadTaskWihDelay();
         }
 
         public async Task<IRandomAccessStreamWithContentType> GetStreamAsync(Song song)
@@ -257,6 +262,9 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         public async Task ClearCacheAsync()
         {
+            Song currentSong = null;
+            INetworkRandomAccessStream currentStream = null;
+
             await this.mutex.WaitAsync().ConfigureAwait(continueOnCapturedContext: false);
 
             try
@@ -269,6 +277,17 @@ namespace OutcoldSolutions.GoogleMusic.Services
                         this.downloadTaskCancellationToken = null;
                     }
 
+                    if (this.downloadTask != null && this.currentDownloadSong != null && this.currentDownloadStream != null)
+                    {
+                        currentSong = this.currentDownloadSong;
+                        currentStream = this.currentDownloadStream;
+                    }
+
+                    if (this.currentDownloadStream != null)
+                    {
+                        this.currentDownloadStream.Dispose();
+                    }
+
                     this.downloadTask = null;
                     this.currentDownloadSong = null;
                     this.currentDownloadStream = null;
@@ -277,6 +296,12 @@ namespace OutcoldSolutions.GoogleMusic.Services
             finally
             {
                 this.mutex.Release(1);
+            }
+
+            if (currentSong != null && currentStream != null)
+            {
+                this.eventAggregator.Publish(
+                    new SongCachingChangeEvent(SongCachingChangeEventType.DownloadCanceled, currentStream, currentSong));
             }
 
             await this.InitializeCacheFolderAsync();
@@ -296,16 +321,30 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 throw new ArgumentNullException("cachedSong");
             }
 
+            Song currentSong = null;
+            INetworkRandomAccessStream currentStream = null;
+
             await this.mutex.WaitAsync().ConfigureAwait(continueOnCapturedContext: false);
 
             try
             {
-                if (this.currentDownloadSong.SongId == cachedSong.SongId && this.downloadTask != null)
+                if (this.downloadTask != null && this.currentDownloadSong != null && this.currentDownloadSong.SongId == cachedSong.SongId)
                 {
                     if (this.downloadTaskCancellationToken != null)
                     {
                         this.downloadTaskCancellationToken.Cancel();
                         this.downloadTaskCancellationToken = null;
+                    }
+
+                    if (this.downloadTask != null && this.currentDownloadSong != null && this.currentDownloadStream != null)
+                    {
+                        currentSong = this.currentDownloadSong;
+                        currentStream = this.currentDownloadStream;
+                    }
+
+                    if (this.currentDownloadStream != null)
+                    {
+                        this.currentDownloadStream.Dispose();
                     }
 
                     this.downloadTask = null;
@@ -327,12 +366,43 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 this.mutex.Release(1);
             }
 
+            if (currentSong != null && currentStream != null)
+            {
+                this.eventAggregator.Publish(
+                    new SongCachingChangeEvent(SongCachingChangeEventType.DownloadCanceled, currentStream, currentSong));
+            }
+
             await this.StartDownloadTaskAsync();
         }
 
         public Task<IList<CachedSong>> GetAllActiveTasksAsync()
         {
             return this.songsCacheRepository.GetAllQueuedTasksAsync();
+        }
+
+        public async Task<Tuple<INetworkRandomAccessStream, Song>>  GetCurrentTaskAsync()
+        {
+            await this.mutex.WaitAsync().ConfigureAwait(continueOnCapturedContext: false);
+
+            try
+            {
+                if (this.currentDownloadSong != null && this.currentDownloadStream != null && this.downloadTask != null)
+                {
+                    return Tuple.Create(this.currentDownloadStream, this.currentDownloadSong);
+                }
+            }
+            finally
+            {
+                this.mutex.Release(1);
+            }
+
+            return null;
+        }
+
+        private async void StartDownloadTaskWihDelay()
+        {
+            await Task.Delay(1000);
+            await this.StartDownloadTaskAsync();
         }
 
         private async Task SetCurrentStreamAsync(Song song, INetworkRandomAccessStream networkRandomAccessStream)
@@ -401,58 +471,6 @@ namespace OutcoldSolutions.GoogleMusic.Services
             return null;
         }
 
-        private async Task HandleStreamDownloadAsync(INetworkRandomAccessStream stream, Song song)
-        {
-            await this.InitializeCacheFolderAsync();
-
-            try
-            {
-                await stream.DownloadAsync();
-
-                await this.mutex.WaitAsync().ConfigureAwait(continueOnCapturedContext: false);
-
-                try
-                {
-                    var cache = await this.songsCacheRepository.FindAsync(song);
-                    if (cache == null || string.IsNullOrEmpty(cache.FileName))
-                    {
-                        var songFolder = await this.cacheFolder.CreateFolderAsync(song.ProviderSongId.Substring(0, 1), CreationCollisionOption.OpenIfExists);
-                        var file = await songFolder.CreateFileAsync(song.ProviderSongId, CreationCollisionOption.ReplaceExisting);
-                        await stream.SaveToFileAsync(file);
-
-                        if (cache == null)
-                        {
-                            cache = new CachedSong() { FileName = file.Name, SongId = song.SongId, TaskAdded = DateTime.Now };
-                            await this.songsCacheRepository.AddAsync(cache);
-                        }
-                        else
-                        {
-                            cache.FileName = file.Name;
-                            await this.songsCacheRepository.UpdateAsync(cache);
-                        }
-                    }
-
-                    this.currentDownloadStream = null;
-                    this.currentDownloadSong = null;
-                }
-                finally
-                {
-                    this.mutex.Release(1);
-                }
-            }
-            catch (Exception exception)
-            {
-                if (exception is TaskCanceledException)
-                {
-                    this.logger.Debug("HandleStreamDownload was canceled.");
-                }
-                else
-                {
-                    this.logger.Error(exception, "Exception while tried to HandleStreamDownload.");
-                }
-            }
-        }
-
         private async Task StartDownloadTaskAsync()
         {
             await this.mutex.WaitAsync().ConfigureAwait(continueOnCapturedContext: false);
@@ -473,6 +491,9 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         private async Task CancelDownloadTaskAsync()
         {
+            Song currentSong = null;
+            INetworkRandomAccessStream currentStream = null;
+
             await this.mutex.WaitAsync().ConfigureAwait(continueOnCapturedContext: false);
 
             try
@@ -483,8 +504,19 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     this.downloadTaskCancellationToken = null;
                 }
 
+                if (this.downloadTask != null && this.currentDownloadSong != null && this.currentDownloadStream != null)
+                {
+                    currentSong = this.currentDownloadSong;
+                    currentStream = this.currentDownloadStream;
+                }
+
                 this.downloadTask = null;
-                
+
+                if (this.currentDownloadStream != null)
+                {
+                    this.currentDownloadStream.Dispose();
+                }
+
                 this.currentDownloadSong = null;
                 this.currentDownloadStream = null;
 
@@ -494,6 +526,12 @@ namespace OutcoldSolutions.GoogleMusic.Services
             finally
             {
                 this.mutex.Release(1);
+            }
+
+            if (currentSong != null && currentStream != null)
+            {
+                this.eventAggregator.Publish(
+                    new SongCachingChangeEvent(SongCachingChangeEventType.DownloadCanceled, currentStream, currentSong));
             }
         }
 
@@ -546,7 +584,44 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     else
                     {
                         await this.SetCurrentStreamAsync(nextTask.Song, stream);
-                        await this.HandleStreamDownloadAsync(stream, nextTask.Song);
+                        await this.InitializeCacheFolderAsync();
+                        await stream.DownloadAsync();
+
+                        if (cancellationToken.IsCancellationRequested)
+                        {
+                            break;
+                        }
+
+                        await this.mutex.WaitAsync(cancellationToken).ConfigureAwait(continueOnCapturedContext: false);
+
+                        try
+                        {
+                            var cache = await this.songsCacheRepository.FindAsync(nextTask.Song);
+                            if (cache == null || string.IsNullOrEmpty(cache.FileName))
+                            {
+                                var songFolder = await this.cacheFolder.CreateFolderAsync(nextTask.Song.ProviderSongId.Substring(0, 1), CreationCollisionOption.OpenIfExists);
+                                var file = await songFolder.CreateFileAsync(nextTask.Song.ProviderSongId, CreationCollisionOption.ReplaceExisting);
+                                await stream.SaveToFileAsync(file);
+
+                                if (cache == null)
+                                {
+                                    cache = new CachedSong() { FileName = file.Name, SongId = nextTask.Song.SongId, TaskAdded = DateTime.Now };
+                                    await this.songsCacheRepository.AddAsync(cache);
+                                }
+                                else
+                                {
+                                    cache.FileName = file.Name;
+                                    await this.songsCacheRepository.UpdateAsync(cache);
+                                }
+                            }
+
+                            this.currentDownloadStream = null;
+                            this.currentDownloadSong = null;
+                        }
+                        finally
+                        {
+                            this.mutex.Release(1);
+                        }
 
                         var song = await this.songsRepository.GetSongAsync(nextTask.Song.SongId);
                         this.eventAggregator.Publish(new SongCachingChangeEvent(SongCachingChangeEventType.FinishDownloading, stream, song));

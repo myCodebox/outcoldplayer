@@ -70,7 +70,7 @@ namespace OutcoldSolutions.GoogleMusic.Converters
                 StorageFile file;
                 if (string.IsNullOrEmpty(path))
                 {
-                    file = await StorageFile.GetFileFromPathAsync(string.Format(CultureInfo.InvariantCulture, UnknownAlbumArtFormat, size));
+                    file = await StorageFile.GetFileFromApplicationUriAsync(new Uri(string.Format(CultureInfo.InvariantCulture, UnknownAlbumArtFormat, size)));
                 }
                 else
                 {
