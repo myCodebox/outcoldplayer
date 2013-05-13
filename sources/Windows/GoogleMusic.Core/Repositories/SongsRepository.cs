@@ -17,7 +17,9 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
 
         Task<IList<Song>> SearchAsync(string searchQuery, uint? take = null);
 
-        Task UpdateAsync(IEnumerable<Song> songs);
+        Task UpdateRatingAsync(Song song);
+
+        Task UpdatePlayCountsAsync(Song song);
 
         Task InsertAsync(IEnumerable<Song> songs);
 
@@ -60,9 +62,14 @@ where (?1 = 1 or s.[IsCached] = 1) and s.[SongId] = ?2
             return await this.Connection.QueryAsync<Song>(sql.ToString(), this.stateService.IsOnline(), string.Format("%{0}%", searchQueryNorm));
         }
 
-        public Task UpdateAsync(IEnumerable<Song> songs)
+        public Task UpdateRatingAsync(Song song)
         {
-            return this.Connection.RunInTransactionAsync((c) => c.UpdateAll(songs));
+            return this.Connection.ExecuteAsync("update Song set Rating = ?1 where SongId = ?2", song.Rating, song.SongId);
+        }
+
+        public Task UpdatePlayCountsAsync(Song song)
+        {
+            return this.Connection.ExecuteAsync("update Song set PlayCount = ?1 where SongId = ?2", song.PlayCount, song.SongId);
         }
 
         public Task InsertAsync(IEnumerable<Song> songs)

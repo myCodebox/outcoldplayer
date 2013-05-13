@@ -68,9 +68,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 {
                     song.Rating = songRatingResp.Rating;
                     
-                    var songs = new[] { song };
-                    await this.songsRepository.UpdateAsync(songs);
-                    this.eventAggregator.Publish(new SongsUpdatedEvent(songs));
+                    await this.songsRepository.UpdateRatingAsync(song);
+                    this.eventAggregator.Publish(new SongsUpdatedEvent(new[] { song }));
                     
                     if (this.logger.IsDebugEnabled)
                     {

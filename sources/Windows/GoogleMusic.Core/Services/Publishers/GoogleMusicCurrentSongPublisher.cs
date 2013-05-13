@@ -87,9 +87,8 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
             song.PlayCount = playCount;
             song.LastPlayed = DateTime.UtcNow;
 
-            var songs = new[] { song };
-            await this.songsRepository.UpdateAsync(new[] { song });
-            this.eventAggregator.Publish(new SongsUpdatedEvent(songs));
+            await this.songsRepository.UpdatePlayCountsAsync(song);
+            this.eventAggregator.Publish(new SongsUpdatedEvent(new [] { song }));
         }
 
         private async Task RecordOnServerAsync(string googleSongId, string playlistId, bool updateRecentAlbum, bool updateRecentPlaylist, int playCount)
