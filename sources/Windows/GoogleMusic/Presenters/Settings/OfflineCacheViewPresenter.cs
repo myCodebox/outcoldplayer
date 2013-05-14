@@ -15,7 +15,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
     using OutcoldSolutions.GoogleMusic.Shell;
     using OutcoldSolutions.GoogleMusic.Web;
     using OutcoldSolutions.Presenters;
-    using OutcoldSolutions.Shell;
     using OutcoldSolutions.Views;
 
     using Windows.Storage;
@@ -224,7 +223,10 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
                 queuedTask.IsDownloading = true;
                 this.currentCachedSong = queuedTask;
                 this.currentDownloadStream = networkRandomAccessStream;
-                this.currentDownloadStream.DownloadProgressChanged += this.CurrentDownloadStreamOnDownloadProgressChanged;
+                if (this.currentDownloadStream != null)
+                {
+                    this.currentDownloadStream.DownloadProgressChanged += this.CurrentDownloadStreamOnDownloadProgressChanged;
+                }
             }
         }
 

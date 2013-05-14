@@ -26,6 +26,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private readonly IPlaylistsService playlistsService;
         private readonly IAlbumsRepository albumsRepository;
         private readonly ISongsCachingService cachingService;
+        private readonly IApplicationStateService stateService;
 
         internal ArtistPageViewPresenter(
             IApplicationResources resources,
@@ -33,7 +34,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             INavigationService navigationService,
             IPlaylistsService playlistsService,
             IAlbumsRepository albumsRepository,
-            ISongsCachingService cachingService)
+            ISongsCachingService cachingService,
+            IApplicationStateService stateService)
         {
             this.resources = resources;
             this.playQueueService = playQueueService;
@@ -41,6 +43,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.playlistsService = playlistsService;
             this.albumsRepository = albumsRepository;
             this.cachingService = cachingService;
+            this.stateService = stateService;
             this.PlayCommand = new DelegateCommand(this.Play);
             this.ShowAllCommand = new DelegateCommand(this.ShowAll);
 
@@ -110,7 +113,10 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private IEnumerable<CommandMetadata> GetContextCommands()
         {
             yield return new CommandMetadata(CommandIcon.OpenWith, this.resources.GetString("Toolbar_QueueButton"), this.QueueCommand);
-            yield return new CommandMetadata(CommandIcon.Download, this.resources.GetString("Toolbar_KeepLocal"), this.DownloadCommand);
+            if (this.stateService.IsOnline())
+            {
+                yield return new CommandMetadata(CommandIcon.Download, this.resources.GetString("Toolbar_KeepLocal"), this.DownloadCommand);
+            }
         }
 
         private void ShowAll()

@@ -25,18 +25,21 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private readonly IPlayQueueService playQueueService;
         private readonly ISongsService metadataEditService;
         private readonly ISongsCachingService cachingService;
+        private readonly IApplicationStateService stateService;
 
         internal CurrentPlaylistPageViewPresenter(
             IApplicationResources resources,
             IPlayQueueService playQueueService,
             ISongsService metadataEditService,
             ISongsCachingService cachingService,
+            IApplicationStateService stateService,
             SongsBindingModel songsBindingModel)
         {
             this.resources = resources;
             this.playQueueService = playQueueService;
             this.metadataEditService = metadataEditService;
             this.cachingService = cachingService;
+            this.stateService = stateService;
             this.BindingModel = songsBindingModel;
 
             this.playQueueService.QueueChanged += async (sender, args) => await this.Dispatcher.RunAsync(this.UpdateSongs);
@@ -210,9 +213,17 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private IEnumerable<CommandMetadata> GetContextCommands()
         {
-            yield return new CommandMetadata(CommandIcon.Add, this.resources.GetString("Toolbar_PlaylistButton"), this.AddToPlaylistCommand);
+            if (this.stateService.IsOnline())
+            {
+                yield return new CommandMetadata(CommandIcon.Add, this.resources.GetString("Toolbar_PlaylistButton"), this.AddToPlaylistCommand);
+            }
+
             yield return new CommandMetadata(CommandIcon.Remove, this.resources.GetString("Toolbar_QueueButton"), this.RemoveSelectedSongCommand);
-            yield return new CommandMetadata(CommandIcon.Download, this.resources.GetString("Toolbar_KeepLocal"), this.DownloadCommand);
+
+            if (this.stateService.IsOnline())
+            {
+                yield return new CommandMetadata(CommandIcon.Download, this.resources.GetString("Toolbar_KeepLocal"), this.DownloadCommand);
+            }
         }
     }
 }

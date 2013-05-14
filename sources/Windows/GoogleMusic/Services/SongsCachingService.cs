@@ -87,6 +87,9 @@ namespace OutcoldSolutions.GoogleMusic.Services
         private readonly ISongsRepository songsRepository;
         private readonly IMediaStreamDownloadService mediaStreamDownloadService;
         private readonly IAlbumArtCacheService albumArtCacheService;
+
+        private readonly IApplicationStateService stateService;
+
         private readonly IEventAggregator eventAggregator;
         private readonly ILogger logger;
 
@@ -109,6 +112,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             ISongsRepository songsRepository,
             IMediaStreamDownloadService mediaStreamDownloadService,
             IAlbumArtCacheService albumArtCacheService,
+            IApplicationStateService stateService,
             IEventAggregator eventAggregator)
         {
             this.logger = logManager.CreateLogger("SongsCachingService");
@@ -117,7 +121,21 @@ namespace OutcoldSolutions.GoogleMusic.Services
             this.songsRepository = songsRepository;
             this.mediaStreamDownloadService = mediaStreamDownloadService;
             this.albumArtCacheService = albumArtCacheService;
+            this.stateService = stateService;
             this.eventAggregator = eventAggregator;
+
+            this.eventAggregator.GetEvent<ApplicationStateChangeEvent>()
+                .Subscribe(async (e) =>
+                {
+                    if (e.CurrentState == ApplicationState.Offline)
+                    {
+                        await this.CancelDownloadTaskAsync();
+                    }
+                    else if (e.CurrentState == ApplicationState.Online)
+                    {
+                        this.StartDownloadTask();
+                    }
+                });
         }
 
         public async Task<IRandomAccessStreamWithContentType> GetStreamAsync(Song song)
@@ -475,6 +493,11 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         private async Task StartDownloadTaskAsync()
         {
+            if (this.stateService.IsOffline())
+            {
+                return;
+            }
+
             await this.mutex.WaitAsync().ConfigureAwait(continueOnCapturedContext: false);
 
             try
@@ -582,6 +605,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     if (stream == null)
                     {
                         this.eventAggregator.Publish(new SongCachingChangeEvent(SongCachingChangeEventType.FailedToDownload, null, nextTask.Song));
+                        break;
                     }
                     else
                     {

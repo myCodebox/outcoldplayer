@@ -13,6 +13,8 @@ namespace OutcoldSolutions.GoogleMusic.Controls
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Media;
 
+    using OutcoldSolutions.GoogleMusic.Services;
+
     [TemplateVisualState(GroupName = "Hover", Name = "Start1Hover")]
     [TemplateVisualState(GroupName = "Hover", Name = "Start2Hover")] 
     [TemplateVisualState(GroupName = "Hover", Name = "Start3Hover")] 
@@ -70,6 +72,8 @@ namespace OutcoldSolutions.GoogleMusic.Controls
             typeof(Rating), 
             new PropertyMetadata(null));
 
+        private static readonly Lazy<IApplicationStateService> StateService = new Lazy<IApplicationStateService>(() => ApplicationBase.Container.Resolve<IApplicationStateService>());
+
         private readonly Button[] stars = new Button[5];
 
         public event EventHandler<ValueChangedEventArgs> ValueChanged;
@@ -114,22 +118,31 @@ namespace OutcoldSolutions.GoogleMusic.Controls
                 this.stars[i] = (Button)this.GetTemplateChild("Star" + value);
                 this.stars[i].Click += (sender, args) =>
                     {
-                        var command = this.Command;
-
-                        this.Value = value;
-                        this.RaiseValueChanged(new ValueChangedEventArgs(Value));
-
-                        if (command != null)
+                        if (StateService.Value.IsOnline())
                         {
-                            var eventArgs = new RatingEventArgs(this.CommandParameter, value);
-                            if (command.CanExecute(eventArgs))
+                            var command = this.Command;
+
+                            this.Value = value;
+                            this.RaiseValueChanged(new ValueChangedEventArgs(Value));
+
+                            if (command != null)
                             {
-                                command.Execute(eventArgs);
+                                var eventArgs = new RatingEventArgs(this.CommandParameter, value);
+                                if (command.CanExecute(eventArgs))
+                                {
+                                    command.Execute(eventArgs);
+                                }
                             }
                         }
                     };
 
-                this.stars[i].PointerEntered += (sender, args) => VisualStateManager.GoToState(this, string.Format(CultureInfo.InvariantCulture, "Start{0}Hover", value), false);
+                this.stars[i].PointerEntered += (sender, args) =>
+                {
+                    if (StateService.Value.IsOnline())
+                    {
+                        VisualStateManager.GoToState(this, string.Format(CultureInfo.InvariantCulture, "Start{0}Hover", value), false);
+                    }
+                };
                 this.PointerExited += (sender, args) => VisualStateManager.GoToState(this, "NoHover", false);
             }
 

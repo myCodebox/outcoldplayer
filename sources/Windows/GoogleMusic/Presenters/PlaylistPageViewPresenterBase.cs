@@ -30,6 +30,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private readonly IPlaylistsService playlistsService;
         private readonly IApplicationResources resources;
         private readonly ISongsCachingService cachingService;
+        private readonly IApplicationStateService stateService;
 
         public PlaylistPageViewPresenterBase(IDependencyResolverContainer container)
         {
@@ -38,6 +39,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.playlistsService = container.Resolve<IPlaylistsService>();
             this.resources = container.Resolve<IApplicationResources>();
             this.cachingService = container.Resolve<ISongsCachingService>();
+            this.stateService = container.Resolve<IApplicationStateService>();
 
             this.QueueCommand = new DelegateCommand(this.Queue, () => this.BindingModel != null && this.BindingModel.SongsBindingModel.SelectedItems.Count > 0);
             this.AddToPlaylistCommand = new DelegateCommand(this.AddToPlaylist, () => this.BindingModel != null && this.BindingModel.SongsBindingModel.SelectedItems.Count > 0);
@@ -102,8 +104,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         protected virtual IEnumerable<CommandMetadata> GetContextCommands()
         {
             yield return new CommandMetadata(CommandIcon.OpenWith, this.resources.GetString("Toolbar_QueueButton"), this.QueueCommand);
-            yield return new CommandMetadata(CommandIcon.Add, this.resources.GetString("Toolbar_PlaylistButton"), this.AddToPlaylistCommand);
-            yield return new CommandMetadata(CommandIcon.Download, this.resources.GetString("Toolbar_KeepLocal"), this.DownloadCommand);
+            if (this.stateService.IsOnline())
+            {
+                yield return new CommandMetadata(CommandIcon.Add, this.resources.GetString("Toolbar_PlaylistButton"), this.AddToPlaylistCommand);
+                yield return new CommandMetadata(CommandIcon.Download, this.resources.GetString("Toolbar_KeepLocal"), this.DownloadCommand);
+            }
         }
 
         private void Queue()
@@ -159,7 +164,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         {
             var ratingEventArgs = parameter as RatingEventArgs;
             Debug.Assert(ratingEventArgs != null, "ratingEventArgs != null");
-            if (ratingEventArgs != null)
+            if (ratingEventArgs != null && this.stateService.IsOnline())
             {
                 this.Logger.LogTask(this.metadataEditService.UpdateRatingAsync(
                         ((SongBindingModel)ratingEventArgs.CommandParameter).Metadata, (byte)ratingEventArgs.Value));

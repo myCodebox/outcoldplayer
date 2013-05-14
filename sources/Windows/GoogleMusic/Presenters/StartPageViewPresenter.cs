@@ -9,6 +9,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using System.Linq;
     using System.Threading.Tasks;
 
+    using Windows.Networking.Connectivity;
+
     using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
@@ -44,6 +46,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private readonly IGoogleMusicSessionService sessionService;
         private readonly ISearchService searchService;
         private readonly ISongsCachingService cachingService;
+        private readonly IApplicationStateService stateService;
 
         private bool initialized = false;
 
@@ -57,7 +60,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             IMainFrameRegionProvider mainFrameRegionProvider,
             IGoogleMusicSessionService sessionService,
             ISearchService searchService,
-            ISongsCachingService cachingService)
+            ISongsCachingService cachingService,
+            IApplicationStateService stateService)
         {
             this.resources = resources;
             this.settingsService = settingsService;
@@ -69,6 +73,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.sessionService = sessionService;
             this.searchService = searchService;
             this.cachingService = cachingService;
+            this.stateService = stateService;
 
             this.PlayCommand = new DelegateCommand(this.Play);
             this.QueueCommand = new DelegateCommand(this.Queue, () => this.BindingModel.SelectedItems.Count > 0);
@@ -216,6 +221,16 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         {
             if (!this.initialized)
             {
+                if (this.stateService.CurrentState == ApplicationState.Online)
+                {
+                    var networkConnectivityLevel = NetworkInformation.GetInternetConnectionProfile().GetNetworkConnectivityLevel();
+                    if (networkConnectivityLevel != NetworkConnectivityLevel.ConstrainedInternetAccess
+                        && networkConnectivityLevel != NetworkConnectivityLevel.InternetAccess)
+                    {
+                        this.stateService.CurrentState = ApplicationState.Offline;
+                    }
+                }
+
                 await this.Dispatcher.RunAsync(() =>
                     {
                         this.searchService.Register();
@@ -293,7 +308,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private IEnumerable<CommandMetadata> GetContextCommands()
         {
             yield return new CommandMetadata(CommandIcon.OpenWith, this.resources.GetString("Toolbar_QueueButton"), this.QueueCommand);
-            yield return new CommandMetadata(CommandIcon.Download, this.resources.GetString("Toolbar_KeepLocal"), this.DownloadCommand);
+
+            if (this.stateService.IsOnline())
+            {
+                yield return new CommandMetadata(CommandIcon.Download, this.resources.GetString("Toolbar_KeepLocal"), this.DownloadCommand);
+            }
         }
 
         private PlaylistsGroupBindingModel CreateGroup(string title, int playlistsCount, IEnumerable<IPlaylist> playlists, PlaylistType type)

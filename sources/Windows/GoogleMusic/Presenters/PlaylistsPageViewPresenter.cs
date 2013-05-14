@@ -14,8 +14,9 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             IPlaylistsService playlistsService,
             INavigationService navigationService,
             IPlayQueueService playQueueService,
-            ISongsCachingService cachingService)
-            : base(resources, playlistsService, navigationService, playQueueService, cachingService)
+            ISongsCachingService cachingService,
+            IApplicationStateService stateService)
+            : base(resources, playlistsService, navigationService, playQueueService, cachingService, stateService)
         {
         }
     }

@@ -22,18 +22,21 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     {
         private readonly IApplicationResources resources;
         private readonly IUserPlaylistsService userPlaylistsService;
-        
+        private readonly IApplicationStateService stateService;
+
         public UserPlaylistsPageViewPresenter(
             IApplicationResources resources,
             INavigationService navigationService,
             IPlayQueueService playQueueService,
             IPlaylistsService playlistsService,
             IUserPlaylistsService userPlaylistsService,
-            ISongsCachingService cachingService)
-            : base(resources, playlistsService, navigationService, playQueueService, cachingService)
+            ISongsCachingService cachingService,
+            IApplicationStateService stateService)
+            : base(resources, playlistsService, navigationService, playQueueService, cachingService, stateService)
         {
             this.resources = resources;
             this.userPlaylistsService = userPlaylistsService;
+            this.stateService = stateService;
             this.AddPlaylistCommand = new DelegateCommand(this.AddPlaylist);
             this.EditPlaylistCommand = new DelegateCommand(this.EditPlaylist, () => this.BindingModel.SelectedItems.Count == 1);
             this.DeletePlaylistsCommand = new DelegateCommand(this.DeletePlaylists, () => this.BindingModel.SelectedItems.Count > 0);
@@ -72,8 +75,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 yield return commandMetadata;
             }
 
-            yield return new CommandMetadata(CommandIcon.Edit, this.resources.GetString("Toolbar_RenameButton"), this.EditPlaylistCommand);
-            yield return new CommandMetadata(CommandIcon.Delete, this.resources.GetString("Toolbar_DeleteButton"), this.DeletePlaylistsCommand);
+            if (this.stateService.IsOnline())
+            {
+                yield return new CommandMetadata(CommandIcon.Edit, this.resources.GetString("Toolbar_RenameButton"), this.EditPlaylistCommand);
+                yield return new CommandMetadata(CommandIcon.Delete, this.resources.GetString("Toolbar_DeleteButton"), this.DeletePlaylistsCommand);
+            }
         }
 
         private void AddPlaylist()

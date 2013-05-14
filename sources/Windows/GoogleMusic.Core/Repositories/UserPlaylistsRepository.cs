@@ -33,7 +33,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
         private const string SqlSearchPlaylists = @"
 select p.*
 from [UserPlaylist] as p  
-where (?1 = 1 or x.[OfflineSongsCount] > 0) and p.[TitleNorm] like ?2
+where (?1 = 1 or p.[OfflineSongsCount] > 0) and p.[TitleNorm] like ?2
 order by p.[TitleNorm]
 ";
 

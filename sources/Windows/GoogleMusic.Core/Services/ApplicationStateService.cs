@@ -59,6 +59,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
         private readonly ISettingsService settingsService;
         private readonly IEventAggregator eventAggregator;
 
+        private ApplicationState? applicationState;
+
         public ApplicationStateService(
             ISettingsService settingsService,
             IEventAggregator eventAggregator)
@@ -71,11 +73,12 @@ namespace OutcoldSolutions.GoogleMusic.Services
         {
             get
             {
-                return this.settingsService.GetValue(LastApplicationStateKey, ApplicationState.Online);
+                return this.applicationState.HasValue ? this.applicationState.Value : (ApplicationState)(this.applicationState = this.settingsService.GetValue(LastApplicationStateKey, ApplicationState.Online));
             }
 
             set
             {
+                this.applicationState = value;
                 this.settingsService.SetValue(LastApplicationStateKey, value);
                 this.eventAggregator.Publish(new ApplicationStateChangeEvent(value));
             }

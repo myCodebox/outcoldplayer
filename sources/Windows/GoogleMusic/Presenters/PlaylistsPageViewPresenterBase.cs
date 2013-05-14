@@ -29,6 +29,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private readonly INavigationService navigationService;
         private readonly IPlayQueueService playQueueService;
         private readonly ISongsCachingService cachingService;
+        private readonly IApplicationStateService stateService;
 
         private IDisposable playlistsChangeSubscription;
 
@@ -37,13 +38,15 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             IPlaylistsService playlistsService,
             INavigationService navigationService,
             IPlayQueueService playQueueService,
-            ISongsCachingService cachingService)
+            ISongsCachingService cachingService,
+            IApplicationStateService stateService)
         {
             this.resources = resources;
             this.playlistsService = playlistsService;
             this.navigationService = navigationService;
             this.playQueueService = playQueueService;
             this.cachingService = cachingService;
+            this.stateService = stateService;
 
             this.PlayCommand = new DelegateCommand(this.Play);
             this.QueueCommand = new DelegateCommand(this.Queue, () => this.BindingModel.SelectedItems.Count > 0);
@@ -117,7 +120,10 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         protected virtual IEnumerable<CommandMetadata> GetContextCommands()
         {
             yield return new CommandMetadata(CommandIcon.OpenWith, this.resources.GetString("Toolbar_QueueButton"), this.QueueCommand);
-            yield return new CommandMetadata(CommandIcon.Download, this.resources.GetString("Toolbar_KeepLocal"), this.DownloadCommand);
+            if (this.stateService.IsOnline())
+            {
+                yield return new CommandMetadata(CommandIcon.Download, this.resources.GetString("Toolbar_KeepLocal"), this.DownloadCommand);
+            }
         }
 
         private void SelectedItemsOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
