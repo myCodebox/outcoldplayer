@@ -33,7 +33,7 @@
             <TextBlock Style="{StaticResource BodyTextStyle}" 
                        Margin="0, 20, 0, 0"
                        x:Uid="SettingsUpgrade_AddFreePackageDescription">
-                You can buy for $4.99 AdFree package, which will remove all advertisements:
+                You can buy for $2.99 AdFree package, which will remove all advertisements:
             </TextBlock>
 
             <Button Margin="0, 20, 0, 0" Command="{Binding Path=BuyPackageCommand, Mode=OneTime}"
@@ -44,7 +44,7 @@
 
             <TextBlock Style="{StaticResource BodyTextStyle}"  Margin="0, 40, 0, 0"
                        x:Uid="SettingsUpgrade_UltimatePackageDescription">
-                Or you can spend $9.99 for Ultimate package, which removes all advertisements from application and remove limit for 30 songs in offline mode.
+                Or you can spend $5.99 for Ultimate package, which removes all advertisements from application and remove limit for 30 songs in offline mode.
                 Also it will contains all additional features, which we will ship in future:
             </TextBlock>
 

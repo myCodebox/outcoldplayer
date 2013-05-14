@@ -301,7 +301,6 @@
     <None Include="GoogleMusic_StoreKey.pfx" />
     <None Include="GoogleMusic_TemporaryKey.pfx" />
     <None Include="packages.config" />
-    <PRIResource Include="Strings\ru\Resources.resw" />
     <PRIResource Include="Strings\en\Resources.resw" />
   </ItemGroup>
   <ItemGroup>

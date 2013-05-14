@@ -545,7 +545,7 @@ This setting allows to prevent this when gMusic application is in foreground (on
     <comment>09.png</comment>
   </data>
   <data name="SettingsUpgrade_AddFreePackageDescription.Text" xml:space="preserve">
-    <value>You can buy for $4.99 AdFree package, which will remove all advertisements:</value>
+    <value>You can buy for $2.99 AdFree package, which will remove all advertisements:</value>
     <comment>09.png</comment>
   </data>
   <data name="SettingsUpgrade_RemoveAdsTitle.Text" xml:space="preserve">
@@ -561,7 +561,7 @@ This setting allows to prevent this when gMusic application is in foreground (on
     <comment>09.png</comment>
   </data>
   <data name="SettingsUpgrade_UltimatePackageDescription.Text" xml:space="preserve">
-    <value>Or you can spend $9.99 for Ultimate package, which removes all advertisements from application and remove limit for 30 songs in offline mode.
+    <value>Or you can spend $5.99 for Ultimate package, which removes all advertisements from application and remove limit for 30 songs in offline mode.
 Also it will contains all additional features, which we will ship in future:</value>
     <comment>09.png</comment>
   </data>

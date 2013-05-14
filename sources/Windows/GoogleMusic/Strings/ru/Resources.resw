@@ -448,7 +448,7 @@
     <value>Без рекламы (безлимитный)</value>
   </data>
   <data name="SettingsUpgrade_AddFreePackageDescription.Text" xml:space="preserve">
-    <value>Вы можете купить пакет без рекламы за $4.99, который удалит всю рекламу из приложения:</value>
+    <value>Вы можете купить пакет без рекламы за $2.99, который удалит всю рекламу из приложения:</value>
   </data>
   <data name="SettingsUpgrade_RemoveAdsTitle.Text" xml:space="preserve">
     <value>Вы может удалить рекламу из приложения.</value>
@@ -460,7 +460,7 @@
     <value>Ultimate (безлимитный)</value>
   </data>
   <data name="SettingsUpgrade_UltimatePackageDescription.Text" xml:space="preserve">
-    <value>А так же вы можете купить пакет Ultimate за $9.99. Данный пакет не дает никаких дополнительных преимуществ на данный момент (включает в себя пакет без рекламы). 
+    <value>А так же вы можете купить пакет Ultimate за $5.99. Данный пакет не дает никаких дополнительных преимуществ на данный момент (включает в себя пакет без рекламы). 
 Но, как только мы введем дополнительные платные функции, данный пакет будет включать их все:</value>
   </data>
   <data name="SongsList_SongAlbum.Title" xml:space="preserve">
