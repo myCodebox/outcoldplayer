@@ -3,7 +3,6 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.BindingModels.Settings
 {
-    using System;
     using System.Collections.ObjectModel;
     using System.Collections.Specialized;
 

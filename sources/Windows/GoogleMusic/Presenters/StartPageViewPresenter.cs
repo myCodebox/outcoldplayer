@@ -199,16 +199,17 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private async Task DeinitializeAsync()
         {
+            await this.cachingService.ClearCacheAsync();
             await this.Dispatcher.RunAsync(
                 () =>
-                    {
-                        this.searchService.Unregister();
-                        this.mainFrameRegionProvider.SetContent(MainFrameRegion.Links, null);
-                        this.BindingModel.ClearSelectedItems();
-                        this.BindingModel.Groups = null;
-                        this.navigationService.ClearHistory();
-                        this.initialized = false;
-                    });
+                {
+                    this.searchService.Unregister();
+                    this.mainFrameRegionProvider.SetContent(MainFrameRegion.Links, null);
+                    this.BindingModel.ClearSelectedItems();
+                    this.BindingModel.Groups = null;
+                    this.navigationService.ClearHistory();
+                    this.initialized = false;
+                });
         }
 
         private async Task OnViewInitializedAsync()
@@ -220,6 +221,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                         this.searchService.Register();
                         this.mainFrameRegionProvider.SetContent(MainFrameRegion.Links, ApplicationBase.Container.Resolve<LinksRegionView>());
                     });
+
+                this.cachingService.StartDownloadTask();
 
                 this.initialized = true;
             }

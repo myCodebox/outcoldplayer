@@ -37,6 +37,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
         Task<IList<CachedSong>> GetAllActiveTasksAsync();
 
         Task<Tuple<INetworkRandomAccessStream, Song>> GetCurrentTaskAsync();
+
+        void StartDownloadTask();
     }
 
     public enum SongCachingChangeEventType
@@ -116,9 +118,6 @@ namespace OutcoldSolutions.GoogleMusic.Services
             this.mediaStreamDownloadService = mediaStreamDownloadService;
             this.albumArtCacheService = albumArtCacheService;
             this.eventAggregator = eventAggregator;
-
-            // TODO: find better way to launch this.
-            // this.StartDownloadTaskWihDelay();
         }
 
         public async Task<IRandomAccessStreamWithContentType> GetStreamAsync(Song song)
@@ -403,9 +402,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
             return null;
         }
 
-        private async void StartDownloadTaskWihDelay()
+        public async void StartDownloadTask()
         {
-            await Task.Delay(1000);
             await this.StartDownloadTaskAsync();
         }
 

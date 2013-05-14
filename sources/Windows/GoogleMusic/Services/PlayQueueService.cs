@@ -9,6 +9,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
     using System.Net;
     using System.Threading.Tasks;
 
+    using Windows.Networking.Connectivity;
+
     using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services.Publishers;

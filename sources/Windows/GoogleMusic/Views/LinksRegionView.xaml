@@ -23,7 +23,7 @@
                 <Button.Template>
                     <ControlTemplate>
                         <TextBlock Text="{Binding Path=BindingModel.MessageText, Mode=OneWay}" 
-                               Style="{StaticResource BasicTextStyle}"/>
+                                   Style="{StaticResource BodyTextStyle}"/>
                     </ControlTemplate>
                 </Button.Template>
             </Button>
