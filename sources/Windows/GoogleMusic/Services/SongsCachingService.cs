@@ -117,7 +117,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
             this.albumArtCacheService = albumArtCacheService;
             this.eventAggregator = eventAggregator;
 
-            this.StartDownloadTaskWihDelay();
+            // TODO: find better way to launch this.
+            // this.StartDownloadTaskWihDelay();
         }
 
         public async Task<IRandomAccessStreamWithContentType> GetStreamAsync(Song song)

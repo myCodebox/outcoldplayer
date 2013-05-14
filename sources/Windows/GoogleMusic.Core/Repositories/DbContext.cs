@@ -5,6 +5,7 @@
 namespace OutcoldSolutions.GoogleMusic.Repositories
 {
     using System;
+    using System.Globalization;
     using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
@@ -19,6 +20,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
 
     public class DbContext
     {
+        private const int CurrentDatabaseVersion = 2;
         private readonly string dbFileName;
 
         public DbContext(string dbFileName = "db.sqlite")
@@ -61,13 +63,24 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
             fDbExists = File.Exists(this.GetDatabaseFilePath());
 #endif
             SQLite3.Config(SQLite3.ConfigOption.MultiThread);
+            
+            if (fDbExists)
+            {
+                var connection = this.CreateConnection();
+                int currentVersion = await connection.ExecuteScalarAsync<int>("PRAGMA user_version");
+                if (currentVersion != CurrentDatabaseVersion)
+                {
+                    connection.Close();
+                    await this.DeleteDatabaseAsync();
+                    fDbExists = false;
+                }
+            }
 
             if (!fDbExists)
             {
                 var connection = this.CreateConnection();
                 await connection.ExecuteAsync("PRAGMA page_size = 65536 ;");
-                await connection.ExecuteAsync("PRAGMA user_version = 1 ;");
-
+                
                 await connection.CreateTableAsync<Song>();
                 await connection.CreateTableAsync<UserPlaylist>();
                 await connection.CreateTableAsync<UserPlaylistEntry>();
@@ -588,6 +601,7 @@ CREATE TRIGGER update_song_parenttitlesupdate AFTER UPDATE OF [AlbumTitleNorm], 
 
   END;");
 
+                await connection.ExecuteAsync(string.Format(CultureInfo.InvariantCulture, "PRAGMA user_version = {0} ;", CurrentDatabaseVersion));
             }
 
             return fDbExists ? DatabaseStatus.Existed : DatabaseStatus.New;

@@ -220,9 +220,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\OutcoldSolutions.Presentation.1.0.30512.0\lib\win\OutcoldSolutions.Presentation.dll</HintPath>
     </Reference>
-    <Reference Include="OutcoldSolutions.SQLite, Version=1.1.30331.42665, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
+    <Reference Include="OutcoldSolutions.SQLite, Version=1.1.30513.33825, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\OutcoldSolutions.SQLite.1.1.30331.0\lib\win\OutcoldSolutions.SQLite.dll</HintPath>
+      <HintPath>..\..\packages\OutcoldSolutions.SQLite.1.1.30513.1\lib\win\OutcoldSolutions.SQLite.dll</HintPath>
     </Reference>
     <Reference Include="System.Reactive.Core, Version=2.1.30214.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

@@ -189,6 +189,8 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
                     c.DeleteAll<Artist>();
                     c.DeleteAll<Genre>();
                     c.DeleteAll<Song>();
+                    c.DeleteAll<CachedSong>();
+                    c.DeleteAll<CachedAlbumArt>();
                 });
         }
 
