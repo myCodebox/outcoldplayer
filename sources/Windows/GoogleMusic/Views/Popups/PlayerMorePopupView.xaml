@@ -53,7 +53,7 @@
 
             <controls:AppBarToggleButton IsChecked="{Binding Path=BindingModel.IsOnlineMode, Mode=TwoWay}" 
                                          Style="{StaticResource GlobePopupMenuButtonStyle}"
-                                         AutomationProperties.Name="Online mode"/>
+                                         AutomationProperties.Name="{Binding Path=BindingModel.ApplicationStateText}"/>
 
             <controls:AppBarToggleButton Style="{StaticResource ShufflePopupMenuButtonStyle}" 
                                          IsChecked="{Binding Path=BindingModel.IsShuffleEnabled, Mode=TwoWay}"

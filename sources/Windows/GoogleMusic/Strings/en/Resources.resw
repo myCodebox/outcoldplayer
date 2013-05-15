@@ -354,6 +354,12 @@
   <data name="OfflineCacheAppSettingsTitle" xml:space="preserve">
     <value>Offline cache</value>
   </data>
+  <data name="OfflineMode" xml:space="preserve">
+    <value>Offline Mode</value>
+  </data>
+  <data name="OnlineMode" xml:space="preserve">
+    <value>Online Mode</value>
+  </data>
   <data name="Player_BufferingLabel.Text" xml:space="preserve">
     <value>Buffering</value>
     <comment>13.png</comment>

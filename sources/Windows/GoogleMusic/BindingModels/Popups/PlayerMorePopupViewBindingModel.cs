@@ -17,6 +17,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels.Popups
         private readonly IPlayQueueService playQueueService;
         private readonly IEventAggregator eventAggregator;
         private readonly IApplicationStateService stateService;
+        private readonly IApplicationResources applicationResources;
         private readonly IDispatcher dispatcher;
 
         public PlayerMorePopupViewBindingModel(
@@ -24,12 +25,14 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels.Popups
             IPlayQueueService playQueueService,
             IEventAggregator eventAggregator,
             IApplicationStateService stateService,
+            IApplicationResources applicationResources,
             IDispatcher dispatcher)
         {
             this.mediaElementContainer = mediaElementContainer;
             this.playQueueService = playQueueService;
             this.eventAggregator = eventAggregator;
             this.stateService = stateService;
+            this.applicationResources = applicationResources;
             this.dispatcher = dispatcher;
 
             this.RegisterForDispose(this.eventAggregator.GetEvent<QueueChangeEvent>().Subscribe(
@@ -92,6 +95,20 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels.Popups
             set
             {
                 this.stateService.CurrentState = value ? ApplicationState.Online : ApplicationState.Offline;
+                this.RaisePropertyChanged(() => this.ApplicationStateText);
+            }
+        }
+
+        public string ApplicationStateText
+        {
+            get
+            {
+                if (this.IsOnlineMode)
+                {
+                    return this.applicationResources.GetString("OnlineMode");
+                }
+
+                return this.applicationResources.GetString("OfflineMode");
             }
         }
     }
