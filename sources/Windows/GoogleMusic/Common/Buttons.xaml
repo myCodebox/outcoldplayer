@@ -162,4 +162,10 @@
         <Setter Property="Content" Value="&#xE12B;"/>
     </Style>
 
+    <Style x:Key="SettingsPopupMenuButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource PopupMenuButtonStyle}">
+        <Setter Property="AutomationProperties.AutomationId" Value="SettingsAppBarButton"/>
+        <Setter Property="AutomationProperties.Name" Value="Settings"/>
+        <Setter Property="Content" Value="&#xE115;"/>
+    </Style>
+
 </ResourceDictionary>

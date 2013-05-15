@@ -9,21 +9,29 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views.Popups;
     using OutcoldSolutions.Presenters;
+    using OutcoldSolutions.Shell;
 
     public class PlayerMorePopupViewPresenter : DisposableViewPresenterBase<IPlayerMorePopupView>, IDisposable
     {
         private readonly IPlayQueueService queueService;
+        private readonly IApplicationSettingViewsService applicationSettingViewsService;
 
         public PlayerMorePopupViewPresenter(
             IPlayQueueService queueService,
+            IApplicationSettingViewsService applicationSettingViewsService,
             PlayerMorePopupViewBindingModel bindingModel)
         {
             this.queueService = queueService;
+            this.applicationSettingViewsService = applicationSettingViewsService;
 
             this.BindingModel = bindingModel;
 
             this.RepeatAllCommand = new DelegateCommand(() => { }, () => this.queueService.State != QueueState.Busy);
             this.ShuffleCommand = new DelegateCommand(() => { }, () => this.queueService.State != QueueState.Busy);
+            this.ShowApplicationSettingsCommand = new DelegateCommand(async () =>
+            {
+                await this.Dispatcher.RunAsync(() => this.applicationSettingViewsService.Show());
+            });
 
             this.queueService.StateChanged += this.QueueServiceOnStateChanged;
         }
@@ -33,6 +41,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
         public DelegateCommand ShuffleCommand { get; set; }
 
         public DelegateCommand RepeatAllCommand { get; set; }
+
+        public DelegateCommand ShowApplicationSettingsCommand { get; set; }
 
         protected override void OnDisposing()
         {

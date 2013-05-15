@@ -40,6 +40,7 @@
                         <Paragraph>[+] Offline mode (check the "..." button to enable it).</Paragraph>
                         <Paragraph>[+] Predownload of next song in queue.</Paragraph>
                         <Paragraph>[+] gMusic caches album art locally.</Paragraph>
+                        <Paragraph>[+] Add Application Settings button at "..." button, which provides easy access to application settings.</Paragraph>
                         <Paragraph>[b] gMusic can continue to work on initial library load if it cannot load playlists.</Paragraph>
                         <Paragraph>[b] Song name on search page can be truncated without '...'.</Paragraph>
                     </RichTextBlock>
