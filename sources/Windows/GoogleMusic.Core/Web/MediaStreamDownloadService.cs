@@ -52,11 +52,19 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 source = this.cancellationTokenSource = new CancellationTokenSource();
                 var cancellationToken = source.Token;
 
-                var response = await this.client.SendAsync(new HttpRequestMessage(HttpMethod.Get, url), HttpCompletionOption.ResponseHeadersRead, cancellationToken);
+                var response =
+                    await
+                        this.client.SendAsync(
+                            new HttpRequestMessage(HttpMethod.Get, url),
+                            HttpCompletionOption.ResponseHeadersRead,
+                            cancellationToken);
 
                 if (this.logger.IsDebugEnabled)
                 {
-                    this.logger.Debug("Got response. ContentLength: {0}, ContentType: {1}.", response.Content.Headers.ContentLength, response.Content.Headers.ContentType);
+                    this.logger.Debug(
+                        "Got response. ContentLength: {0}, ContentType: {1}.",
+                        response.Content.Headers.ContentLength,
+                        response.Content.Headers.ContentType);
                 }
 
                 if (!response.Content.Headers.ContentLength.HasValue)
@@ -73,7 +81,11 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
                 if (this.logger.IsDebugEnabled)
                 {
-                    this.logger.Debug("Requestion end of stream. Start: {0}, End: {1}, Read Count: {2}.", start, response.Content.Headers.ContentLength, readCount);
+                    this.logger.Debug(
+                        "Requestion end of stream. Start: {0}, End: {1}, Read Count: {2}.",
+                        start,
+                        response.Content.Headers.ContentLength,
+                        readCount);
                 }
 
                 HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, url);
@@ -106,13 +118,41 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
                 this.cancellationTokenSource = null;
 
-                return new MemoryRandomAccessStream(this.logger, await response.Content.ReadAsStreamAsync(), data, response.Content.Headers.ContentType.MediaType, read);
+                return new MemoryRandomAccessStream(
+                    this.logger,
+                    await response.Content.ReadAsStreamAsync(),
+                    data,
+                    response.Content.Headers.ContentType.MediaType,
+                    read);
+            }
+            catch (HttpRequestException exception)
+            {
+                if (exception.InnerException is IOException)
+                {
+                    this.logger.Debug(exception, "GetStreamAsync: HttpRequestException.");
+                }
+                else
+                {
+                    this.logger.Error(exception, "GetStreamAsync: Exception while loading stream.");
+                }
+
+                return null;
+            }
+            catch (IOException exception)
+            {
+                this.logger.Debug(exception, "GetStreamAsync: IOException.");
+                return null;
+            }
+            catch (OperationCanceledException exception)
+            {
+                this.logger.Debug(exception, "GetStreamAsync: Operation was canceled.");
+                return null;
             }
             catch (Exception e)
             {
                 if (source == null || !source.IsCancellationRequested)
                 {
-                    this.logger.Error(e, "Exception while loading stream");
+                    this.logger.Error(e, "GetStreamAsync: Exception while loading stream");
                 }
 
                 return null;
@@ -159,7 +199,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 var cancellationToken = this.cancellationTokenSource.Token;
 
                 this.readTask =
-                    Task.Factory.StartNew(() => this.SafeDownloadSream(cancellationToken), cancellationToken)
+                    Task.Factory.StartNew(() => this.SafeDownloadStream(cancellationToken), cancellationToken)
                         .ContinueWith(t => this.DisposeNetworkDownloader());
             }
 
@@ -270,7 +310,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
                                     return buffer;
                                 }
 
-                                await Task.Delay(10);
+                                await Task.Delay(10, token);
                             }
                         } 
                         while (fReading && this.readTask != null);
@@ -369,7 +409,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 }
             }
 
-            private void SafeDownloadSream(CancellationToken cancellationToken)
+            private void SafeDownloadStream(CancellationToken cancellationToken)
             {
                 try
                 {
@@ -428,19 +468,34 @@ namespace OutcoldSolutions.GoogleMusic.Web
                     downloadProgress = 1d;
                     this.RaiseDownloadProgressChanged(downloadProgress);
                 }
+                catch (HttpRequestException exception)
+                {
+                    if (exception.InnerException is IOException)
+                    {
+                        this.logger.Debug(exception, "SafeDownloadStream: HttpRequestException.");
+                    }
+                    else
+                    {
+                        this.logger.Error(exception, "SafeDownloadStream: Exception while reading stream.");
+                    }
+                }
+                catch (IOException exception)
+                {
+                    this.logger.Debug(exception, "SafeDownloadStream: IOException.");
+                }
                 catch (OperationCanceledException exception)
                 {
-                    this.logger.Debug("Downloading task was cancelled: {0}.", exception);
+                    this.logger.Debug(exception, "SafeDownloadStream: Downloading task was canceled.");
                 }
                 catch (Exception exception)
                 {
                     if (cancellationToken.IsCancellationRequested)
                     {
-                        this.logger.Debug("Downloading task was cancelled {0}.", exception);
+                        this.logger.Debug(exception, "SafeDownloadStream: Downloading task was canceled .");
                     }
                     else
                     {
-                        this.logger.Error(exception, "Exception while reading stream.");
+                        this.logger.Error(exception, "SafeDownloadStream: Exception while reading stream.");
                     }
                 }
             }

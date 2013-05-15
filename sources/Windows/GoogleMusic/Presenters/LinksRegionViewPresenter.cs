@@ -23,6 +23,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private readonly IApplicationResources resources;
         private readonly IDispatcher dispatcher;
         private readonly IGoogleMusicSynchronizationService googleMusicSynchronizationService;
+        private readonly IGoogleMusicSessionService sessionService;
 
         private readonly DispatcherTimer synchronizationTimer;
         private int synchronizationTime = 0; // we don't want to synchronize playlists each time, so we will do it on each 6 time
@@ -36,12 +37,14 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             ISearchService searchService,
             IDispatcher dispatcher,
             IGoogleMusicSynchronizationService googleMusicSynchronizationService,
-            IApplicationSettingViewsService applicationSettingViewsService)
+            IApplicationSettingViewsService applicationSettingViewsService,
+            IGoogleMusicSessionService sessionService)
         {
             this.stateService = stateService;
             this.resources = resources;
             this.dispatcher = dispatcher;
             this.googleMusicSynchronizationService = googleMusicSynchronizationService;
+            this.sessionService = sessionService;
             this.ShowSearchCommand = new DelegateCommand(searchService.Activate);
             this.NavigateToDownloadQueue = new DelegateCommand(async () =>
             {
@@ -62,6 +65,14 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.Logger.LogTask(this.Synchronize());
 
             this.SetOfflineMessageIfRequired();
+
+            this.sessionService.SessionCleared += SessionServiceOnSessionCleared;
+        }
+
+        private void SessionServiceOnSessionCleared(object sender, EventArgs eventArgs)
+        {
+            this.synchronizationTimer.Stop();
+            this.sessionService.SessionCleared -= SessionServiceOnSessionCleared;
         }
 
         public DelegateCommand ShowSearchCommand { get; private set; }

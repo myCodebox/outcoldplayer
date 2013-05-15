@@ -77,6 +77,10 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
                 {
                     result = await this.authentificationService.CheckAuthentificationAsync(userInfo);
                 }
+                catch (OperationCanceledException exception)
+                {
+                    this.Logger.Debug(exception, "Operation was canceled.");
+                }
                 catch (Exception exception)
                 {
                     this.Logger.Error(exception, "Exception while tried to authentificate.");

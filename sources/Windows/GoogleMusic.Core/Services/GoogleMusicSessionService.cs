@@ -18,9 +18,9 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
     public class GoogleMusicSessionService : IGoogleMusicSessionService
     {
-        private const string ContainerName = "UserSession";
-        private const string SessionIdKey = "SessionId";
-        private const string CookiesKey = "Cookies";
+        private const string ContainerName = "GoogleMusicSessionService_UserSession";
+        private const string SessionIdKey = "GoogleMusicSessionService_SessionId";
+        private const string CookiesKey = "GoogleMusicSessionService_Cookies";
 
         private readonly IDataProtectService dataProtectService;
         private readonly ILogger logger;
@@ -63,23 +63,30 @@ namespace OutcoldSolutions.GoogleMusic.Services
             var applicationDataContainer = this.GetSessionContainer();
             if (applicationDataContainer != null)
             {
-                applicationDataContainer.Values[SessionIdKey] = this.userSession.SessionId;
-
-                var cookies = cookieCollection.ToArray();
-
-                string cookiesJson = JsonConvert.SerializeObject(cookies);
-
-                string protectedCookies = await this.dataProtectService.ProtectStringAsync(cookiesJson);
-
-                applicationDataContainer.Values[CookiesKey] = protectedCookies;
-                
-                if (this.logger.IsDebugEnabled)
+                try
                 {
-                    this.logger.Debug("Cookies and sessionId were saved. SessionId: {0}.", this.userSession.SessionId);
-                    this.logger.Debug("---------------------------------");
-                    this.logger.Debug("Saved cookies:");
-                    this.logger.LogCookies(cookies);
-                    this.logger.Debug("---------------------------------");
+                    applicationDataContainer.Values[SessionIdKey] = this.userSession.SessionId;
+
+                    var cookies = cookieCollection.ToArray();
+
+                    string cookiesJson = JsonConvert.SerializeObject(cookies);
+
+                    string protectedCookies = await this.dataProtectService.ProtectStringAsync(cookiesJson);
+
+                    applicationDataContainer.Values[CookiesKey] = protectedCookies;
+
+                    if (this.logger.IsDebugEnabled)
+                    {
+                        this.logger.Debug("Cookies and sessionId were saved. SessionId: {0}.", this.userSession.SessionId);
+                        this.logger.Debug("---------------------------------");
+                        this.logger.Debug("Saved cookies:");
+                        this.logger.LogCookies(cookies);
+                        this.logger.Debug("---------------------------------");
+                    }
+                }
+                catch (Exception exception)
+                {
+                    this.logger.Error(exception, "Failed to save cookies");
                 }
             }
             else
@@ -98,7 +105,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 {
                     try
                     {
-                        string unprotectedSerializedCookies = await this.dataProtectService.UnprotectStringAsync(Convert.ToString(cookies));
+                        string unprotectedSerializedCookies =
+                            await this.dataProtectService.UnprotectStringAsync(Convert.ToString(cookies));
 
                         var cookiesArray = JsonConvert.DeserializeObject<Cookie[]>(unprotectedSerializedCookies);
 
@@ -114,6 +122,10 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
                             return cookiesArray;
                         }
+                    }
+                    catch (FormatException formatException)
+                    {
+                        this.logger.Debug(formatException, "Could not deserialize cookies: {0}", cookies);
                     }
                     catch (Exception e)
                     {

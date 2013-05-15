@@ -83,16 +83,15 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
                         {
                             var storedSong = connection.Find<Song>(x => x.ProviderSongId == songId);
                             
-                            var songEntity = googleSong.ToSong();
                             if (storedSong != null)
                             {
-                                songEntity.SongId = storedSong.SongId;
-                                connection.Update(songEntity);
+                                GoogleMusicSongEx.Mapper(googleSong, storedSong);
+                                connection.Update(storedSong);
                                 songsUpdated++;
                             }
                             else
                             {
-                                connection.Insert(songEntity);
+                                connection.Insert(googleSong.ToSong());
                                 songsInstered++;
                             }
                         }

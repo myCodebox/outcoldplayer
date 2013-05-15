@@ -7,7 +7,6 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
     using System.Threading;
     using System.Threading.Tasks;
 
-    using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
 
     using Windows.Data.Xml.Dom;
@@ -16,11 +15,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
     internal class TileCurrentSongPublisher : ICurrentSongPublisher
     {
         private const string CurrentSongTileTag = "CurrentSong";
-
-        public TileCurrentSongPublisher()
-        {
-            TileUpdateManager.CreateTileUpdaterForApplication().EnableNotificationQueue(true);
-        }
+        private bool isInitialized = false;
 
         public PublisherType PublisherType
         {
@@ -29,6 +24,8 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
 
         public Task PublishAsync(Song song, IPlaylist currentPlaylist, Uri albumArtUri, CancellationToken cancellationToken)
         {
+            this.TilesInitialization();
+
             return Task.Factory.StartNew(() =>
                 {
                     XmlDocument wideTileTemplate = this.GenerateWideTile(song, albumArtUri);
@@ -48,7 +45,16 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
                                                };
 
                     TileUpdateManager.CreateTileUpdaterForApplication().Update(tileNotification);
-                });
+                }, cancellationToken);
+        }
+
+        private void TilesInitialization()
+        {
+            if (!this.isInitialized)
+            {
+                TileUpdateManager.CreateTileUpdaterForApplication().EnableNotificationQueue(true);
+                this.isInitialized = true;
+            }
         }
 
         private XmlDocument GenerateWideTile(Song song, Uri albumArtUri)

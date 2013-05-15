@@ -12,35 +12,43 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
     {
         public static Song ToSong(this GoogleMusicSong googleMusicSong)
         {
-            return new Song()
-            {
-                AlbumArtistTitle = googleMusicSong.AlbumArtist.Trim(),
-                AlbumArtistTitleNorm = googleMusicSong.AlbumArtist.Trim().Normalize(),
-                ArtistTitle = googleMusicSong.Artist.Trim(),
-                ArtistTitleNorm = googleMusicSong.Artist.Trim().Normalize(),
-                AlbumTitle = googleMusicSong.Album.Trim(),
-                AlbumTitleNorm = googleMusicSong.Album.Trim().Normalize(),
-                GenreTitle = googleMusicSong.Genre.Trim(),
-                GenreTitleNorm = googleMusicSong.Genre.Trim().Normalize(),
-                AlbumArtUrl = string.IsNullOrEmpty(googleMusicSong.AlbumArtUrl) ? null : new Uri("http:" + googleMusicSong.AlbumArtUrl),
-                Composer = googleMusicSong.Composer,
-                Disc = googleMusicSong.Disc,
-                TotalDiscs = googleMusicSong.TotalDiscs,
-                Duration = TimeSpan.FromMilliseconds(googleMusicSong.DurationMillis),
-                ProviderSongId = googleMusicSong.Id,
-                LastPlayed = DateTimeExtensions.FromUnixFileTime(googleMusicSong.LastPlayed / 1000),
-                CreationDate = DateTimeExtensions.FromUnixFileTime(googleMusicSong.CreationDate / 1000),
-                PlayCount = googleMusicSong.PlayCount,
-                Rating = googleMusicSong.Rating,
-                Title = googleMusicSong.Title.Trim(),
-                TitleNorm = googleMusicSong.Title.Trim().Normalize(),
-                Track = googleMusicSong.Track,
-                TotalTracks = googleMusicSong.TotalTracks,
-                Year = googleMusicSong.Year,
-                Comment = googleMusicSong.Comment,
-                Bitrate = googleMusicSong.Bitrate,
-                StreamType = StreamType.GoogleMusic
-            };
+            var song = new Song();
+
+            Mapper(googleMusicSong, song);
+
+            return song;
+        }
+
+        public static void Mapper(GoogleMusicSong googleMusicSong, Song song)
+        {
+            song.AlbumArtistTitle = googleMusicSong.AlbumArtist.Trim();
+            song.AlbumArtistTitleNorm = googleMusicSong.AlbumArtist.Trim().Normalize();
+            song.ArtistTitle = googleMusicSong.Artist.Trim();
+            song.ArtistTitleNorm = googleMusicSong.Artist.Trim().Normalize();
+            song.AlbumTitle = googleMusicSong.Album.Trim();
+            song.AlbumTitleNorm = googleMusicSong.Album.Trim().Normalize();
+            song.GenreTitle = googleMusicSong.Genre.Trim();
+            song.GenreTitleNorm = googleMusicSong.Genre.Trim().Normalize();
+            song.AlbumArtUrl = string.IsNullOrEmpty(googleMusicSong.AlbumArtUrl)
+                ? null
+                : new Uri("http:" + googleMusicSong.AlbumArtUrl);
+            song.Composer = googleMusicSong.Composer;
+            song.Disc = googleMusicSong.Disc;
+            song.TotalDiscs = googleMusicSong.TotalDiscs;
+            song.Duration = TimeSpan.FromMilliseconds(googleMusicSong.DurationMillis);
+            song.ProviderSongId = googleMusicSong.Id;
+            song.LastPlayed = DateTimeExtensions.FromUnixFileTime(googleMusicSong.LastPlayed / 1000);
+            song.CreationDate = DateTimeExtensions.FromUnixFileTime(googleMusicSong.CreationDate / 1000);
+            song.PlayCount = googleMusicSong.PlayCount;
+            song.Rating = googleMusicSong.Rating;
+            song.Title = googleMusicSong.Title.Trim();
+            song.TitleNorm = googleMusicSong.Title.Trim().Normalize();
+            song.Track = googleMusicSong.Track;
+            song.TotalTracks = googleMusicSong.TotalTracks;
+            song.Year = googleMusicSong.Year;
+            song.Comment = googleMusicSong.Comment;
+            song.Bitrate = googleMusicSong.Bitrate;
+            song.StreamType = StreamType.GoogleMusic;
         }
     }
 }

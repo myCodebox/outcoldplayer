@@ -194,8 +194,9 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
                     }
                 }
             }
-            catch (TaskCanceledException)
+            catch (OperationCanceledException exception)
             {
+                this.logger.Debug(exception, "GetAlbumArtUri:: operation canceled.");
                 throw;
             }
             catch (Exception exception)

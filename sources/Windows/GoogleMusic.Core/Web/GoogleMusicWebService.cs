@@ -317,26 +317,29 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
         private string SignUrl(string url)
         {
-            var cookie = this.cookieContainer.FindCookie("xt");
-
-            if (cookie != null)
+            if (this.cookieContainer != null)
             {
-                if (url.IndexOf("?", StringComparison.OrdinalIgnoreCase) < 0)
+                var cookie = this.cookieContainer.FindCookie("xt");
+
+                if (cookie != null)
                 {
-                    url += "?";
+                    if (url.IndexOf("?", StringComparison.OrdinalIgnoreCase) < 0)
+                    {
+                        url += "?";
+                    }
+                    else
+                    {
+                        url += "&";
+                    }
+
+                    url += string.Format(CultureInfo.InvariantCulture, "u=0&xt={0}", cookie.Value);
+
+                    this.Logger.Debug("Found XT cookie, transforming url to '{0}'.", url);
                 }
                 else
                 {
-                    url += "&";
+                    this.Logger.Debug("Could not find XT cookie.");
                 }
-
-                url += string.Format(CultureInfo.InvariantCulture, "u=0&xt={0}", cookie.Value);
-
-                this.Logger.Debug("Found XT cookie, transforming url to '{0}'.", url);
-            }
-            else
-            {
-                this.Logger.Debug("Could not find XT cookie.");
             }
 
             return url;
