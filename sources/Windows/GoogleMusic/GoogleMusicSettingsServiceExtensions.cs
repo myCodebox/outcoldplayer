@@ -19,7 +19,7 @@ namespace OutcoldSolutions.GoogleMusic
                 throw new ArgumentNullException("this");
             }
 
-            return @this.GetValue<bool>(LockScreenEnabledKey);
+            return @this.GetValue<bool>(LockScreenEnabledKey, defaultValue: true);
         }
 
         public static void SetIsLockScreenEnabled(this ISettingsService @this, bool value)
