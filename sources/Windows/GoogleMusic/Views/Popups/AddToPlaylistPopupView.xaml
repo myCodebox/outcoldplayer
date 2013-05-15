@@ -6,7 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:views="using:OutcoldSolutions.Views"
     mc:Ignorable="d"
-    Height="300" 
+    Height="400" 
     Width="300">
 
     <Border Padding="20" Background="{StaticResource AppBarBackgroundThemeBrush}" Width="Auto" >
