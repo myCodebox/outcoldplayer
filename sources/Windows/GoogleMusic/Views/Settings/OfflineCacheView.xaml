@@ -9,56 +9,74 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <StackPanel>
-        <StackPanel.Transitions>
+    <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+        <Grid.Transitions>
             <TransitionCollection>
                 <EntranceThemeTransition FromHorizontalOffset="120" />
             </TransitionCollection>
-        </StackPanel.Transitions>
+        </Grid.Transitions>
 
-        <Border Height="10">
-            <ProgressBar IsIndeterminate="True" Visibility="{Binding Path=BindingModel.IsLoading, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
-        </Border>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        
+        <StackPanel HorizontalAlignment="Stretch">
+        
+            <Border Height="10">
+                <ProgressBar IsIndeterminate="True" Visibility="{Binding Path=BindingModel.IsLoading, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            </Border>
 
-        <TextBlock Style="{StaticResource BodyTextStyle}">
-                Album arts cache size:
-        </TextBlock>
+            <TextBlock Style="{StaticResource BodyTextStyle}">
+                    Album arts cache size:
+            </TextBlock>
 
-        <TextBlock Style="{StaticResource BodyTextStyle}"
-                   Text="{Binding Path=BindingModel.AlbumArtCacheSize, Mode=OneWay, Converter={StaticResource SizeToStringConverter}}"
-                   Margin="0, 10, 0, 0"/>
+            <TextBlock Style="{StaticResource BodyTextStyle}"
+                       Text="{Binding Path=BindingModel.AlbumArtCacheSize, Mode=OneWay, Converter={StaticResource SizeToStringConverter}}"
+                       Margin="0, 10, 0, 0"/>
 
-        <Button Command="{Binding Path=ClearAlbumArtsCacheCommand}" 
-                Content="Clear album arts cache" 
-                Margin="0, 20, 0, 0"/>
+            <Button Command="{Binding Path=ClearAlbumArtsCacheCommand}" 
+                    Content="Clear album arts cache" 
+                    Margin="0, 20, 0, 0"/>
 
-        <TextBlock Style="{StaticResource BodyTextStyle}"
-                   Margin="0, 40, 0, 0">
-                Songs cache size:
-        </TextBlock>
+            <TextBlock Style="{StaticResource BodyTextStyle}"
+                       Margin="0, 40, 0, 0">
+                    Songs cache size:
+            </TextBlock>
 
-        <TextBlock Style="{StaticResource BodyTextStyle}"
-                   Text="{Binding Path=BindingModel.SongsCacheSize, Mode=OneWay, Converter={StaticResource SizeToStringConverter}}"
-                   Margin="0, 10, 0, 0"/>
+            <TextBlock Style="{StaticResource BodyTextStyle}"
+                       Text="{Binding Path=BindingModel.SongsCacheSize, Mode=OneWay, Converter={StaticResource SizeToStringConverter}}"
+                       Margin="0, 10, 0, 0"/>
 
-        <Button Command="{Binding Path=ClearSongsCacheCommand}" 
-                Content="Clear songs cache" 
-                Margin="0, 20, 0, 0"/>
+            <Button Command="{Binding Path=ClearSongsCacheCommand}" 
+                    Content="Clear songs cache" 
+                    Margin="0, 20, 0, 0"/>
 
-        <TextBlock Style="{StaticResource BodyTextStyle}"
-                   Margin="0, 40, 0, 0">
-               Download queue:
-        </TextBlock>
+            <TextBlock Style="{StaticResource BodyTextStyle}"
+                       Margin="0, 40, 0, 0">
+                   Download queue:
+            </TextBlock>
 
-        <TextBlock Style="{StaticResource BodyTextStyle}"
-                   Visibility="{Binding Path=BindingModel.IsQueueEmpty, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                   Margin="0, 20, 0, 0">
-            Queue is empty
-        </TextBlock>
+            <TextBlock Style="{StaticResource BodyTextStyle}"
+                       Visibility="{Binding Path=BindingModel.IsQueueEmpty, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                       Margin="0, 20, 0, 0">
+                Queue is empty
+            </TextBlock>
 
-        <Grid Margin="0, 20, 0, 0"
-              Visibility="{Binding Path=BindingModel.IsQueueEmpty, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}">
-            <Grid.Resources>
+        </StackPanel>
+
+        <ListView Grid.Row="1"
+                    Margin="0, 20, 0, 20"
+                    x:Name="ListView"
+                    Visibility="{Binding Path=BindingModel.IsQueueEmpty, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}"
+                    ItemsSource="{Binding Path=BindingModel.QueuedTasks, Mode=OneWay}"
+                    SelectionMode="None"
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Stretch"
+                    IsTapEnabled="False"
+                    ManipulationMode="None">
+                
+            <ListView.Resources>
                 <Style TargetType="TextBlock" x:Key="DeleteTextBlock">
                     <Setter Property="HorizontalAlignment" Value="Center" />
                     <Setter Property="VerticalAlignment" Value="Center" />
@@ -68,88 +86,78 @@
                     <Setter Property="TextTrimming" Value="None" />
                     <Setter Property="Foreground" Value="IndianRed" />
                 </Style>
-            </Grid.Resources>
+            </ListView.Resources>
+                
+            <ListView.ItemTemplate>
 
-            <ListView x:Name="ListView"
-                  Visibility="{Binding Path=BindingModel.IsLoading, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}"
-                  ItemsSource="{Binding Path=BindingModel.QueuedTasks, Mode=OneWay}"
-                  SelectionMode="None"
-                  HorizontalAlignment="Stretch"
-                  HorizontalContentAlignment="Stretch"
-                  IsTapEnabled="False"
-                  ManipulationMode="None">
-                <ListView.ItemTemplate>
+                <DataTemplate>
 
-                    <DataTemplate>
+                    <Grid MinHeight="44" Margin="0, 5, 20, 5">
+                        <Grid.ColumnDefinitions >
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
 
-                        <Grid MinHeight="44" Margin="0, 5, 20, 5">
-                            <Grid.ColumnDefinitions >
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="20" />
+                            <RowDefinition Height="20" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
 
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="20" />
-                                <RowDefinition Height="20" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
+                        <Button Grid.RowSpan="3"
+                            Height="30" Width="30" Margin="7" VerticalAlignment="Top"
+                            Command="{Binding Path=DataContext.CancelTaskCommand, ElementName=ListView}"
+                            CommandParameter="{Binding Mode=OneTime}">
+                            <Button.Template>
+                                <ControlTemplate>
+                                    <TextBlock Style="{StaticResource DeleteTextBlock}" />
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
 
-                            <Button Grid.RowSpan="3"
-                                Height="30" Width="30" Margin="7" VerticalAlignment="Top"
-                                Command="{Binding Path=DataContext.CancelTaskCommand, ElementName=ListView}"
-                                CommandParameter="{Binding Mode=OneTime}">
-                                <Button.Template>
-                                    <ControlTemplate>
-                                        <TextBlock Style="{StaticResource DeleteTextBlock}" />
-                                    </ControlTemplate>
-                                </Button.Template>
-                            </Button>
+                        <TextBlock Grid.Column="1" 
+                                Grid.ColumnSpan="2"
+                                Grid.Row="0"
+                                Style="{StaticResource TitleTextStyle}" 
+                                VerticalAlignment="Center" 
+                                Margin="5, 0, 0, 0" 
+                                Text="{Binding Path=CachedSong.Song.Title, Mode=OneWay}" 
+                                HorizontalAlignment="Left" 
+                                TextTrimming="WordEllipsis" />
 
-                            <TextBlock Grid.Column="1" 
-                                   Grid.ColumnSpan="2"
-                                   Grid.Row="0"
-                                   Style="{StaticResource TitleTextStyle}" 
-                                   VerticalAlignment="Center" 
-                                   Margin="5, 0, 0, 0" 
-                                   Text="{Binding Path=CachedSong.Song.Title, Mode=OneWay}" 
-                                   HorizontalAlignment="Left" 
-                                   TextTrimming="WordEllipsis" />
+                        <TextBlock Grid.Column="1" 
+                                Grid.Row="1"
+                                Style="{StaticResource SubtitleTextStyle}" 
+                                VerticalAlignment="Center" 
+                                Margin="5, 0, 0, 0" 
+                                Text="{Binding Path=CachedSong.Song, Converter={StaticResource SongToArtistConverter}, Mode=OneWay}" 
+                                TextTrimming="WordEllipsis" />
 
-                            <TextBlock Grid.Column="1" 
-                                   Grid.Row="1"
-                                   Style="{StaticResource SubtitleTextStyle}" 
-                                   VerticalAlignment="Center" 
-                                   Margin="5, 0, 0, 0" 
-                                   Text="{Binding Path=CachedSong.Song, Converter={StaticResource SongToArtistConverter}, Mode=OneWay}" 
-                                   TextTrimming="WordEllipsis" />
+                        <TextBlock Grid.Column="2" 
+                                Grid.Row="1"
+                                Style="{StaticResource BasicTextStyle}" 
+                                VerticalAlignment="Center" 
+                                Margin="10, 0, 0, 0" 
+                                Text="{Binding Path=CachedSong.Song.Duration, Converter={StaticResource TimeSpanToTimeConverter}, Mode=OneWay}" 
+                                HorizontalAlignment="Right"/>
 
-                            <TextBlock Grid.Column="2" 
-                                   Grid.Row="1"
-                                   Style="{StaticResource BasicTextStyle}" 
-                                   VerticalAlignment="Center" 
-                                   Margin="10, 0, 0, 0" 
-                                   Text="{Binding Path=CachedSong.Song.Duration, Converter={StaticResource TimeSpanToTimeConverter}, Mode=OneWay}" 
-                                   HorizontalAlignment="Right"/>
+                        <ProgressBar Grid.Row="2"
+                                    Grid.Column="1"
+                                    Grid.ColumnSpan="2"
+                                    VerticalAlignment="Bottom"
+                                    HorizontalAlignment="Stretch"
+                                    Value="{Binding Path=DownloadProgress, Mode=OneWay}" 
+                                    Minimum="0" 
+                                    Maximum="1" 
+                                    Margin="0, 5, 0, 0"
+                                    Visibility="{Binding Path=IsDownloading, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                    </Grid>
 
-                            <ProgressBar Grid.Row="2"
-                                     Grid.Column="1"
-                                     Grid.ColumnSpan="2"
-                                     VerticalAlignment="Bottom"
-                                     HorizontalAlignment="Stretch"
-                                     Value="{Binding Path=DownloadProgress, Mode=OneWay}" 
-                                     Minimum="0" 
-                                     Maximum="1" 
-                                     Margin="0, 5, 0, 0"
-                                     Visibility="{Binding Path=IsDownloading, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-                        </Grid>
+                </DataTemplate>
 
-                    </DataTemplate>
-
-                </ListView.ItemTemplate>
-            </ListView>
-        </Grid>
-
-    </StackPanel>
+            </ListView.ItemTemplate>
+        </ListView>
+    </Grid>
 
 </views:ViewBase>

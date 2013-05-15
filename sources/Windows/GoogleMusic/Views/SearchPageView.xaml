@@ -242,13 +242,11 @@
                             <Image Source="{Binding Path=ImageUrl, Converter={StaticResource AlbumArtUrlToImageConverter}, Mode=OneTime, ConverterParameter=40}" Stretch="UniformToFill"/>
                         </Border>
                         <StackPanel Grid.Column="1" Margin="10,-10,0,0">
-                            <StackPanel Orientation="Horizontal" >
-                                <TextBlock Style="{StaticResource BodyTextStyle}" TextWrapping="NoWrap" TextTrimming="WordEllipsis">
-                                    <TextBlock.Inlines>
-                                        <Run Text="{Binding Path=PreTitle, Mode=OneTime}" /><Run Text="{Binding Path=HighlightedTitle, Mode=OneTime}" Foreground="{StaticResource TextHighlightedBrush}"/><Run Text="{Binding Path=PostTitle, Mode=OneTime}" />
-                                    </TextBlock.Inlines>
-                                </TextBlock>
-                            </StackPanel>
+                            <TextBlock Style="{StaticResource BodyTextStyle}" TextWrapping="NoWrap" TextTrimming="WordEllipsis">
+                                <TextBlock.Inlines>
+                                    <Run Text="{Binding Path=PreTitle, Mode=OneTime}" /><Run Text="{Binding Path=HighlightedTitle, Mode=OneTime}" Foreground="{StaticResource TextHighlightedBrush}"/><Run Text="{Binding Path=PostTitle, Mode=OneTime}"  />
+                                </TextBlock.Inlines>
+                            </TextBlock>
                             <TextBlock Text="{Binding Path=Subtitle, Mode=OneTime}" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
                             <TextBlock Text="{Binding Path=Description, Mode=OneTime}" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
                         </StackPanel>

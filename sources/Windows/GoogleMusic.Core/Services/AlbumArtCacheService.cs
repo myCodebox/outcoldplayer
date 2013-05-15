@@ -132,25 +132,32 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         private async void DeleteRemovedItems()
         {
-            var removedItems = await this.cachedAlbumArtsRepository.GetRemovedCachedItemsAsync();
-            foreach (var cache in removedItems)
+            try
             {
-                var file = await StorageFile.GetFileFromPathAsync(Path.Combine(AlbumArtCacheFolder, cache.FileName.Substring(0, 1), cache.FileName));
-                if (file != null)
+                var removedItems = await this.cachedAlbumArtsRepository.GetRemovedCachedItemsAsync();
+                foreach (var cache in removedItems)
                 {
                     try
                     {
-                        await file.DeleteAsync(StorageDeleteOption.PermanentDelete);
+                        var file = await ApplicationData.Current.LocalFolder.GetFileAsync(Path.Combine(AlbumArtCacheFolder, cache.FileName.Substring(0, 1), cache.FileName));
+                        if (file != null)
+                        {
+                            try
+                            {
+                                await file.DeleteAsync(StorageDeleteOption.PermanentDelete);
+                            }
+                            catch (Exception e)
+                            {
+                                this.logger.Warning(e, "DeleteRemovedItems: Could not delete cached image {0}.", file.Path);
+                            }
+                        }
                     }
-                    catch (Exception e)
+                    catch (Exception exception)
                     {
-                        this.logger.Warning(e, "DeleteRemovedItems: Could not delete cached image {0}.", file.Path);
+                        this.logger.Debug(exception, "Could not delete file of removed album art item.");
                     }
                 }
-            }
 
-            try
-            {
                 await this.cachedAlbumArtsRepository.DeleteCachedItemsAsync(removedItems);
             }
             catch (Exception e)
