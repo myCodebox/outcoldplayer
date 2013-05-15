@@ -180,7 +180,6 @@
     <Compile Include="Services\StateChangedEventArgs.cs" />
     <Compile Include="Shell\ApplicationResources.cs" />
     <Compile Include="Shell\IMediaElementContainer.cs" />
-    <Compile Include="Shell\INotificationService.cs" />
     <Compile Include="Shell\MediaControlIntegration.cs" />
     <Compile Include="Shell\MediaElementContainer.cs" />
     <Compile Include="Shell\MediaEndedEventArgs.cs" />

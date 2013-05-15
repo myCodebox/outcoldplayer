@@ -348,6 +348,9 @@
   <data name="Model_UserPlaylist_Title" xml:space="preserve">
     <value>Playlist</value>
   </data>
+  <data name="Notification_FailedToDownloadPlaylists" xml:space="preserve">
+    <value>Failed to download playlists, this could be temporary issue. We will try to download them later.</value>
+  </data>
   <data name="OfflineCacheAppSettingsTitle" xml:space="preserve">
     <value>Offline cache</value>
   </data>

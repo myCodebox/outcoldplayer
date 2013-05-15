@@ -33,6 +33,8 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
         private readonly ISongsRepository songsRepository;
         private readonly IUserPlaylistsRepository userPlaylistsRepository;
         private readonly ISettingsService settingsService;
+        private readonly INotificationService notificationService;
+        private readonly IApplicationResources applicationResources;
 
         private readonly DbContext dbContext;
 
@@ -46,7 +48,9 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
             IPlaylistsWebService playlistsWebService,
             ISongsRepository songsRepository,
             IUserPlaylistsRepository userPlaylistsRepository,
-            ISettingsService settingsService)
+            ISettingsService settingsService,
+            INotificationService notificationService,
+            IApplicationResources applicationResources)
         {
             this.dbContext = new DbContext();
             this.logger = logManager.CreateLogger("InitialSynchronization");
@@ -56,6 +60,8 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
             this.songsRepository = songsRepository;
             this.userPlaylistsRepository = userPlaylistsRepository;
             this.settingsService = settingsService;
+            this.notificationService = notificationService;
+            this.applicationResources = applicationResources;
         }
 
         public async Task InitializeAsync(IProgress<double> progress)
@@ -76,7 +82,24 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
 
             this.logger.Debug("InitializeAsync: loading all user playlists.");
             var playlistsProgress = new Progress<double>(async plProgress => await progress.SafeReportAsync((plProgress * 0.2d) + 0.8d));
-            await this.LoadPlaylistsAsync(playlistsProgress);
+
+            bool failedToLoadPlaylists = false;
+
+            try
+            {
+                await this.LoadPlaylistsAsync(playlistsProgress);
+            }
+            catch (OperationCanceledException exception)
+            {
+                this.logger.Debug(exception, "Failed to download playlists.");
+
+                failedToLoadPlaylists = true;
+            }
+
+            if (failedToLoadPlaylists)
+            {
+                await this.notificationService.ShowMessageAsync(this.applicationResources.GetString("Notification_FailedToDownloadPlaylists"));
+            }
 
             this.settingsService.SetLibraryFreshnessDate(currentTime);
         }

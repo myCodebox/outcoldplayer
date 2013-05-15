@@ -102,6 +102,7 @@
   <ItemGroup>
     <Compile Include="ApplicationException.cs" />
     <Compile Include="IApplicationResources.cs" />
+    <Compile Include="INotificationService.cs" />
     <Compile Include="Models\AlbumArtUrlExtensions.cs" />
     <Compile Include="Models\CachedAlbumArt.cs" />
     <Compile Include="Models\CachedSong.cs" />

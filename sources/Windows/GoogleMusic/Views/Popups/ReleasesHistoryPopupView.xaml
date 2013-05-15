@@ -39,6 +39,9 @@
                     <RichTextBlock Style="{StaticResource BodyRichTextStyle}">
                         <Paragraph>[+] Offline mode (check the "..." button to enable it).</Paragraph>
                         <Paragraph>[+] Predownload of next song in queue.</Paragraph>
+                        <Paragraph>[+] gMusic caches album art locally.</Paragraph>
+                        <Paragraph>[b] gMusic can continue to work on initial library load if it cannot load playlists.</Paragraph>
+                        <Paragraph>[b] Song name on search page can be truncated without '...'.</Paragraph>
                     </RichTextBlock>
                     
                     <TextBlock Style="{StaticResource TitleTextStyle}" Margin="0, 10, 0, 0" >
