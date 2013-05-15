@@ -711,7 +711,10 @@ namespace OutcoldSolutions.GoogleMusic.Services
         {
             try
             {
-                await networkRandomAccessStream.DownloadAsync();
+                if (networkRandomAccessStream != null)
+                {
+                    await networkRandomAccessStream.DownloadAsync();
+                }
             }
             catch (Exception exception)
             {
