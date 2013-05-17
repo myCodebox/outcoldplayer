@@ -260,6 +260,132 @@ namespace OutcoldSolutions.GoogleMusic.Web
             }
         }
 
+        public async Task<IRandomAccessStreamWithContentType> GetCachedStreamAsync(IStorageFile storageFile)
+        {
+            var memoryStream = new InMemoryRandomAccessStreamWithContentType(storageFile.ContentType);
+
+            using (DataWriter writer = new DataWriter(memoryStream))
+            {
+                using (var stream = await storageFile.OpenStreamForReadAsync())
+                {
+                    byte[] buffer = new byte[DefaultBufferSize];
+
+                    var chunks = stream.Length / DefaultBufferSize;
+
+                    for (int i = 1; i < chunks; i++)
+                    {
+                        stream.Seek(stream.Length - i * DefaultBufferSize, SeekOrigin.Begin);
+                        await stream.ReadAsync(buffer, 0, DefaultBufferSize);
+                        writer.WriteBytes(buffer);
+                    }
+
+                    long lastChunkLength = stream.Length % DefaultBufferSize;
+                    if (lastChunkLength > 0)
+                    {
+                        stream.Seek(0, SeekOrigin.Begin);
+                        byte[] lastChunk = new byte[lastChunkLength];
+                        await stream.ReadAsync(lastChunk, 0, lastChunk.Length);
+                        writer.WriteBytes(lastChunk);
+                    }
+                }
+
+                await writer.StoreAsync();
+                await writer.FlushAsync();
+                writer.DetachStream();
+            }
+
+            return memoryStream;
+        }
+
+        private class InMemoryRandomAccessStreamWithContentType : IRandomAccessStreamWithContentType
+        {
+            public InMemoryRandomAccessStreamWithContentType(string contentType)
+            {
+                this.ContentType = contentType;
+            }
+
+            private readonly InMemoryRandomAccessStream memoryRandomAccessStream = new InMemoryRandomAccessStream();
+
+            public void Dispose()
+            {
+                this.memoryRandomAccessStream.Dispose();
+            }
+
+            public IAsyncOperationWithProgress<IBuffer, uint> ReadAsync(IBuffer buffer, uint count, InputStreamOptions options)
+            {
+                return this.memoryRandomAccessStream.ReadAsync(buffer, count, options);
+            }
+
+            public IAsyncOperationWithProgress<uint, uint> WriteAsync(IBuffer buffer)
+            {
+                return this.memoryRandomAccessStream.WriteAsync(buffer);
+            }
+
+            public IAsyncOperation<bool> FlushAsync()
+            {
+                return this.memoryRandomAccessStream.FlushAsync();
+            }
+
+            public IInputStream GetInputStreamAt(ulong position)
+            {
+                return this.memoryRandomAccessStream.GetInputStreamAt(position);
+            }
+
+            public IOutputStream GetOutputStreamAt(ulong position)
+            {
+                return this.memoryRandomAccessStream.GetOutputStreamAt(position);
+            }
+
+            public void Seek(ulong position)
+            {
+                this.memoryRandomAccessStream.Seek(position);
+            }
+
+            public IRandomAccessStream CloneStream()
+            {
+                return this.memoryRandomAccessStream.CloneStream();
+            }
+
+            public bool CanRead
+            {
+                get
+                {
+                    return this.memoryRandomAccessStream.CanRead;
+                }
+            }
+
+            public bool CanWrite
+            {
+                get
+                {
+                    return this.memoryRandomAccessStream.CanWrite;
+                }
+            }
+
+            public ulong Position
+            {
+                get
+                {
+                    return this.memoryRandomAccessStream.Position;
+                }
+            }
+
+            public ulong Size
+            {
+                get
+                {
+                    return this.memoryRandomAccessStream.Size;
+                }
+
+                set
+                {
+                    this.memoryRandomAccessStream.Size = value;
+                }
+            }
+
+            public string ContentType { get; private set; }
+        }
+
         private class MemoryRandomAccessStream : INetworkRandomAccessStream
         {
             private readonly ILogger logger;
@@ -372,7 +498,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
                     throw new NotSupportedException("File is still in downloading state.");
                 }
 
-                await FileIO.WriteBytesAsync(file, this.data);
+                await this.WriteSongToCache(file, this.data);
             }
 
             public void Dispose()
@@ -807,7 +933,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
                     }
                 }
 
-                await FileIO.WriteBytesAsync(file, this.data);
+                await this.WriteSongToCache(file, this.data);
             }
 
             private async Task DownloadStream(HttpClient client, CancellationToken token)
@@ -911,6 +1037,24 @@ namespace OutcoldSolutions.GoogleMusic.Web
             end = long.Parse(rangeEnd[1]);
 
             return true;
+        }
+
+        private async Task WriteSongToCache(IStorageFile file, byte[] data)
+        {
+            using (var stream = await file.OpenStreamForWriteAsync())
+            {
+                var chunks = this.data.Length / DefaultBufferSize;
+
+                if (this.data.Length % DefaultBufferSize > 0)
+                {
+                    await stream.WriteAsync(data, chunks * DefaultBufferSize, this.data.Length - chunks * DefaultBufferSize);
+                }
+
+                for (int i = (chunks - 1); i >= 0; i--)
+                {
+                    await stream.WriteAsync(data, i * DefaultBufferSize, DefaultBufferSize);
+                }
+            }
         }
     }
 }

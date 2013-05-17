@@ -154,7 +154,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 {
                     // TODO: Catch exception if file does not exist
                     var storageFile = await StorageFile.GetFileFromPathAsync(this.GetFullPath(cache.FileName));
-                    return await storageFile.OpenReadAsync();
+                    return await this.mediaStreamDownloadService.GetCachedStreamAsync(storageFile);
                 }
 
                 if (this.predownloadedSong != null && this.predownloadedSong.SongId == song.SongId)
