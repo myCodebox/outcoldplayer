@@ -470,10 +470,17 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 {
                     this.logger.Debug("Getting stream by url '{0}'.", songUrl.Url);
                 }
-
+                
                 try
                 {
-                    return await this.mediaStreamDownloadService.GetStreamAsync(songUrl.Url);
+                    if (string.IsNullOrEmpty(songUrl.Url))
+                    {
+                        return await this.mediaStreamDownloadService.GetStreamAsync(songUrl.Urls);
+                    }
+                    else
+                    {
+                        return await this.mediaStreamDownloadService.GetStreamAsync(songUrl.Url);
+                    }
                 }
                 catch (Exception exception)
                 {

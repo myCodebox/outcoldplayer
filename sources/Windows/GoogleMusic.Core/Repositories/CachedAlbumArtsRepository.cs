@@ -51,7 +51,7 @@ from CachedAlbumArt c
                     {
                         foreach (var cachedAlbumArt in cachedAlbumArts)
                         {
-                            c.Delete<CachedAlbumArt>(cachedAlbumArt);
+                            c.Delete(cachedAlbumArt);
                         }
                     });
         }

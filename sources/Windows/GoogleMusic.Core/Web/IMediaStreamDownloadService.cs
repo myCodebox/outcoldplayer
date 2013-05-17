@@ -8,5 +8,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
     public interface IMediaStreamDownloadService
     {
         Task<INetworkRandomAccessStream> GetStreamAsync(string url);
+
+        Task<INetworkRandomAccessStream> GetStreamAsync(string[] urls);
     }
 }

@@ -5,6 +5,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
 {
     using System;
     using System.IO;
+    using System.Linq;
     using System.Net.Http;
     using System.Net.Http.Headers;
     using System.Runtime.InteropServices.WindowsRuntime;
@@ -20,6 +21,8 @@ namespace OutcoldSolutions.GoogleMusic.Web
     public class MediaStreamDownloadService : IMediaStreamDownloadService
     {
         private const int DefaultBufferSize = 0x10000;
+
+        private const string RangeQueryParamName = "range=";
 
         private readonly ILogger logger;
         private readonly HttpClient client = new HttpClient() { Timeout = TimeSpan.FromSeconds(20) };
@@ -45,7 +48,14 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 var previousCancellationTokenSource = this.cancellationTokenSource;
                 if (previousCancellationTokenSource != null)
                 {
-                    previousCancellationTokenSource.Cancel();
+                    try
+                    {
+                        previousCancellationTokenSource.Cancel();
+                    }
+                    catch (ObjectDisposedException)
+                    {
+                    }
+                    
                     this.client.CancelPendingRequests();
                 }
 
@@ -153,6 +163,97 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 if (source == null || !source.IsCancellationRequested)
                 {
                     this.logger.Error(e, "GetStreamAsync: Exception while loading stream");
+                }
+
+                return null;
+            }
+        }
+
+        public async Task<INetworkRandomAccessStream> GetStreamAsync(string[] urls)
+        {
+            CancellationTokenSource source = null;
+
+            try
+            {
+                if (urls == null || urls.Length == 0)
+                {
+                    return null;
+                }
+
+                long chunkStart;
+                long contentLength;
+
+                var lastUri = urls[urls.Length - 1];
+                if (!GetChunkPosition(lastUri, out chunkStart, out contentLength))
+                {
+                    this.logger.Warning("Could not parse start and end range from url {0}", lastUri);
+                    return null;
+                }
+                
+                var previousCancellationTokenSource = this.cancellationTokenSource;
+                if (previousCancellationTokenSource != null)
+                {
+                    try
+                    {
+                        previousCancellationTokenSource.Cancel();
+                    }
+                    catch (ObjectDisposedException)
+                    {
+                    }
+
+                    this.client.CancelPendingRequests();
+                }
+
+                source = this.cancellationTokenSource = new CancellationTokenSource();
+                var cancellationToken = source.Token;
+
+                var data = new byte[contentLength];
+                int read;
+
+                var streamResponse = await this.client.GetAsync(lastUri, cancellationToken);
+                using (var audioStreamEnd = await streamResponse.Content.ReadAsStreamAsync())
+                {
+                    read = await audioStreamEnd.ReadAsync(data, (int)chunkStart, (int)(contentLength - chunkStart), cancellationToken);
+                }
+
+                return new MemoryRandomAccessStreamMultiStreams(
+                    this.client,
+                    source,
+                    this.logger,
+                    urls,
+                    data,
+                    streamResponse.Content.Headers.ContentType.MediaType,
+                    read);
+
+            }
+            catch (HttpRequestException exception)
+            {
+                if (exception.InnerException is IOException)
+                {
+                    this.logger.Debug(exception, "GetStreamAsync (multiply urls): HttpRequestException.");
+                }
+                else
+                {
+                    this.logger.Error(exception, "GetStreamAsync (multiply urls): Exception while loading stream.");
+                }
+
+                return null;
+            }
+            catch (IOException exception)
+            {
+                this.logger.Debug(exception, "GetStreamAsync (multiply urls): IOException.");
+                return null;
+            }
+            catch (OperationCanceledException exception)
+            {
+                this.logger.Debug(exception, "GetStreamAsync (multiply urls): Operation was canceled.");
+                return null;
+            }
+            catch (Exception e)
+            {
+                if (source == null || !source.IsCancellationRequested)
+                {
+                    this.logger.Error(e, "GetStreamAsync (multiply urls): Exception while loading stream");
                 }
 
                 return null;
@@ -499,6 +600,317 @@ namespace OutcoldSolutions.GoogleMusic.Web
                     }
                 }
             }
+        }
+
+        private class MemoryRandomAccessStreamMultiStreams : INetworkRandomAccessStream
+        {
+            private readonly object locker = new object();
+            private readonly Task downloadTask;
+            
+            private readonly ILogger logger;
+            private readonly string[] urls;
+            private readonly byte[] data;
+            private readonly string mediaType;
+            private readonly int lastChunk;
+            private ulong readPosition;
+            private ulong currentPosition;
+
+            private CancellationTokenSource cancellationTokenSource;
+
+            public MemoryRandomAccessStreamMultiStreams(
+                HttpClient httpClient,
+                CancellationTokenSource cancellationTokenSource,
+                ILogger logger, string[] urls, byte[] data, string mediaType, int lastChunk)
+            {
+                this.cancellationTokenSource = cancellationTokenSource;
+                this.logger = logger;
+                this.urls = urls;
+                this.data = data;
+                this.mediaType = mediaType;
+                this.lastChunk = lastChunk;
+
+                this.downloadTask = this.DownloadStream(httpClient, cancellationTokenSource.Token);
+            }
+
+            public void Dispose()
+            {
+                lock (this.locker)
+                {
+                    if (this.cancellationTokenSource != null && !this.cancellationTokenSource.IsCancellationRequested)
+                    {
+                        try
+                        {
+                            this.cancellationTokenSource.Cancel();
+                            this.cancellationTokenSource.Dispose();
+                        }
+                        catch
+                        {
+                        }
+                    }
+
+                    this.cancellationTokenSource = null;
+                }
+            }
+
+            public IAsyncOperationWithProgress<IBuffer, uint> ReadAsync(
+                IBuffer buffer, uint count, InputStreamOptions options)
+            {
+                return AsyncInfo.Run<IBuffer, uint>(async (token, progress) =>
+                {
+                    progress.Report(0);
+
+                    bool fReading;
+                    do
+                    {
+                        lock (this.locker)
+                        {
+                            fReading = this.readPosition < (this.currentPosition + count)
+                                && this.currentPosition < (ulong)this.lastChunk;
+                        }
+
+                        if (fReading)
+                        {
+                            if (token.IsCancellationRequested)
+                            {
+                                return buffer;
+                            }
+
+                            await Task.Delay(10, token);
+                        }
+                    }
+                    while (fReading && this.downloadTask != null);
+
+                    if (this.data != null)
+                    {
+                        int length = (int)Math.Min(count, this.data.Length - (int)this.currentPosition);
+                        this.data.CopyTo((int)this.currentPosition, buffer, 0, length);
+                        buffer.Length = (uint)length;
+                    }
+
+                    return buffer;
+                });
+            }
+
+            public void Seek(ulong position)
+            {
+                lock (this.locker)
+                {
+                    this.currentPosition = position;
+                }
+            }
+
+            public IAsyncOperationWithProgress<uint, uint> WriteAsync(IBuffer buffer)
+            {
+                this.logger.Warning("WriteAsync is not supported.");
+                throw new NotSupportedException();
+            }
+
+            public IAsyncOperation<bool> FlushAsync()
+            {
+                this.logger.Warning("FlushAsync is not supported.");
+                throw new NotSupportedException();
+            }
+
+            public IInputStream GetInputStreamAt(ulong position)
+            {
+                this.logger.Warning("GetInputStreamAt ({0}) is not supported.", position);
+                throw new NotSupportedException();
+            }
+
+            public IOutputStream GetOutputStreamAt(ulong position)
+            {
+                this.logger.Warning("GetOutputStreamAt ({0}) is not supported.", position);
+                throw new NotSupportedException();
+            }
+
+            public IRandomAccessStream CloneStream()
+            {
+                this.logger.Warning("CloneStream is not supported.");
+                throw new NotSupportedException();
+            }
+
+            public bool CanRead
+            {
+                get
+                {
+                    lock (this.locker)
+                    {
+                        return this.currentPosition < (ulong)this.data.Length;
+                    }
+                }
+            }
+
+            public bool CanWrite
+            {
+                get
+                {
+                    return false;
+                }
+            }
+
+            public ulong Position
+            {
+                get
+                {
+                    lock (this.locker)
+                    {
+                        return this.currentPosition;
+                    }
+                }
+            }
+
+            public ulong Size
+            {
+                get
+                {
+                    return (ulong)this.data.Length;
+                }
+
+                set
+                {
+                    this.logger.Warning("set_Size is not supported.");
+                    throw new NotSupportedException();
+                }
+            }
+
+            public string ContentType
+            {
+                get
+                {
+                    return this.mediaType;
+                }
+            }
+
+            private void RaiseDownloadProgressChanged(double downloadProgress)
+            {
+                var handler = this.DownloadProgressChanged;
+                if (handler != null)
+                {
+                    handler(this, downloadProgress);
+                }
+            }
+
+            public event EventHandler<double> DownloadProgressChanged;
+
+            public Task DownloadAsync()
+            {
+                return this.downloadTask;
+            }
+
+            public async Task SaveToFileAsync(IStorageFile file)
+            {
+                lock (this.locker)
+                {
+                    if (this.readPosition < (ulong)data.Length)
+                    {
+                        throw new NotSupportedException("File is still in downloading state.");
+                    }
+                }
+
+                await FileIO.WriteBytesAsync(file, this.data);
+            }
+
+            private async Task DownloadStream(HttpClient client, CancellationToken token)
+            {
+                try
+                {
+                    for (int i = 0; i < this.urls.Length - 1; i++)
+                    {
+                        var uri = this.urls[i];
+
+                        long start;
+                        long end;
+                        if (GetChunkPosition(uri, out start, out end))
+                        {
+                            lock (this.locker)
+                            {
+                                this.readPosition = (ulong)Math.Max(start - 1, 0);
+                            }
+
+                            double downloadProgress;
+                            lock (this.locker)
+                            {
+                                downloadProgress = (double)this.readPosition / (double)this.data.Length;
+                            }
+
+                            this.RaiseDownloadProgressChanged(downloadProgress);
+
+                            var response = await client.GetAsync(uri, token);
+                            using (var stream = await response.Content.ReadAsStreamAsync())
+                            {
+                                int read = await stream.ReadAsync(this.data, (int)start, (int)end - (int)start, token);
+
+                                if (read != (int)end - (int)start)
+                                {
+                                    this.logger.Warning("We read not the same value as we expected from url {0}. We read {1}.", uri, read);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            this.logger.Warning("Could not parse start and end range from url {0}", uri);
+                        }
+                    }
+
+                    this.readPosition = (ulong)this.data.Length;
+
+                    this.RaiseDownloadProgressChanged(1.0d);
+                }
+                catch (HttpRequestException exception)
+                {
+                    if (exception.InnerException is IOException)
+                    {
+                        this.logger.Debug(exception, "MemoryRandomAccessStreamMultiStreams.SafeDownloadStream: HttpRequestException.");
+                    }
+                    else
+                    {
+                        this.logger.Error(exception, "MemoryRandomAccessStreamMultiStreams.SafeDownloadStream: Exception while reading stream.");
+                    }
+                }
+                catch (IOException exception)
+                {
+                    this.logger.Debug(exception, "MemoryRandomAccessStreamMultiStreams.SafeDownloadStream: IOException.");
+                }
+                catch (OperationCanceledException exception)
+                {
+                    this.logger.Debug(exception, "MemoryRandomAccessStreamMultiStreams.SafeDownloadStream: Downloading task was canceled.");
+                }
+                catch (Exception exception)
+                {
+                    if (token.IsCancellationRequested)
+                    {
+                        this.logger.Debug(exception, "MemoryRandomAccessStreamMultiStreams.SafeDownloadStream: Downloading task was canceled .");
+                    }
+                    else
+                    {
+                        this.logger.Error(exception, "MemoryRandomAccessStreamMultiStreams.SafeDownloadStream: Exception while reading stream.");
+                    }
+                }
+            }
+        }
+
+        private static bool GetChunkPosition(string url, out long start, out long end)
+        {
+            start = 0;
+            end = 0;
+
+            var lastUri = new Uri(url);
+            var rangeParam = lastUri.Query.Split('&').FirstOrDefault(x => x.StartsWith(RangeQueryParamName, StringComparison.OrdinalIgnoreCase));
+            if (rangeParam == null)
+            {
+                return false;
+            }
+
+            var rangeEnd = rangeParam.Substring(RangeQueryParamName.Length).Split('-');
+            if (rangeEnd.Length != 2)
+            {
+                return false;
+            }
+
+            start = long.Parse(rangeEnd[0]);
+            end = long.Parse(rangeEnd[1]);
+
+            return true;
         }
     }
 }
