@@ -34,16 +34,22 @@
             <ScrollViewer Grid.Row="2" Margin="0, 20, 0, 0">
                 <StackPanel>
                     <TextBlock Style="{StaticResource TitleTextStyle}" Margin="0, 10, 0, 0" >
-                    <Run>05/14/2013 - Version 2.1</Run>
+                    <Run>05/16/2013 - Version 2.1</Run>
                     </TextBlock>
                     <RichTextBlock Style="{StaticResource BodyRichTextStyle}">
                         <Paragraph>[+] Offline mode (check the "..." button to enable it).</Paragraph>
                         <Paragraph>[+] Predownload of next song in queue.</Paragraph>
                         <Paragraph>[+] gMusic caches album art locally.</Paragraph>
-                        <Paragraph>[+] Add support for All Access songs (song from library, which you don't own).</Paragraph>
                         <Paragraph>[+] Add Application Settings button at "..." button, which provides easy access to application settings.</Paragraph>
                         <Paragraph>[b] gMusic can continue to work on initial library load if it cannot load playlists.</Paragraph>
                         <Paragraph>[b] Song name on search page can be truncated without '...'.</Paragraph>
+                    </RichTextBlock>
+                    
+                    <TextBlock Style="{StaticResource TitleTextStyle}" Margin="0, 10, 0, 0" >
+                    <Run>05/16/2013 - Version 2.0.3</Run>
+                    </TextBlock>
+                    <RichTextBlock Style="{StaticResource BodyRichTextStyle}">
+                        <Paragraph>[b] Add support for All Access streams (music which you don't own).</Paragraph>
                         <Paragraph>[b] gMusic did not delete songs from local database when they were deleted from server.</Paragraph>
                     </RichTextBlock>
                     
