@@ -533,7 +533,14 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
                         try
                         {
-                            stream = await this.downloadService.GetStreamAsync(songUrl.Url);
+                            if (string.IsNullOrEmpty(songUrl.Url))
+                            {
+                                stream = await this.downloadService.GetStreamAsync(songUrl.Urls);
+                            }
+                            else
+                            {
+                                stream = await this.downloadService.GetStreamAsync(songUrl.Url);
+                            }
                         }
                         catch (Exception exception)
                         {

@@ -73,16 +73,15 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
                     foreach (var googleSong in updatedSongs)
                     {
                         var songId = googleSong.Id;
+                        var storedSong = connection.Find<Song>(x => x.ProviderSongId == songId);
 
                         if (googleSong.Deleted)
                         {
-                            connection.Delete<Song>(songId);
+                            connection.Delete<Song>(storedSong.SongId);
                             songsDeleted++;
                         }
                         else
                         {
-                            var storedSong = connection.Find<Song>(x => x.ProviderSongId == songId);
-                            
                             var songEntity = googleSong.ToSong();
                             if (storedSong != null)
                             {
