@@ -121,7 +121,7 @@ namespace OutcoldSolutions.GoogleMusic.Shell
                             }
 
                             args.Request.SearchSuggestionCollection.AppendResultSuggestion(
-                                searchResult.Title, searchResult.Details, searchResult.Tag, randomAccessStreamReference, "gMusic");
+                                searchResult.Title, searchResult.Details, searchResult.Tag, randomAccessStreamReference, "gMusicW");
                         }
                     }
 

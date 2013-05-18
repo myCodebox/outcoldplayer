@@ -21,7 +21,7 @@
 
             <TextBlock Style="{StaticResource BodyTextStyle}">
                 Do you want to send feedback? Please, do. 
-                UserVoice is the best way to tell us what features you want to see in next versions of gMusic.
+                UserVoice is the best way to tell us what features you want to see in next versions of gMusicW.
             </TextBlock>
 
             <Button Click="UserVoiceClick" Margin="0, 20, 0, 0" >
@@ -48,7 +48,7 @@
             </Button>
 
             <TextBlock Style="{StaticResource BodyTextStyle}"  Margin="0, 20, 0, 0">
-                Sometimes we can ask you to enable logging to help us find bugs and unexpected behaviors with gMusic. 
+                Sometimes we can ask you to enable logging to help us find bugs and unexpected behaviors with gMusicW. 
                 We are sorry, if this happend with you. 
                 And thank you for your help.
             </TextBlock>

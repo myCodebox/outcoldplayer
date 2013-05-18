@@ -214,7 +214,7 @@
     <comment>03.png</comment>
   </data>
   <data name="Authorization_SignInInfo.Text" xml:space="preserve">
-    <value>To use gMusic player you need to provide your Google Account's email and password. If you do not have one, you need to create a Google Account. Please make sure that you have subscribed to the Google Music service. For more details go to the Google Music site.</value>
+    <value>To use gMusicW player you need to provide your Google Account's email and password. If you do not have one, you need to create a Google Account. Please make sure that you have subscribed to the Google Music service. For more details go to the Google Music site.</value>
     <comment>03.png</comment>
   </data>
   <data name="Authorization_SignInTitle.Text" xml:space="preserve">
@@ -229,13 +229,13 @@
     <value>Cancel</value>
   </data>
   <data name="LastFmAuthentification_Instruction" xml:space="preserve">
-    <value>You will be transferred to the last.fm authentication page, where you will be asked to give permissions to gMusic application.</value>
+    <value>You will be transferred to the last.fm authentication page, where you will be asked to give permissions to gMusicW application.</value>
   </data>
   <data name="LastFmAuthentification_Linking" xml:space="preserve">
     <value>Linking Last.fm account...</value>
   </data>
   <data name="LastFmAuthentification_Unsuccess" xml:space="preserve">
-    <value>Cannot link Last.fm account to gMusic application. Please make sure that you gave permissions to gMusic application on Last.fm site. Use link below to do this:</value>
+    <value>Cannot link Last.fm account to gMusicW application. Please make sure that you gave permissions to gMusicW application on Last.fm site. Use link below to do this:</value>
   </data>
   <data name="LinksRegion_FailedToUpdate" xml:space="preserve">
     <value>Failed to update library...</value>
@@ -308,7 +308,7 @@
     <value>Remind me later</value>
   </data>
   <data name="MessageBox_ReviewMessage" xml:space="preserve">
-    <value>If you enjoy using gMusic appication, would you mind taking a moment to rate it? Good ratings help us a lot. It won't take more than a minute. Thanks for your support!</value>
+    <value>If you enjoy using gMusicW appication, would you mind taking a moment to rate it? Good ratings help us a lot. It won't take more than a minute. Thanks for your support!</value>
   </data>
   <data name="Model_Album_Plural_Title" xml:space="preserve">
     <value>Albums</value>
@@ -425,19 +425,19 @@
     <value>name</value>
   </data>
   <data name="RelaseHistory_ThankYou.Text" xml:space="preserve">
-    <value>Thank you for using gMusic application!</value>
+    <value>Thank you for using gMusicW application!</value>
   </data>
   <data name="ReleaseHistory_OkButton.Content" xml:space="preserve">
     <value>Ok</value>
   </data>
   <data name="ReleaseHistory_Subtitle.Text" xml:space="preserve">
-    <value>Congratulations! You just installed a new version of gMusic. You can find the list of new features [+] and fixed bugs [b] below:</value>
+    <value>Congratulations! You just installed a new version of gMusicW. You can find the list of new features [+] and fixed bugs [b] below:</value>
   </data>
   <data name="ReleaseHistory_Twitter.Text" xml:space="preserve">
     <value>Follow us on twitter to know about our plans.</value>
   </data>
   <data name="ReleaseHistory_UserVoice.Text" xml:space="preserve">
-    <value>UserVoice is the best way to tell us what features you want to see in next versions of gMusic.</value>
+    <value>UserVoice is the best way to tell us what features you want to see in next versions of gMusicW.</value>
   </data>
   <data name="SearchItem_SongsFormat" xml:space="preserve">
     <value>{0} songs</value>
@@ -464,11 +464,11 @@
     <comment>Show on 07.png when user will click on Sign out.</comment>
   </data>
   <data name="SettingsAccount_AccountClearedButYouAreSignedIn" xml:space="preserve">
-    <value>Username and password were cleared. You are still signed in, on next application start gMusic can still use your Token and Session keys, to delete them click on Sign Out button.</value>
+    <value>Username and password were cleared. You are still signed in, on next application start gMusicW can still use your Token and Session keys, to delete them click on Sign Out button.</value>
     <comment>Show on 07.png when user will click on Forget account.</comment>
   </data>
   <data name="SettingsAccount_DoesNotStorePassword.Text" xml:space="preserve">
-    <value>gMusic does not store email and password of current Google Account.</value>
+    <value>gMusicW does not store email and password of current Google Account.</value>
     <comment>The same location as 'SettingsAccount_StorePasswordInProtectedStore.Text' on 07.png</comment>
   </data>
   <data name="SettingsAccount_ForgetAccountButton.Content" xml:space="preserve">
@@ -476,7 +476,7 @@
     <comment>07.png</comment>
   </data>
   <data name="SettingsAccount_LastFmAccountLabel.Text" xml:space="preserve">
-    <value>Linked Last.fm account (gMusic sends updates for your "Recently Listened Tracks" list):</value>
+    <value>Linked Last.fm account (gMusicW sends updates for your "Recently Listened Tracks" list):</value>
     <comment>07.png</comment>
   </data>
   <data name="SettingsAccount_LastFmBeta.Text" xml:space="preserve">
@@ -484,7 +484,7 @@
     <comment>07.png</comment>
   </data>
   <data name="SettingsAccount_LastFmInfo.Text" xml:space="preserve">
-    <value>gMusic can update your "Recently Listened Tracks" list on Last.fm while you are listening music in application. To do this you need to link Last.fm account.</value>
+    <value>gMusicW can update your "Recently Listened Tracks" list on Last.fm while you are listening music in application. To do this you need to link Last.fm account.</value>
     <comment>Show instead of 'SettingsAccount_LastFmAccountLabel.Text' on 07.png when Last.fm account is not linked.</comment>
   </data>
   <data name="SettingsAccount_LinkLastFmAccountButton.Content" xml:space="preserve">
@@ -508,7 +508,7 @@
     <comment>07.png</comment>
   </data>
   <data name="SettingsAccount_StorePasswordInProtectedStore.Text" xml:space="preserve">
-    <value>gMusic stores email and password in protected Windows store.</value>
+    <value>gMusicW stores email and password in protected Windows store.</value>
     <comment>07.png</comment>
   </data>
   <data name="SettingsAccount_UnlinkLastFmAccountButton.Content" xml:space="preserve">
@@ -526,7 +526,7 @@
   <data name="SettingsAppSettings_KeepDisplayOnDescription.Text" xml:space="preserve">
     <value>Depending on system power settings, the display may first be dimmed, then turned off if 
 Windows does not detect any user activity for a certain amount of time. 
-This setting allows to prevent this when gMusic application is in foreground (on screen).</value>
+This setting allows to prevent this when gMusicW application is in foreground (on screen).</value>
     <comment>08.png</comment>
   </data>
   <data name="SettingsAppSettings_KeepDisplayOnLabel.Header" xml:space="preserve">
@@ -558,7 +558,7 @@ This setting allows to prevent this when gMusic application is in foreground (on
     <comment>09.png</comment>
   </data>
   <data name="SettingsUpgrade_RemoveAdsTitle.Text" xml:space="preserve">
-    <value>Do you want to remove advertisements from gMusic?</value>
+    <value>Do you want to remove advertisements from gMusicW?</value>
     <comment>09.png</comment>
   </data>
   <data name="SettingsUpgrade_ThankYou.Text" xml:space="preserve">

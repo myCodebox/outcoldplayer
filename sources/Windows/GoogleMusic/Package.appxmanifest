@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/2010/manifest">
-  <Identity Name="47286outcoldman.gMusic" Publisher="CN=3943AC93-78E3-4C62-BC48-BB69A8AB1704" Version="2.1.0.53" />
+  <Identity Name="OutcoldSolutions.gMusicW" Publisher="CN=3943AC93-78E3-4C62-BC48-BB69A8AB1704" Version="2.1.0.53" />
   <Properties>
-    <DisplayName>gMusic</DisplayName>
+    <DisplayName>gMusicW</DisplayName>
     <PublisherDisplayName>OutcoldSolutions</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
@@ -15,7 +15,7 @@
   </Resources>
   <Applications>
     <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="OutcoldSolutions.GoogleMusic.App">
-      <VisualElements DisplayName="gMusic" Logo="Assets\Logo.png" SmallLogo="Assets\SmallLogo.png" Description="gMusic - best Unofficial Google Music Player by OutcoldSolution." ForegroundText="light" BackgroundColor="#207CB0">
+      <VisualElements DisplayName="gMusicW" Logo="Assets\Logo.png" SmallLogo="Assets\SmallLogo.png" Description="gMusicW - best Unofficial Google Music Player provided by OutcoldSolution." ForegroundText="light" BackgroundColor="#207CB0">
         <DefaultTile ShowName="logoOnly" WideLogo="Assets\WideLogo.png" />
         <SplashScreen Image="Assets\SplashScreen.png" BackgroundColor="#207CB0" />
         <InitialRotationPreference>

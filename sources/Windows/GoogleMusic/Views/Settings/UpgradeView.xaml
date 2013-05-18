@@ -27,7 +27,7 @@
 
             <TextBlock Style="{StaticResource BodyTextStyle}"
                        x:Uid="SettingsUpgrade_RemoveAdsTitle">
-                Do you want to remove advertisements from gMusic?
+                Do you want to remove advertisements from gMusicW?
             </TextBlock>
 
             <TextBlock Style="{StaticResource BodyTextStyle}" 

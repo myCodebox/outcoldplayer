@@ -45,7 +45,7 @@ namespace OutcoldSolutions.GoogleMusic
 
         protected override void InitializeApplication()
         {
-            this.Resources["ApplicationName"] = string.Format(CultureInfo.CurrentCulture, "gMusic {0}", Package.Current.Id.Version.ToVersionString());
+            this.Resources["ApplicationName"] = string.Format(CultureInfo.CurrentCulture, "gMusicW {0}", Package.Current.Id.Version.ToVersionString());
 
             using (var registration = Container.Registration())
             {

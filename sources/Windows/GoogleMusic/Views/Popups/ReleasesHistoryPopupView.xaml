@@ -28,7 +28,7 @@
             </StackPanel>
 
             <TextBlock Grid.Row="1" Style="{StaticResource BodyTextStyle}"  Margin="0, 20, 0, 0" x:Uid="ReleaseHistory_Subtitle" >
-                Congratulations! You just installed new version of gMusic. You can find the list of new feature [+] and fixed bugs [b] below:
+                Congratulations! You just installed new version of gMusicW. You can find the list of new feature [+] and fixed bugs [b] below:
             </TextBlock>
 
             <ScrollViewer Grid.Row="2" Margin="0, 20, 0, 0">
@@ -39,9 +39,9 @@
                     <RichTextBlock Style="{StaticResource BodyRichTextStyle}">
                         <Paragraph>[+] Offline mode (check the "..." button to enable it).</Paragraph>
                         <Paragraph>[+] Predownload of next song in queue.</Paragraph>
-                        <Paragraph>[+] gMusic caches album art locally.</Paragraph>
+                        <Paragraph>[+] gMusicW caches album art locally.</Paragraph>
                         <Paragraph>[+] Add Application Settings button at "..." button, which provides easy access to application settings.</Paragraph>
-                        <Paragraph>[b] gMusic can continue to work on initial library load if it cannot load playlists.</Paragraph>
+                        <Paragraph>[b] gMusicW can continue to work on initial library load if it cannot load playlists.</Paragraph>
                         <Paragraph>[b] Song name on search page can be truncated without '...'.</Paragraph>
                     </RichTextBlock>
                     
@@ -50,7 +50,7 @@
                     </TextBlock>
                     <RichTextBlock Style="{StaticResource BodyRichTextStyle}">
                         <Paragraph>[b] Add support for All Access streams (music which you don't own).</Paragraph>
-                        <Paragraph>[b] gMusic did not delete songs from local database when they were deleted from server.</Paragraph>
+                        <Paragraph>[b] gMusicW did not delete songs from local database when they were deleted from server.</Paragraph>
                     </RichTextBlock>
                     
                     <TextBlock Style="{StaticResource TitleTextStyle}" Margin="0, 10, 0, 0" >
@@ -64,9 +64,9 @@
                     <Run>04/17/2013 - Version 2.0.1</Run>
                     </TextBlock>
                     <RichTextBlock Style="{StaticResource BodyRichTextStyle}">
-                        <Paragraph>[b] When user does not have playlists gMusic should not show user playlists group in home page.</Paragraph>
+                        <Paragraph>[b] When user does not have playlists gMusicW should not show user playlists group in home page.</Paragraph>
                         <Paragraph>[b] Volume level should be stored between application sessions.</Paragraph>
-                        <Paragraph>[b] gMusic can fail to load library, if some song plays count more than one milliard.</Paragraph>
+                        <Paragraph>[b] gMusicW can fail to load library, if some song plays count more than one milliard.</Paragraph>
                         <Paragraph>[b] Library synchronization can be broken if google stores empty playlists.</Paragraph>
                         <Paragraph>[b] Music library initialization can be broken if google contains not unique song identities.</Paragraph>
                         <Paragraph>[b] After purchase app can crash if user will click on Upgrade second time.</Paragraph>
@@ -93,14 +93,14 @@
                     <Run>03/09/2013 - Version 1.3.2</Run>
                     </TextBlock>
                     <RichTextBlock Style="{StaticResource BodyRichTextStyle}">
-                        <Paragraph>[b] gMusic cannot load load playlist for some users (loading stops on 80-90%).</Paragraph>
+                        <Paragraph>[b] gMusicW cannot load load playlist for some users (loading stops on 80-90%).</Paragraph>
                     </RichTextBlock>
 
                     <TextBlock Style="{StaticResource TitleTextStyle}" Margin="0, 10, 0, 0" >
                     <Run>03/01/2013 - Version 1.3.1</Run>
                     </TextBlock>
                     <RichTextBlock Style="{StaticResource BodyRichTextStyle}">
-                        <Paragraph>[b] If song metadata has disc property with value greater than 255 - gMusic fails to load songs.</Paragraph>
+                        <Paragraph>[b] If song metadata has disc property with value greater than 255 - gMusicW fails to load songs.</Paragraph>
                     </RichTextBlock>
 
                     <TextBlock Style="{StaticResource TitleTextStyle}" Margin="0, 10, 0, 0" >
@@ -123,7 +123,7 @@
                     <Run>02/01/2013 - Version 1.2.1</Run>
                     </TextBlock>
                     <RichTextBlock Style="{StaticResource BodyRichTextStyle}">
-                        <Paragraph>[b] On some devices gMusic cannot load huge songs collection.</Paragraph>
+                        <Paragraph>[b] On some devices gMusicW cannot load huge songs collection.</Paragraph>
                         <Paragraph>[b] Increase timeouts for http requests.</Paragraph>
                     </RichTextBlock>
 
@@ -131,13 +131,13 @@
                     <Run>01/17/2013 - Version 1.2</Run>
                     </TextBlock>
                     <RichTextBlock Style="{StaticResource BodyRichTextStyle}">
-                        <Paragraph>[+] Live tiles support (gMusic updates tiles on the main screen with current playing songs).</Paragraph>
-                        <Paragraph>[+] Last.fm scrobbling support (link Last.fm account in gMusic settings, Accounts page).</Paragraph>
-                        <Paragraph>[+] gMusic updates last played albums and playlists in Google Play Music.</Paragraph>
+                        <Paragraph>[+] Live tiles support (gMusicW updates tiles on the main screen with current playing songs).</Paragraph>
+                        <Paragraph>[+] Last.fm scrobbling support (link Last.fm account in gMusicW settings, Accounts page).</Paragraph>
+                        <Paragraph>[+] gMusicW updates last played albums and playlists in Google Play Music.</Paragraph>
                         <Paragraph>[+] Songs load optimization on startup (up to 2 times faster for > 1000 songs).</Paragraph>
                         <Paragraph>[+] Updating list of added/deleted/updated tracks once in 5 minutes from cloud.</Paragraph>
                         <Paragraph>[+] Updating playlists once in 10 minutes from cloud.</Paragraph>
-                        <Paragraph>[b] In background gMusic memory usage can grow up to 1 GB in a 24 hours playing (without stops and going to foreground).</Paragraph>
+                        <Paragraph>[b] In background gMusicW memory usage can grow up to 1 GB in a 24 hours playing (without stops and going to foreground).</Paragraph>
                         <Paragraph>[b] After ~6 hours in session Google Music Service does not save statistic data or playlist changes.</Paragraph>
                         <Paragraph>[b] Some album art pictures can be little blur.</Paragraph>
                         <Paragraph>[b] Search ignored artists from collection albums (like artists of albums with Various Artists).</Paragraph>
@@ -154,8 +154,8 @@
                         <Paragraph>[+] Add two system playlists on Home screen: "All songs" and "Highly rated".</Paragraph>
                         <Paragraph>[+] Playing tracks from queue with turned off screen.</Paragraph>
                         <Paragraph>[+] Clicking on song name in player highlight it in queue.</Paragraph>
-                        <Paragraph>[b] Surface RT (Windows RT devices): some streams do not play until end. gMusic can switch to next song at the middle of the track.</Paragraph>
-                        <Paragraph>[b] gMusic can stop to load playlists and songs. Re-signing in is required to make it works again.</Paragraph>
+                        <Paragraph>[b] Surface RT (Windows RT devices): some streams do not play until end. gMusicW can switch to next song at the middle of the track.</Paragraph>
+                        <Paragraph>[b] gMusicW can stop to load playlists and songs. Re-signing in is required to make it works again.</Paragraph>
                         <Paragraph>[b] Horizontal scrolling not showing on playlists/albums/artists/genres views.</Paragraph>
                         <Paragraph>[b] Fix scrolling by mouse wheel on Home screen.</Paragraph>
                     </RichTextBlock>
@@ -187,7 +187,7 @@
                 <TextBlock Style="{StaticResource BodyTextStyle}" VerticalAlignment="Center" 
                            Margin="10, 0, 0, 0" 
                            x:Uid="ReleaseHistory_UserVoice">
-                    UserVoice is the best way to tell us what features you want to see in next versions of gMusic.
+                    UserVoice is the best way to tell us what features you want to see in next versions of gMusicW.
                 </TextBlock>
             </StackPanel>
 
@@ -219,7 +219,7 @@
                        Style="{StaticResource TitleTextStyle}" 
                        Margin="0, 0, 0, 0" 
                        x:Uid="RelaseHistory_ThankYou">
-                Thank you for using gMusic application!
+                Thank you for using gMusicW application!
             </TextBlock>
 
             <Button Grid.Row="5" 
