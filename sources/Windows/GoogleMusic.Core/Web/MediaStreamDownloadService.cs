@@ -260,11 +260,11 @@ namespace OutcoldSolutions.GoogleMusic.Web
             }
         }
 
-        public async Task<IRandomAccessStreamWithContentType> GetCachedStreamAsync(IStorageFile storageFile)
+        public async Task<IRandomAccessStream> GetCachedStreamAsync(IStorageFile storageFile)
         {
-            var memoryStream = new InMemoryRandomAccessStreamWithContentType(storageFile.ContentType);
+            InMemoryRandomAccessStream memoryRandomAccessStream = new InMemoryRandomAccessStream();
 
-            using (DataWriter writer = new DataWriter(memoryStream))
+            using (DataWriter writer = new DataWriter(memoryRandomAccessStream))
             {
                 using (var stream = await storageFile.OpenStreamForReadAsync())
                 {
@@ -272,9 +272,9 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
                     var chunks = stream.Length / DefaultBufferSize;
 
-                    for (int i = 1; i < chunks; i++)
+                    for (int i = 1; i <= chunks; i++)
                     {
-                        stream.Seek(stream.Length - i * DefaultBufferSize, SeekOrigin.Begin);
+                        stream.Seek(stream.Length - (i * DefaultBufferSize), SeekOrigin.Begin);
                         await stream.ReadAsync(buffer, 0, DefaultBufferSize);
                         writer.WriteBytes(buffer);
                     }
@@ -294,96 +294,49 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 writer.DetachStream();
             }
 
-            return memoryStream;
+            return memoryRandomAccessStream;
+        }
+        
+        private static bool GetChunkPosition(string url, out long start, out long end)
+        {
+            start = 0;
+            end = 0;
+
+            var lastUri = new Uri(url);
+            var rangeParam = lastUri.Query.Split('&').FirstOrDefault(x => x.StartsWith(RangeQueryParamName, StringComparison.OrdinalIgnoreCase));
+            if (rangeParam == null)
+            {
+                return false;
+            }
+
+            var rangeEnd = rangeParam.Substring(RangeQueryParamName.Length).Split('-');
+            if (rangeEnd.Length != 2)
+            {
+                return false;
+            }
+
+            start = long.Parse(rangeEnd[0]);
+            end = long.Parse(rangeEnd[1]);
+
+            return true;
         }
 
-        private class InMemoryRandomAccessStreamWithContentType : IRandomAccessStreamWithContentType
+        private static async Task WriteSongToCache(IStorageFile file, byte[] data)
         {
-            public InMemoryRandomAccessStreamWithContentType(string contentType)
+            using (var stream = await file.OpenStreamForWriteAsync())
             {
-                this.ContentType = contentType;
-            }
+                var chunks = data.Length / DefaultBufferSize;
 
-            private readonly InMemoryRandomAccessStream memoryRandomAccessStream = new InMemoryRandomAccessStream();
-
-            public void Dispose()
-            {
-                this.memoryRandomAccessStream.Dispose();
-            }
-
-            public IAsyncOperationWithProgress<IBuffer, uint> ReadAsync(IBuffer buffer, uint count, InputStreamOptions options)
-            {
-                return this.memoryRandomAccessStream.ReadAsync(buffer, count, options);
-            }
-
-            public IAsyncOperationWithProgress<uint, uint> WriteAsync(IBuffer buffer)
-            {
-                return this.memoryRandomAccessStream.WriteAsync(buffer);
-            }
-
-            public IAsyncOperation<bool> FlushAsync()
-            {
-                return this.memoryRandomAccessStream.FlushAsync();
-            }
-
-            public IInputStream GetInputStreamAt(ulong position)
-            {
-                return this.memoryRandomAccessStream.GetInputStreamAt(position);
-            }
-
-            public IOutputStream GetOutputStreamAt(ulong position)
-            {
-                return this.memoryRandomAccessStream.GetOutputStreamAt(position);
-            }
-
-            public void Seek(ulong position)
-            {
-                this.memoryRandomAccessStream.Seek(position);
-            }
-
-            public IRandomAccessStream CloneStream()
-            {
-                return this.memoryRandomAccessStream.CloneStream();
-            }
-
-            public bool CanRead
-            {
-                get
+                if (data.Length % DefaultBufferSize > 0)
                 {
-                    return this.memoryRandomAccessStream.CanRead;
-                }
-            }
-
-            public bool CanWrite
-            {
-                get
-                {
-                    return this.memoryRandomAccessStream.CanWrite;
-                }
-            }
-
-            public ulong Position
-            {
-                get
-                {
-                    return this.memoryRandomAccessStream.Position;
-                }
-            }
-
-            public ulong Size
-            {
-                get
-                {
-                    return this.memoryRandomAccessStream.Size;
+                    await stream.WriteAsync(data, chunks * DefaultBufferSize, data.Length - (chunks * DefaultBufferSize));
                 }
 
-                set
+                for (int i = chunks - 1; i >= 0; i--)
                 {
-                    this.memoryRandomAccessStream.Size = value;
+                    await stream.WriteAsync(data, i * DefaultBufferSize, DefaultBufferSize);
                 }
             }
-
-            public string ContentType { get; private set; }
         }
 
         private class MemoryRandomAccessStream : INetworkRandomAccessStream
@@ -746,7 +699,11 @@ namespace OutcoldSolutions.GoogleMusic.Web
             public MemoryRandomAccessStreamMultiStreams(
                 HttpClient httpClient,
                 CancellationTokenSource cancellationTokenSource,
-                ILogger logger, string[] urls, byte[] data, string mediaType, int lastChunk)
+                ILogger logger, 
+                string[] urls, 
+                byte[] data, 
+                string mediaType, 
+                int lastChunk)
             {
                 this.cancellationTokenSource = cancellationTokenSource;
                 this.logger = logger;
@@ -756,6 +713,60 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 this.lastChunk = lastChunk;
 
                 this.downloadTask = this.DownloadStream(httpClient, cancellationTokenSource.Token);
+            }
+
+            public event EventHandler<double> DownloadProgressChanged;
+
+            public bool CanRead
+            {
+                get
+                {
+                    lock (this.locker)
+                    {
+                        return this.currentPosition < (ulong)this.data.Length;
+                    }
+                }
+            }
+
+            public bool CanWrite
+            {
+                get
+                {
+                    return false;
+                }
+            }
+
+            public ulong Position
+            {
+                get
+                {
+                    lock (this.locker)
+                    {
+                        return this.currentPosition;
+                    }
+                }
+            }
+
+            public ulong Size
+            {
+                get
+                {
+                    return (ulong)this.data.Length;
+                }
+
+                set
+                {
+                    this.logger.Warning("set_Size is not supported.");
+                    throw new NotSupportedException();
+                }
+            }
+
+            public string ContentType
+            {
+                get
+                {
+                    return this.mediaType;
+                }
             }
 
             public void Dispose()
@@ -854,70 +865,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 this.logger.Warning("CloneStream is not supported.");
                 throw new NotSupportedException();
             }
-
-            public bool CanRead
-            {
-                get
-                {
-                    lock (this.locker)
-                    {
-                        return this.currentPosition < (ulong)this.data.Length;
-                    }
-                }
-            }
-
-            public bool CanWrite
-            {
-                get
-                {
-                    return false;
-                }
-            }
-
-            public ulong Position
-            {
-                get
-                {
-                    lock (this.locker)
-                    {
-                        return this.currentPosition;
-                    }
-                }
-            }
-
-            public ulong Size
-            {
-                get
-                {
-                    return (ulong)this.data.Length;
-                }
-
-                set
-                {
-                    this.logger.Warning("set_Size is not supported.");
-                    throw new NotSupportedException();
-                }
-            }
-
-            public string ContentType
-            {
-                get
-                {
-                    return this.mediaType;
-                }
-            }
-
-            private void RaiseDownloadProgressChanged(double downloadProgress)
-            {
-                var handler = this.DownloadProgressChanged;
-                if (handler != null)
-                {
-                    handler(this, downloadProgress);
-                }
-            }
-
-            public event EventHandler<double> DownloadProgressChanged;
-
+            
             public Task DownloadAsync()
             {
                 return this.downloadTask;
@@ -934,6 +882,15 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 }
 
                 await WriteSongToCache(file, this.data);
+            }
+
+            private void RaiseDownloadProgressChanged(double downloadProgress)
+            {
+                var handler = this.DownloadProgressChanged;
+                if (handler != null)
+                {
+                    handler(this, downloadProgress);
+                }
             }
 
             private async Task DownloadStream(HttpClient client, CancellationToken token)
@@ -1011,48 +968,6 @@ namespace OutcoldSolutions.GoogleMusic.Web
                     {
                         this.logger.Error(exception, "MemoryRandomAccessStreamMultiStreams.SafeDownloadStream: Exception while reading stream.");
                     }
-                }
-            }
-        }
-
-        private static bool GetChunkPosition(string url, out long start, out long end)
-        {
-            start = 0;
-            end = 0;
-
-            var lastUri = new Uri(url);
-            var rangeParam = lastUri.Query.Split('&').FirstOrDefault(x => x.StartsWith(RangeQueryParamName, StringComparison.OrdinalIgnoreCase));
-            if (rangeParam == null)
-            {
-                return false;
-            }
-
-            var rangeEnd = rangeParam.Substring(RangeQueryParamName.Length).Split('-');
-            if (rangeEnd.Length != 2)
-            {
-                return false;
-            }
-
-            start = long.Parse(rangeEnd[0]);
-            end = long.Parse(rangeEnd[1]);
-
-            return true;
-        }
-
-        private static async Task WriteSongToCache(IStorageFile file, byte[] data)
-        {
-            using (var stream = await file.OpenStreamForWriteAsync())
-            {
-                var chunks = data.Length / DefaultBufferSize;
-
-                if (data.Length % DefaultBufferSize > 0)
-                {
-                    await stream.WriteAsync(data, chunks * DefaultBufferSize, data.Length - chunks * DefaultBufferSize);
-                }
-
-                for (int i = (chunks - 1); i >= 0; i--)
-                {
-                    await stream.WriteAsync(data, i * DefaultBufferSize, DefaultBufferSize);
                 }
             }
         }

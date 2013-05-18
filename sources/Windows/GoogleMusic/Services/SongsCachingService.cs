@@ -20,9 +20,19 @@ namespace OutcoldSolutions.GoogleMusic.Services
     using Windows.Storage;
     using Windows.Storage.Streams;
 
+    public enum SongCachingChangeEventType
+    {
+        Unknown = 1,
+        StartDownloading = 2,
+        FinishDownloading = 3,
+        FailedToDownload = 4,
+        DownloadCanceled = 5,
+        ClearCache = 6
+    }
+
     public interface ISongsCachingService
     {
-        Task<IRandomAccessStreamWithContentType> GetStreamAsync(Song song);
+        Task<IRandomAccessStream> GetStreamAsync(Song song);
 
         Task PredownloadStreamAsync(Song song);
 
@@ -39,16 +49,6 @@ namespace OutcoldSolutions.GoogleMusic.Services
         Task<Tuple<INetworkRandomAccessStream, Song>> GetCurrentTaskAsync();
 
         void StartDownloadTask();
-    }
-
-    public enum SongCachingChangeEventType
-    {
-        Unknown = 1,
-        StartDownloading = 2,
-        FinishDownloading = 3,
-        FailedToDownload = 4,
-        DownloadCanceled = 5,
-        ClearCache = 6
     }
 
     public class CachingChangeEvent
@@ -138,7 +138,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 });
         }
 
-        public async Task<IRandomAccessStreamWithContentType> GetStreamAsync(Song song)
+        public async Task<IRandomAccessStream> GetStreamAsync(Song song)
         {
             if (song == null)
             {
