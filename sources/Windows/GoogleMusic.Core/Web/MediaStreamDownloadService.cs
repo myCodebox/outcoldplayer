@@ -666,6 +666,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 catch (OperationCanceledException exception)
                 {
                     this.logger.Debug(exception, "SafeDownloadStream: Downloading task was canceled.");
+                    throw;
                 }
                 catch (Exception exception)
                 {
@@ -875,7 +876,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
             {
                 lock (this.locker)
                 {
-                    if (this.readPosition < (ulong)data.Length)
+                    if (this.readPosition < (ulong)this.data.Length)
                     {
                         throw new NotSupportedException("File is still in downloading state.");
                     }
@@ -900,6 +901,8 @@ namespace OutcoldSolutions.GoogleMusic.Web
                     for (int i = 0; i < this.urls.Length - 1; i++)
                     {
                         var uri = this.urls[i];
+
+                        token.ThrowIfCancellationRequested();
 
                         long start;
                         long end;
@@ -957,6 +960,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 catch (OperationCanceledException exception)
                 {
                     this.logger.Debug(exception, "MemoryRandomAccessStreamMultiStreams.SafeDownloadStream: Downloading task was canceled.");
+                    throw;
                 }
                 catch (Exception exception)
                 {

@@ -668,7 +668,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             }
             catch (Exception exception)
             {
-                if (exception is TaskCanceledException)
+                if (exception is OperationCanceledException)
                 {
                     this.logger.Debug("DownloadAsync was canceled.");
                 }
