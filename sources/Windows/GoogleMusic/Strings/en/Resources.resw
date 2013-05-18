@@ -185,10 +185,10 @@
     <comment>DO NOT TRANSLATE</comment>
   </data>
   <data name="Authorization_Error_UnexpectedError" xml:space="preserve">
-    <value>Could not authentificate. Please check network connection.</value>
+    <value>Could not authenticate. Please check network connection.</value>
   </data>
   <data name="Authorization_Error_Unknown" xml:space="preserve">
-    <value>Cannot authentificate on Google Play Music with provided credentials. Please make sure that you activated Google Play Music service for current account and this service is available in your country.</value>
+    <value>Cannot authenticate on Google Play Music with provided credentials. Please make sure that you activated Google Play Music service for current account and this service is available in your country.</value>
   </data>
   <data name="Authorization_Error_UserNameAndPassword" xml:space="preserve">
     <value>Please provide email and password first.</value>
@@ -214,7 +214,7 @@
     <comment>03.png</comment>
   </data>
   <data name="Authorization_SignInInfo.Text" xml:space="preserve">
-    <value>To use gMusic player you need to provide your Google Account's email and password. If you do not have one, you need to create Google Account. Please make sure that you have subscribed to Google Music service. For more details go to the Google Music site.</value>
+    <value>To use gMusic player you need to provide your Google Account's email and password. If you do not have one, you need to create a Google Account. Please make sure that you have subscribed to the Google Music service. For more details go to the Google Music site.</value>
     <comment>03.png</comment>
   </data>
   <data name="Authorization_SignInTitle.Text" xml:space="preserve">
@@ -308,7 +308,7 @@
     <value>Remind me later</value>
   </data>
   <data name="MessageBox_ReviewMessage" xml:space="preserve">
-    <value>If you are enjoy using gMusic appication, would you mind taking a moment to rate it? Good ratings help us a lot. It won't take more than a minute. Thanks for your support!</value>
+    <value>If you enjoy using gMusic appication, would you mind taking a moment to rate it? Good ratings help us a lot. It won't take more than a minute. Thanks for your support!</value>
   </data>
   <data name="Model_Album_Plural_Title" xml:space="preserve">
     <value>Albums</value>
@@ -365,7 +365,7 @@
     <comment>13.png</comment>
   </data>
   <data name="Player_CannotPlay" xml:space="preserve">
-    <value>Cannot play right now. Make sure that you don't use current account on different device at the same time. Try after couple minutes.</value>
+    <value>Cannot play right now. Make sure that you are not currently using the current account on a different device. Try in a couple of minutes.</value>
   </data>
   <data name="Player_QueueEmpty.Text" xml:space="preserve">
     <value>Queue is Empty</value>
@@ -431,7 +431,7 @@
     <value>Ok</value>
   </data>
   <data name="ReleaseHistory_Subtitle.Text" xml:space="preserve">
-    <value>Congratulations! You just installed new version of gMusic. You can find the list of new feature [+] and fixed bugs [b] below:</value>
+    <value>Congratulations! You just installed a new version of gMusic. You can find the list of new features [+] and fixed bugs [b] below:</value>
   </data>
   <data name="ReleaseHistory_Twitter.Text" xml:space="preserve">
     <value>Follow us on twitter to know about our plans.</value>
@@ -554,7 +554,7 @@ This setting allows to prevent this when gMusic application is in foreground (on
     <comment>09.png</comment>
   </data>
   <data name="SettingsUpgrade_AddFreePackageDescription.Text" xml:space="preserve">
-    <value>You can buy for $2.99 AdFree package, which will remove all advertisements:</value>
+    <value>You can buy for $1.99 AdFree package, which will remove all advertisements (limited offer):</value>
     <comment>09.png</comment>
   </data>
   <data name="SettingsUpgrade_RemoveAdsTitle.Text" xml:space="preserve">
@@ -570,8 +570,8 @@ This setting allows to prevent this when gMusic application is in foreground (on
     <comment>09.png</comment>
   </data>
   <data name="SettingsUpgrade_UltimatePackageDescription.Text" xml:space="preserve">
-    <value>Or you can spend $5.99 for Ultimate package, which removes all advertisements from application and remove limit for 30 songs in offline mode.
-Also it will contains all additional features, which we will ship in future:</value>
+    <value>Or you can spend $4.99 for Ultimate package. This package does not offer any additional features now (other than Ad Free package has). 
+But it will contains all additional features, which we will ship in future. For now we can say, that this is a way to support development of our app.</value>
     <comment>09.png</comment>
   </data>
   <data name="SongsList_SongAlbum.Title" xml:space="preserve">
