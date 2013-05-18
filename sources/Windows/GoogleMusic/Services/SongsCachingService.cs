@@ -49,6 +49,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
         Task<Tuple<INetworkRandomAccessStream, Song>> GetCurrentTaskAsync();
 
         void StartDownloadTask();
+
+        bool IsDownloading();
     }
 
     public class CachingChangeEvent
@@ -425,6 +427,20 @@ namespace OutcoldSolutions.GoogleMusic.Services
             await this.StartDownloadTaskAsync();
         }
 
+        public bool IsDownloading()
+        {
+            this.mutex.Wait();
+
+            try
+            {
+                return this.downloadTask != null;
+            }
+            finally
+            {
+                this.mutex.Release(1);
+            }
+        }
+
         private async Task SetCurrentStreamAsync(Song song, INetworkRandomAccessStream networkRandomAccessStream)
         {
             await this.mutex.WaitAsync().ConfigureAwait(continueOnCapturedContext: false);
@@ -611,6 +627,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
                     if (stream == null)
                     {
+                        await this.ClearDownloadTask(cancellationToken);
                         this.eventAggregator.Publish(new SongCachingChangeEvent(SongCachingChangeEventType.FailedToDownload, null, nextTask.Song));
                         break;
                     }
@@ -678,6 +695,11 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 }
             }
 
+            await this.ClearDownloadTask(cancellationToken);
+        }
+
+        private async Task ClearDownloadTask(CancellationToken cancellationToken)
+        {
             await this.mutex.WaitAsync(cancellationToken).ConfigureAwait(continueOnCapturedContext: false);
 
             try

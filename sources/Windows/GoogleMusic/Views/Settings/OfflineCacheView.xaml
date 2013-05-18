@@ -58,10 +58,24 @@
             </TextBlock>
 
             <TextBlock Style="{StaticResource BodyTextStyle}"
+                       Visibility="{Binding Path=BindingModel.IsQueueEmpty, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}"
+                       Margin="0, 20, 0, 0">
+                If download task fails - please check that you don't use current account on any other device (or web browser), in other case just wait five minutes and try again.
+            </TextBlock>
+
+
+            <Button Command="{Binding Path=StartDownloadCommand}" 
+                    Visibility="{Binding Path=BindingModel.IsQueueEmpty, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}"
+                    Content="Start download task" 
+                    Margin="0, 20, 0, 0"/>
+            
+            <TextBlock Style="{StaticResource BodyTextStyle}"
                        Visibility="{Binding Path=BindingModel.IsQueueEmpty, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                        Margin="0, 20, 0, 0">
                 Queue is empty
             </TextBlock>
+
+            
 
         </StackPanel>
 

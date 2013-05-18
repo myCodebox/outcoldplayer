@@ -66,13 +66,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
             this.SetOfflineMessageIfRequired();
 
-            this.sessionService.SessionCleared += SessionServiceOnSessionCleared;
-        }
-
-        private void SessionServiceOnSessionCleared(object sender, EventArgs eventArgs)
-        {
-            this.synchronizationTimer.Stop();
-            this.sessionService.SessionCleared -= SessionServiceOnSessionCleared;
+            this.sessionService.SessionCleared += this.SessionServiceOnSessionCleared;
         }
 
         public DelegateCommand ShowSearchCommand { get; private set; }
@@ -92,16 +86,24 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                                 .Subscribe(async e => await this.dispatcher.RunAsync(this.SetOfflineMessageIfRequired));
         }
 
+        private void SessionServiceOnSessionCleared(object sender, EventArgs eventArgs)
+        {
+            this.synchronizationTimer.Stop();
+            this.sessionService.SessionCleared -= this.SessionServiceOnSessionCleared;
+        }
+
         private void SetOfflineMessageIfRequired()
         {
             this.isDownloading = false;
 
             if (this.stateService.IsOffline())
             {
+                this.BindingModel.ShowProgressRing = false;
                 this.BindingModel.MessageText = "Offline mode (listen only)";
             }
             else
             {
+                this.BindingModel.ShowProgressRing = false;
                 this.BindingModel.MessageText = null;
             }
         }
@@ -156,13 +158,15 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
             if (this.stateService.IsOnline() && !this.isDownloading)
             {
-                this.disableClickToCache = true;
-
                 await this.dispatcher.RunAsync(
                     () =>
                     {
-                        this.BindingModel.ShowProgressRing = true;
-                        this.BindingModel.MessageText = this.resources.GetString("LinksRegion_UpdatingSongs");
+                        if (this.stateService.IsOnline())
+                        {
+                            this.disableClickToCache = true;
+                            this.BindingModel.ShowProgressRing = true;
+                            this.BindingModel.MessageText = this.resources.GetString("LinksRegion_UpdatingSongs");
+                        }
                     });
 
                 bool error = false;
@@ -186,12 +190,16 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 await this.dispatcher.RunAsync(
                          () =>
                          {
-                             this.BindingModel.ShowProgressRing = false;
-                             this.BindingModel.MessageText = error ? this.resources.GetString("LinksRegion_FailedToUpdate") : this.resources.GetString("LinksRegion_Updated");
-                         });
-                await Task.Delay(TimeSpan.FromSeconds(2));
+                             this.disableClickToCache = false;
 
-                this.disableClickToCache = false;
+                             if (this.stateService.IsOnline())
+                             {
+                                 this.BindingModel.ShowProgressRing = false;
+                                 this.BindingModel.MessageText = error ? this.resources.GetString("LinksRegion_FailedToUpdate") : this.resources.GetString("LinksRegion_Updated");
+                             }
+                         });
+
+                await Task.Delay(TimeSpan.FromSeconds(2));
             }
 
             await this.dispatcher.RunAsync(

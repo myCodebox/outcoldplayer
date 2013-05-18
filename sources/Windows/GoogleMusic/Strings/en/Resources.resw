@@ -365,7 +365,7 @@
     <comment>13.png</comment>
   </data>
   <data name="Player_CannotPlay" xml:space="preserve">
-    <value>Cannot play right now. Make sure that you are not currently using the current account on a different device. Try in a couple of minutes.</value>
+    <value>Cannot play right now. Make sure that you are not currently using the current account on a different device (or web browser). Try in a couple of minutes.</value>
   </data>
   <data name="Player_QueueEmpty.Text" xml:space="preserve">
     <value>Queue is Empty</value>
