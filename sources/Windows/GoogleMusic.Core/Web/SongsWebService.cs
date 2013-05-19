@@ -30,7 +30,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
     public class SongsWebService : ISongsWebService
     {
-        private const string SongUrlFormat = "play?u=0&songid={0}";
+        private const string SongUrlFormat = "play?songid={0}&pt=e&dt=pe&targetkbps=320&start=0";
         private const string RecordPlayingUrl = "services/recordplaying";
         private const string ModifyEntriesUrl = "services/modifyentries";
         
