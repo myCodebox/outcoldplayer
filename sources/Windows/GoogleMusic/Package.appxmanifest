@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/2010/manifest">
-  <Identity Name="47286outcoldman.gMusic" Publisher="CN=3943AC93-78E3-4C62-BC48-BB69A8AB1704" Version="2.1.0.54" />
+  <Identity Name="47286outcoldman.gMusic" Publisher="CN=3943AC93-78E3-4C62-BC48-BB69A8AB1704" Version="2.1.0.55" />
   <Properties>
     <DisplayName>gMusic</DisplayName>
     <PublisherDisplayName>OutcoldSolutions</PublisherDisplayName>
