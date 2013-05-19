@@ -620,6 +620,9 @@ But it will contains all additional features, which we will ship in future. For 
     <value>Queue</value>
     <comment>10.png</comment>
   </data>
+  <data name="Toolbar_RemoveLocal" xml:space="preserve">
+    <value>Remove local</value>
+  </data>
   <data name="Toolbar_RenameButton" xml:space="preserve">
     <value>Rename</value>
     <comment>10.png</comment>

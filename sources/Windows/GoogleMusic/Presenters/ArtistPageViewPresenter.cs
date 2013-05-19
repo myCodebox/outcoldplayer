@@ -49,8 +49,9 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
             this.QueueCommand = new DelegateCommand(this.Queue, () => this.BindingModel.SelectedItems.Count > 0);
             this.DownloadCommand = new DelegateCommand(this.Download, () => this.BindingModel.SelectedItems.Count > 0);
+            this.UnPinCommand = new DelegateCommand(this.UnPin, () => this.BindingModel.SelectedItems.Count > 0);
         }
-        
+
         public DelegateCommand PlayCommand { get; set; }
 
         public DelegateCommand ShowAllCommand { get; set; }
@@ -58,6 +59,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         public DelegateCommand QueueCommand { get; private set; }
 
         public DelegateCommand DownloadCommand { get; set; }
+
+        public DelegateCommand UnPinCommand { get; set; }
 
         public override void OnNavigatingFrom(NavigatingFromEventArgs eventArgs)
         {
@@ -113,9 +116,17 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private IEnumerable<CommandMetadata> GetContextCommands()
         {
             yield return new CommandMetadata(CommandIcon.OpenWith, this.resources.GetString("Toolbar_QueueButton"), this.QueueCommand);
-            if (this.stateService.IsOnline())
+
+            if (this.BindingModel.SelectedItems.Any(x => x.Playlist.OfflineSongsCount != x.Playlist.SongsCount))
             {
-                yield return new CommandMetadata(CommandIcon.Download, this.resources.GetString("Toolbar_KeepLocal"), this.DownloadCommand);
+                if (this.stateService.IsOnline())
+                {
+                    yield return new CommandMetadata(CommandIcon.Pin, this.resources.GetString("Toolbar_KeepLocal"), this.DownloadCommand);
+                }
+            }
+            else
+            {
+                yield return new CommandMetadata(CommandIcon.UnPin, this.resources.GetString("Toolbar_RemoveLocal"), this.UnPinCommand);
             }
         }
 
@@ -179,6 +190,26 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             catch (Exception e)
             {
                 this.Logger.Error(e, "Cannot add songs to download queue");
+            }
+        }
+
+        private async void UnPin()
+        {
+            try
+            {
+                IEnumerable<Song> songs = Enumerable.Empty<Song>();
+
+                foreach (var playlistBindingModel in this.BindingModel.SelectedItems)
+                {
+                    songs = songs.Union(await this.playlistsService.GetSongsAsync(playlistBindingModel.Playlist));
+                }
+
+                await this.cachingService.ClearCachedAsync(songs);
+                this.BindingModel.ClearSelectedItems();
+            }
+            catch (Exception e)
+            {
+                this.Logger.Error(e, "Cannot remove from cache selected songs.");
             }
         }
     }

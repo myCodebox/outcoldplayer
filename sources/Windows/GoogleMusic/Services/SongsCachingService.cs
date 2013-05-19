@@ -27,7 +27,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
         FinishDownloading = 3,
         FailedToDownload = 4,
         DownloadCanceled = 5,
-        ClearCache = 6
+        ClearCache = 6,
+        RemoveLocalCopy = 7
     }
 
     public interface ISongsCachingService
@@ -41,6 +42,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
         Task<StorageFolder> GetCacheFolderAsync();
 
         Task ClearCacheAsync();
+
+        Task ClearCachedAsync(IEnumerable<Song> songs);
 
         Task CancelTaskAsync(CachedSong cachedSong);
 
@@ -174,6 +177,11 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 this.mutex.Release(1);
             }
 
+            if (this.stateService.IsOffline())
+            {
+                return null;
+            }
+
             await this.CancelDownloadTaskAsync();
 
             INetworkRandomAccessStream networkRandomAccessStream = await this.GetNetworkStreamAsync(song);
@@ -215,6 +223,11 @@ namespace OutcoldSolutions.GoogleMusic.Services
             finally
             {
                 this.mutex.Release(1);
+            }
+
+            if (this.stateService.IsOffline())
+            {
+                return;
             }
 
             await this.CancelDownloadTaskAsync();
@@ -337,6 +350,27 @@ namespace OutcoldSolutions.GoogleMusic.Services
             this.eventAggregator.Publish(new CachingChangeEvent(SongCachingChangeEventType.ClearCache));
         }
 
+        public async Task ClearCachedAsync(IEnumerable<Song> songs)
+        {
+            await this.CancelDownloadTaskAsync();
+            await this.InitializeCacheFolderAsync();
+
+            foreach (var song in songs)
+            {
+                var cache = await this.songsCacheRepository.FindAsync(song);
+                if (cache != null)
+                {
+                    await this.songsCacheRepository.RemoveAsync(cache);
+                    var file = await StorageFile.GetFileFromPathAsync(this.GetFullPath(cache.FileName));
+                    await file.DeleteAsync(StorageDeleteOption.PermanentDelete);
+
+                    this.eventAggregator.Publish(new SongCachingChangeEvent(SongCachingChangeEventType.RemoveLocalCopy, null, song));
+                }
+            }
+
+            this.StartDownloadTask();
+        }
+
         public async Task CancelTaskAsync(CachedSong cachedSong)
         {
             if (cachedSong == null)
@@ -403,7 +437,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             return this.songsCacheRepository.GetAllQueuedTasksAsync();
         }
 
-        public async Task<Tuple<INetworkRandomAccessStream, Song>>  GetCurrentTaskAsync()
+        public async Task<Tuple<INetworkRandomAccessStream, Song>> GetCurrentTaskAsync()
         {
             await this.mutex.WaitAsync().ConfigureAwait(continueOnCapturedContext: false);
 
