@@ -13,6 +13,8 @@ namespace OutcoldSolutions.GoogleMusic.Web
     {
         event EventHandler<double> DownloadProgressChanged;
 
+        bool IsReady { get; }
+
         Task DownloadAsync();
 
         Task SaveToFileAsync(IStorageFile file);

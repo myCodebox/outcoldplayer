@@ -54,6 +54,17 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 }
             });
 
+            this.UpdateLibraryCommand = new DelegateCommand(
+                async () =>
+                    {
+                        if (this.UpdateLibraryCommand.CanExecute())
+                        {
+                            this.synchronizationTimer.Stop();
+                            await this.Synchronize(forceToDownloadPlaylists: true);
+                        }
+                    },
+                () => !this.BindingModel.ShowProgressRing);
+
             this.BindingModel = new LinksRegionBindingModel();
 
             this.synchronizationTimer = new DispatcherTimer { Interval = TimeSpan.FromMinutes(5) };
@@ -72,6 +83,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         public DelegateCommand ShowSearchCommand { get; private set; }
 
         public DelegateCommand NavigateToDownloadQueue { get; private set; }
+
+        public DelegateCommand UpdateLibraryCommand { get; private set; }
 
         public LinksRegionBindingModel BindingModel { get; set; }
 
@@ -106,6 +119,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 this.BindingModel.ShowProgressRing = false;
                 this.BindingModel.MessageText = null;
             }
+
+            this.UpdateLibraryCommand.RaiseCanExecuteChanged();
         }
 
         private async void OnCachingEvent(SongCachingChangeEventType eventType)
@@ -129,6 +144,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     {
                         this.BindingModel.ShowProgressRing = false;
                         this.BindingModel.MessageText = "Error happened on download songs to local cache...";
+                        this.UpdateLibraryCommand.RaiseCanExecuteChanged();
                     });
                     break;
                 }
@@ -141,6 +157,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     {
                         this.BindingModel.ShowProgressRing = false;
                         this.SetOfflineMessageIfRequired();
+                        this.UpdateLibraryCommand.RaiseCanExecuteChanged();
                     });
                     break;
                 }
@@ -152,7 +169,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             await this.Synchronize();
         }
 
-        private async Task Synchronize()
+        private async Task Synchronize(bool forceToDownloadPlaylists = false)
         {
             await this.dispatcher.RunAsync(() => this.synchronizationTimer.Stop());
 
@@ -166,6 +183,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                             this.disableClickToCache = true;
                             this.BindingModel.ShowProgressRing = true;
                             this.BindingModel.MessageText = this.resources.GetString("LinksRegion_UpdatingSongs");
+                            this.UpdateLibraryCommand.RaiseCanExecuteChanged();
                         }
                     });
 
@@ -175,7 +193,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 {
                     await this.googleMusicSynchronizationService.UpdateSongsAsync();
 
-                    if (this.synchronizationTime == 0)
+                    if (this.synchronizationTime == 0 || forceToDownloadPlaylists)
                     {
                         await this.dispatcher.RunAsync(() => { this.BindingModel.MessageText = this.resources.GetString("LinksRegion_UpdatingPlaylists"); });
                         await this.googleMusicSynchronizationService.UpdateUserPlaylistsAsync();
@@ -206,13 +224,18 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                      () =>
                      {
                          this.synchronizationTime++;
-                         if (this.synchronizationTime >= 6)
+                         if (forceToDownloadPlaylists)
+                         {
+                             this.synchronizationTime = 1;
+                         }
+                         else if (this.synchronizationTime >= 6)
                          {
                              this.synchronizationTime = 0;
                          }
 
                          this.synchronizationTimer.Start();
                          this.SetOfflineMessageIfRequired();
+                         this.UpdateLibraryCommand.RaiseCanExecuteChanged();
                      });
         }
     }

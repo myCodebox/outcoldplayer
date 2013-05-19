@@ -390,6 +390,8 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
             public event EventHandler<double> DownloadProgressChanged;
 
+            public bool IsReady { get; private set; }
+
             public string ContentType { get; private set; }
 
             public bool CanRead
@@ -645,6 +647,8 @@ namespace OutcoldSolutions.GoogleMusic.Web
                     }
 
                     this.readPosition = (ulong)this.contentLength;
+                    this.IsReady = true;
+
                     downloadProgress = 1d;
                     this.RaiseDownloadProgressChanged(downloadProgress);
                 }
@@ -770,6 +774,8 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 }
             }
 
+            public bool IsReady { get; private set; }
+
             public void Dispose()
             {
                 lock (this.locker)
@@ -866,7 +872,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 this.logger.Warning("CloneStream is not supported.");
                 throw new NotSupportedException();
             }
-            
+
             public Task DownloadAsync()
             {
                 return this.downloadTask;
@@ -939,6 +945,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
                     }
 
                     this.readPosition = (ulong)this.data.Length;
+                    this.IsReady = true;
 
                     this.RaiseDownloadProgressChanged(1.0d);
                 }

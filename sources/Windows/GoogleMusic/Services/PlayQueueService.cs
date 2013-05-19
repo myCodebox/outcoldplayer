@@ -512,7 +512,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                         if (this.currentSongStream != null)
                         {
                             var networkRandomAccessStream = this.currentSongStream as INetworkRandomAccessStream;
-                            if (networkRandomAccessStream != null)
+                            if (networkRandomAccessStream != null && !networkRandomAccessStream.IsReady)
                             {
                                 networkRandomAccessStream.DownloadProgressChanged += this.CurrentSongStreamOnDownloadProgressChanged;
                             }

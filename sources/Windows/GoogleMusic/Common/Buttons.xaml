@@ -186,4 +186,10 @@
         <Setter Property="Content" Value="&#xE196;"/>
     </Style>
 
+    <Style x:Key="RefreshAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource PopupMenuButtonStyle}">
+        <Setter Property="AutomationProperties.AutomationId" Value="RefreshAppBarButton"/>
+        <Setter Property="AutomationProperties.Name" Value="Refresh"/>
+        <Setter Property="Content" Value="&#xE117;"/>
+    </Style>
+
 </ResourceDictionary>
