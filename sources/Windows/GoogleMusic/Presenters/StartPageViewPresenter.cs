@@ -435,7 +435,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     (cmd) =>
                     {
                         this.settingsService.SetRoamingValue<bool>(DoNotAskToReviewKey, true);
-                        this.Logger.LogTask(Launcher.LaunchUriAsync(new Uri("ms-windows-store:REVIEW?PFN=OutcoldSolutions.gMusicW_z1q2m7teapq4y")).AsTask());
+                        this.Logger.LogTask(Launcher.LaunchUriAsync(new Uri("ms-windows-store:REVIEW?PFN=47286outcoldman.gMusic_z1q2m7teapq4y")).AsTask());
                     }));
 
             dialog.Commands.Add(
