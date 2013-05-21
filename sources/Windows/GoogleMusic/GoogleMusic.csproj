@@ -531,8 +531,8 @@
     <SDKReference Include="MSAdvertisingXaml, Version=6.1">
       <Name>MSAdvertisingXaml</Name>
     </SDKReference>
-    <SDKReference Include="SQLite.WinRT, Version=3.7.16.2">
-      <Name>SQLite for Windows Runtime %28SQLite.WinRT, Version=3.7.16.2%29</Name>
+    <SDKReference Include="SQLite.WinRT, Version=3.7.17">
+      <Name>SQLite for Windows Runtime</Name>
     </SDKReference>
   </ItemGroup>
   <ItemGroup>
