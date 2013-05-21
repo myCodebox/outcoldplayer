@@ -27,7 +27,7 @@
                        x:Uid="SettingsAppSettings_KeepDisplayOnDescription">
                 Depending on system power settings, the display may first be dimmed, then turned off if 
                 Windows does not detect any user activity for a certain amount of time. 
-                This setting allows to prevent this when gMusic application is in foreground (on screen).
+                This setting allows to prevent this when gMusicW application is in foreground (on screen).
             </TextBlock>
 
         </StackPanel>

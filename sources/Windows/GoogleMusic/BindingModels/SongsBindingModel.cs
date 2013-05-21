@@ -59,8 +59,8 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
                            .Subscribe(async (e) => await this.dispatcher.RunAsync(() => this.OnSongsUpdated(e.UpdatedSongs)));
 
             eventAggregator.GetEvent<SongCachingChangeEvent>()
-                           .Where(e => e.EventType == SongCachingChangeEventType.FinishDownloading)
-                           .Subscribe(async (e) => await this.dispatcher.RunAsync(() => this.UpdateIfSongCached(e.Song)));
+                           .Where(e => e.EventType == SongCachingChangeEventType.FinishDownloading || e.EventType == SongCachingChangeEventType.RemoveLocalCopy)
+                           .Subscribe(async (e) => await this.dispatcher.RunAsync(() => this.UpdateIfSongCached(e.Song, e.EventType)));
 
             eventAggregator.GetEvent<CachingChangeEvent>()
                            .Where(e => e.EventType == SongCachingChangeEventType.ClearCache)
@@ -167,14 +167,14 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             }
         }
 
-        private void UpdateIfSongCached(Song song)
+        private void UpdateIfSongCached(Song song, SongCachingChangeEventType eventType)
         {
             if (song != null && this.Songs != null)
             {
                 var songBindingModel = this.Songs.FirstOrDefault(s => s.Metadata.SongId == song.SongId);
                 if (songBindingModel != null)
                 {
-                    songBindingModel.IsCached = true;
+                    songBindingModel.IsCached = eventType == SongCachingChangeEventType.FinishDownloading;
                 }
             }
         }

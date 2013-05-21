@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Outcold Solutions")]
-[assembly: AssemblyProduct("Outcold Solutions gMusic")]
+[assembly: AssemblyProduct("Outcold Solutions gMusicW")]
 [assembly: AssemblyCopyright("Outcold Solutions © 2013")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

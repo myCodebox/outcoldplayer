@@ -60,14 +60,14 @@
                    Margin="0, 40, 0, 0"
                    Visibility="{Binding Path=BindingModel.IsRemembered, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}"
                    x:Uid="SettingsAccount_DoesNotStorePassword">
-                gMusic does not store email and password of current Google Account.
+                gMusicW does not store email and password of current Google Account.
             </TextBlock>
 
             <TextBlock Style="{StaticResource BodyTextStyle}" 
                    Margin="0, 40, 0, 0"
                    Visibility="{Binding Path=BindingModel.IsRemembered, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                    x:Uid="SettingsAccount_StorePasswordInProtectedStore">
-                gMusic stores email and password in protected Windows store.
+                gMusicW stores email and password in protected Windows store.
             </TextBlock>
 
             <Button Command="{Binding Path=ForgetAccountCommand}" 
@@ -91,7 +91,7 @@
                    Margin="0, 20, 0, 0"
                    Visibility="{Binding Path=BindingModel.LastfmAccountName, Converter={StaticResource NullToInvisibilityConverter}}"
                    x:Uid="SettingsAccount_LastFmAccountLabel">
-                Linked Last.fm account (gMusic sends updates for your "Recently Listened Tracks" list):
+                Linked Last.fm account (gMusicW sends updates for your "Recently Listened Tracks" list):
             </TextBlock>
 
             <TextBlock Text="{Binding Path=BindingModel.LastfmAccountName, Mode=OneWay}" 

@@ -18,7 +18,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
     {
         public ApplicationStateChangeEvent(ApplicationState currentState)
         {
-            CurrentState = currentState;
+            this.CurrentState = currentState;
         }
 
         public ApplicationState CurrentState { get; set; }

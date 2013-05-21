@@ -6,17 +6,13 @@ namespace OutcoldSolutions.GoogleMusic.Services
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Net;
     using System.Threading.Tasks;
-
-    using Windows.Networking.Connectivity;
 
     using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services.Publishers;
     using OutcoldSolutions.GoogleMusic.Shell;
     using OutcoldSolutions.GoogleMusic.Web;
-    using OutcoldSolutions.GoogleMusic.Web.Models;
 
     using Windows.Storage.Streams;
 
@@ -28,7 +24,6 @@ namespace OutcoldSolutions.GoogleMusic.Services
         private readonly ISettingsService settingsService;
         private readonly ISongsCachingService songsCachingService;
         private readonly ICurrentSongPublisherService publisherService;
-        private readonly ISongsWebService songsWebService;
         private readonly INotificationService notificationService;
         private readonly IPlaylistsService playlistsService;
         private readonly IEventAggregator eventAggregator;
@@ -38,8 +33,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         private readonly Random random = new Random((int)DateTime.Now.Ticks);
 
-
-        private IRandomAccessStreamWithContentType currentSongStream;
+        private IRandomAccessStream currentSongStream;
         private int currentQueueIndex; // From queueOrder
 
         private IPlaylist currentPlaylist;
@@ -57,7 +51,6 @@ namespace OutcoldSolutions.GoogleMusic.Services
             ISettingsService settingsService,
             ISongsCachingService songsCachingService,
             ICurrentSongPublisherService publisherService,
-            ISongsWebService songsWebService,
             INotificationService notificationService,
             IGoogleMusicSessionService sessionService,
             IPlaylistsService playlistsService,
@@ -69,7 +62,6 @@ namespace OutcoldSolutions.GoogleMusic.Services
             this.settingsService = settingsService;
             this.songsCachingService = songsCachingService;
             this.publisherService = publisherService;
-            this.songsWebService = songsWebService;
             this.notificationService = notificationService;
             this.playlistsService = playlistsService;
             this.eventAggregator = eventAggregator;
@@ -520,7 +512,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                         if (this.currentSongStream != null)
                         {
                             var networkRandomAccessStream = this.currentSongStream as INetworkRandomAccessStream;
-                            if (networkRandomAccessStream != null)
+                            if (networkRandomAccessStream != null && !networkRandomAccessStream.IsReady)
                             {
                                 networkRandomAccessStream.DownloadProgressChanged += this.CurrentSongStreamOnDownloadProgressChanged;
                             }
@@ -529,7 +521,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                                 this.PredownloadNextSong();
                             }
 
-                            await this.mediaElement.PlayAsync(this.currentSongStream, this.currentSongStream.ContentType);
+                            await this.mediaElement.PlayAsync(this.currentSongStream, "audio/mpeg");
 
                             this.State = QueueState.Play;
 

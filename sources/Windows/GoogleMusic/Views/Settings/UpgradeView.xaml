@@ -27,13 +27,13 @@
 
             <TextBlock Style="{StaticResource BodyTextStyle}"
                        x:Uid="SettingsUpgrade_RemoveAdsTitle">
-                Do you want to remove advertisements from gMusic?
+                Do you want to remove advertisements from gMusicW?
             </TextBlock>
 
             <TextBlock Style="{StaticResource BodyTextStyle}" 
                        Margin="0, 20, 0, 0"
                        x:Uid="SettingsUpgrade_AddFreePackageDescription">
-                You can buy for $2.99 AdFree package, which will remove all advertisements:
+                Please upgrade to AdFree package for $1.99.
             </TextBlock>
 
             <Button Margin="0, 20, 0, 0" Command="{Binding Path=BuyPackageCommand, Mode=OneTime}"
@@ -44,8 +44,8 @@
 
             <TextBlock Style="{StaticResource BodyTextStyle}"  Margin="0, 40, 0, 0"
                        x:Uid="SettingsUpgrade_UltimatePackageDescription">
-                Or you can spend $5.99 for Ultimate package, which removes all advertisements from application and remove limit for 30 songs in offline mode.
-                Also it will contains all additional features, which we will ship in future:
+                Or you can spend $4.99 for Ultimate package. This package does not offer any additional features for now (other than Ad Free package has). 
+                But this is a good way to support development of our app.
             </TextBlock>
 
             <Button Margin="0, 20, 0, 0" Command="{Binding Path=BuyPackageCommand, Mode=OneTime}"

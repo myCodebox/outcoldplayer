@@ -44,12 +44,15 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.QueueCommand = new DelegateCommand(this.Queue, () => this.BindingModel != null && this.BindingModel.SongsBindingModel.SelectedItems.Count > 0);
             this.AddToPlaylistCommand = new DelegateCommand(this.AddToPlaylist, () => this.BindingModel != null && this.BindingModel.SongsBindingModel.SelectedItems.Count > 0);
             this.DownloadCommand = new DelegateCommand(this.Download, () => this.BindingModel != null && this.BindingModel.SongsBindingModel.SelectedItems.Count > 0);
+            this.UnPinCommand = new DelegateCommand(this.UnPin, () => this.BindingModel != null && this.BindingModel.SongsBindingModel.SelectedItems.Count > 0);
             this.RateSongCommand = new DelegateCommand(this.RateSong);
         }
 
         public DelegateCommand QueueCommand { get; set; }
 
         public DelegateCommand DownloadCommand { get; set; }
+
+        public DelegateCommand UnPinCommand { get; set; }
 
         public DelegateCommand AddToPlaylistCommand { get; set; }
 
@@ -107,7 +110,18 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             if (this.stateService.IsOnline())
             {
                 yield return new CommandMetadata(CommandIcon.Add, this.resources.GetString("Toolbar_PlaylistButton"), this.AddToPlaylistCommand);
-                yield return new CommandMetadata(CommandIcon.Download, this.resources.GetString("Toolbar_KeepLocal"), this.DownloadCommand);
+            }
+
+            if (this.BindingModel.SongsBindingModel.SelectedItems.Any(x => !x.IsCached))
+            {
+                if (this.stateService.IsOnline())
+                {
+                    yield return new CommandMetadata(CommandIcon.Pin, this.resources.GetString("Toolbar_KeepLocal"), this.DownloadCommand);
+                }
+            }
+            else
+            {
+                yield return new CommandMetadata(CommandIcon.UnPin, this.resources.GetString("Toolbar_RemoveLocal"), this.UnPinCommand);
             }
         }
 
@@ -128,6 +142,19 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             catch (Exception e)
             {
                 this.Logger.Error(e, "Cannot add songs to download queue");
+            }
+        }
+
+        private async void UnPin()
+        {
+            try
+            {
+                await this.cachingService.ClearCachedAsync(this.BindingModel.SongsBindingModel.GetSelectedSongs());
+                this.BindingModel.SongsBindingModel.ClearSelectedItems();
+            }
+            catch (Exception e)
+            {
+                this.Logger.Error(e, "Cannot clear cache for selected songs.");
             }
         }
 

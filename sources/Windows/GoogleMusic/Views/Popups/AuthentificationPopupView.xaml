@@ -28,7 +28,7 @@
                            TextWrapping="Wrap" 
                            Style="{StaticResource SmallTextStyle}" 
                            x:Uid="Authorization_SignInInfo">
-                    To use gMusic player you need to provide your Google Account's email and password. 
+                    To use gMusicW player you need to provide your Google Account's email and password. 
                     If you do not have one, you need to create Google Account. 
                     Please make sure that you have subscribed to Google Music service. For more details go to the Google Music site.
                 </TextBlock>

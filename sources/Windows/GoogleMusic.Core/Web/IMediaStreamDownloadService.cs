@@ -14,6 +14,6 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
         Task<INetworkRandomAccessStream> GetStreamAsync(string[] urls);
 
-        Task<IRandomAccessStreamWithContentType> GetCachedStreamAsync(IStorageFile storageFile);
+        Task<IRandomAccessStream> GetCachedStreamAsync(IStorageFile storageFile);
     }
 }

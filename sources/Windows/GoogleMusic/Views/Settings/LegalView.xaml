@@ -26,7 +26,7 @@
             </StackPanel.Resources>
 
             <RichTextBlock >
-                <Paragraph>gMusic is built using the open source software:</Paragraph>
+                <Paragraph>gMusicW is built using the open source software:</Paragraph>
                 <Paragraph Margin="10, 5, 0, 0">- SQLite</Paragraph>
                 <Paragraph Margin="10, 5, 0, 0">- SQLite-net</Paragraph>
                 <Paragraph Margin="10, 5, 0, 0">- Json.NET</Paragraph>
