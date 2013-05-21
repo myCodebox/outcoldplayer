@@ -33,7 +33,7 @@
         <Button Margin="0, -15, 0, 0" Style="{StaticResource RefreshAppBarButtonStyle}" 
                 AutomationProperties.Name="Update library"
                 Command="{Binding Path=UpdateLibraryCommand, Mode=OneTime}"
-                Visibility="{Binding Path=BindingModel.ShowProgressRing, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}"
+                Visibility="{Binding Path=BindingModel.MessageText, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
                 VerticalAlignment="Center" />
         
         <Button Margin="0, -15, 0, 0" Style="{StaticResource SearchPopupMenuButtonStyle}" 

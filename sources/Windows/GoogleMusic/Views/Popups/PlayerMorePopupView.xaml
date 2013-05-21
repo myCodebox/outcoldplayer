@@ -11,9 +11,9 @@
     Width="260">
 
     <Border Background="{StaticResource AppBarBackgroundThemeBrush}">
-        <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" Margin="40, 0, 40, 0" >
+        <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" Margin="40, 0, 20, 0" >
 
-            <Grid HorizontalAlignment="Center" Width="140" Margin="0, 40, 0, 20">
+            <Grid HorizontalAlignment="Center" Width="140" Margin="0, 40, 20, 20">
 
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
@@ -57,13 +57,15 @@
             
             <controls:AppBarToggleButton IsChecked="{Binding Path=BindingModel.IsOnlineMode, Mode=TwoWay}" 
                                          Style="{StaticResource GlobePopupMenuButtonStyle}"
-                                         AutomationProperties.Name="{Binding Path=BindingModel.ApplicationStateText}"/>
+                                         AutomationProperties.Name="{Binding Path=BindingModel.ApplicationStateText}"
+                                         Width="260"/>
 
             <controls:AppBarToggleButton Style="{StaticResource ShufflePopupMenuButtonStyle}" 
                                          IsChecked="{Binding Path=BindingModel.IsShuffleEnabled, Mode=TwoWay}"
                                          Command="{Binding Path=ShuffleCommand, Mode=OneTime}"
                                          AutomationProperties.Name="Player_Shuffle"
                                          x:Uid="Player_ShuffleButton"/>
+            
             <controls:AppBarToggleButton Style="{StaticResource RepeatAllPopupMenuButtonStyle}" 
                                          IsChecked="{Binding Path=BindingModel.IsRepeatAllEnabled, Mode=TwoWay}"
                                          Command="{Binding Path=RepeatAllCommand, Mode=OneTime}"

@@ -15,6 +15,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using OutcoldSolutions.Shell;
     using OutcoldSolutions.Views;
 
+    using Windows.System;
+    using Windows.UI.Popups;
     using Windows.UI.Xaml;
 
     public class LinksRegionViewPresenter : ViewPresenterBase<IView>
@@ -24,6 +26,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private readonly IDispatcher dispatcher;
         private readonly IGoogleMusicSynchronizationService googleMusicSynchronizationService;
         private readonly IGoogleMusicSessionService sessionService;
+        private readonly INavigationService navigationService;
 
         private readonly DispatcherTimer synchronizationTimer;
         private int synchronizationTime = 0; // we don't want to synchronize playlists each time, so we will do it on each 6 time
@@ -38,13 +41,15 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             IDispatcher dispatcher,
             IGoogleMusicSynchronizationService googleMusicSynchronizationService,
             IApplicationSettingViewsService applicationSettingViewsService,
-            IGoogleMusicSessionService sessionService)
+            IGoogleMusicSessionService sessionService,
+            INavigationService navigationService)
         {
             this.stateService = stateService;
             this.resources = resources;
             this.dispatcher = dispatcher;
             this.googleMusicSynchronizationService = googleMusicSynchronizationService;
             this.sessionService = sessionService;
+            this.navigationService = navigationService;
             this.ShowSearchCommand = new DelegateCommand(searchService.Activate);
             this.NavigateToDownloadQueue = new DelegateCommand(async () =>
             {
@@ -171,6 +176,9 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private async Task Synchronize(bool forceToDownloadPlaylists = false)
         {
+            SongsUpdateStatus songsUpdateStatus = null;
+            UserPlaylistsUpdateStatus userPlaylistsUpdateStatus = null;
+
             await this.dispatcher.RunAsync(() => this.synchronizationTimer.Stop());
 
             if (this.stateService.IsOnline() && !this.isDownloading)
@@ -191,12 +199,12 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
                 try
                 {
-                    await this.googleMusicSynchronizationService.UpdateSongsAsync();
+                    songsUpdateStatus = await this.googleMusicSynchronizationService.UpdateSongsAsync();
 
                     if (this.synchronizationTime == 0 || forceToDownloadPlaylists)
                     {
                         await this.dispatcher.RunAsync(() => { this.BindingModel.MessageText = this.resources.GetString("LinksRegion_UpdatingPlaylists"); });
-                        await this.googleMusicSynchronizationService.UpdateUserPlaylistsAsync();
+                        userPlaylistsUpdateStatus = await this.googleMusicSynchronizationService.UpdateUserPlaylistsAsync();
                     }
                 }
                 catch (Exception e)
@@ -216,6 +224,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                                  this.BindingModel.MessageText = error ? this.resources.GetString("LinksRegion_FailedToUpdate") : this.resources.GetString("LinksRegion_Updated");
                              }
                          });
+
+                this.ShowUpdateMessage(userPlaylistsUpdateStatus, songsUpdateStatus);
 
                 await Task.Delay(TimeSpan.FromSeconds(2));
             }
@@ -237,6 +247,30 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                          this.SetOfflineMessageIfRequired();
                          this.UpdateLibraryCommand.RaiseCanExecuteChanged();
                      });
+        }
+
+        private async void ShowUpdateMessage(
+            UserPlaylistsUpdateStatus userPlaylistsUpdateStatus, SongsUpdateStatus songsUpdateStatus)
+        {
+            if ((userPlaylistsUpdateStatus != null
+                && (userPlaylistsUpdateStatus.DeletedPlaylists + userPlaylistsUpdateStatus.UpdatedPlaylists + userPlaylistsUpdateStatus.NewPlaylists) > 0)
+                || (songsUpdateStatus != null
+                && (songsUpdateStatus.DeletedSongs + songsUpdateStatus.UpdatedSongs + songsUpdateStatus.NewSongs) > 0))
+            {
+                var dialog = new MessageDialog(this.resources.GetString("Update_MessageBox_Updates_Message"));
+                dialog.Commands.Add(
+                    new UICommand(
+                        this.resources.GetString("Update_MessageBox_Updates_OkButton"),
+                        (cmd) =>
+                            {
+                                this.navigationService.ClearHistory();
+                                this.navigationService.RefreshCurrentView();
+                            }));
+
+                dialog.Commands.Add(new UICommand(this.resources.GetString("Update_MessageBox_Updates_CancelButton")));
+
+                await dialog.ShowAsync().AsTask();
+            }
         }
     }
 }
