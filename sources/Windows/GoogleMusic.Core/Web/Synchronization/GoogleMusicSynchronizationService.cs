@@ -84,9 +84,13 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
                         {
                             if (storedSong != null)
                             {
+                                if (!GoogleMusicSongEx.IsVisualMatch(googleSong, storedSong))
+                                {
+                                    songsUpdated++;
+                                }
+
                                 GoogleMusicSongEx.Mapper(googleSong, storedSong);
                                 connection.Update(storedSong);
-                                songsUpdated++;
                             }
                             else
                             {

@@ -50,5 +50,18 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
             song.Bitrate = googleMusicSong.Bitrate;
             song.StreamType = StreamType.GoogleMusic;
         }
+
+        public static bool IsVisualMatch(GoogleMusicSong googleMusicSong, Song song)
+        {
+            return string.Equals(song.AlbumArtistTitleNorm, googleMusicSong.AlbumArtist.Trim().Normalize(), StringComparison.CurrentCulture)
+            && string.Equals(song.ArtistTitleNorm, googleMusicSong.Artist.Trim().Normalize(), StringComparison.CurrentCulture)
+            && string.Equals(song.AlbumTitleNorm, googleMusicSong.Album.Trim().Normalize(), StringComparison.CurrentCulture)
+            && string.Equals(song.GenreTitleNorm, googleMusicSong.Genre.Trim().Normalize(), StringComparison.CurrentCulture)
+            && (song.AlbumArtUrl == (string.IsNullOrEmpty(googleMusicSong.AlbumArtUrl) ? null : new Uri("http:" + googleMusicSong.AlbumArtUrl))) 
+            && (song.Rating == googleMusicSong.Rating)
+            && string.Equals(song.TitleNorm, googleMusicSong.Title.Trim().Normalize(), StringComparison.CurrentCulture)
+            && (song.Track == googleMusicSong.Track)
+            && (song.Year == googleMusicSong.Year);
+        }
     }
 }
