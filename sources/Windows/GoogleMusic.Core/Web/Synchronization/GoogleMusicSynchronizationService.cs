@@ -77,7 +77,11 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
 
                         if (googleSong.Deleted)
                         {
-                            connection.Delete<Song>(storedSong.SongId);
+                            if (storedSong != null)
+                            {
+                                connection.Delete<Song>(storedSong.SongId);
+                            }
+
                             songsDeleted++;
                         }
                         else
