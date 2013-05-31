@@ -29,7 +29,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
         private const string SqlHiglyRatedSongsPlaylists = @"
 select count(*) as SongsCount, sum(s.[Duration]) as Duration, count(*) as OfflineSongsCount, sum(s.[Duration]) as OfflineDuration, ?3 as [SystemPlaylistType]
 from [Song] as s
-where (?1 = 1 or s.[IsCached] = 1) and s.[Rating] >= ?2 
+where (?1 = 1 or s.[IsCached] = 1) and s.IsLibrary = 1 and s.[Rating] >= ?2 
 ";
 
         private const string SqlLastAddedPlaylist = @"
@@ -37,34 +37,34 @@ select count(*) as SongsCount, sum(x.[Duration]) as Duration, count(*) as Offlin
 (
   select *
   from [Song] as s  
-  where (?1 = 1 or s.[IsCached] = 1) 
+  where (?1 = 1 or s.[IsCached] = 1) and s.IsLibrary = 1
   order by s.[CreationDate] desc
   limit ?2
 ) as x
 ";
 
         private const string SqlAllSongsPlaylist = @"
-select count(*) as SongsCount, sum(s.[Duration]) as Duration, count(*) as OfflineSongsCount, sum(s.[Duration]) as OfflineDuration, ?2 as [SystemPlaylistType] from [Song] as s where (?1 = 1 or s.[IsCached] = 1) 
+select count(*) as SongsCount, sum(s.[Duration]) as Duration, count(*) as OfflineSongsCount, sum(s.[Duration]) as OfflineDuration, ?2 as [SystemPlaylistType] from [Song] as s where (?1 = 1 or s.[IsCached] = 1) and s.IsLibrary = 1 
 ";
 
         private const string SqlAllSongs = @"
 select s.* 
 from [Song] as s
-where (?1 = 1 or s.[IsCached] = 1) 
+where (?1 = 1 or s.[IsCached] = 1) and s.IsLibrary = 1
 order by coalesce(nullif(s.AlbumArtistTitleNorm, ''), s.[ArtistTitleNorm]), s.[AlbumTitleNorm], coalesce(nullif(s.Disc, 0), 1), s.Track
 ";
 
         private const string SqlHighlyRatedSongs = @"
 select s.* 
 from [Song] as s
-where (?1 = 1 or s.[IsCached] = 1) and s.[Rating] >= ?2
+where (?1 = 1 or s.[IsCached] = 1) and s.[Rating] >= ?2 and s.IsLibrary = 1
 order by s.TitleNorm
 ";
 
         private const string SqlLastAddedSongs = @"
 select *
 from [Song] as x  
-where (?1 = 1 or x.[IsCached] = 1)
+where (?1 = 1 or x.[IsCached] = 1) and s.IsLibrary = 1
 order by x.[CreationDate] desc
 limit ?2
 ";

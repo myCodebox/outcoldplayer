@@ -33,7 +33,7 @@ select s.*,
 from [Song] as s
      inner join Album a on s.AlbumTitleNorm  = a.TitleNorm and coalesce(nullif(s.[AlbumArtistTitleNorm], ''), s.[ArtistTitleNorm]) = a.[ArtistTitleNorm]
      inner join Artist ta on a.[ArtistTitleNorm] = ta.[TitleNorm]
-where  (?1 = 1 or s.[IsCached] = 1) and ta.ArtistId = ?2
+where  (?1 = 1 or s.[IsCached] = 1) and s.IsLibrary = 1 and ta.ArtistId = ?2
 
 union 
 
@@ -41,7 +41,7 @@ select s.*,
        1 as [IsCollection]
 from [Song] as s    
     inner join [Artist] ar on ar.[TitleNorm] = s.[ArtistTitleNorm]
-where (?1 = 1 or s.[IsCached] = 1) and s.[ArtistTitleNorm] <> coalesce(nullif(s.[AlbumArtistTitleNorm], ''), s.[ArtistTitleNorm]) and ar.[ArtistId] = ?2
+where (?1 = 1 or s.[IsCached] = 1) and s.IsLibrary = 1 and s.[ArtistTitleNorm] <> coalesce(nullif(s.[AlbumArtistTitleNorm], ''), s.[ArtistTitleNorm]) and ar.[ArtistId] = ?2
 ) as x
 order by x.IsCollection, x.Year, x.[AlbumTitleNorm], coalesce(nullif(x.Disc, 0), 1), x.Track 
 ";

@@ -236,23 +236,24 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
                         else
                         {
                             storedSong = await this.Connection.FindAsync<Song>(x => x.ProviderSongId == song.Id);
-                            if (storedSong != null)
+                            
+                            if (storedSong == null)
                             {
-                                playlistUpdated = true;
-                                var entry = new UserPlaylistEntry
-                                {
-                                    PlaylistOrder = songIndex,
-                                    SongId = storedSong.SongId,
-                                    ProviderEntryId = song.PlaylistEntryId,
-                                    PlaylistId = userPlaylist.Id
-                                };
+                                storedSong = song.ToSong();
+                                storedSong.IsLibrary = false;
+                                await this.Connection.InsertAsync(storedSong);
+                            }
 
-                                newEntries.Add(entry);
-                            }
-                            else
+                            playlistUpdated = true;
+                            var entry = new UserPlaylistEntry
                             {
-                                this.logger.Warning("Stored song is null, could not find song for id '{0}' in playlist '{1}'.", song.Id, providerPlaylistId);
-                            }
+                                PlaylistOrder = songIndex,
+                                SongId = storedSong.SongId,
+                                ProviderEntryId = song.PlaylistEntryId,
+                                PlaylistId = userPlaylist.Id
+                            };
+
+                            newEntries.Add(entry);
                         }
                     }
                 }

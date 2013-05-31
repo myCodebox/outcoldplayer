@@ -103,13 +103,13 @@ CREATE TRIGGER insert_song AFTER INSERT ON Song
         [Duration] = [Genre].[Duration] + new.[Duration],
         [ArtUrl] = case when nullif([Genre].[ArtUrl], '') is null then new.[AlbumArtUrl] else [Genre].[ArtUrl] end,
         [LastPlayed] = case when new.[LastPlayed] > [Genre].[LastPlayed] then new.[LastPlayed] else [Genre].[LastPlayed] end        
-    where [Genre].TitleNorm = new.GenreTitleNorm;
+    where [Genre].TitleNorm = new.GenreTitleNorm and new.IsLibrary = 1;
   
     insert into Genre([Title], [TitleNorm], [SongsCount], [Duration], [ArtUrl], [LastPlayed], OfflineSongsCount, OfflineDuration)
     select new.GenreTitle, new.GenreTitleNorm, 1, new.Duration, new.AlbumArtUrl, new.LastPlayed, 0, 0
     from [Enumerator] as e
          left join [Genre] as g on g.TitleNorm = new.GenreTitleNorm
-    where e.[Id] = 1 and g.TitleNorm is null;
+    where e.[Id] = 1 and g.TitleNorm is null and new.IsLibrary = 1;
 
     update [Artist]
     set 
@@ -117,7 +117,7 @@ CREATE TRIGGER insert_song AFTER INSERT ON Song
         [Duration] = [Artist].[Duration] + new.[Duration],
         [ArtUrl] = case when nullif([Artist].[ArtUrl], '') is null then new.[AlbumArtUrl] else [Artist].[ArtUrl] end,
         [LastPlayed] = case when new.[LastPlayed] > [Artist].[LastPlayed] then new.[LastPlayed] else [Artist].[LastPlayed] end    
-    where [Artist].TitleNorm = coalesce(nullif(new.AlbumArtistTitleNorm, ''), new.[ArtistTitleNorm]);
+    where [Artist].TitleNorm = coalesce(nullif(new.AlbumArtistTitleNorm, ''), new.[ArtistTitleNorm]) and new.IsLibrary = 1;
 
     update [Artist]
     set 
@@ -125,19 +125,19 @@ CREATE TRIGGER insert_song AFTER INSERT ON Song
         [Duration] = [Artist].[Duration] + new.[Duration],
         [ArtUrl] = case when nullif([Artist].[ArtUrl], '') is null then new.[AlbumArtUrl] else [Artist].[ArtUrl] end,
         [LastPlayed] = case when new.[LastPlayed] > [Artist].[LastPlayed] then new.[LastPlayed] else [Artist].[LastPlayed] end    
-    where [Artist].TitleNorm = new.[ArtistTitleNorm] and new.AlbumArtistTitleNorm <> ''  and new.[ArtistTitleNorm] <> new.AlbumArtistTitleNorm;
+    where [Artist].TitleNorm = new.[ArtistTitleNorm] and new.AlbumArtistTitleNorm <> ''  and new.[ArtistTitleNorm] <> new.AlbumArtistTitleNorm and new.IsLibrary = 1;
 
     insert into Artist([Title], [TitleNorm], [SongsCount], [Duration], [ArtUrl], [LastPlayed], [AlbumsCount], OfflineSongsCount, OfflineDuration, OfflineAlbumsCount)
     select coalesce(nullif(new.AlbumArtistTitle, ''), new.[ArtistTitle]), coalesce(nullif(new.AlbumArtistTitleNorm, ''), new.[ArtistTitleNorm]), 1, new.Duration, new.AlbumArtUrl, new.LastPlayed, 0, 0, 0, 0
     from [Enumerator] as e
          left join [Artist] as a on a.TitleNorm = coalesce(nullif(new.AlbumArtistTitleNorm, ''), new.[ArtistTitleNorm])
-    where e.[Id] = 1 and a.TitleNorm is null;
+    where e.[Id] = 1 and a.TitleNorm is null and new.IsLibrary = 1;
 
     insert into Artist([Title], [TitleNorm], [SongsCount], [Duration], [ArtUrl], [LastPlayed], [AlbumsCount], OfflineSongsCount, OfflineDuration, OfflineAlbumsCount)
     select new.[ArtistTitle], new.[ArtistTitleNorm], 1, new.Duration, new.AlbumArtUrl, new.LastPlayed, 0, 0, 0, 0
     from [Enumerator] as e
          left join [Artist] as a on a.TitleNorm = new.[ArtistTitleNorm]
-    where e.[Id] = 1 and new.AlbumArtistTitleNorm <> ''  and new.[ArtistTitleNorm] <> new.AlbumArtistTitleNorm and a.TitleNorm is null;
+    where e.[Id] = 1 and new.AlbumArtistTitleNorm <> ''  and new.[ArtistTitleNorm] <> new.AlbumArtistTitleNorm and a.TitleNorm is null and new.IsLibrary = 1;
 
     update [Album]
     set 
@@ -147,17 +147,17 @@ CREATE TRIGGER insert_song AFTER INSERT ON Song
         [LastPlayed] = case when new.[LastPlayed] > [Album].[LastPlayed] then new.[LastPlayed] else [Album].[LastPlayed] end,
         [Year] = case when nullif([Album].[Year], 0) is null then nullif(new.Year, 0) else [Album].[Year] end,
         [GenreTitleNorm] = case when nullif([Album].[GenreTitleNorm], '') is null then new.[GenreTitleNorm] else [Album].[GenreTitleNorm] end
-    where [Album].ArtistTitleNorm = coalesce(nullif(new.AlbumArtistTitleNorm, ''), new.[ArtistTitleNorm]) and TitleNorm = new.AlbumTitleNorm;
+    where [Album].ArtistTitleNorm = coalesce(nullif(new.AlbumArtistTitleNorm, ''), new.[ArtistTitleNorm]) and TitleNorm = new.AlbumTitleNorm and new.IsLibrary = 1;
 
     update [Artist]
     set [ArtUrl] = new.[AlbumArtUrl]
-    where [Artist].[AlbumsCount] = 0 and [Artist].TitleNorm = coalesce(nullif(new.AlbumArtistTitleNorm, ''), new.[ArtistTitleNorm]) and not exists (select * from [Album] as a where a.ArtistTitleNorm = coalesce(nullif(new.AlbumArtistTitleNorm, ''), new.[ArtistTitleNorm]) and a.TitleNorm = new.AlbumTitleNorm);
+    where [Artist].[AlbumsCount] = 0 and [Artist].TitleNorm = coalesce(nullif(new.AlbumArtistTitleNorm, ''), new.[ArtistTitleNorm]) and not exists (select * from [Album] as a where a.ArtistTitleNorm = coalesce(nullif(new.AlbumArtistTitleNorm, ''), new.[ArtistTitleNorm]) and a.TitleNorm = new.AlbumTitleNorm) and new.IsLibrary = 1;
 
     insert into Album([Title], [TitleNorm], [SongsCount], [Duration], [ArtUrl], [LastPlayed], [Year], [ArtistTitleNorm], [GenreTitleNorm], OfflineSongsCount, OfflineDuration)
     select new.AlbumTitle, new.AlbumTitleNorm, 1, new.Duration, new.AlbumArtUrl, new.LastPlayed, nullif(new.Year, 0), coalesce(nullif(new.AlbumArtistTitleNorm, ''), new.[ArtistTitleNorm]), new.[GenreTitleNorm], 0, 0
     from [Enumerator] as e
          left join [Album] as a on a.ArtistTitleNorm = coalesce(nullif(new.AlbumArtistTitleNorm, ''), new.[ArtistTitleNorm]) and a.TitleNorm = new.AlbumTitleNorm
-    where e.[Id] = 1 and a.TitleNorm is null;
+    where e.[Id] = 1 and a.TitleNorm is null and new.IsLibrary = 1;
 
   END;");
 
@@ -173,7 +173,7 @@ CREATE TRIGGER delete_song AFTER DELETE ON Song
         [LastPlayed] = (select max(s.[LastPlayed]) from [Song] s where s.[GenreTitleNorm] = old.[GenreTitleNorm]),
         [OfflineSongsCount] = [Genre].[OfflineSongsCount] - coalesce( (select 1 from CachedSong as cs where cs.SongId = old.SongId) , 0),
         [OfflineDuration] = [Genre].[OfflineSongsCount] - coalesce( (select old.[Duration] from CachedSong as cs where cs.SongId = old.SongId) , 0)      
-    where [Genre].TitleNorm = old.GenreTitleNorm;
+    where [Genre].TitleNorm = old.GenreTitleNorm and old.IsLibrary = 1;
 
     delete from [Genre] where [SongsCount] <= 0;
 
@@ -187,7 +187,7 @@ CREATE TRIGGER delete_song AFTER DELETE ON Song
         [GenreTitleNorm] = (select max(s.[GenreTitleNorm]) from [Song] s where s.[AlbumTitleNorm] = old.[AlbumTitleNorm]),
         [OfflineSongsCount] = [Album].[OfflineSongsCount] - coalesce( (select 1 from CachedSong as cs where cs.SongId = old.SongId) , 0),
         [OfflineDuration] = [Album].[OfflineSongsCount] - coalesce( (select old.[Duration] from CachedSong as cs where cs.SongId = old.SongId) , 0)   
-    where [Album].TitleNorm = old.AlbumTitleNorm and ArtistTitleNorm = coalesce(nullif(old.AlbumArtistTitleNorm, ''), old.[ArtistTitleNorm]);    
+    where [Album].TitleNorm = old.AlbumTitleNorm and ArtistTitleNorm = coalesce(nullif(old.AlbumArtistTitleNorm, ''), old.[ArtistTitleNorm]) and old.IsLibrary = 1;    
 
     delete from [Album] where [SongsCount] <= 0;
 
@@ -199,7 +199,7 @@ CREATE TRIGGER delete_song AFTER DELETE ON Song
         [LastPlayed] = (select max(s.[LastPlayed]) from [Song] s where coalesce(nullif(s.AlbumArtistTitleNorm, ''), s.[ArtistTitleNorm]) = coalesce(nullif(old.AlbumArtistTitleNorm, ''), old.[ArtistTitleNorm])),        
         [OfflineSongsCount] = [Artist].[OfflineSongsCount] - coalesce( (select 1 from CachedSong as cs where cs.SongId = old.SongId) , 0),
         [OfflineDuration] = [Artist].[OfflineSongsCount] - coalesce( (select old.[Duration] from CachedSong as cs where cs.SongId = old.SongId) , 0)   
-    where TitleNorm = coalesce(nullif(old.AlbumArtistTitleNorm, ''), old.[ArtistTitleNorm]);    
+    where TitleNorm = coalesce(nullif(old.AlbumArtistTitleNorm, ''), old.[ArtistTitleNorm]) and old.IsLibrary = 1;    
 
     update [Artist]    
     set 
@@ -209,7 +209,7 @@ CREATE TRIGGER delete_song AFTER DELETE ON Song
         [LastPlayed] = (select max(s.[LastPlayed]) from [Song] s where coalesce(nullif(s.AlbumArtistTitleNorm, ''), s.[ArtistTitleNorm]) = old.[ArtistTitleNorm]),
         [OfflineSongsCount] = [Artist].[OfflineSongsCount] - coalesce( (select 1 from CachedSong as cs where cs.SongId = old.SongId) , 0),
         [OfflineDuration] = [Artist].[OfflineSongsCount] - coalesce( (select old.[Duration] from CachedSong as cs where cs.SongId = old.SongId) , 0)   
-    where [Artist].TitleNorm = old.[ArtistTitleNorm] and old.[AlbumArtistTitleNorm] <> old.[ArtistTitleNorm];
+    where [Artist].TitleNorm = old.[ArtistTitleNorm] and old.[AlbumArtistTitleNorm] <> old.[ArtistTitleNorm] and old.IsLibrary = 1;
     
     delete from [Artist] where [SongsCount] <= 0;
   END;
@@ -278,19 +278,19 @@ CREATE TRIGGER update_song_albumarturl AFTER UPDATE OF [AlbumArtUrl] ON [Song]
   
     update [UserPlaylist]
     set [ArtUrl] = new.[AlbumArtUrl] 
-    where old.[AlbumArtUrl] <> new.[AlbumArtUrl] and [PlaylistId] in (select distinct e.[PlaylistId] from [UserPlaylistEntry] e where new.[SongId] = e.[SongId]);
+    where old.[AlbumArtUrl] <> new.[AlbumArtUrl] and [PlaylistId] in (select distinct e.[PlaylistId] from [UserPlaylistEntry] e where new.[SongId] = e.[SongId]) and new.IsLibrary = 1;
 
     update [Artist]
     set [ArtUrl] = new.[AlbumArtUrl] 
-    where old.[AlbumArtUrl] <> new.[AlbumArtUrl] and [TitleNorm] = new.[ArtistTitleNorm] or [TitleNorm] = new.[AlbumArtistTitleNorm];
+    where old.[AlbumArtUrl] <> new.[AlbumArtUrl] and [TitleNorm] = new.[ArtistTitleNorm] or [TitleNorm] = new.[AlbumArtistTitleNorm] and new.IsLibrary = 1;
 
     update [Album]
     set [ArtUrl] = new.[AlbumArtUrl] 
-    where old.[AlbumArtUrl] <> new.[AlbumArtUrl] and [TitleNorm] = new.[AlbumTitleNorm] and [ArtistTitleNorm] = coalesce(nullif(new.AlbumArtistTitleNorm, ''), new.[ArtistTitleNorm]);
+    where old.[AlbumArtUrl] <> new.[AlbumArtUrl] and [TitleNorm] = new.[AlbumTitleNorm] and [ArtistTitleNorm] = coalesce(nullif(new.AlbumArtistTitleNorm, ''), new.[ArtistTitleNorm]) and new.IsLibrary = 1;
 
     update [Genre]
     set [ArtUrl] = new.[AlbumArtUrl] 
-    where old.[AlbumArtUrl] <> new.[AlbumArtUrl] and [TitleNorm] = new.[GenreTitleNorm];
+    where old.[AlbumArtUrl] <> new.[AlbumArtUrl] and [TitleNorm] = new.[GenreTitleNorm] and new.IsLibrary = 1;
 
   END;
 ");
@@ -309,7 +309,7 @@ CREATE TRIGGER update_song_parenttitlesupdate AFTER UPDATE OF [AlbumTitleNorm], 
         [LastPlayed] = (select max(s.[LastPlayed]) from [Song] s where s.[GenreTitleNorm] = old.[GenreTitleNorm]),
         [OfflineSongsCount] = [Genre].[OfflineSongsCount] - coalesce( (select 1 from CachedSong as cs where cs.SongId = old.SongId) , 0),
         [OfflineDuration] = [Genre].[OfflineSongsCount] - coalesce( (select old.[Duration] from CachedSong as cs where cs.SongId = old.SongId) , 0)          
-    where new.[GenreTitleNorm] <> old.[GenreTitleNorm] and [Genre].TitleNorm = old.GenreTitleNorm;
+    where (new.[GenreTitleNorm] <> old.[GenreTitleNorm] or (old.IsLibrary = 1 and new.IsLibrary = 0)) and [Genre].TitleNorm = old.GenreTitleNorm;
 
     delete from [Genre] where [SongsCount] <= 0;
 
@@ -323,7 +323,7 @@ CREATE TRIGGER update_song_parenttitlesupdate AFTER UPDATE OF [AlbumTitleNorm], 
         [GenreTitleNorm] = (select max(s.[GenreTitleNorm]) from [Song] s where s.[AlbumTitleNorm] = old.[AlbumTitleNorm]),        
         [OfflineSongsCount] = [Album].[OfflineSongsCount] - coalesce( (select 1 from CachedSong as cs where cs.SongId = old.SongId) , 0),
         [OfflineDuration] = [Album].[OfflineSongsCount] - coalesce( (select old.[Duration] from CachedSong as cs where cs.SongId = old.SongId) , 0)
-    where (new.[AlbumTitleNorm] <> old.[AlbumTitleNorm] or new.[ArtistTitleNorm] <> old.[ArtistTitleNorm] or new.[AlbumArtistTitleNorm] <> old.[AlbumArtistTitleNorm])
+    where (new.[AlbumTitleNorm] <> old.[AlbumTitleNorm] or new.[ArtistTitleNorm] <> old.[ArtistTitleNorm] or new.[AlbumArtistTitleNorm] <> old.[AlbumArtistTitleNorm] or (old.IsLibrary = 1 and new.IsLibrary = 0))
           and [Album].TitleNorm = old.AlbumTitleNorm and [Album].ArtistTitleNorm = coalesce(nullif(old.AlbumArtistTitleNorm, ''), old.[ArtistTitleNorm]);    
 
     delete from [Album] where [SongsCount] <= 0;
@@ -336,7 +336,7 @@ CREATE TRIGGER update_song_parenttitlesupdate AFTER UPDATE OF [AlbumTitleNorm], 
         [LastPlayed] = (select max(s.[LastPlayed]) from [Song] s where coalesce(nullif(s.AlbumArtistTitleNorm, ''), s.[ArtistTitleNorm]) = coalesce(nullif(old.AlbumArtistTitleNorm, ''), old.[ArtistTitleNorm])),        
         [OfflineSongsCount] = [Artist].[OfflineSongsCount] - coalesce( (select 1 from CachedSong as cs where cs.SongId = old.SongId) , 0),
         [OfflineDuration] = [Artist].[OfflineSongsCount] - coalesce( (select old.[Duration] from CachedSong as cs where cs.SongId = old.SongId) , 0)
-    where (new.[AlbumTitleNorm] <> old.[AlbumTitleNorm] or new.[ArtistTitleNorm] <> old.[ArtistTitleNorm] or new.[AlbumArtistTitleNorm] <> old.[AlbumArtistTitleNorm])
+    where (new.[AlbumTitleNorm] <> old.[AlbumTitleNorm] or new.[ArtistTitleNorm] <> old.[ArtistTitleNorm] or new.[AlbumArtistTitleNorm] <> old.[AlbumArtistTitleNorm] or (old.IsLibrary = 1 and new.IsLibrary = 0))
           and [Artist].TitleNorm = coalesce(nullif(old.AlbumArtistTitleNorm, ''), old.[ArtistTitleNorm]);    
 
     update [Artist]    
@@ -347,7 +347,7 @@ CREATE TRIGGER update_song_parenttitlesupdate AFTER UPDATE OF [AlbumTitleNorm], 
         [LastPlayed] = (select max(s.[LastPlayed]) from [Song] s where coalesce(nullif(s.AlbumArtistTitleNorm, ''), s.[ArtistTitleNorm]) = old.[ArtistTitleNorm]),        
         [OfflineSongsCount] = [Artist].[OfflineSongsCount] - coalesce( (select 1 from CachedSong as cs where cs.SongId = old.SongId) , 0),
         [OfflineDuration] = [Artist].[OfflineSongsCount] - coalesce( (select old.[Duration] from CachedSong as cs where cs.SongId = old.SongId) , 0)
-    where (new.[AlbumTitleNorm] <> old.[AlbumTitleNorm] or new.[ArtistTitleNorm] <> old.[ArtistTitleNorm] or new.[AlbumArtistTitleNorm] <> old.[AlbumArtistTitleNorm])
+    where (new.[AlbumTitleNorm] <> old.[AlbumTitleNorm] or new.[ArtistTitleNorm] <> old.[ArtistTitleNorm] or new.[AlbumArtistTitleNorm] <> old.[AlbumArtistTitleNorm] or (old.IsLibrary = 1 and new.IsLibrary = 0))
           and [Artist].TitleNorm = old.[ArtistTitleNorm] and old.[AlbumArtistTitleNorm] <> old.[ArtistTitleNorm];
     
     delete from [Artist] where [SongsCount] <= 0;
@@ -362,7 +362,7 @@ CREATE TRIGGER update_song_parenttitlesupdate AFTER UPDATE OF [AlbumTitleNorm], 
         [LastPlayed] = case when new.[LastPlayed] > [Genre].[LastPlayed] then new.[LastPlayed] else [Genre].[LastPlayed] end,        
         [OfflineSongsCount] = [Genre].[OfflineSongsCount] + coalesce( (select 1 from CachedSong as cs where cs.SongId = new.SongId) , 0),
         [OfflineDuration] = [Genre].[OfflineSongsCount] + coalesce( (select new.[Duration] from CachedSong as cs where cs.SongId = new.SongId) , 0)        
-    where new.[GenreTitleNorm] <> old.[GenreTitleNorm] and [Genre].TitleNorm = new.GenreTitleNorm;
+    where (new.[GenreTitleNorm] <> old.[GenreTitleNorm] or (old.IsLibrary = 0 and new.IsLibrary = 1)) and [Genre].TitleNorm = new.GenreTitleNorm;
   
     insert into Genre([Title], [TitleNorm], [SongsCount], [Duration], [ArtUrl], [LastPlayed], [OfflineSongsCount], [OfflineDuration])
     select new.GenreTitle, new.GenreTitleNorm, 1, new.Duration, new.AlbumArtUrl, new.LastPlayed, 
@@ -370,7 +370,7 @@ CREATE TRIGGER update_song_parenttitlesupdate AFTER UPDATE OF [AlbumTitleNorm], 
       coalesce( (select new.[Duration] from CachedSong as cs where cs.SongId = new.SongId) , 0)
     from [Enumerator] as e
          left join [Genre] as g on g.TitleNorm = new.GenreTitleNorm
-    where new.[GenreTitleNorm] <> old.[GenreTitleNorm] and e.[Id] = 1 and g.TitleNorm is null;
+    where (new.[GenreTitleNorm] <> old.[GenreTitleNorm] or (old.IsLibrary = 0 and new.IsLibrary = 1)) and e.[Id] = 1 and g.TitleNorm is null;
 
     update [Artist]
     set 
@@ -380,7 +380,7 @@ CREATE TRIGGER update_song_parenttitlesupdate AFTER UPDATE OF [AlbumTitleNorm], 
         [LastPlayed] = case when new.[LastPlayed] > [Artist].[LastPlayed] then new.[LastPlayed] else [Artist].[LastPlayed] end,        
         [OfflineSongsCount] = [Artist].[OfflineSongsCount] + coalesce( (select 1 from CachedSong as cs where cs.SongId = new.SongId) , 0),
         [OfflineDuration] = [Artist].[OfflineSongsCount] + coalesce( (select new.[Duration] from CachedSong as cs where cs.SongId = new.SongId) , 0)     
-    where (new.[AlbumTitleNorm] <> old.[AlbumTitleNorm] or new.[ArtistTitleNorm] <> old.[ArtistTitleNorm] or new.[AlbumArtistTitleNorm] <> old.[AlbumArtistTitleNorm])
+    where (new.[AlbumTitleNorm] <> old.[AlbumTitleNorm] or new.[ArtistTitleNorm] <> old.[ArtistTitleNorm] or new.[AlbumArtistTitleNorm] <> old.[AlbumArtistTitleNorm] or (old.IsLibrary = 0 and new.IsLibrary = 1))
           and [Artist].TitleNorm = coalesce(nullif(new.AlbumArtistTitleNorm, ''), new.[ArtistTitleNorm]);
 
     update [Artist]
@@ -391,7 +391,7 @@ CREATE TRIGGER update_song_parenttitlesupdate AFTER UPDATE OF [AlbumTitleNorm], 
         [LastPlayed] = case when new.[LastPlayed] > [Artist].[LastPlayed] then new.[LastPlayed] else [Artist].[LastPlayed] end,        
         [OfflineSongsCount] = [Artist].[OfflineSongsCount] + coalesce( (select 1 from CachedSong as cs where cs.SongId = new.SongId) , 0),
         [OfflineDuration] = [Artist].[OfflineSongsCount] + coalesce( (select new.[Duration] from CachedSong as cs where cs.SongId = new.SongId) , 0)       
-    where (new.[AlbumTitleNorm] <> old.[AlbumTitleNorm] or new.[ArtistTitleNorm] <> old.[ArtistTitleNorm] or new.[AlbumArtistTitleNorm] <> old.[AlbumArtistTitleNorm])
+    where (new.[AlbumTitleNorm] <> old.[AlbumTitleNorm] or new.[ArtistTitleNorm] <> old.[ArtistTitleNorm] or new.[AlbumArtistTitleNorm] <> old.[AlbumArtistTitleNorm] or (old.IsLibrary = 0 and new.IsLibrary = 1))
           and [Artist].TitleNorm = new.[ArtistTitleNorm] and new.AlbumArtistTitleNorm <> ''  and new.[ArtistTitleNorm] <> new.AlbumArtistTitleNorm;
 
     insert into Artist([Title], [TitleNorm], [SongsCount], [Duration], [ArtUrl], [LastPlayed], [AlbumsCount], [OfflineSongsCount], [OfflineDuration], OfflineAlbumsCount)
@@ -401,7 +401,7 @@ CREATE TRIGGER update_song_parenttitlesupdate AFTER UPDATE OF [AlbumTitleNorm], 
       coalesce( (select count(*) from [Album] where [ArtistTitleNorm] = coalesce(nullif(new.AlbumArtistTitle, ''), new.[ArtistTitle]) and [OfflineSongsCount] > 0) , 0)
     from [Enumerator] as e
          left join [Artist] as a on a.TitleNorm = coalesce(nullif(new.AlbumArtistTitleNorm, ''), new.[ArtistTitleNorm])
-    where (new.[AlbumTitleNorm] <> old.[AlbumTitleNorm] or new.[ArtistTitleNorm] <> old.[ArtistTitleNorm] or new.[AlbumArtistTitleNorm] <> old.[AlbumArtistTitleNorm])
+    where (new.[AlbumTitleNorm] <> old.[AlbumTitleNorm] or new.[ArtistTitleNorm] <> old.[ArtistTitleNorm] or new.[AlbumArtistTitleNorm] <> old.[AlbumArtistTitleNorm] or (old.IsLibrary = 0 and new.IsLibrary = 1))
           and e.[Id] = 1 and a.TitleNorm is null;
 
     insert into Artist([Title], [TitleNorm], [SongsCount], [Duration], [ArtUrl], [LastPlayed], [AlbumsCount], [OfflineSongsCount], [OfflineDuration], OfflineAlbumsCount)
@@ -411,7 +411,7 @@ CREATE TRIGGER update_song_parenttitlesupdate AFTER UPDATE OF [AlbumTitleNorm], 
       coalesce( (select count(*) from [Album] where [ArtistTitleNorm] = new.[ArtistTitleNorm] and [OfflineSongsCount] > 0) , 0)
     from [Enumerator] as e
          left join [Artist] as a on a.TitleNorm = new.[ArtistTitleNorm]
-    where (new.[AlbumTitleNorm] <> old.[AlbumTitleNorm] or new.[ArtistTitleNorm] <> old.[ArtistTitleNorm] or new.[AlbumArtistTitleNorm] <> old.[AlbumArtistTitleNorm])
+    where (new.[AlbumTitleNorm] <> old.[AlbumTitleNorm] or new.[ArtistTitleNorm] <> old.[ArtistTitleNorm] or new.[AlbumArtistTitleNorm] <> old.[AlbumArtistTitleNorm] or (old.IsLibrary = 0 and new.IsLibrary = 1))
           and e.[Id] = 1 and new.AlbumArtistTitleNorm <> ''  and new.[ArtistTitleNorm] <> new.AlbumArtistTitleNorm and a.TitleNorm is null;
 
     update [Album]
@@ -424,12 +424,12 @@ CREATE TRIGGER update_song_parenttitlesupdate AFTER UPDATE OF [AlbumTitleNorm], 
         [GenreTitleNorm] = case when nullif([Album].[GenreTitleNorm], '') is null then new.[GenreTitleNorm] else [Album].[GenreTitleNorm] end,        
         [OfflineSongsCount] = [Album].[OfflineSongsCount] + coalesce( (select 1 from CachedSong as cs where cs.SongId = new.SongId) , 0),
         [OfflineDuration] = [Album].[OfflineSongsCount] + coalesce( (select new.[Duration] from CachedSong as cs where cs.SongId = new.SongId) , 0)   
-    where (new.[AlbumTitleNorm] <> old.[AlbumTitleNorm] or new.[ArtistTitleNorm] <> old.[ArtistTitleNorm] or new.[AlbumArtistTitleNorm] <> old.[AlbumArtistTitleNorm])
+    where (new.[AlbumTitleNorm] <> old.[AlbumTitleNorm] or new.[ArtistTitleNorm] <> old.[ArtistTitleNorm] or new.[AlbumArtistTitleNorm] <> old.[AlbumArtistTitleNorm] or (old.IsLibrary = 0 and new.IsLibrary = 1))
           and [Album].ArtistTitleNorm = coalesce(nullif(new.AlbumArtistTitleNorm, ''), new.[ArtistTitleNorm]) and TitleNorm = new.AlbumTitleNorm;
 
     update [Artist]
     set [ArtUrl] = new.[AlbumArtUrl]
-    where [Artist].[AlbumsCount] = 0 and (new.[AlbumTitleNorm] <> old.[AlbumTitleNorm] or new.[ArtistTitleNorm] <> old.[ArtistTitleNorm] or new.[AlbumArtistTitleNorm] <> old.[AlbumArtistTitleNorm])
+    where [Artist].[AlbumsCount] = 0 and (new.[AlbumTitleNorm] <> old.[AlbumTitleNorm] or new.[ArtistTitleNorm] <> old.[ArtistTitleNorm] or new.[AlbumArtistTitleNorm] <> old.[AlbumArtistTitleNorm] or (old.IsLibrary = 0 and new.IsLibrary = 1))
           and [Artist].TitleNorm = coalesce(nullif(new.AlbumArtistTitleNorm, ''), new.[ArtistTitleNorm]) and not exists (select * from [Album] as a where a.ArtistTitleNorm = coalesce(nullif(new.AlbumArtistTitleNorm, ''), new.[ArtistTitleNorm]) and a.TitleNorm = new.AlbumTitleNorm);
 
     insert into Album([Title], [TitleNorm], [SongsCount], [Duration], [ArtUrl], [LastPlayed], [Year], [ArtistTitleNorm], [GenreTitleNorm], [OfflineSongsCount], [OfflineDuration])
@@ -438,7 +438,7 @@ CREATE TRIGGER update_song_parenttitlesupdate AFTER UPDATE OF [AlbumTitleNorm], 
       coalesce( (select new.[Duration] from CachedSong as cs where cs.SongId = new.SongId) , 0)
     from [Enumerator] as e
          left join [Album] as a on a.ArtistTitleNorm = coalesce(nullif(new.AlbumArtistTitleNorm, ''), new.[ArtistTitleNorm]) and a.TitleNorm = new.AlbumTitleNorm
-    where (new.[AlbumTitleNorm] <> old.[AlbumTitleNorm] or new.[ArtistTitleNorm] <> old.[ArtistTitleNorm] or new.[AlbumArtistTitleNorm] <> old.[AlbumArtistTitleNorm])
+    where (new.[AlbumTitleNorm] <> old.[AlbumTitleNorm] or new.[ArtistTitleNorm] <> old.[ArtistTitleNorm] or new.[AlbumArtistTitleNorm] <> old.[AlbumArtistTitleNorm] or (old.IsLibrary = 0 and new.IsLibrary = 1))
           and e.[Id] = 1 and a.TitleNorm is null;
 
   END; 
@@ -451,25 +451,25 @@ CREATE TRIGGER update_song_parenttitlesupdate AFTER UPDATE OF [AlbumTitleNorm], 
     set     
       [OfflineSongsCount] = [Genre].[OfflineSongsCount] + 1,
       [OfflineDuration] = [Genre].[OfflineDuration] + (select s.Duration from Song s where s.SongId = new.SongId)
-    where nullif(new.FileName, '') is not null and [Genre].TitleNorm = (select s.GenreTitleNorm from Song s where s.SongId = new.SongId);    
+    where nullif(new.FileName, '') is not null and [Genre].TitleNorm = (select s.GenreTitleNorm from Song s where s.SongId = new.SongId and s.IsLibrary = 1);    
 
     update [Artist]    
     set     
       [OfflineSongsCount] = [Artist].[OfflineSongsCount] + 1,
       [OfflineDuration] = [Artist].[OfflineDuration] + (select s.Duration from Song s where s.SongId = new.SongId)  
-    where nullif(new.FileName, '') is not null and [Artist].TitleNorm = (select coalesce(nullif(s.AlbumArtistTitleNorm, ''), s.[ArtistTitleNorm]) from Song s where s.SongId = new.SongId);
+    where nullif(new.FileName, '') is not null and [Artist].TitleNorm = (select coalesce(nullif(s.AlbumArtistTitleNorm, ''), s.[ArtistTitleNorm]) from Song s where s.SongId = new.SongId and s.IsLibrary = 1);
 
     update [Artist]    
     set     
       [OfflineSongsCount] = [Artist].[OfflineSongsCount] + 1,
       [OfflineDuration] = [Artist].[OfflineDuration] + (select s.Duration from Song s where s.SongId = new.SongId)  
-    where nullif(new.FileName, '') is not null and [Artist].TitleNorm = (select s.[ArtistTitleNorm] from Song s where s.SongId = new.SongId and s.AlbumArtistTitleNorm <> ''  and s.[ArtistTitleNorm] <> s.AlbumArtistTitleNorm);    
+    where nullif(new.FileName, '') is not null and [Artist].TitleNorm = (select s.[ArtistTitleNorm] from Song s where s.SongId = new.SongId and s.AlbumArtistTitleNorm <> ''  and s.[ArtistTitleNorm] <> s.AlbumArtistTitleNorm and s.IsLibrary = 1);    
 
     update [Album]    
     set     
       [OfflineSongsCount] = [Album].[OfflineSongsCount] + 1,
       [OfflineDuration] = [Album].[OfflineDuration] + (select s.Duration from Song s where s.SongId = new.SongId)  
-    where nullif(new.FileName, '') is not null and exists (select * from Song s where s.SongId = new.SongId and [Album].TitleNorm = s.[AlbumTitleNorm] and [Album].[ArtistTitleNorm] == coalesce(nullif(s.AlbumArtistTitleNorm, ''), s.[ArtistTitleNorm]));
+    where nullif(new.FileName, '') is not null and exists (select * from Song s where s.SongId = new.SongId and [Album].TitleNorm = s.[AlbumTitleNorm] and [Album].[ArtistTitleNorm] == coalesce(nullif(s.AlbumArtistTitleNorm, ''), s.[ArtistTitleNorm]) and s.IsLibrary = 1);
 
     update [UserPlaylist]    
     set     
@@ -491,25 +491,25 @@ CREATE TRIGGER update_song_parenttitlesupdate AFTER UPDATE OF [AlbumTitleNorm], 
     set     
       [OfflineSongsCount] = [Genre].[OfflineSongsCount] - 1,
       [OfflineDuration] = [Genre].[OfflineDuration] - (select s.Duration from Song s where s.SongId = old.SongId)
-    where nullif(old.FileName, '') is not null and [Genre].TitleNorm = (select s.GenreTitleNorm from Song s where s.SongId = old.SongId);    
+    where nullif(old.FileName, '') is not null and [Genre].TitleNorm = (select s.GenreTitleNorm from Song s where s.SongId = old.SongId and s.IsLibrary = 1);    
 
     update [Artist]    
     set     
       [OfflineSongsCount] = [Artist].[OfflineSongsCount] - 1,
       [OfflineDuration] = [Artist].[OfflineDuration] - (select s.Duration from Song s where s.SongId = old.SongId)  
-    where nullif(old.FileName, '') is not null and [Artist].TitleNorm = (select coalesce(nullif(s.AlbumArtistTitleNorm, ''), s.[ArtistTitleNorm]) from Song s where s.SongId = old.SongId);
+    where nullif(old.FileName, '') is not null and [Artist].TitleNorm = (select coalesce(nullif(s.AlbumArtistTitleNorm, ''), s.[ArtistTitleNorm]) from Song s where s.SongId = old.SongId and s.IsLibrary = 1);
 
     update [Artist]    
     set     
       [OfflineSongsCount] = [Artist].[OfflineSongsCount] - 1,
       [OfflineDuration] = [Artist].[OfflineDuration] - (select s.Duration from Song s where s.SongId = old.SongId)  
-    where nullif(old.FileName, '') is not null and [Artist].TitleNorm = (select s.[ArtistTitleNorm] from Song s where s.SongId = old.SongId and s.AlbumArtistTitleNorm <> ''  and s.[ArtistTitleNorm] <> s.AlbumArtistTitleNorm);    
+    where nullif(old.FileName, '') is not null and [Artist].TitleNorm = (select s.[ArtistTitleNorm] from Song s where s.SongId = old.SongId and s.AlbumArtistTitleNorm <> ''  and s.[ArtistTitleNorm] <> s.AlbumArtistTitleNorm and s.IsLibrary = 1);    
 
     update [Album]    
     set     
       [OfflineSongsCount] = [Album].[OfflineSongsCount] - 1,
       [OfflineDuration] = [Album].[OfflineDuration] - (select s.Duration from Song s where s.SongId = old.SongId)  
-    where nullif(old.FileName, '') is not null and exists (select * from Song s where s.SongId = old.SongId and [Album].TitleNorm = s.[AlbumTitleNorm] and [Album].[ArtistTitleNorm] == coalesce(nullif(s.AlbumArtistTitleNorm, ''), s.[ArtistTitleNorm]));
+    where nullif(old.FileName, '') is not null and exists (select * from Song s where s.SongId = old.SongId and [Album].TitleNorm = s.[AlbumTitleNorm] and [Album].[ArtistTitleNorm] == coalesce(nullif(s.AlbumArtistTitleNorm, ''), s.[ArtistTitleNorm]) and s.IsLibrary = 1);
 
     update [UserPlaylist]    
     set     
@@ -531,25 +531,25 @@ CREATE TRIGGER update_song_parenttitlesupdate AFTER UPDATE OF [AlbumTitleNorm], 
     set     
       [OfflineSongsCount] = [Genre].[OfflineSongsCount] + 1,
       [OfflineDuration] = [Genre].[OfflineDuration] + (select s.Duration from Song s where s.SongId = old.SongId)
-    where nullif(old.FileName, '') is null and nullif(new.[FileName], '') is not null and new.SongId = old.SongId and [Genre].TitleNorm = (select s.GenreTitleNorm from Song s where s.SongId = old.SongId);    
+    where nullif(old.FileName, '') is null and nullif(new.[FileName], '') is not null and new.SongId = old.SongId and [Genre].TitleNorm = (select s.GenreTitleNorm from Song s where s.SongId = old.SongId and s.IsLibrary = 1);    
 
     update [Artist]    
     set     
       [OfflineSongsCount] = [Artist].[OfflineSongsCount] + 1,
       [OfflineDuration] = [Artist].[OfflineDuration] + (select s.Duration from Song s where s.SongId = old.SongId)  
-    where nullif(old.FileName, '') is null and nullif(new.[FileName], '') is not null and new.SongId = old.SongId and [Artist].TitleNorm = (select coalesce(nullif(s.AlbumArtistTitleNorm, ''), s.[ArtistTitleNorm]) from Song s where s.SongId = old.SongId);
+    where nullif(old.FileName, '') is null and nullif(new.[FileName], '') is not null and new.SongId = old.SongId and [Artist].TitleNorm = (select coalesce(nullif(s.AlbumArtistTitleNorm, ''), s.[ArtistTitleNorm]) from Song s where s.SongId = old.SongId and s.IsLibrary = 1);
 
     update [Artist]    
     set     
       [OfflineSongsCount] = [Artist].[OfflineSongsCount] + 1,
       [OfflineDuration] = [Artist].[OfflineDuration] + (select s.Duration from Song s where s.SongId = old.SongId)  
-    where nullif(old.FileName, '') is null and nullif(new.[FileName], '') is not null and new.SongId = old.SongId and [Artist].TitleNorm = (select s.[ArtistTitleNorm] from Song s where s.SongId = old.SongId and s.AlbumArtistTitleNorm <> ''  and s.[ArtistTitleNorm] <> s.AlbumArtistTitleNorm);    
+    where nullif(old.FileName, '') is null and nullif(new.[FileName], '') is not null and new.SongId = old.SongId and [Artist].TitleNorm = (select s.[ArtistTitleNorm] from Song s where s.SongId = old.SongId and s.AlbumArtistTitleNorm <> ''  and s.[ArtistTitleNorm] <> s.AlbumArtistTitleNorm and s.IsLibrary = 1);    
 
     update [Album]    
     set     
       [OfflineSongsCount] = [Album].[OfflineSongsCount] + 1,
       [OfflineDuration] = [Album].[OfflineDuration] + (select s.Duration from Song s where s.SongId = old.SongId)  
-    where nullif(old.FileName, '') is null and nullif(new.[FileName], '') is not null and new.SongId = old.SongId and exists (select * from Song s where s.SongId = old.SongId and [Album].TitleNorm = s.[AlbumTitleNorm] and [Album].[ArtistTitleNorm] == coalesce(nullif(s.AlbumArtistTitleNorm, ''), s.[ArtistTitleNorm]));
+    where nullif(old.FileName, '') is null and nullif(new.[FileName], '') is not null and new.SongId = old.SongId and exists (select * from Song s where s.SongId = old.SongId and [Album].TitleNorm = s.[AlbumTitleNorm] and [Album].[ArtistTitleNorm] == coalesce(nullif(s.AlbumArtistTitleNorm, ''), s.[ArtistTitleNorm]) and s.IsLibrary = 1);
 
     update [UserPlaylist]    
     set     

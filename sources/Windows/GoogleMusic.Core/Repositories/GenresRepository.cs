@@ -28,7 +28,7 @@ order by x.[TitleNorm]
 select s.* 
 from [Song] as s
      inner join Genre g on s.GenreTitleNorm = g.TitleNorm
-where (?1 = 1 or s.[IsCached] = 1) and g.GenreId = ?2
+where (?1 = 1 or s.[IsCached] = 1) and s.IsLibrary = 1 and g.GenreId = ?2
 order by coalesce(nullif(s.AlbumArtistTitleNorm, ''), s.[ArtistTitleNorm]), s.AlbumTitleNorm, coalesce(nullif(s.Disc, 0), 1), s.Track
 ";
         

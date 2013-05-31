@@ -179,7 +179,10 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
                             Song song;
                             if (!this.songEntities.TryGetValue(googleSong.Id, out song))
                             {
-                                continue;
+                                song = googleSong.ToSong();
+                                song.IsLibrary = false;
+                                await this.songsRepository.InsertAsync(new[] { song });
+                                this.songEntities.Add(googleSong.Id, song);
                             }
 
                             var entry = new UserPlaylistEntry

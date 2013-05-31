@@ -49,6 +49,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
             song.Comment = googleMusicSong.Comment;
             song.Bitrate = googleMusicSong.Bitrate;
             song.StreamType = StreamType.GoogleMusic;
+            song.IsLibrary = true;
         }
 
         public static bool IsVisualMatch(GoogleMusicSong googleMusicSong, Song song)

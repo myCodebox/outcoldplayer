@@ -144,6 +144,7 @@ from [Song] as s
     inner join [Album] a on s.[AlbumTitleNorm] = a.[TitleNorm]      
     inner join [Artist] ar on ar.[TitleNorm] = s.[ArtistTitleNorm]
 where (?1 = 1 or s.IsCached = 1) and
+    s.IsLibrary = 1 and
     s.[ArtistTitleNorm] <> coalesce(nullif(s.[AlbumArtistTitleNorm], ''), s.[ArtistTitleNorm]) and ar.[ArtistId] = ?2
 group by a.[AlbumId], a.[Title], a.[TitleNorm], a.[ArtistTitleNorm], a.[Year], a.[ArtUrl], a.[LastPlayed]
 ) as x
@@ -154,7 +155,7 @@ order by x.IsCollection, x.Year
 select s.* 
 from [Song] as s
      inner join Album a on s.[AlbumTitleNorm] = a.[TitleNorm] and coalesce(nullif(s.AlbumArtistTitleNorm, ''), s.[ArtistTitleNorm]) = a.[ArtistTitleNorm]
-where  (?1 = 1 or s.[IsCached] = 1) and a.AlbumId = ?2
+where  (?1 = 1 or s.[IsCached] = 1) and s.IsLibrary = 1 and a.AlbumId = ?2
 order by coalesce(nullif(s.Disc, 0), 1), s.Track
 ";
 
@@ -185,7 +186,7 @@ select
 from [Album] x 
      inner join [Artist] as a on x.[ArtistTitleNorm] = a.[TitleNorm]
      inner join [Song] as s on x.[TitleNorm] = s.[AlbumTitleNorm]
-where (?1 = 1 or x.[OfflineSongsCount] > 0) and s.[SongId] = ?2
+where (?1 = 1 or x.[OfflineSongsCount] > 0) and s.IsLibrary = 1 and s.[SongId] = ?2
 ";
 
         private const string SqlAlbumCount = @"select count(*) from [Album] x where ?1 = 1 or x.[OfflineSongsCount] > 0";
