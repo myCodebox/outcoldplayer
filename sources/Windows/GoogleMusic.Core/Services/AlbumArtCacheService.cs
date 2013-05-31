@@ -146,6 +146,10 @@ namespace OutcoldSolutions.GoogleMusic.Services
                             {
                                 await file.DeleteAsync(StorageDeleteOption.PermanentDelete);
                             }
+                            catch (FileNotFoundException e)
+                            {
+                                this.logger.Debug(e, "DeleteRemovedItems: Could not delete cached image {0}, because file was not found.", file.Path);
+                            }
                             catch (Exception e)
                             {
                                 this.logger.Warning(e, "DeleteRemovedItems: Could not delete cached image {0}.", file.Path);

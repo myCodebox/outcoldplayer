@@ -115,12 +115,12 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
         public IEnumerable<Song> GetSelectedSongs()
         {
-            return this.SelectedItems.Select(bm => bm.Metadata);
+            return this.SelectedItems.Select(bm => bm.Metadata).ToList();
         }
 
         public IEnumerable<int> GetSelectedIndexes()
         {
-            return this.SelectedItems.Select(bm => this.Songs.IndexOf(bm));
+            return this.SelectedItems.Select(bm => this.Songs.IndexOf(bm)).ToList();
         }
 
         public void SelectSongByIndex(int index)

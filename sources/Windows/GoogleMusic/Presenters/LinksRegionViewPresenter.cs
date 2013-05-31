@@ -15,7 +15,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using OutcoldSolutions.Shell;
     using OutcoldSolutions.Views;
 
-    using Windows.System;
     using Windows.UI.Popups;
     using Windows.UI.Xaml;
 

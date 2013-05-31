@@ -5,6 +5,8 @@ namespace OutcoldSolutions.GoogleMusic.Converters
 {
     using System;
     using System.Globalization;
+    using System.IO;
+    using System.Net;
 
     using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Models;
@@ -65,11 +67,14 @@ namespace OutcoldSolutions.GoogleMusic.Converters
             try
             {
                 string path = await this.cacheService.Value.GetCachedImageAsync(uri, size);
-                
+
                 StorageFile file;
                 if (string.IsNullOrEmpty(path))
                 {
-                    file = await StorageFile.GetFileFromApplicationUriAsync(new Uri(string.Format(CultureInfo.InvariantCulture, UnknownAlbumArtFormat, size)));
+                    file =
+                        await
+                        StorageFile.GetFileFromApplicationUriAsync(
+                            new Uri(string.Format(CultureInfo.InvariantCulture, UnknownAlbumArtFormat, size)));
                 }
                 else
                 {
@@ -77,6 +82,18 @@ namespace OutcoldSolutions.GoogleMusic.Converters
                 }
 
                 image.SetSource(await file.OpenReadAsync());
+            }
+            catch (OperationCanceledException e)
+            {
+                this.logger.Value.Debug(e, "Task was cancelled");
+            }
+            catch (WebException e)
+            {
+                this.logger.Value.Debug(e, "Web exception.");
+            }
+            catch (FileNotFoundException e)
+            {
+                this.logger.Value.Debug(e, "File was removed.");
             }
             catch (Exception e)
             {

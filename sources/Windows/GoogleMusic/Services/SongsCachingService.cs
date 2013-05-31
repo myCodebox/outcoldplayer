@@ -410,13 +410,16 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 }
 
                 var refreshedCache = await this.songsCacheRepository.FindAsync(cachedSong.Song);
-                if (!string.IsNullOrEmpty(refreshedCache.FileName))
+                if (refreshedCache != null)
                 {
-                    var storageFile = await StorageFile.GetFileFromPathAsync(this.GetFullPath(refreshedCache.FileName));
-                    await storageFile.DeleteAsync(StorageDeleteOption.PermanentDelete);
-                }
+                    if (!string.IsNullOrEmpty(refreshedCache.FileName))
+                    {
+                        var storageFile = await StorageFile.GetFileFromPathAsync(this.GetFullPath(refreshedCache.FileName));
+                        await storageFile.DeleteAsync(StorageDeleteOption.PermanentDelete);
+                    }
 
-                await this.songsCacheRepository.RemoveAsync(refreshedCache);
+                    await this.songsCacheRepository.RemoveAsync(refreshedCache);
+                }
             }
             finally
             {
@@ -717,16 +720,13 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     }
                 }
             }
+            catch (OperationCanceledException e)
+            {
+                this.logger.Debug(e, "DownloadAsync was canceled.");
+            }
             catch (Exception exception)
             {
-                if (exception is OperationCanceledException)
-                {
-                    this.logger.Debug("DownloadAsync was canceled.");
-                }
-                else
-                {
-                    this.logger.Error(exception, "Exception while tried to DownloadAsync.");
-                }
+                this.logger.Error(exception, "Exception while tried to DownloadAsync.");
             }
 
             await this.ClearDownloadTask(cancellationToken);
