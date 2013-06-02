@@ -5,6 +5,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
 
@@ -26,6 +27,8 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
         Task InsertEntriesAsync(IEnumerable<UserPlaylistEntry> entries);
 
         Task UpdateEntriesAsync(IEnumerable<UserPlaylistEntry> entries);
+
+        Task<UserPlaylist> FindUserPlaylistAsync(Song song);
     }
 
     public class UserPlaylistsRepository : RepositoryBase, IUserPlaylistsRepository
@@ -52,6 +55,13 @@ order by e.[PlaylistOrder]
 
         private const string SqlDeletePlaylistEntries = @"
 DELETE FROM [UserPlaylistEntry] WHERE PlaylistId = ?1
+";
+
+        private const string SqlFindFirstUserPlaylist = @"
+select p.* 
+from UserPlaylist p
+where exists(select * from UserPlaylistEntry e where e.PlaylistId = p.PlaylistId and e.SongId = ?1)
+limit 1
 ";
 
         private readonly IApplicationStateService stateService;
@@ -195,6 +205,16 @@ DELETE FROM [UserPlaylistEntry] WHERE PlaylistId = ?1
                     connection.Update(userPlaylistEntry);
                 }
             });
+        }
+
+        public async Task<UserPlaylist> FindUserPlaylistAsync(Song song)
+        {
+            if (song == null)
+            {
+                throw new ArgumentNullException("song");
+            }
+
+            return (await this.Connection.QueryAsync<UserPlaylist>(SqlFindFirstUserPlaylist, song.SongId)).FirstOrDefault();
         }
     }
 }

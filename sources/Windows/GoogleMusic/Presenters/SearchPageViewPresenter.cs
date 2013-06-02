@@ -20,15 +20,46 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private readonly IApplicationResources resources;
         private readonly ISongsRepository songsRepository;
         private readonly IPlaylistsService playlistsService;
+        private readonly INavigationService navigationService;
+        private readonly IUserPlaylistsRepository userPlaylistsRepository;
 
         public SearchPageViewPresenter(
             IApplicationResources resources,
             ISongsRepository songsRepository,
-            IPlaylistsService playlistsService)
+            IPlaylistsService playlistsService,
+            INavigationService navigationService,
+            IUserPlaylistsRepository userPlaylistsRepository)
         {
             this.resources = resources;
             this.songsRepository = songsRepository;
             this.playlistsService = playlistsService;
+            this.navigationService = navigationService;
+            this.userPlaylistsRepository = userPlaylistsRepository;
+        }
+
+        public async void NavigateToView(object clickedItem)
+        {
+            if (clickedItem is SongResultBindingModel)
+            {
+                var song = ((SongResultBindingModel)clickedItem).Result.Metadata;
+                if (song.IsLibrary)
+                {
+                    this.navigationService.NavigateTo<IAlbumPageView>(song.SongId);
+                }
+                else
+                {
+                    var playlist = await this.userPlaylistsRepository.FindUserPlaylistAsync(song);
+                    if (playlist != null)
+                    {
+                        await this.Dispatcher.RunAsync(() => this.navigationService.NavigateTo<IPlaylistPageView>(new PlaylistNavigationRequest(PlaylistType.UserPlaylist, playlist.Id, song.SongId)));
+                    }
+                }
+                
+            }
+            else if (clickedItem is PlaylistResultBindingModel)
+            {
+                this.navigationService.NavigateToPlaylist(((PlaylistResultBindingModel)clickedItem).Result);
+            }
         }
 
         protected override async Task LoadDataAsync(NavigatedToEventArgs navigatedToEventArgs)

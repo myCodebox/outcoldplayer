@@ -5,8 +5,11 @@ namespace OutcoldSolutions.GoogleMusic.Services
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
+    using System.IO.Compression;
     using System.Linq;
     using System.Net;
+    using System.Text;
     using System.Threading.Tasks;
 
     using Newtonsoft.Json;
@@ -16,11 +19,14 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
     using Windows.Storage;
 
+    using UnicodeEncoding = Windows.Storage.Streams.UnicodeEncoding;
+
     public class GoogleMusicSessionService : IGoogleMusicSessionService
     {
         private const string ContainerName = "GoogleMusicSessionService_UserSession";
         private const string SessionIdKey = "GoogleMusicSessionService_SessionId";
         private const string CookiesKey = "GoogleMusicSessionService_Cookies";
+        private const string CookiesFile = "cookies.cache";
 
         private readonly IDataProtectService dataProtectService;
         private readonly ILogger logger;
@@ -70,10 +76,10 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     var cookies = cookieCollection.ToArray();
 
                     string cookiesJson = JsonConvert.SerializeObject(cookies);
-
+                    
                     string protectedCookies = await this.dataProtectService.ProtectStringAsync(cookiesJson);
-
-                    applicationDataContainer.Values[CookiesKey] = protectedCookies;
+                    var storageFile = await ApplicationData.Current.LocalFolder.CreateFileAsync(CookiesFile, CreationCollisionOption.ReplaceExisting);
+                    await FileIO.WriteTextAsync(storageFile, protectedCookies, UnicodeEncoding.Utf8);
 
                     if (this.logger.IsDebugEnabled)
                     {
@@ -97,49 +103,68 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         public async Task<IEnumerable<Cookie>> GetSavedCookiesAsync()
         {
-            var applicationDataContainer = this.GetSessionContainer();
-            if (applicationDataContainer != null)
+            string protectedSerializedCookies = null;
+
+            var storageFile = await ApplicationData.Current.LocalFolder.CreateFileAsync(CookiesFile, CreationCollisionOption.ReplaceExisting);
+            if (storageFile != null)
             {
-                object cookies;
-                if (applicationDataContainer.Values.TryGetValue(CookiesKey, out cookies) && cookies is string)
+                this.logger.Debug("Trying to load cookies from file");
+                protectedSerializedCookies = await FileIO.ReadTextAsync(storageFile, UnicodeEncoding.Utf8);
+            }
+
+            if (string.IsNullOrWhiteSpace(protectedSerializedCookies))
+            {
+                this.logger.Debug("Trying to load cookies from application settings");
+                var applicationDataContainer = this.GetSessionContainer();
+                if (applicationDataContainer != null)
                 {
-                    try
+                    object cookies;
+                    if (applicationDataContainer.Values.TryGetValue(CookiesKey, out cookies) && cookies is string)
                     {
-                        string unprotectedSerializedCookies =
-                            await this.dataProtectService.UnprotectStringAsync(Convert.ToString(cookies));
-
-                        var cookiesArray = JsonConvert.DeserializeObject<Cookie[]>(unprotectedSerializedCookies);
-
-                        if (cookiesArray != null)
-                        {
-                            if (this.logger.IsDebugEnabled)
-                            {
-                                this.logger.Debug("---------------------------------");
-                                this.logger.Debug("Loaded cookies:");
-                                this.logger.LogCookies(cookiesArray);
-                                this.logger.Debug("---------------------------------");
-                            }
-
-                            return cookiesArray;
-                        }
+                        protectedSerializedCookies = Convert.ToString(cookies);
                     }
-                    catch (FormatException formatException)
+                    else
                     {
-                        this.logger.Debug(formatException, "Could not deserialize cookies: {0}", cookies);
-                    }
-                    catch (Exception e)
-                    {
-                        this.logger.Error(e, "GetSavedCookiesAsync: Cannot deserialize cookies. Protected cookies: '{0}'", cookies);
+                        this.logger.Debug("GetSavedCookiesAsync: session container does not have value by {0} key.", CookiesKey);
                     }
                 }
                 else
                 {
-                    this.logger.Debug("GetSavedCookiesAsync: session container does not have value by {0} key.", CookiesKey);
+                    this.logger.Debug("GetSavedCookiesAsync: session container is null. Cannot get cookies.");
                 }
             }
-            else
+
+            if (!string.IsNullOrWhiteSpace(protectedSerializedCookies))
             {
-                this.logger.Debug("GetSavedCookiesAsync: session container is null. Cannot get cookies.");
+                try
+                {
+                    string unprotectedSerializedCookies =
+                        await this.dataProtectService.UnprotectStringAsync(protectedSerializedCookies);
+
+                    var cookiesArray = JsonConvert.DeserializeObject<Cookie[]>(unprotectedSerializedCookies);
+
+                    if (cookiesArray != null)
+                    {
+                        if (this.logger.IsDebugEnabled)
+                        {
+                            this.logger.Debug("---------------------------------");
+                            this.logger.Debug("Loaded cookies:");
+                            this.logger.LogCookies(cookiesArray);
+                            this.logger.Debug("---------------------------------");
+                        }
+
+                        return cookiesArray;
+                    }
+                }
+                catch (FormatException formatException)
+                {
+                    this.logger.Debug(formatException, "Could not deserialize cookies: {0}", protectedSerializedCookies);
+                }
+                catch (Exception e)
+                {
+                    this.logger.Error(
+                        e, "GetSavedCookiesAsync: Cannot deserialize cookies. Protected cookies: '{0}'", protectedSerializedCookies);
+                }
             }
 
             return null;
@@ -198,7 +223,6 @@ namespace OutcoldSolutions.GoogleMusic.Services
         private ApplicationDataContainer GetSessionContainer()
         {
             var localSettings = ApplicationData.Current.LocalSettings;
-
             ApplicationDataContainer userSessionContainer;
             if (!localSettings.Containers.TryGetValue(ContainerName, out userSessionContainer))
             {

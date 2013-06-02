@@ -26,6 +26,7 @@ namespace OutcoldSolutions.GoogleMusic.Shell
         private readonly IDispatcher dispatcher;
         private readonly IPlaylistsService playlistsService;
         private readonly ISongsRepository songsRepository;
+        private readonly IUserPlaylistsRepository playlistsRepository;
         private readonly IAlbumArtCacheService albumArtCacheService;
 
         public SearchService(
@@ -34,6 +35,7 @@ namespace OutcoldSolutions.GoogleMusic.Shell
             IDispatcher dispatcher,
             IPlaylistsService playlistsService,
             ISongsRepository songsRepository,
+            IUserPlaylistsRepository playlistsRepository,
             IAlbumArtCacheService albumArtCacheService)
         {
             this.resources = resources;
@@ -41,6 +43,7 @@ namespace OutcoldSolutions.GoogleMusic.Shell
             this.dispatcher = dispatcher;
             this.playlistsService = playlistsService;
             this.songsRepository = songsRepository;
+            this.playlistsRepository = playlistsRepository;
             this.albumArtCacheService = albumArtCacheService;
         }
         
@@ -154,7 +157,22 @@ namespace OutcoldSolutions.GoogleMusic.Shell
                 int songId;
                 if (int.TryParse(tag, out songId))
                 {
-                    await this.dispatcher.RunAsync(() => this.navigationService.NavigateTo<IAlbumPageView>(songId));
+                    var song = await this.songsRepository.GetSongAsync(songId);
+                    if (song != null)
+                    {
+                        if (song.IsLibrary)
+                        {
+                            await this.dispatcher.RunAsync(() => this.navigationService.NavigateTo<IAlbumPageView>(songId));
+                        }
+                        else
+                        {
+                            var playlist = await this.playlistsRepository.FindUserPlaylistAsync(song);
+                            if (playlist != null)
+                            {
+                                await this.dispatcher.RunAsync(() => this.navigationService.NavigateTo<IPlaylistPageView>(new PlaylistNavigationRequest(PlaylistType.UserPlaylist, playlist.Id, song.SongId)));
+                            }
+                        }
+                    }
                 }
             }
         }

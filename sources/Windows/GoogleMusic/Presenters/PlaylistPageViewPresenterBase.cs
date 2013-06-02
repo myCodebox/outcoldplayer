@@ -101,6 +101,15 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                         this.BindingModel.SongsBindingModel.SetCollection(songs);
                         this.BindingModel.Playlist = (TPlaylist)playlist;
                         this.BindingModel.Type = this.resources.GetTitle(playlist.PlaylistType);
+
+                        if (request.SongId.HasValue)
+                        {
+                            var songBindingModel = this.BindingModel.SongsBindingModel.Songs.FirstOrDefault(s => s.Metadata.SongId == request.SongId);
+                            if (songBindingModel != null)
+                            {
+                                this.BindingModel.SongsBindingModel.SelectedItems.Add(songBindingModel);
+                            }
+                        }
                     });
         }
 

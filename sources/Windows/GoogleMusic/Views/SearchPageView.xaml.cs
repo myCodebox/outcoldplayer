@@ -5,6 +5,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
 {
     using OutcoldSolutions.Controls;
     using OutcoldSolutions.GoogleMusic.BindingModels;
+    using OutcoldSolutions.GoogleMusic.Presenters;
     using OutcoldSolutions.Views;
 
     using Windows.UI.Xaml.Controls;
@@ -61,14 +62,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
         private void ListViewOnItemClick(object sender, ItemClickEventArgs e)
         {
-            if (e.ClickedItem is SongResultBindingModel)
-            {
-                this.NavigationService.NavigateTo<IAlbumPageView>(((SongResultBindingModel)e.ClickedItem).Result.Metadata.SongId);
-            }
-            else if (e.ClickedItem is PlaylistResultBindingModel)
-            {
-                this.NavigationService.NavigateToPlaylist(((PlaylistResultBindingModel)e.ClickedItem).Result);
-            }
+            this.GetPresenter<SearchPageViewPresenter>().NavigateToView(e.ClickedItem);
         }
 
         private void GroupsOnSelectionChanged(object sender, SelectionChangedEventArgs e)
