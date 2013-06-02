@@ -61,8 +61,16 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             {
                 if (this.BindingModel.IsPlaying)
                 {
-                    this.BindingModel.TotalSeconds = args.Duration.TotalSeconds;
-                    this.BindingModel.CurrentPosition = this.progressPosition = args.Position.TotalSeconds;
+                    try
+                    {
+                        this.BindingModel.FreezeNotifications();
+                        this.BindingModel.TotalSeconds = args.Duration.TotalSeconds;
+                        this.BindingModel.CurrentPosition = this.progressPosition = args.Position.TotalSeconds;
+                    }
+                    finally
+                    {
+                        this.BindingModel.UnfreezeNotifications();
+                    }
                 }
             };
 
