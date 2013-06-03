@@ -147,12 +147,12 @@
                     </Button.Template>
                 </Button>
 
-                <controls2:Rating Grid.Row="1"
+                <controls2:Rating x:Name="RatingControl"
+                              Grid.Row="1"
                               Grid.Column="1" 
                               HorizontalAlignment="Right" 
                               VerticalAlignment="Bottom"
                               Margin="0, 0, 0, -10"
-                              Value="{Binding Path=BindingModel.CurrentSong.Rating, Mode=OneWay}"
                               ValueChanged="RatingOnValueChanged"
                               Visibility="{Binding Path=BindingModel.CurrentSong, Mode=OneWay, Converter={StaticResource NullToInvisibilityConverter}}"/>
             </Grid>

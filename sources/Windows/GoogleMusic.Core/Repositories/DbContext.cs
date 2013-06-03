@@ -159,7 +159,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
             var triggers = await connection.QueryAsync<SqliteMasterRecord>(@"select name from sqlite_master where type = 'trigger'");
             foreach (var sqliteMasterRecord in triggers)
             {
-                await connection.ExecuteAsync("drop trigger ?1", sqliteMasterRecord.Name);
+                await connection.ExecuteAsync(string.Format(CultureInfo.InvariantCulture, "drop trigger {0};", sqliteMasterRecord.Name));
             }
         }
 
@@ -683,8 +683,10 @@ CREATE TRIGGER update_song_parenttitlesupdate AFTER UPDATE OF [AlbumTitleNorm], 
 #endif
         }
 
+        [Table("sqlite_master")]
         public class SqliteMasterRecord
         {
+            [Column("name")]
             public string Name { get; set; }
         }
 

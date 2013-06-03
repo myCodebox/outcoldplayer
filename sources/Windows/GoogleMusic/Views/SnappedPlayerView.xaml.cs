@@ -73,6 +73,16 @@ namespace OutcoldSolutions.GoogleMusic.Views
         {
             this.Loaded -= this.OnLoaded;
             this.playerBindingModel = this.GetPresenter<SnappedPlayerViewPresenter>().BindingModel;
+
+            this.UpdateCurrentSongRating();
+            this.playerBindingModel.Subscribe(() => this.playerBindingModel.CurrentSong, (o, args) => this.UpdateCurrentSongRating());
+        }
+
+        private void UpdateCurrentSongRating()
+        {
+            this.RatingControl.Value = this.playerBindingModel.CurrentSong == null
+                                           ? 0
+                                           : this.playerBindingModel.CurrentSong.Rating;
         }
 
         private void UpdateAdControl()

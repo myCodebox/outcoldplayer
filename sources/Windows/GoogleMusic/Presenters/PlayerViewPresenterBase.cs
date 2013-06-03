@@ -82,7 +82,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 });
 
             this.queueService.DownloadProgress += this.CurrentSongStreamOnDownloadProgressChanged;
-
+            this.queueService.QueueChanged += (sender, args) => this.UpdateCommands();
             this.queueService.StateChanged += async (sender, args) => await this.Dispatcher.RunAsync(
                 () =>
                 {
