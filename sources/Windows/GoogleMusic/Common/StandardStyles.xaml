@@ -1167,13 +1167,13 @@
     </Style>
 
     <Style TargetType="HyperlinkButton" x:Key="RightRegionAdReplacement">
-        <Setter Property="NavigateUri" Value="https://twitter.com/gMusicW" />
+        <Setter Property="NavigateUri" Value="http://outcoldsolutions.com/resources/gmusicw_link.html" />
         <Setter Property="Height" Value="600" />
         <Setter Property="Width" Value="160" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="HyperlinkButton">
-                    <Image Source="http://outcoldsolutions.com/resources/rightpane.png" 
+                    <Image Source="http://outcoldsolutions.com/resources/rightpane-v2.png" 
                            Stretch="None" 
                            Height="600" 
                            Width="160" />
@@ -1183,14 +1183,14 @@
     </Style>
 
     <Style TargetType="HyperlinkButton" x:Key="SnappedViewAdReplacement">
-        <Setter Property="NavigateUri" Value="https://twitter.com/gMusicW" />
+        <Setter Property="NavigateUri" Value="http://outcoldsolutions.com/resources/gmusicw_link.html" />
         <Setter Property="Height" Value="60" />
         <Setter Property="Width" Value="292" />
         <Setter Property="HorizontalAlignment" Value="Center" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="HyperlinkButton">
-                    <Image Source="http://outcoldsolutions.com/resources/snappedview.png" 
+                    <Image Source="http://outcoldsolutions.com/resources/snappedview-v2.png" 
                            Stretch="None" 
                            Height="60" 
                            Width="292"/>
