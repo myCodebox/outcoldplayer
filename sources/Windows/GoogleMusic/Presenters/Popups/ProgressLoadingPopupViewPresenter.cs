@@ -4,8 +4,6 @@
 namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
 {
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
     using System.Net;
     using System.Threading.Tasks;
 
@@ -18,25 +16,37 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
     using OutcoldSolutions.GoogleMusic.Web.Synchronization;
     using OutcoldSolutions.Presenters;
 
-    using Windows.Storage;
     using Windows.System;
     using Windows.UI.Core;
     using Windows.UI.Popups;
+
+    internal class ProgressLoadingPopupViewRequest
+    {
+        public ProgressLoadingPopupViewRequest(bool forceToUpdate)
+        {
+            this.ForceToUpdate = forceToUpdate;
+        }
+
+        public bool ForceToUpdate { get; set; }
+    }
 
     public class ProgressLoadingPopupViewPresenter : ViewPresenterBase<IProgressLoadingPopupView>
     {
         private readonly IApplicationResources resources;
         private readonly ISettingsService settingsService;
         private readonly IInitialSynchronization initialSynchronization;
+        private readonly ProgressLoadingPopupViewRequest request;
 
-        public ProgressLoadingPopupViewPresenter(
+        internal ProgressLoadingPopupViewPresenter(
             IApplicationResources resources,
             ISettingsService settingsService, 
-            IInitialSynchronization initialSynchronization)
+            IInitialSynchronization initialSynchronization,
+            ProgressLoadingPopupViewRequest request)
         {
             this.resources = resources;
             this.settingsService = settingsService;
             this.initialSynchronization = initialSynchronization;
+            this.request = request;
             this.BindingModel = new ProgressLoadingPageViewBindingModel();
 
             this.ReloadSongsCommand = new DelegateCommand(this.LoadSongs, () => this.BindingModel.IsFailed);
@@ -98,35 +108,31 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
 
         private async Task InitializeRepositoriesAsync()
         {
-            // Remove old JSON caches
-            IEnumerable<StorageFile> files = (await ApplicationData.Current.LocalFolder.GetFilesAsync()).Where(x => x.Name.EndsWith(".cache", StringComparison.OrdinalIgnoreCase));
-            foreach (var storageFile in files)
-            {
-                await storageFile.DeleteAsync(StorageDeleteOption.PermanentDelete);
-            }
-
             DbContext dbContext = new DbContext();
-            await dbContext.InitializeAsync();
+            var updateInformation = await dbContext.InitializeAsync(this.request.ForceToUpdate);
 
-            await this.Dispatcher.RunAsync(
-                () =>
+            if (updateInformation.Status == DbContext.DatabaseStatus.New)
+            {
+                await this.Dispatcher.RunAsync(
+                    () =>
                     {
                         this.BindingModel.Progress = 0;
                         this.BindingModel.Message = this.resources.GetString("Loading_LoadingMusicLibrary");
                     });
 
-            Progress<double> progress = new Progress<double>();
-            progress.ProgressChanged += async (sender, i) =>
-                {
-                    await this.Dispatcher.RunAsync(
-                        CoreDispatcherPriority.High, () => { this.BindingModel.Progress = i; });
-                };
+                Progress<double> progress = new Progress<double>();
+                progress.ProgressChanged += async (sender, i) =>
+                    {
+                        await this.Dispatcher.RunAsync(
+                            CoreDispatcherPriority.High, () => { this.BindingModel.Progress = i; });
+                    };
 
-            this.settingsService.ResetLibraryFreshness();
+                this.settingsService.ResetLibraryFreshness();
 
-            await this.initialSynchronization.InitializeAsync(progress);
-            
-            await progress.SafeReportAsync(1.0);
+                await this.initialSynchronization.InitializeAsync(progress);
+
+                await progress.SafeReportAsync(1.0);
+            }
         }
 
         private Task ShowErrorInfoAsync()

@@ -20,7 +20,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
 
     public class DbContext
     {
-        private const int CurrentDatabaseVersion = 2;
+        private const int CurrentDatabaseVersion = 3;
         private readonly string dbFileName;
 
         public DbContext(string dbFileName = "db.sqlite")
@@ -44,7 +44,8 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
         {
             Unknown = 0,
             New = 1,
-            Existed = 2
+            Updated = 2,
+            Existed = 3
         }
 
         public SQLiteAsyncConnection CreateConnection()
@@ -52,7 +53,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
             return new SQLiteAsyncConnection(this.GetDatabaseFilePath(), openFlags: SQLiteOpenFlags.Create | SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.SharedCache | SQLiteOpenFlags.NoMutex, storeDateTimeAsTicks: true);
         }
 
-        public async Task<DatabaseStatus> InitializeAsync()
+        public async Task<DatabaseUpdateInformation> InitializeAsync(bool forceToUpdate)
         {
             bool fDbExists = false;
 
@@ -63,37 +64,108 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
             fDbExists = File.Exists(this.GetDatabaseFilePath());
 #endif
             SQLite3.Config(SQLite3.ConfigOption.MultiThread);
-            
+
+            int currentVersion = -1;
+
+            SQLiteAsyncConnection connection = null;
+
             if (fDbExists)
             {
-                var connection = this.CreateConnection();
-                int currentVersion = await connection.ExecuteScalarAsync<int>("PRAGMA user_version");
-                if (currentVersion != CurrentDatabaseVersion)
+                connection = this.CreateConnection();
+                currentVersion = await connection.ExecuteScalarAsync<int>("PRAGMA user_version");
+
+                if (currentVersion == CurrentDatabaseVersion && !forceToUpdate)
                 {
-                    connection.Close();
-                    await this.DeleteDatabaseAsync();
-                    fDbExists = false;
+                    return new DatabaseUpdateInformation(CurrentDatabaseVersion, DatabaseStatus.Existed);
                 }
             }
 
-            if (!fDbExists)
+            if (currentVersion == 2 && !forceToUpdate)
             {
-                var connection = this.CreateConnection();
-                await connection.ExecuteAsync("PRAGMA page_size = 65536 ;");
-                
-                await connection.CreateTableAsync<Song>();
-                await connection.CreateTableAsync<UserPlaylist>();
-                await connection.CreateTableAsync<UserPlaylistEntry>();
-                await connection.CreateTableAsync<Album>();
-                await connection.CreateTableAsync<Genre>();
-                await connection.CreateTableAsync<Artist>();
-                await connection.CreateTableAsync<CachedSong>();
-                await connection.CreateTableAsync<CachedAlbumArt>();
+                await this.DropAllTriggersAsync(connection);
+                await this.Update2Async(connection);
+            }
+            else
+            {
+                currentVersion = -1;
 
-                await connection.ExecuteAsync(@"CREATE TABLE [Enumerator] (Id integer primary key autoincrement not null);");
-                await connection.ExecuteAsync(@"INSERT INTO [Enumerator] DEFAULT VALUES;");
+                if (connection != null)
+                {
+                    connection.Close();
+                    await this.DeleteDatabaseAsync();
+                }
 
-                await connection.ExecuteAsync(@"
+                connection = this.CreateConnection();
+                await this.CreateBasicObjectsAsync(connection);
+            }
+
+            if (connection != null)
+            {
+                await this.CreateTriggersAsync(connection);
+                await connection.ExecuteAsync(string.Format(CultureInfo.InvariantCulture, "PRAGMA user_version = {0} ;", CurrentDatabaseVersion));
+            }
+
+            return new DatabaseUpdateInformation(currentVersion, currentVersion == -1 ? DatabaseStatus.New : DatabaseStatus.Updated);
+        }
+
+        public async Task DeleteDatabaseAsync()
+        {
+#if NETFX_CORE
+            var dbFile = (await ApplicationData.Current.LocalFolder.GetFilesAsync())
+                .FirstOrDefault(f => string.Equals(f.Name, this.dbFileName));
+
+            if (dbFile != null)
+            {
+                await dbFile.DeleteAsync();
+            }
+#else
+            await Task.Run(
+                () =>
+                    {
+                        var databaseFilePath = this.GetDatabaseFilePath();
+                        if (File.Exists(databaseFilePath))
+                        {
+                            File.Delete(databaseFilePath);
+                        }
+                    });
+#endif
+        }
+
+        private async Task Update2Async(SQLiteAsyncConnection connection)
+        {
+            await connection.ExecuteAsync("alter table Song add column IsLibrary;");
+            await connection.ExecuteAsync("update Song set IsLibrary = 1;");
+        }
+
+        private async Task CreateBasicObjectsAsync(SQLiteAsyncConnection connection)
+        {
+            await connection.ExecuteAsync("PRAGMA page_size = 65536 ;");
+
+            await connection.CreateTableAsync<Song>();
+            await connection.CreateTableAsync<UserPlaylist>();
+            await connection.CreateTableAsync<UserPlaylistEntry>();
+            await connection.CreateTableAsync<Album>();
+            await connection.CreateTableAsync<Genre>();
+            await connection.CreateTableAsync<Artist>();
+            await connection.CreateTableAsync<CachedSong>();
+            await connection.CreateTableAsync<CachedAlbumArt>();
+
+            await connection.ExecuteAsync(@"CREATE TABLE [Enumerator] (Id integer primary key autoincrement not null);");
+            await connection.ExecuteAsync(@"INSERT INTO [Enumerator] DEFAULT VALUES;");
+        }
+
+        private async Task DropAllTriggersAsync(SQLiteAsyncConnection connection)
+        {
+            var triggers = await connection.QueryAsync<SqliteMasterRecord>(@"select name from sqlite_master where type = 'trigger'");
+            foreach (var sqliteMasterRecord in triggers)
+            {
+                await connection.ExecuteAsync("drop trigger ?1", sqliteMasterRecord.Name);
+            }
+        }
+
+        private async Task CreateTriggersAsync(SQLiteAsyncConnection connection)
+        {
+            await connection.ExecuteAsync(@"
 CREATE TRIGGER insert_song AFTER INSERT ON Song 
   BEGIN
 
@@ -161,7 +233,7 @@ CREATE TRIGGER insert_song AFTER INSERT ON Song
 
   END;");
 
-                await connection.ExecuteAsync(@"
+            await connection.ExecuteAsync(@"
 CREATE TRIGGER delete_song AFTER DELETE ON Song 
   BEGIN
 
@@ -215,7 +287,7 @@ CREATE TRIGGER delete_song AFTER DELETE ON Song
   END;
 ");
 
-                await connection.ExecuteAsync(@"
+            await connection.ExecuteAsync(@"
 CREATE TRIGGER insert_userplaylistentry AFTER INSERT ON UserPlaylistEntry 
   BEGIN
   
@@ -232,7 +304,7 @@ CREATE TRIGGER insert_userplaylistentry AFTER INSERT ON UserPlaylistEntry
   END;
 ");
 
-                await connection.ExecuteAsync(@"
+            await connection.ExecuteAsync(@"
 CREATE TRIGGER delete_userplaylistentry AFTER DELETE ON [UserPlaylistEntry]
   BEGIN
   
@@ -249,7 +321,7 @@ CREATE TRIGGER delete_userplaylistentry AFTER DELETE ON [UserPlaylistEntry]
   END; 
 ");
 
-                await connection.ExecuteAsync(@"
+            await connection.ExecuteAsync(@"
 CREATE TRIGGER update_song_lastplayed AFTER UPDATE OF [LastPlayed] ON [Song]
   BEGIN
   
@@ -272,7 +344,7 @@ CREATE TRIGGER update_song_lastplayed AFTER UPDATE OF [LastPlayed] ON [Song]
   END;    
 ");
 
-                await connection.ExecuteAsync(@"
+            await connection.ExecuteAsync(@"
 CREATE TRIGGER update_song_albumarturl AFTER UPDATE OF [AlbumArtUrl] ON [Song]
   BEGIN
   
@@ -295,7 +367,7 @@ CREATE TRIGGER update_song_albumarturl AFTER UPDATE OF [AlbumArtUrl] ON [Song]
   END;
 ");
 
-                await connection.ExecuteAsync(@"
+            await connection.ExecuteAsync(@"
 CREATE TRIGGER update_song_parenttitlesupdate AFTER UPDATE OF [AlbumTitleNorm], [GenreTitleNorm], [AlbumArtistTitleNorm], [ArtistTitleNorm] ON [Song]
   BEGIN  
 
@@ -444,7 +516,7 @@ CREATE TRIGGER update_song_parenttitlesupdate AFTER UPDATE OF [AlbumTitleNorm], 
   END; 
 ");
 
-                await connection.ExecuteAsync(@"CREATE TRIGGER insert_cachedsong AFTER INSERT ON CachedSong
+            await connection.ExecuteAsync(@"CREATE TRIGGER insert_cachedsong AFTER INSERT ON CachedSong
   BEGIN  
         
     update [Genre]    
@@ -484,7 +556,7 @@ CREATE TRIGGER update_song_parenttitlesupdate AFTER UPDATE OF [AlbumTitleNorm], 
 
   END;");
 
-                await connection.ExecuteAsync(@"CREATE TRIGGER delete_cachedsong AFTER DELETE ON CachedSong
+            await connection.ExecuteAsync(@"CREATE TRIGGER delete_cachedsong AFTER DELETE ON CachedSong
   BEGIN  
         
     update [Genre]    
@@ -524,7 +596,7 @@ CREATE TRIGGER update_song_parenttitlesupdate AFTER UPDATE OF [AlbumTitleNorm], 
 
   END;");
 
-                await connection.ExecuteAsync(@"CREATE TRIGGER update_cachedsong AFTER UPDATE ON CachedSong
+            await connection.ExecuteAsync(@"CREATE TRIGGER update_cachedsong AFTER UPDATE ON CachedSong
   BEGIN  
         
     update [Genre]    
@@ -564,7 +636,7 @@ CREATE TRIGGER update_song_parenttitlesupdate AFTER UPDATE OF [AlbumTitleNorm], 
 
   END;");
 
-                await connection.ExecuteAsync(@"CREATE TRIGGER insert_album AFTER INSERT ON [Album]
+            await connection.ExecuteAsync(@"CREATE TRIGGER insert_album AFTER INSERT ON [Album]
   BEGIN      
                                                     
     update [Artist]    
@@ -575,7 +647,7 @@ CREATE TRIGGER update_song_parenttitlesupdate AFTER UPDATE OF [AlbumTitleNorm], 
 
   END;");
 
-                await connection.ExecuteAsync(@"CREATE TRIGGER delete_album AFTER DELETE ON [Album]
+            await connection.ExecuteAsync(@"CREATE TRIGGER delete_album AFTER DELETE ON [Album]
   BEGIN      
                                                     
     update [Artist]    
@@ -586,7 +658,7 @@ CREATE TRIGGER update_song_parenttitlesupdate AFTER UPDATE OF [AlbumTitleNorm], 
 
   END;");
 
-                await connection.ExecuteAsync(@"CREATE TRIGGER update_album AFTER UPDATE OF [OfflineSongsCount] ON [Album]
+            await connection.ExecuteAsync(@"CREATE TRIGGER update_album AFTER UPDATE OF [OfflineSongsCount] ON [Album]
   BEGIN                             
 
     update [Artist]    
@@ -600,34 +672,6 @@ CREATE TRIGGER update_song_parenttitlesupdate AFTER UPDATE OF [AlbumTitleNorm], 
     where old.[OfflineSongsCount] > 0 and new.[OfflineSongsCount] = 0 and [Artist].[TitleNorm] = old.[ArtistTitleNorm];
 
   END;");
-
-                await connection.ExecuteAsync(string.Format(CultureInfo.InvariantCulture, "PRAGMA user_version = {0} ;", CurrentDatabaseVersion));
-            }
-
-            return fDbExists ? DatabaseStatus.Existed : DatabaseStatus.New;
-        }
-
-        public async Task DeleteDatabaseAsync()
-        {
-#if NETFX_CORE
-            var dbFile = (await ApplicationData.Current.LocalFolder.GetFilesAsync())
-                .FirstOrDefault(f => string.Equals(f.Name, this.dbFileName));
-
-            if (dbFile != null)
-            {
-                await dbFile.DeleteAsync();
-            }
-#else
-            await Task.Run(
-                () =>
-                    {
-                        var databaseFilePath = this.GetDatabaseFilePath();
-                        if (File.Exists(databaseFilePath))
-                        {
-                            File.Delete(databaseFilePath);
-                        }
-                    });
-#endif
         }
 
         private string GetDatabaseFilePath()
@@ -637,6 +681,24 @@ CREATE TRIGGER update_song_parenttitlesupdate AFTER UPDATE OF [AlbumTitleNorm], 
 #else
             return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, this.dbFileName);
 #endif
+        }
+
+        public class SqliteMasterRecord
+        {
+            public string Name { get; set; }
+        }
+
+        public class DatabaseUpdateInformation
+        {
+            public DatabaseUpdateInformation(int dbVersion, DatabaseStatus databaseStatus)
+            {
+                this.PreviousVersion = dbVersion;
+                this.Status = databaseStatus;
+            }
+
+            public int PreviousVersion { get; private set; }
+
+            public DatabaseStatus Status { get; private set; }
         }
     }
 }

@@ -117,7 +117,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 .Subscribe(async (e) =>
                 {
                     await this.DeinitializeAsync();
-                    this.ShowProgressLoadingPopupView();
+                    this.ShowProgressLoadingPopupView(forceToRefreshDb: true);
                 });
         }
 
@@ -145,7 +145,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 }
                 else
                 {
-                    this.ShowProgressLoadingPopupView();
+                    this.ShowProgressLoadingPopupView(forceToRefreshDb: false);
                 }
             }
             else
@@ -165,22 +165,22 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private void AuthentificationPopupView_Closed(object sender, EventArgs eventArgs)
         {
-            ((IAuthentificationPopupView)sender).Closed += this.AuthentificationPopupView_Closed;
-            this.ShowProgressLoadingPopupView();
+            ((IAuthentificationPopupView)sender).Closed -= this.AuthentificationPopupView_Closed;
+            this.ShowProgressLoadingPopupView(forceToRefreshDb: true);
         }
 
-        private void ShowProgressLoadingPopupView()
+        private void ShowProgressLoadingPopupView(bool forceToRefreshDb)
         {
             this.Dispatcher.RunAsync(
                 () =>
                     {
-                        this.MainFrame.ShowPopup<IProgressLoadingPopupView>(PopupRegion.Full).Closed += this.ProgressLoadingPopupView_Closed;
+                        this.MainFrame.ShowPopup<IProgressLoadingPopupView>(PopupRegion.Full, new ProgressLoadingPopupViewRequest(forceToRefreshDb)).Closed += this.ProgressLoadingPopupView_Closed;
                     });
         }
 
         private async void ProgressLoadingPopupView_Closed(object sender, EventArgs eventArgs)
         {
-            ((IProgressLoadingPopupView)sender).Closed += this.AuthentificationPopupView_Closed;
+            ((IProgressLoadingPopupView)sender).Closed -= this.ProgressLoadingPopupView_Closed;
 
             var progressLoadingCloseEventArgs = eventArgs as ProgressLoadingCloseEventArgs;
             if (progressLoadingCloseEventArgs != null && progressLoadingCloseEventArgs.IsFailed)
