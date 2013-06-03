@@ -105,7 +105,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
         {
             string protectedSerializedCookies = null;
 
-            var storageFile = await ApplicationData.Current.LocalFolder.CreateFileAsync(CookiesFile, CreationCollisionOption.ReplaceExisting);
+            var storageFile = await ApplicationData.Current.LocalFolder.CreateFileAsync(CookiesFile, CreationCollisionOption.OpenIfExists);
             if (storageFile != null)
             {
                 this.logger.Debug("Trying to load cookies from file");

@@ -38,6 +38,7 @@
                     </TextBlock>
                     <RichTextBlock Style="{StaticResource BodyRichTextStyle}">
                         <Paragraph>[+] Add support for songs in user playlists not from user library (all access mode, before gMusicW ignored them).</Paragraph>
+                        <Paragraph>[b] In snapped view rating not always was updated for current song.</Paragraph>
                         <Paragraph>[b] Player keeps next/previous buttons disabled after user adds songs to queue.</Paragraph>
                         <Paragraph>[b] Fix issues when gMusicW can stop to auto sync library.</Paragraph>
                         <Paragraph>[b] Sometimes gMusicW does not respond on 'Keep local' button for selected playlists.</Paragraph>
