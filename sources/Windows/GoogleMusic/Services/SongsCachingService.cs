@@ -499,7 +499,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
             try
             {
-                songUrl = await this.songsWebService.GetSongUrlAsync(song.ProviderSongId);
+                songUrl = await this.songsWebService.GetSongUrlAsync(song);
             }
             catch (WebRequestException e)
             {

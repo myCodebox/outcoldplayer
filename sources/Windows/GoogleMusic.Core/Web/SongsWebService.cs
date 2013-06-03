@@ -11,6 +11,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
     using Newtonsoft.Json;
 
+    using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Web.Models;
     using OutcoldSolutions.Web;
@@ -21,7 +22,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
         Task<List<GoogleMusicSong>> StreamingLoadAllTracksAsync(DateTime? lastUpdate, IProgress<int> progress);
 
-        Task<GoogleMusicSongUrl> GetSongUrlAsync(string id);
+        Task<GoogleMusicSongUrl> GetSongUrlAsync(Song song);
 
         Task<bool> RecordPlayingAsync(string songId, string playlistId, bool updateRecentAlbum, bool updateRecentPlaylist, int playCount);
 
@@ -31,6 +32,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
     public class SongsWebService : ISongsWebService
     {
         private const string SongUrlFormat = "play?songid={0}&pt=e&dt=pe&targetkbps=320&start=0";
+        private const string SongUrlFromStoreFormat = "play?mjck={0}&pt=e&dt=pe&targetkbps=320&start=0";
         private const string RecordPlayingUrl = "services/recordplaying";
         private const string ModifyEntriesUrl = "services/modifyentries";
         
@@ -125,9 +127,9 @@ namespace OutcoldSolutions.GoogleMusic.Web
             return googleMusicSongs;
         }
 
-        public async Task<GoogleMusicSongUrl> GetSongUrlAsync(string id)
+        public async Task<GoogleMusicSongUrl> GetSongUrlAsync(Song song)
         {
-            var url = string.Format(SongUrlFormat, id);
+            var url = string.Format(song.IsLibrary ? SongUrlFormat : SongUrlFromStoreFormat, song.ProviderSongId);
             return await this.googleMusicWebService.GetAsync<GoogleMusicSongUrl>(url, signUrl: false);
         }
 
