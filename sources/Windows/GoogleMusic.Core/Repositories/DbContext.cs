@@ -20,7 +20,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
 
     public class DbContext
     {
-        private const int CurrentDatabaseVersion = 3;
+        private const int CurrentDatabaseVersion = 4;
         private readonly string dbFileName;
 
         public DbContext(string dbFileName = "db.sqlite")
@@ -80,10 +80,20 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
                 }
             }
 
-            if (currentVersion == 2 && !forceToUpdate)
+            if ((currentVersion >= 2 && currentVersion < CurrentDatabaseVersion)
+                && !forceToUpdate)
             {
                 await this.DropAllTriggersAsync(connection);
-                await this.Update2Async(connection);
+
+                if (currentVersion <= 2)
+                {
+                    await this.Update2Async(connection);
+                }
+
+                if (currentVersion <= 3)
+                {
+                    await this.Update3Async(connection);
+                }
             }
             else
             {
@@ -135,6 +145,41 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
         {
             await connection.ExecuteAsync("alter table Song add column IsLibrary;");
             await connection.ExecuteAsync("update Song set IsLibrary = 1;");
+        }
+
+        private async Task Update3Async(SQLiteAsyncConnection connection)
+        {
+            await connection.ExecuteAsync(@"
+update Song
+set TitleNorm = case when TitleNorm like '@THE@ @%' then substr(TitleNorm, 7) else TitleNorm end,
+    AlbumArtistTitleNorm = case when AlbumArtistTitleNorm like '@THE@ @%' then substr(AlbumArtistTitleNorm, 7) else AlbumArtistTitleNorm end,    
+    ArtistTitleNorm = case when ArtistTitleNorm like '@THE@ @%' then substr(ArtistTitleNorm, 7) else ArtistTitleNorm end,    
+    AlbumTitleNorm = case when AlbumTitleNorm like '@THE@ @%' then substr(AlbumTitleNorm, 7) else AlbumTitleNorm end,    
+    GenreTitleNorm = case when GenreTitleNorm like '@THE@ @%' then substr(GenreTitleNorm, 7) else
+            GenreTitleNorm end;
+");
+
+            await connection.ExecuteAsync(@"
+update Album
+set TitleNorm = case when TitleNorm like '@THE@ @%' then substr(TitleNorm, 7) else TitleNorm end,
+    ArtistTitleNorm = case when ArtistTitleNorm like '@THE@ @%' then substr(ArtistTitleNorm, 7) else ArtistTitleNorm end,    
+    GenreTitleNorm = case when GenreTitleNorm like '@THE@ @%' then substr(GenreTitleNorm, 7) else GenreTitleNorm end;
+");
+
+            await connection.ExecuteAsync(@"
+update Artist
+set TitleNorm = case when TitleNorm like '@THE@ @%' then substr(TitleNorm, 7) else TitleNorm end;
+");
+
+            await connection.ExecuteAsync(@"
+update Genre
+set TitleNorm = case when TitleNorm like '@THE@ @%' then substr(TitleNorm, 7) else TitleNorm end;
+");
+
+            await connection.ExecuteAsync(@"
+update UserPlaylist
+set TitleNorm = case when TitleNorm like '@THE@ @%' then substr(TitleNorm, 7) else TitleNorm end;
+");
         }
 
         private async Task CreateBasicObjectsAsync(SQLiteAsyncConnection connection)
