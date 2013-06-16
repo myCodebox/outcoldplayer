@@ -20,12 +20,18 @@ namespace OutcoldSolutions.GoogleMusic.Services
         Task<IList<RadioPlaylist>> GetAllAsync();
 
         Task<IList<Song>> GetRadioSongsAsync(string id);
+
+        Task DeleteStationAsync(string id);
+
+        Task RenameStationAsync(string id, string name);
     }
 
     public class RadioWebService : IRadioWebService
     {
         private const string GetAllRadios = "/music/services/radio/loadradio?u=0";
         private const string FetchRadioFeed = "/music/services/radio/fetchradiofeed?u=0";
+        private const string DeleteStation = "/music/services/radio/deletestation";
+        private const string RenameStation = "/music/services/radio/renamestation";
 
         private readonly IGoogleMusicWebService webService;
 
@@ -97,6 +103,23 @@ namespace OutcoldSolutions.GoogleMusic.Services
             }
 
             return songs;
+        }
+
+        public async Task DeleteStationAsync(string id)
+        {
+            var jsonProperties = new Dictionary<string, string> { { "id", JsonConvert.ToString(id) } };
+            await this.webService.PostAsync<CommonResponse>(DeleteStation, jsonProperties: jsonProperties);
+        }
+
+        public async Task RenameStationAsync(string id, string name)
+        {
+            var jsonProperties = new Dictionary<string, string>
+                                     {
+                                         { "id", JsonConvert.ToString(id) },
+                                         { "name", JsonConvert.ToString(name) }
+                                     };
+
+            await this.webService.PostAsync<CommonResponse>(RenameStation, jsonProperties: jsonProperties);
         }
     }
 }
