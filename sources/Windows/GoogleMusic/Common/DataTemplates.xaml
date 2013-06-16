@@ -233,7 +233,7 @@
     </Style>
 
     <Style TargetType="ListView" x:Key="ZoomOutPlaylistGroupsListView">
-        <Setter Property="Padding" Value="120, 0, 0, 0" />
+        <Setter Property="Padding" Value="40, 0, 0, 0" />
         <Setter Property="SelectionMode" Value="None" />
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="HorizontalAlignment" Value="Center" />
