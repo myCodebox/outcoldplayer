@@ -36,7 +36,7 @@ namespace OutcoldSolutions.GoogleMusic
             yield return MenuItemMetadata.FromViewType<IPlaylistsPageView>(new { Title = resources.GetString("MainMenu_Genres"), Icon = "ms-appx:///Resources/genres.png" }, PlaylistType.Genre);
             if (stateService.CurrentState == ApplicationState.Online)
             {
-                yield return MenuItemMetadata.FromViewType<IPlaylistsPageView>(new { Title = resources.GetString("MainMenu_Radio"), Icon = "ms-appx:///Resources/Radio.png" }, PlaylistType.Radio);
+                yield return MenuItemMetadata.FromViewType<IRadioPageView>(new { Title = resources.GetString("MainMenu_Radio"), Icon = "ms-appx:///Resources/Radio.png" }, PlaylistType.Radio);
             }
         }
     }

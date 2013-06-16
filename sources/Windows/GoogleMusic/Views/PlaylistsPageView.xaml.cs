@@ -14,24 +14,24 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
     using Windows.UI.Xaml.Controls;
 
+    public interface IUserPlaylistsPageView : IPageView
+    {
+    }
+
     public interface IPlaylistsPageView : IPageView
     {
     }
 
-    public sealed partial class PlaylistsPageView : PageViewBase, IPlaylistsPageView
+    public interface IRadioPageView : IPageView
     {
-        private PlaylistsPageViewPresenter presenter;
+    }
 
+    public sealed partial class PlaylistsPageView : PageViewBase, IPlaylistsPageView, IUserPlaylistsPageView, IRadioPageView
+    {
         public PlaylistsPageView()
         {
             this.InitializeComponent();
             this.TrackItemsControl(this.ListView);
-        }
-
-        protected override void OnInitialized()
-        {
-            base.OnInitialized();
-            this.presenter = this.GetPresenter<PlaylistsPageViewPresenter>();
         }
 
         private void PlaylistItemClick(object sender, ItemClickEventArgs e)
@@ -41,7 +41,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
             {
                 if (playlistBindingModel.Playlist.PlaylistType == PlaylistType.Radio)
                 {
-                    this.presenter.PlayPlaylist(playlistBindingModel.Playlist);
+                    this.GetPresenter<RadioPageViewPresenter>().PlayRadio(playlistBindingModel.Playlist);
                 }
                 else
                 {

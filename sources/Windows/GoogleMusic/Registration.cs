@@ -37,7 +37,7 @@ namespace OutcoldSolutions.GoogleMusic
             // User Playlists view
             registration.Register<IUserPlaylistsPageView>()
                         .InjectionRule<BindingModelBase, UserPlaylistsPageViewPresenter>()
-                        .AsSingleton<UserPlaylistsPageView>();
+                        .AsSingleton<PlaylistsPageView>();
             registration.Register<UserPlaylistsPageViewPresenter>().AsSingleton();
 
             // Playlist view (playlist, all artist's songs, system playlists, genre)
@@ -73,6 +73,12 @@ namespace OutcoldSolutions.GoogleMusic
                         .AsSingleton<AlbumPageView>();
             registration.Register<AlbumPageViewPresenter>().AsSingleton();
             registration.Register<PlaylistPageViewBindingModel<Album>>().AsSingleton();
+
+            // User Playlists view
+            registration.Register<IRadioPageView>()
+                        .InjectionRule<BindingModelBase, RadioPageViewPresenter>()
+                        .AsSingleton<PlaylistsPageView>();
+            registration.Register<RadioPageViewPresenter>().AsSingleton();
         }
 
         public static void RegisterSettingViews(IRegistrationContext registration)

@@ -21,9 +21,9 @@
             <ListView x:Name="ListView"
                       Margin="0, 40, 0, 0" 
                       SelectionMode="Extended"
+                      IsItemClickEnabled="True"
                       ItemClick="PlaylistItemClick"
                       ItemsSource="{Binding Path=BindingModel.Playlists, Mode=OneWay}"
-                      IsItemClickEnabled="True"
                       Style="{StaticResource PlaylistsListView}">
                 <interactivity:Interaction.Behaviors>
                     <controls:ListViewBaseSelectedItemsBehavior SelectedItems="{Binding Path=BindingModel.SelectedItems, Mode=OneWay}" />

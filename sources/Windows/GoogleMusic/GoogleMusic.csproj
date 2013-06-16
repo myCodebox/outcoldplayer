@@ -166,6 +166,7 @@
     <Compile Include="Presenters\Popups\PlaylistEditPopupViewPresenter.cs" />
     <Compile Include="Presenters\Popups\ProgressLoadingCloseEventArgs.cs" />
     <Compile Include="Presenters\Popups\QueueActionsPopupViewPresenter.cs" />
+    <Compile Include="Presenters\RadioPageViewPresenter.cs" />
     <Compile Include="Presenters\Settings\OfflineCacheViewPresenter.cs" />
     <Compile Include="Presenters\SnappedPlayerViewPresenter.cs" />
     <Compile Include="Presenters\Popups\PlayerMorePopupViewPresenter.cs" />
@@ -288,9 +289,6 @@
     </Compile>
     <Compile Include="Views\StartPageView.xaml.cs">
       <DependentUpon>StartPageView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\UserPlaylistsPageView.xaml.cs">
-      <DependentUpon>UserPlaylistsPageView.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -481,10 +479,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\StartPageView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\UserPlaylistsPageView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

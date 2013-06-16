@@ -82,11 +82,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             }
         }
 
-        public void PlayPlaylist(IPlaylist playlist)
-        {
-            this.Play(playlist);
-        }
-
         protected override void OnInitialized()
         {
             base.OnInitialized();
@@ -127,11 +122,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         protected virtual IEnumerable<CommandMetadata> GetContextCommands()
         {
-            if (this.BindingModel.PlaylistType == PlaylistType.Radio)
-            {
-                yield break;
-            }
-
             yield return new CommandMetadata(CommandIcon.OpenWith, this.resources.GetString("Toolbar_QueueButton"), this.QueueCommand);
             if (this.stateService.IsOnline() && 
                 (this.BindingModel.SelectedItems.Any(x => x.Playlist.OfflineSongsCount != x.Playlist.SongsCount)

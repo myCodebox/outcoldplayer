@@ -301,6 +301,9 @@
   <data name="MessageBox_DeletePlaylistYes" xml:space="preserve">
     <value>Yes</value>
   </data>
+  <data name="MessageBox_DeleteRadioMessage" xml:space="preserve">
+    <value>Are you sure want to delete selected radio stations?</value>
+  </data>
   <data name="MessageBox_ReviewButtonNoThanks" xml:space="preserve">
     <value>No, thanks</value>
   </data>
