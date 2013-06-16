@@ -10,6 +10,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Repositories;
+    using OutcoldSolutions.GoogleMusic.Web;
 
     public interface IPlaylistsService
     {
