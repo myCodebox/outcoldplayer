@@ -22,14 +22,13 @@ namespace OutcoldSolutions.GoogleMusic.Models
 
             string url = uri.ToString();
 
-            if (url.LastIndexOf(AlbumArtUrlParameter, StringComparison.OrdinalIgnoreCase) == (url.Length - AlbumArtUrlParameter.Length))
+            var lastIndexOf = url.LastIndexOf(AlbumArtUrlParameter, StringComparison.OrdinalIgnoreCase);
+            if (lastIndexOf == (url.Length - AlbumArtUrlParameter.Length))
             {
-                url = string.Format(
-                    CultureInfo.InvariantCulture,
-                    "{0}=s{1}-c-e100",
-                    url.Substring(0, url.Length - AlbumArtUrlParameter.Length),
-                    size);
+                url = url.Substring(0, url.Length - AlbumArtUrlParameter.Length);
             }
+
+            url = string.Format(CultureInfo.InvariantCulture, "{0}=s{1}-c-e100", url, size);
 
             return new Uri(url);
         }

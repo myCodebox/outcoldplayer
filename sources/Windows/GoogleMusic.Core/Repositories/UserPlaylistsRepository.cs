@@ -109,9 +109,11 @@ limit 1
             return await query.ToListAsync();
         }
 
-        public async Task<UserPlaylist> GetAsync(int id)
+        public async Task<UserPlaylist> GetAsync(string id)
         {
-            var query = this.Connection.Table<UserPlaylist>().Where(a => a.Id == id);
+            int playlistId = int.Parse(id);
+
+            var query = this.Connection.Table<UserPlaylist>().Where(a => a.PlaylistId == playlistId);
 
             if (this.stateService.IsOffline())
             {
@@ -121,7 +123,7 @@ limit 1
             return await query.FirstOrDefaultAsync();
         }
 
-        public async Task<IList<Song>> GetSongsAsync(int id, bool includeAll = false)
+        public async Task<IList<Song>> GetSongsAsync(string id, bool includeAll = false)
         {
             return await this.Connection.QueryAsync<Song>(SqlUserPlaylistSongs, includeAll || this.stateService.IsOnline(), id);
         }

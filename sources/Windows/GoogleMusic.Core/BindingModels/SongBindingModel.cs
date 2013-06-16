@@ -64,7 +64,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             }
         }
 
-        public ushort? Track
+        public short? Track
         {
             get
             {

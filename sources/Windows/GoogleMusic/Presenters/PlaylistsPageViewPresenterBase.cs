@@ -82,6 +82,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             }
         }
 
+        public void PlayPlaylist(IPlaylist playlist)
+        {
+            this.Play(playlist);
+        }
+
         protected override void OnInitialized()
         {
             base.OnInitialized();

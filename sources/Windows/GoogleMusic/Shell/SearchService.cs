@@ -144,12 +144,10 @@ namespace OutcoldSolutions.GoogleMusic.Shell
             if (strings.Length == 2)
             {
                 PlaylistType playlistType;
-                int playlistId;
-                if (Enum.TryParse(strings[0], out playlistType)
-                    && int.TryParse(strings[1], out playlistId))
+                if (Enum.TryParse(strings[0], out playlistType))
                 {
                     await this.dispatcher.RunAsync(() => this.navigationService.NavigateToPlaylist(
-                        new PlaylistNavigationRequest(playlistType, playlistId)));
+                        new PlaylistNavigationRequest(playlistType, strings[1])));
                 }
             }
             else

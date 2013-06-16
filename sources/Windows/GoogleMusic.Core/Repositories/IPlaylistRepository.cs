@@ -16,8 +16,8 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
 
         Task<IList<TPlaylist>> SearchAsync(string searchQuery, uint? take);
 
-        Task<TPlaylist> GetAsync(int id);
+        Task<TPlaylist> GetAsync(string id);
 
-        Task<IList<Song>> GetSongsAsync(int id, bool includeAll = false);
+        Task<IList<Song>> GetSongsAsync(string id, bool includeAll = false);
     }
 }

@@ -1,16 +1,12 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // OutcoldSolutions (http://outcoldsolutions.com)
 // --------------------------------------------------------------------------------------------------------------------
-namespace OutcoldSolutions.GoogleMusic.Models
+namespace OutcoldSolutions.GoogleMusic.Web.Models
 {
-    public enum PlaylistType
+    public class FetchRadioFeedResp : CommonResponse
     {
-        Unknown = 0,
-        Album = 1,
-        Artist = 2,
-        Genre = 3,
-        UserPlaylist = 4,
-        SystemPlaylist = 5,
-        Radio = 6
+        public string Id { get; set; }
+
+        public GoogleMusicSong[] Track { get; set; }
     }
 }

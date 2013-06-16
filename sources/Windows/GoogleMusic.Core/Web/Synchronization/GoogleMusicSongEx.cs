@@ -21,17 +21,18 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
 
         public static void Mapper(GoogleMusicSong googleMusicSong, Song song)
         {
-            song.AlbumArtistTitle = googleMusicSong.AlbumArtist.Trim();
-            song.AlbumArtistTitleNorm = googleMusicSong.AlbumArtist.Trim().Normalize();
-            song.ArtistTitle = googleMusicSong.Artist.Trim();
-            song.ArtistTitleNorm = googleMusicSong.Artist.Trim().Normalize();
-            song.AlbumTitle = googleMusicSong.Album.Trim();
-            song.AlbumTitleNorm = googleMusicSong.Album.Trim().Normalize();
-            song.GenreTitle = googleMusicSong.Genre.Trim();
-            song.GenreTitleNorm = googleMusicSong.Genre.Trim().Normalize();
-            song.AlbumArtUrl = string.IsNullOrEmpty(googleMusicSong.AlbumArtUrl)
+            song.AlbumArtistTitle = (googleMusicSong.AlbumArtist ?? string.Empty).Trim();
+            song.AlbumArtistTitleNorm = (googleMusicSong.AlbumArtist ?? string.Empty).Trim().Normalize();
+            song.ArtistTitle = (googleMusicSong.Artist ?? string.Empty).Trim();
+            song.ArtistTitleNorm = (googleMusicSong.Artist ?? string.Empty).Trim().Normalize();
+            song.AlbumTitle = (googleMusicSong.Album ?? string.Empty).Trim();
+            song.AlbumTitleNorm = (googleMusicSong.Album ?? string.Empty).Trim().Normalize();
+            song.GenreTitle = (googleMusicSong.Genre ?? string.Empty).Trim();
+            song.GenreTitleNorm = (googleMusicSong.Genre ?? string.Empty).Trim().Normalize();
+            string imageBaseUrlBase = googleMusicSong.AlbumArtUrl ?? googleMusicSong.ImageBaseUrl;
+            song.AlbumArtUrl = string.IsNullOrEmpty(imageBaseUrlBase)
                 ? null
-                : new Uri("http:" + googleMusicSong.AlbumArtUrl);
+                : new Uri("http:" + imageBaseUrlBase);
             song.Composer = googleMusicSong.Composer;
             song.Disc = googleMusicSong.Disc;
             song.TotalDiscs = googleMusicSong.TotalDiscs;
@@ -40,9 +41,9 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
             song.LastPlayed = DateTimeExtensions.FromUnixFileTime(googleMusicSong.LastPlayed / 1000);
             song.CreationDate = DateTimeExtensions.FromUnixFileTime(googleMusicSong.CreationDate / 1000);
             song.PlayCount = googleMusicSong.PlayCount;
-            song.Rating = googleMusicSong.Rating;
-            song.Title = googleMusicSong.Title.Trim();
-            song.TitleNorm = googleMusicSong.Title.Trim().Normalize();
+            song.Rating = (byte)(googleMusicSong.Rating < 0 ? 0 : googleMusicSong.Rating);
+            song.Title = (googleMusicSong.Title ?? string.Empty).Trim();
+            song.TitleNorm = (googleMusicSong.Title ?? string.Empty).Trim().Normalize();
             song.Track = googleMusicSong.Track;
             song.TotalTracks = googleMusicSong.TotalTracks;
             song.Year = googleMusicSong.Year;

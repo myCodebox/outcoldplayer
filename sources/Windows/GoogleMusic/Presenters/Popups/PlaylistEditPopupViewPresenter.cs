@@ -32,7 +32,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
             this.userPlaylist = userPlaylist;
             this.SaveCommand = new DelegateCommand(this.Save, this.CanSave);
             this.CancelCommand = new DelegateCommand(this.Cancel);
-            this.Title = this.userPlaylist.Id > 0
+            this.Title = this.userPlaylist.PlaylistId > 0
                        ? this.userPlaylist.Title
                        : DateTime.Now.ToString(CultureInfo.CurrentCulture);
         }
@@ -71,7 +71,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
 
         private void Save()
         {
-            if (this.userPlaylist.Id > 0)
+            if (this.userPlaylist.PlaylistId > 0)
             {
                 this.Logger.LogTask(this.userPlaylistsService.ChangeNameAsync(this.userPlaylist, this.Title));
             }

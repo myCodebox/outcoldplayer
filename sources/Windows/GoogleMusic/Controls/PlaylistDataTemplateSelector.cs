@@ -24,6 +24,8 @@ namespace OutcoldSolutions.GoogleMusic.Controls
 
         public DataTemplate UserPlaylistDataTemplate { get; set; }
 
+        public DataTemplate RadioDataTemplate { get; set; }
+
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
         {
             var groupPlaylistBindingModel = item as PlaylistBindingModel;
@@ -61,6 +63,12 @@ namespace OutcoldSolutions.GoogleMusic.Controls
             {
                 Debug.Assert(this.UserPlaylistDataTemplate != null, "this.UserPlaylistDataTemplate != null");
                 return this.UserPlaylistDataTemplate;
+            }
+
+            if (playlist is RadioPlaylist)
+            {
+                Debug.Assert(this.RadioDataTemplate != null, "this.UserPlaylistDataTemplate != null");
+                return this.RadioDataTemplate;
             }
 
             Debug.Assert(false, "Uknown playlist type.");

@@ -25,6 +25,7 @@ namespace OutcoldSolutions.GoogleMusic
             yield return MenuItemMetadata.FromViewType<IPlaylistsPageView>(new { Title = resources.GetString("MainMenu_Artists"), Icon = "ms-appx:///Resources/artists.png" }, PlaylistType.Artist);
             yield return MenuItemMetadata.FromViewType<IPlaylistsPageView>(new { Title = resources.GetString("MainMenu_Albums"), Icon = "ms-appx:///Resources/albums.png" }, PlaylistType.Album);
             yield return MenuItemMetadata.FromViewType<IPlaylistsPageView>(new { Title = resources.GetString("MainMenu_Genres"), Icon = "ms-appx:///Resources/genres.png" }, PlaylistType.Genre);
+            yield return MenuItemMetadata.FromViewType<IPlaylistsPageView>(new { Title = resources.GetString("MainMenu_Radio"), Icon = "ms-appx:///Resources/genres.png" }, PlaylistType.Radio);
         }
     }
 }

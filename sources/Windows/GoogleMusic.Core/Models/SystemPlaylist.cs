@@ -10,11 +10,11 @@ namespace OutcoldSolutions.GoogleMusic.Models
     {
         public SystemPlaylistType SystemPlaylistType { get; set; }
 
-        public int Id
+        public string Id
         {
             get
             {
-                return (int)this.SystemPlaylistType;
+                return this.SystemPlaylistType.ToString();
             }
         }
 

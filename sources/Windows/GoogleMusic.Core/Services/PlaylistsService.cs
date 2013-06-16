@@ -19,9 +19,9 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         Task<IList<Song>> GetSongsAsync(IPlaylist playlist);
 
-        Task<IList<Song>> GetSongsAsync(PlaylistType playlistType, int id);
+        Task<IList<Song>> GetSongsAsync(PlaylistType playlistType, string id);
 
-        Task<IPlaylist> GetAsync(PlaylistType playlistType, int id);
+        Task<IPlaylist> GetAsync(PlaylistType playlistType, string id);
 
         Task<IEnumerable<IPlaylist>> GetAllAsync(PlaylistType playlistType, Order order, uint? take = null);
 
@@ -32,9 +32,14 @@ namespace OutcoldSolutions.GoogleMusic.Services
     {
         private readonly IDependencyResolverContainer container;
 
-        public PlaylistsService(IDependencyResolverContainer container)
+        private readonly IRadioWebService radioWebService;
+
+        public PlaylistsService(
+            IDependencyResolverContainer container,
+            IRadioWebService radioWebService)
         {
             this.container = container;
+            this.radioWebService = radioWebService;
         }
 
         public IPlaylistRepository<TPlaylist> GetRepository<TPlaylist>() where TPlaylist : IPlaylist
@@ -71,7 +76,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             return this.GetSongsAsync(playlist.PlaylistType, playlist.Id);
         }
 
-        public Task<IList<Song>> GetSongsAsync(PlaylistType playlistType, int id)
+        public Task<IList<Song>> GetSongsAsync(PlaylistType playlistType, string id)
         {
             switch (playlistType)
             {
@@ -85,12 +90,14 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     return this.GetRepository<UserPlaylist>().GetSongsAsync(id);
                 case PlaylistType.SystemPlaylist:
                     return this.GetRepository<SystemPlaylist>().GetSongsAsync(id);
+                case PlaylistType.Radio:
+                    return this.radioWebService.GetRadioSongsAsync(id);
                 default:
                     throw new ArgumentOutOfRangeException("playlistType");
             }
         }
 
-        public async Task<IPlaylist> GetAsync(PlaylistType playlistType, int id)
+        public async Task<IPlaylist> GetAsync(PlaylistType playlistType, string id)
         {
             switch (playlistType)
             {
@@ -123,6 +130,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     return await this.GetRepository<UserPlaylist>().GetAllAsync(order, take);
                 case PlaylistType.SystemPlaylist:
                     return await this.GetRepository<SystemPlaylist>().GetAllAsync(order, take);
+                case PlaylistType.Radio:
+                    return await this.radioWebService.GetAllAsync();
                 default:
                     throw new ArgumentOutOfRangeException("playlistType");
             }

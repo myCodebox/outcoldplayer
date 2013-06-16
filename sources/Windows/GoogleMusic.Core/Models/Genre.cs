@@ -4,6 +4,7 @@
 namespace OutcoldSolutions.GoogleMusic.Models
 {
     using System;
+    using System.Globalization;
 
     using SQLite;
 
@@ -11,7 +12,16 @@ namespace OutcoldSolutions.GoogleMusic.Models
     public class Genre : IPlaylist
     {
         [PrimaryKey, AutoIncrement, Column("GenreId")]
-        public int Id { get; set; }
+        public int GenreId { get; set; }
+
+        [Ignore]
+        public string Id
+        {
+            get
+            {
+                return this.GenreId.ToString(CultureInfo.InvariantCulture);
+            }
+        }
 
         [Ignore]
         public PlaylistType PlaylistType

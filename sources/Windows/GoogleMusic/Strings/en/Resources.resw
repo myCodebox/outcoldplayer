@@ -289,6 +289,9 @@
     <value>Queue</value>
     <comment>06.png</comment>
   </data>
+  <data name="MainMenu_Radio" xml:space="preserve">
+    <value>Radio</value>
+  </data>
   <data name="MessageBox_DeletePlaylistMessage" xml:space="preserve">
     <value>Are you sure want to delete selected playlists?</value>
   </data>

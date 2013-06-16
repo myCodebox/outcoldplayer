@@ -57,7 +57,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     {
                         if (this.BindingModel.Songs != null && args.CurrentSong != null)
                         {
-                            var currentSong = this.BindingModel.Songs.FirstOrDefault(x => x.Metadata.SongId == args.CurrentSong.SongId);
+                            var currentSong = this.BindingModel.Songs.FirstOrDefault(x => string.Equals(x.Metadata.ProviderSongId, args.CurrentSong.ProviderSongId, StringComparison.Ordinal));
                             if (currentSong != null)
                             {
                                 await this.View.ScrollIntoCurrentSongAsync(currentSong);

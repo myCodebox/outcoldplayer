@@ -4,39 +4,21 @@
 namespace OutcoldSolutions.GoogleMusic.Models
 {
     using System;
-    using System.Globalization;
 
-    using SQLite;
-
-    [Table("UserPlaylist")]
-    public class UserPlaylist : IPlaylist
+    public class RadioPlaylist : IPlaylist
     {
-        [PrimaryKey, AutoIncrement, Column("PlaylistId")]
-        public int PlaylistId { get; set; }
+        public string Id { get; set; }
 
-        [Ignore]
-        public string Id
-        {
-            get
-            {
-                return this.PlaylistId > 0 ? this.PlaylistId.ToString(CultureInfo.InvariantCulture) : string.Empty;
-            }
-        }
-
-        [Ignore]
         public PlaylistType PlaylistType
         {
             get
             {
-                return PlaylistType.UserPlaylist;
+                return PlaylistType.Radio;
             }
         }
 
-        public string ProviderPlaylistId { get; set; }
-
         public string Title { get; set; }
 
-        [Indexed]
         public string TitleNorm { get; set; }
 
         public int SongsCount { get; set; }
@@ -49,7 +31,6 @@ namespace OutcoldSolutions.GoogleMusic.Models
 
         public Uri ArtUrl { get; set; }
 
-        [Indexed]
         public DateTime LastPlayed { get; set; }
     }
 }

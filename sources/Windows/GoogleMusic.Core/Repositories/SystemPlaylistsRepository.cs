@@ -92,9 +92,9 @@ limit ?2
         }
 
 
-        public Task<IList<Song>> GetSongsAsync(int id, bool includeAll = false)
+        public Task<IList<Song>> GetSongsAsync(string id, bool includeAll = false)
         {
-            return this.GetSongsAsync((SystemPlaylistType)id, includeAll);
+            return this.GetSongsAsync((SystemPlaylistType)Enum.Parse(typeof(SystemPlaylistType), id), includeAll);
         }
 
         public Task<IList<Song>> GetSongsAsync(SystemPlaylistType systemPlaylistType, bool includeAll = false)
@@ -135,9 +135,9 @@ limit ?2
             throw new NotSupportedException();
         }
 
-        public Task<SystemPlaylist> GetAsync(int id)
+        public Task<SystemPlaylist> GetAsync(string id)
         {
-            return this.GetAsync((SystemPlaylistType)id);
+            return this.GetAsync((SystemPlaylistType)Enum.Parse(typeof(SystemPlaylistType), id));
         }
 
         public Task<SystemPlaylist> GetAsync(SystemPlaylistType systemPlaylistType)

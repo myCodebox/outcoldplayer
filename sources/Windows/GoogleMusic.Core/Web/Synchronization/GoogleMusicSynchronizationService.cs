@@ -250,7 +250,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
                                 PlaylistOrder = songIndex,
                                 SongId = storedSong.SongId,
                                 ProviderEntryId = song.PlaylistEntryId,
-                                PlaylistId = userPlaylist.Id
+                                PlaylistId = userPlaylist.PlaylistId
                             };
 
                             newEntries.Add(entry);

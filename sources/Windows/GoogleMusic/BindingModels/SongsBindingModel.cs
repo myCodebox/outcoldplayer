@@ -158,7 +158,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             {
                 foreach (var updateSong in updateSongs)
                 {
-                    var songBindingModel = this.Songs.FirstOrDefault(s => s.Metadata.SongId == updateSong.SongId);
+                    var songBindingModel = this.Songs.FirstOrDefault(s => string.Equals(s.Metadata.ProviderSongId, updateSong.ProviderSongId, StringComparison.Ordinal));
                     if (songBindingModel != null)
                     {
                         songBindingModel.Metadata = updateSong;
@@ -171,7 +171,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         {
             if (song != null && this.Songs != null)
             {
-                var songBindingModel = this.Songs.FirstOrDefault(s => s.Metadata.SongId == song.SongId);
+                var songBindingModel = this.Songs.FirstOrDefault(s => string.Equals(s.Metadata.ProviderSongId, song.ProviderSongId, StringComparison.Ordinal));
                 if (songBindingModel != null)
                 {
                     songBindingModel.IsCached = eventType == SongCachingChangeEventType.FinishDownloading;
@@ -202,7 +202,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             {
                 foreach (var song in this.Songs)
                 {
-                    if (currentSong != null && song.Metadata.SongId == currentSong.SongId)
+                    if (currentSong != null && string.Equals(song.Metadata.ProviderSongId, currentSong.ProviderSongId, StringComparison.Ordinal))
                     {
                         if (queueState == QueueState.Play)
                         {

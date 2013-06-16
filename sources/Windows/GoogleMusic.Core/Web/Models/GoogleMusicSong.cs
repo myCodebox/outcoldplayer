@@ -18,9 +18,9 @@ namespace OutcoldSolutions.GoogleMusic.Web.Models
 
         public double LastPlayed { get; set; }
 
-        public int Type { get; set; }
+        public string Type { get; set; }
 
-        public ushort? Disc { get; set; }
+        public short? Disc { get; set; }
 
         public string Id { get; set; }
 
@@ -32,15 +32,15 @@ namespace OutcoldSolutions.GoogleMusic.Web.Models
 
         public string ArtistMatchedId { get; set; }
 
-        public ushort? TotalTracks { get; set; }
+        public short? TotalTracks { get; set; }
 
         public bool SubjectToCuration { get; set; }
 
         public string Name { get; set; }
 
-        public ushort? TotalDiscs { get; set; }
+        public short? TotalDiscs { get; set; }
 
-        public ushort? Year { get; set; }
+        public short? Year { get; set; }
 
         public string TitleNorm { get; set; }
 
@@ -48,7 +48,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Models
 
         public string AlbumNorm { get; set; }
 
-        public ushort? Track { get; set; }
+        public short? Track { get; set; }
 
         public long DurationMillis { get; set; }
 
@@ -62,15 +62,17 @@ namespace OutcoldSolutions.GoogleMusic.Web.Models
 
         public uint PlayCount { get; set; }
 
-        public byte Rating { get; set; }
+        public short Rating { get; set; }
 
         public string Comment { get; set; }
 
         public string AlbumArtUrl { get; set; }
 
+        public string ImageBaseUrl { get; set; }
+
         public string PlaylistEntryId { get; set; }
 
-        public ushort Bitrate { get; set; }
+        public short Bitrate { get; set; }
 
         public double RecentTimestamp { get; set; }
     }

@@ -107,6 +107,7 @@
     <Compile Include="Models\CachedAlbumArt.cs" />
     <Compile Include="Models\CachedSong.cs" />
     <Compile Include="Models\PlaylistsChangeEvent.cs" />
+    <Compile Include="Models\RadioPlaylist.cs" />
     <Compile Include="Models\SongExtensions.cs" />
     <Compile Include="Models\SongsUpdatedEvent.cs" />
     <Compile Include="CommandIcon.cs" />
@@ -145,6 +146,7 @@
     <Compile Include="Services\IAlbumArtCacheService.cs" />
     <Compile Include="Services\InAppPurchases.cs" />
     <Compile Include="Services\PlaylistsService.cs" />
+    <Compile Include="Web\RadioWebService.cs" />
     <Compile Include="Services\SongsService.cs" />
     <Compile Include="Repositories\SongsRepository.cs" />
     <Compile Include="Services\AuthentificationService.cs" />
@@ -169,6 +171,9 @@
     <Compile Include="SettingsServiceExtensions.cs" />
     <Compile Include="Web\CookieContainerWrapper.cs" />
     <Compile Include="Web\GoogleAccountWebService.cs" />
+    <Compile Include="Web\Models\FetchRadioFeedResp.cs" />
+    <Compile Include="Web\Models\GoogleRadio.cs" />
+    <Compile Include="Web\Models\RadioResp.cs" />
     <Compile Include="Web\Synchronization\GoogleMusicSongEx.cs" />
     <Compile Include="Web\Synchronization\GoogleMusicSynchronizationService.cs" />
     <Compile Include="Web\GoogleMusicWebService.cs" />

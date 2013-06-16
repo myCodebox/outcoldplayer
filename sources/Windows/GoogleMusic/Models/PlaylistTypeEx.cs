@@ -18,6 +18,8 @@ namespace OutcoldSolutions.GoogleMusic.Models
                     return resources.GetString("Model_Genre_Title");
                 case PlaylistType.UserPlaylist:
                     return resources.GetString("Model_UserPlaylist_Title");
+                case PlaylistType.Radio:
+                    return resources.GetString("MainMenu_Radio");
                 default:
                     return null;
             }
@@ -35,6 +37,8 @@ namespace OutcoldSolutions.GoogleMusic.Models
                     return resources.GetString("Model_Genre_Plural_Title");
                 case PlaylistType.UserPlaylist:
                     return resources.GetString("Model_UserPlaylist_Plural_Title");
+                case PlaylistType.Radio:
+                    return resources.GetString("MainMenu_Radio");
                 default:
                     return null;
             }

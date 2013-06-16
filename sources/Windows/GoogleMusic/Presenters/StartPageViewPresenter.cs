@@ -9,8 +9,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using System.Linq;
     using System.Threading.Tasks;
 
-    using Windows.Networking.Connectivity;
-
     using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
@@ -24,6 +22,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using OutcoldSolutions.Views;
 
     using Windows.ApplicationModel;
+    using Windows.Networking.Connectivity;
     using Windows.System;
     using Windows.UI.Popups;
 

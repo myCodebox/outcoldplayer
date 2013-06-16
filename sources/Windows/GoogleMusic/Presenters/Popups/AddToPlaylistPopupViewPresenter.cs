@@ -91,7 +91,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
                 IEnumerable<Tuple<Song, IList<UserPlaylistEntry>>> addingSongs)
             {
                 this.Playlist = userPlaylist;
-                this.SongContainsCount = addingSongs.Count(x => x.Item2.Any(e => e.PlaylistId == userPlaylist.Id));
+                this.SongContainsCount = addingSongs.Count(x => x.Item2.Any(e => e.PlaylistId == userPlaylist.PlaylistId));
             }
 
             public UserPlaylist Playlist { get; set; }

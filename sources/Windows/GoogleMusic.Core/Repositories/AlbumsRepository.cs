@@ -15,7 +15,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
 
     public interface IAlbumsRepository : IPlaylistRepository<Album>
     {
-        Task<IList<Album>> GetArtistAlbumsAsync(int artistId);
+        Task<IList<Album>> GetArtistAlbumsAsync(string artistId);
 
         Task<Album> FindSongAlbumAsync(int songId);
     }
@@ -227,7 +227,7 @@ where (?1 = 1 or x.[OfflineSongsCount] > 0) and s.IsLibrary = 1 and s.[SongId] =
             return await this.Connection.QueryAsync<Album>(sql.ToString(), this.stateService.IsOnline());
         }
 
-        public async Task<IList<Album>> GetArtistAlbumsAsync(int artistId)
+        public async Task<IList<Album>> GetArtistAlbumsAsync(string artistId)
         {
             return await this.Connection.QueryAsync<Album>(SqlArtistAlbums, this.stateService.IsOnline(), artistId);
         }
@@ -251,7 +251,7 @@ where (?1 = 1 or x.[OfflineSongsCount] > 0) and s.IsLibrary = 1 and s.[SongId] =
             return await this.Connection.QueryAsync<Album>(sql.ToString(), this.stateService.IsOnline(), string.Format("%{0}%", searchQueryNorm));
         }
 
-        public async Task<Album> GetAsync(int id)
+        public async Task<Album> GetAsync(string id)
         {
             var sql = new StringBuilder(SqlAllAlbums);
             sql.Append(" and x.[AlbumId] == ?2 ");
@@ -259,7 +259,7 @@ where (?1 = 1 or x.[OfflineSongsCount] > 0) and s.IsLibrary = 1 and s.[SongId] =
             return (await this.Connection.QueryAsync<Album>(sql.ToString(), this.stateService.IsOnline(), id)).FirstOrDefault();
         }
 
-        public async Task<IList<Song>> GetSongsAsync(int id, bool includeAll = false)
+        public async Task<IList<Song>> GetSongsAsync(string id, bool includeAll = false)
         {
             return await this.Connection.QueryAsync<Song>(SqlAlbumsSongs, includeAll || this.stateService.IsOnline(), id);
         }

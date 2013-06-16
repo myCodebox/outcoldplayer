@@ -7,7 +7,7 @@ namespace OutcoldSolutions.GoogleMusic.Models
 
     public interface IPlaylist
     {
-        int Id { get; }
+        string Id { get; }
 
         PlaylistType PlaylistType { get; }
 

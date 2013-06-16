@@ -91,9 +91,11 @@ order by coalesce(nullif(s.AlbumArtistTitleNorm, ''), s.[ArtistTitleNorm]), s.Al
             return await this.Connection.QueryAsync<Genre>(sql.ToString(), this.stateService.IsOnline(), string.Format("%{0}%", searchQueryNorm));
         }
 
-        public async Task<Genre> GetAsync(int id)
+        public async Task<Genre> GetAsync(string id)
         {
-            var query = this.Connection.Table<Genre>().Where(a => a.Id == id);
+            int genreId = int.Parse(id);
+
+            var query = this.Connection.Table<Genre>().Where(a => a.GenreId == genreId);
 
             if (this.stateService.IsOffline())
             {
@@ -103,7 +105,7 @@ order by coalesce(nullif(s.AlbumArtistTitleNorm, ''), s.[ArtistTitleNorm]), s.Al
             return await query.FirstOrDefaultAsync();
         }
 
-        public async Task<IList<Song>> GetSongsAsync(int id, bool includeAll = false)
+        public async Task<IList<Song>> GetSongsAsync(string id, bool includeAll = false)
         {
             return await this.Connection.QueryAsync<Song>(SqlGenreSongs, includeAll || this.stateService.IsOnline(), id);
         }

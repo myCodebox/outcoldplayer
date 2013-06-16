@@ -216,7 +216,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                                            SongId = storedSong.SongId,
                                            ProviderEntryId = a.PlaylistEntryId,
                                            PlaylistOrder = playlist.SongsCount + index,
-                                           PlaylistId = playlist.Id
+                                           PlaylistId = playlist.PlaylistId
                                        };
                         });
 

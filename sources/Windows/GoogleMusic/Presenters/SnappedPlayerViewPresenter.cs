@@ -90,7 +90,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                                    {
                                        var currentSongUpdated =
                                            e.UpdatedSongs.FirstOrDefault(
-                                               s => s.SongId == this.BindingModel.CurrentSong.Metadata.SongId);
+                                               s =>
+                                               string.Equals(
+                                                   s.ProviderSongId,
+                                                   this.BindingModel.CurrentSong.Metadata.ProviderSongId,
+                                                   StringComparison.Ordinal));
 
                                        if (currentSongUpdated != null)
                                        {

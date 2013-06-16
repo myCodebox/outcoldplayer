@@ -5,7 +5,6 @@
 namespace OutcoldSolutions.GoogleMusic.Views
 {
     using System.Collections.Generic;
-    using System.Collections.Specialized;
     using System.Linq;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
@@ -40,7 +39,14 @@ namespace OutcoldSolutions.GoogleMusic.Views
             var playlistBindingModel = e.ClickedItem as PlaylistBindingModel;
             if (playlistBindingModel != null)
             {
-                this.NavigationService.NavigateToPlaylist(playlistBindingModel.Playlist);
+                if (playlistBindingModel.Playlist.PlaylistType == PlaylistType.Radio)
+                {
+                    this.presenter.PlayPlaylist(playlistBindingModel.Playlist);
+                }
+                else
+                {
+                    this.NavigationService.NavigateToPlaylist(playlistBindingModel.Playlist);
+                }
             }
         }
 

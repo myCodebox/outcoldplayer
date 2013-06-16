@@ -162,12 +162,12 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     return await this.mediaStreamDownloadService.GetCachedStreamAsync(storageFile);
                 }
 
-                if (this.predownloadedSong != null && this.predownloadedSong.SongId == song.SongId)
+                if (this.predownloadedSong != null && string.Equals(this.predownloadedSong.ProviderSongId, song.ProviderSongId, StringComparison.Ordinal))
                 {
                     return this.predownloadedStream;
                 }
 
-                if (this.currentDownloadSong != null && this.currentDownloadSong.SongId == song.SongId)
+                if (this.currentDownloadSong != null && string.Equals(this.currentDownloadSong.ProviderSongId, song.ProviderSongId, StringComparison.Ordinal))
                 {
                     return this.currentDownloadStream;
                 }
@@ -210,12 +210,12 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     return;
                 }
 
-                if (this.predownloadedSong != null && this.predownloadedSong.SongId == song.SongId)
+                if (this.predownloadedSong != null && string.Equals(this.predownloadedSong.ProviderSongId, song.ProviderSongId, StringComparison.Ordinal))
                 {
                     return;
                 }
 
-                if (this.currentDownloadSong != null && this.currentDownloadSong.SongId == song.SongId)
+                if (this.currentDownloadSong != null && string.Equals(this.currentDownloadSong.ProviderSongId, song.ProviderSongId, StringComparison.Ordinal))
                 {
                     return;
                 }
