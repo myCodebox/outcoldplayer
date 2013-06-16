@@ -192,7 +192,11 @@ namespace OutcoldSolutions.GoogleMusic
                 var page = (Page)Window.Current.Content;
                 VisualTreeHelperEx.GetVisualChild<Panel>(page).Children.Add(Container.Resolve<MediaElement>());
 
-                MainMenu.Initialize(Container.Resolve<IMainFrame>(), Container.Resolve<IApplicationResources>());
+                MainMenu.Initialize(
+                    Container.Resolve<IMainFrame>(),
+                    Container.Resolve<IApplicationResources>(),
+                    Container.Resolve<IApplicationStateService>(),
+                    Container.Resolve<IEventAggregator>());
                 ApplicationSettingViews.Initialize(Container.Resolve<IApplicationSettingViewsService>(), Container.Resolve<IApplicationResources>());
 
                 Container.Resolve<MediaControlIntegration>();

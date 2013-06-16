@@ -343,6 +343,7 @@
     <Content Include="Resources\outcoldsolutions.png" />
     <Content Include="Resources\playlists.png" />
     <Content Include="Resources\queue.png" />
+    <Content Include="Resources\Radio.png" />
     <Content Include="Resources\twitter-logo.png" />
     <Content Include="Resources\UnknownArt-116.png" />
     <Content Include="Resources\UnknownArt-140.png" />
