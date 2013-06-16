@@ -128,7 +128,9 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         protected virtual IEnumerable<CommandMetadata> GetContextCommands()
         {
             yield return new CommandMetadata(CommandIcon.OpenWith, this.resources.GetString("Toolbar_QueueButton"), this.QueueCommand);
-            if (this.stateService.IsOnline() && this.BindingModel.SelectedItems.Any(x => x.Playlist.OfflineSongsCount != x.Playlist.SongsCount))
+            if (this.stateService.IsOnline() && 
+                (this.BindingModel.SelectedItems.Any(x => x.Playlist.OfflineSongsCount != x.Playlist.SongsCount)
+                || this.BindingModel.SelectedItems.All(x => x.Playlist.SongsCount == 0)))
             {
                 yield return new CommandMetadata(CommandIcon.Pin, this.resources.GetString("Toolbar_KeepLocal"), this.DownloadCommand);
             }
