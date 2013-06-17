@@ -32,5 +32,9 @@ namespace OutcoldSolutions.GoogleMusic.Models
         public Uri ArtUrl { get; set; }
 
         public DateTime LastPlayed { get; set; }
+
+        public string SeedId { get; set; }
+
+        public string SeedType { get; set; }
     }
 }

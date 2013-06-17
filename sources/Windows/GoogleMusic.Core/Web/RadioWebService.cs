@@ -22,7 +22,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
         Task DeleteStationAsync(string id);
 
-        Task RenameStationAsync(string id, string name);
+        Task RenameStationAsync(RadioPlaylist playlist, string name);
     }
 
     public class RadioWebService : IRadioWebService
@@ -65,6 +65,12 @@ namespace OutcoldSolutions.GoogleMusic.Web
                     if (googleRadio.ImageUrl != null && googleRadio.ImageUrl.Length > 0)
                     {
                         radioPlaylist.ArtUrl = new Uri(googleRadio.ImageUrl[0]);
+                    }
+
+                    if (googleRadio.RadioSeedId != null)
+                    {
+                        radioPlaylist.SeedId = googleRadio.RadioSeedId.SeedId;
+                        radioPlaylist.SeedType = googleRadio.RadioSeedId.SeedType;
                     }
 
                     radioPlaylists.Add(radioPlaylist);
@@ -110,12 +116,13 @@ namespace OutcoldSolutions.GoogleMusic.Web
             await this.webService.PostAsync<CommonResponse>(DeleteStation, jsonProperties: jsonProperties);
         }
 
-        public async Task RenameStationAsync(string id, string name)
+        public async Task RenameStationAsync(RadioPlaylist playlist, string name)
         {
             var jsonProperties = new Dictionary<string, string>
                                      {
-                                         { "id", JsonConvert.ToString(id) },
-                                         { "name", JsonConvert.ToString(name) }
+                                         { "id", JsonConvert.ToString(playlist.Id) },
+                                         { "name", JsonConvert.ToString(name) },
+                                         { "radioSeedId", JsonConvert.SerializeObject(new { seedType = playlist.SeedType, seedId = playlist.SeedId }) }
                                      };
 
             await this.webService.PostAsync<CommonResponse>(RenameStation, jsonProperties: jsonProperties);

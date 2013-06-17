@@ -1,49 +1,37 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// Outcold Solutions (http://outcoldman.com)
+// OutcoldSolutions (http://outcoldsolutions.com)
 // --------------------------------------------------------------------------------------------------------------------
-
 namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
 {
     using System;
-    using System.Globalization;
 
-    using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Models;
-    using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Shell;
     using OutcoldSolutions.GoogleMusic.Views.Popups;
+    using OutcoldSolutions.GoogleMusic.Web;
     using OutcoldSolutions.Presenters;
 
-    public interface IPlaylistEditPopupViewPresenter
-    {
-        string Title { get; set; }
-
-        DelegateCommand SaveCommand { get; }
-
-        DelegateCommand CancelCommand { get; }
-    }
-
-    public class PlaylistEditPopupViewPresenter : DisposableViewPresenterBase<IPlaylistEditPopupView>, IPlaylistEditPopupViewPresenter
+    public class RadioEditPopupViewPresenter : DisposableViewPresenterBase<IPlaylistEditPopupView>, IPlaylistEditPopupViewPresenter
     {
         private readonly ISearchService searchService;
-        private readonly IUserPlaylistsService userPlaylistsService;
-        private readonly UserPlaylist userPlaylist;
+        private readonly IRadioWebService radioWebService;
+        private readonly RadioPlaylist radioPlaylist;
 
         private string title;
 
-        public PlaylistEditPopupViewPresenter(
+        private bool isRenaming = false;
+
+        public RadioEditPopupViewPresenter(
             ISearchService searchService,
-            IUserPlaylistsService userPlaylistsService,
-            UserPlaylist userPlaylist)
+            IRadioWebService radioWebService,
+            RadioPlaylist radioPlaylist)
         {
             this.searchService = searchService;
-            this.userPlaylistsService = userPlaylistsService;
-            this.userPlaylist = userPlaylist;
+            this.radioWebService = radioWebService;
+            this.radioPlaylist = radioPlaylist;
             this.SaveCommand = new DelegateCommand(this.Save, this.CanSave);
             this.CancelCommand = new DelegateCommand(this.Cancel);
-            this.Title = this.userPlaylist.PlaylistId > 0
-                       ? this.userPlaylist.Title
-                       : DateTime.Now.ToString(CultureInfo.CurrentCulture);
+            this.Title = radioPlaylist.Title;
         }
 
         public string Title
@@ -78,23 +66,30 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
             this.searchService.SetShowOnKeyboardInput(true);
         }
 
-        private void Save()
+        private async void Save()
         {
-            if (this.userPlaylist.PlaylistId > 0)
+            this.isRenaming = true;
+            this.SaveCommand.RaiseCanExecuteChanged();
+
+            try
             {
-                this.Logger.LogTask(this.userPlaylistsService.ChangeNameAsync(this.userPlaylist, this.Title));
+                await this.radioWebService.RenameStationAsync(this.radioPlaylist, this.Title);
+                this.EventAggregator.Publish(PlaylistsChangeEvent.New(PlaylistType.Radio));
+
+                this.View.Close();
             }
-            else
+            catch (Exception e)
             {
-                this.Logger.LogTask(this.userPlaylistsService.CreateAsync(this.Title));
+                this.Logger.Error(e, "Cannot rename radio station");
             }
             
-            this.View.Close();
+            this.isRenaming = false;
+            this.SaveCommand.RaiseCanExecuteChanged();
         }
 
         private bool CanSave()
         {
-            return !string.IsNullOrEmpty(this.Title);
+            return !string.IsNullOrEmpty(this.Title) && !this.isRenaming;
         }
 
         private void Cancel()

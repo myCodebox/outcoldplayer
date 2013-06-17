@@ -13,7 +13,9 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
+    using OutcoldSolutions.GoogleMusic.Views.Popups;
     using OutcoldSolutions.GoogleMusic.Web;
+    using OutcoldSolutions.Views;
 
     using Windows.UI.Popups;
 
@@ -104,7 +106,10 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private void EditRadioName()
         {
-            throw new System.NotImplementedException();
+            if (this.EditRadioNameCommand.CanExecute())
+            {
+                this.MainFrame.ShowPopup<IRadioEditPopupView>(PopupRegion.AppToolBarLeft, this.BindingModel.SelectedItems[0].Playlist);
+            }
         }
     }
 }

@@ -14,9 +14,13 @@ namespace OutcoldSolutions.GoogleMusic.Views.Popups
     {
     }
 
-    public sealed partial class PlaylistEditPopupView : PopupViewBase, IPlaylistEditPopupView
+    public interface IRadioEditPopupView : IPopupView
     {
-        private PlaylistEditPopupViewPresenter presenter;
+    }
+
+    public sealed partial class PlaylistEditPopupView : PopupViewBase, IPlaylistEditPopupView, IRadioEditPopupView
+    {
+        private IPlaylistEditPopupViewPresenter presenter;
 
         public PlaylistEditPopupView()
         {
@@ -32,7 +36,7 @@ namespace OutcoldSolutions.GoogleMusic.Views.Popups
         {
             base.OnInitialized();
 
-            this.presenter = this.GetPresenter<PlaylistEditPopupViewPresenter>();
+            this.presenter = this.GetPresenter<IPlaylistEditPopupViewPresenter>();
         }
 
         private void TextBoxPlaylistNameKeyUp(object sender, KeyRoutedEventArgs e)
