@@ -72,7 +72,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
             if (radioSongs != null)
             {
-                jsonProperties.Add("track", JsonConvert.SerializeObject(radioSongs.Select(x => new { seedId = x.ProviderSongId, seedType = x.IsLibrary ? "TRACK_LOCKER_ID" : "TRACK_MATCHED_ID" }).ToArray()));
+                // jsonProperties.Add("radioSeedId", JsonConvert.SerializeObject(radioSongs.Select(x => new { seedId = x.ProviderSongId, seedType = x.IsLibrary ? "TRACK_LOCKER_ID" : "TRACK_MATCHED_ID" }).ToArray()));
             }
 
             var radio = await this.webService.PostAsync<FetchRadioFeedResp>(FetchRadioFeed, jsonProperties: jsonProperties);

@@ -34,10 +34,12 @@
             <ScrollViewer Grid.Row="2" Margin="0, 20, 0, 0">
                 <StackPanel>
                     <TextBlock Style="{StaticResource TitleTextStyle}" Margin="0, 10, 0, 0" >
-                    <Run>06/03/2013 - Version 2.2</Run>
+                    <Run>06/17/2013 - Version 2.2</Run>
                     </TextBlock>
                     <RichTextBlock Style="{StaticResource BodyRichTextStyle}">
+                        <Paragraph>[+] All Access Radio Support (Create / Delete / Rename / Listen).</Paragraph>
                         <Paragraph>[+] Improvement in sorting and searching for names with "The" in names / titles (e.g. "The Prodigy" is equal to "Prodigy").</Paragraph>
+                        <Paragraph>[b] App can crush after adding songs in existing queue.</Paragraph>
                     </RichTextBlock>
                     
                     <TextBlock Style="{StaticResource TitleTextStyle}" Margin="0, 10, 0, 0" >
