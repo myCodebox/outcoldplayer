@@ -26,8 +26,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
 
             this.BindingModel = bindingModel;
 
-            this.RepeatAllCommand = new DelegateCommand(() => { }, () => this.queueService.State != QueueState.Busy);
-            this.ShuffleCommand = new DelegateCommand(() => { }, () => this.queueService.State != QueueState.Busy);
+            this.RepeatAllCommand = new DelegateCommand(() => { }, () => this.queueService.State != QueueState.Busy && !queueService.IsRadio);
+            this.ShuffleCommand = new DelegateCommand(() => { }, () => this.queueService.State != QueueState.Busy && !queueService.IsRadio);
             this.ShowApplicationSettingsCommand = new DelegateCommand(async () =>
             {
                 await this.Dispatcher.RunAsync(() => this.applicationSettingViewsService.Show());

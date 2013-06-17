@@ -5,7 +5,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 {
     using System;
     using System.Linq;
-    using System.Reactive.Linq;
 
     using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.BindingModels;
@@ -20,6 +19,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     {
         private readonly IPlayQueueService queueService;
 
+        private bool isRadio = false;
+
         public SnappedPlayerViewPresenter(
             IMediaElementContainer mediaElementContainer, 
             IGoogleMusicSessionService sessionService, 
@@ -29,16 +30,17 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             : base(mediaElementContainer, sessionService, queueService, navigationService, snappedPlayerBindingModel)
         {
             this.queueService = queueService;
+            this.isRadio = this.queueService.IsRadio;
 
             this.RepeatAllCommand =
                 new DelegateCommand(
                     () => { },
-                    () => this.queueService.State != QueueState.Busy);
+                    () => this.queueService.State != QueueState.Busy && !this.isRadio);
 
             this.ShuffleCommand =
                 new DelegateCommand(
                     () => { },
-                    () => this.queueService.State != QueueState.Busy);
+                    () => this.queueService.State != QueueState.Busy && !this.isRadio);
 
             this.AddToQueueCommand = new DelegateCommand(
                 () =>
@@ -51,8 +53,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
             this.queueService.StateChanged += async (sender, args) => await this.Dispatcher.RunAsync(async () => 
                 {
-                    this.RepeatAllCommand.RaiseCanExecuteChanged();
-                    this.ShuffleCommand.RaiseCanExecuteChanged();
+                    this.UpdateCommands();
 
                     await this.View.ScrollIntoCurrentSongAsync();
                 });
@@ -78,9 +79,13 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     async (e) => await this.Dispatcher.RunAsync(
                         () =>
                             {
+                                this.isRadio = e.IsRadio;
+
                                 this.BindingModel.SongsBindingModel.SetCollection(e.SongsQueue);
                                 this.BindingModel.IsQueueEmpty = this.BindingModel.SongsBindingModel.Songs == null
                                                                  || this.BindingModel.SongsBindingModel.Songs.Count == 0;
+
+                                this.UpdateCommands();
                             }));
 
             this.EventAggregator.GetEvent<SongsUpdatedEvent>()
@@ -102,6 +107,12 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                                        }
                                    }
                                }));
+        }
+
+        private void UpdateCommands()
+        {
+            this.RepeatAllCommand.RaiseCanExecuteChanged();
+            this.ShuffleCommand.RaiseCanExecuteChanged();
         }
     }
 }

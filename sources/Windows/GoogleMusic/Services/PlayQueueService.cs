@@ -136,6 +136,14 @@ namespace OutcoldSolutions.GoogleMusic.Services
             }
         }
 
+        public bool IsRadio
+        {
+            get
+            {
+                return this.currentPlaylist != null && this.currentPlaylist.PlaylistType == PlaylistType.Radio;
+            }
+        }
+
         public QueueState State
         {
             get
@@ -648,7 +656,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         private void RaiseQueueChanged()
         {
-            this.eventAggregator.Publish(new QueueChangeEvent(this.IsShuffled, this.IsRepeatAll, this.songsQueue));
+            this.eventAggregator.Publish(new QueueChangeEvent(this.IsShuffled, this.IsRepeatAll, this.IsRadio, this.songsQueue));
 
             var handler = this.QueueChanged;
             if (handler != null)
