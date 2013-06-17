@@ -23,6 +23,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         bool IsRadio { get; }
 
+        IPlaylist CurrentPlaylist { get; }
+
         QueueState State { get; }
 
         Task PlayAsync(IPlaylist playlist);

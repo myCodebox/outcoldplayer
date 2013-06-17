@@ -22,6 +22,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     public class RadioPageViewPresenter : PlaylistsPageViewPresenterBase<IRadioPageView, PlaylistsPageViewBindingModel>
     {
         private readonly IApplicationResources resources;
+        private readonly INavigationService navigationService;
+        private readonly IPlayQueueService playQueueService;
         private readonly IRadioWebService radioWebService;
 
         public RadioPageViewPresenter(
@@ -35,6 +37,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             : base(resources, playlistsService, navigationService, playQueueService, cachingService, stateService)
         {
             this.resources = resources;
+            this.navigationService = navigationService;
+            this.playQueueService = playQueueService;
             this.radioWebService = radioWebService;
             this.EditRadioNameCommand = new DelegateCommand(this.EditRadioName, () => this.BindingModel.SelectedItems.Count == 1);
             this.DeleteRadioCommand = new DelegateCommand(this.DeleteRadio, () => this.BindingModel.SelectedItems.Count > 0);
@@ -48,7 +52,18 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         {
             if (this.PlayCommand.CanExecute(playlist))
             {
-                this.PlayCommand.Execute(playlist);
+                var currentPlaylist = this.playQueueService.CurrentPlaylist;
+
+                if (currentPlaylist != null 
+                    && currentPlaylist.PlaylistType == PlaylistType.Radio
+                    && string.Equals(currentPlaylist.Id, playlist.Id, StringComparison.Ordinal))
+                {
+                    this.navigationService.NavigateTo<ICurrentPlaylistPageView>();
+                }
+                else
+                {
+                    this.PlayCommand.Execute(playlist);
+                }
             }
         }
 

@@ -36,8 +36,6 @@ namespace OutcoldSolutions.GoogleMusic.Services
         private IRandomAccessStream currentSongStream;
         private int currentQueueIndex; // From queueOrder
 
-        private IPlaylist currentPlaylist;
-
         private QueueState state;
 
         private bool isShuffled;
@@ -140,9 +138,11 @@ namespace OutcoldSolutions.GoogleMusic.Services
         {
             get
             {
-                return this.currentPlaylist != null && this.currentPlaylist.PlaylistType == PlaylistType.Radio;
+                return this.CurrentPlaylist != null && this.CurrentPlaylist.PlaylistType == PlaylistType.Radio;
             }
         }
+
+        public IPlaylist CurrentPlaylist { get; private set; }
 
         public QueueState State
         {
@@ -204,7 +204,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     throw new InvalidOperationException("Queue is busy");
                 }
 
-                this.currentPlaylist = playlist;
+                this.CurrentPlaylist = playlist;
                 this.songsQueue.Clear();
                 this.songsQueue.AddRange(songs);
 
@@ -254,7 +254,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             {
                 await this.mediaElement.PlayAsync();
                 this.State = QueueState.Play;
-                this.logger.LogTask(this.publisherService.PublishAsync(this.songsQueue[this.CurrentSongIndex], this.currentPlaylist));
+                this.logger.LogTask(this.publisherService.PublishAsync(this.songsQueue[this.CurrentSongIndex], this.CurrentPlaylist));
             }
             else
             {
@@ -345,7 +345,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
             await Task.Run(() =>
             {
-                this.currentPlaylist = null;
+                this.CurrentPlaylist = null;
 
                 var addedSongs = songs.ToList();
                 
@@ -394,7 +394,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
                 if (collection.Count > 0)
                 {
-                    this.currentPlaylist = null;
+                    this.CurrentPlaylist = null;
 
                     bool currentSongChanged = false;
 
@@ -533,7 +533,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
                             this.State = QueueState.Play;
 
-                            this.logger.LogTask(this.publisherService.PublishAsync(song, this.currentPlaylist));
+                            this.logger.LogTask(this.publisherService.PublishAsync(song, this.CurrentPlaylist));
                         }
                         else
                         {
@@ -672,7 +672,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             this.songsQueue.Clear();
             this.currentQueueIndex = -1;
             this.currentSongStream = null;
-            this.currentPlaylist = null;
+            this.CurrentPlaylist = null;
             this.RaiseQueueChanged();
         }
     }
