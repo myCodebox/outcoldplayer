@@ -130,7 +130,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
                 if (this.BindingModel.SongsBindingModel.SelectedItems.Count == 1)
                 {
-                    yield return new CommandMetadata(CommandIcon.MusicInfo, this.resources.GetString("Toolbar_StartRadio"), this.StartRadioCommand);
+                    yield return new CommandMetadata(CommandIcon.MusicInfo, this.resources.GetString("s"), this.StartRadioCommand);
                 }
             }
 
@@ -229,20 +229,28 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 {
                     try
                     {
-                        var radioResp = await this.radioWebService.CreateStationAsync(
-                        songBindingModel.Metadata.ProviderSongId,
-                        songBindingModel.Metadata.IsLibrary ? "TRACK_LOCKER_ID" : "TRACK_MATCHED_ID",
-                        songBindingModel.Metadata.Title);
+                        this.IsDataLoading = true;
+
+                        var radioResp =
+                            await this.radioWebService.CreateStationAsync(
+                                songBindingModel.Metadata.ProviderSongId,
+                                songBindingModel.Metadata.IsLibrary ? "TRACK_LOCKER_ID" : "TRACK_MATCHED_ID",
+                                songBindingModel.Metadata.Title);
 
                         if (radioResp != null)
                         {
                             await this.playQueueService.PlayAsync(radioResp.Item1, radioResp.Item2, -1);
+                            this.IsDataLoading = false;
                             this.navigationService.NavigateTo<ICurrentPlaylistPageView>();
                         }
                     }
                     catch (Exception e)
                     {
                         this.Logger.Error(e, "Cannot start radio");
+                    }
+                    finally
+                    {
+                        this.IsDataLoading = false;
                     }
                 }
             }
