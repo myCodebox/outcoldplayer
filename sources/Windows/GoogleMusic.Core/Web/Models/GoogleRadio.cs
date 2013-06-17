@@ -3,7 +3,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Web.Models
 {
-    public class GoogleRadio
+    public class GoogleRadio : CommonResponse
     {
         public string Id { get; set; }
 

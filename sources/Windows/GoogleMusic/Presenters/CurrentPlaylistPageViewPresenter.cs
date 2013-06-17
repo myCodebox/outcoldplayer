@@ -236,16 +236,19 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
             yield return new CommandMetadata(CommandIcon.Remove, this.resources.GetString("Toolbar_QueueButton"), this.RemoveSelectedSongCommand);
 
-            if (this.BindingModel.SelectedItems.Any(x => !x.IsCached))
+            if (!this.playQueueService.IsRadio)
             {
-                if (this.stateService.IsOnline())
+                if (this.BindingModel.SelectedItems.Any(x => !x.IsCached))
                 {
-                    yield return new CommandMetadata(CommandIcon.Pin, this.resources.GetString("Toolbar_KeepLocal"), this.DownloadCommand);
+                    if (this.stateService.IsOnline())
+                    {
+                        yield return new CommandMetadata(CommandIcon.Pin, this.resources.GetString("Toolbar_KeepLocal"), this.DownloadCommand);
+                    }
                 }
-            }
-            else
-            {
-                yield return new CommandMetadata(CommandIcon.UnPin, this.resources.GetString("Toolbar_RemoveLocal"), this.UnPinCommand);
+                else
+                {
+                    yield return new CommandMetadata(CommandIcon.UnPin, this.resources.GetString("Toolbar_RemoveLocal"), this.UnPinCommand);
+                }
             }
         }
     }

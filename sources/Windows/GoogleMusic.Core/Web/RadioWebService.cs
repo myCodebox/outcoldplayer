@@ -23,6 +23,8 @@ namespace OutcoldSolutions.GoogleMusic.Web
         Task DeleteStationAsync(string id);
 
         Task RenameStationAsync(RadioPlaylist playlist, string name);
+
+        Task<RadioPlaylist> CreateStationAsync(string seedId, string seedType, string name);
     }
 
     public class RadioWebService : IRadioWebService
@@ -31,6 +33,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
         private const string FetchRadioFeed = "/music/services/radio/fetchradiofeed?u=0";
         private const string DeleteStation = "/music/services/radio/deletestation";
         private const string RenameStation = "/music/services/radio/renamestation";
+        private const string CreateStation = "/music/services/radio/createstation?u=0";
 
         private readonly IGoogleMusicWebService webService;
 
@@ -54,25 +57,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
             {
                 foreach (var googleRadio in resp.MyStation)
                 {
-                    var radioPlaylist = new RadioPlaylist()
-                                            {
-                                                Id = googleRadio.Id,
-                                                Title = googleRadio.Name,
-                                                TitleNorm = googleRadio.Name.Normalize(),
-                                                LastPlayed = DateTimeExtensions.FromUnixFileTime(googleRadio.RecentTimestamp / 1000)
-                                            };
-
-                    if (googleRadio.ImageUrl != null && googleRadio.ImageUrl.Length > 0)
-                    {
-                        radioPlaylist.ArtUrl = new Uri(googleRadio.ImageUrl[0]);
-                    }
-
-                    if (googleRadio.RadioSeedId != null)
-                    {
-                        radioPlaylist.SeedId = googleRadio.RadioSeedId.SeedId;
-                        radioPlaylist.SeedType = googleRadio.RadioSeedId.SeedType;
-                    }
-
+                    var radioPlaylist = this.ConvertToPlaylist(googleRadio);
                     radioPlaylists.Add(radioPlaylist);
                 }
             }
@@ -126,6 +111,44 @@ namespace OutcoldSolutions.GoogleMusic.Web
                                      };
 
             await this.webService.PostAsync<CommonResponse>(RenameStation, jsonProperties: jsonProperties);
+        }
+
+        public async Task<RadioPlaylist> CreateStationAsync(string seedId, string seedType, string name)
+        {
+            var jsonProperties = new Dictionary<string, string>
+                                     {
+                                         { "seedId", JsonConvert.ToString(seedId) },
+                                         { "seedType", JsonConvert.ToString(seedType) },
+                                         { "name", JsonConvert.ToString(name) }
+                                     };
+
+            var radioResp = await this.webService.PostAsync<GoogleRadio>(CreateStation, jsonProperties: jsonProperties);
+
+            return this.ConvertToPlaylist(radioResp);
+        }
+
+        private RadioPlaylist ConvertToPlaylist(GoogleRadio googleRadio)
+        {
+            var radioPlaylist = new RadioPlaylist()
+            {
+                Id = googleRadio.Id,
+                Title = googleRadio.Name,
+                TitleNorm = googleRadio.Name.Normalize(),
+                LastPlayed = DateTimeExtensions.FromUnixFileTime(googleRadio.RecentTimestamp / 1000)
+            };
+
+            if (googleRadio.ImageUrl != null && googleRadio.ImageUrl.Length > 0)
+            {
+                radioPlaylist.ArtUrl = new Uri(googleRadio.ImageUrl[0]);
+            }
+
+            if (googleRadio.RadioSeedId != null)
+            {
+                radioPlaylist.SeedId = googleRadio.RadioSeedId.SeedId;
+                radioPlaylist.SeedType = googleRadio.RadioSeedId.SeedType;
+            }
+
+            return radioPlaylist;
         }
     }
 }
