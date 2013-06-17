@@ -24,7 +24,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
         Task RenameStationAsync(RadioPlaylist playlist, string name);
 
-        Task<RadioPlaylist> CreateStationAsync(string seedId, string seedType, string name);
+        Task<Tuple<RadioPlaylist, IList<Song>>> CreateStationAsync(string seedId, string seedType, string name);
     }
 
     public class RadioWebService : IRadioWebService
@@ -67,32 +67,17 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
         public async Task<IList<Song>> GetRadioSongsAsync(string id)
         {
-            List<Song> songs = new List<Song>();
-
             var jsonProperties = new Dictionary<string, string> { { "id", JsonConvert.ToString(id) } };
             var radio = await this.webService.PostAsync<FetchRadioFeedResp>(FetchRadioFeed, jsonProperties: jsonProperties);
 
+            IList<Song> songs = null;
+
             if (radio != null && radio.Track != null)
             {
-                foreach (var track in radio.Track)
-                {
-                    Song song = null;
-                    if (!string.Equals(track.Type, "EPHEMERAL_SUBSCRIPTION", StringComparison.OrdinalIgnoreCase))
-                    {
-                        song = await this.songsRepository.FindSongAsync(track.Id);
-                    }
-
-                    if (song == null)
-                    {
-                        song = track.ToSong();
-                        song.IsLibrary = false;
-                    }
-
-                    songs.Add(song);
-                }
+                songs = await this.GetSongsAsync(radio);
             }
 
-            return songs;
+            return songs ?? new List<Song>();
         }
 
         public async Task DeleteStationAsync(string id)
@@ -113,7 +98,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
             await this.webService.PostAsync<CommonResponse>(RenameStation, jsonProperties: jsonProperties);
         }
 
-        public async Task<RadioPlaylist> CreateStationAsync(string seedId, string seedType, string name)
+        public async Task<Tuple<RadioPlaylist, IList<Song>>> CreateStationAsync(string seedId, string seedType, string name)
         {
             var jsonProperties = new Dictionary<string, string>
                                      {
@@ -122,9 +107,23 @@ namespace OutcoldSolutions.GoogleMusic.Web
                                          { "name", JsonConvert.ToString(name) }
                                      };
 
-            var radioResp = await this.webService.PostAsync<GoogleRadio>(CreateStation, jsonProperties: jsonProperties);
+            var radioResp = await this.webService.PostAsync<FetchRadioFeedResp>(CreateStation, jsonProperties: jsonProperties);
 
-            return this.ConvertToPlaylist(radioResp);
+            if (radioResp.Success.HasValue && !radioResp.Success.Value)
+            {
+                return null;
+            }
+
+            RadioPlaylist playlist = new RadioPlaylist()
+                                         {
+                                             Id = radioResp.Id,
+                                             Title = name,
+                                             TitleNorm = name.Normalize(),
+                                             SeedId = seedId,
+                                             SeedType = seedType
+                                         };
+
+            return Tuple.Create(playlist, await this.GetSongsAsync(radioResp));
         }
 
         private RadioPlaylist ConvertToPlaylist(GoogleRadio googleRadio)
@@ -149,6 +148,30 @@ namespace OutcoldSolutions.GoogleMusic.Web
             }
 
             return radioPlaylist;
+        }
+
+        private async Task<IList<Song>> GetSongsAsync(FetchRadioFeedResp radio)
+        {
+            List<Song> songs = new List<Song>();
+
+            foreach (var track in radio.Track)
+            {
+                Song song = null;
+                if (!string.Equals(track.Type, "EPHEMERAL_SUBSCRIPTION", StringComparison.OrdinalIgnoreCase))
+                {
+                    song = await this.songsRepository.FindSongAsync(track.Id);
+                }
+
+                if (song == null)
+                {
+                    song = track.ToSong();
+                    song.IsLibrary = false;
+                }
+
+                songs.Add(song);
+            }
+
+            return songs;
         }
     }
 }

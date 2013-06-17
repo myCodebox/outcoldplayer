@@ -26,6 +26,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
         private readonly ICachedAlbumArtsRepository cachedAlbumArtsRepository;
 
         private readonly SemaphoreSlim semaphoreSlim = new SemaphoreSlim(2);
+        private readonly SemaphoreSlim initializationSemaphore = new SemaphoreSlim(1);
         private readonly ConcurrentDictionary<CachedKey, Task<CachedAlbumArt>> downloadTasks = new ConcurrentDictionary<CachedKey, Task<CachedAlbumArt>>();
         private readonly HttpClient httpClient = new HttpClient();
         private StorageFolder cacheFolder;
@@ -97,7 +98,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 }
                 finally
                 {
-                    this.semaphoreSlim.Release();
+                    this.semaphoreSlim.Release(1);
                 }
             }
 
@@ -121,12 +122,21 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         private async Task InitializeCacheFolderAsync()
         {
-            if (this.cacheFolder == null)
+            await this.initializationSemaphore.WaitAsync().ConfigureAwait(continueOnCapturedContext: false);
+
+            try
             {
-                var localFolder = ApplicationData.Current.LocalFolder;
-                this.cacheFolder =
-                    await localFolder.CreateFolderAsync(AlbumArtCacheFolder, CreationCollisionOption.OpenIfExists);
-                this.DeleteRemovedItems();
+                if (this.cacheFolder == null)
+                {
+                    var localFolder = ApplicationData.Current.LocalFolder;
+                    this.cacheFolder =
+                        await localFolder.CreateFolderAsync(AlbumArtCacheFolder, CreationCollisionOption.OpenIfExists);
+                    this.DeleteRemovedItems();
+                }
+            }
+            finally
+            {
+                this.initializationSemaphore.Release(1);
             }
         }
 

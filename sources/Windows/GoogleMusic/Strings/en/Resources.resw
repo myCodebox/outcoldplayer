@@ -637,6 +637,9 @@ But it will contains all additional features, which we will ship in future. For 
     <value>Show All</value>
     <comment>16.png</comment>
   </data>
+  <data name="Toolbar_StartRadio" xml:space="preserve">
+    <value>Start radio</value>
+  </data>
   <data name="Update_MessageBox_Updates_CancelButton" xml:space="preserve">
     <value>Cancel</value>
   </data>

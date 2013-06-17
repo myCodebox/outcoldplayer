@@ -28,5 +28,7 @@ namespace OutcoldSolutions.GoogleMusic
         public const string Pin = "PinAppBarButtonStyle";
 
         public const string UnPin = "UnPinAppBarButtonStyle";
+
+        public const string MusicInfo = "MusicInfoAppBarButtonStyle";
     }
 }
