@@ -392,6 +392,8 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
             public bool IsReady { get; private set; }
 
+            public bool IsFailed { get; private set; }
+
             public string ContentType { get; private set; }
 
             public bool CanRead
@@ -654,6 +656,8 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 }
                 catch (HttpRequestException exception)
                 {
+                    this.IsFailed = true;
+
                     if (exception.InnerException is IOException)
                     {
                         this.logger.Debug(exception, "SafeDownloadStream: HttpRequestException.");
@@ -665,15 +669,21 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 }
                 catch (IOException exception)
                 {
+                    this.IsFailed = true;
+
                     this.logger.Debug(exception, "SafeDownloadStream: IOException.");
                 }
                 catch (OperationCanceledException exception)
                 {
+                    this.IsFailed = true;
+
                     this.logger.Debug(exception, "SafeDownloadStream: Downloading task was canceled.");
                     throw;
                 }
                 catch (Exception exception)
                 {
+                    this.IsFailed = true;
+
                     if (cancellationToken.IsCancellationRequested)
                     {
                         this.logger.Debug(exception, "SafeDownloadStream: Downloading task was canceled .");
@@ -775,6 +785,8 @@ namespace OutcoldSolutions.GoogleMusic.Web
             }
 
             public bool IsReady { get; private set; }
+
+            public bool IsFailed { get; private set; }
 
             public void Dispose()
             {
@@ -951,6 +963,8 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 }
                 catch (HttpRequestException exception)
                 {
+                    this.IsFailed = true;
+
                     if (exception.InnerException is IOException)
                     {
                         this.logger.Debug(exception, "MemoryRandomAccessStreamMultiStreams.SafeDownloadStream: HttpRequestException.");
@@ -962,15 +976,21 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 }
                 catch (IOException exception)
                 {
+                    this.IsFailed = true;
+
                     this.logger.Debug(exception, "MemoryRandomAccessStreamMultiStreams.SafeDownloadStream: IOException.");
                 }
                 catch (OperationCanceledException exception)
                 {
+                    this.IsFailed = true;
+
                     this.logger.Debug(exception, "MemoryRandomAccessStreamMultiStreams.SafeDownloadStream: Downloading task was canceled.");
                     throw;
                 }
                 catch (Exception exception)
                 {
+                    this.IsFailed = true;
+
                     if (token.IsCancellationRequested)
                     {
                         this.logger.Debug(exception, "MemoryRandomAccessStreamMultiStreams.SafeDownloadStream: Downloading task was canceled .");

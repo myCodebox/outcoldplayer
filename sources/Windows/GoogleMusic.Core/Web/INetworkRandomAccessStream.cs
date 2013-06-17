@@ -15,6 +15,8 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
         bool IsReady { get; }
 
+        bool IsFailed { get; }
+
         Task DownloadAsync();
 
         Task SaveToFileAsync(IStorageFile file);

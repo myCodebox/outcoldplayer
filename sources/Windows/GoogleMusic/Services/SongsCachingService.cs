@@ -162,12 +162,14 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     return await this.mediaStreamDownloadService.GetCachedStreamAsync(storageFile);
                 }
 
-                if (this.predownloadedSong != null && string.Equals(this.predownloadedSong.ProviderSongId, song.ProviderSongId, StringComparison.Ordinal))
+                if (this.predownloadedSong != null && string.Equals(this.predownloadedSong.ProviderSongId, song.ProviderSongId, StringComparison.Ordinal) 
+                    && this.predownloadedStream != null && !this.predownloadedStream.IsFailed)
                 {
                     return this.predownloadedStream;
                 }
 
-                if (this.currentDownloadSong != null && string.Equals(this.currentDownloadSong.ProviderSongId, song.ProviderSongId, StringComparison.Ordinal))
+                if (this.currentDownloadSong != null && string.Equals(this.currentDownloadSong.ProviderSongId, song.ProviderSongId, StringComparison.Ordinal)
+                    && this.currentDownloadStream != null && !this.currentDownloadStream.IsFailed)
                 {
                     return this.currentDownloadStream;
                 }
@@ -210,12 +212,14 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     return;
                 }
 
-                if (this.predownloadedSong != null && string.Equals(this.predownloadedSong.ProviderSongId, song.ProviderSongId, StringComparison.Ordinal))
+                if (this.predownloadedSong != null && string.Equals(this.predownloadedSong.ProviderSongId, song.ProviderSongId, StringComparison.Ordinal)
+                    && this.predownloadedStream != null && !this.predownloadedStream.IsFailed)
                 {
                     return;
                 }
 
-                if (this.currentDownloadSong != null && string.Equals(this.currentDownloadSong.ProviderSongId, song.ProviderSongId, StringComparison.Ordinal))
+                if (this.currentDownloadSong != null && string.Equals(this.currentDownloadSong.ProviderSongId, song.ProviderSongId, StringComparison.Ordinal)
+                     && this.currentDownloadStream != null && !this.currentDownloadStream.IsFailed)
                 {
                     return;
                 }
