@@ -100,7 +100,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
         {
             get
             {
-                return this.isShuffled;
+                return this.isShuffled && !this.IsRadio;
             }
             
             set
@@ -124,7 +124,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
         {
             get
             {
-                return this.isRepeatAll;
+                return this.isRepeatAll && !this.IsRadio;
             }
             
             set
@@ -209,6 +209,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 }
 
                 this.CurrentPlaylist = playlist;
+
                 this.songsQueue.Clear();
                 this.songsQueue.AddRange(songs);
 
@@ -358,7 +359,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
                 var addedSongs = songs.ToList();
 
-                var range = Enumerable.Range(this.songsQueue.Count, this.songsQueue.Count + addedSongs.Count);
+                var range = Enumerable.Range(this.songsQueue.Count, addedSongs.Count);
                 this.songsQueue.AddRange(addedSongs);
 
                 if (this.IsShuffled)
