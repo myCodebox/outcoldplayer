@@ -31,17 +31,20 @@ namespace OutcoldSolutions.GoogleMusic.Services
         private readonly ILogger logger;
         private readonly IPlaylistsWebService webService;
         private readonly IUserPlaylistsRepository repository;
+        private readonly ISongsRepository songsRepository;
         private readonly IEventAggregator eventAggregator;
 
         public UserPlaylistsService(
             ILogManager logManager,
             IPlaylistsWebService webService,
             IUserPlaylistsRepository repository,
+            ISongsRepository songsRepository,
             IEventAggregator eventAggregator)
         {
             this.logger = logManager.CreateLogger("UserPlaylistsService");
             this.webService = webService;
             this.repository = repository;
+            this.songsRepository = songsRepository;
             this.eventAggregator = eventAggregator;
         }
 
@@ -206,21 +209,31 @@ namespace OutcoldSolutions.GoogleMusic.Services
                         playlist.ProviderPlaylistId);
                 }
 
-                var userPlaylistEntries = result.SongIds.Select(
-                    (a, index) =>
-                        {
-                            var storedSong = list.FirstOrDefault(x => string.Equals(x.ProviderSongId, a.SongId, StringComparison.OrdinalIgnoreCase));
+                IList<UserPlaylistEntry> entries = new List<UserPlaylistEntry>();
 
-                            return new UserPlaylistEntry()
-                                       {
-                                           SongId = storedSong.SongId,
-                                           ProviderEntryId = a.PlaylistEntryId,
-                                           PlaylistOrder = playlist.SongsCount + index,
-                                           PlaylistId = playlist.PlaylistId
-                                       };
-                        });
+                int index = 0;
 
-                await this.repository.InsertEntriesAsync(userPlaylistEntries);
+                foreach (var songIdResp in result.SongIds)
+                {
+                    var storedSong = list.FirstOrDefault(x => string.Equals(x.ProviderSongId, songIdResp.SongId, StringComparison.OrdinalIgnoreCase));
+
+                    if (storedSong.SongId <= 0)
+                    {
+                        await this.songsRepository.InsertAsync(new[] { storedSong });
+                    }
+
+                    entries.Add(new UserPlaylistEntry()
+                    {
+                        SongId = storedSong.SongId,
+                        ProviderEntryId = songIdResp.PlaylistEntryId,
+                        PlaylistOrder = playlist.SongsCount + index,
+                        PlaylistId = playlist.PlaylistId
+                    });
+
+                    index++;
+                }
+
+                await this.repository.InsertEntriesAsync(entries);
 
                 return true;
             }

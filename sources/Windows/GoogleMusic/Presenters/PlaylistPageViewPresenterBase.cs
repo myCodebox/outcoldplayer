@@ -130,7 +130,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
                 if (this.BindingModel.SongsBindingModel.SelectedItems.Count == 1)
                 {
-                    yield return new CommandMetadata(CommandIcon.MusicInfo, this.resources.GetString("s"), this.StartRadioCommand);
+                    yield return new CommandMetadata(CommandIcon.MusicInfo, this.resources.GetString("Toolbar_StartRadio"), this.StartRadioCommand);
                 }
             }
 
