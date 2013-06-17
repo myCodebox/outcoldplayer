@@ -26,6 +26,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
         private readonly ICurrentSongPublisherService publisherService;
         private readonly INotificationService notificationService;
         private readonly IPlaylistsService playlistsService;
+        private readonly IRadioWebService radioWebService;
+
         private readonly IEventAggregator eventAggregator;
 
         private readonly List<Song> songsQueue = new List<Song>();
@@ -52,6 +54,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             INotificationService notificationService,
             IGoogleMusicSessionService sessionService,
             IPlaylistsService playlistsService,
+            IRadioWebService radioWebService,
             IEventAggregator eventAggregator)
         {
             this.logger = logManager.CreateLogger("PlayQueueService");
@@ -62,6 +65,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             this.publisherService = publisherService;
             this.notificationService = notificationService;
             this.playlistsService = playlistsService;
+            this.radioWebService = radioWebService;
             this.eventAggregator = eventAggregator;
             this.currentQueueIndex = -1;
 
@@ -336,7 +340,12 @@ namespace OutcoldSolutions.GoogleMusic.Services
             }
         }
 
-        public async Task AddRangeAsync(IEnumerable<Song> songs)
+        public Task AddRangeAsync(IEnumerable<Song> songs)
+        {
+            return this.AddRangeAsync(null, songs);
+        }
+
+        public async Task AddRangeAsync(IPlaylist playlist, IEnumerable<Song> songs)
         {
             if (songs == null)
             {
@@ -345,10 +354,10 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
             await Task.Run(() =>
             {
-                this.CurrentPlaylist = null;
+                this.CurrentPlaylist = playlist;
 
                 var addedSongs = songs.ToList();
-                
+
                 var range = Enumerable.Range(this.songsQueue.Count, this.songsQueue.Count + addedSongs.Count);
                 this.songsQueue.AddRange(addedSongs);
 
@@ -534,6 +543,19 @@ namespace OutcoldSolutions.GoogleMusic.Services
                             this.State = QueueState.Play;
 
                             this.logger.LogTask(this.publisherService.PublishAsync(song, this.CurrentPlaylist));
+
+                            if (this.IsRadio && !this.CanSwitchToNext())
+                            {
+                                try
+                                {
+                                    var newRadioSongs = await this.radioWebService.GetRadioSongsAsync(this.CurrentPlaylist.Id, this.songsQueue);
+                                    await this.AddRangeAsync(this.CurrentPlaylist, newRadioSongs);
+                                }
+                                catch (Exception e)
+                                {
+                                    this.logger.Error(e, "Cannot fetch next songs for radio");
+                                }
+                            }
                         }
                         else
                         {

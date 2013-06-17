@@ -5,6 +5,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
 
     using Newtonsoft.Json;
@@ -18,13 +19,13 @@ namespace OutcoldSolutions.GoogleMusic.Web
     {
         Task<IList<RadioPlaylist>> GetAllAsync();
 
-        Task<IList<Song>> GetRadioSongsAsync(string id);
+        Task<IList<Song>> GetRadioSongsAsync(string id, IList<Song> songs = null);
 
         Task DeleteStationAsync(string id);
 
         Task RenameStationAsync(RadioPlaylist playlist, string name);
 
-        Task<Tuple<RadioPlaylist, IList<Song>>> CreateStationAsync(string seedId, string seedType, string name);
+        Task<Tuple<RadioPlaylist, IList<Song>>> CreateStationAsync(Song song);
     }
 
     public class RadioWebService : IRadioWebService
@@ -65,9 +66,15 @@ namespace OutcoldSolutions.GoogleMusic.Web
             return radioPlaylists;
         }
 
-        public async Task<IList<Song>> GetRadioSongsAsync(string id)
+        public async Task<IList<Song>> GetRadioSongsAsync(string id, IList<Song> radioSongs = null)
         {
             var jsonProperties = new Dictionary<string, string> { { "id", JsonConvert.ToString(id) } };
+
+            if (radioSongs != null)
+            {
+                jsonProperties.Add("track", JsonConvert.SerializeObject(radioSongs.Select(x => new { seedId = x.ProviderSongId, seedType = x.IsLibrary ? "TRACK_LOCKER_ID" : "TRACK_MATCHED_ID" }).ToArray()));
+            }
+
             var radio = await this.webService.PostAsync<FetchRadioFeedResp>(FetchRadioFeed, jsonProperties: jsonProperties);
 
             IList<Song> songs = null;
@@ -98,13 +105,16 @@ namespace OutcoldSolutions.GoogleMusic.Web
             await this.webService.PostAsync<CommonResponse>(RenameStation, jsonProperties: jsonProperties);
         }
 
-        public async Task<Tuple<RadioPlaylist, IList<Song>>> CreateStationAsync(string seedId, string seedType, string name)
+        public async Task<Tuple<RadioPlaylist, IList<Song>>> CreateStationAsync(Song song)
         {
+            var seedType = song.IsLibrary ? "TRACK_LOCKER_ID" : "TRACK_MATCHED_ID";
+            var seedId = song.ProviderSongId;
+
             var jsonProperties = new Dictionary<string, string>
                                      {
                                          { "seedId", JsonConvert.ToString(seedId) },
                                          { "seedType", JsonConvert.ToString(seedType) },
-                                         { "name", JsonConvert.ToString(name) }
+                                         { "name", JsonConvert.ToString(song.Title) }
                                      };
 
             var radioResp = await this.webService.PostAsync<FetchRadioFeedResp>(CreateStation, jsonProperties: jsonProperties);
@@ -117,8 +127,8 @@ namespace OutcoldSolutions.GoogleMusic.Web
             RadioPlaylist playlist = new RadioPlaylist()
                                          {
                                              Id = radioResp.Id,
-                                             Title = name,
-                                             TitleNorm = name.Normalize(),
+                                             Title = song.Title,
+                                             TitleNorm = song.Title.Normalize(),
                                              SeedId = seedId,
                                              SeedType = seedType
                                          };

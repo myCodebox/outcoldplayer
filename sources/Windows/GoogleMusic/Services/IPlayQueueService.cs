@@ -53,6 +53,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         Task AddRangeAsync(IEnumerable<Song> songs);
 
+        Task AddRangeAsync(IPlaylist playlist, IEnumerable<Song> songs);
+
         Task RemoveAsync(IEnumerable<int> index);
 
         IEnumerable<Song> GetQueue();

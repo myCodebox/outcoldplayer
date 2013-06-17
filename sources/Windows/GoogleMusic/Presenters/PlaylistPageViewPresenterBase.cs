@@ -231,11 +231,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     {
                         this.IsDataLoading = true;
 
-                        var radioResp =
-                            await this.radioWebService.CreateStationAsync(
-                                songBindingModel.Metadata.ProviderSongId,
-                                songBindingModel.Metadata.IsLibrary ? "TRACK_LOCKER_ID" : "TRACK_MATCHED_ID",
-                                songBindingModel.Metadata.Title);
+                        var radioResp = await this.radioWebService.CreateStationAsync(songBindingModel.Metadata);
 
                         if (radioResp != null)
                         {
