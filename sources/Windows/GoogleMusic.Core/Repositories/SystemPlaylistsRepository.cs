@@ -64,7 +64,7 @@ order by s.TitleNorm
         private const string SqlLastAddedSongs = @"
 select *
 from [Song] as x  
-where (?1 = 1 or x.[IsCached] = 1) and s.IsLibrary = 1
+where (?1 = 1 or x.[IsCached] = 1) and x.IsLibrary = 1
 order by x.[CreationDate] desc
 limit ?2
 ";
