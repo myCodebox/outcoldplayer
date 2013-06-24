@@ -19,12 +19,10 @@ namespace OutcoldSolutions.GoogleMusic.Services
     internal class PlayQueueService : IPlayQueueService
     {
         private readonly ILogger logger;
-        private readonly IApplicationResources resources;
         private readonly IMediaElementContainer mediaElement;
         private readonly ISettingsService settingsService;
         private readonly ISongsCachingService songsCachingService;
         private readonly ICurrentSongPublisherService publisherService;
-        private readonly INotificationService notificationService;
         private readonly IPlaylistsService playlistsService;
         private readonly IRadioWebService radioWebService;
 
@@ -46,24 +44,20 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         public PlayQueueService(
             ILogManager logManager,
-            IApplicationResources resources,
             IMediaElementContainer mediaElement,
             ISettingsService settingsService,
             ISongsCachingService songsCachingService,
             ICurrentSongPublisherService publisherService,
-            INotificationService notificationService,
             IGoogleMusicSessionService sessionService,
             IPlaylistsService playlistsService,
             IRadioWebService radioWebService,
             IEventAggregator eventAggregator)
         {
             this.logger = logManager.CreateLogger("PlayQueueService");
-            this.resources = resources;
             this.mediaElement = mediaElement;
             this.settingsService = settingsService;
             this.songsCachingService = songsCachingService;
             this.publisherService = publisherService;
-            this.notificationService = notificationService;
             this.playlistsService = playlistsService;
             this.radioWebService = radioWebService;
             this.eventAggregator = eventAggregator;
@@ -576,8 +570,6 @@ namespace OutcoldSolutions.GoogleMusic.Services
                         {
                             this.logger.Debug("Could not get url for song {0}.", song.ProviderSongId);
                         }
-
-                        this.logger.LogTask(this.notificationService.ShowMessageAsync(this.resources.GetString("Player_CannotPlay")));
                     }
                 }
             }

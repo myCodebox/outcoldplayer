@@ -28,15 +28,15 @@ namespace OutcoldSolutions.GoogleMusic.Models
 
         public byte Rating { get; set; }
 
-        public short? Disc { get; set; }
+        public int? Disc { get; set; }
 
-        public short? TotalDiscs { get; set; }
+        public int? TotalDiscs { get; set; }
 
-        public short? Track { get; set; }
+        public int? Track { get; set; }
 
-        public short? TotalTracks { get; set; }
+        public int? TotalTracks { get; set; }
 
-        public short? Year { get; set; }
+        public int? Year { get; set; }
 
         public Uri AlbumArtUrl { get; set; }
 
@@ -48,7 +48,7 @@ namespace OutcoldSolutions.GoogleMusic.Models
 
         public string Comment { get; set; }
 
-        public short Bitrate { get; set; }
+        public int Bitrate { get; set; }
 
         public StreamType StreamType { get; set; }
        

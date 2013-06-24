@@ -92,10 +92,10 @@ namespace OutcoldSolutions.GoogleMusic.Services
         private readonly ISongsRepository songsRepository;
         private readonly IMediaStreamDownloadService mediaStreamDownloadService;
         private readonly IAlbumArtCacheService albumArtCacheService;
-
         private readonly IApplicationStateService stateService;
-
         private readonly IEventAggregator eventAggregator;
+        private readonly IApplicationResources resources;
+        private readonly INotificationService notificationService;
         private readonly ILogger logger;
 
         private readonly SemaphoreSlim mutex = new SemaphoreSlim(1);
@@ -118,7 +118,9 @@ namespace OutcoldSolutions.GoogleMusic.Services
             IMediaStreamDownloadService mediaStreamDownloadService,
             IAlbumArtCacheService albumArtCacheService,
             IApplicationStateService stateService,
-            IEventAggregator eventAggregator)
+            IEventAggregator eventAggregator,
+            IApplicationResources resources,
+            INotificationService notificationService)
         {
             this.logger = logManager.CreateLogger("SongsCachingService");
             this.songsWebService = songsWebService;
@@ -128,6 +130,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
             this.albumArtCacheService = albumArtCacheService;
             this.stateService = stateService;
             this.eventAggregator = eventAggregator;
+            this.resources = resources;
+            this.notificationService = notificationService;
 
             this.eventAggregator.GetEvent<ApplicationStateChangeEvent>()
                 .Subscribe(async (e) =>
@@ -186,7 +190,21 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
             await this.CancelDownloadTaskAsync();
 
-            INetworkRandomAccessStream networkRandomAccessStream = await this.GetNetworkStreamAsync(song);
+            var result = await this.GetNetworkStreamAsync(song);
+
+            INetworkRandomAccessStream networkRandomAccessStream = result.Item1;
+
+            if (result.Item1 == null)
+            {
+                if (result.Item2 == HttpStatusCode.NotFound)
+                {
+                    this.logger.LogTask(this.notificationService.ShowMessageAsync(this.resources.GetString("Msg_Http404")));
+                } 
+                else
+                {
+                    this.logger.LogTask(this.notificationService.ShowMessageAsync(this.resources.GetString("Player_CannotPlay")));
+                }
+            }
 
             await this.SetCurrentStreamAsync(song, networkRandomAccessStream);
 
@@ -236,7 +254,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
             await this.CancelDownloadTaskAsync();
 
-            INetworkRandomAccessStream networkRandomAccessStream = await this.GetNetworkStreamAsync(song);
+            INetworkRandomAccessStream networkRandomAccessStream = (await this.GetNetworkStreamAsync(song)).Item1;
 
             await this.SetCurrentStreamAsync(song, networkRandomAccessStream);
 
@@ -497,9 +515,11 @@ namespace OutcoldSolutions.GoogleMusic.Services
             }
         }
 
-        private async Task<INetworkRandomAccessStream> GetNetworkStreamAsync(Song song)
+        private async Task<Tuple<INetworkRandomAccessStream, HttpStatusCode>> GetNetworkStreamAsync(Song song)
         {
             GoogleMusicSongUrl songUrl = null;
+
+            HttpStatusCode statusCode = HttpStatusCode.OK;
 
             try
             {
@@ -507,9 +527,15 @@ namespace OutcoldSolutions.GoogleMusic.Services
             }
             catch (WebRequestException e)
             {
+                statusCode = e.StatusCode;
+
                 if (e.StatusCode == HttpStatusCode.Forbidden)
                 {
-                    this.logger.Debug("Exception while tried to get song url: {0}", e);
+                    this.logger.Debug("Forbidden: Exception while tried to get song url: {0}", e);
+                }
+                else if (e.StatusCode == HttpStatusCode.NotFound)
+                {
+                    this.logger.Debug("Not Found: Exception while tried to get song url: {0}", e);
                 }
                 else
                 {
@@ -532,11 +558,11 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 {
                     if (string.IsNullOrEmpty(songUrl.Url))
                     {
-                        return await this.mediaStreamDownloadService.GetStreamAsync(songUrl.Urls);
+                        return Tuple.Create(await this.mediaStreamDownloadService.GetStreamAsync(songUrl.Urls), statusCode);
                     }
                     else
                     {
-                        return await this.mediaStreamDownloadService.GetStreamAsync(songUrl.Url);
+                        return Tuple.Create(await this.mediaStreamDownloadService.GetStreamAsync(songUrl.Url), statusCode);
                     }
                 }
                 catch (Exception exception)
@@ -661,7 +687,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
                     if (stream == null)
                     {
-                        stream = await this.GetNetworkStreamAsync(nextTask.Song);
+                        stream = (await this.GetNetworkStreamAsync(nextTask.Song)).Item1;
                     }
 
                     this.eventAggregator.Publish(new SongCachingChangeEvent(SongCachingChangeEventType.StartDownloading, stream, nextTask.Song));

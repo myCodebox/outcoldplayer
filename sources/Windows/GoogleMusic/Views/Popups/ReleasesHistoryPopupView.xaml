@@ -34,6 +34,15 @@
             <ScrollViewer Grid.Row="2" Margin="0, 20, 0, 0">
                 <StackPanel>
                     <TextBlock Style="{StaticResource TitleTextStyle}" Margin="0, 10, 0, 0" >
+                    <Run>06/24/2013 - Version 2.2.1</Run>
+                    </TextBlock>
+                    <RichTextBlock Style="{StaticResource BodyRichTextStyle}">
+                        <Paragraph>[b] Fix 'Last Added' system playlist.</Paragraph>
+                        <Paragraph>[b] gMusicW can stop to sync library if one of the song contains year in tags with value more than 3000.</Paragraph>
+                        <Paragraph>[b] Show "Not found" message in case when some song could not be found on server.</Paragraph>
+                    </RichTextBlock> 
+                    
+                    <TextBlock Style="{StaticResource TitleTextStyle}" Margin="0, 10, 0, 0" >
                     <Run>06/17/2013 - Version 2.2</Run>
                     </TextBlock>
                     <RichTextBlock Style="{StaticResource BodyRichTextStyle}">
