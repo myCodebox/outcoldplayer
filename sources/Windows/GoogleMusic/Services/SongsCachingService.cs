@@ -202,7 +202,14 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 } 
                 else
                 {
-                    this.logger.LogTask(this.notificationService.ShowMessageAsync(this.resources.GetString("Player_CannotPlay")));
+                    if (!song.IsLibrary)
+                    {
+                        this.logger.LogTask(this.notificationService.ShowMessageAsync(this.resources.GetString("Msg_AllAccessDisabled")));
+                    }
+                    else
+                    {
+                        this.logger.LogTask(this.notificationService.ShowMessageAsync(this.resources.GetString("Player_CannotPlay")));
+                    }
                 }
             }
 
@@ -578,7 +585,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 }
             }
 
-            return null;
+            return new Tuple<INetworkRandomAccessStream, HttpStatusCode>(null, statusCode);
         }
 
         private async Task StartDownloadTaskAsync()

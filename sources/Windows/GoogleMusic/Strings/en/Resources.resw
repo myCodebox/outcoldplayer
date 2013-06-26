@@ -354,6 +354,9 @@
   <data name="Model_UserPlaylist_Title" xml:space="preserve">
     <value>Playlist</value>
   </data>
+  <data name="Msg_AllAccessDisabled" xml:space="preserve">
+    <value>Google changed API for All Access songs. We are looking for workaround. At current moment you can play only songs which you own.</value>
+  </data>
   <data name="Msg_Http404" xml:space="preserve">
     <value>Server does not know this song. You can force to refresh your local library or just when application will auto sync it with server.</value>
   </data>

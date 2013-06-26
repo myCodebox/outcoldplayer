@@ -40,6 +40,7 @@
                         <Paragraph>[b] Fix 'Last Added' system playlist.</Paragraph>
                         <Paragraph>[b] gMusicW can stop to sync library if one of the song contains year in tags with value more than 3000.</Paragraph>
                         <Paragraph>[b] Show "Not found" message in case when some song could not be found on server.</Paragraph>
+                        <Paragraph>[b] Show error message on All Access songs (no support yet).</Paragraph>
                     </RichTextBlock> 
                     
                     <TextBlock Style="{StaticResource TitleTextStyle}" Margin="0, 10, 0, 0" >
