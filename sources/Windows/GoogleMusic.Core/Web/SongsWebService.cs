@@ -7,6 +7,9 @@ namespace OutcoldSolutions.GoogleMusic.Web
     using System.Collections.Generic;
     using System.IO;
     using System.Net;
+    using System.Net.Http;
+    using System.Runtime.InteropServices.WindowsRuntime;
+    using System.Text;
     using System.Threading.Tasks;
 
     using Newtonsoft.Json;
@@ -15,6 +18,9 @@ namespace OutcoldSolutions.GoogleMusic.Web
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Web.Models;
     using OutcoldSolutions.Web;
+
+    using Windows.Security.Cryptography;
+    using Windows.Security.Cryptography.Core;
 
     public interface ISongsWebService
     {
@@ -31,8 +37,13 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
     public class SongsWebService : ISongsWebService
     {
+        private const string AlpanumLowercase = "abcdefghijklmnopqrstuvwxyz" + "0123456789";
+        private const string DefaultGoogleKey = "27f7313e-f75d-445a-ac99-56386a5fe879";
+
+        private const string SettingsGoogleKeyName = "GoogleAAKey";
+
         private const string SongUrlFormat = "play?songid={0}&pt=e&dt=pe&targetkbps=320&start=0";
-        private const string SongUrlFromStoreFormat = "play?mjck={0}&pt=e&dt=pe&targetkbps=320&start=0";
+        private const string SongUrlFromStoreFormat = "play?mjck={0}&slt={1}&sig={2}&pt=e&dt=pe&targetkbps=320&start=0";
         private const string RecordPlayingUrl = "services/recordplaying";
         private const string ModifyEntriesUrl = "services/modifyentries";
         
@@ -42,13 +53,16 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
         private readonly IGoogleMusicWebService googleMusicWebService;
         private readonly IGoogleMusicSessionService sessionService;
+        private readonly ISettingsService settingsService;
 
         public SongsWebService(
             IGoogleMusicWebService googleMusicWebService,
-            IGoogleMusicSessionService sessionService)
+            IGoogleMusicSessionService sessionService,
+            ISettingsService settingsService)
         {
             this.googleMusicWebService = googleMusicWebService;
             this.sessionService = sessionService;
+            this.settingsService = settingsService;
         }
 
         public async Task<StatusResp> GetStatusAsync()
@@ -129,8 +143,20 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
         public async Task<GoogleMusicSongUrl> GetSongUrlAsync(Song song)
         {
-            var url = string.Format(song.IsLibrary ? SongUrlFormat : SongUrlFromStoreFormat, song.ProviderSongId);
-            return await this.googleMusicWebService.GetAsync<GoogleMusicSongUrl>(url, signUrl: false);
+            try
+            {
+                return await this.GetSongUrlInternalAsync(song);
+            }
+            catch (WebRequestException e)
+            {
+                if (e.StatusCode != HttpStatusCode.Forbidden)
+                {
+                    throw;
+                }
+            }
+
+            await this.UpdateGoogleKeyAsync();
+            return await this.GetSongUrlInternalAsync(song);
         }
 
         public async Task<bool> RecordPlayingAsync(string songId, string playlistId, bool updateRecentAlbum, bool updateRecentPlaylist, int playCount)
@@ -159,6 +185,71 @@ namespace OutcoldSolutions.GoogleMusic.Web
                                      };
 
             return await this.googleMusicWebService.PostAsync<RatingResp>(ModifyEntriesUrl, jsonProperties: jsonProperties);
+        }
+
+        private async Task<GoogleMusicSongUrl> GetSongUrlInternalAsync(Song song)
+        {
+            string url = null;
+            if (song.IsLibrary)
+            {
+                url = string.Format(SongUrlFormat, song.ProviderSongId);
+            }
+            else
+            {
+                StringBuilder salt = new StringBuilder(12);
+                Random r = new Random((int)DateTime.Now.Ticks);
+
+                for (int i = 0; i < 12; i++)
+                {
+                    salt.Append(AlpanumLowercase[r.Next(AlpanumLowercase.Length)]);
+                }
+
+                var hash = this.Hash(song.ProviderSongId + salt, this.GetKey()).ToCharArray();
+
+                for (int i = 0; i < hash.Length; i++)
+                {
+                    if (hash[i] == '+')
+                    {
+                        hash[i] = '-';
+                    }
+                    else if (hash[i] == '/')
+                    {
+                        hash[i] = '_';
+                    }
+                    else if (hash[i] == '=')
+                    {
+                        hash[i] = '.';
+                    }
+                }
+
+                string hashString = new string(hash);
+
+                url = string.Format(SongUrlFromStoreFormat, song.ProviderSongId, salt, hashString);
+            }
+
+            return await this.googleMusicWebService.GetAsync<GoogleMusicSongUrl>(url, signUrl: false);
+        }
+
+        private string Hash(string value, string key)
+        {
+            var provider = MacAlgorithmProvider.OpenAlgorithm(MacAlgorithmNames.HmacSha1);
+            var hmacKey = provider.CreateKey(CryptographicBuffer.ConvertStringToBinary(key, BinaryStringEncoding.Utf8));
+            var signedData = CryptographicEngine.Sign(hmacKey, CryptographicBuffer.ConvertStringToBinary(value, BinaryStringEncoding.Utf8));
+
+            return Convert.ToBase64String(signedData.ToArray());
+        }
+
+        private async Task UpdateGoogleKeyAsync()
+        {
+            HttpClient client = new HttpClient();
+            var result = await client.GetStringAsync("https://dl.dropboxusercontent.com/u/114202641/gMusicW/aakey.txt");
+
+            this.settingsService.SetValue(SettingsGoogleKeyName, result);
+        }
+
+        private string GetKey()
+        {
+            return this.settingsService.GetValue(SettingsGoogleKeyName, DefaultGoogleKey);
         }
     }
 }
