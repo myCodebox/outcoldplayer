@@ -43,7 +43,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
             this.ForgetAccountCommand = new DelegateCommand(this.ForgetAccount);
             this.SignOutCommand = new DelegateCommand(this.SignOutAccount);
             this.LastfmUnlinkCommand = new DelegateCommand(this.LastfmUnlink);
-            this.LastfmLinkCommand = new DelegateCommand(this.LastfmLink);
+            this.LastfmLinkCommand = new DelegateCommand(this.LastfmLink, () => this.sessionService.GetSession().IsAuthenticated);
             this.ReloadSongsCommand = new DelegateCommand(this.ReloadSongs, () => this.navigationService.HasHistory());
 
             var userInfo = this.googleAccountService.GetUserInfo();

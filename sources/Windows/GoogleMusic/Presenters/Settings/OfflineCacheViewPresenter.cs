@@ -25,8 +25,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
 
         private readonly IAlbumArtCacheService albumArtCacheService;
         private readonly ISongsCachingService songsCachingService;
-        private readonly ISearchService searchService;
         private readonly ISongsCachingService cachingService;
+        private readonly IGoogleMusicSessionService sessionService;
 
         private INetworkRandomAccessStream currentDownloadStream;
         private CachedSongBindingModel currentCachedSong;
@@ -36,24 +36,22 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
             IAlbumArtCacheService albumArtCacheService,
             ISongsCachingService songsCachingService, 
             OfflineCacheViewBindingModel bindingModel,
-            ISearchService searchService,
-            ISongsCachingService cachingService)
+            ISongsCachingService cachingService,
+            IGoogleMusicSessionService sessionService)
         {
             this.stateService = stateService;
             this.albumArtCacheService = albumArtCacheService;
             this.songsCachingService = songsCachingService;
-            this.searchService = searchService;
             this.cachingService = cachingService;
+            this.sessionService = sessionService;
             this.BindingModel = bindingModel;
 
             this.BindingModel.IsLoading = true;
 
-            this.searchService.SetShowOnKeyboardInput(false);
-
-            this.ClearAlbumArtsCacheCommand = new DelegateCommand(this.ClearAlbumArtsCache, () => !this.BindingModel.IsLoading);
-            this.ClearSongsCacheCommand = new DelegateCommand(this.ClearSongsCache, () => !this.BindingModel.IsLoading);
-            this.CancelTaskCommand = new DelegateCommand(this.CancelTask, (e) => !this.BindingModel.IsLoading);
-            this.StartDownloadCommand = new DelegateCommand(this.StartDownload, () => !this.BindingModel.IsLoading && this.stateService.IsOnline() && !this.cachingService.IsDownloading() && !this.BindingModel.IsQueueEmpty);
+            this.ClearAlbumArtsCacheCommand = new DelegateCommand(this.ClearAlbumArtsCache, () => this.sessionService.GetSession().IsAuthenticated && !this.BindingModel.IsLoading);
+            this.ClearSongsCacheCommand = new DelegateCommand(this.ClearSongsCache, () => this.sessionService.GetSession().IsAuthenticated && !this.BindingModel.IsLoading);
+            this.CancelTaskCommand = new DelegateCommand(this.CancelTask, (e) => this.sessionService.GetSession().IsAuthenticated && !this.BindingModel.IsLoading);
+            this.StartDownloadCommand = new DelegateCommand(this.StartDownload, () => this.sessionService.GetSession().IsAuthenticated && !this.BindingModel.IsLoading && this.stateService.IsOnline() && !this.cachingService.IsDownloading() && !this.BindingModel.IsQueueEmpty);
         }
 
         public OfflineCacheViewBindingModel BindingModel { get; private set; }
@@ -72,7 +70,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
 
             await this.UpdateLoadingState(isLoading: true);
             await this.LoadFolderSizesAsync();
-            await this.LoadQueuedTasks();
+            if (this.sessionService.GetSession().IsAuthenticated)
+            {
+                await this.LoadQueuedTasks();
+            }
+
             await this.UpdateLoadingState(isLoading: false);
 
             this.RegisterForDispose(this.EventAggregator.GetEvent<SongCachingChangeEvent>().Subscribe(async e => await this.Dispatcher.RunAsync(() => this.OnCacheUpdated(e))));
@@ -81,8 +83,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
         protected override void OnDisposing()
         {
             base.OnDisposing();
-
-            this.searchService.SetShowOnKeyboardInput(true);
 
             var networkRandomAccessStream = this.currentDownloadStream;
             if (networkRandomAccessStream != null)
