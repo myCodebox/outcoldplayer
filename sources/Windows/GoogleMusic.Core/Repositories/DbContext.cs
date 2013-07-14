@@ -20,7 +20,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
 
     public class DbContext
     {
-        private const int CurrentDatabaseVersion = 4;
+        private const int CurrentDatabaseVersion = 5;
         private readonly string dbFileName;
 
         public DbContext(string dbFileName = "db.sqlite")
@@ -80,6 +80,8 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
                 }
             }
 
+            bool versionUpdated = false;
+
             if ((currentVersion >= 2 && currentVersion < CurrentDatabaseVersion)
                 && !forceToUpdate)
             {
@@ -94,8 +96,17 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
                 {
                     await this.Update3Async(connection);
                 }
+
+                if (currentVersion <= 4)
+                {
+                    await this.Update4Async(connection);
+                    forceToUpdate = true;
+                }
+
+                versionUpdated = true;
             }
-            else
+
+            if (!versionUpdated || forceToUpdate)
             {
                 currentVersion = -1;
 
@@ -180,6 +191,11 @@ set TitleNorm = case when TitleNorm like '@THE@ @%' then substr(TitleNorm, 7) el
 update UserPlaylist
 set TitleNorm = case when TitleNorm like '@THE@ @%' then substr(TitleNorm, 7) else TitleNorm end;
 ");
+        }
+
+        private async Task Update4Async(SQLiteAsyncConnection connection)
+        {
+            await connection.ExecuteAsync("alter table Song add column StoreId;");
         }
 
         private async Task CreateBasicObjectsAsync(SQLiteAsyncConnection connection)

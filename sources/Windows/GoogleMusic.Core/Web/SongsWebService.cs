@@ -190,7 +190,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
         private async Task<GoogleMusicSongUrl> GetSongUrlInternalAsync(Song song)
         {
             string url = null;
-            if (song.IsLibrary)
+            if (string.IsNullOrEmpty(song.StoreId))
             {
                 url = string.Format(SongUrlFormat, song.ProviderSongId);
             }
@@ -204,7 +204,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
                     salt.Append(AlpanumLowercase[r.Next(AlpanumLowercase.Length)]);
                 }
 
-                var hash = this.Hash(song.ProviderSongId + salt, this.GetKey()).ToCharArray();
+                var hash = this.Hash(song.StoreId + salt, this.GetKey()).ToCharArray();
 
                 for (int i = 0; i < hash.Length; i++)
                 {
@@ -224,7 +224,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
                 string hashString = new string(hash);
 
-                url = string.Format(SongUrlFromStoreFormat, song.ProviderSongId, salt, hashString);
+                url = string.Format(SongUrlFromStoreFormat, song.StoreId, salt, hashString);
             }
 
             return await this.googleMusicWebService.GetAsync<GoogleMusicSongUrl>(url, signUrl: false);

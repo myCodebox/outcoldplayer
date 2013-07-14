@@ -50,6 +50,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
             song.Comment = googleMusicSong.Comment;
             song.Bitrate = googleMusicSong.Bitrate;
             song.StreamType = StreamType.GoogleMusic;
+            song.StoreId = googleMusicSong.StoreId;
             song.IsLibrary = true;
         }
 

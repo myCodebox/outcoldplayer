@@ -75,5 +75,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Models
         public int Bitrate { get; set; }
 
         public double RecentTimestamp { get; set; }
+
+        public string StoreId { get; set; }
     }
 }

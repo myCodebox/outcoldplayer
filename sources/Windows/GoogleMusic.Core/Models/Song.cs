@@ -78,5 +78,7 @@ namespace OutcoldSolutions.GoogleMusic.Models
         public bool IsCached { get; set; }
 
         public bool IsLibrary { get; set; }
+
+        public string StoreId { get; set; }
     }
 }
