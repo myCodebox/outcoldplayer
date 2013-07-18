@@ -4,6 +4,7 @@
 namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
 {
     using System;
+    using System.Globalization;
 
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Web.Models;
@@ -49,7 +50,21 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
             song.Year = googleMusicSong.Year;
             song.Comment = googleMusicSong.Comment;
             song.Bitrate = googleMusicSong.Bitrate;
-            song.StreamType = StreamType.GoogleMusic;
+
+            int type;
+            if (!int.TryParse(googleMusicSong.Type, out type))
+            {
+                if (string.Equals(googleMusicSong.Type, "EPHEMERAL_SUBSCRIPTION", StringComparison.OrdinalIgnoreCase))
+                {
+                    type = 1;
+                }
+                else
+                {
+                    type = 2;
+                }
+            }
+
+            song.StreamType = (StreamType)type;
             song.StoreId = googleMusicSong.StoreId;
             song.IsLibrary = true;
         }

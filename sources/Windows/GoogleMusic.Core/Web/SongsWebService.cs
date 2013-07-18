@@ -190,7 +190,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
         private async Task<GoogleMusicSongUrl> GetSongUrlInternalAsync(Song song)
         {
             string url = null;
-            if (string.IsNullOrEmpty(song.StoreId))
+            if (string.IsNullOrEmpty(song.StoreId) || song.StreamType != StreamType.EphemeralSubscription)
             {
                 url = string.Format(SongUrlFormat, song.ProviderSongId);
             }

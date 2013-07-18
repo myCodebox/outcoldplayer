@@ -20,7 +20,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
 
     public class DbContext
     {
-        private const int CurrentDatabaseVersion = 5;
+        private const int CurrentDatabaseVersion = 6;
         private readonly string dbFileName;
 
         public DbContext(string dbFileName = "db.sqlite")
@@ -100,6 +100,11 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
                 if (currentVersion <= 4)
                 {
                     await this.Update4Async(connection);
+                    forceToUpdate = true;
+                }
+
+                if (currentVersion <= 5)
+                {
                     forceToUpdate = true;
                 }
 

@@ -8,8 +8,10 @@ namespace OutcoldSolutions.GoogleMusic.Models
     [Flags]
     public enum StreamType : byte
     {
-        None = 0,
+        Free = 0,
 
-        GoogleMusic = 1
+        EphemeralSubscription = 1,
+
+        OwnLibrary = 2
     }
 }
