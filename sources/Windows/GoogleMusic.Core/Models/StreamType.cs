@@ -12,6 +12,10 @@ namespace OutcoldSolutions.GoogleMusic.Models
 
         EphemeralSubscription = 1,
 
-        OwnLibrary = 2
+        OwnLibrary = 2,
+
+        Type6 = 6,
+
+        Type7 = 7
     }
 }
