@@ -34,7 +34,7 @@
             <ScrollViewer Grid.Row="2" Margin="0, 20, 0, 0">
                 <StackPanel>
                     <TextBlock Style="{StaticResource TitleTextStyle}" Margin="0, 10, 0, 0" >
-                    <Run>07/13/2013 - Version 2.2.4</Run>
+                    <Run>07/17/2013 - Version 2.2.4</Run>
                     </TextBlock>
                     <RichTextBlock Style="{StaticResource BodyRichTextStyle}">
                         <Paragraph>[b] Fix for streaming own songs, which match songs on Google Music store.</Paragraph>
