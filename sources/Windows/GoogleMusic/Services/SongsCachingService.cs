@@ -546,7 +546,9 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 }
                 else
                 {
-                    this.logger.Error(e, "Exception while tried to get song url.");
+                    this.logger.Error(
+                        new WebRequestException(string.Format("Cannot get network stream - {0}.", e.StatusCode), e.InnerException, e.StatusCode), 
+                        "Exception while tried to get song url.");
                 }
             }
             catch (Exception e)

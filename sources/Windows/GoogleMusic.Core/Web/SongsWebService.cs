@@ -14,6 +14,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
     using Newtonsoft.Json;
 
+    using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Web.Models;
@@ -54,15 +55,18 @@ namespace OutcoldSolutions.GoogleMusic.Web
         private readonly IGoogleMusicWebService googleMusicWebService;
         private readonly IGoogleMusicSessionService sessionService;
         private readonly ISettingsService settingsService;
+        private readonly ILogger logger;
 
         public SongsWebService(
             IGoogleMusicWebService googleMusicWebService,
             IGoogleMusicSessionService sessionService,
-            ISettingsService settingsService)
+            ISettingsService settingsService,
+            ILogManager logManager)
         {
             this.googleMusicWebService = googleMusicWebService;
             this.sessionService = sessionService;
             this.settingsService = settingsService;
+            this.logger = logManager.CreateLogger("SongsWebService");
         }
 
         public async Task<StatusResp> GetStatusAsync()
@@ -145,7 +149,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
         {
             try
             {
-                return await this.GetSongUrlInternalAsync(song);
+                return await this.GetSongUrlInternalAsync(song, forceSwitch: false);
             }
             catch (WebRequestException e)
             {
@@ -155,8 +159,28 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 }
             }
 
-            await this.UpdateGoogleKeyAsync();
-            return await this.GetSongUrlInternalAsync(song);
+            try
+            {
+                await this.UpdateGoogleKeyAsync();
+            }
+            catch (Exception e)
+            {
+                this.logger.Warning("Could not update google key from dropbox.");
+            }
+
+            try
+            {
+                return await this.GetSongUrlInternalAsync(song, forceSwitch: false);
+            }
+            catch (WebRequestException e)
+            {
+                if (e.StatusCode != HttpStatusCode.Forbidden)
+                {
+                    throw;
+                }
+            }
+
+            return await this.GetSongUrlInternalAsync(song, forceSwitch: true);
         }
 
         public async Task<bool> RecordPlayingAsync(string songId, string playlistId, bool updateRecentAlbum, bool updateRecentPlaylist, int playCount)
@@ -187,14 +211,20 @@ namespace OutcoldSolutions.GoogleMusic.Web
             return await this.googleMusicWebService.PostAsync<RatingResp>(ModifyEntriesUrl, jsonProperties: jsonProperties);
         }
 
-        private async Task<GoogleMusicSongUrl> GetSongUrlInternalAsync(Song song)
+        private async Task<GoogleMusicSongUrl> GetSongUrlInternalAsync(Song song, bool forceSwitch)
         {
             string url = null;
-            if (string.IsNullOrEmpty(song.StoreId) || song.StreamType == StreamType.Free || song.StreamType == StreamType.OwnLibrary)
+
+            bool useSignature = !string.IsNullOrEmpty(song.StoreId) 
+                                && song.StreamType != StreamType.Free
+                                && song.StreamType != StreamType.OwnLibrary;
+
+            if (forceSwitch)
             {
-                url = string.Format(SongUrlFormat, song.ProviderSongId);
+                useSignature = !useSignature;
             }
-            else
+
+            if (useSignature && !string.IsNullOrEmpty(song.StoreId))
             {
                 StringBuilder salt = new StringBuilder(12);
                 Random r = new Random((int)DateTime.Now.Ticks);
@@ -225,6 +255,10 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 string hashString = new string(hash);
 
                 url = string.Format(SongUrlFromStoreFormat, song.StoreId, salt, hashString);
+            }
+            else
+            {
+                url = string.Format(SongUrlFormat, song.ProviderSongId);
             }
 
             return await this.googleMusicWebService.GetAsync<GoogleMusicSongUrl>(url, signUrl: false);
