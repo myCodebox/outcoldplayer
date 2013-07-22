@@ -32,7 +32,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
     public class PlaylistsWebService : IPlaylistsWebService
     {
         private const string PlaylistsUrl = "services/loadplaylist";
-        private const string AddPlaylistUrl = "services/addplaylist";
+        private const string AddPlaylistUrl = "services/createplaylist?format=json";
         private const string DeletePlaylistUrl = "services/deleteplaylist";
         private const string ChangePlaylistNameUrl = "services/modifyplaylist";
         private const string AddToPlaylistUrl = "services/addtoplaylist";
@@ -67,9 +67,10 @@ namespace OutcoldSolutions.GoogleMusic.Web
         {
             var jsonProperties = new Dictionary<string, string>
                                         {
-                                            { "title", JsonConvert.ToString(name) },
-                                            { "playlistType", JsonConvert.ToString("USER_GENERATED") },
-                                            { "songRefs", JsonConvert.SerializeObject(new string[] { }) }
+                                            { "name", JsonConvert.ToString(name) },
+                                            { "type", JsonConvert.ToString("USER_GENERATED") },
+                                            { "track", JsonConvert.SerializeObject(new string[] { }) },
+                                            { "public", JsonConvert.ToString(false) },
                                         };
 
             return await this.googleMusicWebService.PostAsync<AddPlaylistResp>(AddPlaylistUrl, jsonProperties: jsonProperties);

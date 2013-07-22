@@ -8,6 +8,6 @@ namespace OutcoldSolutions.GoogleMusic.Web.Models
     {
         public string Id { get; set; }
 
-        public string Title { get; set; }
+        public long CreationTimestamp { get; set; }
     }
 }

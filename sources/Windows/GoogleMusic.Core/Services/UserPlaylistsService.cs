@@ -56,36 +56,36 @@ namespace OutcoldSolutions.GoogleMusic.Services
             }
 
             var resp = await this.webService.CreateAsync(name);
-            if (resp.Success.HasValue && resp.Success.Value)
+            if (resp.Success.HasValue && !resp.Success.Value)
             {
                 if (this.logger.IsDebugEnabled)
                 {
                     this.logger.Debug(
-                        "Playlist was created on the server with id '{0}' for name '{1}'.", resp.Id, resp.Title);
+                        "Could not create playlist for name '{0}'.", name);
                 }
 
-                var userPlaylist = new UserPlaylist
-                                             {
-                                                 ProviderPlaylistId = resp.Id,
-                                                 Title = resp.Title,
-                                                 TitleNorm = resp.Title.Normalize()
-                                             };
-
-                await this.repository.InsertAsync(userPlaylist);
-
-                this.eventAggregator.Publish(PlaylistsChangeEvent.New(PlaylistType.UserPlaylist).AddAddedPlaylists(userPlaylist));
-
-                return userPlaylist;
+                return null;
             }
             else
             {
                 if (this.logger.IsDebugEnabled)
                 {
                     this.logger.Debug(
-                        "Could not create playlist for name '{0}'.", resp.Title);
+                        "Playlist was created on the server with id '{0}' for name '{1}'.", resp.Id, name);
                 }
 
-                return null;
+                var userPlaylist = new UserPlaylist
+                {
+                    ProviderPlaylistId = resp.Id,
+                    Title = name,
+                    TitleNorm = name.Normalize()
+                };
+
+                await this.repository.InsertAsync(userPlaylist);
+
+                this.eventAggregator.Publish(PlaylistsChangeEvent.New(PlaylistType.UserPlaylist).AddAddedPlaylists(userPlaylist));
+
+                return userPlaylist;
             }
         }
 
