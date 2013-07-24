@@ -147,26 +147,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
         public async Task<GoogleMusicSongUrl> GetSongUrlAsync(Song song)
         {
-            try
-            {
-                return await this.GetSongUrlInternalAsync(song, forceSwitch: false);
-            }
-            catch (WebRequestException e)
-            {
-                if (e.StatusCode != HttpStatusCode.Forbidden)
-                {
-                    throw;
-                }
-            }
-
-            try
-            {
-                await this.UpdateGoogleKeyAsync();
-            }
-            catch (Exception e)
-            {
-                this.logger.Warning("Could not update google key from dropbox.");
-            }
+            HttpStatusCode lastStatusCode;
 
             try
             {
@@ -174,13 +155,32 @@ namespace OutcoldSolutions.GoogleMusic.Web
             }
             catch (WebRequestException e)
             {
-                if (e.StatusCode != HttpStatusCode.Forbidden)
+                if (e.StatusCode != HttpStatusCode.Forbidden
+                    && e.StatusCode != HttpStatusCode.NotFound)
                 {
                     throw;
                 }
+
+                lastStatusCode = e.StatusCode;
             }
 
-            return await this.GetSongUrlInternalAsync(song, forceSwitch: true);
+            if (lastStatusCode == HttpStatusCode.Forbidden)
+            {
+                try
+                {
+                    await this.UpdateGoogleKeyAsync();
+                }
+                catch (Exception e)
+                {
+                    this.logger.Warning("Could not update google key from dropbox.");
+                }
+
+                return await this.GetSongUrlInternalAsync(song, forceSwitch: false);
+            }
+            else
+            {
+                return await this.GetSongUrlInternalAsync(song, forceSwitch: true);
+            }
         }
 
         public async Task<bool> RecordPlayingAsync(string songId, string playlistId, bool updateRecentAlbum, bool updateRecentPlaylist, int playCount)
