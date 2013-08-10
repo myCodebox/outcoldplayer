@@ -469,7 +469,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         public Song GetCurrentSong()
         {
-            if (this.CurrentSongIndex < 0)
+            if (this.CurrentSongIndex < 0 && this.songsQueue.Count > this.CurrentSongIndex)
             {
                 return null;
             }

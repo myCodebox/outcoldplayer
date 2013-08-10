@@ -115,9 +115,9 @@ namespace OutcoldSolutions.GoogleMusic.Views
                     this.adControl = new AdControl
                     {
                         ApplicationId = "8eb9e14b-2133-40db-9500-14eff7c05aab",
-                        AdUnitId = "111664",
-                        Width = 292,
-                        Height = 60,
+                        AdUnitId = "138990",
+                        Width = 250,
+                        Height = 250,
                         HorizontalAlignment = HorizontalAlignment.Center,
                         UseStaticAnchor = true
                     };
