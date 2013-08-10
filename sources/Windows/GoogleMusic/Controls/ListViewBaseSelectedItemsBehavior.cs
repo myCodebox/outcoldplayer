@@ -14,23 +14,27 @@ namespace OutcoldSolutions.GoogleMusic.Controls
     using Windows.UI.Interactivity;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
+    using Windows.UI.Xaml.Data;
 
     public class ListViewBaseSelectedItemsBehavior : Behavior<ListViewBase>
     {
         public static readonly DependencyProperty SelectedItemsProperty = DependencyProperty.Register(
             "SelectedItems",
-            typeof(INotifyCollectionChanged),
+            typeof(object),
             typeof(ListViewBaseSelectedItemsBehavior),
-            new PropertyMetadata(null, (o, args) => ((ListViewBaseSelectedItemsBehavior)o).OnSelectedItemsChanged(args)));
+            new PropertyMetadata(null, (o, args) => 
+            {
+                ((ListViewBaseSelectedItemsBehavior)o).OnSelectedItemsChanged(args);
+            }));
 
         public static readonly DependencyProperty ForceToShowProperty = DependencyProperty.Register(
             "ForceToShow", typeof(bool), typeof(ListViewBaseSelectedItemsBehavior), new PropertyMetadata(false));
 
         private bool freezed = false;
 
-        public INotifyCollectionChanged SelectedItems
+        public object SelectedItems
         {
-            get { return (INotifyCollectionChanged)this.GetValue(SelectedItemsProperty); }
+            get { return (object)this.GetValue(SelectedItemsProperty); }
             set { this.SetValue(SelectedItemsProperty, value); }
         }
 
