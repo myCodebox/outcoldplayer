@@ -147,8 +147,6 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
         public async Task<GoogleMusicSongUrl> GetSongUrlAsync(Song song)
         {
-            HttpStatusCode lastStatusCode;
-
             try
             {
                 return await this.GetSongUrlInternalAsync(song, forceSwitch: false);
@@ -161,26 +159,34 @@ namespace OutcoldSolutions.GoogleMusic.Web
                     throw;
                 }
 
-                lastStatusCode = e.StatusCode;
+                this.logger.Debug(e, "Tried to get song url by first attempt");
             }
 
-            if (lastStatusCode == HttpStatusCode.Forbidden)
-            {
-                try
-                {
-                    await this.UpdateGoogleKeyAsync();
-                }
-                catch (Exception e)
-                {
-                    this.logger.Warning("Could not update google key from dropbox.");
-                }
-
-                return await this.GetSongUrlInternalAsync(song, forceSwitch: false);
-            }
-            else
+            try
             {
                 return await this.GetSongUrlInternalAsync(song, forceSwitch: true);
             }
+            catch (WebRequestException e)
+            {
+                if (e.StatusCode != HttpStatusCode.Forbidden
+                    && e.StatusCode != HttpStatusCode.NotFound)
+                {
+                    throw;
+                }
+
+                this.logger.Debug(e, "Tried to get song url by second attempt (with force switch)");
+            }
+
+            try
+            {
+                await this.UpdateGoogleKeyAsync();
+            }
+            catch (Exception e)
+            {
+                this.logger.Warning(e, "Could not update google key from dropbox.");
+            }
+
+            return await this.GetSongUrlInternalAsync(song, forceSwitch: false);
         }
 
         public async Task<bool> RecordPlayingAsync(string songId, string playlistId, bool updateRecentAlbum, bool updateRecentPlaylist, int playCount)

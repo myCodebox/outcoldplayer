@@ -9,6 +9,7 @@ namespace OutcoldSolutions.GoogleMusic.Shell
     using System.Linq;
     using System.Threading.Tasks;
 
+    using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Services;
@@ -21,6 +22,8 @@ namespace OutcoldSolutions.GoogleMusic.Shell
     {
         private const int MaxResults = 5;
 
+        private readonly ILogger logger;
+
         private readonly IApplicationResources resources;
         private readonly INavigationService navigationService;
         private readonly IDispatcher dispatcher;
@@ -30,6 +33,7 @@ namespace OutcoldSolutions.GoogleMusic.Shell
         private readonly IAlbumArtCacheService albumArtCacheService;
 
         public SearchService(
+            ILogManager logManager,
             IApplicationResources resources,
             INavigationService navigationService, 
             IDispatcher dispatcher,
@@ -38,6 +42,7 @@ namespace OutcoldSolutions.GoogleMusic.Shell
             IUserPlaylistsRepository playlistsRepository,
             IAlbumArtCacheService albumArtCacheService)
         {
+            this.logger = logManager.CreateLogger("SearchService");
             this.resources = resources;
             this.navigationService = navigationService;
             this.dispatcher = dispatcher;
@@ -49,8 +54,19 @@ namespace OutcoldSolutions.GoogleMusic.Shell
         
         public void Activate()
         {
-            var searchPane = SearchPane.GetForCurrentView();
-            searchPane.Show();
+            this.dispatcher.RunAsync(
+                () =>
+                    {
+                        try
+                        {
+                            var searchPane = SearchPane.GetForCurrentView();
+                            searchPane.Show();
+                        }
+                        catch (Exception e)
+                        {
+                            this.logger.Warning(e, "Cannot show search panel");
+                        }
+                    });
         }
 
         public void SetShowOnKeyboardInput(bool value)

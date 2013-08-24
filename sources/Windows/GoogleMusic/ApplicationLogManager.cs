@@ -71,7 +71,7 @@ namespace OutcoldSolutions.GoogleMusic
             }
             
 #if !DEBUG
-            this.logManager.Writers.AddOrUpdate(typeof(BugSenseLogWriter), type => new BugSenseLogWriter(this.dispatcher), (type, writer) => writer);
+            // this.logManager.Writers.AddOrUpdate(typeof(BugSenseLogWriter), type => new BugSenseLogWriter(this.dispatcher), (type, writer) => writer);
 #endif
 
             this.logManager.LogLevel = (isLoggingOn || Debugger.IsAttached) ? LogLevel.Info : LogLevel.Warning;
