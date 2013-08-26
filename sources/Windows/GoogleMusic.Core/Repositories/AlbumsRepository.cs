@@ -185,7 +185,7 @@ select
        a.[OfflineDuration]  as [Artist.OfflineDuration]
 from [Album] x 
      inner join [Artist] as a on x.[ArtistTitleNorm] = a.[TitleNorm]
-     inner join [Song] as s on x.[TitleNorm] = s.[AlbumTitleNorm]
+     inner join [Song] as s on x.[TitleNorm] = s.[AlbumTitleNorm] and coalesce(nullif(s.AlbumArtistTitleNorm, ''), s.[ArtistTitleNorm]) = x.[ArtistTitleNorm]
 where (?1 = 1 or x.[OfflineSongsCount] > 0) and s.IsLibrary = 1 and s.[SongId] = ?2
 ";
 

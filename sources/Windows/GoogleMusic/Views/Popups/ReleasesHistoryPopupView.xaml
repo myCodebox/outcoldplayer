@@ -37,6 +37,7 @@
                     <Run>08/24/2013 - Version 2.2.8</Run>
                     </TextBlock>
                     <RichTextBlock Style="{StaticResource BodyRichTextStyle}">
+                        <Paragraph>[b] When user pick song from Search layout gMusicW can navigate to wrong album/artist.</Paragraph>
                         <Paragraph>[b] Stability improvements (crashes and fetching streams).</Paragraph>
                     </RichTextBlock>
                     
