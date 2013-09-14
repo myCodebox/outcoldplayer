@@ -416,7 +416,14 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 int startsCount = this.settingsService.GetRoamingValue<int>(CountOfStartsBeforeReview);
                 if (startsCount >= AskForReviewStarts)
                 {
-                    this.Logger.LogTask(this.VerifyToReview());
+                    try
+                    {
+                        this.Logger.LogTask(this.VerifyToReview());
+                    }
+                    catch (Exception e) 
+                    {
+                        this.Logger.Error(e, "VerifyToReview failed");
+                    }
                 }
                 else
                 {

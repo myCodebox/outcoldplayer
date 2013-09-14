@@ -91,7 +91,15 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
                     {
                         if (showErrorInfo)
                         {
-                            await this.ShowErrorInfoAsync();
+                            try
+                            {
+                                await this.ShowErrorInfoAsync();
+                            }
+                            catch (Exception e)
+                            {
+                                this.Logger.Error(e, "ShowErrorInfoAsync failed");
+                            }
+                            
                             this.View.Close(new ProgressLoadingCloseEventArgs(isFailed: true));
                         }
                         else if (isFailed)

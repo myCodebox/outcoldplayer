@@ -99,24 +99,31 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         {
             if (this.DeletePlaylistsCommand.CanExecute())
             {
-                var yesUiCommand = new UICommand(this.resources.GetString("MessageBox_DeletePlaylistYes"));
-                var noUiCommand = new UICommand(this.resources.GetString("MessageBox_DeletePlaylistNo"));
-
-                var playlists = this.BindingModel.SelectedItems.Select(bm => bm.Playlist).ToList();
-
-                MessageDialog dialog = new MessageDialog(this.resources.GetString("MessageBox_DeletePlaylistMessage"));
-                dialog.Commands.Add(yesUiCommand);
-                dialog.Commands.Add(noUiCommand);
-                dialog.DefaultCommandIndex = 0;
-                dialog.CancelCommandIndex = 1;
-                var command = await dialog.ShowAsync();
-
-                if (command == yesUiCommand)
+                try
                 {
-                    foreach (UserPlaylist playlist in playlists)
+                    var yesUiCommand = new UICommand(this.resources.GetString("MessageBox_DeletePlaylistYes"));
+                    var noUiCommand = new UICommand(this.resources.GetString("MessageBox_DeletePlaylistNo"));
+
+                    var playlists = this.BindingModel.SelectedItems.Select(bm => bm.Playlist).ToList();
+
+                    MessageDialog dialog = new MessageDialog(this.resources.GetString("MessageBox_DeletePlaylistMessage"));
+                    dialog.Commands.Add(yesUiCommand);
+                    dialog.Commands.Add(noUiCommand);
+                    dialog.DefaultCommandIndex = 0;
+                    dialog.CancelCommandIndex = 1;
+                    var command = await dialog.ShowAsync();
+
+                    if (command == yesUiCommand)
                     {
-                        await this.userPlaylistsService.DeleteAsync(playlist);
+                        foreach (UserPlaylist playlist in playlists)
+                        {
+                            await this.userPlaylistsService.DeleteAsync(playlist);
+                        }
                     }
+                }
+                catch (Exception e)
+                {
+                    this.Logger.Error(e, "DeletePlaylists failed");
                 }
             }
         }

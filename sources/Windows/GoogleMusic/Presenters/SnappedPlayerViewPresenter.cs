@@ -79,32 +79,46 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     async (e) => await this.Dispatcher.RunAsync(
                         () =>
                             {
-                                this.isRadio = e.IsRadio;
+                                try
+                                {
+                                    this.isRadio = e.IsRadio;
 
-                                this.BindingModel.SongsBindingModel.SetCollection(e.SongsQueue);
-                                this.BindingModel.IsQueueEmpty = this.BindingModel.SongsBindingModel.Songs == null
-                                                                 || this.BindingModel.SongsBindingModel.Songs.Count == 0;
+                                    this.BindingModel.SongsBindingModel.SetCollection(e.SongsQueue);
+                                    this.BindingModel.IsQueueEmpty = this.BindingModel.SongsBindingModel.Songs == null
+                                                                     || this.BindingModel.SongsBindingModel.Songs.Count == 0;
 
-                                this.UpdateCommands();
+                                    this.UpdateCommands();
+                                }
+                                catch (Exception exp)
+                                {
+                                    this.Logger.Error(exp, "OnInitialized::QueueChangeEvent failed");
+                                }
                             }));
 
             this.EventAggregator.GetEvent<SongsUpdatedEvent>()
                            .Subscribe(async (e) => await this.Dispatcher.RunAsync(() =>
                                {
-                                   if (this.BindingModel.CurrentSong != null)
+                                   try
                                    {
-                                       var currentSongUpdated =
-                                           e.UpdatedSongs.FirstOrDefault(
-                                               s =>
-                                               string.Equals(
-                                                   s.ProviderSongId,
-                                                   this.BindingModel.CurrentSong.Metadata.ProviderSongId,
-                                                   StringComparison.Ordinal));
-
-                                       if (currentSongUpdated != null)
+                                       if (this.BindingModel.CurrentSong != null)
                                        {
-                                           this.BindingModel.CurrentSong.Metadata = currentSongUpdated;
+                                           var currentSongUpdated =
+                                               e.UpdatedSongs.FirstOrDefault(
+                                                   s =>
+                                                   string.Equals(
+                                                       s.ProviderSongId,
+                                                       this.BindingModel.CurrentSong.Metadata.ProviderSongId,
+                                                       StringComparison.Ordinal));
+
+                                           if (currentSongUpdated != null)
+                                           {
+                                               this.BindingModel.CurrentSong.Metadata = currentSongUpdated;
+                                           }
                                        }
+                                   }
+                                   catch (Exception exp)
+                                   {
+                                       this.Logger.Error(exp, "OnInitialized::QueueChangeEvent failed");
                                    }
                                }));
         }

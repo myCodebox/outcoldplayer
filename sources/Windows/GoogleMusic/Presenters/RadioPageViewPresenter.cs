@@ -91,30 +91,37 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         {
             if (this.DeleteRadioCommand.CanExecute())
             {
-                var yesUiCommand = new UICommand(this.resources.GetString("MessageBox_DeletePlaylistYes"));
-                var noUiCommand = new UICommand(this.resources.GetString("MessageBox_DeletePlaylistNo"));
-
-                var playlists = this.BindingModel.SelectedItems.Select(bm => bm.Playlist).ToList();
-
-                MessageDialog dialog = new MessageDialog(this.resources.GetString("MessageBox_DeleteRadioMessage"));
-                dialog.Commands.Add(yesUiCommand);
-                dialog.Commands.Add(noUiCommand);
-                dialog.DefaultCommandIndex = 0;
-                dialog.CancelCommandIndex = 1;
-                var command = await dialog.ShowAsync();
-
-                if (command == yesUiCommand)
+                try
                 {
-                    this.IsDataLoading = true;
+                    var yesUiCommand = new UICommand(this.resources.GetString("MessageBox_DeletePlaylistYes"));
+                    var noUiCommand = new UICommand(this.resources.GetString("MessageBox_DeletePlaylistNo"));
 
-                    foreach (RadioPlaylist playlist in playlists)
+                    var playlists = this.BindingModel.SelectedItems.Select(bm => bm.Playlist).ToList();
+
+                    MessageDialog dialog = new MessageDialog(this.resources.GetString("MessageBox_DeleteRadioMessage"));
+                    dialog.Commands.Add(yesUiCommand);
+                    dialog.Commands.Add(noUiCommand);
+                    dialog.DefaultCommandIndex = 0;
+                    dialog.CancelCommandIndex = 1;
+                    var command = await dialog.ShowAsync();
+
+                    if (command == yesUiCommand)
                     {
-                        await this.radioWebService.DeleteStationAsync(playlist.Id);
+                        this.IsDataLoading = true;
+
+                        foreach (RadioPlaylist playlist in playlists)
+                        {
+                            await this.radioWebService.DeleteStationAsync(playlist.Id);
+                        }
+
+                        this.IsDataLoading = false;
+
+                        this.EventAggregator.Publish(PlaylistsChangeEvent.New(PlaylistType.Radio));
                     }
-
-                    this.IsDataLoading = false;
-
-                    this.EventAggregator.Publish(PlaylistsChangeEvent.New(PlaylistType.Radio));
+                }
+                catch (Exception e)
+                {
+                    this.Logger.Error(e, "DeleteRadio failed");
                 }
             }
         }

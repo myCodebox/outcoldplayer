@@ -268,7 +268,14 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
                 dialog.Commands.Add(new UICommand(this.resources.GetString("Update_MessageBox_Updates_CancelButton")));
 
-                await dialog.ShowAsync().AsTask();
+                try
+                {
+                    await dialog.ShowAsync().AsTask();
+                }
+                catch (Exception e)
+                {
+                    this.Logger.Error(e, "Could not show message dialog: ShowUpdateMessage");
+                }
             }
         }
     }
