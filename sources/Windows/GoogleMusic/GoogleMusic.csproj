@@ -325,6 +325,7 @@
     <Content Include="Assets\WideLogo.scale-140.png" />
     <Content Include="Assets\WideLogo.scale-180.png" />
     <Content Include="Assets\WideLogo.scale-80.png" />
+    <Content Include="BugSense\BugSense - SDK License Agreement.txt" />
     <Content Include="Resources\albums.png" />
     <Content Include="Resources\artists.png" />
     <Content Include="Resources\genres.png" />
@@ -486,11 +487,12 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="BugSense-W8">
-      <HintPath>..\..\packages\BugSense.W8.3.4\lib\win\BugSense-W8.dll</HintPath>
+      <HintPath>..\..\packages\BugSense.W8.3.5.0.2\lib\netcore45\BugSense-W8.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Newtonsoft.Json.5.0.5\lib\netcore45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\packages\Newtonsoft.Json.5.0.6\lib\netcore45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="OutcoldSolutions.Framework, Version=1.0.30513.0, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -527,7 +529,7 @@
     <SDKReference Include="MSAdvertisingXaml, Version=6.1">
       <Name>MSAdvertisingXaml</Name>
     </SDKReference>
-    <SDKReference Include="SQLite.WinRT, Version=3.7.17">
+    <SDKReference Include="SQLite.WinRT, Version=3.8.0.2">
       <Name>SQLite for Windows Runtime</Name>
     </SDKReference>
   </ItemGroup>
