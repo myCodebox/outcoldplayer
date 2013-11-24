@@ -14,7 +14,7 @@
     <ProjectTypeGuids>{BC8A1FFA-BEE3-4634-8014-F334798102B3};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <PackageCertificateKeyFile>GoogleMusic_StoreKey.pfx</PackageCertificateKeyFile>
     <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
-    <AppxPackageDir>C:\Users\Den\Repositories\GoogleMusic\WinAppPackages\</AppxPackageDir>
+    <AppxPackageDir>..\WinAppPackages\</AppxPackageDir>
     <PackageCertificateThumbprint>A11C9603F7F61E61F208F3B2B392F509B544CF6A</PackageCertificateThumbprint>
     <AllowedReferenceRelatedFileExtensions>.pdb;.pri</AllowedReferenceRelatedFileExtensions>
   </PropertyGroup>

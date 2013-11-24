@@ -205,8 +205,7 @@ namespace OutcoldSolutions.GoogleMusic
                 Container.Resolve<INavigationService>().NavigateTo<IStartPageView>();
 
 #if !DEBUG
-                BugSense.BugSenseHandler.Instance.Init(
-                    this, "w8c8d6b5", new NotificationOptions() { Type = enNotificationType.None, HandleWhileDebugging = true });
+                BugSense.BugSenseHandler.Instance.InitAndStartSession(this, "w8c8d6b5");
 #endif
             }
         }
