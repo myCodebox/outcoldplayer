@@ -59,7 +59,8 @@ select t.*,
     s.[AlbumTitleNorm] as [Song.AlbumTitleNorm],
     s.[GenreTitle] as [Song.GenreTitle],
     s.[GenreTitleNorm] as [Song.GenreTitleNorm],
-    s.[IsLibrary] as [Song.IsLibrary]
+    s.[IsLibrary] as [Song.IsLibrary],
+    s.[StoreId] as [Song.StoreId]
 from [CachedSong] as t
      inner join [Song] s on s.SongId = t.SongId
 where t.[FileName] is null

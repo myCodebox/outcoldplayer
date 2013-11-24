@@ -19,7 +19,14 @@ namespace OutcoldSolutions.GoogleMusic.Converters
                 return DependencyProperty.UnsetValue;
             }
 
-            return TimeSpan.FromSeconds((double)value).ToPresentString();
+            var doubleValue = (double) value;
+
+            if (0 <= doubleValue && doubleValue <= TimeSpan.MaxValue.TotalSeconds)
+            {
+                return TimeSpan.FromSeconds((double)value).ToPresentString();
+            }
+
+            return null;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)

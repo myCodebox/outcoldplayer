@@ -7,6 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GoogleMusic", "Windows\Goog
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A72150F6-1ED9-491A-B002-68F1E7A0871A}"
 	ProjectSection(SolutionItems) = preProject
+		GoogleMusic.sln.DotSettings = GoogleMusic.sln.DotSettings
 		Settings.StyleCop = Settings.StyleCop
 	EndProjectSection
 EndProject
