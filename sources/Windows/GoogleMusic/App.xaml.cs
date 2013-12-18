@@ -41,6 +41,9 @@ namespace OutcoldSolutions.GoogleMusic
         public App()
         {
             this.InitializeComponent();
+#if !DEBUG
+            BugSense.BugSenseHandler.Instance.InitAndStartSession(this, "w8c8d6b5");
+#endif
         }
 
         protected override void InitializeApplication()
@@ -203,10 +206,6 @@ namespace OutcoldSolutions.GoogleMusic
                 Container.Resolve<ScreenLocker>();
 
                 Container.Resolve<INavigationService>().NavigateTo<IStartPageView>();
-
-#if !DEBUG
-                BugSense.BugSenseHandler.Instance.InitAndStartSession(this, "w8c8d6b5");
-#endif
             }
         }
 
