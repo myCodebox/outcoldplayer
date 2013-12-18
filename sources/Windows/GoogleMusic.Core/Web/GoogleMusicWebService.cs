@@ -353,7 +353,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 {
                     this.Logger.Warning("Got the Unauthorized http status code. Going to clear session.");
 
-                    this.sessionService.ClearSession();
+                    await this.sessionService.ClearSession();
                     responseMessage.EnsureSuccessStatusCode();
                 }
                 else if (responseMessage.StatusCode == HttpStatusCode.Found)
@@ -375,7 +375,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
                             }
                         }
 
-                        this.sessionService.ClearSession();
+                        await this.sessionService.ClearSession();
                         responseMessage.EnsureSuccessStatusCode();
                     }
                 }

@@ -201,13 +201,25 @@ namespace OutcoldSolutions.GoogleMusic.Services
             }
         }
 
-        public void ClearSession()
+        public async Task ClearSession()
         {
             var sessionContainer = this.GetSessionContainer();
             if (sessionContainer != null)
             {
                 sessionContainer.Values.Clear();
                 this.userSession = null;
+                try
+                {
+                    var file = await ApplicationData.Current.LocalFolder.GetFileAsync(CookiesFile);
+                    if (file != null)
+                    {
+                        await file.DeleteAsync(StorageDeleteOption.PermanentDelete);
+                    }
+                }
+                catch (Exception exp)
+                {
+                    this.logger.Debug(exp, "Could not detele cookies file");
+                }
 
                 this.RaiseSessionCleared();
             }

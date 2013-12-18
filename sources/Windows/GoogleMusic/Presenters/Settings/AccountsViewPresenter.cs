@@ -91,9 +91,9 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
             this.BindingModel.IsRemembered = false;
         }
 
-        private void SignOutAccount()
+        private async void SignOutAccount()
         {
-            this.sessionService.ClearSession();
+            await this.sessionService.ClearSession();
             this.applicationSettingViewsService.Close();
         }
 

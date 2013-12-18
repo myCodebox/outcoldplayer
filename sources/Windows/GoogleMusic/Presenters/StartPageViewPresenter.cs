@@ -184,7 +184,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             var progressLoadingCloseEventArgs = eventArgs as ProgressLoadingCloseEventArgs;
             if (progressLoadingCloseEventArgs != null && progressLoadingCloseEventArgs.IsFailed)
             {
-                this.sessionService.ClearSession();
+                await this.sessionService.ClearSession();
                 return;
             }
 

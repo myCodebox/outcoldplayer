@@ -22,6 +22,6 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         Task<IEnumerable<Cookie>> GetSavedCookiesAsync();
 
-        void ClearSession();
+        Task ClearSession();
     }
 }
