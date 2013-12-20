@@ -102,6 +102,8 @@ namespace OutcoldSolutions.Views
 
         private bool bottomToolWasOpen;
 
+        private Popup fullScreenPopup;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="MainFrame"/> class.
         /// </summary>
@@ -385,12 +387,28 @@ namespace OutcoldSolutions.Views
                     this.AppToolBarLeftPopup.IsOpen = true;
                     break;
                 case PopupRegion.Full:
-                    this.DisposePopupContent(this.FullScreenPopup);
-                    this.FullScreenPopup.Child = content;
+                    if (this.fullScreenPopup != null)
+                    {
+                        this.DisposePopupContent(this.fullScreenPopup);
+                        this.fullScreenPopup.Closed -= this.FullScreenPopupViewClosed;
+                        this.fullScreenPopup = null;
+                        ((Storyboard)this.Resources["ActivateFullScreenPopup"]).Stop();
+                    }
+
+                    this.fullScreenPopup = new Popup()
+                                               {
+                                                   HorizontalAlignment = HorizontalAlignment.Stretch,
+                                                   VerticalAlignment = VerticalAlignment.Stretch,
+                                                   IsLightDismissEnabled = false
+                                               };
+                    this.fullScreenPopup.Closed += FullScreenPopupViewClosed;
+                    this.fullScreenPopup.Child = content;
                     this.UpdateFullScreenPopupSize();
-                    this.FullScreenPopup.IsOpen = true;
+                    this.fullScreenPopup.IsOpen = true;
+                    this.fullScreenPopup.Opacity = 1.0;
                     this.UpdateBottomAppBarVisibility();
                     this.UpdateTopAppBarVisibility();
+                    Storyboard.SetTarget(((Storyboard)this.Resources["ActivateFullScreenPopup"]), this.fullScreenPopup);
                     ((Storyboard)this.Resources["ActivateFullScreenPopup"]).Begin();
                     break;
                 default:
@@ -400,13 +418,16 @@ namespace OutcoldSolutions.Views
 
         private void UpdateFullScreenPopupSize()
         {
-            this.FullScreenPopup.Width = Window.Current.Bounds.Width;
-            this.FullScreenPopup.Height = Window.Current.Bounds.Height;
-            var frameworkElement = this.FullScreenPopup.Child as FrameworkElement;
-            if (frameworkElement != null)
+            if (this.fullScreenPopup != null)
             {
-                frameworkElement.Height = this.FullScreenPopup.Height;
-                frameworkElement.Width = this.FullScreenPopup.Width;
+                this.fullScreenPopup.Width = Window.Current.Bounds.Width;
+                this.fullScreenPopup.Height = Window.Current.Bounds.Height;
+                var frameworkElement = this.fullScreenPopup.Child as FrameworkElement;
+                if (frameworkElement != null)
+                {
+                    frameworkElement.Height = this.fullScreenPopup.Height;
+                    frameworkElement.Width = this.fullScreenPopup.Width;
+                }
             }
         }
 
@@ -655,7 +676,7 @@ namespace OutcoldSolutions.Views
             {
                 var currentVisibility = appBar.Visibility == Visibility.Visible && appBar.IsOpen;
 
-                var isVisible = ApplicationView.Value != ApplicationViewState.Snapped && !this.FullScreenPopup.IsOpen && isLogicalVisible;
+                var isVisible = ApplicationView.Value != ApplicationViewState.Snapped && (this.fullScreenPopup == null || !this.fullScreenPopup.IsOpen) && isLogicalVisible;
 
                 appBar.Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
 

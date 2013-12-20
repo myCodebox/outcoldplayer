@@ -102,12 +102,6 @@
     </Page.BottomAppBar>
 
     <Grid Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
-
-        <Popup x:Name="FullScreenPopup" 
-               HorizontalAlignment="Stretch" 
-               VerticalAlignment="Stretch" 
-               IsLightDismissEnabled="False"
-               Closed="FullScreenPopupViewClosed"/>
         
         <ContentControl x:Name="SnappedViewContentControl" 
                         Visibility="Collapsed"

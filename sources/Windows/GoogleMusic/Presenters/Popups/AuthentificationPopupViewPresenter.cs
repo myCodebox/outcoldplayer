@@ -12,6 +12,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
     using OutcoldSolutions.GoogleMusic.Views.Popups;
     using OutcoldSolutions.Presenters;
 
+    using Windows.UI.Core;
+
     public class AuthentificationPopupViewPresenter : ViewPresenterBase<IAuthentificationPopupView>
     {
         private readonly IApplicationResources resources;
