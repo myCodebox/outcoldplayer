@@ -13,6 +13,7 @@ namespace OutcoldSolutions.GoogleMusic.Shell
     public class MediaControlIntegration : IDisposable
     {
         private readonly IPlayQueueService playQueueService;
+        private readonly IDispatcher dispatcher;
         private readonly ILogger logger;
 
         private bool mediaControlSubscribed = false;
@@ -21,10 +22,12 @@ namespace OutcoldSolutions.GoogleMusic.Shell
 
         public MediaControlIntegration(
             ILogManager logManager,
-            IPlayQueueService playQueueService)
+            IPlayQueueService playQueueService,
+            IDispatcher dispatcher)
         {
             this.logger = logManager.CreateLogger("MediaControlIntegration");
             this.playQueueService = playQueueService;
+            this.dispatcher = dispatcher;
             this.playQueueService.StateChanged += this.StateChanged;
         }
 
@@ -60,28 +63,48 @@ namespace OutcoldSolutions.GoogleMusic.Shell
 
         private void ChangeSubscriptionToMediaControl(bool subscribe)
         {
-            if (subscribe)
-            {
-                if (!this.mediaControlSubscribed)
+            this.dispatcher.RunAsync(() =>
                 {
-                    MediaControl.PlayPauseTogglePressed += this.MediaControlPlayPauseTogglePressed;
-                    MediaControl.PlayPressed += this.MediaControlPlayPressed;
-                    MediaControl.PausePressed += this.MediaControlPausePressed;
-                    MediaControl.StopPressed += this.MediaControlStopPressed;
-                    this.mediaControlSubscribed = true;
-                }
-            }
-            else
-            {
-                if (this.mediaControlSubscribed)
-                {
-                    MediaControl.PlayPauseTogglePressed -= this.MediaControlPlayPauseTogglePressed;
-                    MediaControl.PlayPressed -= this.MediaControlPlayPressed;
-                    MediaControl.PausePressed -= this.MediaControlPausePressed;
-                    MediaControl.StopPressed -= this.MediaControlStopPressed;
-                    this.mediaControlSubscribed = false;
-                }
-            }
+                    if (subscribe)
+                    {
+                        if (!this.mediaControlSubscribed)
+                        {
+                            try
+                            {
+                                MediaControl.PlayPauseTogglePressed += this.MediaControlPlayPauseTogglePressed;
+                                MediaControl.PlayPressed += this.MediaControlPlayPressed;
+                                MediaControl.PausePressed += this.MediaControlPausePressed;
+                                MediaControl.StopPressed += this.MediaControlStopPressed;
+                            }
+                            catch (Exception e)
+                            {
+                                this.logger.Debug(e, "Could not subscribe to MediaControl events");
+                            }
+                            
+                            this.mediaControlSubscribed = true;
+                        }
+                    }
+                    else
+                    {
+                        if (this.mediaControlSubscribed)
+                        {
+                            try
+                            {
+                                MediaControl.PlayPauseTogglePressed -= this.MediaControlPlayPauseTogglePressed;
+                                MediaControl.PlayPressed -= this.MediaControlPlayPressed;
+                                MediaControl.PausePressed -= this.MediaControlPausePressed;
+                                MediaControl.StopPressed -= this.MediaControlStopPressed;
+                            }
+                            catch (Exception e)
+                            {
+                                this.logger.Debug(e, "Could not subscribe to MediaControl events");
+                            }
+                            
+                            this.mediaControlSubscribed = false;
+                        }
+                    }
+                });
+            
         }
 
         private void ChangeSubscriptionToNextTrackMediaControl(bool subscribe)
