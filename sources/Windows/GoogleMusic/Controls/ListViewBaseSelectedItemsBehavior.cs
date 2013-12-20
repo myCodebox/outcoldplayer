@@ -128,7 +128,10 @@ namespace OutcoldSolutions.GoogleMusic.Controls
             {
                 if (e.NewItems == null && e.OldItems == null)
                 {
-                    this.AssociatedObject.SelectedItems.Clear();
+                    if (this.AssociatedObject.SelectedItems != null)
+                    {
+                        this.AssociatedObject.SelectedItems.Clear();
+                    }
                 }
                 else
                 {
@@ -136,22 +139,28 @@ namespace OutcoldSolutions.GoogleMusic.Controls
 
                     if (e.OldItems != null)
                     {
-                        foreach (object item in e.OldItems)
+                        if (this.AssociatedObject.SelectedItems != null)
                         {
-                            if (this.AssociatedObject.SelectedItems.Contains(item))
+                            foreach (object item in e.OldItems)
                             {
-                                this.AssociatedObject.SelectedItems.Remove(item);
+                                if (this.AssociatedObject.SelectedItems.Contains(item))
+                                {
+                                    this.AssociatedObject.SelectedItems.Remove(item);
+                                }
                             }
                         }
                     }
 
                     if (e.NewItems != null)
                     {
-                        foreach (object item in e.NewItems)
+                        if (this.AssociatedObject.SelectedItems != null)
                         {
-                            if (!this.AssociatedObject.SelectedItems.Contains(item))
+                            foreach (object item in e.NewItems)
                             {
-                                this.AssociatedObject.SelectedItems.Add(item);
+                                if (!this.AssociatedObject.SelectedItems.Contains(item))
+                                {
+                                    this.AssociatedObject.SelectedItems.Add(item);
+                                }
                             }
                         }
                     }
@@ -159,12 +168,24 @@ namespace OutcoldSolutions.GoogleMusic.Controls
                     this.freezed = false;
                 }
 
-                if (this.ForceToShow && e.NewItems != null && this.AssociatedObject.SelectedItems.Count == 1)
+                if (this.ForceToShow && e.NewItems != null && this.AssociatedObject.SelectedItems !=null && this.AssociatedObject.SelectedItems.Count == 1)
                 {
                     await Task.Yield();
 
                     await this.Dispatcher.RunAsync(
-                            CoreDispatcherPriority.Low, () => this.AssociatedObject.ScrollIntoView(e.NewItems[0]));
+                            CoreDispatcherPriority.Low, () =>
+                                {
+                                    try
+                                    {
+                                        if (this.AssociatedObject != null)
+                                        {
+                                            this.AssociatedObject.ScrollIntoView(e.NewItems[0]);
+                                        }
+                                    }
+                                    catch (Exception)
+                                    {
+                                    }
+                                });
                 }
             }
         }

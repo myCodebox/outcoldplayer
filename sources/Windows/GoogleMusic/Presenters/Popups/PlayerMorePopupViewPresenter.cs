@@ -29,9 +29,20 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
             this.RepeatAllCommand = new DelegateCommand(() => { }, () => this.queueService.State != QueueState.Busy && !queueService.IsRadio);
             this.ShuffleCommand = new DelegateCommand(() => { }, () => this.queueService.State != QueueState.Busy && !queueService.IsRadio);
             this.ShowApplicationSettingsCommand = new DelegateCommand(async () =>
-            {
-                await this.Dispatcher.RunAsync(() => this.applicationSettingViewsService.Show());
-            });
+                {
+                    await this.Dispatcher.RunAsync(
+                        () =>
+                            {
+                                try
+                                {
+                                    this.applicationSettingViewsService.Show();
+                                }
+                                catch (Exception e)
+                                {
+                                    this.Logger.Debug(e, "this.applicationSettingViewsService.Show() failed");
+                                }
+                            });
+                });
 
             this.queueService.StateChanged += this.QueueServiceOnStateChanged;
         }

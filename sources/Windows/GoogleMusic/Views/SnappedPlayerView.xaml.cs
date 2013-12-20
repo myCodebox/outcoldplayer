@@ -63,12 +63,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
                 });
         }
 
-        protected override Windows.Foundation.Size ArrangeOverride(Windows.Foundation.Size finalSize)
-        {
-            Task task = this.ScrollIntoCurrentSongAsync();
-            return base.ArrangeOverride(finalSize);
-        }
-
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             this.Loaded -= this.OnLoaded;
