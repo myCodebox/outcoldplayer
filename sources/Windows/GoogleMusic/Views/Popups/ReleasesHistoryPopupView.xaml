@@ -34,6 +34,15 @@
             <ScrollViewer Grid.Row="2" Margin="0, 20, 0, 0">
                 <StackPanel>
                     <TextBlock Style="{StaticResource TitleTextStyle}" Margin="0, 10, 0, 0" >
+                    <Run>12/22/2013 - Version 2.2.11</Run>
+                    </TextBlock>
+                    <RichTextBlock Style="{StaticResource BodyRichTextStyle}">
+                        <Paragraph>[b] Fix application crash on song select from search result.</Paragraph>
+                        <Paragraph>[b] Fix application crash when Windows does not have internet connections.</Paragraph>
+                        <Paragraph>[b] Other stability improvements.</Paragraph>
+                    </RichTextBlock>
+                    
+                    <TextBlock Style="{StaticResource TitleTextStyle}" Margin="0, 10, 0, 0" >
                     <Run>12/19/2013 - Version 2.2.10</Run>
                     </TextBlock>
                     <RichTextBlock Style="{StaticResource BodyRichTextStyle}">

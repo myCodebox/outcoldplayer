@@ -10,6 +10,7 @@ namespace OutcoldSolutions.GoogleMusic
     using System.Threading.Tasks;
 
     using BugSense;
+    using BugSense.Model;
 
     using OutcoldSolutions.BindingModels;
     using OutcoldSolutions.Controls;
@@ -42,7 +43,7 @@ namespace OutcoldSolutions.GoogleMusic
         {
             this.InitializeComponent();
 #if !DEBUG
-            BugSense.BugSenseHandler.Instance.InitAndStartSession(this, "w8c8d6b5");
+            BugSense.BugSenseHandler.Instance.InitAndStartSession(new ExceptionManager(this), "w8c8d6b5");
 #endif
         }
 

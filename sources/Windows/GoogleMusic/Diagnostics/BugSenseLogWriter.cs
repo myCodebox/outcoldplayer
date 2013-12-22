@@ -8,6 +8,8 @@ namespace OutcoldSolutions.GoogleMusic.Diagnostics
     using System.Collections.Generic;
     using System.Globalization;
 
+    using BugSense.Core.Model;
+
     using OutcoldSolutions.Diagnostics;
 
     using Windows.UI.Core;
@@ -54,7 +56,7 @@ namespace OutcoldSolutions.GoogleMusic.Diagnostics
                                 exception = aggregateException.Flatten();
                             }
 
-                            var logExtra = new Dictionary<string, string>()
+                            var logExtra = new LimitedCrashExtraDataList()
                                                {
                                                    { "level", level.ToString() },
                                                    { "context", context },

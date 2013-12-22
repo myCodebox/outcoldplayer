@@ -278,7 +278,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
         {
             if (this.State == QueueState.Busy)
             {
-                throw new InvalidOperationException("Queue is busy");
+                this.logger.Debug("PlayAsync: Could not do that. Queue is busy.");
+                return;
             }
 
             if (this.CanSwitchToNext())
@@ -305,7 +306,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
         {
             if (this.State == QueueState.Busy)
             {
-                throw new InvalidOperationException("Queue is busy");
+                this.logger.Debug("PlayAsync: Could not do that. Queue is busy.");
+                return;
             }
 
             if (this.CanSwitchToPrevious())
@@ -394,7 +396,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
             {
                 if (this.State == QueueState.Busy)
                 {
-                    throw new InvalidOperationException("Queue is busy");
+                    this.logger.Debug("PlayAsync: Could not do that. Queue is busy.");
+                    return;
                 }
 
                 List<int> collection = songIndexes.ToList();
@@ -497,7 +500,11 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
             if (this.queueOrder.Count > queueIndex)
             {
-                var song = this.songsQueue[songIndex];
+                Song song = null;
+                if (this.songsQueue.Count > songIndex)
+                {
+                    song = this.songsQueue[songIndex];
+                }
                 if (song != null)
                 {
                     if (this.logger.IsDebugEnabled)

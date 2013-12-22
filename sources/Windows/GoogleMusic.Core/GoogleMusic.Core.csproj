@@ -215,6 +215,9 @@
     <Compile Include="Web\WebRequestException.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="BugSense-W8">
+      <HintPath>..\..\packages\BugSense.W8.3.6.0.1\lib\netcore45\BugSense-W8.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\..\packages\Newtonsoft.Json.5.0.8\lib\netcore45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -243,6 +246,9 @@
       <Project>{8c64ae2d-9131-44e9-83a4-d71b423baf1d}</Project>
       <Name>OutcoldSolutions.Presentation</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="BugSense\BugSense - SDK License Agreement.txt" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '11.0' ">
     <VisualStudioVersion>11.0</VisualStudioVersion>

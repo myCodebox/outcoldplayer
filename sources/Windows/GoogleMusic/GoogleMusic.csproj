@@ -486,9 +486,9 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="BugSense-W8">
-      <HintPath>..\..\packages\BugSense.W8.3.5.0.2\lib\netcore45\BugSense-W8.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="BugSense-W8, Version=3.6.0.1, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\BugSense.W8.3.6.0.1\lib\netcore45\BugSense-W8.dll</HintPath>
     </Reference>
     <Reference Include="OutcoldSolutions.SQLite, Version=1.1.30513.33825, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

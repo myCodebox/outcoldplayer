@@ -9,6 +9,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using System.Linq;
     using System.Threading.Tasks;
 
+    using BugSense;
+
     using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
@@ -225,11 +227,15 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             {
                 if (this.stateService.CurrentState == ApplicationState.Online)
                 {
-                    var networkConnectivityLevel = NetworkInformation.GetInternetConnectionProfile().GetNetworkConnectivityLevel();
-                    if (networkConnectivityLevel != NetworkConnectivityLevel.ConstrainedInternetAccess
-                        && networkConnectivityLevel != NetworkConnectivityLevel.InternetAccess)
+                    var profile = NetworkInformation.GetInternetConnectionProfile();
+                    if (profile != null)
                     {
-                        this.stateService.CurrentState = ApplicationState.Offline;
+                        var networkConnectivityLevel = profile.GetNetworkConnectivityLevel();
+                        if (networkConnectivityLevel != NetworkConnectivityLevel.ConstrainedInternetAccess
+                            && networkConnectivityLevel != NetworkConnectivityLevel.InternetAccess)
+                        {
+                            this.stateService.CurrentState = ApplicationState.Offline;
+                        }
                     }
                 }
 
