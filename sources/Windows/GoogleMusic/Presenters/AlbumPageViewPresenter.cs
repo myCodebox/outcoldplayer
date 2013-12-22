@@ -39,7 +39,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 var songBindingModel = this.BindingModel.SongsBindingModel.Songs.FirstOrDefault(s => s.Metadata.SongId == songId);
                 if (songBindingModel != null)
                 {
-                    this.BindingModel.SongsBindingModel.SelectedItems.Add(songBindingModel);
+                    await this.Dispatcher.RunAsync(() => this.BindingModel.SongsBindingModel.SelectedItems.Add(songBindingModel));
                 }
             }
             else
