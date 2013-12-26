@@ -475,7 +475,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         public Song GetCurrentSong()
         {
-            if (this.CurrentSongIndex < 0 && this.songsQueue.Count >= this.CurrentSongIndex)
+            if (this.CurrentSongIndex < 0 || this.CurrentSongIndex >= this.songsQueue.Count)
             {
                 return null;
             }
