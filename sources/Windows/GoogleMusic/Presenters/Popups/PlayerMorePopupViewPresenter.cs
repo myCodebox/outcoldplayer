@@ -31,17 +31,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
             this.ShowApplicationSettingsCommand = new DelegateCommand(async () =>
                 {
                     await this.Dispatcher.RunAsync(
-                        () =>
-                            {
-                                try
-                                {
-                                    this.applicationSettingViewsService.Show();
-                                }
-                                catch (Exception e)
-                                {
-                                    this.Logger.Debug(e, "this.applicationSettingViewsService.Show() failed");
-                                }
-                            });
+                        () => this.applicationSettingViewsService.Show());
                 });
 
             this.queueService.StateChanged += this.QueueServiceOnStateChanged;

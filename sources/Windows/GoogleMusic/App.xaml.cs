@@ -52,7 +52,8 @@ namespace OutcoldSolutions.GoogleMusic
                     {
                         var exception = args.Exception.Flatten();
                         if (exception.InnerException != null 
-                            && !exception.InnerException.Message.Contains("fimpression")
+                            && exception.InnerException.Message.IndexOf("fimpression", StringComparison.OrdinalIgnoreCase) < 0
+                            && exception.InnerException.Message.IndexOf("No ad available", StringComparison.OrdinalIgnoreCase) < 0
                             && (exception.InnerException.InnerException == null
                                 || !exception.InnerException.InnerException.Message.Contains("fimpression")))
                         {

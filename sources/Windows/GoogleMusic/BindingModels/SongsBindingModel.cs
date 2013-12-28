@@ -127,7 +127,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         {
             if (this.Songs.Count <= index)
             {
-                throw new ArgumentOutOfRangeException("index");
+                return;
             }
 
             if (index == -1)

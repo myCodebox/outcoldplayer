@@ -268,7 +268,13 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
         {
             if (this.currentCachedSong != null)
             {
-                await this.Dispatcher.RunAsync(() => { this.currentCachedSong.DownloadProgress = d; });
+                await this.Dispatcher.RunAsync(() =>
+                    {
+                        if (this.currentCachedSong != null)
+                        {
+                            this.currentCachedSong.DownloadProgress = d;
+                        }
+                    });
             }
         }
 

@@ -10,6 +10,8 @@ namespace OutcoldSolutions.GoogleMusic.Controls
     using System.Linq;
     using System.Threading.Tasks;
 
+    using OutcoldSolutions.Diagnostics;
+
     using Windows.UI.Core;
     using Windows.UI.Interactivity;
     using Windows.UI.Xaml;
@@ -29,6 +31,8 @@ namespace OutcoldSolutions.GoogleMusic.Controls
 
         public static readonly DependencyProperty ForceToShowProperty = DependencyProperty.Register(
             "ForceToShow", typeof(bool), typeof(ListViewBaseSelectedItemsBehavior), new PropertyMetadata(false));
+
+        private static readonly Lazy<ILogger> Logger = new Lazy<ILogger>(() => ApplicationBase.Container.Resolve<ILogManager>().CreateLogger(typeof(ListViewBaseSelectedItemsBehavior).Name));
 
         private bool freezed = false;
 
@@ -177,13 +181,14 @@ namespace OutcoldSolutions.GoogleMusic.Controls
                                 {
                                     try
                                     {
-                                        if (this.AssociatedObject != null)
+                                        if (this.AssociatedObject != null && e.NewItems.Count > 0)
                                         {
                                             this.AssociatedObject.ScrollIntoView(e.NewItems[0]);
                                         }
                                     }
-                                    catch (Exception)
+                                    catch (Exception exception)
                                     {
+                                        Logger.Value.Debug(exception, "OnCollectionChanged");
                                     }
                                 });
                 }
@@ -210,7 +215,20 @@ namespace OutcoldSolutions.GoogleMusic.Controls
                     await Task.Yield();
 
                     await this.Dispatcher.RunAsync(
-                            CoreDispatcherPriority.Low, () => this.AssociatedObject.ScrollIntoView(this.AssociatedObject.SelectedItems[0]));
+                            CoreDispatcherPriority.Low, () =>
+                                {
+                                    try
+                                    {
+                                        if (this.AssociatedObject != null && this.AssociatedObject.SelectedItems.Count > 0)
+                                        {
+                                            this.AssociatedObject.ScrollIntoView(this.AssociatedObject.SelectedItems[0]);
+                                        }
+                                    }
+                                    catch (Exception exception)
+                                    {
+                                        Logger.Value.Debug(exception, "Synchronize");
+                                    }
+                                });
                 }
             }
         }

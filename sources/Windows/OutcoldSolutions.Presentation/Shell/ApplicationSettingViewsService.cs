@@ -40,7 +40,14 @@ namespace OutcoldSolutions.Shell
 
         public void Show()
         {
-            SettingsPane.Show();
+            try
+            {
+                SettingsPane.Show();
+            }
+            catch (Exception exception)
+            {
+                this.logger.Debug(exception, "Show");
+            }
         }
 
         public void Close()

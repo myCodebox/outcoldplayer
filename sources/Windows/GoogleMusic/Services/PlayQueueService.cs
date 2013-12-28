@@ -475,12 +475,21 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         public Song GetCurrentSong()
         {
-            if (this.CurrentSongIndex < 0 || this.CurrentSongIndex >= this.songsQueue.Count)
+            var songIndex = this.CurrentSongIndex;
+            if (songIndex < 0 || songIndex >= this.songsQueue.Count)
             {
                 return null;
             }
 
-            return this.songsQueue[this.CurrentSongIndex];
+            try
+            {
+                return this.songsQueue[this.CurrentSongIndex];
+            }
+            catch (IndexOutOfRangeException exception)
+            {
+                this.logger.Debug(exception, "GetCurrentSong");
+                return null;
+            }
         }
 
         private async Task PlaySongAsyncInternal(int songIndex)
@@ -498,7 +507,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
             this.publisherService.CancelActiveTasks();
 
-            if (this.queueOrder.Count > queueIndex)
+            if (this.queueOrder.Count > queueIndex && queueIndex >= 0)
             {
                 Song song = null;
                 if (this.songsQueue.Count > songIndex)
@@ -644,7 +653,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
         {
             this.RaiseDownloadProgress(e);
 
-            if (Math.Abs(1 - e) < 0.0001)
+            var networkRandomAccessStream = this.currentSongStream as INetworkRandomAccessStream;
+            if (Math.Abs(1 - e) < 0.0001 && networkRandomAccessStream != null && networkRandomAccessStream.IsReady)
             {
                 this.PredownloadNextSong();
             }

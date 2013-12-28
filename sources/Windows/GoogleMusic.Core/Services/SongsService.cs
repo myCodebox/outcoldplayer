@@ -68,12 +68,19 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 {
                     song.Rating = songRatingResp.Rating;
                     
-                    await this.songsRepository.UpdateRatingAsync(song);
-                    this.eventAggregator.Publish(new SongsUpdatedEvent(new[] { song }));
-                    
-                    if (this.logger.IsDebugEnabled)
+                    try
                     {
-                        this.logger.Debug("Song updated: {0}, Rating: {1}.", songUpdate.Id, songUpdate.Rating);
+                        await this.songsRepository.UpdateRatingAsync(song);
+                        this.eventAggregator.Publish(new SongsUpdatedEvent(new[] { song }));
+
+                        if (this.logger.IsDebugEnabled)
+                        {
+                            this.logger.Debug("Song updated: {0}, Rating: {1}.", songUpdate.Id, songUpdate.Rating);
+                        }
+                    }
+                    catch (Exception exception)
+                    {
+                        this.logger.Debug(exception, "UpdateRatingAsync");
                     }
                 }
             }
