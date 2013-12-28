@@ -10,6 +10,7 @@ namespace OutcoldSolutions.GoogleMusic
     using System.Threading.Tasks;
 
     using BugSense;
+    using BugSense.Core.Model;
     using BugSense.Model;
 
     using OutcoldSolutions.BindingModels;
@@ -43,7 +44,28 @@ namespace OutcoldSolutions.GoogleMusic
         {
             this.InitializeComponent();
 #if !DEBUG
+            BugSense.BugSenseHandler.Instance.UnregisterUnobservedTaskExceptions();
             BugSense.BugSenseHandler.Instance.InitAndStartSession(new ExceptionManager(this), "w8c8d6b5");
+            TaskScheduler.UnobservedTaskException += (sender, args) =>
+                {
+                    if (!args.Observed && args.Exception != null)
+                    {
+                        var exception = args.Exception.Flatten();
+                        if (exception.InnerException != null 
+                            && !exception.InnerException.Message.Contains("fimpression")
+                            && (exception.InnerException.InnerException == null
+                                || !exception.InnerException.InnerException.Message.Contains("fimpression")))
+                        {
+                            var logExtra = new LimitedCrashExtraDataList()
+                                               {
+                                                   { "level", "UnobservedTaskException" }
+                                               };
+                            BugSense.BugSenseHandler.Instance.LogException(exception.InnerException, logExtra);
+                        }
+
+                        args.SetObserved();
+                    }
+                };
 #endif
         }
 
