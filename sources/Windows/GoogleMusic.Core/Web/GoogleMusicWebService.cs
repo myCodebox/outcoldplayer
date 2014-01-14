@@ -109,6 +109,15 @@ namespace OutcoldSolutions.GoogleMusic.Web
             return this.cookieContainer.GetCookies();
         }
 
+        public async Task SaveCurrentSessionAsync()
+        {
+            var cookieCollection = this.GetCurrentCookies();
+            if (cookieCollection != null)
+            {
+                await this.sessionService.SaveCurrentSessionAsync(cookieCollection);
+            }
+        }
+
         public async Task<HttpResponseMessage> GetAsync(
             string url,
             bool signUrl = true)
@@ -387,6 +396,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
                         {
                             await BugSense.BugSenseHandler.Instance.LogEventAsync("GoogleMusicWebService:Found:re-authentification:success");
                             this.Initialize(result.CookieCollection.Cast<Cookie>());
+                            await this.SaveCurrentSessionAsync();
                             return;
                         }
 

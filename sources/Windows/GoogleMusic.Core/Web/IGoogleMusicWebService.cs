@@ -20,6 +20,8 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
         Task RefreshXtAsync();
 
+        Task SaveCurrentSessionAsync();
+
         Task<HttpResponseMessage> GetAsync(
             string url, 
             bool signUrl = true);

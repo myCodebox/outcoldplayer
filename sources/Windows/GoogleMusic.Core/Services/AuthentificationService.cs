@@ -80,6 +80,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 if (authResponse.CookieCollection != null && authResponse.CookieCollection.Count > 0)
                 {
                     this.googleMusicWebService.Initialize(authResponse.CookieCollection.Cast<Cookie>());
+                    await this.googleMusicWebService.SaveCurrentSessionAsync();
                     this.sessionService.GetSession().IsAuthenticated = true;
                     return AuthentificationResult.SucceedResult();
                 }

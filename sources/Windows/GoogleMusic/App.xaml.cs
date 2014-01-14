@@ -237,11 +237,7 @@ namespace OutcoldSolutions.GoogleMusic
         {
             var sessionService = Container.Resolve<IGoogleMusicSessionService>();
 
-            var cookieCollection = Container.Resolve<IGoogleMusicWebService>().GetCurrentCookies();
-            if (cookieCollection != null)
-            {
-                await sessionService.SaveCurrentSessionAsync(cookieCollection);
-            }
+            await Container.Resolve<IGoogleMusicWebService>().SaveCurrentSessionAsync();
 
             Container.Resolve<ILastfmWebService>().SaveCurrentSession();
 
