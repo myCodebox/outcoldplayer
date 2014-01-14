@@ -104,6 +104,13 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
             var response = await this.googleMusicWebService.GetAsync(StreamingLoadAllTracks + WebUtility.UrlEncode(json));
 
+            if (response.StatusCode == HttpStatusCode.Forbidden || response.StatusCode == HttpStatusCode.Found)
+            {
+                response = await this.googleMusicWebService.GetAsync(StreamingLoadAllTracks + WebUtility.UrlEncode(json));
+            }
+
+            response.EnsureSuccessStatusCode();
+
             if (response.Content.IsPlainText())
             {
                 var oResponse = await response.Content.ReadAsJsonObject<CommonResponse>();

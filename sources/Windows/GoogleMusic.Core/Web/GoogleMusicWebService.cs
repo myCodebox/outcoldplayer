@@ -183,13 +183,13 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 responseMessage = await this.GetAsync(url, signUrl);
 
                 // This means that google asked us to relogin. Let's try again this request.
-                if (responseMessage.StatusCode == HttpStatusCode.Found)
+                if (responseMessage.StatusCode == HttpStatusCode.Found
+                    || responseMessage.StatusCode == HttpStatusCode.Forbidden)
                 {
                     responseMessage = await this.GetAsync(url, signUrl);
                 }
 
                 responseMessage.EnsureSuccessStatusCode();
-
                 TResult result = await responseMessage.Content.ReadAsJsonObject<TResult>();
 
                 if (result.ReloadXsrf.HasValue && result.ReloadXsrf.Value)
@@ -262,13 +262,13 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 responseMessage = await this.PostAsync(url, formData, signUrl);
 
                 // This means that google asked us to relogin. Let's try again this request.
-                if (responseMessage.StatusCode == HttpStatusCode.Found)
+                if (responseMessage.StatusCode == HttpStatusCode.Found
+                    || responseMessage.StatusCode == HttpStatusCode.Forbidden)
                 {
                     responseMessage = await this.PostAsync(url, formData, signUrl);
                 }
 
                 responseMessage.EnsureSuccessStatusCode();
-
                 TResult result = await responseMessage.Content.ReadAsJsonObject<TResult>();
 
                 if (result.ReloadXsrf.HasValue && result.ReloadXsrf.Value)
@@ -349,39 +349,57 @@ namespace OutcoldSolutions.GoogleMusic.Web
         {
             if (!responseMessage.IsSuccessStatusCode)
             {
+                bool clearSession = false;
+                bool relogin = false;
+
                 if (responseMessage.StatusCode == HttpStatusCode.Unauthorized)
                 {
                     await BugSense.BugSenseHandler.Instance.LogEventAsync("GoogleMusicWebService:Unauthorized");
                     this.Logger.Warning("Got the Unauthorized http status code. Going to clear session.");
 
-                    await this.sessionService.ClearSession();
-                    responseMessage.EnsureSuccessStatusCode();
+                    clearSession = true;
                 }
                 else if (responseMessage.StatusCode == HttpStatusCode.Found)
                 {
                     await BugSense.BugSenseHandler.Instance.LogEventAsync("GoogleMusicWebService:Found:re-authentification");
                     if (string.Equals(responseMessage.Headers.Location.LocalPath, "/accounts/ServiceLogin", StringComparison.OrdinalIgnoreCase))
                     {
-                        this.Logger.Warning("We been asked to re-authentification");
-                        
-                        var googleAccountService = this.container.Resolve<IGoogleAccountService>();
-                        var userInfo = googleAccountService.GetUserInfo(retrievePassword: true);
-                        if (userInfo != null)
+                        relogin = true;
+                    }
+                }
+                else if (responseMessage.StatusCode == HttpStatusCode.Forbidden)
+                {
+                    await BugSense.BugSenseHandler.Instance.LogEventAsync("GoogleMusicWebService:Forbidden:re-authentification");
+                    relogin = true;
+                }
+
+                if (relogin)
+                {
+                    this.Logger.Warning("We been asked to re-authentification");
+
+                    var googleAccountService = this.container.Resolve<IGoogleAccountService>();
+                    var userInfo = googleAccountService.GetUserInfo(retrievePassword: true);
+                    if (userInfo != null)
+                    {
+                        var googleAccountWebService = this.container.Resolve<IGoogleAccountWebService>();
+                        var result = await googleAccountWebService.AuthenticateAsync(new Uri(this.GetServiceUrl()), userInfo.Email, userInfo.Password);
+                        if (result.Success)
                         {
-                            var googleAccountWebService = this.container.Resolve<IGoogleAccountWebService>();
-                            var result = await googleAccountWebService.AuthenticateAsync(new Uri(this.GetServiceUrl()), userInfo.Email, userInfo.Password);
-                            if (result.Success)
-                            {
-                                await BugSense.BugSenseHandler.Instance.LogEventAsync("GoogleMusicWebService:Found:re-authentification:success");
-                                this.Initialize(result.CookieCollection.Cast<Cookie>());
-                                return;
-                            }
+                            await BugSense.BugSenseHandler.Instance.LogEventAsync("GoogleMusicWebService:Found:re-authentification:success");
+                            this.Initialize(result.CookieCollection.Cast<Cookie>());
+                            return;
                         }
 
                         await BugSense.BugSenseHandler.Instance.LogEventAsync("GoogleMusicWebService:Found:re-authentification:failed");
-                        await this.sessionService.ClearSession();
-                        responseMessage.EnsureSuccessStatusCode();
                     }
+
+                    clearSession = true;
+                }
+
+                if (clearSession)
+                {
+                    await this.sessionService.ClearSession();
+                    responseMessage.EnsureSuccessStatusCode();
                 }
             }
         }
