@@ -15,7 +15,7 @@
     <PackageCertificateKeyFile>GoogleMusic_StoreKey.pfx</PackageCertificateKeyFile>
     <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
     <AppxPackageDir>..\..\..\WinAppPackages\</AppxPackageDir>
-    <PackageCertificateThumbprint>A11C9603F7F61E61F208F3B2B392F509B544CF6A</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>5BE5306966E410FE1D1BB3E17C83A2CDE5757E68</PackageCertificateThumbprint>
     <AllowedReferenceRelatedFileExtensions>.pdb;.pri</AllowedReferenceRelatedFileExtensions>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
