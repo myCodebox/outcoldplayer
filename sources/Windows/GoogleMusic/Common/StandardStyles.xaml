@@ -1185,7 +1185,7 @@
     <Style TargetType="HyperlinkButton" x:Key="SnappedViewAdReplacement">
         <Setter Property="NavigateUri" Value="http://outcoldsolutions.com/resources/gmusicw_link.html" />
         <Setter Property="Height" Value="250" />
-        <Setter Property="Width" Value="250" />
+        <Setter Property="Width" Value="300" />
         <Setter Property="HorizontalAlignment" Value="Center" />
         <Setter Property="Template">
             <Setter.Value>
@@ -1193,7 +1193,7 @@
                     <Image Source="http://outcoldsolutions.com/resources/snappedview-v3.png" 
                            Stretch="Fill" 
                            Height="250" 
-                           Width="250"/>
+                           Width="300"/>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
