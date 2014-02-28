@@ -8,7 +8,7 @@ gMusicW (unofficial Google Music Client for Windows 8)
 ### `master` branch
 
 * Visual Studio 2012
-* sqlite [Precompiled Binaries for Windows Runtime](http://sqlite.org/download.html)
+* sqlite [Precompiled Binaries for Windows Runtime](http://sqlite.org/download.html), use version [sqlite-winrt-3080100.vsix](http://sqlite.org/2013/sqlite-winrt-3080100.vsix) (new versions have some compatibility issues)
 * [AdControl for Windows 8.0](http://msdn.microsoft.com/en-us/library/advertising-windows-sdk(v=msads.10).aspx)
 
 ### `win8next` branch
