@@ -360,15 +360,15 @@
   <PackageInfoList LandingUrl="https://appdev.microsoft.com:443/StorePortals/Developer/Catalog/ReleaseAnchor/939f0859-1413-4a52-9ab6-6e50405c8c2e">
     <PackageInfo>
       <PackageArchitecture>arm</PackageArchitecture>
-      <PackageMaxArchitectureVersion>2.2.12.87</PackageMaxArchitectureVersion>
+      <PackageMaxArchitectureVersion>2.2.14.89</PackageMaxArchitectureVersion>
     </PackageInfo>
     <PackageInfo>
       <PackageArchitecture>x64</PackageArchitecture>
-      <PackageMaxArchitectureVersion>2.2.12.87</PackageMaxArchitectureVersion>
+      <PackageMaxArchitectureVersion>2.2.14.89</PackageMaxArchitectureVersion>
     </PackageInfo>
     <PackageInfo>
       <PackageArchitecture>x86</PackageArchitecture>
-      <PackageMaxArchitectureVersion>2.2.12.87</PackageMaxArchitectureVersion>
+      <PackageMaxArchitectureVersion>2.2.14.89</PackageMaxArchitectureVersion>
     </PackageInfo>
   </PackageInfoList>
 </StoreAssociation>

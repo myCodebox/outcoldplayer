@@ -122,7 +122,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
                     }
                 });
 
-            await progress.SafeReportAsync(0.75d);
+            await progress.SafeReportAsync(0.8d);
 
             int playlistsInserted = 0;
             int playlistsUpdated = 0;
@@ -180,7 +180,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
                 }
             });
 
-            await progress.SafeReportAsync(0.8d);
+            await progress.SafeReportAsync(0.85d);
 
             this.logger.Debug("LoadPlaylistsAsync: loading playlist entries.");
             await this.playlistsWebService.GetAllPlaylistEntries(libraryFreshnessDate, chunkHandler: async (chunk) =>
@@ -221,27 +221,27 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
 
                         if (entry.Track != null)
                         {
-                            Song currentSong = null;
+                            Song currentSong = entry.Track.ToSong();
                             if (libraryFreshnessDate.HasValue)
                             {
-                                currentSong = await this.songsRepository.FindSongAsync(entry.TrackId);
+                                currentSong = await this.songsRepository.FindSongAsync(currentSong.SongId);
                             }
-
+                            
                             if (currentSong != null)
                             {
-                                if (!songsToUpdate.ContainsKey(entry.TrackId))
+                                if (!songsToUpdate.ContainsKey(currentSong.SongId))
                                 {
                                     GoogleMusicSongEx.Mapper(entry.Track, currentSong);
-                                    songsToUpdate.Add(entry.TrackId, currentSong);
+                                    songsToUpdate.Add(currentSong.SongId, currentSong);
                                 }
                             }
                             else
                             {
-                                if (!songsToInsert.ContainsKey(entry.TrackId))
+                                currentSong = entry.Track.ToSong();
+                                if (!songsToInsert.ContainsKey(currentSong.SongId))
                                 {
-                                    Song song = entry.Track.ToSong();
-                                    song.IsLibrary = false;
-                                    songsToInsert.Add(entry.TrackId, song);
+                                    currentSong.IsLibrary = false;
+                                    songsToInsert.Add(currentSong.SongId, currentSong);
                                 }
                             }
                         }

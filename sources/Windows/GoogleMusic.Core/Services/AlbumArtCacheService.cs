@@ -114,7 +114,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
         public async Task ClearCacheAsync()
         {
             await this.cachedAlbumArtsRepository.ClearCacheAsync();
-            foreach (var storageItem in await this.cacheFolder.GetItemsAsync())
+            var folder = await this.GetCacheFolderAsync();
+            foreach (var storageItem in await folder.GetItemsAsync())
             {
                 await storageItem.DeleteAsync(StorageDeleteOption.PermanentDelete);
             }

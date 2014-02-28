@@ -9,7 +9,8 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
     using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Repositories;
-    
+    using OutcoldSolutions.GoogleMusic.Services;
+
     public interface IInitialSynchronization
     {
         Task InitializeAsync(IProgress<double> progress = null);
@@ -21,20 +22,30 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
 
         private readonly IGoogleMusicSynchronizationService synchronizationService;
 
+        private readonly ISongsCachingService songsCachingService;
+
+        private readonly IAlbumArtCacheService albumArtCacheService;
+
         private readonly DbContext dbContext;
 
         public InitialSynchronization(
             ILogManager logManager,
-            IGoogleMusicSynchronizationService synchronizationService)
+            IGoogleMusicSynchronizationService synchronizationService,
+            ISongsCachingService songsCachingService,
+            IAlbumArtCacheService albumArtCacheService)
         {
             this.dbContext = new DbContext();
             this.logger = logManager.CreateLogger("InitialSynchronization");
             this.synchronizationService = synchronizationService;
+            this.songsCachingService = songsCachingService;
+            this.albumArtCacheService = albumArtCacheService;
         }
 
         public async Task InitializeAsync(IProgress<double> progress)
         {
             await this.ClearLocalDatabaseAsync();
+            await this.songsCachingService.ClearCacheAsync();
+            await this.albumArtCacheService.ClearCacheAsync();
             await this.synchronizationService.Update(progress);
         }
 
