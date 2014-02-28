@@ -54,6 +54,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
         void StartDownloadTask();
 
         bool IsDownloading();
+
+        Task RestoreCacheAsync();
     }
 
     public class CachingChangeEvent
@@ -504,6 +506,36 @@ namespace OutcoldSolutions.GoogleMusic.Services
             finally
             {
                 this.mutex.Release(1);
+            }
+        }
+
+        public async Task RestoreCacheAsync()
+        {
+            StorageFolder storageFolder = await this.GetCacheFolderAsync();
+            var folders = await storageFolder.GetFoldersAsync();
+            foreach (var folder in folders)
+            {
+                IReadOnlyList<StorageFile> files = await folder.GetFilesAsync();
+                foreach (var file in files)
+                {
+                    var song = await this.songsRepository.FindSongAsync(file.Name);
+                    if (song != null)
+                    {
+                        CachedSong cachedSong = new CachedSong()
+                        {
+                            FileName = file.Name,
+                            SongId = song.SongId,
+                            IsAddedByUser = true,
+                            TaskAdded = DateTime.Now
+                        };
+
+                        await this.songsCacheRepository.AddAsync(cachedSong);
+                    }
+                    else
+                    {
+                        await file.DeleteAsync(StorageDeleteOption.PermanentDelete);
+                    }
+                }
             }
         }
 

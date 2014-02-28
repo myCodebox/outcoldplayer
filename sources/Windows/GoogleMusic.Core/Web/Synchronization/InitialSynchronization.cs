@@ -44,9 +44,11 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
         public async Task InitializeAsync(IProgress<double> progress)
         {
             await this.ClearLocalDatabaseAsync();
-            await this.songsCachingService.ClearCacheAsync();
             await this.albumArtCacheService.ClearCacheAsync();
+
             await this.synchronizationService.Update(progress);
+
+            await this.songsCachingService.RestoreCacheAsync();
         }
 
         private async Task ClearLocalDatabaseAsync()
