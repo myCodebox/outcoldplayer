@@ -10,10 +10,8 @@ namespace OutcoldSolutions.GoogleMusic.Models
     [Table("Song")]
     public class Song
     {
-        [PrimaryKey, AutoIncrement]
-        public int SongId { get; set; }
-
-        public string ProviderSongId { get; set; }
+        [PrimaryKey]
+        public string SongId { get; set; }
 
         public string Title { get; set; }
 
@@ -40,6 +38,8 @@ namespace OutcoldSolutions.GoogleMusic.Models
 
         public Uri AlbumArtUrl { get; set; }
 
+        public Uri ArtistArtUrl { get; set; }
+
         [Indexed]
         public DateTime LastPlayed { get; set; }
 
@@ -48,10 +48,12 @@ namespace OutcoldSolutions.GoogleMusic.Models
 
         public string Comment { get; set; }
 
-        public int Bitrate { get; set; }
+        public StreamType TrackType { get; set; }
 
-        public StreamType StreamType { get; set; }
-       
+        public string GoogleArtistId { get; set; }
+
+        public string GoogleAlbumId { get; set; }
+
         [Reference]
         public UserPlaylistEntry UserPlaylistEntry { get; set; }
 
@@ -80,5 +82,19 @@ namespace OutcoldSolutions.GoogleMusic.Models
         public bool IsLibrary { get; set; }
 
         public string StoreId { get; set; }
+
+        public DateTime RecentDate { get; set; }
+
+        public int BeatsPerMinute { get; set; }
+
+        public string EstimatedSize { get; set; }
+
+        public int ContentType { get; set; }
+
+        public bool TrackAvailableForSubscription { get; set; }
+
+        public bool TrackAvailableForPurchase { get; set; }
+
+        public bool AlbumAvailableForPurchase { get; set; }
     }
 }

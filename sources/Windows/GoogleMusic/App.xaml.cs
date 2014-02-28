@@ -101,6 +101,7 @@ namespace OutcoldSolutions.GoogleMusic
                 registration.Register<IDataProtectService>().AsSingleton<DataProtectService>();
                 registration.Register<IGoogleAccountWebService>().As<GoogleAccountWebService>();
                 registration.Register<IGoogleMusicWebService>().AsSingleton<GoogleMusicWebService>();
+                registration.Register<IGoogleMusicApisService>().AsSingleton<GoogleMusicApisService>();
                 registration.Register<IGoogleAccountService>().AsSingleton<GoogleAccountService>();
                 registration.Register<IAuthentificationService>().As<AuthentificationService>();
                 registration.Register<IPlaylistsWebService>().As<PlaylistsWebService>();
@@ -235,9 +236,7 @@ namespace OutcoldSolutions.GoogleMusic
 
         protected override async Task OnSuspendingAsync()
         {
-            var sessionService = Container.Resolve<IGoogleMusicSessionService>();
-
-            await Container.Resolve<IGoogleMusicWebService>().SaveCurrentSessionAsync();
+            await Container.Resolve<IGoogleMusicSessionService>().SaveCurrentSessionAsync();
 
             Container.Resolve<ILastfmWebService>().SaveCurrentSession();
 

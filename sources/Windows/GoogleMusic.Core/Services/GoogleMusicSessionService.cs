@@ -16,12 +16,15 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
     using Windows.Storage;
 
+    using OutcoldSolutions.GoogleMusic.Web;
+
     using UnicodeEncoding = Windows.Storage.Streams.UnicodeEncoding;
 
     public class GoogleMusicSessionService : IGoogleMusicSessionService
     {
         private const string ContainerName = "GoogleMusicSessionService_UserSession";
         private const string SessionIdKey = "GoogleMusicSessionService_SessionId";
+        private const string AuthKey = "GoogleMusicSessionService_Token";
         private const string CookiesKey = "GoogleMusicSessionService_Cookies";
         private const string CookiesFile = "cookies.cache";
 
@@ -30,6 +33,9 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         private UserSession userSession;
 
+        private CookieContainerWrapper cookieContainer;
+        private string auth;
+
         public GoogleMusicSessionService(ILogManager logManager, IDataProtectService dataProtectService)
         {
             this.dataProtectService = dataProtectService;
@@ -37,6 +43,29 @@ namespace OutcoldSolutions.GoogleMusic.Services
         }
 
         public event EventHandler SessionCleared;
+
+        public void InitializeCookieContainer(IEnumerable<Cookie> cookieCollection, string authValue)
+        {
+            if (cookieCollection == null)
+            {
+                throw new ArgumentNullException("cookieCollection");
+            }
+
+            this.cookieContainer = new CookieContainerWrapper();
+            this.cookieContainer.AddCookies(cookieCollection);
+
+            this.auth = authValue;
+        }
+
+        public CookieContainerWrapper GetCookieContainer()
+        {
+            return this.cookieContainer;
+        }
+
+        public string GetAuth()
+        {
+            return this.auth;
+        }
 
         public UserSession GetSession()
         {
@@ -50,18 +79,15 @@ namespace OutcoldSolutions.GoogleMusic.Services
             return this.userSession;
         }
 
-        public async Task SaveCurrentSessionAsync(IEnumerable<Cookie> cookieCollection)
+        public async Task SaveCurrentSessionAsync()
         {
-            if (cookieCollection == null)
-            {
-                throw new ArgumentNullException("cookieCollection");
-            }
-
-            if (this.userSession == null)
+            if (this.userSession == null || this.cookieContainer == null)
             {
                 this.logger.Debug("Current user session is null, ignoring save current session.");
                 return;
             }
+
+            var cookieCollection = this.cookieContainer.GetCookies();
 
             var applicationDataContainer = this.GetSessionContainer();
             if (applicationDataContainer != null)
@@ -69,6 +95,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 try
                 {
                     applicationDataContainer.Values[SessionIdKey] = this.userSession.SessionId;
+                    applicationDataContainer.Values[AuthKey] = this.auth;
 
                     var cookies = cookieCollection.ToArray();
 
@@ -194,6 +221,21 @@ namespace OutcoldSolutions.GoogleMusic.Services
                         this.logger.Error(e, "LoadSession: cannot deserialize sessionId.");
                     }
                 }
+
+                object tokenObject;
+                if (applicationDataContainer.Values.TryGetValue(AuthKey, out tokenObject))
+                {
+                    try
+                    {
+                        this.auth = Convert.ToString(tokenObject);
+
+                        this.logger.Debug("LoadSession: auth.");
+                    }
+                    catch (Exception e)
+                    {
+                        this.logger.Error(e, "LoadSession: cannot deserialize auth.");
+                    }
+                }
             }
             else
             {
@@ -208,6 +250,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             {
                 sessionContainer.Values.Clear();
                 this.userSession = null;
+                this.cookieContainer = null;
                 try
                 {
                     var file = await ApplicationData.Current.LocalFolder.GetFileAsync(CookiesFile);

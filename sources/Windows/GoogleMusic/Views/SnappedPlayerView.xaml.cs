@@ -57,7 +57,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
                     {
                         await this.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, this.UpdateLayout);
                         var currentSongBindingModel = this.playerBindingModel.SongsBindingModel.Songs
-                            .FirstOrDefault(x => string.Equals(x.Metadata.ProviderSongId, this.playerBindingModel.CurrentSong.Metadata.ProviderSongId, StringComparison.Ordinal));
+                            .FirstOrDefault(x => string.Equals(x.Metadata.SongId, this.playerBindingModel.CurrentSong.Metadata.SongId, StringComparison.Ordinal));
                         await this.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => this.ListView.ScrollIntoView(currentSongBindingModel));
                     }
                 });

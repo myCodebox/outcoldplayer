@@ -11,30 +11,23 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
     public class CookieContainerWrapper
     {
+        private readonly static Uri BaseUri = new Uri("https://play.google.com/music/");
         private const string SecureHeaderValue = " Secure";
 
         private readonly CookieContainer cookieContainer = new CookieContainer();
-        private readonly Uri baseUri;
         private readonly string localPath = "/";
 
-        public CookieContainerWrapper(Uri baseUri)
+        public CookieContainerWrapper()
         {
-            if (baseUri == null)
+            if (!string.Equals(BaseUri.LocalPath, this.localPath))
             {
-                throw new ArgumentNullException("baseUri");
-            }
-
-            this.baseUri = baseUri;
-
-            if (!string.Equals(this.baseUri.LocalPath, this.localPath))
-            {
-                this.localPath = this.baseUri.LocalPath.TrimEnd('/');
+                this.localPath = BaseUri.LocalPath.TrimEnd('/');
             }
         }
 
         public string GetCookieHeader()
         {
-            return this.GetCookieHeader(this.baseUri);
+            return this.GetCookieHeader(BaseUri);
         }
 
         public string GetCookieHeader(Uri uri)
@@ -44,12 +37,12 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
         public IEnumerable<Cookie> GetCookies()
         {
-            return this.GetCookies(this.baseUri);
+            return this.GetCookies(BaseUri);
         }
 
         public IEnumerable<Cookie> GetCookies(Uri uri)
         {
-            return this.cookieContainer.GetCookies(this.baseUri).Cast<Cookie>();
+            return this.cookieContainer.GetCookies(BaseUri).Cast<Cookie>();
         }
 
         public Cookie FindCookie(string name)
@@ -67,12 +60,12 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
             foreach (var cookie in cookies)
             {
-                if (string.Equals(cookie.Domain, this.baseUri.Host))
+                if (string.Equals(cookie.Domain, BaseUri.Host))
                 {
                     cookie.Path = this.localPath;
                 }
 
-                this.cookieContainer.Add(this.baseUri, cookie);
+                this.cookieContainer.Add(BaseUri, cookie);
             }
         }
 
@@ -96,10 +89,10 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 throw new ArgumentNullException("cookieHeader");
             }
 
-            this.VerifyCookieHeaderProperty(ref cookieHeader, "Domain", this.baseUri.Host);
+            this.VerifyCookieHeaderProperty(ref cookieHeader, "Domain", BaseUri.Host);
             this.VerifyCookieHeaderProperty(ref cookieHeader, "Path", this.localPath);
 
-            this.cookieContainer.SetCookies(this.baseUri, cookieHeader);
+            this.cookieContainer.SetCookies(BaseUri, cookieHeader);
         }
 
         private void VerifyCookieHeaderProperty(ref string cookieHeader, string property, string defaultValue)

@@ -5,7 +5,6 @@ namespace OutcoldSolutions.GoogleMusic.Web
 {
     using System;
     using System.Collections.Generic;
-    using System.IO;
     using System.Net;
     using System.Net.Http;
     using System.Runtime.InteropServices.WindowsRuntime;
@@ -18,7 +17,6 @@ namespace OutcoldSolutions.GoogleMusic.Web
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Web.Models;
-    using OutcoldSolutions.Web;
 
     using Windows.Security.Cryptography;
     using Windows.Security.Cryptography.Core;
@@ -27,7 +25,10 @@ namespace OutcoldSolutions.GoogleMusic.Web
     {
         Task<StatusResp> GetStatusAsync();
 
-        Task<List<GoogleMusicSong>> StreamingLoadAllTracksAsync(DateTime? lastUpdate, IProgress<int> progress);
+        Task<IList<GoogleMusicSong>> GetAllAsync(
+            DateTime? lastUpdate,
+            IProgress<int> progress,
+            Func<IList<GoogleMusicSong>, Task> chunkHandler = null);
 
         Task<GoogleMusicSongUrl> GetSongUrlAsync(Song song);
 
@@ -50,20 +51,25 @@ namespace OutcoldSolutions.GoogleMusic.Web
         
         private const string GetStatusUrl = "services/getstatus";
 
-        private const string StreamingLoadAllTracks = "services/streamingloadalltracks?json=";
+        private const string StreamingLoadAllTracks = "trackfeed?alt=json&hl=en_US&art-dimension=512&tier=aa";
 
         private readonly IGoogleMusicWebService googleMusicWebService;
+
+        private readonly IGoogleMusicApisService googleMusicApisService;
+
         private readonly IGoogleMusicSessionService sessionService;
         private readonly ISettingsService settingsService;
         private readonly ILogger logger;
 
         public SongsWebService(
             IGoogleMusicWebService googleMusicWebService,
+            IGoogleMusicApisService googleMusicApisService,
             IGoogleMusicSessionService sessionService,
             ISettingsService settingsService,
             ILogManager logManager)
         {
             this.googleMusicWebService = googleMusicWebService;
+            this.googleMusicApisService = googleMusicApisService;
             this.sessionService = sessionService;
             this.settingsService = settingsService;
             this.logger = logManager.CreateLogger("SongsWebService");
@@ -73,83 +79,10 @@ namespace OutcoldSolutions.GoogleMusic.Web
         {
             return await this.googleMusicWebService.PostAsync<StatusResp>(GetStatusUrl, forceJsonBody: false);
         }
-        
-        public async Task<List<GoogleMusicSong>> StreamingLoadAllTracksAsync(DateTime? lastUpdate, IProgress<int> progress)
+
+        public Task<IList<GoogleMusicSong>> GetAllAsync(DateTime? lastUpdate, IProgress<int> progress, Func<IList<GoogleMusicSong>, Task> chunkHandler = null)
         {
-            List<GoogleMusicSong> googleMusicSongs = new List<GoogleMusicSong>();
-
-            string json;
-
-            if (lastUpdate == null)
-            {
-                json = JsonConvert.SerializeObject(
-                        new
-                        {
-                            sessionId = this.sessionService.GetSession().SessionId,
-                            requestCause = 3,
-                            requestType = 1
-                        });
-            }
-            else
-            {
-                json = JsonConvert.SerializeObject(
-                        new
-                        {
-                            sessionId = this.sessionService.GetSession().SessionId,
-                            requestCause = 2,
-                            requestType = 1,
-                            lastUpdated = (long)((lastUpdate.Value - new DateTime(1970, 1, 1, 0, 0, 0)).TotalMilliseconds * 1000)
-                        });
-            }
-
-            var response = await this.googleMusicWebService.GetAsync(StreamingLoadAllTracks + WebUtility.UrlEncode(json));
-
-            if (response.StatusCode == HttpStatusCode.Forbidden || response.StatusCode == HttpStatusCode.Found)
-            {
-                response = await this.googleMusicWebService.GetAsync(StreamingLoadAllTracks + WebUtility.UrlEncode(json));
-            }
-
-            response.EnsureSuccessStatusCode();
-
-            if (response.Content.IsPlainText())
-            {
-                var oResponse = await response.Content.ReadAsJsonObject<CommonResponse>();
-                if (oResponse.ReloadXsrf.HasValue && oResponse.ReloadXsrf.Value)
-                {
-                    await this.googleMusicWebService.RefreshXtAsync();
-                    response = await this.googleMusicWebService.GetAsync(StreamingLoadAllTracks + WebUtility.UrlEncode(json));
-                }
-            }
-
-            if (response.Content.IsHtmlText())
-            {
-                var stream = await response.Content.ReadAsStreamAsync();
-                using (StreamReader streamReader = new StreamReader(stream))
-                {
-                    while (!streamReader.EndOfStream)
-                    {
-                        var line = streamReader.ReadLine();
-                        if (line == null)
-                        {
-                            break;
-                        }
-
-                        if (line.StartsWith("window.parent['slat_process']("))
-                        {
-                            string str = line.Substring("window.parent['slat_process'](".Length, line.Length - ("window.parent['slat_process'](".Length + 2));
-                            var googleMusicPlaylist = JsonConvert.DeserializeObject<GoogleMusicPlaylist>(str);
-                            googleMusicSongs.AddRange(googleMusicPlaylist.Playlist);
-
-                            if (progress != null)
-                            {
-                                progress.Report(googleMusicSongs.Count);
-                            }
-                        }
-                    }
-                }
-            }
-
-            return googleMusicSongs;
+            return this.googleMusicApisService.DownloadList(StreamingLoadAllTracks, lastUpdate, progress, chunkHandler);
         }
 
         public async Task<GoogleMusicSongUrl> GetSongUrlAsync(Song song)
@@ -229,8 +162,8 @@ namespace OutcoldSolutions.GoogleMusic.Web
             string url = null;
 
             bool useSignature = !string.IsNullOrEmpty(song.StoreId) 
-                                && song.StreamType != StreamType.Free
-                                && song.StreamType != StreamType.OwnLibrary;
+                                && song.TrackType != StreamType.Free
+                                && song.TrackType != StreamType.OwnLibrary;
 
             if (forceSwitch)
             {
@@ -271,7 +204,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
             }
             else
             {
-                url = string.Format(SongUrlFormat, song.ProviderSongId);
+                url = string.Format(SongUrlFormat, song.SongId);
             }
 
             return await this.googleMusicWebService.GetAsync<GoogleMusicSongUrl>(url, signUrl: false);

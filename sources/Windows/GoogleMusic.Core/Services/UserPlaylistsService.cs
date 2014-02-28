@@ -12,6 +12,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Web;
+    using OutcoldSolutions.GoogleMusic.Web.Synchronization;
 
     public interface IUserPlaylistsService
     {
@@ -76,12 +77,12 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
                 var userPlaylist = new UserPlaylist
                 {
-                    ProviderPlaylistId = resp.Id,
+                    PlaylistId = resp.Id,
                     Title = name,
                     TitleNorm = name.Normalize()
                 };
 
-                await this.repository.InsertAsync(userPlaylist);
+                await this.repository.InsertAsync(new [] { userPlaylist });
 
                 this.eventAggregator.Publish(PlaylistsChangeEvent.New(PlaylistType.UserPlaylist).AddAddedPlaylists(userPlaylist));
 
@@ -91,21 +92,25 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         public async Task<bool> DeleteAsync(UserPlaylist playlist)
         {
-             if (this.logger.IsDebugEnabled)
-            {
-                this.logger.Debug("Deleting playlist '{0}'.", playlist.ProviderPlaylistId);
-            }
-
-            var resp = await this.webService.DeleteAsync(playlist.ProviderPlaylistId);
             if (this.logger.IsDebugEnabled)
             {
-                this.logger.Debug("Playlist '{0}' was deleted from server with response '{1}'.", playlist.ProviderPlaylistId, resp);
+                this.logger.Debug("Deleting playlist '{0}'.", playlist.PlaylistId);
+            }
+
+            var resp = await this.webService.DeleteAsync(playlist.PlaylistId);
+            if (this.logger.IsDebugEnabled)
+            {
+                this.logger.Debug(
+                    "Playlist '{0}' was deleted from server with response '{1}'.",
+                    playlist.PlaylistId,
+                    resp);
             }
 
             if (resp)
             {
-                await this.repository.DeleteAsync(playlist);
-                this.eventAggregator.Publish(PlaylistsChangeEvent.New(PlaylistType.UserPlaylist).AddRemovedPlaylists(playlist));
+                await this.repository.DeleteAsync(new [] { playlist });
+                this.eventAggregator.Publish(
+                    PlaylistsChangeEvent.New(PlaylistType.UserPlaylist).AddRemovedPlaylists(playlist));
             }
 
             return resp;
@@ -115,21 +120,21 @@ namespace OutcoldSolutions.GoogleMusic.Services
         {
             if (this.logger.IsDebugEnabled)
             {
-                this.logger.Debug("Changing name for playlist with Id '{0}' to '{1}'.", playlist.ProviderPlaylistId, name);
+                this.logger.Debug("Changing name for playlist with Id '{0}' to '{1}'.", playlist.PlaylistId, name);
             }
 
-            bool result = await this.webService.ChangeNameAsync(playlist.ProviderPlaylistId, name);
+            bool result = await this.webService.ChangeNameAsync(playlist.PlaylistId, name);
 
             if (this.logger.IsDebugEnabled)
             {
-                this.logger.Debug("The result of name changing for playlist with id '{0}' is '{1}'.", playlist.ProviderPlaylistId, result);
+                this.logger.Debug("The result of name changing for playlist with id '{0}' is '{1}'.", playlist.PlaylistId, result);
             }
 
             if (result)
             {
                 playlist.Title = name;
                 playlist.TitleNorm = name.Normalize();
-                await this.repository.UpdateAsync(playlist);
+                await this.repository.UpdateAsync(new [] { playlist });
                 this.eventAggregator.Publish(PlaylistsChangeEvent.New(PlaylistType.UserPlaylist).AddUpdatedPlaylists(playlist));
             }
 
@@ -151,7 +156,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             List<Song> list = songs.ToList();
             if (this.logger.IsDebugEnabled)
             {
-                this.logger.Debug("Removing entries from playlist '{0}'.", playlist.ProviderPlaylistId);
+                this.logger.Debug("Removing entries from playlist '{0}'.", playlist.PlaylistId);
             }
 
             string[] songIds = new string[list.Count];
@@ -160,20 +165,20 @@ namespace OutcoldSolutions.GoogleMusic.Services
             for (int index = 0; index < list.Count; index++)
             {
                 var song = list[index];
-                songIds[index] = song.ProviderSongId;
+                songIds[index] = song.SongId;
 
                 if (song.UserPlaylistEntry == null)
                 {
                     throw new ArgumentException("Songs should be collection of songs with playlist entries.", "songs");
                 }
 
-                entryIds[index] = song.UserPlaylistEntry.ProviderEntryId;
+                entryIds[index] = song.UserPlaylistEntry.Id;
             }
 
-            var result = await this.webService.RemoveSongsAsync(playlist.ProviderPlaylistId, songIds, entryIds);
+            var result = await this.webService.RemoveSongsAsync(playlist.PlaylistId, songIds, entryIds);
             if (this.logger.IsDebugEnabled)
             {
-                this.logger.Debug("Result of entry removing entries from playlist '{0}' is '{1}'.", playlist.ProviderPlaylistId, result);
+                this.logger.Debug("Result of entry removing entries from playlist '{0}' is '{1}'.", playlist.PlaylistId, result);
             }
 
             if (result)
@@ -195,10 +200,10 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
             if (this.logger.IsDebugEnabled)
             {
-                this.logger.Debug("Adding {0} songs to playlist '{1}'.", list.Count, playlist.ProviderPlaylistId);
+                this.logger.Debug("Adding {0} songs to playlist '{1}'.", list.Count, playlist.PlaylistId);
             }
 
-            var result = await this.webService.AddSongsAsync(playlist.ProviderPlaylistId, list.Select(s => s.ProviderSongId).ToArray());
+            var result = await this.webService.AddSongsAsync(playlist.PlaylistId, list.Select(s => s.SongId).ToArray());
             if (result != null)
             {
                 if (this.logger.IsDebugEnabled)
@@ -206,17 +211,23 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     this.logger.Debug(
                         "Successfully added '{0}' songs to playlist {1}.",
                         list.Count,
-                        playlist.ProviderPlaylistId);
+                        playlist.PlaylistId);
                 }
 
+
+                // TODO: Temporary solution
+                await ApplicationBase.Container.Resolve<IGoogleMusicSynchronizationService>().Update();
+
+                /*
                 IList<UserPlaylistEntry> entries = new List<UserPlaylistEntry>();
 
                 int index = 0;
 
                 foreach (var songIdResp in result.SongIds)
                 {
-                    var storedSong = list.FirstOrDefault(x => string.Equals(x.ProviderSongId, songIdResp.SongId, StringComparison.OrdinalIgnoreCase));
+                    var storedSong = list.FirstOrDefault(x => string.Equals(x.SongId, songIdResp.SongId, StringComparison.OrdinalIgnoreCase));
 
+                    // Don't support Playlist to Radio
                     if (storedSong.SongId <= 0)
                     {
                         await this.songsRepository.InsertAsync(new[] { storedSong });
@@ -234,6 +245,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 }
 
                 await this.repository.InsertEntriesAsync(entries);
+                */
 
                 return true;
             }

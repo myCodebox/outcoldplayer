@@ -12,6 +12,8 @@ namespace OutcoldSolutions.Diagnostics
     using System.Text;
     using System.Threading.Tasks;
 
+    using Newtonsoft.Json;
+
     using OutcoldSolutions.Web;
 
     using Windows.Security.Cryptography;
@@ -41,7 +43,7 @@ namespace OutcoldSolutions.Diagnostics
         /// <param name="cookieCollection">
         /// The cookie collection.
         /// </param>
-        /// <param name="formData">
+        /// <param name="json">
         /// The form data.
         /// </param>
         /// <exception cref="ArgumentNullException">
@@ -52,7 +54,7 @@ namespace OutcoldSolutions.Diagnostics
             HttpMethod method,
             string requestUrl,
             IEnumerable<Cookie> cookieCollection = null,
-            IDictionary<string, string> formData = null)
+            object json = null)
         {
             if (@this == null)
             {
@@ -67,15 +69,10 @@ namespace OutcoldSolutions.Diagnostics
                 log.AppendFormat("{0} REQUEST: {1}.", method, requestUrl);
                 log.AppendLine();
 
-                if (formData != null)
+                if (json != null)
                 {
                     log.AppendLine("    FORMDATA: ");
-
-                    foreach (var argument in formData)
-                    {
-                        log.AppendFormat("        {0}={1}", argument.Key, argument.Value);
-                        log.AppendLine();
-                    }
+                    log.AppendLine(JsonConvert.SerializeObject(json));
                 }
 
                 LogCookies(log, cookieCollection);

@@ -11,7 +11,7 @@ namespace OutcoldSolutions.GoogleMusic.Models
     public class CachedSong
     {
         [PrimaryKey]
-        public int SongId { get; set; }
+        public string SongId { get; set; }
 
         public DateTime TaskAdded { get; set; }
 

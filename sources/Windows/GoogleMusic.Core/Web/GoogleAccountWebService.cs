@@ -148,7 +148,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 return GoogleAuthResponse.ErrorResponse(GoogleAuthResponse.ErrorResponseCode.Unknown);
             }
 
-            return GoogleAuthResponse.SuccessResponse(this.httpClientHandler.CookieContainer.GetCookies(serviceUri));
+            return GoogleAuthResponse.SuccessResponse(this.httpClientHandler.CookieContainer.GetCookies(serviceUri), dictionary["Auth"]);
         }
     }
 }

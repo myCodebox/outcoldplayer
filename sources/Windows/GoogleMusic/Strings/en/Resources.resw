@@ -360,9 +360,6 @@
   <data name="Msg_Http404" xml:space="preserve">
     <value>Server does not know this song. You can force to refresh your local library or just when application will auto sync it with server.</value>
   </data>
-  <data name="Notification_FailedToDownloadPlaylists" xml:space="preserve">
-    <value>Failed to download playlists, this could be temporary issue. We will try to download them later.</value>
-  </data>
   <data name="OfflineCacheAppSettingsTitle" xml:space="preserve">
     <value>Offline cache</value>
   </data>

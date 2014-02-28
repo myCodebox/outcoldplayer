@@ -108,7 +108,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
         public async Task<Tuple<RadioPlaylist, IList<Song>>> CreateStationAsync(Song song)
         {
             var seedType = song.IsLibrary ? "TRACK_LOCKER_ID" : "TRACK_MATCHED_ID";
-            var seedId = song.ProviderSongId;
+            var seedId = song.SongId;
 
             var jsonProperties = new Dictionary<string, string>
                                      {
@@ -167,7 +167,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
             foreach (var track in radio.Track)
             {
                 Song song = null;
-                if (!string.Equals(track.Type, "EPHEMERAL_SUBSCRIPTION", StringComparison.OrdinalIgnoreCase))
+                if (track.TrackType != (int)StreamType.EphemeralSubscription)
                 {
                     song = await this.songsRepository.FindSongAsync(track.Id);
                 }

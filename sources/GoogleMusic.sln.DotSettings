@@ -9,4 +9,5 @@
 	<s:String x:Key="/Default/Environment/InjectedLayers/FileInjectedLayer/=DE133AC8C098824AA3D21F4A39009757/AbsolutePath/@EntryValue">C:\Users\Den\dev\gMusic\sources\GoogleMusic.sln.DotSettings</s:String>
 	<s:Boolean x:Key="/Default/Environment/InjectedLayers/InjectedLayerCustomization/=FileDE133AC8C098824AA3D21F4A39009757/@KeyIndexDefined">True</s:Boolean>
 	<s:Double x:Key="/Default/Environment/InjectedLayers/InjectedLayerCustomization/=FileDE133AC8C098824AA3D21F4A39009757/RelativePriority/@EntryValue">1</s:Double>
+	<s:Boolean x:Key="/Default/Environment/SettingsMigration/IsMigratorApplied/=JetBrains_002EReSharper_002EPsi_002ECSharp_002ECodeStyle_002ESettingsUpgrade_002EMigrateBlankLinesAroundFieldToBlankLinesAroundProperty/@EntryIndexedValue">True</s:Boolean>
 	<s:String x:Key="/Default/Environment/UserInterface/ShortcutSchemeName/@EntryValue">None</s:String></wpf:ResourceDictionary>

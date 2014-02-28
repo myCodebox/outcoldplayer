@@ -518,7 +518,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 {
                     if (this.logger.IsDebugEnabled)
                     {
-                        this.logger.Debug("Getting url for song '{0}'.", song.ProviderSongId);
+                        this.logger.Debug("Getting url for song '{0}'.", song.SongId);
                     }
 
                     var stream = await this.songsCachingService.GetStreamAsync(song);
@@ -587,7 +587,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
                         if (this.logger.IsDebugEnabled)
                         {
-                            this.logger.Debug("Could not get url for song {0}.", song.ProviderSongId);
+                            this.logger.Debug("Could not get url for song {0}.", song.SongId);
                         }
                     }
                 }

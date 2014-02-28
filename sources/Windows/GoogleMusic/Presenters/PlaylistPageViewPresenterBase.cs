@@ -110,7 +110,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                         this.BindingModel.Playlist = (TPlaylist)playlist;
                         this.BindingModel.Type = this.resources.GetTitle(playlist.PlaylistType);
 
-                        if (request.SongId.HasValue)
+                        if (!string.IsNullOrEmpty(request.SongId))
                         {
                             var songBindingModel = this.BindingModel.SongsBindingModel.Songs.FirstOrDefault(s => s.Metadata.SongId == request.SongId);
                             if (songBindingModel != null)

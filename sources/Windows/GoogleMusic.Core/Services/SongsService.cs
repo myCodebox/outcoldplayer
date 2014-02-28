@@ -50,21 +50,21 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
             if (this.logger.IsDebugEnabled)
             {
-                this.logger.Debug("Updating rating for song '{0}' to rating '{1}' from '{2}'.", song.ProviderSongId, newRating, song.Rating);
+                this.logger.Debug("Updating rating for song '{0}' to rating '{1}' from '{2}'.", song.SongId, newRating, song.Rating);
             }
 
-            var ratingResp = await this.songsWebService.UpdateRatingAsync(song.ProviderSongId, newRating);
+            var ratingResp = await this.songsWebService.UpdateRatingAsync(song.SongId, newRating);
             
             if (this.logger.IsDebugEnabled)
             {
-                this.logger.Debug("Rating updated for song: {0}.", song.ProviderSongId);
+                this.logger.Debug("Rating updated for song: {0}.", song.SongId);
             }
 
             foreach (var songUpdate in ratingResp.Songs)
             {
                 var songRatingResp = songUpdate;
 
-                if (string.Equals(songUpdate.Id, song.ProviderSongId))
+                if (string.Equals(songUpdate.Id, song.SongId))
                 {
                     song.Rating = songRatingResp.Rating;
                     

@@ -12,15 +12,10 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Services;
-    using OutcoldSolutions.GoogleMusic.Web.Models;
 
     public interface IGoogleMusicSynchronizationService
     {
-        Task<SongsUpdateStatus> UpdateSongsAsync();
-
-        Task<UserPlaylistsUpdateStatus> UpdateUserPlaylistsAsync();
-
-        Task<UserPlaylistsUpdateStatus> UpdateUserPlaylistAsync(UserPlaylist userPlaylist);
+        Task<Tuple<SongsUpdateStatus, UserPlaylistsUpdateStatus>> Update(IProgress<double> progress = null);
     }
 
     public class GoogleMusicSynchronizationService : RepositoryBase, IGoogleMusicSynchronizationService
@@ -30,261 +25,259 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
         private readonly IPlaylistsWebService playlistsWebService;
         private readonly ISongsWebService songsWebService;
         private readonly IUserPlaylistsRepository userPlaylistsRepository;
+        private readonly ISongsRepository songsRepository;
 
         public GoogleMusicSynchronizationService(
             ILogManager logManager,
             ISettingsService settingsService,
             IPlaylistsWebService playlistsWebService,
             ISongsWebService songsWebService,
-            IUserPlaylistsRepository userPlaylistsRepository)
+            IUserPlaylistsRepository userPlaylistsRepository,
+            ISongsRepository songsRepository)
         {
             this.logger = logManager.CreateLogger("GoogleMusicSynchronizationService");
             this.settingsService = settingsService;
             this.playlistsWebService = playlistsWebService;
             this.songsWebService = songsWebService;
             this.userPlaylistsRepository = userPlaylistsRepository;
+            this.songsRepository = songsRepository;
         }
 
-        public async Task<SongsUpdateStatus> UpdateSongsAsync()
+        public async Task<Tuple<SongsUpdateStatus, UserPlaylistsUpdateStatus>> Update(IProgress<double> progress = null)
         {
+            DateTime? libraryFreshnessDate = this.settingsService.GetLibraryFreshnessDate();
+            DateTime currentTime = DateTime.UtcNow;
+
+            IProgress<int> subProgress = null;
+
+            // Get status if we need to report progress
+
+            if (!libraryFreshnessDate.HasValue && progress != null)
+            {
+                var status = await this.songsWebService.GetStatusAsync();
+                subProgress = new Progress<int>(async songsCount => await progress.SafeReportAsync((((double)songsCount / status.AvailableTracks) * 0.75d) + 0.05d));
+            }
+
+            await progress.SafeReportAsync(0.05d);
+
             int songsUpdated = 0;
             int songsDeleted = 0;
             int songsInstered = 0;
 
-            DateTime? libraryFreshnessDate = this.settingsService.GetLibraryFreshnessDate();
-            DateTime currentTime = DateTime.UtcNow;
-
-            if (this.logger.IsDebugEnabled)
-            {
-                this.logger.Debug("UpdateSongsAsync: streaming load all tracks. Library freshness date {0}.", libraryFreshnessDate);
-            }
-
-            var updatedSongs = await this.songsWebService.StreamingLoadAllTracksAsync(libraryFreshnessDate, null);
-
-            if (updatedSongs != null && updatedSongs.Count > 0)
-            {
-                if (this.logger.IsDebugEnabled)
+            await this.songsWebService.GetAllAsync(
+                libraryFreshnessDate,
+                subProgress,
+                async (gSongs) =>
                 {
-                    this.logger.Debug("UpdateSongsAsync: got {0} updates.", updatedSongs.Count);
-                }
+                    IList<Song> toBeDeleted = new List<Song>();
+                    IList<Song> toBeUpdated = new List<Song>();
+                    IList<Song> toBeInserted = new List<Song>();
 
-                await this.Connection.RunInTransactionAsync(connection =>
-                {
-                    foreach (var googleSong in updatedSongs)
+                    foreach (var googleMusicSong in gSongs)
                     {
-                        var songId = googleSong.Id;
-                        var storedSong = connection.Find<Song>(x => x.ProviderSongId == songId);
-
-                        if (googleSong.Deleted)
+                        if (googleMusicSong.Deleted)
                         {
-                            if (storedSong != null)
-                            {
-                                connection.Delete<Song>(storedSong.SongId);
-                            }
-
+                            toBeDeleted.Add(googleMusicSong.ToSong());
                             songsDeleted++;
                         }
                         else
                         {
-                            if (storedSong != null)
+                            Song song = null;
+                            if (libraryFreshnessDate.HasValue)
                             {
-                                if (!GoogleMusicSongEx.IsVisualMatch(googleSong, storedSong))
+                                song = await this.songsRepository.FindSongAsync(googleMusicSong.Id);
+                            }
+
+                            if (song != null)
+                            {
+                                GoogleMusicSongEx.Mapper(googleMusicSong, song);
+                                toBeUpdated.Add(song);
+
+                                if (!GoogleMusicSongEx.IsVisualMatch(googleMusicSong, song))
                                 {
                                     songsUpdated++;
                                 }
-
-                                GoogleMusicSongEx.Mapper(googleSong, storedSong);
-                                connection.Update(storedSong);
                             }
                             else
                             {
-                                connection.Insert(googleSong.ToSong());
+                                toBeInserted.Add(googleMusicSong.ToSong());
                                 songsInstered++;
                             }
                         }
                     }
-                });
-            }
-            else
-            {
-                if (this.logger.IsDebugEnabled)
-                {
-                    this.logger.Debug("UpdateSongsAsync: no updates.");
-                }
-            }
 
-            this.settingsService.SetLibraryFreshnessDate(currentTime);
-
-            return new SongsUpdateStatus(songsInstered, songsUpdated, songsDeleted);
-        }
-
-        public async Task<UserPlaylistsUpdateStatus> UpdateUserPlaylistsAsync()
-        {
-            Task<GoogleMusicPlaylists> allUserPlaylistsAsync = this.playlistsWebService.GetAllAsync();
-            Task<List<UserPlaylist>> allStoredUserPlaylistsAsync = this.Connection.Table<UserPlaylist>().ToListAsync();
-
-            await Task.WhenAll(allStoredUserPlaylistsAsync, allUserPlaylistsAsync);
-
-            var googlePlaylists = await allUserPlaylistsAsync;
-            var existingPlaylists = await allStoredUserPlaylistsAsync;
-
-            if (googlePlaylists.Success.HasValue && !googlePlaylists.Success.Value)
-            {
-                throw new ApplicationException("PlaylistsWebService:GetAllAsync returns unsuccessful result");
-            }
-
-            return await this.UpdateUserPlaylistsInternalAsync(existingPlaylists, googlePlaylists.Playlists ?? Enumerable.Empty<GoogleMusicPlaylist>());
-        }
-
-        public async Task<UserPlaylistsUpdateStatus> UpdateUserPlaylistAsync(UserPlaylist userPlaylist)
-        {
-            GoogleMusicPlaylist googleMusicPlaylist = await this.playlistsWebService.GetAsync(userPlaylist.ProviderPlaylistId);
-
-            return await this.UpdateUserPlaylistsInternalAsync(new[] { userPlaylist }, googleMusicPlaylist == null ? new GoogleMusicPlaylist[] { } : new[] { googleMusicPlaylist });
-        }
-
-        private async Task<UserPlaylistsUpdateStatus> UpdateUserPlaylistsInternalAsync(IEnumerable<UserPlaylist> userPlaylists, IEnumerable<GoogleMusicPlaylist> googleMusicPlaylists)
-        {
-            var existingPlaylists = userPlaylists.ToList();
-
-            int updatedPlaylists = 0;
-            int newPlaylists = 0;
-
-            foreach (var googlePlaylist in googleMusicPlaylists)
-            {
-                bool playlistUpdated = false;
-
-                var providerPlaylistId = googlePlaylist.PlaylistId;
-
-                var userPlaylist = existingPlaylists.FirstOrDefault(x => string.Equals(x.ProviderPlaylistId, providerPlaylistId, StringComparison.OrdinalIgnoreCase));
-                if (userPlaylist != null)
-                {
-                    if (!string.Equals(userPlaylist.Title, googlePlaylist.Title, StringComparison.CurrentCulture))
+                    if (toBeDeleted.Count > 0)
                     {
-                        if (this.logger.IsDebugEnabled)
+                        await this.songsRepository.DeleteAsync(toBeDeleted);
+                    }
+
+                    if (toBeInserted.Count > 0)
+                    {
+                        await this.songsRepository.InsertAsync(toBeInserted);
+                    }
+
+                    if (toBeUpdated.Count > 0)
+                    {
+                        await this.songsRepository.UpdateAsync(toBeUpdated);
+                    }
+                });
+
+            await progress.SafeReportAsync(0.75d);
+
+            int playlistsInserted = 0;
+            int playlistsUpdated = 0;
+            int playlistsDeleted = 0;
+
+            this.logger.Debug("LoadPlaylistsAsync: loading playlists.");
+            await this.playlistsWebService.GetAllAsync(libraryFreshnessDate, chunkHandler: async (chunk) =>
+            {
+                IList<UserPlaylist> toBeDeleted = new List<UserPlaylist>();
+                IList<UserPlaylist> toBeUpdated = new List<UserPlaylist>();
+                IList<UserPlaylist> toBeInserted = new List<UserPlaylist>();
+
+                foreach (var googleMusicPlaylist in chunk.Where(x => string.Equals(x.Type, "USER_GENERATED", StringComparison.OrdinalIgnoreCase)))
+                {
+                    if (googleMusicPlaylist.Deleted)
+                    {
+                        toBeDeleted.Add(googleMusicPlaylist.ToUserPlaylist());
+                        playlistsDeleted++;
+                    }
+                    else
+                    {
+                        UserPlaylist currentPlaylist = null;
+                        if (libraryFreshnessDate.HasValue)
                         {
-                            this.logger.Debug(
-                                "UpdateUserPlaylistsAsync: title was changed from {0} to {1} (id - {2}).",
-                                userPlaylist.Title,
-                                googlePlaylist.Title,
-                                providerPlaylistId);
+                            currentPlaylist = await this.userPlaylistsRepository.GetAsync(googleMusicPlaylist.Id);
                         }
 
-                        userPlaylist.Title = googlePlaylist.Title;
-                        userPlaylist.TitleNorm = googlePlaylist.Title.Normalize();
-                        playlistUpdated = true;
-
-                        await this.userPlaylistsRepository.UpdateAsync(userPlaylist);
-                    }
-
-                    existingPlaylists.Remove(userPlaylist);
-                }
-                else
-                {
-                    if (this.logger.IsDebugEnabled)
-                    {
-                        this.logger.Debug(
-                            "UpdateUserPlaylistsAsync: new playlist {0} (id - {1}).",
-                            googlePlaylist.Title,
-                            providerPlaylistId);
-                    }
-
-                    userPlaylist = new UserPlaylist
-                    {
-                        ProviderPlaylistId = providerPlaylistId,
-                        Title = googlePlaylist.Title,
-                        TitleNorm = googlePlaylist.Title.Normalize()
-                    };
-
-                    await this.userPlaylistsRepository.InsertAsync(userPlaylist);
-                    newPlaylists++;
-                }
-
-                var userPlaylistSongs = await this.userPlaylistsRepository.GetSongsAsync(userPlaylist.Id, includeAll: true);
-
-                List<UserPlaylistEntry> newEntries = new List<UserPlaylistEntry>();
-                List<UserPlaylistEntry> updatedEntries = new List<UserPlaylistEntry>();
-
-                if (googlePlaylist.Playlist != null)
-                {
-                    for (int songIndex = 0; songIndex < googlePlaylist.Playlist.Count; songIndex++)
-                    {
-                        var song = googlePlaylist.Playlist[songIndex];
-                        var storedSong = userPlaylistSongs.FirstOrDefault(s =>
-                                        string.Equals(s.ProviderSongId, song.Id, StringComparison.OrdinalIgnoreCase) &&
-                                        string.Equals(s.UserPlaylistEntry.ProviderEntryId, song.PlaylistEntryId, StringComparison.OrdinalIgnoreCase));
-
-                        if (storedSong != null)
+                        if (currentPlaylist != null)
                         {
-                            if (storedSong.UserPlaylistEntry.PlaylistOrder != songIndex)
-                            {
-                                if (this.logger.IsDebugEnabled)
-                                {
-                                    this.logger.Debug(
-                                        "UpdateUserPlaylistsAsync: order was changed for entry id {0} (playlist id - {1}).",
-                                        storedSong.UserPlaylistEntry.ProviderEntryId,
-                                        providerPlaylistId);
-                                }
+                            GoogleMusicPlaylistEx.Mapper(googleMusicPlaylist, currentPlaylist);
+                            toBeUpdated.Add(currentPlaylist);
 
-                                storedSong.UserPlaylistEntry.PlaylistOrder = songIndex;
-                                updatedEntries.Add(storedSong.UserPlaylistEntry);
-                                playlistUpdated = true;
-                            }
-
-                            userPlaylistSongs.Remove(storedSong);
                         }
                         else
                         {
-                            storedSong = await this.Connection.FindAsync<Song>(x => x.ProviderSongId == song.Id);
-                            
-                            if (storedSong == null)
-                            {
-                                storedSong = song.ToSong();
-                                storedSong.IsLibrary = false;
-                                await this.Connection.InsertAsync(storedSong);
-                            }
-
-                            playlistUpdated = true;
-                            var entry = new UserPlaylistEntry
-                            {
-                                PlaylistOrder = songIndex,
-                                SongId = storedSong.SongId,
-                                ProviderEntryId = song.PlaylistEntryId,
-                                PlaylistId = userPlaylist.PlaylistId
-                            };
-
-                            newEntries.Add(entry);
+                            toBeInserted.Add(googleMusicPlaylist.ToUserPlaylist());
+                            playlistsInserted++;
                         }
                     }
                 }
 
-                if (playlistUpdated)
+                if (toBeDeleted.Count > 0)
                 {
-                    updatedPlaylists++;
+                    await this.userPlaylistsRepository.DeleteAsync(toBeDeleted);
                 }
 
-                if (newEntries.Count > 0)
+                if (toBeInserted.Count > 0)
                 {
-                    await this.userPlaylistsRepository.InsertEntriesAsync(newEntries);
+                    await this.userPlaylistsRepository.InsertAsync(toBeInserted);
                 }
 
-                if (updatedEntries.Count > 0)
+                if (toBeUpdated.Count > 0)
                 {
-                    await this.userPlaylistsRepository.UpdateEntriesAsync(updatedEntries);
+                    await this.userPlaylistsRepository.UpdateAsync(toBeUpdated);
                 }
+            });
 
-                if (userPlaylistSongs.Count > 0)
-                {
-                    await this.userPlaylistsRepository.DeleteEntriesAsync(userPlaylistSongs.Select(entry => entry.UserPlaylistEntry));
-                }
-            }
+            await progress.SafeReportAsync(0.8d);
 
-            foreach (var existingPlaylist in existingPlaylists)
+            this.logger.Debug("LoadPlaylistsAsync: loading playlist entries.");
+            await this.playlistsWebService.GetAllPlaylistEntries(libraryFreshnessDate, chunkHandler: async (chunk) =>
             {
-                await this.userPlaylistsRepository.DeleteAsync(existingPlaylist);
-            }
+                IList<UserPlaylistEntry> toBeDeleted = new List<UserPlaylistEntry>();
+                IList<UserPlaylistEntry> toBeUpdated = new List<UserPlaylistEntry>();
+                IList<UserPlaylistEntry> toBeInserted = new List<UserPlaylistEntry>();
 
-            return new UserPlaylistsUpdateStatus(newPlaylists, updatedPlaylists, existingPlaylists.Count);
+                IDictionary<string, Song> songsToInsert = new Dictionary<string, Song>();
+                IDictionary<string, Song> songsToUpdate = new Dictionary<string, Song>();
+
+                foreach (var entry in chunk)
+                {
+                    playlistsUpdated++;
+
+                    if (entry.Deleted)
+                    {
+                        toBeDeleted.Add(entry.ToUserPlaylistEntry());
+                    }
+                    else
+                    {
+                        UserPlaylistEntry currentEntry = null;
+                        if (libraryFreshnessDate.HasValue)
+                        {
+                            currentEntry = await this.userPlaylistsRepository.GetEntryAsync(entry.Id);
+                        }
+
+                        if (currentEntry != null)
+                        {
+                            GoogleMusicPlaylistEntryEx.Mapper(entry, currentEntry);
+                            toBeUpdated.Add(currentEntry);
+                        }
+                        else
+                        {
+                            toBeInserted.Add(entry.ToUserPlaylistEntry());
+                            playlistsInserted++;
+                        }
+
+                        if (entry.Track != null)
+                        {
+                            Song currentSong = null;
+                            if (libraryFreshnessDate.HasValue)
+                            {
+                                currentSong = await this.songsRepository.FindSongAsync(entry.TrackId);
+                            }
+
+                            if (currentSong != null)
+                            {
+                                if (!songsToUpdate.ContainsKey(entry.TrackId))
+                                {
+                                    GoogleMusicSongEx.Mapper(entry.Track, currentSong);
+                                    songsToUpdate.Add(entry.TrackId, currentSong);
+                                }
+                            }
+                            else
+                            {
+                                if (!songsToInsert.ContainsKey(entry.TrackId))
+                                {
+                                    Song song = entry.Track.ToSong();
+                                    song.IsLibrary = false;
+                                    songsToInsert.Add(entry.TrackId, song);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (songsToInsert.Count > 0)
+                {
+                    await this.songsRepository.InsertAsync(songsToInsert.Values);
+                }
+
+                if (songsToUpdate.Count > 0)
+                {
+                    await this.songsRepository.UpdateAsync(songsToUpdate.Values);
+                }
+
+                if (toBeDeleted.Count > 0)
+                {
+                    await this.userPlaylistsRepository.DeleteEntriesAsync(toBeDeleted);
+                }
+
+                if (toBeInserted.Count > 0)
+                {
+                    await this.userPlaylistsRepository.InsertEntriesAsync(toBeInserted);
+                }
+
+                if (toBeUpdated.Count > 0)
+                {
+                    await this.userPlaylistsRepository.UpdateEntriesAsync(toBeUpdated);
+                }
+            });
+
+            await progress.SafeReportAsync(1.0d);
+            this.settingsService.SetLibraryFreshnessDate(currentTime);
+
+            return Tuple.Create(new SongsUpdateStatus(songsInstered, songsUpdated, songsDeleted), new UserPlaylistsUpdateStatus(playlistsInserted, playlistsUpdated, playlistsDeleted));
         }
     }
 }

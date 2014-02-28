@@ -17,7 +17,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
     {
         Task<IList<Album>> GetArtistAlbumsAsync(string artistId);
 
-        Task<Album> FindSongAlbumAsync(int songId);
+        Task<Album> FindSongAlbumAsync(string songId);
     }
 
     public class AlbumsRepository : RepositoryBase, IAlbumsRepository
@@ -36,6 +36,7 @@ select
        x.[LastPlayed],
        x.[OfflineSongsCount],
        x.[OfflineDuration],
+       x.[GoogleAlbumId],
        a.[ArtistId] as [Artist.ArtistId],
        a.[Title] as [Artist.Title],
        a.[TitleNorm] as [Artist.TitleNorm],
@@ -45,7 +46,8 @@ select
        a.[ArtUrl] as [Artist.ArtUrl],
        a.[LastPlayed]  as [Artist.LastPlayed],
        a.[OfflineSongsCount]  as [Artist.OfflineSongsCount],
-       a.[OfflineDuration]  as [Artist.OfflineDuration]
+       a.[OfflineDuration]  as [Artist.OfflineDuration],
+       a.[GoogleArtistId] as [Artist.GoogleArtistId]
 from [Album] x 
      inner join [Artist] as a on x.[ArtistTitleNorm] = a.[TitleNorm]  
 where (?1 = 1 or x.[OfflineSongsCount] > 0) 
@@ -65,6 +67,7 @@ select
        x.[LastPlayed],
        x.[OfflineSongsCount],
        x.[OfflineDuration],
+       x.[GoogleAlbumId],
        a.[ArtistId] as [Artist.ArtistId],
        a.[Title] as [Artist.Title],
        a.[TitleNorm] as [Artist.TitleNorm],
@@ -74,7 +77,8 @@ select
        a.[ArtUrl] as [Artist.ArtUrl],
        a.[LastPlayed]  as [Artist.LastPlayed],
        a.[OfflineSongsCount]  as [Artist.OfflineSongsCount],
-       a.[OfflineDuration]  as [Artist.OfflineDuration]
+       a.[OfflineDuration]  as [Artist.OfflineDuration],
+       a.[GoogleArtistId] as [Artist.GoogleArtistId]
 from [Album] x 
      inner join [Artist] as a on x.[ArtistTitleNorm] = a.[TitleNorm]
 where (?1 = 1 or x.[OfflineSongsCount] > 0) and x.[TitleNorm] like ?2
@@ -99,6 +103,7 @@ select
        x.[LastPlayed],
        x.[OfflineSongsCount],
        x.[OfflineDuration],
+       x.[GoogleAlbumId],
        a.[ArtistId] as [Artist.ArtistId],
        a.[Title] as [Artist.Title],
        a.[TitleNorm] as [Artist.TitleNorm],
@@ -109,6 +114,7 @@ select
        a.[LastPlayed]  as [Artist.LastPlayed],
        a.[OfflineSongsCount]  as [Artist.OfflineSongsCount],
        a.[OfflineDuration]  as [Artist.OfflineDuration],
+       a.[GoogleArtistId] as [Artist.GoogleArtistId],
        0 as [IsCollection]
 from [Album] x 
      inner join [Artist] as a on x.[ArtistTitleNorm] = a.[TitleNorm]     
@@ -129,6 +135,7 @@ select
        a.[LastPlayed],
        a.[OfflineSongsCount],
        a.[OfflineDuration],
+       a.[GoogleAlbumId],
        ar.[ArtistId] as [Artist.ArtistId],
        ar.[Title] as [Artist.Title],
        ar.[TitleNorm] as [Artist.TitleNorm],
@@ -139,6 +146,7 @@ select
        ar.[LastPlayed]  as [Artist.LastPlayed],
        ar.[OfflineSongsCount]  as [Artist.OfflineSongsCount],
        ar.[OfflineDuration]  as [Artist.OfflineDuration],
+       ar.[GoogleArtistId] as [Artist.GoogleArtistId],
        1 as [IsCollection]
 from [Song] as s 
     inner join [Album] a on s.[AlbumTitleNorm] = a.[TitleNorm]      
@@ -173,6 +181,7 @@ select
        x.[LastPlayed],
        x.[OfflineSongsCount],
        x.[OfflineDuration],
+       x.[GoogleAlbumId],
        a.[ArtistId] as [Artist.ArtistId],
        a.[Title] as [Artist.Title],
        a.[TitleNorm] as [Artist.TitleNorm],
@@ -182,7 +191,8 @@ select
        a.[ArtUrl] as [Artist.ArtUrl],
        a.[LastPlayed]  as [Artist.LastPlayed],
        a.[OfflineSongsCount]  as [Artist.OfflineSongsCount],
-       a.[OfflineDuration]  as [Artist.OfflineDuration]
+       a.[OfflineDuration]  as [Artist.OfflineDuration],
+       a.[GoogleArtistId] as [Artist.GoogleArtistId]
 from [Album] x 
      inner join [Artist] as a on x.[ArtistTitleNorm] = a.[TitleNorm]
      inner join [Song] as s on x.[TitleNorm] = s.[AlbumTitleNorm] and coalesce(nullif(s.AlbumArtistTitleNorm, ''), s.[ArtistTitleNorm]) = x.[ArtistTitleNorm]
@@ -232,7 +242,7 @@ where (?1 = 1 or x.[OfflineSongsCount] > 0) and s.IsLibrary = 1 and s.[SongId] =
             return await this.Connection.QueryAsync<Album>(SqlArtistAlbums, this.stateService.IsOnline(), artistId);
         }
 
-        public async Task<Album> FindSongAlbumAsync(int songId)
+        public async Task<Album> FindSongAlbumAsync(string songId)
         {
             return (await this.Connection.QueryAsync<Album>(SqlSongAlbum, this.stateService.IsOnline(), songId)).FirstOrDefault();
         }

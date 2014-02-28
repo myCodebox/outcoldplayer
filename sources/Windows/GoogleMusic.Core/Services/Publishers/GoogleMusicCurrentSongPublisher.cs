@@ -41,7 +41,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
 
         public async Task PublishAsync(Song song, IPlaylist currentPlaylist, Uri albumArtUri, CancellationToken cancellationToken)
         {
-            this.logger.Debug("PublishAsync: Publishing song playing to GoogleMusic services. ProviderSongId: {0}.", song.ProviderSongId);
+            this.logger.Debug("PublishAsync: Publishing song playing to GoogleMusic services. ProviderSongId: {0}.", song.SongId);
 
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -57,7 +57,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
                 if (userPlaylist != null)
                 {
                     updateRecentPlaylist = true;
-                    playlistId = userPlaylist.ProviderPlaylistId;
+                    playlistId = userPlaylist.Id;
                 }
                 else 
                 {
@@ -71,7 +71,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
             if (this.stateService.IsOnline())
             {
                 var recordOnServerAsync = this.RecordOnServerAsync(
-                    song.ProviderSongId, playlistId, updateRecentAlbum, updateRecentPlaylist, playCount);
+                    song.SongId, playlistId, updateRecentAlbum, updateRecentPlaylist, playCount);
                 await Task.WhenAll(recordLocalAsync, recordOnServerAsync);
             }
             else
@@ -79,7 +79,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
                 await recordLocalAsync;
             }
 
-            this.logger.Debug("PublishAsync: Song playing published to GoogleMusic services. ProviderSongId: {0}. Plays count: {1}.", song.ProviderSongId, playCount);
+            this.logger.Debug("PublishAsync: Song playing published to GoogleMusic services. ProviderSongId: {0}. Plays count: {1}.", song.SongId, playCount);
         }
 
         private async Task RecordLocalAsync(Song song, ushort playCount)

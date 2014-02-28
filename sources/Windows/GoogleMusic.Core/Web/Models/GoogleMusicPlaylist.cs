@@ -4,22 +4,30 @@
 
 namespace OutcoldSolutions.GoogleMusic.Web.Models
 {
-    using System.Collections.Generic;
-
-    public class GoogleMusicPlaylist : CommonResponse
+    public class GoogleMusicPlaylist
     {
-        public string Title { get; set; }
+        public string Kind { get; set; }
 
-        public string PlaylistId { get; set; }
+        public string Id { get; set; }
 
-        public double RequestTime { get; set; }
+        public double CreationTimestramp { get; set; }
 
-        public string ContinuationToken { get; set; }
+        public double LastModifiedTimestamp { get; set; }
 
-        public bool DifferentialUpdate { get; set; }
+        public double RecentTimestamp { get; set; }
 
-        public List<GoogleMusicSong> Playlist { get; set; }
+        public bool Deleted { get; set; }
 
-        public bool Continuation { get; set; }
+        public string Name { get; set; }
+
+        public string Type { get; set; }
+
+        public string ShareToken { get; set; }
+
+        public string OwnerName { get; set; }
+
+        public string OwnerProfilePhotoUrl { get; set; }
+
+        public bool AccessControlled { get; set; }
     }
 }

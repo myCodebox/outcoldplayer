@@ -24,9 +24,9 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         protected override async Task LoadDataAsync(NavigatedToEventArgs navigatedToEventArgs)
         {
-            if (navigatedToEventArgs.Parameter is int)
+            var songId = navigatedToEventArgs.Parameter as string;
+            if (songId != null)
             {
-                int songId = (int)navigatedToEventArgs.Parameter;
                 Album album = await this.albumsRepository.FindSongAlbumAsync(songId);
 
                 await base.LoadDataAsync(

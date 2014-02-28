@@ -52,8 +52,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     var cookieCollection = await this.sessionService.GetSavedCookiesAsync();
                     if (cookieCollection != null)
                     {
-                        this.logger.Debug("CheckAuthentificationAsync: cookie collection is not null. Initializing web services.");
-                        this.googleMusicWebService.Initialize(cookieCollection.Cast<Cookie>());
+                        this.sessionService.InitializeCookieContainer(cookieCollection, this.sessionService.GetAuth());
+                        this.logger.Debug("CheckAuthentificationAsync: cookie collection is not null. Initializing.");
                         userSession.IsAuthenticated = true; 
                         return AuthentificationResult.SucceedResult();
                     }
@@ -79,8 +79,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
             {
                 if (authResponse.CookieCollection != null && authResponse.CookieCollection.Count > 0)
                 {
-                    this.googleMusicWebService.Initialize(authResponse.CookieCollection.Cast<Cookie>());
-                    await this.googleMusicWebService.SaveCurrentSessionAsync();
+                    this.sessionService.InitializeCookieContainer(authResponse.CookieCollection.Cast<Cookie>(), authResponse.Auth);
+                    await this.sessionService.SaveCurrentSessionAsync();
                     this.sessionService.GetSession().IsAuthenticated = true;
                     return AuthentificationResult.SucceedResult();
                 }

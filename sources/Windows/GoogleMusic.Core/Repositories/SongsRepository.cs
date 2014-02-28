@@ -13,7 +13,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
 
     public interface ISongsRepository
     {
-        Task<Song> GetSongAsync(int songId);
+        Task<Song> GetSongAsync(string songId);
 
         Task<Song> FindSongAsync(string providerSongId);
 
@@ -26,6 +26,8 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
         Task InsertAsync(IEnumerable<Song> songs);
 
         Task DeleteAsync(IEnumerable<Song> songs);
+
+        Task UpdateAsync(IEnumerable<Song> songs);
     }
 
     public class SongsRepository : RepositoryBase, ISongsRepository
@@ -52,7 +54,7 @@ where (?1 = 1 or s.[IsCached] = 1) and s.[SongId] = ?2
 
         public Task<Song> FindSongAsync(string providerSongId)
         {
-            return this.Connection.Table<Song>().Where(s => s.ProviderSongId == providerSongId).FirstOrDefaultAsync();
+            return this.Connection.Table<Song>().Where(s => s.SongId == providerSongId).FirstOrDefaultAsync();
         }
 
         public async Task<IList<Song>> SearchAsync(string searchQuery, uint? take = null)
@@ -95,7 +97,12 @@ where (?1 = 1 or s.[IsCached] = 1) and s.[SongId] = ?2
                 });
         }
 
-        public async Task<Song> GetSongAsync(int songId)
+        public Task UpdateAsync(IEnumerable<Song> songs)
+        {
+            return this.Connection.RunInTransactionAsync((c) => c.UpdateAll(songs));
+        }
+
+        public async Task<Song> GetSongAsync(string songId)
         {
             return (await this.Connection.QueryAsync<Song>(SqlSong, this.stateService.IsOnline(), songId)).FirstOrDefault();
         }

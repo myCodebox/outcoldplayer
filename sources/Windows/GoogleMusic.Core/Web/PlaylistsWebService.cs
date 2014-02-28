@@ -14,9 +14,9 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
     public interface IPlaylistsWebService
     {
-        Task<GoogleMusicPlaylists> GetAllAsync();
+        Task<IList<GoogleMusicPlaylist>> GetAllAsync(DateTime? lastUpdate, IProgress<int> progress = null, Func<IList<GoogleMusicPlaylist>, Task> chunkHandler = null);
 
-        Task<GoogleMusicPlaylist> GetAsync(string playlistId);
+        Task<IList<GoogleMusicPlaylistEntry>> GetAllPlaylistEntries(DateTime? lastUpdate, IProgress<int> progress = null, Func<IList<GoogleMusicPlaylistEntry>, Task> chunkHandler = null);
 
         Task<AddPlaylistResp> CreateAsync(string name);
 
@@ -31,7 +31,8 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
     public class PlaylistsWebService : IPlaylistsWebService
     {
-        private const string PlaylistsUrl = "services/loadplaylist";
+        private const string PlaylistFeed = "playlistfeed?alt=json&hl=en_US&tier=aa";
+        private const string PlEntryFeed = "plentryfeed?alt=json&hl=en_US&tier=aa";
         private const string AddPlaylistUrl = "services/createplaylist?format=json";
         private const string DeletePlaylistUrl = "services/deleteplaylist";
         private const string ChangePlaylistNameUrl = "services/modifyplaylist";
@@ -39,28 +40,24 @@ namespace OutcoldSolutions.GoogleMusic.Web
         private const string DeleteSongUrl = "services/deletesong";
 
         private readonly IGoogleMusicWebService googleMusicWebService;
+        private readonly IGoogleMusicApisService googleMusicApisService;
 
         public PlaylistsWebService(
-            IGoogleMusicWebService googleMusicWebService)
+            IGoogleMusicWebService googleMusicWebService,
+            IGoogleMusicApisService googleMusicApisService)
         {
             this.googleMusicWebService = googleMusicWebService;
+            this.googleMusicApisService = googleMusicApisService;
         }
 
-        public async Task<GoogleMusicPlaylists> GetAllAsync()
+        public Task<IList<GoogleMusicPlaylist>> GetAllAsync(DateTime? lastUpdate, IProgress<int> progress = null, Func<IList<GoogleMusicPlaylist>, Task> chunkHandler = null)
         {
-            return await this.googleMusicWebService.PostAsync<GoogleMusicPlaylists>(PlaylistsUrl);
+            return this.googleMusicApisService.DownloadList(PlaylistFeed, lastUpdate, progress, chunkHandler);
         }
 
-        public async Task<GoogleMusicPlaylist> GetAsync(string playlistId)
+        public Task<IList<GoogleMusicPlaylistEntry>> GetAllPlaylistEntries(DateTime? lastUpdate, IProgress<int> progress = null, Func<IList<GoogleMusicPlaylistEntry>, Task> chunkHandler = null)
         {
-            var jsonProperties = new Dictionary<string, string>
-                                        {
-                                            { 
-                                                "id", JsonConvert.ToString(playlistId)
-                                            }
-                                        };
-
-            return await this.googleMusicWebService.PostAsync<GoogleMusicPlaylist>(PlaylistsUrl, jsonProperties: jsonProperties);
+            return this.googleMusicApisService.DownloadList(PlEntryFeed, lastUpdate, progress, chunkHandler);
         }
 
         public async Task<AddPlaylistResp> CreateAsync(string name)

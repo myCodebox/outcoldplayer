@@ -166,13 +166,13 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     return await this.mediaStreamDownloadService.GetCachedStreamAsync(storageFile);
                 }
 
-                if (this.predownloadedSong != null && string.Equals(this.predownloadedSong.ProviderSongId, song.ProviderSongId, StringComparison.Ordinal) 
+                if (this.predownloadedSong != null && string.Equals(this.predownloadedSong.SongId, song.SongId, StringComparison.Ordinal) 
                     && this.predownloadedStream != null && !this.predownloadedStream.IsFailed)
                 {
                     return this.predownloadedStream;
                 }
 
-                if (this.currentDownloadSong != null && string.Equals(this.currentDownloadSong.ProviderSongId, song.ProviderSongId, StringComparison.Ordinal)
+                if (this.currentDownloadSong != null && string.Equals(this.currentDownloadSong.SongId, song.SongId, StringComparison.Ordinal)
                     && this.currentDownloadStream != null && !this.currentDownloadStream.IsFailed)
                 {
                     return this.currentDownloadStream;
@@ -237,13 +237,13 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     return;
                 }
 
-                if (this.predownloadedSong != null && string.Equals(this.predownloadedSong.ProviderSongId, song.ProviderSongId, StringComparison.Ordinal)
+                if (this.predownloadedSong != null && string.Equals(this.predownloadedSong.SongId, song.SongId, StringComparison.Ordinal)
                     && this.predownloadedStream != null && !this.predownloadedStream.IsFailed)
                 {
                     return;
                 }
 
-                if (this.currentDownloadSong != null && string.Equals(this.currentDownloadSong.ProviderSongId, song.ProviderSongId, StringComparison.Ordinal)
+                if (this.currentDownloadSong != null && string.Equals(this.currentDownloadSong.SongId, song.SongId, StringComparison.Ordinal)
                      && this.currentDownloadStream != null && !this.currentDownloadStream.IsFailed)
                 {
                     return;
@@ -730,8 +730,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
                             var cache = await this.songsCacheRepository.FindAsync(nextTask.Song);
                             if (cache == null || string.IsNullOrEmpty(cache.FileName))
                             {
-                                var songFolder = await this.cacheFolder.CreateFolderAsync(nextTask.Song.ProviderSongId.Substring(0, 1), CreationCollisionOption.OpenIfExists);
-                                var file = await songFolder.CreateFileAsync(nextTask.Song.ProviderSongId, CreationCollisionOption.ReplaceExisting);
+                                var songFolder = await this.cacheFolder.CreateFolderAsync(nextTask.Song.SongId.Substring(0, 1), CreationCollisionOption.OpenIfExists);
+                                var file = await songFolder.CreateFileAsync(nextTask.Song.SongId, CreationCollisionOption.ReplaceExisting);
                                 await stream.SaveToFileAsync(file);
 
                                 if (cache == null)

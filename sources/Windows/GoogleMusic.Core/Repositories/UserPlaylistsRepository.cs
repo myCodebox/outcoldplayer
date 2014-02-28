@@ -14,13 +14,13 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
 
     public interface IUserPlaylistsRepository : IPlaylistRepository<UserPlaylist>
     {
-        Task InsertAsync(UserPlaylist userPlaylist);
+        Task InsertAsync(IEnumerable<UserPlaylist> userPlaylist);
 
-        Task DeleteAsync(UserPlaylist userPlaylist);
+        Task DeleteAsync(IEnumerable<UserPlaylist> userPlaylist);
 
-        Task UpdateAsync(UserPlaylist userPlaylist);
+        Task UpdateAsync(IEnumerable<UserPlaylist> userPlaylist);
 
-        Task<IList<UserPlaylistEntry>> GetAllSongEntriesAsync(int sondId);
+        Task<IList<UserPlaylistEntry>> GetAllSongEntriesAsync(string sondId);
 
         Task DeleteEntriesAsync(IEnumerable<UserPlaylistEntry> entries);
 
@@ -29,6 +29,8 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
         Task UpdateEntriesAsync(IEnumerable<UserPlaylistEntry> entries);
 
         Task<UserPlaylist> FindUserPlaylistAsync(Song song);
+
+        Task<UserPlaylistEntry> GetEntryAsync(string id);
     }
 
     public class UserPlaylistsRepository : RepositoryBase, IUserPlaylistsRepository
@@ -46,7 +48,10 @@ select s.*,
     e.[PlaylistId] as [UserPlaylistEntry.PlaylistId], 
     e.[SongId] as [UserPlaylistEntry.SongId],
     e.[PlaylistOrder] as [UserPlaylistEntry.PlaylistOrder],
-    e.[ProviderEntryId] as [UserPlaylistEntry.ProviderEntryId]
+    e.[CreationDate] as [UserPlaylistEntry.CreationDate],
+    e.[LastModified] as [UserPlaylistEntry.LastModified],
+    e.[CliendId] as [UserPlaylistEntry.CliendId],
+    e.[Source] as [UserPlaylistEntry.Source]
 from [Song] as s
      inner join UserPlaylistEntry e on e.SongId = s.SongId
 where (?1 = 1 or s.IsCached = 1) and e.[PlaylistId] = ?2
@@ -111,9 +116,7 @@ limit 1
 
         public async Task<UserPlaylist> GetAsync(string id)
         {
-            int playlistId = int.Parse(id);
-
-            var query = this.Connection.Table<UserPlaylist>().Where(a => a.PlaylistId == playlistId);
+            var query = this.Connection.Table<UserPlaylist>().Where(a => a.PlaylistId == id);
 
             if (this.stateService.IsOffline())
             {
@@ -121,6 +124,11 @@ limit 1
             }
 
             return await query.FirstOrDefaultAsync();
+        }
+
+        public Task<UserPlaylistEntry> GetEntryAsync(string id)
+        {
+            return this.Connection.Table<UserPlaylistEntry>().Where(x => x.Id == id).FirstOrDefaultAsync();
         }
 
         public async Task<IList<Song>> GetSongsAsync(string id, bool includeAll = false)
@@ -142,29 +150,38 @@ limit 1
             return await this.Connection.QueryAsync<UserPlaylist>(sql.ToString(), this.stateService.IsOnline(), string.Format("%{0}%", searchQueryNorm));
         }
         
-        public Task InsertAsync(UserPlaylist userPlaylist)
+        public Task InsertAsync(IEnumerable<UserPlaylist> userPlaylist)
         {
-            return this.Connection.InsertAsync(userPlaylist);
+            return this.Connection.InsertAllAsync(userPlaylist);
         }
 
-        public async Task<IList<UserPlaylistEntry>> GetAllSongEntriesAsync(int sondId)
+        public async Task<IList<UserPlaylistEntry>> GetAllSongEntriesAsync(string sondId)
         {
             return await this.Connection.Table<UserPlaylistEntry>().Where(x => x.SongId == sondId).ToListAsync();
         }
 
-        public Task DeleteAsync(UserPlaylist playlist)
+        public Task DeleteAsync(IEnumerable<UserPlaylist> playlists)
         {
             return this.Connection.RunInTransactionAsync(
                     (connection) =>
                     {
-                        connection.Execute(SqlDeletePlaylistEntries, playlist.Id);
-                        connection.Delete<UserPlaylist>(playlist.Id);
+                        foreach (var userPlaylist in playlists)
+                        {
+                            connection.Execute(SqlDeletePlaylistEntries, userPlaylist.Id);
+                            connection.Delete<UserPlaylist>(userPlaylist.Id);
+                        }
                     });
         }
 
-        public Task UpdateAsync(UserPlaylist playlist)
+        public Task UpdateAsync(IEnumerable<UserPlaylist> playlists)
         {
-            return this.Connection.UpdateAsync(playlist);
+            return this.Connection.RunInTransactionAsync(connection =>
+            {
+                foreach (var playlist in playlists)
+                {
+                    connection.Update(playlist);
+                }
+            });
         }
 
         public Task DeleteEntriesAsync(IEnumerable<UserPlaylistEntry> entries)

@@ -27,7 +27,9 @@ namespace OutcoldSolutions.GoogleMusic.Web.Models
 
         public CookieCollection CookieCollection { get; private set; }
 
-        public static GoogleAuthResponse SuccessResponse(CookieCollection cookieCollection)
+        public string Auth { get; private set; }
+
+        public static GoogleAuthResponse SuccessResponse(CookieCollection cookieCollection, string auth)
         {
             if (cookieCollection == null)
             {
@@ -37,7 +39,8 @@ namespace OutcoldSolutions.GoogleMusic.Web.Models
             return new GoogleAuthResponse()
                        {
                            Success = true,
-                           CookieCollection = cookieCollection
+                           CookieCollection = cookieCollection,
+                           Auth = auth
                        };
         }
 

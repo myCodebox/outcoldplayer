@@ -28,7 +28,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private readonly INavigationService navigationService;
 
         private readonly DispatcherTimer synchronizationTimer;
-        private int synchronizationTime = 0; // we don't want to synchronize playlists each time, so we will do it on each 6 time
 
         private bool isDownloading = false;
         private bool disableClickToCache = false;
@@ -64,7 +63,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                         if (this.UpdateLibraryCommand.CanExecute())
                         {
                             this.synchronizationTimer.Stop();
-                            await this.Synchronize(forceToDownloadPlaylists: true);
+                            await this.Synchronize();
                         }
                     },
                 () => !this.BindingModel.ShowProgressRing);
@@ -73,11 +72,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
             this.synchronizationTimer = new DispatcherTimer { Interval = TimeSpan.FromMinutes(5) };
             this.synchronizationTimer.Stop();
-            this.synchronizationTime = 0;
 
             this.synchronizationTimer.Tick += this.SynchronizationTimerOnTick;
-
-            this.Logger.LogTask(this.Synchronize());
 
             this.SetOfflineMessageIfRequired();
 
@@ -101,6 +97,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
             this.EventAggregator.GetEvent<ApplicationStateChangeEvent>()
                                 .Subscribe(async e => await this.dispatcher.RunAsync(this.SetOfflineMessageIfRequired));
+
+            this.Logger.LogTask(this.Synchronize());
         }
 
         private void SessionServiceOnSessionCleared(object sender, EventArgs eventArgs)
@@ -173,10 +171,9 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             await this.Synchronize();
         }
 
-        private async Task Synchronize(bool forceToDownloadPlaylists = false)
+        private async Task Synchronize()
         {
-            SongsUpdateStatus songsUpdateStatus = null;
-            UserPlaylistsUpdateStatus userPlaylistsUpdateStatus = null;
+            Tuple<SongsUpdateStatus, UserPlaylistsUpdateStatus> updateStatus = null;
 
             await this.dispatcher.RunAsync(() => this.synchronizationTimer.Stop());
 
@@ -198,13 +195,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
                 try
                 {
-                    songsUpdateStatus = await this.googleMusicSynchronizationService.UpdateSongsAsync();
-
-                    if (this.synchronizationTime == 0 || forceToDownloadPlaylists)
-                    {
-                        await this.dispatcher.RunAsync(() => { this.BindingModel.MessageText = this.resources.GetString("LinksRegion_UpdatingPlaylists"); });
-                        userPlaylistsUpdateStatus = await this.googleMusicSynchronizationService.UpdateUserPlaylistsAsync();
-                    }
+                    updateStatus = await this.googleMusicSynchronizationService.Update();
                 }
                 catch (Exception e)
                 {
@@ -224,7 +215,10 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                              }
                          });
 
-                this.ShowUpdateMessage(userPlaylistsUpdateStatus, songsUpdateStatus);
+                if (updateStatus != null)
+                {
+                    this.ShowUpdateMessage(updateStatus.Item2, updateStatus.Item1);
+                }
 
                 await Task.Delay(TimeSpan.FromSeconds(2));
             }
@@ -232,16 +226,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             await this.dispatcher.RunAsync(
                      () =>
                      {
-                         this.synchronizationTime++;
-                         if (forceToDownloadPlaylists)
-                         {
-                             this.synchronizationTime = 1;
-                         }
-                         else if (this.synchronizationTime >= 6)
-                         {
-                             this.synchronizationTime = 0;
-                         }
-
                          this.synchronizationTimer.Start();
                          this.SetOfflineMessageIfRequired();
                          this.UpdateLibraryCommand.RaiseCanExecuteChanged();

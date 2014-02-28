@@ -55,6 +55,8 @@ namespace OutcoldSolutions.GoogleMusic.Models
 
         public Uri ArtUrl { get; set; }
 
+        public string GoogleAlbumId { get; set; }
+
         [Ignore]
         public bool IsCollection { get; set; }
 

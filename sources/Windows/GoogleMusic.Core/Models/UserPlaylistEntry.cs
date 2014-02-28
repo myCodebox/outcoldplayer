@@ -3,22 +3,29 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Models
 {
+    using System;
+
     using SQLite;
 
     [Table("UserPlaylistEntry")]
     public class UserPlaylistEntry
     {
-        [PrimaryKey, AutoIncrement]
-        public int Id { get; set; }
+        [PrimaryKey]
+        public string Id { get; set; }
 
-        public int PlaylistId { get; set; }
+        public string PlaylistId { get; set; }
 
-        public int SongId { get; set; }
+        public string SongId { get; set; }
 
-        public int PlaylistOrder { get; set; }
+        public string PlaylistOrder { get; set; }
 
-        [Unique]
-        public string ProviderEntryId { get; set; }
+        public DateTime CreationDate { get; set; }
+
+        public DateTime LastModified { get; set; }
+
+        public string CliendId { get; set; }
+
+        public int Source { get; set; } 
 
         [Reference]
         public Song Song { get; set; }

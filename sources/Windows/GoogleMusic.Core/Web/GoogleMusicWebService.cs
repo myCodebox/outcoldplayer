@@ -34,7 +34,6 @@ namespace OutcoldSolutions.GoogleMusic.Web
         private readonly ILogger logger;
         private readonly HttpClient httpClient;
 
-        private CookieContainerWrapper cookieContainer;
 
         public GoogleMusicWebService(
             IDependencyResolverContainer container,
@@ -59,10 +58,6 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
             this.container = container;
             this.sessionService = sessionService;
-            this.sessionService.SessionCleared += (sender, args) =>
-                {
-                    this.cookieContainer = null;
-                };
 
             this.logger = logManager.CreateLogger("GoogleMusicWebService");
         }
@@ -88,43 +83,13 @@ namespace OutcoldSolutions.GoogleMusic.Web
             return PlayMusicUrl;
         }
 
-        public void Initialize(IEnumerable<Cookie> cookieCollection)
-        {
-            if (cookieCollection == null)
-            {
-                throw new ArgumentNullException("cookieCollection");
-            }
-
-            this.cookieContainer = new CookieContainerWrapper(this.HttpClient.BaseAddress);
-            this.cookieContainer.AddCookies(cookieCollection);
-        }
-
-        public IEnumerable<Cookie> GetCurrentCookies()
-        {
-            if (this.cookieContainer == null)
-            {
-                return null;
-            }
-
-            return this.cookieContainer.GetCookies();
-        }
-
-        public async Task SaveCurrentSessionAsync()
-        {
-            var cookieCollection = this.GetCurrentCookies();
-            if (cookieCollection != null)
-            {
-                await this.sessionService.SaveCurrentSessionAsync(cookieCollection);
-            }
-        }
-
         public async Task<HttpResponseMessage> GetAsync(
             string url,
             bool signUrl = true)
         {
             if (this.Logger.IsDebugEnabled)
             {
-                this.Logger.LogRequest(HttpMethod.Get, url, this.cookieContainer.GetCookies());
+                this.Logger.LogRequest(HttpMethod.Get, url, this.sessionService.GetCookieContainer().GetCookies());
             }
 
             if (signUrl)
@@ -133,13 +98,13 @@ namespace OutcoldSolutions.GoogleMusic.Web
             }
 
             var requestMessage = new HttpRequestMessage(HttpMethod.Get, url);
-            requestMessage.Headers.Add(CookieHeader, this.cookieContainer.GetCookieHeader());
+            requestMessage.Headers.Add(CookieHeader, this.sessionService.GetCookieContainer().GetCookieHeader());
             var responseMessage = await this.SendAsync(requestMessage, HttpCompletionOption.ResponseHeadersRead);
 
             IEnumerable<string> responseCookies;
             if (responseMessage.Headers.TryGetValues(SetCookieHeader, out responseCookies))
             {
-                this.cookieContainer.SetCookies(responseCookies);
+                this.sessionService.GetCookieContainer().SetCookies(responseCookies);
             }
 
             await this.VerifyAuthorization(responseMessage);
@@ -149,12 +114,12 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
         public async Task<HttpResponseMessage> PostAsync(
             string url,
-            IDictionary<string, string> formData = null, 
+            IDictionary<string, string> formData = null,
             bool signUrl = true)
         {
             if (this.Logger.IsDebugEnabled)
             {
-                this.Logger.LogRequest(HttpMethod.Post, url, this.cookieContainer.GetCookies(), formData);
+                this.Logger.LogRequest(HttpMethod.Post, url, this.sessionService.GetCookieContainer().GetCookies(), formData);
             }
 
             if (signUrl)
@@ -169,15 +134,15 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 requestMessage.Content = new FormUrlEncodedContent(formData);
             }
 
-            requestMessage.Headers.Add(CookieHeader, this.cookieContainer.GetCookieHeader());
+            requestMessage.Headers.Add(CookieHeader, this.sessionService.GetCookieContainer().GetCookieHeader());
             var responseMessage = await this.SendAsync(requestMessage, HttpCompletionOption.ResponseContentRead);
 
             IEnumerable<string> responseCookies;
             if (responseMessage.Headers.TryGetValues(SetCookieHeader, out responseCookies))
             {
-                this.cookieContainer.SetCookies(responseCookies);
+                this.sessionService.GetCookieContainer().SetCookies(responseCookies);
             }
-            
+
             await this.VerifyAuthorization(responseMessage);
 
             return responseMessage;
@@ -234,8 +199,8 @@ namespace OutcoldSolutions.GoogleMusic.Web
         }
 
         public async Task<TResult> PostAsync<TResult>(
-            string url, 
-            IDictionary<string, string> formData = null, 
+            string url,
+            IDictionary<string, string> formData = null,
             IDictionary<string, string> jsonProperties = null,
             bool forceJsonBody = true,
             bool signUrl = true) where TResult : CommonResponse
@@ -326,9 +291,9 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
         private string SignUrl(string url)
         {
-            if (this.cookieContainer != null)
+            if (this.sessionService.GetCookieContainer() != null)
             {
-                var cookie = this.cookieContainer.FindCookie("xt");
+                var cookie = this.sessionService.GetCookieContainer().FindCookie("xt");
 
                 if (cookie != null)
                 {
@@ -395,8 +360,8 @@ namespace OutcoldSolutions.GoogleMusic.Web
                         if (result.Success)
                         {
                             await BugSense.BugSenseHandler.Instance.LogEventAsync("GoogleMusicWebService:Found:re-authentification:success");
-                            this.Initialize(result.CookieCollection.Cast<Cookie>());
-                            await this.SaveCurrentSessionAsync();
+                            this.sessionService.InitializeCookieContainer(result.CookieCollection.Cast<Cookie>(), result.Auth);
+                            await this.sessionService.SaveCurrentSessionAsync();
                             return;
                         }
 

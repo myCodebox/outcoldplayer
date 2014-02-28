@@ -11,7 +11,7 @@ namespace OutcoldSolutions.GoogleMusic.Models
     {
         public const uint DefaultAlbumArtSize = 130;
 
-        private const string AlbumArtUrlParameter = "=s130-c-e100";
+        private const string AlbumArtUrlParameter = "=s512";
 
         public static Uri ChangeSize(this Uri uri, uint size)
         {
@@ -28,7 +28,7 @@ namespace OutcoldSolutions.GoogleMusic.Models
                 url = url.Substring(0, url.Length - AlbumArtUrlParameter.Length);
             }
 
-            url = string.Format(CultureInfo.InvariantCulture, "{0}=s{1}-c-e100", url, size);
+            url = string.Format(CultureInfo.InvariantCulture, "{0}=s{1}", url, size);
 
             return new Uri(url);
         }

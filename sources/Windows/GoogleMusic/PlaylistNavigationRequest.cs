@@ -7,7 +7,7 @@ namespace OutcoldSolutions.GoogleMusic
 
     public class PlaylistNavigationRequest
     {
-        public PlaylistNavigationRequest(PlaylistType playlistType, string playlistId, int? songId = null)
+        public PlaylistNavigationRequest(PlaylistType playlistType, string playlistId, string songId = null)
         {
             this.PlaylistType = playlistType;
             this.PlaylistId = playlistId;
@@ -18,6 +18,6 @@ namespace OutcoldSolutions.GoogleMusic
 
         public string PlaylistId { get; set; }
 
-        public int? SongId { get; set; }
+        public string SongId { get; set; }
     }
 }
