@@ -156,6 +156,8 @@
     <Compile Include="Web\Models\GoogleConfigResponse.cs" />
     <Compile Include="Web\Models\GoogleMusicArtist.cs" />
     <Compile Include="Web\Models\GoogleMusicMutateResponse.cs" />
+    <Compile Include="Web\Models\GoogleMusicPlaylistBatchResponse.cs" />
+    <Compile Include="Web\Models\GoogleMusicPlaylistEntriesBatchResponse.cs" />
     <Compile Include="Web\Models\GoogleMusicStationFeed.cs" />
     <Compile Include="Web\Models\UrlRef.cs" />
     <Compile Include="Web\Models\GoogleMusicPlaylist.cs" />
@@ -211,7 +213,6 @@
     <Compile Include="Web\Lastfm\LastfmWebService.cs" />
     <Compile Include="Web\Lastfm\TokenResp.cs" />
     <Compile Include="Web\MediaStreamDownloadService.cs" />
-    <Compile Include="Web\Models\AddPlaylistResp.cs" />
     <Compile Include="Web\Models\AddSongResp.cs" />
     <Compile Include="Web\Models\DeletePlaylistResp.cs" />
     <Compile Include="Web\Models\DeleteSongResp.cs" />

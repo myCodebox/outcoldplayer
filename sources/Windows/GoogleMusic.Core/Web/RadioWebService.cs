@@ -128,7 +128,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
             {
                 createMutation = new 
                                 {
-                                    clientId = Guid.NewGuid().ToString(),
+                                    clientId = Guid.NewGuid().ToString().ToLowerInvariant(),
                                     deleted = false,
                                     imageType = 1, // TODO: ?
                                     lastModifiedTimestamp = "-1",
@@ -142,7 +142,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
             {
                 createMutation = new 
                                 {
-                                    clientId = Guid.NewGuid().ToString(),
+                                    clientId = Guid.NewGuid().ToString().ToLowerInvariant(),
                                     deleted = false,
                                     imageType = 1, // TODO: ?
                                     imageUrl = song.AlbumArtUrl,
@@ -175,7 +175,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
         {
             dynamic createMutation = new 
                                 {
-                                    clientId = Guid.NewGuid().ToString(),
+                                    clientId = Guid.NewGuid().ToString().ToLowerInvariant(),
                                     deleted = false,
                                     imageType = 1, // TODO: ?
                                     imageUrl = artist.ArtUrl,
@@ -207,7 +207,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
         {
             dynamic createMutation = new 
                                 {
-                                    clientId = Guid.NewGuid().ToString(),
+                                    clientId = Guid.NewGuid().ToString().ToLowerInvariant(),
                                     deleted = false,
                                     imageType = 1, // TODO: ?
                                     imageUrl = album.ArtUrl,

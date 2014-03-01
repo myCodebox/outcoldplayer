@@ -117,10 +117,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
                     if (command == yesUiCommand)
                     {
-                        foreach (UserPlaylist playlist in playlists)
-                        {
-                            await this.userPlaylistsService.DeleteAsync(playlist);
-                        }
+                        await this.userPlaylistsService.DeleteAsync(playlists.Cast<UserPlaylist>().ToList());
                     }
                 }
                 catch (Exception e)

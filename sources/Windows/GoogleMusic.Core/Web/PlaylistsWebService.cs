@@ -8,8 +8,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
     using System.Linq;
     using System.Threading.Tasks;
 
-    using Newtonsoft.Json;
-
+    using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Web.Models;
 
     public interface IPlaylistsWebService
@@ -18,35 +17,31 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
         Task<IList<GoogleMusicPlaylistEntry>> GetAllPlaylistEntries(DateTime? lastUpdate, IProgress<int> progress = null, Func<IList<GoogleMusicPlaylistEntry>, Task> chunkHandler = null);
 
-        Task<AddPlaylistResp> CreateAsync(string name);
+        Task<GoogleMusicPlaylistBatchResponse> CreateAsync(string name);
 
-        Task<bool> DeleteAsync(string id);
+        Task<GoogleMusicPlaylistBatchResponse> DeleteAsync(IList<UserPlaylist> playlists);
 
-        Task<bool> ChangeNameAsync(string id, string name);
+        Task<GoogleMusicPlaylistBatchResponse> ChangeNameAsync(string id, string name);
 
-        Task<AddSongResp> AddSongsAsync(string playlistId, string[] songIds);
+        Task<GoogleMusicPlaylistEntriesBatchResponse> AddSongsAsync(UserPlaylist userPlaylist, IDictionary<string, Song> songs);
 
-        Task<bool> RemoveSongsAsync(string playlistId, string[] songId, string[] entryId);
+        Task<GoogleMusicPlaylistEntriesBatchResponse> RemoveSongsAsync(
+            UserPlaylist playlist,
+            IList<UserPlaylistEntry> entries);
     }
 
     public class PlaylistsWebService : IPlaylistsWebService
     {
         private const string PlaylistFeed = "playlistfeed";
         private const string PlEntryFeed = "plentryfeed";
-        private const string AddPlaylistUrl = "services/createplaylist?format=json";
-        private const string DeletePlaylistUrl = "services/deleteplaylist";
-        private const string ChangePlaylistNameUrl = "services/modifyplaylist";
-        private const string AddToPlaylistUrl = "services/addtoplaylist";
-        private const string DeleteSongUrl = "services/deletesong";
+        private const string PlaylistBatch = "playlistbatch";
+        private const string PlEntriesBatch = "plentriesbatch";
 
-        private readonly IGoogleMusicWebService googleMusicWebService;
         private readonly IGoogleMusicApisService googleMusicApisService;
 
         public PlaylistsWebService(
-            IGoogleMusicWebService googleMusicWebService,
             IGoogleMusicApisService googleMusicApisService)
         {
-            this.googleMusicWebService = googleMusicWebService;
             this.googleMusicApisService = googleMusicApisService;
         }
 
@@ -60,87 +55,112 @@ namespace OutcoldSolutions.GoogleMusic.Web
             return this.googleMusicApisService.DownloadList(PlEntryFeed, lastUpdate, progress, chunkHandler);
         }
 
-        public async Task<AddPlaylistResp> CreateAsync(string name)
+        public async Task<GoogleMusicPlaylistBatchResponse> CreateAsync(string name)
         {
-            var jsonProperties = new Dictionary<string, string>
-                                        {
-                                            { "name", JsonConvert.ToString(name) },
-                                            { "type", JsonConvert.ToString("USER_GENERATED") },
-                                            { "track", JsonConvert.SerializeObject(new string[] { }) },
-                                            { "public", JsonConvert.ToString(false) },
-                                        };
+            var json = new
+                       {
+                           mutations = new []
+                                       {
+                                           new
+                                           {
+                                               create = new
+                                                        {
+                                                            creationTimestamp = "-1",
+                                                            deleted = false,
+                                                            lastModifiedTimestamp = "0",
+                                                            name = name,
+                                                            type = "USER_GENERATED"
+                                                        }
+                                           }
+                                       }
+                       };
 
-            return await this.googleMusicWebService.PostAsync<AddPlaylistResp>(AddPlaylistUrl, jsonProperties: jsonProperties);
+            return await this.googleMusicApisService.PostAsync<GoogleMusicPlaylistBatchResponse>(PlaylistBatch, json);
         }
 
-        public async Task<bool> DeleteAsync(string id)
+        public async Task<GoogleMusicPlaylistBatchResponse> DeleteAsync(IList<UserPlaylist> playlists)
         {
-            var jsonProperties = new Dictionary<string, string>
-                                        {
-                                            { "id", JsonConvert.ToString(id) },
-                                            { "requestType", JsonConvert.ToString(1) },
-                                            { "requestCause", JsonConvert.ToString(1) }
-                                        };
+            var json = new
+            {
+                mutations = playlists.Select(x => new
+                {
+                    delete = x.Id
+                }).ToArray()
+            };
 
-            var deletePlaylistResp = await this.googleMusicWebService.PostAsync<DeletePlaylistResp>(DeletePlaylistUrl, jsonProperties: jsonProperties);
-
-            return deletePlaylistResp.DeleteId == id;
+            return await this.googleMusicApisService.PostAsync<GoogleMusicPlaylistBatchResponse>(PlaylistBatch, json);
         }
 
-        public async Task<bool> ChangeNameAsync(string id, string name)
+        public async Task<GoogleMusicPlaylistBatchResponse> ChangeNameAsync(string id, string name)
         {
-            var jsonProperties = new Dictionary<string, string>
-                                        {
-                                            { "playlistId", JsonConvert.ToString(id) },
-                                            { "playlistName", JsonConvert.ToString(name) }
-                                        };
+            var json = new
+                {
+                    mutations = new[]
+                                           {
+                                               new
+                                               {
+                                                   update = new
+                                                            {
+                                                                id = id,
+                                                                name = name
+                                                            }
+                                               }
+                                           }
+                };
 
-            var response = await this.googleMusicWebService.PostAsync<CommonResponse>(ChangePlaylistNameUrl, jsonProperties: jsonProperties);
-            return !response.Success.HasValue || response.Success.Value;
+            return await this.googleMusicApisService.PostAsync<GoogleMusicPlaylistBatchResponse>(PlaylistBatch, json);
         }
 
-        public async Task<AddSongResp> AddSongsAsync(string playlistId, string[] songIds)
+        public async Task<GoogleMusicPlaylistEntriesBatchResponse> AddSongsAsync(UserPlaylist userPlaylist, IDictionary<string, Song> songs)
         {
-            if (songIds == null)
+            if (songs == null)
             {
-                throw new ArgumentNullException("songIds");
+                throw new ArgumentNullException("songs");
             }
 
-            var jsonProperties = new Dictionary<string, string>
-                                        {
-                                            { "playlistId", JsonConvert.ToString(playlistId) },
-                                            { "songRefs", JsonConvert.SerializeObject(songIds.Select(x => new { id = x, type = 1 }).ToArray()) }
-                                        };
+            var json = new
+                {
+                    mutations = songs.Select(song => 
+                                               new
+                                               {
+                                                   create = new
+                                                            {
+                                                                clientId = song.Key,
+                                                                creationTimestamp = "-1",
+                                                                deleted = false,
+                                                                lastModifiedTimestamp = "0",
+                                                                playlistId = userPlaylist.PlaylistId,
+                                                                source = song.Value.TrackType == StreamType.EphemeralSubscription ? 2 : 1,
+                                                                trackId = song.Value.SongId
+                                                            }
+                                               }
+                                           ).ToArray()
+                };
 
-            return await this.googleMusicWebService.PostAsync<AddSongResp>(AddToPlaylistUrl, jsonProperties: jsonProperties);
+            return await this.googleMusicApisService.PostAsync<GoogleMusicPlaylistEntriesBatchResponse>(PlEntriesBatch, json);
         }
 
-        public async Task<bool> RemoveSongsAsync(string playlistId, string[] songIds, string[] entryIds)
+        public async Task<GoogleMusicPlaylistEntriesBatchResponse> RemoveSongsAsync(UserPlaylist playlist, IList<UserPlaylistEntry> entries)
         {
-            if (songIds == null)
+            if (playlist == null)
             {
-                throw new ArgumentNullException("songIds");
+                throw new ArgumentNullException("playlist");
             }
 
-            if (entryIds == null)
+            if (entries == null)
             {
-                throw new ArgumentNullException("entryIds");
+                throw new ArgumentNullException("entries");
             }
 
-            if (songIds.Length != entryIds.Length)
-            {
-                throw new ArgumentException("Different lengths of collections: songIds and entries Ids.", "entryIds");
-            }
+            var json = new
+                       {
+                           mutations = entries.Select(x => new
+                                                           {
+                                                               delete = x.Id
+                                                           }).ToArray()
+                       };
 
-            var jsonProperties = new Dictionary<string, string>
-                                        {
-                                            { "listId", JsonConvert.ToString(playlistId) },
-                                            { "songIds", JsonConvert.SerializeObject(songIds) },
-                                            { "entryIds", JsonConvert.SerializeObject(entryIds) }
-                                        };
-
-            var response = await this.googleMusicWebService.PostAsync<CommonResponse>(DeleteSongUrl, jsonProperties: jsonProperties);
-            return !response.Success.HasValue || response.Success.Value;
+            return await this.googleMusicApisService.PostAsync<GoogleMusicPlaylistEntriesBatchResponse>(PlEntriesBatch, json);
         }
     }
 }

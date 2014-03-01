@@ -12,13 +12,12 @@ namespace OutcoldSolutions.GoogleMusic.Services
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Web;
-    using OutcoldSolutions.GoogleMusic.Web.Synchronization;
 
     public interface IUserPlaylistsService
     {
         Task<UserPlaylist> CreateAsync(string name);
 
-        Task<bool> DeleteAsync(UserPlaylist playlist);
+        Task<bool> DeleteAsync(IList<UserPlaylist> playlists);
 
         Task<bool> ChangeNameAsync(UserPlaylist playlist, string name);
 
@@ -32,20 +31,17 @@ namespace OutcoldSolutions.GoogleMusic.Services
         private readonly ILogger logger;
         private readonly IPlaylistsWebService webService;
         private readonly IUserPlaylistsRepository repository;
-        private readonly ISongsRepository songsRepository;
         private readonly IEventAggregator eventAggregator;
 
         public UserPlaylistsService(
             ILogManager logManager,
             IPlaylistsWebService webService,
             IUserPlaylistsRepository repository,
-            ISongsRepository songsRepository,
             IEventAggregator eventAggregator)
         {
             this.logger = logManager.CreateLogger("UserPlaylistsService");
             this.webService = webService;
             this.repository = repository;
-            this.songsRepository = songsRepository;
             this.eventAggregator = eventAggregator;
         }
 
@@ -57,63 +53,75 @@ namespace OutcoldSolutions.GoogleMusic.Services
             }
 
             var resp = await this.webService.CreateAsync(name);
-            if (resp.Success.HasValue && !resp.Success.Value)
+
+            if (resp != null && resp.MutateResponse != null && resp.MutateResponse.Length == 1 && string.Equals(resp.MutateResponse[0].ResponseCode, "OK", StringComparison.OrdinalIgnoreCase))
             {
+                var mutation = resp.MutateResponse[0];
+
                 if (this.logger.IsDebugEnabled)
                 {
-                    this.logger.Debug(
-                        "Could not create playlist for name '{0}'.", name);
+                    this.logger.Debug("Playlist was created on the server with id '{0}' for name '{1}'.", mutation.Id, name);
                 }
 
-                return null;
+                var userPlaylist = new UserPlaylist { PlaylistId = mutation.Id, Title = name, TitleNorm = name.Normalize() };
+
+                await this.repository.InsertAsync(new[] { userPlaylist });
+
+                this.eventAggregator.Publish(
+                    PlaylistsChangeEvent.New(PlaylistType.UserPlaylist).AddAddedPlaylists(userPlaylist));
+
+                return userPlaylist;
             }
             else
             {
                 if (this.logger.IsDebugEnabled)
                 {
-                    this.logger.Debug(
-                        "Playlist was created on the server with id '{0}' for name '{1}'.", resp.Id, name);
+                    this.logger.Debug("Could not create playlist for name '{0}'.", name);
                 }
 
-                var userPlaylist = new UserPlaylist
-                {
-                    PlaylistId = resp.Id,
-                    Title = name,
-                    TitleNorm = name.Normalize()
-                };
-
-                await this.repository.InsertAsync(new [] { userPlaylist });
-
-                this.eventAggregator.Publish(PlaylistsChangeEvent.New(PlaylistType.UserPlaylist).AddAddedPlaylists(userPlaylist));
-
-                return userPlaylist;
+                return null;
             }
         }
 
-        public async Task<bool> DeleteAsync(UserPlaylist playlist)
+        public async Task<bool> DeleteAsync(IList<UserPlaylist> playlists)
         {
             if (this.logger.IsDebugEnabled)
             {
-                this.logger.Debug("Deleting playlist '{0}'.", playlist.PlaylistId);
+                this.logger.Debug("Deleting playlists.");
             }
 
-            var resp = await this.webService.DeleteAsync(playlist.PlaylistId);
-            if (this.logger.IsDebugEnabled)
+            List<UserPlaylist> toDelete = new List<UserPlaylist>();
+
+            var resp = await this.webService.DeleteAsync(playlists);
+            foreach (var mutation in resp.MutateResponse)
             {
-                this.logger.Debug(
-                    "Playlist '{0}' was deleted from server with response '{1}'.",
-                    playlist.PlaylistId,
-                    resp);
+                if (string.Equals(mutation.ResponseCode, "OK", StringComparison.OrdinalIgnoreCase))
+                {
+                    var playlist =
+                        playlists.FirstOrDefault(
+                            x => string.Equals(x.Id, mutation.Id, StringComparison.OrdinalIgnoreCase));
+                    if (playlist != null)
+                    {
+                        toDelete.Add(playlist);
+                    }
+                }
+                else
+                {
+                    this.logger.Debug(
+                        "Playlist '{0}' was not deleted from server with response '{1}'.",
+                        mutation.Id,
+                        mutation.ResponseCode);
+                }
             }
 
-            if (resp)
+            if (toDelete.Count > 0)
             {
-                await this.repository.DeleteAsync(new [] { playlist });
+                await this.repository.DeleteAsync(toDelete);
                 this.eventAggregator.Publish(
-                    PlaylistsChangeEvent.New(PlaylistType.UserPlaylist).AddRemovedPlaylists(playlist));
+                    PlaylistsChangeEvent.New(PlaylistType.UserPlaylist).AddRemovedPlaylists(toDelete.Cast<IPlaylist>().ToArray()));
             }
 
-            return resp;
+            return toDelete.Count > 0;
         }
 
         public async Task<bool> ChangeNameAsync(UserPlaylist playlist, string name)
@@ -123,22 +131,34 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 this.logger.Debug("Changing name for playlist with Id '{0}' to '{1}'.", playlist.PlaylistId, name);
             }
 
-            bool result = await this.webService.ChangeNameAsync(playlist.PlaylistId, name);
+            var resp = await this.webService.ChangeNameAsync(playlist.PlaylistId, name);
 
-            if (this.logger.IsDebugEnabled)
+            if (resp != null && resp.MutateResponse != null && resp.MutateResponse.Length == 1 && string.Equals(resp.MutateResponse[0].ResponseCode, "OK", StringComparison.OrdinalIgnoreCase))
             {
-                this.logger.Debug("The result of name changing for playlist with id '{0}' is '{1}'.", playlist.PlaylistId, result);
-            }
+                var mutation = resp.MutateResponse[0];
 
-            if (result)
-            {
+                if (this.logger.IsDebugEnabled)
+                {
+                    this.logger.Debug("The result of name changing for playlist with id '{0}' is '{1}'", mutation.Id, name);
+                }
+
                 playlist.Title = name;
                 playlist.TitleNorm = name.Normalize();
-                await this.repository.UpdateAsync(new [] { playlist });
-                this.eventAggregator.Publish(PlaylistsChangeEvent.New(PlaylistType.UserPlaylist).AddUpdatedPlaylists(playlist));
-            }
 
-            return result;
+                await this.repository.UpdateAsync(new[] { playlist });
+                this.eventAggregator.Publish(PlaylistsChangeEvent.New(PlaylistType.UserPlaylist).AddUpdatedPlaylists(playlist));
+
+                return true;
+            }
+            else
+            {
+                if (this.logger.IsDebugEnabled)
+                {
+                    this.logger.Debug("Could not change name for playlist '{0}'.", playlist.Id);
+                }
+
+                return false;
+            }
         }
 
         public async Task<bool> RemoveSongsAsync(UserPlaylist playlist, IEnumerable<Song> songs)
@@ -153,40 +173,42 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 throw new ArgumentNullException("songs");
             }
 
-            List<Song> list = songs.ToList();
+            List<UserPlaylistEntry> list = songs.Select(x => x.UserPlaylistEntry).ToList();
             if (this.logger.IsDebugEnabled)
             {
                 this.logger.Debug("Removing entries from playlist '{0}'.", playlist.PlaylistId);
             }
 
-            string[] songIds = new string[list.Count];
-            string[] entryIds = new string[list.Count];
+            var resp = await this.webService.RemoveSongsAsync(playlist, list);
 
-            for (int index = 0; index < list.Count; index++)
+            List<UserPlaylistEntry> toDelete = new List<UserPlaylistEntry>();
+
+            foreach (var mutation in resp.MutateResponse)
             {
-                var song = list[index];
-                songIds[index] = song.SongId;
-
-                if (song.UserPlaylistEntry == null)
+                if (string.Equals(mutation.ResponseCode, "OK", StringComparison.OrdinalIgnoreCase))
                 {
-                    throw new ArgumentException("Songs should be collection of songs with playlist entries.", "songs");
+                    var entry =
+                        list.FirstOrDefault(x => string.Equals(x.Id, mutation.Id, StringComparison.OrdinalIgnoreCase));
+                    if (entry != null)
+                    {
+                        toDelete.Add(entry);
+                    }
                 }
-
-                entryIds[index] = song.UserPlaylistEntry.Id;
+                else
+                {
+                    this.logger.Debug(
+                        "Entry '{0}' was NOT deleted from server with response '{1}'.",
+                        mutation.Id,
+                        mutation.ResponseCode);
+                }
             }
 
-            var result = await this.webService.RemoveSongsAsync(playlist.PlaylistId, songIds, entryIds);
-            if (this.logger.IsDebugEnabled)
+            if (toDelete.Count > 0)
             {
-                this.logger.Debug("Result of entry removing entries from playlist '{0}' is '{1}'.", playlist.PlaylistId, result);
+                await this.repository.DeleteEntriesAsync(toDelete);
             }
 
-            if (result)
-            {
-                await this.repository.DeleteEntriesAsync(list.Select(s => s.UserPlaylistEntry));
-            }
-
-            return result;
+            return toDelete.Count > 0;
         }
 
         public async Task<bool> AddSongsAsync(UserPlaylist playlist, IEnumerable<Song> songs)
@@ -196,61 +218,53 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 throw new ArgumentNullException("songs");
             }
 
-            List<Song> list = songs.ToList();
+            var dictionary = songs.ToDictionary(x => Guid.NewGuid().ToString().ToLowerInvariant(), x => x);
 
             if (this.logger.IsDebugEnabled)
             {
-                this.logger.Debug("Adding {0} songs to playlist '{1}'.", list.Count, playlist.PlaylistId);
+                this.logger.Debug("Adding {0} songs to playlist '{1}'.", dictionary.Count, playlist.PlaylistId);
             }
 
-            var result = await this.webService.AddSongsAsync(playlist.PlaylistId, list.Select(s => s.SongId).ToArray());
+            List<UserPlaylistEntry> toInsert = new List<UserPlaylistEntry>();
+
+            var result = await this.webService.AddSongsAsync(playlist, dictionary);
             if (result != null)
             {
-                if (this.logger.IsDebugEnabled)
+                for (int index = 0; index < result.MutateResponse.Length; index++)
                 {
-                    this.logger.Debug(
-                        "Successfully added '{0}' songs to playlist {1}.",
-                        list.Count,
-                        playlist.PlaylistId);
-                }
-
-
-                // TODO: Temporary solution
-                await ApplicationBase.Container.Resolve<IGoogleMusicSynchronizationService>().Update();
-
-                /*
-                IList<UserPlaylistEntry> entries = new List<UserPlaylistEntry>();
-
-                int index = 0;
-
-                foreach (var songIdResp in result.SongIds)
-                {
-                    var storedSong = list.FirstOrDefault(x => string.Equals(x.SongId, songIdResp.SongId, StringComparison.OrdinalIgnoreCase));
-
-                    // Don't support Playlist to Radio
-                    if (storedSong.SongId <= 0)
+                    var mutation = result.MutateResponse[index];
+                    if (string.Equals(mutation.ResponseCode, "OK", StringComparison.OrdinalIgnoreCase))
                     {
-                        await this.songsRepository.InsertAsync(new[] { storedSong });
+                        var song = dictionary[mutation.ClientId];
+                        toInsert.Add(
+                            new UserPlaylistEntry()
+                            {
+                                Id = mutation.Id,
+                                CliendId = mutation.ClientId,
+                                SongId = song.SongId,
+                                CreationDate = DateTime.UtcNow,
+                                LastModified = DateTime.UtcNow,
+                                Source = song.TrackType == StreamType.EphemeralSubscription ? 2 : 1,
+                                PlaylistOrder = ((1729000000000000000L) + DateTime.UtcNow.Millisecond * 1000L + index).ToString("G"),
+                                PlaylistId = playlist.PlaylistId
+                            });
                     }
-
-                    entries.Add(new UserPlaylistEntry()
+                    else
                     {
-                        SongId = storedSong.SongId,
-                        ProviderEntryId = songIdResp.PlaylistEntryId,
-                        PlaylistOrder = playlist.SongsCount + index,
-                        PlaylistId = playlist.PlaylistId
-                    });
-
-                    index++;
+                        this.logger.Debug(
+                            "Could not add song to playlist {1} because {2}.",
+                            playlist.Id,
+                            mutation.ResponseCode);
+                    }
                 }
-
-                await this.repository.InsertEntriesAsync(entries);
-                */
-
-                return true;
             }
 
-            return false;
+            if (toInsert.Count > 0)
+            {
+                await this.repository.InsertEntriesAsync(toInsert);
+            }
+
+            return toInsert.Count > 0;
         }
     }
 }
