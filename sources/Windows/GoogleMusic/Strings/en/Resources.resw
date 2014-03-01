@@ -433,6 +433,9 @@
   <data name="QueueSongsList_SongTitle.Text" xml:space="preserve">
     <value>name</value>
   </data>
+  <data name="Radio_Lucky" xml:space="preserve">
+    <value>I'm feeling lucky radio</value>
+  </data>
   <data name="RelaseHistory_ThankYou.Text" xml:space="preserve">
     <value>Thank you for using gMusicW application!</value>
   </data>

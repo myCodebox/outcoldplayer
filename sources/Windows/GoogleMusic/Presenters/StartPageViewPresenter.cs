@@ -269,11 +269,24 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private async Task LoadGroupsAsync()
         {
-            var types = new[]
-                            {
-                                PlaylistType.SystemPlaylist, PlaylistType.UserPlaylist, PlaylistType.Radio, PlaylistType.Artist, PlaylistType.Album,
-                                PlaylistType.Genre
-                            };
+            PlaylistType[] types;
+
+            if (this.stateService.IsOnline())
+            {
+                types = new[]
+                        {
+                            PlaylistType.SystemPlaylist, PlaylistType.UserPlaylist, PlaylistType.Radio,
+                            PlaylistType.Artist, PlaylistType.Album, PlaylistType.Genre
+                        };
+            }
+            else
+            {
+                types = new[]
+                        {
+                            PlaylistType.SystemPlaylist, PlaylistType.UserPlaylist, PlaylistType.Artist,
+                            PlaylistType.Album, PlaylistType.Genre
+                        };
+            }
 
             var groups = await Task.WhenAll(
                 types.Select(

@@ -6,11 +6,11 @@ namespace OutcoldSolutions.GoogleMusic.Services
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Repositories;
-    using OutcoldSolutions.GoogleMusic.Web;
 
     public interface IPlaylistsService
     {
@@ -35,12 +35,25 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         private readonly IRadiosService radiosService;
 
+        private readonly IApplicationResources applicationResources;
+
+        private readonly Radio luckyRadio;
+
         public PlaylistsService(
             IDependencyResolverContainer container,
-            IRadiosService radiosService)
+            IRadiosService radiosService,
+            IApplicationResources applicationResources)
         {
             this.container = container;
             this.radiosService = radiosService;
+            this.applicationResources = applicationResources;
+
+            this.luckyRadio = new Radio()
+                              {
+                                  SongId = string.Empty,
+                                  Title = this.applicationResources.GetString("Radio_Lucky"),
+                                  TitleNorm = this.applicationResources.GetString("Radio_Lucky").Normalize()
+                              };
         }
 
         public IPlaylistRepository<TPlaylist> GetRepository<TPlaylist>() where TPlaylist : IPlaylist
@@ -48,22 +61,22 @@ namespace OutcoldSolutions.GoogleMusic.Services
             return this.container.Resolve<IPlaylistRepository<TPlaylist>>();
         }
 
-        public Task<int> GetCountAsync(PlaylistType playlistType)
+        public async Task<int> GetCountAsync(PlaylistType playlistType)
         {
             switch (playlistType)
             {
                 case PlaylistType.Album:
-                    return this.GetRepository<Album>().GetCountAsync();
+                    return await this.GetRepository<Album>().GetCountAsync();
                 case PlaylistType.Artist:
-                    return this.GetRepository<Artist>().GetCountAsync();
+                    return await this.GetRepository<Artist>().GetCountAsync();
                 case PlaylistType.Genre:
-                    return this.GetRepository<Genre>().GetCountAsync();
+                    return await this.GetRepository<Genre>().GetCountAsync();
                 case PlaylistType.UserPlaylist:
-                    return this.GetRepository<UserPlaylist>().GetCountAsync();
+                    return await this.GetRepository<UserPlaylist>().GetCountAsync();
                 case PlaylistType.SystemPlaylist:
-                    return this.GetRepository<SystemPlaylist>().GetCountAsync();
+                    return await this.GetRepository<SystemPlaylist>().GetCountAsync();
                 case PlaylistType.Radio:
-                    return this.GetRepository<Radio>().GetCountAsync();
+                    return 1 + await this.GetRepository<Radio>().GetCountAsync();
                 default:
                     throw new ArgumentOutOfRangeException("playlistType");
             }
@@ -136,7 +149,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 case PlaylistType.SystemPlaylist:
                     return await this.GetRepository<SystemPlaylist>().GetAllAsync(order, take);
                 case PlaylistType.Radio:
-                    return await this.GetRepository<Radio>().GetAllAsync(order, take);
+                    return (new [] { this.luckyRadio }).Union(await this.GetRepository<Radio>().GetAllAsync(order, take));
                 default:
                     throw new ArgumentOutOfRangeException("playlistType");
             }

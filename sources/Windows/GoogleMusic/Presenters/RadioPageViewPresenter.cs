@@ -37,7 +37,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.navigationService = navigationService;
             this.playQueueService = playQueueService;
             this.radiosService = radiosService;
-            this.DeleteRadioCommand = new DelegateCommand(this.DeleteRadio, () => this.BindingModel.SelectedItems.Count > 0);
+            this.DeleteRadioCommand = new DelegateCommand(this.DeleteRadio, () => this.BindingModel.SelectedItems.Count > 0 && this.BindingModel.SelectedItems.All(x => !string.IsNullOrEmpty(x.Playlist.Id)));
         }
 
         public DelegateCommand DeleteRadioCommand { get; private set; }

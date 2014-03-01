@@ -66,6 +66,30 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
         public Task<GoogleMusicStationFeed> GetRadioSongsAsync(string id, IList<Song> radioSongs = null)
         {
+            dynamic jsonStation;
+
+            if (string.IsNullOrEmpty(id))
+            {
+                jsonStation = new
+                            {
+                                numEntries = 25,
+                                recentlyPlayed = radioSongs.Select(x => new { id = x.SongId, type = (int)x.TrackType }).ToArray(),
+                                seed = new
+                                       {
+                                           seedType = 6
+                                       }
+                            };
+            }
+            else
+            {
+                jsonStation = new
+                            {
+                                numEntries = 25,
+                                recentlyPlayed = radioSongs.Select(x => new { id = x.SongId, type = (int)x.TrackType }).ToArray(),
+                                radioId = id
+                            };
+            }
+
             return this.googleMusicApisService.PostAsync<GoogleMusicStationFeed>(
                 FetchRadioFeed,
                 new
@@ -74,12 +98,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
                     stations =
                         new[]
                         {
-                            new
-                            {
-                                numEntries = 25,
-                                recentlyPlayed = radioSongs.Select(x => new { id = x.SongId, type = (int)x.TrackType }).ToArray(),
-                                radioId = id
-                            }
+                            jsonStation
                         }
                 });
         }
