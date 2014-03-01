@@ -129,9 +129,15 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             {
                 yield return new CommandMetadata(CommandIcon.Add, this.resources.GetString("Toolbar_PlaylistButton"), this.AddToPlaylistCommand);
 
-                if (this.BindingModel.SongsBindingModel.SelectedItems.Count == 1 && this.settingsService.GetIsAllAccessAvailable())
+                if (this.BindingModel.SongsBindingModel.SelectedItems.Count == 1)
                 {
-                    yield return new CommandMetadata(CommandIcon.MusicInfo, this.resources.GetString("Toolbar_StartRadio"), this.StartRadioCommand);
+                    yield return
+                        new CommandMetadata(
+                            CommandIcon.MusicInfo,
+                            this.settingsService.GetIsAllAccessAvailable()
+                                ? this.resources.GetString("Toolbar_StartRadio")
+                                : this.resources.GetString("Toolbar_StartInstantMix"),
+                            this.StartRadioCommand);
                 }
             }
 

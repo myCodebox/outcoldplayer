@@ -37,23 +37,18 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         private readonly IApplicationResources applicationResources;
 
-        private readonly Radio luckyRadio;
+        private readonly ISettingsService settingsService;
 
         public PlaylistsService(
             IDependencyResolverContainer container,
             IRadiosService radiosService,
-            IApplicationResources applicationResources)
+            IApplicationResources applicationResources,
+            ISettingsService settingsService)
         {
             this.container = container;
             this.radiosService = radiosService;
             this.applicationResources = applicationResources;
-
-            this.luckyRadio = new Radio()
-                              {
-                                  SongId = string.Empty,
-                                  Title = this.applicationResources.GetString("Radio_Lucky"),
-                                  TitleNorm = this.applicationResources.GetString("Radio_Lucky").Normalize()
-                              };
+            this.settingsService = settingsService;
         }
 
         public IPlaylistRepository<TPlaylist> GetRepository<TPlaylist>() where TPlaylist : IPlaylist
@@ -128,6 +123,10 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 case PlaylistType.SystemPlaylist:
                     return await this.GetRepository<SystemPlaylist>().GetAsync(id);
                 case PlaylistType.Radio:
+                    if (string.IsNullOrEmpty(id))
+                    {
+                        return this.GetLuckyRadio();
+                    }
                     return await this.GetRepository<Radio>().GetAsync(id);
                 default:
                     throw new ArgumentOutOfRangeException("playlistType");
@@ -149,7 +148,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 case PlaylistType.SystemPlaylist:
                     return await this.GetRepository<SystemPlaylist>().GetAllAsync(order, take);
                 case PlaylistType.Radio:
-                    return (new [] { this.luckyRadio }).Union(await this.GetRepository<Radio>().GetAllAsync(order, take - 1));
+                    return (new [] { this.GetLuckyRadio() }).Union(await this.GetRepository<Radio>().GetAllAsync(order, take - 1));
                 default:
                     throw new ArgumentOutOfRangeException("playlistType");
             }
@@ -174,6 +173,20 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 default:
                     throw new ArgumentOutOfRangeException("playlistType");
             }
+        }
+
+        private Radio GetLuckyRadio()
+        {
+            var luckyTitle = this.settingsService.GetIsAllAccessAvailable()
+                ? this.applicationResources.GetString("Radio_Lucky")
+                : this.applicationResources.GetString("InstantMix_Lucky");
+
+            return new Radio()
+            {
+                SongId = string.Empty,
+                Title = luckyTitle,
+                TitleNorm = luckyTitle.Normalize()
+            };
         }
     }
 }

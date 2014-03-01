@@ -43,12 +43,35 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
 
         public async Task InitializeAsync(IProgress<double> progress)
         {
-            await this.ClearLocalDatabaseAsync();
-            await this.albumArtCacheService.ClearCacheAsync();
+            Exception exception = null;
 
-            await this.synchronizationService.Update(progress);
+            try
+            {
+                await this.albumArtCacheService.ClearCacheAsync();
 
-            await this.songsCachingService.RestoreCacheAsync();
+                await this.synchronizationService.Update(progress);
+
+                await this.songsCachingService.RestoreCacheAsync();
+            }
+            catch (Exception e)
+            {
+                this.logger.Debug(e, "Initialization failed");
+                exception = e;
+            }
+
+            if (exception != null)
+            {
+                try
+                {
+                    await this.dbContext.DeleteDatabaseAsync();
+                }
+                catch (Exception e)
+                {
+                    this.logger.Error(e, "Could not drop database after initialization failed");
+                }
+                
+                throw exception;
+            }
         }
 
         private async Task ClearLocalDatabaseAsync()

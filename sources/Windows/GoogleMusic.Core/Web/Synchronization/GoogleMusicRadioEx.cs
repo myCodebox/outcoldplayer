@@ -29,7 +29,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
                 DateTimeExtensions.FromUnixFileTime(googleMusicRadio.LastModifiedTimestamp / 1000);
             radio.Recent = DateTimeExtensions.FromUnixFileTime(googleMusicRadio.RecentTimestamp / 1000);
             radio.ClientId = googleMusicRadio.ClientId;
-            radio.ArtUrl = new Uri(googleMusicRadio.ImageUrl);
+            radio.ArtUrl = string.IsNullOrEmpty(googleMusicRadio.ImageUrl) ? null : new Uri(googleMusicRadio.ImageUrl);
             if (googleMusicRadio.Seed != null)
             {
                 radio.SeedType = googleMusicRadio.Seed.SeedType;

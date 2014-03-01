@@ -245,14 +245,13 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             if (this.stateService.IsOnline())
             {
                 yield return new CommandMetadata(CommandIcon.Add, this.resources.GetString("Toolbar_PlaylistButton"), this.AddToPlaylistCommand);
-                if (this.settingsService.GetIsAllAccessAvailable())
-                {
-                    yield return
-                        new CommandMetadata(
-                            CommandIcon.MusicInfo,
-                            this.resources.GetString("Toolbar_StartRadio"),
-                            this.StartRadioCommand);
-                }
+                yield return
+                         new CommandMetadata(
+                             CommandIcon.MusicInfo,
+                             this.settingsService.GetIsAllAccessAvailable()
+                                 ? this.resources.GetString("Toolbar_StartRadio")
+                                 : this.resources.GetString("Toolbar_StartInstantMix"),
+                             this.StartRadioCommand);
             }
 
             yield return new CommandMetadata(CommandIcon.Remove, this.resources.GetString("Toolbar_QueueButton"), this.RemoveSelectedSongCommand);
