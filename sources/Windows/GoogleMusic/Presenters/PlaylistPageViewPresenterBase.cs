@@ -33,6 +33,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private readonly IApplicationStateService stateService;
         private readonly IRadiosService radiosService;
         private readonly INavigationService navigationService;
+        private readonly ISettingsService settingsService;
 
         public PlaylistPageViewPresenterBase(IDependencyResolverContainer container)
         {
@@ -44,6 +45,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.stateService = container.Resolve<IApplicationStateService>();
             this.radiosService = container.Resolve<IRadiosService>();
             this.navigationService = container.Resolve<INavigationService>();
+            this.settingsService = container.Resolve<ISettingsService>();
 
             this.QueueCommand = new DelegateCommand(this.Queue, () => this.BindingModel != null && this.BindingModel.SongsBindingModel.SelectedItems.Count > 0);
             this.AddToPlaylistCommand = new DelegateCommand(this.AddToPlaylist, () => this.BindingModel != null && this.BindingModel.SongsBindingModel.SelectedItems.Count > 0);
@@ -127,7 +129,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             {
                 yield return new CommandMetadata(CommandIcon.Add, this.resources.GetString("Toolbar_PlaylistButton"), this.AddToPlaylistCommand);
 
-                if (this.BindingModel.SongsBindingModel.SelectedItems.Count == 1)
+                if (this.BindingModel.SongsBindingModel.SelectedItems.Count == 1 && this.settingsService.GetIsAllAccessAvailable())
                 {
                     yield return new CommandMetadata(CommandIcon.MusicInfo, this.resources.GetString("Toolbar_StartRadio"), this.StartRadioCommand);
                 }

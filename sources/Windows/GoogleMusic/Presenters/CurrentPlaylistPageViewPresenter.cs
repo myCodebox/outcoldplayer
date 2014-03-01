@@ -16,7 +16,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
     using OutcoldSolutions.GoogleMusic.Views.Popups;
-    using OutcoldSolutions.GoogleMusic.Web;
     using OutcoldSolutions.Presenters;
     using OutcoldSolutions.Views;
 
@@ -29,6 +28,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private readonly IApplicationStateService stateService;
         private readonly INavigationService navigationService;
         private readonly IRadiosService radiosService;
+        private readonly ISettingsService settingsService;
 
         internal CurrentPlaylistPageViewPresenter(
             IApplicationResources resources,
@@ -38,6 +38,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             IApplicationStateService stateService,
             INavigationService navigationService,
             IRadiosService radiosService,
+            ISettingsService settingsService,
             SongsBindingModel songsBindingModel)
         {
             this.resources = resources;
@@ -47,6 +48,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.stateService = stateService;
             this.navigationService = navigationService;
             this.radiosService = radiosService;
+            this.settingsService = settingsService;
             this.BindingModel = songsBindingModel;
 
             this.playQueueService.QueueChanged += async (sender, args) => await this.Dispatcher.RunAsync(this.UpdateSongs);
@@ -243,7 +245,14 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             if (this.stateService.IsOnline())
             {
                 yield return new CommandMetadata(CommandIcon.Add, this.resources.GetString("Toolbar_PlaylistButton"), this.AddToPlaylistCommand);
-                yield return new CommandMetadata(CommandIcon.MusicInfo, this.resources.GetString("Toolbar_StartRadio"), this.StartRadioCommand);
+                if (this.settingsService.GetIsAllAccessAvailable())
+                {
+                    yield return
+                        new CommandMetadata(
+                            CommandIcon.MusicInfo,
+                            this.resources.GetString("Toolbar_StartRadio"),
+                            this.StartRadioCommand);
+                }
             }
 
             yield return new CommandMetadata(CommandIcon.Remove, this.resources.GetString("Toolbar_QueueButton"), this.RemoveSelectedSongCommand);

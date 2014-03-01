@@ -22,6 +22,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
     {
         public bool Updated { get; private set; }
         public bool IsBreakingChange { get; private set; }
+        public bool IsAllAccessHasChanged { get; private set; }
 
         public void SetUpdated()
         {
@@ -45,6 +46,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
         private readonly IUserPlaylistsRepository userPlaylistsRepository;
         private readonly ISongsRepository songsRepository;
         private readonly IRadioStationsRepository radioStationsRepository;
+        private readonly IConfigWebService configWebService;
 
         public GoogleMusicSynchronizationService(
             ILogManager logManager,
@@ -54,7 +56,8 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
             IRadioWebService radioWebService,
             IUserPlaylistsRepository userPlaylistsRepository,
             ISongsRepository songsRepository,
-            IRadioStationsRepository radioStationsRepository)
+            IRadioStationsRepository radioStationsRepository,
+            IConfigWebService configWebService)
         {
             this.logger = logManager.CreateLogger("GoogleMusicSynchronizationService");
             this.settingsService = settingsService;
@@ -64,10 +67,13 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
             this.userPlaylistsRepository = userPlaylistsRepository;
             this.songsRepository = songsRepository;
             this.radioStationsRepository = radioStationsRepository;
+            this.configWebService = configWebService;
         }
 
         public async Task<UpdateStatus> Update(IProgress<double> progress = null)
         {
+            UpdateStatus updateStatus = new UpdateStatus();
+
             DateTime? libraryFreshnessDate = this.settingsService.GetLibraryFreshnessDate();
             DateTime currentTime = DateTime.UtcNow;
 
@@ -81,9 +87,18 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
                 subProgress = new Progress<int>(async songsCount => await progress.SafeReportAsync((((double)songsCount / status.AvailableTracks) * 0.75d) + 0.05d));
             }
 
-            await progress.SafeReportAsync(0.05d);
+            await progress.SafeReportAsync(0.03d);
 
-            UpdateStatus updateStatus = new UpdateStatus();
+            var allAccess = await this.configWebService.IsAllAccessAvailableAsync();
+            bool allAccessChanged = false;
+            if (this.settingsService.GetIsAllAccessAvailable() != allAccess)
+            {
+                updateStatus.SetBreakingChange();
+                allAccessChanged = true;
+                this.settingsService.SetIsAllAccessAvailable(allAccess);
+            }
+
+            await progress.SafeReportAsync(0.05d);
 
             await this.songsWebService.GetAllAsync(
                 libraryFreshnessDate,
@@ -309,63 +324,66 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
 
             await progress.SafeReportAsync(0.95d);
 
-            await this.radioWebService.GetAllAsync(
-                libraryFreshnessDate,
-                null,
-                async (gRadios) =>
-                {
-                    IList<Radio> toBeDeleted = new List<Radio>();
-                    IList<Radio> toBeUpdated = new List<Radio>();
-                    IList<Radio> toBeInserted = new List<Radio>();
-
-                    foreach (var radio in gRadios)
+            if (allAccess || allAccessChanged)
+            {
+                await this.radioWebService.GetAllAsync(
+                    libraryFreshnessDate,
+                    null,
+                    async (gRadios) =>
                     {
-                        if (radio.Deleted)
-                        {
-                            toBeDeleted.Add(radio.ToRadio());
-                        }
-                        else
-                        {
-                            Radio storedRadio = null;
-                            if (libraryFreshnessDate.HasValue)
-                            {
-                                storedRadio = await this.radioStationsRepository.GetAsync(radio.Id);
-                            }
+                        IList<Radio> toBeDeleted = new List<Radio>();
+                        IList<Radio> toBeUpdated = new List<Radio>();
+                        IList<Radio> toBeInserted = new List<Radio>();
 
-                            if (storedRadio != null)
+                        foreach (var radio in gRadios)
+                        {
+                            if (radio.Deleted)
                             {
-                                GoogleMusicRadioEx.Mapper(radio, storedRadio);
-                                toBeUpdated.Add(storedRadio);
-
+                                toBeDeleted.Add(radio.ToRadio());
                             }
                             else
                             {
-                                toBeInserted.Add(radio.ToRadio());
+                                Radio storedRadio = null;
+                                if (libraryFreshnessDate.HasValue)
+                                {
+                                    storedRadio = await this.radioStationsRepository.GetAsync(radio.Id);
+                                }
+
+                                if (storedRadio != null)
+                                {
+                                    GoogleMusicRadioEx.Mapper(radio, storedRadio);
+                                    toBeUpdated.Add(storedRadio);
+
+                                }
+                                else
+                                {
+                                    toBeInserted.Add(radio.ToRadio());
+                                }
                             }
                         }
-                    }
 
-                    if (toBeDeleted.Count > 0)
-                    {
-                        if (await this.radioStationsRepository.DeleteAsync(toBeDeleted) > 0)
+                        if (toBeDeleted.Count > 0)
                         {
-                            updateStatus.SetBreakingChange();
+                            if (await this.radioStationsRepository.DeleteAsync(toBeDeleted) > 0)
+                            {
+                                updateStatus.SetBreakingChange();
+                            }
                         }
-                    }
 
-                    if (toBeInserted.Count > 0)
-                    {
-                        if (await this.radioStationsRepository.InsertAsync(toBeInserted) > 0)
+                        if (toBeInserted.Count > 0)
                         {
-                            updateStatus.SetBreakingChange();
+                            if (await this.radioStationsRepository.InsertAsync(toBeInserted) > 0)
+                            {
+                                updateStatus.SetBreakingChange();
+                            }
                         }
-                    }
 
-                    if (toBeUpdated.Count > 0)
-                    {
-                        await this.radioStationsRepository.UpdateAsync(toBeUpdated);
-                    }
-                });
+                        if (toBeUpdated.Count > 0)
+                        {
+                            await this.radioStationsRepository.UpdateAsync(toBeUpdated);
+                        }
+                    });
+            }
 
             await progress.SafeReportAsync(1d);
 

@@ -109,6 +109,7 @@ namespace OutcoldSolutions.GoogleMusic
                 registration.Register<IRadioWebService>().AsSingleton<RadioWebService>();
                 registration.Register<ISettingsService>().AsSingleton<SettingsService>();
                 registration.Register<IGoogleMusicSessionService>().AsSingleton<GoogleMusicSessionService>();
+                registration.Register<IConfigWebService>().AsSingleton<ConfigWebService>();
 
                 registration.Register<IMediaStreamDownloadService>().AsSingleton<MediaStreamDownloadService>();
 
@@ -226,6 +227,7 @@ namespace OutcoldSolutions.GoogleMusic
                     Container.Resolve<IMainFrame>(),
                     Container.Resolve<IApplicationResources>(),
                     Container.Resolve<IApplicationStateService>(),
+                    Container.Resolve<ISettingsService>(),
                     Container.Resolve<IEventAggregator>());
                 ApplicationSettingViews.Initialize(Container.Resolve<IApplicationSettingViewsService>(), Container.Resolve<IApplicationResources>());
 

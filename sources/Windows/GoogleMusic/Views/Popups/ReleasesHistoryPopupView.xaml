@@ -40,6 +40,7 @@
                         <Paragraph>[+] Implement "Block explicit songs in radio." settings (disabled by default). You can enable it in application settings.</Paragraph>
                         <Paragraph>[+] Show radio list on start page.</Paragraph>
                         <Paragraph>[+] Add support for "I'm feeling lucky radio".</Paragraph>
+                        <Paragraph>[b] Hide "Radio Stations" from not subscribed to All Access users.</Paragraph>
                     </RichTextBlock>
                     
                     <TextBlock Style="{StaticResource TitleTextStyle}" Margin="0, 10, 0, 0" >

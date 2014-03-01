@@ -149,7 +149,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 case PlaylistType.SystemPlaylist:
                     return await this.GetRepository<SystemPlaylist>().GetAllAsync(order, take);
                 case PlaylistType.Radio:
-                    return (new [] { this.luckyRadio }).Union(await this.GetRepository<Radio>().GetAllAsync(order, take));
+                    return (new [] { this.luckyRadio }).Union(await this.GetRepository<Radio>().GetAllAsync(order, take - 1));
                 default:
                     throw new ArgumentOutOfRangeException("playlistType");
             }

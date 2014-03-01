@@ -271,7 +271,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         {
             PlaylistType[] types;
 
-            if (this.stateService.IsOnline())
+            if (this.stateService.IsOnline() && this.settingsService.GetIsAllAccessAvailable())
             {
                 types = new[]
                         {
