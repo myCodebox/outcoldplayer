@@ -6,19 +6,10 @@ namespace OutcoldSolutions.GoogleMusic.Web
 {
     using System;
     using System.Collections.Generic;
-    using System.Net.Http;
     using System.Threading.Tasks;
 
     public interface IGoogleMusicApisService
     {
-        Task<HttpResponseMessage> GetAsync(
-            string url);
-
-        Task<HttpResponseMessage> PostAsync(
-            string url,
-            dynamic json = null,
-            bool signUrl = false);
-
         Task<TResult> GetAsync<TResult>(
             string url);
 

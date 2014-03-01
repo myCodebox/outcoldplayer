@@ -15,15 +15,6 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
         Task RefreshXtAsync();
 
-        Task<HttpResponseMessage> GetAsync(
-                    string url,
-                    bool signUrl = true);
-
-        Task<HttpResponseMessage> PostAsync(
-            string url,
-            IDictionary<string, string> formData = null,
-            bool signUrl = true);
-
         Task<TResult> GetAsync<TResult>(
             string url,
             bool signUrl = true) where TResult : CommonResponse;
