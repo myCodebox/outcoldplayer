@@ -98,5 +98,7 @@ namespace OutcoldSolutions.GoogleMusic.Models
         public bool TrackAvailableForPurchase { get; set; }
 
         public bool AlbumAvailableForPurchase { get; set; }
+
+        public string Nid { get; set; }
     }
 }

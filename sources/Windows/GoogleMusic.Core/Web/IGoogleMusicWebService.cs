@@ -4,7 +4,6 @@
 namespace OutcoldSolutions.GoogleMusic.Web
 {
     using System.Collections.Generic;
-    using System.Net.Http;
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.Web.Models;

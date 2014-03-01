@@ -4,6 +4,7 @@
 namespace OutcoldSolutions.GoogleMusic.Services
 {
     using System;
+    using System.Collections.Generic;
     using System.Threading.Tasks;
 
     using OutcoldSolutions.Diagnostics;
@@ -53,20 +54,13 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 this.logger.Debug("Updating rating for song '{0}' to rating '{1}' from '{2}'.", song.SongId, newRating, song.Rating);
             }
 
-            var ratingResp = await this.songsWebService.UpdateRatingAsync(song.SongId, newRating);
+            var resp = await this.songsWebService.UpdateRatingsAsync(new Dictionary<Song, int>() { { song, newRating } });
             
-            if (this.logger.IsDebugEnabled)
+            foreach (var mutation in resp.MutateResponse)
             {
-                this.logger.Debug("Rating updated for song: {0}.", song.SongId);
-            }
-
-            foreach (var songUpdate in ratingResp.Songs)
-            {
-                var songRatingResp = songUpdate;
-
-                if (string.Equals(songUpdate.Id, song.SongId))
+                if (string.Equals(mutation.ResponseCode, "OK", StringComparison.OrdinalIgnoreCase))
                 {
-                    song.Rating = songRatingResp.Rating;
+                    song.Rating = newRating;
                     
                     try
                     {
@@ -75,7 +69,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
                         if (this.logger.IsDebugEnabled)
                         {
-                            this.logger.Debug("Song updated: {0}, Rating: {1}.", songUpdate.Id, songUpdate.Rating);
+                            this.logger.Debug("Song updated: {0}, Rating: {1}.", song.SongId, song.Rating);
                         }
                     }
                     catch (Exception exception)

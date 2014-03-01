@@ -5,6 +5,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Net;
     using System.Net.Http;
     using System.Runtime.InteropServices.WindowsRuntime;
@@ -34,7 +35,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
         Task<bool> RecordPlayingAsync(string songId, string playlistId, bool updateRecentAlbum, bool updateRecentPlaylist, int playCount);
 
-        Task<RatingResp> UpdateRatingAsync(string songId, int rating);
+        Task<GoogleMusicSongMutateResponse> UpdateRatingsAsync(IDictionary<Song, int> ratings);
     }
 
     public class SongsWebService : ISongsWebService
@@ -47,7 +48,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
         private const string SongUrlFormat = "play?songid={0}&pt=e&dt=pe&targetkbps=320&start=0";
         private const string SongUrlFromStoreFormat = "play?mjck={0}&slt={1}&sig={2}&pt=e&dt=pe&targetkbps=320&start=0";
         private const string RecordPlayingUrl = "services/recordplaying";
-        private const string ModifyEntriesUrl = "services/modifyentries";
+        private const string TrackBatch = "trackbatch";
         
         private const string GetStatusUrl = "services/getstatus";
 
@@ -142,16 +143,28 @@ namespace OutcoldSolutions.GoogleMusic.Web
             return response.Success.HasValue && response.Success.Value;
         }
 
-        public async Task<RatingResp> UpdateRatingAsync(string songId, int rating)
+        public async Task<GoogleMusicSongMutateResponse> UpdateRatingsAsync(IDictionary<Song, int> ratings)
         {
-            var jsonProperties = new Dictionary<string, string>
-                                     {
-                                         {
-                                             "entries", JsonConvert.SerializeObject(new[] { new { id = songId, rating = rating } })
-                                         },
-                                     };
+            var json =
+                new
+                {
+                    mutations = ratings.Select(update =>
+                                new
+                                {
+                                    update =
+                                        new
+                                        {
+                                            id = update.Key.SongId,
+                                            nid = update.Key.Nid,
+                                            rating = update.Value.ToString(),
+                                            trackType = (int)update.Key.TrackType,
+                                            deleted = false,
+                                            lastModifiedTimestamp = ((long)DateTime.UtcNow.ToUnixFileTime() * 1000L).ToString("G")
+                                        }
+                                })
+                };
 
-            return await this.googleMusicWebService.PostAsync<RatingResp>(ModifyEntriesUrl, jsonProperties: jsonProperties);
+            return await this.googleMusicApisService.PostAsync<GoogleMusicSongMutateResponse>(TrackBatch, json);
         }
 
         private async Task<GoogleMusicSongUrl> GetSongUrlInternalAsync(Song song, bool forceSwitch)
