@@ -27,4 +27,22 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
         public HttpStatusCode StatusCode { get; private set; }
     }
+
+    public class GoogleApiWebRequestException : WebRequestException
+    {
+        public GoogleApiWebRequestException(HttpStatusCode statusCode)
+            : base(statusCode)
+        {
+        }
+
+        public GoogleApiWebRequestException(string message, HttpStatusCode statusCode)
+            : base(message, statusCode)
+        {
+        }
+
+        public GoogleApiWebRequestException(string message, Exception innerException, HttpStatusCode statusCode)
+            : base(message, innerException, statusCode)
+        {
+        }
+    }
 }

@@ -155,6 +155,7 @@
     <Compile Include="Web\IGoogleMusicApisService.cs" />
     <Compile Include="Web\Models\GoogleConfigResponse.cs" />
     <Compile Include="Web\Models\GoogleMusicArtist.cs" />
+    <Compile Include="Web\Models\GoogleMusicErrorResponse.cs" />
     <Compile Include="Web\Models\GoogleMusicMutateResponse.cs" />
     <Compile Include="Web\Models\GoogleMusicPlaylistBatchResponse.cs" />
     <Compile Include="Web\Models\GoogleMusicPlaylistEntriesBatchResponse.cs" />

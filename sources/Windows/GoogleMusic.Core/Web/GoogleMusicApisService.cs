@@ -105,7 +105,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
         public async Task<TResult> GetAsync<TResult>(string url)
         {
             HttpResponseMessage responseMessage = null;
-
+            HttpRequestException exception = null;
             try
             {
                 responseMessage = await this.GetAsync(url);
@@ -118,32 +118,45 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 }
 
                 responseMessage.EnsureSuccessStatusCode();
-                TResult result = await responseMessage.Content.ReadAsJsonObject<TResult>();
-
-                return result;
             }
-            catch (HttpRequestException exception)
+            catch (HttpRequestException e)
             {
+                exception = e;
+            }
+
+            if (exception != null)
+            {
+                StringBuilder errorMessage = new StringBuilder();
                 HttpStatusCode statusCode = 0;
                 if (responseMessage != null)
                 {
                     statusCode = responseMessage.StatusCode;
+
+                    var response = await responseMessage.Content.ReadAsJsonObject<GoogleMusicErrorResponse>();
+                    if (response.Error != null)
+                    {
+                        errorMessage.AppendFormat("Code: {0}, Message: {1}", response.Error.Code, response.Error.Message);
+                    }
+                    else
+                    {
+                        errorMessage.AppendFormat(
+                            CultureInfo.CurrentCulture,
+                            "Exception while we tried to get resposne for url (GET) '{0}'. {1}",
+                            url,
+                            exception.Message);
+                    }
                 }
 
-                throw new WebRequestException(
-                    string.Format(
-                        CultureInfo.CurrentCulture,
-                        "Exception while we tried to get resposne for url (GET) '{0}'. {1}",
-                        url,
-                        exception.Message),
-                    exception,
-                    statusCode);
+                throw new GoogleApiWebRequestException(errorMessage.ToString(), exception, statusCode);
             }
+
+            return await responseMessage.Content.ReadAsJsonObject<TResult>();
         }
 
         public async Task<TResult> PostAsync<TResult>(string url, dynamic json = null, bool signUrl = false)
         {
             HttpResponseMessage responseMessage = null;
+            HttpRequestException exception = null;
 
             try
             {
@@ -157,33 +170,45 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 }
 
                 responseMessage.EnsureSuccessStatusCode();
-                TResult result = await responseMessage.Content.ReadAsJsonObject<TResult>();
-
-                return result;
             }
-            catch (HttpRequestException exception)
+            catch (HttpRequestException e)
             {
+                exception = e;
+            }
+
+            if (exception != null)
+            {
+                StringBuilder errorMessage = new StringBuilder();
                 HttpStatusCode statusCode = 0;
                 if (responseMessage != null)
                 {
                     statusCode = responseMessage.StatusCode;
+
+                    var response = await responseMessage.Content.ReadAsJsonObject<GoogleMusicErrorResponse>();
+                    if (response.Error != null)
+                    {
+                        errorMessage.AppendFormat("Code: {0}, Message: {1}", response.Error.Code, response.Error.Message);
+                    }
+                    else
+                    {
+                        errorMessage.AppendFormat(
+                            CultureInfo.CurrentCulture,
+                            "Exception while we tried to get resposne for url (POST) '{0}'. {1}",
+                            url,
+                            exception.Message);
+
+                        if (responseMessage.StatusCode == HttpStatusCode.Found)
+                        {
+                            errorMessage.AppendFormat(
+                                CultureInfo.CurrentCulture, ". 302: Moved to '{0}'", responseMessage.Headers.Location.LocalPath);
+                        }
+                    }
                 }
-
-                StringBuilder errorMessage = new StringBuilder();
-                errorMessage.AppendFormat(
-                    CultureInfo.CurrentCulture,
-                    "Exception while we tried to get resposne for url (POST) '{0}'. {1}",
-                    url,
-                    exception.Message);
-
-                if (responseMessage != null && responseMessage.StatusCode == HttpStatusCode.Found)
-                {
-                    errorMessage.AppendFormat(
-                        CultureInfo.CurrentCulture, ". 302: Moved to '{0}'", responseMessage.Headers.Location.LocalPath);
-                }
-
-                throw new WebRequestException(errorMessage.ToString(), exception, statusCode);
+                
+                throw new GoogleApiWebRequestException(errorMessage.ToString(), exception, statusCode);
             }
+
+            return await responseMessage.Content.ReadAsJsonObject<TResult>();
         }
 
         public async Task<IList<TData>> DownloadList<TData>(
