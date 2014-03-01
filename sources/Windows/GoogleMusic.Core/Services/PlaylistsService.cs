@@ -33,14 +33,14 @@ namespace OutcoldSolutions.GoogleMusic.Services
     {
         private readonly IDependencyResolverContainer container;
 
-        private readonly IRadioWebService radioWebService;
+        private readonly IRadiosService radiosService;
 
         public PlaylistsService(
             IDependencyResolverContainer container,
-            IRadioWebService radioWebService)
+            IRadiosService radiosService)
         {
             this.container = container;
-            this.radioWebService = radioWebService;
+            this.radiosService = radiosService;
         }
 
         public IPlaylistRepository<TPlaylist> GetRepository<TPlaylist>() where TPlaylist : IPlaylist
@@ -62,6 +62,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     return this.GetRepository<UserPlaylist>().GetCountAsync();
                 case PlaylistType.SystemPlaylist:
                     return this.GetRepository<SystemPlaylist>().GetCountAsync();
+                case PlaylistType.Radio:
+                    return this.GetRepository<Radio>().GetCountAsync();
                 default:
                     throw new ArgumentOutOfRangeException("playlistType");
             }
@@ -92,7 +94,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 case PlaylistType.SystemPlaylist:
                     return this.GetRepository<SystemPlaylist>().GetSongsAsync(id);
                 case PlaylistType.Radio:
-                    return this.radioWebService.GetRadioSongsAsync(id);
+                    return this.radiosService.GetRadioSongsAsync(id);
                 default:
                     throw new ArgumentOutOfRangeException("playlistType");
             }
@@ -112,6 +114,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     return await this.GetRepository<UserPlaylist>().GetAsync(id);
                 case PlaylistType.SystemPlaylist:
                     return await this.GetRepository<SystemPlaylist>().GetAsync(id);
+                case PlaylistType.Radio:
+                    return await this.GetRepository<Radio>().GetAsync(id);
                 default:
                     throw new ArgumentOutOfRangeException("playlistType");
             }
@@ -132,7 +136,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 case PlaylistType.SystemPlaylist:
                     return await this.GetRepository<SystemPlaylist>().GetAllAsync(order, take);
                 case PlaylistType.Radio:
-                    return await this.radioWebService.GetAllAsync();
+                    return await this.GetRepository<Radio>().GetAllAsync(order, take);
                 default:
                     throw new ArgumentOutOfRangeException("playlistType");
             }
@@ -152,6 +156,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     return await this.GetRepository<UserPlaylist>().SearchAsync(searchQuery, take);
                 case PlaylistType.SystemPlaylist:
                     return await this.GetRepository<SystemPlaylist>().SearchAsync(searchQuery, take);
+                case PlaylistType.Radio:
+                    return await this.GetRepository<Radio>().SearchAsync(searchQuery, take);
                 default:
                     throw new ArgumentOutOfRangeException("playlistType");
             }

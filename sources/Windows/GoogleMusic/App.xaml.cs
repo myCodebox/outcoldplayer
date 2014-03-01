@@ -134,6 +134,8 @@ namespace OutcoldSolutions.GoogleMusic
                 registration.Register<IUserPlaylistsService>().AsSingleton<UserPlaylistsService>();
                 registration.Register<IAlbumArtCacheService>().AsSingleton<AlbumArtCacheService>();
                 registration.Register<ICachedAlbumArtsRepository>().AsSingleton<CachedAlbumArtsRepository>();
+                registration.Register<IRadioStationsRepository>().And<IPlaylistRepository<Radio>>().AsSingleton<RadioStationsRepository>();
+                registration.Register<IRadiosService>().AsSingleton<RadiosService>();
 
                 registration.Register<IInitialSynchronization>().As<InitialSynchronization>();
 

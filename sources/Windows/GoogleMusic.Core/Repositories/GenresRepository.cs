@@ -66,7 +66,7 @@ order by coalesce(nullif(s.AlbumArtistTitleNorm, ''), s.[ArtistTitleNorm]), s.Al
             }
             else if (order == Order.LastPlayed)
             {
-                query = query.OrderByDescending(g => g.LastPlayed);
+                query = query.OrderByDescending(g => g.Recent);
             }
 
             if (take.HasValue)

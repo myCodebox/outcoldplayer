@@ -85,7 +85,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
         private async Task RecordLocalAsync(Song song, ushort playCount)
         {
             song.PlayCount = playCount;
-            song.LastPlayed = DateTime.UtcNow;
+            song.Recent = DateTime.UtcNow;
 
             await this.songsRepository.UpdatePlayCountsAsync(song);
             this.eventAggregator.Publish(new SongsUpdatedEvent(new [] { song }));

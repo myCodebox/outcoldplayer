@@ -20,6 +20,9 @@
             </StackPanel.Transitions>
 
             <ToggleSwitch Margin="0, 0, 0, 0" 
+                          IsOn="{Binding Path=BlockExplicitSongsInRadio, Mode=TwoWay}">Block explicit songs in radio.</ToggleSwitch>
+            
+            <ToggleSwitch Margin="0, 0, 0, 0" 
                           IsOn="{Binding Path=IsScreenOn, Mode=TwoWay}"
                           x:Uid="SettingsAppSettings_KeepDisplayOnLabel" >Keep display on.</ToggleSwitch>
 

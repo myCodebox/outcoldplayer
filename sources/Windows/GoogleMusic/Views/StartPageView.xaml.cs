@@ -44,7 +44,11 @@ namespace OutcoldSolutions.GoogleMusic.Views
                 var groupBindingModel = frameworkElement.DataContext as PlaylistsGroupBindingModel;
                 if (groupBindingModel != null)
                 {
-                    if (groupBindingModel.Request == PlaylistType.UserPlaylist)
+                    if (groupBindingModel.Request == PlaylistType.Radio)
+                    {
+                        this.NavigationService.NavigateTo<IRadioPageView>(PlaylistType.Radio);
+                    }
+                    else if (groupBindingModel.Request == PlaylistType.UserPlaylist)
                     {
                         this.NavigationService.NavigateTo<IUserPlaylistsPageView>(PlaylistType.UserPlaylist);
                     }

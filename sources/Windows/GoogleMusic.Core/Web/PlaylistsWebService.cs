@@ -31,8 +31,8 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
     public class PlaylistsWebService : IPlaylistsWebService
     {
-        private const string PlaylistFeed = "playlistfeed?alt=json&hl=en_US&tier=aa";
-        private const string PlEntryFeed = "plentryfeed?alt=json&hl=en_US&tier=aa";
+        private const string PlaylistFeed = "playlistfeed";
+        private const string PlEntryFeed = "plentryfeed";
         private const string AddPlaylistUrl = "services/createplaylist?format=json";
         private const string DeletePlaylistUrl = "services/deleteplaylist";
         private const string ChangePlaylistNameUrl = "services/modifyplaylist";

@@ -51,26 +51,23 @@ namespace OutcoldSolutions.GoogleMusic.Web
         
         private const string GetStatusUrl = "services/getstatus";
 
-        private const string StreamingLoadAllTracks = "trackfeed?alt=json&hl=en_US&art-dimension=512&tier=aa";
+        private const string StreamingLoadAllTracks = "trackfeed?art-dimension=512";
 
         private readonly IGoogleMusicWebService googleMusicWebService;
 
         private readonly IGoogleMusicApisService googleMusicApisService;
 
-        private readonly IGoogleMusicSessionService sessionService;
         private readonly ISettingsService settingsService;
         private readonly ILogger logger;
 
         public SongsWebService(
             IGoogleMusicWebService googleMusicWebService,
             IGoogleMusicApisService googleMusicApisService,
-            IGoogleMusicSessionService sessionService,
             ISettingsService settingsService,
             ILogManager logManager)
         {
             this.googleMusicWebService = googleMusicWebService;
             this.googleMusicApisService = googleMusicApisService;
-            this.sessionService = sessionService;
             this.settingsService = settingsService;
             this.logger = logManager.CreateLogger("SongsWebService");
         }

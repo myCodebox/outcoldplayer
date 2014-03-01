@@ -73,9 +73,10 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 this.Logger.LogRequest(HttpMethod.Get, url, null);
             }
 
-            var requestMessage = new HttpRequestMessage(HttpMethod.Get, url);
+            var requestMessage = new HttpRequestMessage(HttpMethod.Get, this.UrlDefaultParameters(url));
             requestMessage.Headers.Add("Authorization", this.GetAuthorizationHeaderValue());
             requestMessage.Headers.Add("Accept-Encoding", "gzip");
+
             var responseMessage = await this.SendAsync(requestMessage, HttpCompletionOption.ResponseHeadersRead);
 
             return responseMessage;
@@ -87,7 +88,8 @@ namespace OutcoldSolutions.GoogleMusic.Web
             {
                 this.Logger.LogRequest(HttpMethod.Post, url, null, (object)json);
             }
-            var requestMessage = new HttpRequestMessage(HttpMethod.Post, url);
+
+            var requestMessage = new HttpRequestMessage(HttpMethod.Post, this.UrlDefaultParameters(url));
             requestMessage.Headers.Add("Authorization", this.GetAuthorizationHeaderValue());
             if (json != null)
             {
@@ -237,6 +239,22 @@ namespace OutcoldSolutions.GoogleMusic.Web
             await commitTask;
 
             return result;
+        }
+
+        private string UrlDefaultParameters(string url)
+        {
+            if (url.IndexOf('?') < 0)
+            {
+                url += "?";
+            }
+            else
+            {
+                url += "&";
+            }
+
+            url += "alt=json&hl=" + CultureInfo.CurrentCulture.Name.Replace("-", "_");
+
+            return url;
         }
 
         private string GetAuthorizationHeaderValue()

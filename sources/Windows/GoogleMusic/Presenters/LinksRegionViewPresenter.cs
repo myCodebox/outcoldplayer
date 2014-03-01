@@ -173,7 +173,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private async Task Synchronize()
         {
-            Tuple<SongsUpdateStatus, UserPlaylistsUpdateStatus> updateStatus = null;
+            UpdateStatus updateStatus = null;
 
             await this.dispatcher.RunAsync(() => this.synchronizationTimer.Stop());
 
@@ -217,7 +217,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
                 if (updateStatus != null)
                 {
-                    this.ShowUpdateMessage(updateStatus.Item2, updateStatus.Item1);
+                    this.ShowUpdateMessage(updateStatus);
                 }
 
                 await Task.Delay(TimeSpan.FromSeconds(2));
@@ -233,12 +233,9 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         }
 
         private async void ShowUpdateMessage(
-            UserPlaylistsUpdateStatus userPlaylistsUpdateStatus, SongsUpdateStatus songsUpdateStatus)
+            UpdateStatus updateStatus)
         {
-            if ((userPlaylistsUpdateStatus != null
-                && (userPlaylistsUpdateStatus.DeletedPlaylists + userPlaylistsUpdateStatus.UpdatedPlaylists + userPlaylistsUpdateStatus.NewPlaylists) > 0)
-                || (songsUpdateStatus != null
-                && (songsUpdateStatus.DeletedSongs + songsUpdateStatus.UpdatedSongs + songsUpdateStatus.NewSongs) > 0))
+            if (updateStatus != null && updateStatus.IsBreakingChange)
             {
                 var dialog = new MessageDialog(this.resources.GetString("Update_MessageBox_Updates_Message"));
                 dialog.Commands.Add(

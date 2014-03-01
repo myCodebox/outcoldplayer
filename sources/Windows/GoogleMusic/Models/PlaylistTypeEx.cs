@@ -38,7 +38,7 @@ namespace OutcoldSolutions.GoogleMusic.Models
                 case PlaylistType.UserPlaylist:
                     return resources.GetString("Model_UserPlaylist_Plural_Title");
                 case PlaylistType.Radio:
-                    return resources.GetString("MainMenu_Radio");
+                    return "Radio Stations";
                 default:
                     return null;
             }

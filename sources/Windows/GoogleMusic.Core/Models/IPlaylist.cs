@@ -25,6 +25,6 @@ namespace OutcoldSolutions.GoogleMusic.Models
 
         Uri ArtUrl { get; set; }
 
-        DateTime LastPlayed { get; set; }
+        DateTime Recent { get; set; }
     }
 }

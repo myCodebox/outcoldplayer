@@ -23,11 +23,11 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
 
         Task UpdatePlayCountsAsync(Song song);
 
-        Task InsertAsync(IEnumerable<Song> songs);
+        Task<int> InsertAsync(IEnumerable<Song> songs);
 
-        Task DeleteAsync(IEnumerable<Song> songs);
+        Task<int> DeleteAsync(IEnumerable<Song> songs);
 
-        Task UpdateAsync(IEnumerable<Song> songs);
+        Task<int> UpdateAsync(IEnumerable<Song> songs);
     }
 
     public class SongsRepository : RepositoryBase, ISongsRepository
@@ -81,25 +81,30 @@ where (?1 = 1 or s.[IsCached] = 1) and s.[SongId] = ?2
             return this.Connection.ExecuteAsync("update Song set PlayCount = ?1 where SongId = ?2", song.PlayCount, song.SongId);
         }
 
-        public Task InsertAsync(IEnumerable<Song> songs)
+        public Task<int> InsertAsync(IEnumerable<Song> songs)
         {
-            return this.Connection.RunInTransactionAsync((c) => c.InsertAll(songs));
+            return this.Connection.InsertAllAsync(songs);
         }
 
-        public Task DeleteAsync(IEnumerable<Song> songs)
+        public async Task<int> DeleteAsync(IEnumerable<Song> songs)
         {
-            return this.Connection.RunInTransactionAsync((c) =>
+            int deltedCount = 0;
+            await this.Connection.RunInTransactionAsync((c) =>
                 {
                     foreach (var song in songs)
                     {
-                        c.Delete(song);
+                        deltedCount += c.Delete(song);
                     }
                 });
+
+            return deltedCount;
         }
 
-        public Task UpdateAsync(IEnumerable<Song> songs)
+        public async Task<int> UpdateAsync(IEnumerable<Song> songs)
         {
-            return this.Connection.RunInTransactionAsync((c) => c.UpdateAll(songs));
+            int updatedCount = 0;
+            await this.Connection.RunInTransactionAsync((c) => updatedCount += c.UpdateAll(songs));
+            return updatedCount;
         }
 
         public async Task<Song> GetSongAsync(string songId)

@@ -68,7 +68,7 @@ order by x.IsCollection, x.Year, x.[AlbumTitleNorm], coalesce(nullif(x.Disc, 0),
             }
             else if (order == Order.LastPlayed)
             {
-                query = query.OrderByDescending(x => x.LastPlayed);
+                query = query.OrderByDescending(x => x.Recent);
             }
 
             if (take.HasValue)

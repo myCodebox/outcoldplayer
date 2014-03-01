@@ -9,8 +9,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using System.Linq;
     using System.Threading.Tasks;
 
-    using BugSense;
-
     using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
@@ -77,9 +75,9 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.stateService = stateService;
 
             this.PlayCommand = new DelegateCommand(this.Play);
-            this.QueueCommand = new DelegateCommand(this.Queue, () => this.BindingModel.SelectedItems.Count > 0);
-            this.DownloadCommand = new DelegateCommand(this.Download, () => this.BindingModel.SelectedItems.Count > 0);
-            this.UnPinCommand = new DelegateCommand(this.UnPin, () => this.BindingModel.SelectedItems.Count > 0);
+            this.QueueCommand = new DelegateCommand(this.Queue, () => this.BindingModel.SelectedItems.Count > 0 && this.BindingModel.SelectedItems.All(x => x.Playlist.PlaylistType != PlaylistType.Radio));
+            this.DownloadCommand = new DelegateCommand(this.Download, () => this.BindingModel.SelectedItems.Count > 0 && this.BindingModel.SelectedItems.All(x => x.Playlist.PlaylistType != PlaylistType.Radio));
+            this.UnPinCommand = new DelegateCommand(this.UnPin, () => this.BindingModel.SelectedItems.Count > 0 && this.BindingModel.SelectedItems.All(x => x.Playlist.PlaylistType != PlaylistType.Radio));
 
             this.sessionService.SessionCleared += async (sender, args) => 
                     {
@@ -273,7 +271,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         {
             var types = new[]
                             {
-                                PlaylistType.SystemPlaylist, PlaylistType.UserPlaylist, PlaylistType.Artist, PlaylistType.Album,
+                                PlaylistType.SystemPlaylist, PlaylistType.UserPlaylist, PlaylistType.Radio, PlaylistType.Artist, PlaylistType.Album,
                                 PlaylistType.Genre
                             };
 

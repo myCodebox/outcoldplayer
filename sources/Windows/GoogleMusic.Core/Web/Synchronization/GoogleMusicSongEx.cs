@@ -21,6 +21,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
 
         public static void Mapper(GoogleMusicSong googleMusicSong, Song song)
         {
+            song.ClientId = googleMusicSong.ClientId;
             song.AlbumArtistTitle = (googleMusicSong.AlbumArtist ?? string.Empty).Trim();
             song.AlbumArtistTitleNorm = (googleMusicSong.AlbumArtist ?? string.Empty).Trim().Normalize();
             song.ArtistTitle = (googleMusicSong.Artist ?? string.Empty).Trim();
@@ -36,9 +37,9 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
             song.TotalDiscs = googleMusicSong.TotalDiscCount;
             song.Duration = TimeSpan.FromMilliseconds(googleMusicSong.DurationMillis);
             song.SongId = string.IsNullOrEmpty(googleMusicSong.Id) ? googleMusicSong.StoreId : googleMusicSong.Id;
-            song.LastPlayed = DateTimeExtensions.FromUnixFileTime(googleMusicSong.LastModifiedTimestamp / 1000);
+            song.Recent = DateTimeExtensions.FromUnixFileTime(googleMusicSong.RecentTimestamp / 1000);
             song.CreationDate = DateTimeExtensions.FromUnixFileTime(googleMusicSong.CreationTimestamp / 1000);
-            song.RecentDate = DateTimeExtensions.FromUnixFileTime(googleMusicSong.RecentTimestamp / 1000);
+            song.LastModified = DateTimeExtensions.FromUnixFileTime(googleMusicSong.LastModifiedTimestamp / 1000);
             song.BeatsPerMinute = googleMusicSong.BeatsPerMinute;
             song.EstimatedSize = googleMusicSong.EstimatedSize;
             song.PlayCount = googleMusicSong.PlayCount;
@@ -69,11 +70,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
             && string.Equals(song.ArtistTitleNorm, googleMusicSong.Artist.Trim().Normalize(), StringComparison.CurrentCulture)
             && string.Equals(song.AlbumTitleNorm, googleMusicSong.Album.Trim().Normalize(), StringComparison.CurrentCulture)
             && string.Equals(song.GenreTitleNorm, googleMusicSong.Genre.Trim().Normalize(), StringComparison.CurrentCulture)
-            && (song.AlbumArtUrl == (googleMusicSong.AlbumArtRef == null || googleMusicSong.AlbumArtRef.Length == 0 ? null : new Uri(googleMusicSong.AlbumArtRef[0].Url))) 
-            && (song.Rating == googleMusicSong.Rating)
-            && string.Equals(song.TitleNorm, googleMusicSong.Title.Trim().Normalize(), StringComparison.CurrentCulture)
-            && (song.Track == googleMusicSong.TrackNumber)
-            && (song.Year == googleMusicSong.Year);
+            && (song.Rating == googleMusicSong.Rating);
         }
     }
 }

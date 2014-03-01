@@ -65,7 +65,7 @@ namespace OutcoldSolutions.GoogleMusic.Controls
                 return this.UserPlaylistDataTemplate;
             }
 
-            if (playlist is RadioPlaylist)
+            if (playlist is Radio)
             {
                 Debug.Assert(this.RadioDataTemplate != null, "this.UserPlaylistDataTemplate != null");
                 return this.RadioDataTemplate;

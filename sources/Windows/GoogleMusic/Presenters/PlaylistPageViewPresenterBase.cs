@@ -17,7 +17,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
     using OutcoldSolutions.GoogleMusic.Views.Popups;
-    using OutcoldSolutions.GoogleMusic.Web;
     using OutcoldSolutions.Presenters;
     using OutcoldSolutions.Views;
 
@@ -32,7 +31,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private readonly IApplicationResources resources;
         private readonly ISongsCachingService cachingService;
         private readonly IApplicationStateService stateService;
-        private readonly IRadioWebService radioWebService;
+        private readonly IRadiosService radiosService;
         private readonly INavigationService navigationService;
 
         public PlaylistPageViewPresenterBase(IDependencyResolverContainer container)
@@ -43,7 +42,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.resources = container.Resolve<IApplicationResources>();
             this.cachingService = container.Resolve<ISongsCachingService>();
             this.stateService = container.Resolve<IApplicationStateService>();
-            this.radioWebService = container.Resolve<IRadioWebService>();
+            this.radiosService = container.Resolve<IRadiosService>();
             this.navigationService = container.Resolve<INavigationService>();
 
             this.QueueCommand = new DelegateCommand(this.Queue, () => this.BindingModel != null && this.BindingModel.SongsBindingModel.SelectedItems.Count > 0);
@@ -231,7 +230,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     {
                         this.IsDataLoading = true;
 
-                        var radioResp = await this.radioWebService.CreateStationAsync(songBindingModel.Metadata);
+                        var radioResp = await this.radiosService.CreateAsync(songBindingModel.Metadata);
 
                         if (radioResp != null)
                         {

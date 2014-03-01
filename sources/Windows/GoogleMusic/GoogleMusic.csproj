@@ -166,7 +166,6 @@
     <Compile Include="Presenters\Popups\PlaylistEditPopupViewPresenter.cs" />
     <Compile Include="Presenters\Popups\ProgressLoadingCloseEventArgs.cs" />
     <Compile Include="Presenters\Popups\QueueActionsPopupViewPresenter.cs" />
-    <Compile Include="Presenters\Popups\RadioEditPopupViewPresenter.cs" />
     <Compile Include="Presenters\RadioPageViewPresenter.cs" />
     <Compile Include="Presenters\Settings\OfflineCacheViewPresenter.cs" />
     <Compile Include="Presenters\SnappedPlayerViewPresenter.cs" />

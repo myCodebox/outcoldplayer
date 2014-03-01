@@ -64,6 +64,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
                     c.DeleteAll<Song>();
                     c.DeleteAll<CachedSong>();
                     c.DeleteAll<CachedAlbumArt>();
+                    c.DeleteAll<Radio>();
                 });
         }
     }

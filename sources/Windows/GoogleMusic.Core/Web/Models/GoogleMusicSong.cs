@@ -4,11 +4,6 @@
 
 namespace OutcoldSolutions.GoogleMusic.Web.Models
 {
-    public class ArtRef
-    {
-        public string Url { get; set; }
-    }
-
     public class GoogleMusicSong
     {
         public string Kind { get; set; }
@@ -47,9 +42,9 @@ namespace OutcoldSolutions.GoogleMusic.Web.Models
 
         public int BeatsPerMinute { get; set; }
 
-        public ArtRef[] AlbumArtRef { get; set; }
+        public UrlRef[] AlbumArtRef { get; set; }
 
-        public ArtRef[] ArtistArtRef { get; set; }
+        public UrlRef[] ArtistArtRef { get; set; }
 
         public uint PlayCount { get; set; }
 

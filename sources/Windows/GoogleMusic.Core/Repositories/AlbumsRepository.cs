@@ -33,7 +33,7 @@ select
        x.[Year],    
        x.[Duration],       
        x.[ArtUrl],    
-       x.[LastPlayed],
+       x.[Recent],
        x.[OfflineSongsCount],
        x.[OfflineDuration],
        x.[GoogleAlbumId],
@@ -44,7 +44,7 @@ select
        a.[SongsCount] as [Artist.SongsCount],
        a.[Duration] as [Artist.Duration],
        a.[ArtUrl] as [Artist.ArtUrl],
-       a.[LastPlayed]  as [Artist.LastPlayed],
+       a.[Recent]  as [Artist.Recent],
        a.[OfflineSongsCount]  as [Artist.OfflineSongsCount],
        a.[OfflineDuration]  as [Artist.OfflineDuration],
        a.[GoogleArtistId] as [Artist.GoogleArtistId]
@@ -64,7 +64,7 @@ select
        x.[Year],    
        x.[Duration],       
        x.[ArtUrl],    
-       x.[LastPlayed],
+       x.[Recent],
        x.[OfflineSongsCount],
        x.[OfflineDuration],
        x.[GoogleAlbumId],
@@ -75,7 +75,7 @@ select
        a.[SongsCount] as [Artist.SongsCount],
        a.[Duration] as [Artist.Duration],
        a.[ArtUrl] as [Artist.ArtUrl],
-       a.[LastPlayed]  as [Artist.LastPlayed],
+       a.[Recent]  as [Artist.Recent],
        a.[OfflineSongsCount]  as [Artist.OfflineSongsCount],
        a.[OfflineDuration]  as [Artist.OfflineDuration],
        a.[GoogleArtistId] as [Artist.GoogleArtistId]
@@ -100,7 +100,7 @@ select
        x.[Year],    
        x.[Duration],       
        x.[ArtUrl],    
-       x.[LastPlayed],
+       x.[Recent],
        x.[OfflineSongsCount],
        x.[OfflineDuration],
        x.[GoogleAlbumId],
@@ -111,7 +111,7 @@ select
        a.[SongsCount] as [Artist.SongsCount],
        a.[Duration] as [Artist.Duration],
        a.[ArtUrl] as [Artist.ArtUrl],
-       a.[LastPlayed]  as [Artist.LastPlayed],
+       a.[Recent]  as [Artist.Recent],
        a.[OfflineSongsCount]  as [Artist.OfflineSongsCount],
        a.[OfflineDuration]  as [Artist.OfflineDuration],
        a.[GoogleArtistId] as [Artist.GoogleArtistId],
@@ -132,7 +132,7 @@ select
        a.[Year],    
        sum(s.[Duration]) as [Duration],       
        a.[ArtUrl],    
-       a.[LastPlayed],
+       a.[Recent],
        a.[OfflineSongsCount],
        a.[OfflineDuration],
        a.[GoogleAlbumId],
@@ -143,7 +143,7 @@ select
        ar.[SongsCount] as [Artist.SongsCount],
        ar.[Duration] as [Artist.Duration],
        ar.[ArtUrl] as [Artist.ArtUrl],
-       ar.[LastPlayed]  as [Artist.LastPlayed],
+       ar.[Recent]  as [Artist.Recent],
        ar.[OfflineSongsCount]  as [Artist.OfflineSongsCount],
        ar.[OfflineDuration]  as [Artist.OfflineDuration],
        ar.[GoogleArtistId] as [Artist.GoogleArtistId],
@@ -154,7 +154,7 @@ from [Song] as s
 where (?1 = 1 or s.IsCached = 1) and
     s.IsLibrary = 1 and
     s.[ArtistTitleNorm] <> coalesce(nullif(s.[AlbumArtistTitleNorm], ''), s.[ArtistTitleNorm]) and ar.[ArtistId] = ?2
-group by a.[AlbumId], a.[Title], a.[TitleNorm], a.[ArtistTitleNorm], a.[Year], a.[ArtUrl], a.[LastPlayed]
+group by a.[AlbumId], a.[Title], a.[TitleNorm], a.[ArtistTitleNorm], a.[Year], a.[ArtUrl], a.[Recent]
 ) as x
 order by x.IsCollection, x.Year 
 ";
@@ -178,7 +178,7 @@ select
        x.[Year],    
        x.[Duration],       
        x.[ArtUrl],    
-       x.[LastPlayed],
+       x.[Recent],
        x.[OfflineSongsCount],
        x.[OfflineDuration],
        x.[GoogleAlbumId],
@@ -189,7 +189,7 @@ select
        a.[SongsCount] as [Artist.SongsCount],
        a.[Duration] as [Artist.Duration],
        a.[ArtUrl] as [Artist.ArtUrl],
-       a.[LastPlayed]  as [Artist.LastPlayed],
+       a.[Recent]  as [Artist.Recent],
        a.[OfflineSongsCount]  as [Artist.OfflineSongsCount],
        a.[OfflineDuration]  as [Artist.OfflineDuration],
        a.[GoogleArtistId] as [Artist.GoogleArtistId]
@@ -204,7 +204,7 @@ where (?1 = 1 or x.[OfflineSongsCount] > 0) and s.IsLibrary = 1 and s.[SongId] =
         private static readonly Dictionary<Order, string> OrderStatements = new Dictionary<Order, string>()
                                                                 {
                                                                     { Order.Name,  " order by x.[TitleNorm]" },
-                                                                    { Order.LastPlayed,  " order by x.[LastPlayed] desc" }
+                                                                    { Order.LastPlayed,  " order by x.[Recent] desc" }
                                                                 };
 
         private readonly IApplicationStateService stateService;

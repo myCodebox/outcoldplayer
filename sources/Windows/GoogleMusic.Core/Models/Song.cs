@@ -13,6 +13,8 @@ namespace OutcoldSolutions.GoogleMusic.Models
         [PrimaryKey]
         public string SongId { get; set; }
 
+        public string ClientId { get; set; }
+
         public string Title { get; set; }
 
         [Indexed]
@@ -41,7 +43,7 @@ namespace OutcoldSolutions.GoogleMusic.Models
         public Uri ArtistArtUrl { get; set; }
 
         [Indexed]
-        public DateTime LastPlayed { get; set; }
+        public DateTime Recent { get; set; }
 
         [Indexed]
         public DateTime CreationDate { get; set; }
@@ -83,7 +85,7 @@ namespace OutcoldSolutions.GoogleMusic.Models
 
         public string StoreId { get; set; }
 
-        public DateTime RecentDate { get; set; }
+        public DateTime LastModified { get; set; }
 
         public int BeatsPerMinute { get; set; }
 

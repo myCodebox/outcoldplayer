@@ -145,11 +145,6 @@ namespace OutcoldSolutions.GoogleMusic
                         .InjectionRule<BindingModelBase, QueueActionsPopupViewPresenter>()
                         .As<QueueActionsPopupView>();
             registration.Register<QueueActionsPopupViewPresenter>();
-
-            registration.Register<IRadioEditPopupView>()
-                        .InjectionRule<BindingModelBase, RadioEditPopupViewPresenter>()
-                        .As<PlaylistEditPopupView>();
-            registration.Register<RadioEditPopupViewPresenter>();
         }
 
         public static void RegisterViews(IRegistrationContext registration)

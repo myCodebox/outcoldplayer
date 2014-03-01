@@ -28,5 +28,18 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
                 this.settingsService.SetIsLockScreenEnabled(value);
             }
         }
+
+        public bool BlockExplicitSongsInRadio
+        {
+            get
+            {
+                return this.settingsService.GetBlockExplicitSongsInRadio();
+            }
+
+            set
+            {
+                this.settingsService.SetBlockExplicitSongsInRadio(value);
+            }
+        }
     }
 }

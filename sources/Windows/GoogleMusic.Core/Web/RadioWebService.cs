@@ -5,183 +5,148 @@ namespace OutcoldSolutions.GoogleMusic.Web
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
     using System.Threading.Tasks;
 
     using Newtonsoft.Json;
 
     using OutcoldSolutions.GoogleMusic.Models;
-    using OutcoldSolutions.GoogleMusic.Repositories;
+    using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Web.Models;
-    using OutcoldSolutions.GoogleMusic.Web.Synchronization;
 
     public interface IRadioWebService
     {
-        Task<IList<RadioPlaylist>> GetAllAsync();
+        Task<IList<GoogleMusicRadio>> GetAllAsync(DateTime? lastUpdate = null, IProgress<int> progress = null, Func<IList<GoogleMusicRadio>, Task> chunkHandler = null);
 
-        Task<IList<Song>> GetRadioSongsAsync(string id, IList<Song> songs = null);
+        Task<GoogleMusicStationFeed> GetRadioSongsAsync(string id, IList<Song> songs = null);
 
-        Task DeleteStationAsync(string id);
+        Task<GoogleMusicMutateResponse> DeleteStationsAsync(IEnumerable<string> ids);
 
-        Task RenameStationAsync(RadioPlaylist playlist, string name);
-
-        Task<Tuple<RadioPlaylist, IList<Song>>> CreateStationAsync(Song song);
+        Task<GoogleMusicMutateResponse> CreateStationAsync(Song song);
     }
 
     public class RadioWebService : IRadioWebService
     {
-        private const string GetAllRadios = "/music/services/radio/loadradio?u=0";
-        private const string FetchRadioFeed = "/music/services/radio/fetchradiofeed?u=0";
-        private const string DeleteStation = "/music/services/radio/deletestation";
-        private const string RenameStation = "/music/services/radio/renamestation";
-        private const string CreateStation = "/music/services/radio/createstation?u=0";
+        private const string GetAllRadios = "radio/station";
+        private const string FetchRadioFeed = "radio/stationfeed";
+        private const string EditStation = "radio/editstation";
 
-        private readonly IGoogleMusicWebService webService;
+        private readonly IGoogleMusicApisService googleMusicApisService;
+        private readonly ISettingsService settingsService;
 
-        private readonly ISongsRepository songsRepository;
+
+        public class RequestCreateMutation
+        {
+            [JsonProperty("create")]
+            public dynamic Create { get; set; }
+
+            [JsonProperty("includeFeed")]
+            public bool IncludeFeed { get; set; }
+
+            [JsonProperty("numEntries")]
+            public int NumEntries { get; set; }
+
+            [JsonProperty("params")]
+            public dynamic Params { get; set; }
+        }
 
         public RadioWebService(
-            IGoogleMusicWebService webService,
-            ISongsRepository songsRepository)
+            IGoogleMusicApisService googleMusicApisService,
+            ISettingsService settingsService)
         {
-            this.webService = webService;
-            this.songsRepository = songsRepository;
+            this.googleMusicApisService = googleMusicApisService;
+            this.settingsService = settingsService;
         }
 
-        public async Task<IList<RadioPlaylist>> GetAllAsync()
+        public Task<IList<GoogleMusicRadio>> GetAllAsync(DateTime? lastUpdate = null, IProgress<int> progress = null, Func<IList<GoogleMusicRadio>, Task> chunkHandler = null)
         {
-            List<RadioPlaylist> radioPlaylists = new List<RadioPlaylist>();
+            return this.googleMusicApisService.DownloadList(GetAllRadios, lastUpdate, progress, chunkHandler);
+        }
 
-            var resp = await this.webService.PostAsync<RadioResp>(GetAllRadios);
-
-            if (resp != null && resp.MyStation != null)
-            {
-                foreach (var googleRadio in resp.MyStation)
+        public Task<GoogleMusicStationFeed> GetRadioSongsAsync(string id, IList<Song> radioSongs = null)
+        {
+            return this.googleMusicApisService.PostAsync<GoogleMusicStationFeed>(
+                FetchRadioFeed,
+                new
                 {
-                    var radioPlaylist = this.ConvertToPlaylist(googleRadio);
-                    radioPlaylists.Add(radioPlaylist);
-                }
+                    contentFilter = this.settingsService.GetBlockExplicitSongsInRadio() ? 2 : 1,
+                    stations =
+                        new[]
+                        {
+                            new
+                            {
+                                numEntries = 25,
+                                recentlyPlayed = radioSongs.Select(x => new { id = x.SongId, type = (int)x.TrackType }).ToArray(),
+                                radioId = id
+                            }
+                        }
+                });
+        }
+
+        public Task<GoogleMusicMutateResponse> DeleteStationsAsync(IEnumerable<string> ids)
+        {
+            return this.googleMusicApisService.PostAsync<GoogleMusicMutateResponse>(EditStation, new
+                                                                                       {
+                                                                                           mutations = ids.Select(id => new
+                                                                                                           {
+                                                                                                              delete = id,
+                                                                                                              includeFeed = false, 
+                                                                                                              numEntries = 0 
+                                                                                                           }).ToArray()
+                                                                                       });
+        }
+
+        public async Task<GoogleMusicMutateResponse> CreateStationAsync(Song song)
+        {
+
+            dynamic createMutation;
+
+            if (song.TrackType == StreamType.EphemeralSubscription)
+            {
+                createMutation = new 
+                                {
+                                    clientId = Guid.NewGuid().ToString(),
+                                    deleted = false,
+                                    imageType = 1, // TODO: ?
+                                    lastModifiedTimestamp = "-1",
+                                    name = song.Title,
+                                    recentTimestamp = ((long)song.Recent.ToUnixFileTime() * 1000L).ToString("G", CultureInfo.InvariantCulture),
+                                    seed = new { seedType = 2, trackId = song.SongId },
+                                    tracks = new object[0]
+                                };
+            }
+            else
+            {
+                createMutation = new 
+                                {
+                                    clientId = Guid.NewGuid().ToString(),
+                                    deleted = false,
+                                    imageType = 1, // TODO: ?
+                                    imageUrl = song.AlbumArtUrl,
+                                    lastModifiedTimestamp = "-1",
+                                    name = song.Title,
+                                    recentTimestamp = ((long)song.Recent.ToUnixFileTime() * 1000L).ToString("G", CultureInfo.InvariantCulture),
+                                    seed = new { seedType = 1, trackLockerId = song.SongId },
+                                    tracks = new object[0],
+                                };
             }
 
-            return radioPlaylists;
-        }
-
-        public async Task<IList<Song>> GetRadioSongsAsync(string id, IList<Song> radioSongs = null)
-        {
-            var jsonProperties = new Dictionary<string, string> { { "id", JsonConvert.ToString(id) } };
-
-            if (radioSongs != null)
+            var mutation = new RequestCreateMutation()
             {
-                // jsonProperties.Add("radioSeedId", JsonConvert.SerializeObject(radioSongs.Select(x => new { seedId = x.ProviderSongId, seedType = x.IsLibrary ? "TRACK_LOCKER_ID" : "TRACK_MATCHED_ID" }).ToArray()));
-            }
-
-            var radio = await this.webService.PostAsync<FetchRadioFeedResp>(FetchRadioFeed, jsonProperties: jsonProperties);
-
-            IList<Song> songs = null;
-
-            if (radio != null && radio.Track != null)
-            {
-                songs = await this.GetSongsAsync(radio);
-            }
-
-            return songs ?? new List<Song>();
-        }
-
-        public async Task DeleteStationAsync(string id)
-        {
-            var jsonProperties = new Dictionary<string, string> { { "id", JsonConvert.ToString(id) } };
-            await this.webService.PostAsync<CommonResponse>(DeleteStation, jsonProperties: jsonProperties);
-        }
-
-        public async Task RenameStationAsync(RadioPlaylist playlist, string name)
-        {
-            var jsonProperties = new Dictionary<string, string>
-                                     {
-                                         { "id", JsonConvert.ToString(playlist.Id) },
-                                         { "name", JsonConvert.ToString(name) },
-                                         { "radioSeedId", JsonConvert.SerializeObject(new { seedType = playlist.SeedType, seedId = playlist.SeedId }) }
-                                     };
-
-            await this.webService.PostAsync<CommonResponse>(RenameStation, jsonProperties: jsonProperties);
-        }
-
-        public async Task<Tuple<RadioPlaylist, IList<Song>>> CreateStationAsync(Song song)
-        {
-            var seedType = song.IsLibrary ? "TRACK_LOCKER_ID" : "TRACK_MATCHED_ID";
-            var seedId = song.SongId;
-
-            var jsonProperties = new Dictionary<string, string>
-                                     {
-                                         { "seedId", JsonConvert.ToString(seedId) },
-                                         { "seedType", JsonConvert.ToString(seedType) },
-                                         { "name", JsonConvert.ToString(song.Title) }
-                                     };
-
-            var radioResp = await this.webService.PostAsync<FetchRadioFeedResp>(CreateStation, jsonProperties: jsonProperties);
-
-            if (radioResp.Success.HasValue && !radioResp.Success.Value)
-            {
-                return null;
-            }
-
-            RadioPlaylist playlist = new RadioPlaylist()
-                                         {
-                                             Id = radioResp.Id,
-                                             Title = song.Title,
-                                             TitleNorm = song.Title.Normalize(),
-                                             SeedId = seedId,
-                                             SeedType = seedType
-                                         };
-
-            return Tuple.Create(playlist, await this.GetSongsAsync(radioResp));
-        }
-
-        private RadioPlaylist ConvertToPlaylist(GoogleRadio googleRadio)
-        {
-            var radioPlaylist = new RadioPlaylist()
-            {
-                Id = googleRadio.Id,
-                Title = googleRadio.Name,
-                TitleNorm = googleRadio.Name.Normalize(),
-                LastPlayed = DateTimeExtensions.FromUnixFileTime(googleRadio.RecentTimestamp / 1000)
+                Create = createMutation,
+                IncludeFeed = true,
+                NumEntries = 25,
+                Params =
+                    new
+                    {
+                        contentFilter = this.settingsService.GetBlockExplicitSongsInRadio() ? 2 : 1
+                    }
             };
 
-            if (googleRadio.ImageUrl != null && googleRadio.ImageUrl.Length > 0)
-            {
-                radioPlaylist.ArtUrl = new Uri(googleRadio.ImageUrl[0]);
-            }
-
-            if (googleRadio.RadioSeedId != null)
-            {
-                radioPlaylist.SeedId = googleRadio.RadioSeedId.SeedId;
-                radioPlaylist.SeedType = googleRadio.RadioSeedId.SeedType;
-            }
-
-            return radioPlaylist;
-        }
-
-        private async Task<IList<Song>> GetSongsAsync(FetchRadioFeedResp radio)
-        {
-            List<Song> songs = new List<Song>();
-
-            foreach (var track in radio.Track)
-            {
-                Song song = null;
-                if (track.TrackType != (int)StreamType.EphemeralSubscription)
-                {
-                    song = await this.songsRepository.FindSongAsync(track.Id);
-                }
-
-                if (song == null)
-                {
-                    song = track.ToSong();
-                    song.IsLibrary = false;
-                }
-
-                songs.Add(song);
-            }
-
-            return songs;
+            return await this.googleMusicApisService.PostAsync<GoogleMusicMutateResponse>(
+                EditStation,
+                new { mutations = new[] { mutation } });
         }
     }
 }

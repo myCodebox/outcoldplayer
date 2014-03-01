@@ -15,7 +15,24 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
 
     public interface IGoogleMusicSynchronizationService
     {
-        Task<Tuple<SongsUpdateStatus, UserPlaylistsUpdateStatus>> Update(IProgress<double> progress = null);
+        Task<UpdateStatus> Update(IProgress<double> progress = null);
+    }
+
+    public class UpdateStatus
+    {
+        public bool Updated { get; private set; }
+        public bool IsBreakingChange { get; private set; }
+
+        public void SetUpdated()
+        {
+            this.Updated = true;
+        }
+
+        public void SetBreakingChange()
+        {
+            this.Updated = true;
+            this.IsBreakingChange = true;
+        }
     }
 
     public class GoogleMusicSynchronizationService : RepositoryBase, IGoogleMusicSynchronizationService
@@ -24,26 +41,32 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
         private readonly ISettingsService settingsService;
         private readonly IPlaylistsWebService playlistsWebService;
         private readonly ISongsWebService songsWebService;
+        private readonly IRadioWebService radioWebService;
         private readonly IUserPlaylistsRepository userPlaylistsRepository;
         private readonly ISongsRepository songsRepository;
+        private readonly IRadioStationsRepository radioStationsRepository;
 
         public GoogleMusicSynchronizationService(
             ILogManager logManager,
             ISettingsService settingsService,
             IPlaylistsWebService playlistsWebService,
             ISongsWebService songsWebService,
+            IRadioWebService radioWebService,
             IUserPlaylistsRepository userPlaylistsRepository,
-            ISongsRepository songsRepository)
+            ISongsRepository songsRepository,
+            IRadioStationsRepository radioStationsRepository)
         {
             this.logger = logManager.CreateLogger("GoogleMusicSynchronizationService");
             this.settingsService = settingsService;
             this.playlistsWebService = playlistsWebService;
             this.songsWebService = songsWebService;
+            this.radioWebService = radioWebService;
             this.userPlaylistsRepository = userPlaylistsRepository;
             this.songsRepository = songsRepository;
+            this.radioStationsRepository = radioStationsRepository;
         }
 
-        public async Task<Tuple<SongsUpdateStatus, UserPlaylistsUpdateStatus>> Update(IProgress<double> progress = null)
+        public async Task<UpdateStatus> Update(IProgress<double> progress = null)
         {
             DateTime? libraryFreshnessDate = this.settingsService.GetLibraryFreshnessDate();
             DateTime currentTime = DateTime.UtcNow;
@@ -60,9 +83,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
 
             await progress.SafeReportAsync(0.05d);
 
-            int songsUpdated = 0;
-            int songsDeleted = 0;
-            int songsInstered = 0;
+            UpdateStatus updateStatus = new UpdateStatus();
 
             await this.songsWebService.GetAllAsync(
                 libraryFreshnessDate,
@@ -78,7 +99,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
                         if (googleMusicSong.Deleted)
                         {
                             toBeDeleted.Add(googleMusicSong.ToSong());
-                            songsDeleted++;
+                            
                         }
                         else
                         {
@@ -95,25 +116,34 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
 
                                 if (!GoogleMusicSongEx.IsVisualMatch(googleMusicSong, song))
                                 {
-                                    songsUpdated++;
+                                    updateStatus.SetBreakingChange();
+                                }
+                                else
+                                {
+                                    updateStatus.SetUpdated();
                                 }
                             }
                             else
                             {
                                 toBeInserted.Add(googleMusicSong.ToSong());
-                                songsInstered++;
                             }
                         }
                     }
 
                     if (toBeDeleted.Count > 0)
                     {
-                        await this.songsRepository.DeleteAsync(toBeDeleted);
+                        if (await this.songsRepository.DeleteAsync(toBeDeleted) > 0)
+                        {
+                            updateStatus.SetBreakingChange();
+                        }
                     }
 
                     if (toBeInserted.Count > 0)
                     {
-                        await this.songsRepository.InsertAsync(toBeInserted);
+                        if (await this.songsRepository.InsertAsync(toBeInserted) > 0)
+                        {
+                            updateStatus.SetBreakingChange();
+                        }
                     }
 
                     if (toBeUpdated.Count > 0)
@@ -123,10 +153,6 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
                 });
 
             await progress.SafeReportAsync(0.8d);
-
-            int playlistsInserted = 0;
-            int playlistsUpdated = 0;
-            int playlistsDeleted = 0;
 
             this.logger.Debug("LoadPlaylistsAsync: loading playlists.");
             await this.playlistsWebService.GetAllAsync(libraryFreshnessDate, chunkHandler: async (chunk) =>
@@ -140,7 +166,6 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
                     if (googleMusicPlaylist.Deleted)
                     {
                         toBeDeleted.Add(googleMusicPlaylist.ToUserPlaylist());
-                        playlistsDeleted++;
                     }
                     else
                     {
@@ -159,19 +184,24 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
                         else
                         {
                             toBeInserted.Add(googleMusicPlaylist.ToUserPlaylist());
-                            playlistsInserted++;
                         }
                     }
                 }
 
                 if (toBeDeleted.Count > 0)
                 {
-                    await this.userPlaylistsRepository.DeleteAsync(toBeDeleted);
+                    if (await this.userPlaylistsRepository.DeleteAsync(toBeDeleted) > 0)
+                    {
+                        updateStatus.SetBreakingChange();
+                    }
                 }
 
                 if (toBeInserted.Count > 0)
                 {
-                    await this.userPlaylistsRepository.InsertAsync(toBeInserted);
+                    if (await this.userPlaylistsRepository.InsertAsync(toBeInserted) > 0)
+                    {
+                        updateStatus.SetBreakingChange();
+                    }
                 }
 
                 if (toBeUpdated.Count > 0)
@@ -194,8 +224,6 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
 
                 foreach (var entry in chunk)
                 {
-                    playlistsUpdated++;
-
                     if (entry.Deleted)
                     {
                         toBeDeleted.Add(entry.ToUserPlaylistEntry());
@@ -216,7 +244,6 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
                         else
                         {
                             toBeInserted.Add(entry.ToUserPlaylistEntry());
-                            playlistsInserted++;
                         }
 
                         if (entry.Track != null)
@@ -260,12 +287,18 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
 
                 if (toBeDeleted.Count > 0)
                 {
-                    await this.userPlaylistsRepository.DeleteEntriesAsync(toBeDeleted);
+                    if (await this.userPlaylistsRepository.DeleteEntriesAsync(toBeDeleted) > 0)
+                    {
+                        updateStatus.SetBreakingChange();
+                    }
                 }
 
                 if (toBeInserted.Count > 0)
                 {
-                    await this.userPlaylistsRepository.InsertEntriesAsync(toBeInserted);
+                    if (await this.userPlaylistsRepository.InsertEntriesAsync(toBeInserted) > 0)
+                    {
+                        updateStatus.SetBreakingChange();
+                    }
                 }
 
                 if (toBeUpdated.Count > 0)
@@ -274,10 +307,71 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
                 }
             });
 
-            await progress.SafeReportAsync(1.0d);
+            await progress.SafeReportAsync(0.95d);
+
+            await this.radioWebService.GetAllAsync(
+                libraryFreshnessDate,
+                null,
+                async (gRadios) =>
+                {
+                    IList<Radio> toBeDeleted = new List<Radio>();
+                    IList<Radio> toBeUpdated = new List<Radio>();
+                    IList<Radio> toBeInserted = new List<Radio>();
+
+                    foreach (var radio in gRadios)
+                    {
+                        if (radio.Deleted)
+                        {
+                            toBeDeleted.Add(radio.ToRadio());
+                        }
+                        else
+                        {
+                            Radio storedRadio = null;
+                            if (libraryFreshnessDate.HasValue)
+                            {
+                                storedRadio = await this.radioStationsRepository.GetAsync(radio.Id);
+                            }
+
+                            if (storedRadio != null)
+                            {
+                                GoogleMusicRadioEx.Mapper(radio, storedRadio);
+                                toBeUpdated.Add(storedRadio);
+
+                            }
+                            else
+                            {
+                                toBeInserted.Add(radio.ToRadio());
+                            }
+                        }
+                    }
+
+                    if (toBeDeleted.Count > 0)
+                    {
+                        if (await this.radioStationsRepository.DeleteAsync(toBeDeleted) > 0)
+                        {
+                            updateStatus.SetBreakingChange();
+                        }
+                    }
+
+                    if (toBeInserted.Count > 0)
+                    {
+                        if (await this.radioStationsRepository.InsertAsync(toBeInserted) > 0)
+                        {
+                            updateStatus.SetBreakingChange();
+                        }
+                    }
+
+                    if (toBeUpdated.Count > 0)
+                    {
+                        await this.radioStationsRepository.UpdateAsync(toBeUpdated);
+                    }
+                });
+
+            await progress.SafeReportAsync(1d);
+
             this.settingsService.SetLibraryFreshnessDate(currentTime);
 
-            return Tuple.Create(new SongsUpdateStatus(songsInstered, songsUpdated, songsDeleted), new UserPlaylistsUpdateStatus(playlistsInserted, playlistsUpdated, playlistsDeleted));
+            return updateStatus;
         }
     }
 }

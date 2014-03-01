@@ -13,9 +13,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
-    using OutcoldSolutions.GoogleMusic.Views.Popups;
-    using OutcoldSolutions.GoogleMusic.Web;
-    using OutcoldSolutions.Views;
 
     using Windows.UI.Popups;
 
@@ -24,7 +21,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private readonly IApplicationResources resources;
         private readonly INavigationService navigationService;
         private readonly IPlayQueueService playQueueService;
-        private readonly IRadioWebService radioWebService;
+        private readonly IRadiosService radiosService;
 
         public RadioPageViewPresenter(
             IApplicationResources resources, 
@@ -33,20 +30,17 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             IPlayQueueService playQueueService, 
             ISongsCachingService cachingService, 
             IApplicationStateService stateService,
-            IRadioWebService radioWebService)
+            IRadiosService radiosService)
             : base(resources, playlistsService, navigationService, playQueueService, cachingService, stateService)
         {
             this.resources = resources;
             this.navigationService = navigationService;
             this.playQueueService = playQueueService;
-            this.radioWebService = radioWebService;
-            this.EditRadioNameCommand = new DelegateCommand(this.EditRadioName, () => this.BindingModel.SelectedItems.Count == 1);
+            this.radiosService = radiosService;
             this.DeleteRadioCommand = new DelegateCommand(this.DeleteRadio, () => this.BindingModel.SelectedItems.Count > 0);
         }
 
         public DelegateCommand DeleteRadioCommand { get; private set; }
-
-        public DelegateCommand EditRadioNameCommand { get; private set; }
 
         public void PlayRadio(IPlaylist playlist)
         {
@@ -77,13 +71,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         {
             base.OnSelectedItemsChanged();
 
-            this.EditRadioNameCommand.RaiseCanExecuteChanged();
             this.DeleteRadioCommand.RaiseCanExecuteChanged();
         }
 
         protected override IEnumerable<CommandMetadata> GetContextCommands()
         {
-            yield return new CommandMetadata(CommandIcon.Edit, this.resources.GetString("Toolbar_RenameButton"), this.EditRadioNameCommand);
             yield return new CommandMetadata(CommandIcon.Delete, this.resources.GetString("Toolbar_DeleteButton"), this.DeleteRadioCommand);
         }
 
@@ -109,10 +101,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     {
                         this.IsDataLoading = true;
 
-                        foreach (RadioPlaylist playlist in playlists)
-                        {
-                            await this.radioWebService.DeleteStationAsync(playlist.Id);
-                        }
+                        await this.radiosService.DeleteAsync(playlists.Cast<Radio>().ToList());
 
                         this.IsDataLoading = false;
 
@@ -123,14 +112,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 {
                     this.Logger.Error(e, "DeleteRadio failed");
                 }
-            }
-        }
-
-        private void EditRadioName()
-        {
-            if (this.EditRadioNameCommand.CanExecute())
-            {
-                this.MainFrame.ShowPopup<IRadioEditPopupView>(PopupRegion.AppToolBarLeft, this.BindingModel.SelectedItems[0].Playlist);
             }
         }
     }

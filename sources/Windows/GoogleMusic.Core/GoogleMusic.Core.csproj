@@ -101,13 +101,14 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="ApplicationException.cs" />
+    <Compile Include="GoogleMusicSettingsServiceExtensions.cs" />
     <Compile Include="IApplicationResources.cs" />
     <Compile Include="INotificationService.cs" />
     <Compile Include="Models\AlbumArtUrlExtensions.cs" />
     <Compile Include="Models\CachedAlbumArt.cs" />
     <Compile Include="Models\CachedSong.cs" />
     <Compile Include="Models\PlaylistsChangeEvent.cs" />
-    <Compile Include="Models\RadioPlaylist.cs" />
+    <Compile Include="Models\Radio.cs" />
     <Compile Include="Models\SongExtensions.cs" />
     <Compile Include="Models\SongsUpdatedEvent.cs" />
     <Compile Include="CommandIcon.cs" />
@@ -139,6 +140,7 @@
     <Compile Include="Repositories\DbContext.cs" />
     <Compile Include="Repositories\GenresRepository.cs" />
     <Compile Include="Repositories\IPlaylistRepository.cs" />
+    <Compile Include="Repositories\RadioStationsRepository.cs" />
     <Compile Include="Repositories\RepositoryBase.cs" />
     <Compile Include="Repositories\SystemPlaylistsRepository.cs" />
     <Compile Include="Services\AlbumArtCacheService.cs" />
@@ -146,11 +148,17 @@
     <Compile Include="Services\IAlbumArtCacheService.cs" />
     <Compile Include="Services\InAppPurchases.cs" />
     <Compile Include="Services\PlaylistsService.cs" />
+    <Compile Include="Services\RadiosService.cs" />
     <Compile Include="Services\SongsCachingService.cs" />
     <Compile Include="Web\GoogleMusicApisService.cs" />
     <Compile Include="Web\IGoogleMusicApisService.cs" />
+    <Compile Include="Web\Models\GoogleMusicArtist.cs" />
+    <Compile Include="Web\Models\GoogleMusicMutateResponse.cs" />
+    <Compile Include="Web\Models\GoogleMusicStationFeed.cs" />
+    <Compile Include="Web\Models\UrlRef.cs" />
     <Compile Include="Web\Models\GoogleMusicPlaylist.cs" />
     <Compile Include="Web\Models\GoogleMusicPlaylistEntry.cs" />
+    <Compile Include="Web\Models\GoogleMusicRadio.cs" />
     <Compile Include="Web\Models\RadioSeedId.cs" />
     <Compile Include="Web\RadioWebService.cs" />
     <Compile Include="Services\SongsService.cs" />
@@ -182,6 +190,7 @@
     <Compile Include="Web\Models\RadioResp.cs" />
     <Compile Include="Web\Synchronization\GoogleMusicPlaylistEntryEx.cs" />
     <Compile Include="Web\Synchronization\GoogleMusicPlaylistEx.cs" />
+    <Compile Include="Web\Synchronization\GoogleMusicRadioEx.cs" />
     <Compile Include="Web\Synchronization\GoogleMusicSongEx.cs" />
     <Compile Include="Web\Synchronization\GoogleMusicSynchronizationService.cs" />
     <Compile Include="Web\GoogleMusicWebService.cs" />
@@ -216,8 +225,6 @@
     <Compile Include="Web\PlaylistsWebService.cs" />
     <Compile Include="Web\SongsWebService.cs" />
     <Compile Include="Web\Synchronization\InitialSynchronization.cs" />
-    <Compile Include="Web\Synchronization\SongsUpdateStatus.cs" />
-    <Compile Include="Web\Synchronization\UserPlaylistsUpdateStatus.cs" />
     <Compile Include="Web\WebRequestException.cs" />
   </ItemGroup>
   <ItemGroup>
