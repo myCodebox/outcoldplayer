@@ -16,6 +16,9 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
     using Windows.UI.Popups;
 
+    using OutcoldSolutions.GoogleMusic.Views.Popups;
+    using OutcoldSolutions.Views;
+
     public class RadioPageViewPresenter : PlaylistsPageViewPresenterBase<IRadioPageView, PlaylistsPageViewBindingModel>
     {
         private readonly IApplicationResources resources;
@@ -38,10 +41,13 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.navigationService = navigationService;
             this.playQueueService = playQueueService;
             this.radioStationsService = radioStationsService;
+            this.EditRadioNameCommand = new DelegateCommand(this.EditRadioName, () => this.BindingModel.SelectedItems.Count == 1);
             this.DeleteRadioCommand = new DelegateCommand(this.DeleteRadio, () => this.BindingModel.SelectedItems.Count > 0 && this.BindingModel.SelectedItems.All(x => !string.IsNullOrEmpty(x.Playlist.Id)));
         }
 
         public DelegateCommand DeleteRadioCommand { get; private set; }
+
+        public DelegateCommand EditRadioNameCommand { get; private set; }
 
         public void PlayRadio(IPlaylist playlist)
         {
@@ -73,10 +79,13 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             base.OnSelectedItemsChanged();
 
             this.DeleteRadioCommand.RaiseCanExecuteChanged();
+            this.EditRadioNameCommand.RaiseCanExecuteChanged();
         }
 
         protected override IEnumerable<CommandMetadata> GetContextCommands()
         {
+            // Goolge API does not support it
+            // yield return new CommandMetadata(CommandIcon.Edit, this.resources.GetString("Toolbar_RenameButton"), this.EditRadioNameCommand);
             yield return new CommandMetadata(CommandIcon.Delete, this.resources.GetString("Toolbar_DeleteButton"), this.DeleteRadioCommand);
         }
 
@@ -113,6 +122,14 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 {
                     this.Logger.Error(e, "DeleteRadio failed");
                 }
+            }
+        }
+
+        private void EditRadioName()
+        {
+            if (this.EditRadioNameCommand.CanExecute())
+            {
+                this.MainFrame.ShowPopup<IRadioEditPopupView>(PopupRegion.AppToolBarLeft, this.BindingModel.SelectedItems[0].Playlist);
             }
         }
     }

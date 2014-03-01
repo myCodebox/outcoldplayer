@@ -27,6 +27,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
         Task<Tuple<Radio, IList<Song>>> CreateAsync(Artist artist);
 
         Task<Tuple<Radio, IList<Song>>> CreateAsync(Album album);
+
+        Task<bool> RenameStationAsync(Radio radio, string title);
     }
 
     public class RadioStationsService : IRadioStationsService
@@ -41,6 +43,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         private readonly IApplicationResources applicationResources;
 
+        private readonly IEventAggregator eventAggregator;
+
         private ILogger logger;
 
         public RadioStationsService(
@@ -49,6 +53,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             ISongsRepository songsRepository,
             INotificationService notificationService,
             IApplicationResources applicationResources,
+            IEventAggregator eventAggregator,
             ILogManager logManager)
         {
             this.radioWebService = radioWebService;
@@ -56,6 +61,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             this.songsRepository = songsRepository;
             this.notificationService = notificationService;
             this.applicationResources = applicationResources;
+            this.eventAggregator = eventAggregator;
 
             this.logger = logManager.CreateLogger("RadioStationsService");
         }
@@ -92,6 +98,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     }
                 }
                 await this.radioStationsRepository.DeleteAsync(deletedRadios);
+                this.eventAggregator.Publish(PlaylistsChangeEvent.New(PlaylistType.Radio).AddRemovedPlaylists(deletedRadios.Cast<IPlaylist>().ToArray()));
                 return true;
             }
 
@@ -131,6 +138,25 @@ namespace OutcoldSolutions.GoogleMusic.Services
             return await this.HandleCreationResponse(await this.radioWebService.CreateStationAsync(album));
         }
 
+        public async Task<bool> RenameStationAsync(Radio radio, string title)
+        {
+            var resp = await this.radioWebService.ChangeStationNameAsync(radio, title);
+            if (resp != null && resp.MutateResponse != null && resp.MutateResponse.Length == 1)
+            {
+                if (string.Equals(resp.MutateResponse[0].ResponseCode, "OK", StringComparison.OrdinalIgnoreCase))
+                {
+                    radio.Title = title;
+                    radio.TitleNorm = title.Normalize();
+
+                    await this.radioStationsRepository.UpdateAsync(new[] { radio });
+                    this.eventAggregator.Publish(PlaylistsChangeEvent.New(PlaylistType.Radio).AddUpdatedPlaylists(radio));
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         private async Task<Tuple<Radio, IList<Song>>> HandleCreationResponse(GoogleMusicMutateResponse response)
         {
             if (response.MutateResponse != null && response.MutateResponse.Length == 1)
@@ -141,6 +167,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 {
                     var radio = mutateResponse.Station.ToRadio();
                     await this.radioStationsRepository.InsertAsync(new[] { radio });
+                    this.eventAggregator.Publish(PlaylistsChangeEvent.New(PlaylistType.Radio).AddAddedPlaylists(radio));
                     IList<Song> tracks = await this.GetSongsAsync(mutateResponse.Station.Tracks);
                     return Tuple.Create(radio, tracks);
                 }

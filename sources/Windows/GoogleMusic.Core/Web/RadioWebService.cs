@@ -25,6 +25,8 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
         Task<GoogleMusicMutateResponse> CreateStationAsync(Song song);
 
+        Task<GoogleMusicMutateResponse> ChangeStationNameAsync(Radio radio, string title);
+
         Task<GoogleMusicMutateResponse> CreateStationAsync(Artist artist);
 
         Task<GoogleMusicMutateResponse> CreateStationAsync(Album album);
@@ -105,6 +107,27 @@ namespace OutcoldSolutions.GoogleMusic.Web
                             jsonStation
                         }
                 });
+        }
+
+        public Task<GoogleMusicMutateResponse> ChangeStationNameAsync(Radio radio, string title)
+        {
+            // BUG: Does not work :(
+            var json = new
+            {
+                mutations = new[]
+                            {
+                                new
+                                {
+                                    update = new
+                                            {
+                                                id = radio.Id,
+                                                name = title
+                                            }
+                                }
+                            }
+            };
+
+            return this.googleMusicApisService.PostAsync<GoogleMusicMutateResponse>(EditStation, json);
         }
 
         public Task<GoogleMusicMutateResponse> DeleteStationsAsync(IEnumerable<string> ids)

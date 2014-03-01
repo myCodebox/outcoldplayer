@@ -14,7 +14,11 @@ namespace OutcoldSolutions.GoogleMusic.Views.Popups
     {
     }
 
-    public sealed partial class PlaylistEditPopupView : PopupViewBase, IPlaylistEditPopupView
+    public interface IRadioEditPopupView : IPopupView
+    {
+    }
+
+    public sealed partial class PlaylistEditPopupView : PopupViewBase, IPlaylistEditPopupView, IRadioEditPopupView
     {
         private IPlaylistEditPopupViewPresenter presenter;
 
