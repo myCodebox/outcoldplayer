@@ -17,6 +17,12 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
         Task<int> DeleteAsync(IEnumerable<Radio> radios);
 
         Task<int> UpdateAsync(IEnumerable<Radio> radios);
+
+        Task<Radio> FindByGoogleArtistId(string googleArtistId);
+
+        Task<Radio> FindByGoogleAlbumId(string googleAlbumId);
+
+        Task<Radio> FindByGoogleSongId(string googleSongId);
     }
 
     public class RadioStationsRepository : RepositoryBase, IRadioStationsRepository
@@ -104,6 +110,21 @@ order by x.[TitleNorm]
             await this.Connection.RunInTransactionAsync(
                 (connection) => updatedCount += connection.UpdateAll(radios));
             return updatedCount;
+        }
+
+        public Task<Radio> FindByGoogleArtistId(string googleArtistId)
+        {
+            return this.Connection.Table<Radio>().Where(x => x.GoogleArtistId == googleArtistId).FirstOrDefaultAsync();
+        }
+
+        public Task<Radio> FindByGoogleAlbumId(string googleAlbumId)
+        {
+            return this.Connection.Table<Radio>().Where(x => x.GoogleAlbumId == googleAlbumId).FirstOrDefaultAsync();
+        }
+
+        public Task<Radio> FindByGoogleSongId(string googleSongId)
+        {
+            return this.Connection.Table<Radio>().Where(x => x.SongId == googleSongId || x.TrackLockerId == googleSongId).FirstOrDefaultAsync();
         }
     }
 }

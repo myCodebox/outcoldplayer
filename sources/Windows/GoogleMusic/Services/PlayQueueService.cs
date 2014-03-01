@@ -24,7 +24,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
         private readonly ISongsCachingService songsCachingService;
         private readonly ICurrentSongPublisherService publisherService;
         private readonly IPlaylistsService playlistsService;
-        private readonly IRadiosService radiosService;
+        private readonly IRadioStationsService radioStationsService;
 
         private readonly IEventAggregator eventAggregator;
 
@@ -50,7 +50,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             ICurrentSongPublisherService publisherService,
             IGoogleMusicSessionService sessionService,
             IPlaylistsService playlistsService,
-            IRadiosService radiosService,
+            IRadioStationsService radioStationsService,
             IEventAggregator eventAggregator)
         {
             this.logger = logManager.CreateLogger("PlayQueueService");
@@ -59,7 +59,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             this.songsCachingService = songsCachingService;
             this.publisherService = publisherService;
             this.playlistsService = playlistsService;
-            this.radiosService = radiosService;
+            this.radioStationsService = radioStationsService;
             this.eventAggregator = eventAggregator;
             this.currentQueueIndex = -1;
 
@@ -562,7 +562,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                             {
                                 try
                                 {
-                                    var newRadioSongs = await this.radiosService.GetRadioSongsAsync(this.CurrentPlaylist.Id, this.songsQueue);
+                                    var newRadioSongs = await this.radioStationsService.GetRadioSongsAsync(this.CurrentPlaylist.Id, this.songsQueue);
                                     await this.AddRangeAsync(this.CurrentPlaylist, newRadioSongs);
                                 }
                                 catch (Exception e)

@@ -27,7 +27,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private readonly ISongsCachingService cachingService;
         private readonly IApplicationStateService stateService;
         private readonly INavigationService navigationService;
-        private readonly IRadiosService radiosService;
+        private readonly IRadioStationsService radioStationsService;
         private readonly ISettingsService settingsService;
 
         internal CurrentPlaylistPageViewPresenter(
@@ -37,7 +37,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             ISongsCachingService cachingService,
             IApplicationStateService stateService,
             INavigationService navigationService,
-            IRadiosService radiosService,
+            IRadioStationsService radioStationsService,
             ISettingsService settingsService,
             SongsBindingModel songsBindingModel)
         {
@@ -47,7 +47,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.cachingService = cachingService;
             this.stateService = stateService;
             this.navigationService = navigationService;
-            this.radiosService = radiosService;
+            this.radioStationsService = radioStationsService;
             this.settingsService = settingsService;
             this.BindingModel = songsBindingModel;
 
@@ -283,7 +283,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     {
                         this.IsDataLoading = true;
 
-                        var radioResp = await this.radiosService.CreateAsync(songBindingModel.Metadata);
+                        var radioResp = await this.radioStationsService.CreateAsync(songBindingModel.Metadata);
 
                         if (radioResp != null)
                         {

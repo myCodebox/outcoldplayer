@@ -24,6 +24,10 @@ namespace OutcoldSolutions.GoogleMusic.Web
         Task<GoogleMusicMutateResponse> DeleteStationsAsync(IEnumerable<string> ids);
 
         Task<GoogleMusicMutateResponse> CreateStationAsync(Song song);
+
+        Task<GoogleMusicMutateResponse> CreateStationAsync(Artist artist);
+
+        Task<GoogleMusicMutateResponse> CreateStationAsync(Album album);
     }
 
     public class RadioWebService : IRadioWebService
@@ -118,7 +122,6 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
         public async Task<GoogleMusicMutateResponse> CreateStationAsync(Song song)
         {
-
             dynamic createMutation;
 
             if (song.TrackType == StreamType.EphemeralSubscription)
@@ -150,6 +153,70 @@ namespace OutcoldSolutions.GoogleMusic.Web
                                     tracks = new object[0],
                                 };
             }
+
+            var mutation = new RequestCreateMutation()
+            {
+                Create = createMutation,
+                IncludeFeed = true,
+                NumEntries = 25,
+                Params =
+                    new
+                    {
+                        contentFilter = this.settingsService.GetBlockExplicitSongsInRadio() ? 2 : 1
+                    }
+            };
+
+            return await this.googleMusicApisService.PostAsync<GoogleMusicMutateResponse>(
+                EditStation,
+                new { mutations = new[] { mutation } });
+        }
+
+        public async Task<GoogleMusicMutateResponse> CreateStationAsync(Artist artist)
+        {
+            dynamic createMutation = new 
+                                {
+                                    clientId = Guid.NewGuid().ToString(),
+                                    deleted = false,
+                                    imageType = 1, // TODO: ?
+                                    imageUrl = artist.ArtUrl,
+                                    lastModifiedTimestamp = "-1",
+                                    name = artist.Title,
+                                    recentTimestamp = ((long)artist.Recent.ToUnixFileTime() * 1000L).ToString("G", CultureInfo.InvariantCulture),
+                                    seed = new { seedType = 3, artistId = artist.GoogleArtistId },
+                                    tracks = new object[0]
+                                };
+
+            var mutation = new RequestCreateMutation()
+            {
+                Create = createMutation,
+                IncludeFeed = true,
+                NumEntries = 25,
+                Params =
+                    new
+                    {
+                        contentFilter = this.settingsService.GetBlockExplicitSongsInRadio() ? 2 : 1
+                    }
+            };
+
+            return await this.googleMusicApisService.PostAsync<GoogleMusicMutateResponse>(
+                EditStation,
+                new { mutations = new[] { mutation } });
+        }
+
+        public async Task<GoogleMusicMutateResponse> CreateStationAsync(Album album)
+        {
+            dynamic createMutation = new 
+                                {
+                                    clientId = Guid.NewGuid().ToString(),
+                                    deleted = false,
+                                    imageType = 1, // TODO: ?
+                                    imageUrl = album.ArtUrl,
+                                    lastModifiedTimestamp = "-1",
+                                    name = album.Title,
+                                    recentTimestamp = ((long)album.Recent.ToUnixFileTime() * 1000L).ToString("G", CultureInfo.InvariantCulture),
+                                    seed = new { seedType = 4, albumId = album.GoogleAlbumId },
+                                    tracks = new object[0]
+                                };
 
             var mutation = new RequestCreateMutation()
             {

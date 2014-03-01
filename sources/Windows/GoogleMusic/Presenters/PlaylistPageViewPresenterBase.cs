@@ -31,7 +31,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private readonly IApplicationResources resources;
         private readonly ISongsCachingService cachingService;
         private readonly IApplicationStateService stateService;
-        private readonly IRadiosService radiosService;
+        private readonly IRadioStationsService radioStationsService;
         private readonly INavigationService navigationService;
         private readonly ISettingsService settingsService;
 
@@ -43,7 +43,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.resources = container.Resolve<IApplicationResources>();
             this.cachingService = container.Resolve<ISongsCachingService>();
             this.stateService = container.Resolve<IApplicationStateService>();
-            this.radiosService = container.Resolve<IRadiosService>();
+            this.radioStationsService = container.Resolve<IRadioStationsService>();
             this.navigationService = container.Resolve<INavigationService>();
             this.settingsService = container.Resolve<ISettingsService>();
 
@@ -238,7 +238,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     {
                         this.IsDataLoading = true;
 
-                        var radioResp = await this.radiosService.CreateAsync(songBindingModel.Metadata);
+                        var radioResp = await this.radioStationsService.CreateAsync(songBindingModel.Metadata);
 
                         if (radioResp != null)
                         {

@@ -39,7 +39,9 @@
                     <RichTextBlock Style="{StaticResource BodyRichTextStyle}">
                         <Paragraph>[+] Implement "Block explicit songs in radio." settings (disabled by default). You can enable it in application settings.</Paragraph>
                         <Paragraph>[+] Show radio list on start page.</Paragraph>
-                        <Paragraph>[+] Add support for "I'm feeling lucky radio".</Paragraph>
+                        <Paragraph>[+] Add support for "I'm feeling lucky radio/mix".</Paragraph>
+                        <Paragraph>[+] For users without All Access mode show Instant Mixes instead of Radio.</Paragraph>
+                        <Paragraph>[+] Add ability to create radio from Artists and Albums.</Paragraph>
                         <Paragraph>[b] Hide "Radio Stations" from not subscribed to All Access users.</Paragraph>
                     </RichTextBlock>
                     

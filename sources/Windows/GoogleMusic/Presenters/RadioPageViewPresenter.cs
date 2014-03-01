@@ -21,7 +21,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private readonly IApplicationResources resources;
         private readonly INavigationService navigationService;
         private readonly IPlayQueueService playQueueService;
-        private readonly IRadiosService radiosService;
+        private readonly IRadioStationsService radioStationsService;
 
         public RadioPageViewPresenter(
             IApplicationResources resources, 
@@ -30,13 +30,14 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             IPlayQueueService playQueueService, 
             ISongsCachingService cachingService, 
             IApplicationStateService stateService,
-            IRadiosService radiosService)
-            : base(resources, playlistsService, navigationService, playQueueService, cachingService, stateService)
+            IRadioStationsService radioStationsService,
+            ISettingsService settingsService)
+            : base(resources, playlistsService, navigationService, playQueueService, cachingService, stateService, radioStationsService, settingsService)
         {
             this.resources = resources;
             this.navigationService = navigationService;
             this.playQueueService = playQueueService;
-            this.radiosService = radiosService;
+            this.radioStationsService = radioStationsService;
             this.DeleteRadioCommand = new DelegateCommand(this.DeleteRadio, () => this.BindingModel.SelectedItems.Count > 0 && this.BindingModel.SelectedItems.All(x => !string.IsNullOrEmpty(x.Playlist.Id)));
         }
 
@@ -101,7 +102,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     {
                         this.IsDataLoading = true;
 
-                        await this.radiosService.DeleteAsync(playlists.Cast<Radio>().ToList());
+                        await this.radioStationsService.DeleteAsync(playlists.Cast<Radio>().ToList());
 
                         this.IsDataLoading = false;
 

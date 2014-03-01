@@ -33,7 +33,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
     {
         private readonly IDependencyResolverContainer container;
 
-        private readonly IRadiosService radiosService;
+        private readonly IRadioStationsService radioStationsService;
 
         private readonly IApplicationResources applicationResources;
 
@@ -41,12 +41,12 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         public PlaylistsService(
             IDependencyResolverContainer container,
-            IRadiosService radiosService,
+            IRadioStationsService radioStationsService,
             IApplicationResources applicationResources,
             ISettingsService settingsService)
         {
             this.container = container;
-            this.radiosService = radiosService;
+            this.radioStationsService = radioStationsService;
             this.applicationResources = applicationResources;
             this.settingsService = settingsService;
         }
@@ -102,7 +102,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 case PlaylistType.SystemPlaylist:
                     return this.GetRepository<SystemPlaylist>().GetSongsAsync(id);
                 case PlaylistType.Radio:
-                    return this.radiosService.GetRadioSongsAsync(id);
+                    return this.radioStationsService.GetRadioSongsAsync(id);
                 default:
                     throw new ArgumentOutOfRangeException("playlistType");
             }

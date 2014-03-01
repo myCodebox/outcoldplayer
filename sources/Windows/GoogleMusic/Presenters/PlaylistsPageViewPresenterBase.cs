@@ -30,6 +30,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private readonly IPlayQueueService playQueueService;
         private readonly ISongsCachingService cachingService;
         private readonly IApplicationStateService stateService;
+        private readonly IRadioStationsService radioStationsService;
+        private readonly ISettingsService settingsService;
 
         private IDisposable playlistsChangeSubscription;
 
@@ -39,7 +41,9 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             INavigationService navigationService,
             IPlayQueueService playQueueService,
             ISongsCachingService cachingService,
-            IApplicationStateService stateService)
+            IApplicationStateService stateService,
+            IRadioStationsService radioStationsService,
+            ISettingsService settingsService)
         {
             this.resources = resources;
             this.playlistsService = playlistsService;
@@ -47,11 +51,14 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.playQueueService = playQueueService;
             this.cachingService = cachingService;
             this.stateService = stateService;
+            this.radioStationsService = radioStationsService;
+            this.settingsService = settingsService;
 
             this.PlayCommand = new DelegateCommand(this.Play);
             this.QueueCommand = new DelegateCommand(this.Queue, () => this.BindingModel.SelectedItems.Count > 0);
             this.DownloadCommand = new DelegateCommand(this.Download, () => this.BindingModel.SelectedItems.Count > 0);
             this.UnPinCommand = new DelegateCommand(this.UnPin, () => this.BindingModel.SelectedItems.Count > 0);
+            this.StartRadioCommand = new DelegateCommand(this.StartRadio, () => this.BindingModel != null && this.BindingModel.SelectedItems.Count == 1);
         }
 
         public DelegateCommand PlayCommand { get; private set; }
@@ -61,6 +68,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         public DelegateCommand DownloadCommand { get; private set; }
 
         public DelegateCommand UnPinCommand { get; private set; }
+
+        public DelegateCommand StartRadioCommand { get; set; }
 
         public override void OnNavigatedTo(NavigatedToEventArgs parameter)
         {
@@ -123,11 +132,32 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         protected virtual IEnumerable<CommandMetadata> GetContextCommands()
         {
             yield return new CommandMetadata(CommandIcon.OpenWith, this.resources.GetString("Toolbar_QueueButton"), this.QueueCommand);
-            if (this.stateService.IsOnline() && 
-                (this.BindingModel.SelectedItems.Any(x => x.Playlist.OfflineSongsCount != x.Playlist.SongsCount)
-                || this.BindingModel.SelectedItems.All(x => x.Playlist.SongsCount == 0)))
+            if (this.stateService.IsOnline())
             {
-                yield return new CommandMetadata(CommandIcon.Pin, this.resources.GetString("Toolbar_KeepLocal"), this.DownloadCommand);
+                if (this.BindingModel.SelectedItems.Count == 1 
+                    && ((this.BindingModel.PlaylistType == PlaylistType.Album
+                        && !string.IsNullOrEmpty(((Album)this.BindingModel.SelectedItems.First().Playlist).GoogleAlbumId)) ||
+                        (this.BindingModel.PlaylistType == PlaylistType.Artist
+                        && !string.IsNullOrEmpty(((Artist)this.BindingModel.SelectedItems.First().Playlist).GoogleArtistId))))
+                {
+                    yield return
+                        new CommandMetadata(
+                            CommandIcon.MusicInfo,
+                            this.settingsService.GetIsAllAccessAvailable()
+                                ? this.resources.GetString("Toolbar_StartRadio")
+                                : this.resources.GetString("Toolbar_StartInstantMix"),
+                            this.StartRadioCommand);
+                }
+
+                if ((this.BindingModel.SelectedItems.Any(x => x.Playlist.OfflineSongsCount != x.Playlist.SongsCount)
+                     || this.BindingModel.SelectedItems.All(x => x.Playlist.SongsCount == 0)))
+                {
+                    yield return
+                        new CommandMetadata(
+                            CommandIcon.Pin,
+                            this.resources.GetString("Toolbar_KeepLocal"),
+                            this.DownloadCommand);
+                }
             }
             else
             {
@@ -204,6 +234,47 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             catch (Exception e)
             {
                 this.Logger.Error(e, "Cannot remove from cache selected songs.");
+            }
+        }
+
+        private async void StartRadio()
+        {
+            if (this.StartRadioCommand.CanExecute())
+            {
+                var songBindingModel = this.BindingModel.SelectedItems.FirstOrDefault();
+                if (songBindingModel != null && (songBindingModel.Playlist is Album || songBindingModel.Playlist is Artist))
+                {
+                    try
+                    {
+                        this.IsDataLoading = true;
+
+                        Tuple<Radio, IList<Song>> radioResp = null;
+
+                        if (songBindingModel.Playlist is Album)
+                        {
+                            radioResp = await this.radioStationsService.CreateAsync((Album)songBindingModel.Playlist);
+                        }
+                        else if (songBindingModel.Playlist is Artist)
+                        {
+                            radioResp = await this.radioStationsService.CreateAsync((Artist)songBindingModel.Playlist);
+                        }
+
+                        if (radioResp != null)
+                        {
+                            await this.playQueueService.PlayAsync(radioResp.Item1, radioResp.Item2, -1);
+                            this.IsDataLoading = false;
+                            this.navigationService.NavigateTo<ICurrentPlaylistPageView>();
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        this.Logger.Error(e, "Cannot start radio");
+                    }
+                    finally
+                    {
+                        this.IsDataLoading = false;
+                    }
+                }
             }
         }
     }

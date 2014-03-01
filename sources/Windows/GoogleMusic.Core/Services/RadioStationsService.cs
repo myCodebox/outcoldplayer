@@ -9,24 +9,27 @@ namespace OutcoldSolutions.GoogleMusic.Services
     using System.Linq;
     using System.Threading.Tasks;
 
+    using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Web;
     using OutcoldSolutions.GoogleMusic.Web.Models;
     using OutcoldSolutions.GoogleMusic.Web.Synchronization;
 
-    public interface IRadiosService
+    public interface IRadioStationsService
     {
         Task<IList<Song>> GetRadioSongsAsync(string radio, IList<Song> currentSongs = null);
 
         Task<bool> DeleteAsync(IList<Radio> radios);
 
-        Task<bool> RenameAsync(Radio playlist, string name);
-
         Task<Tuple<Radio, IList<Song>>> CreateAsync(Song song);
+
+        Task<Tuple<Radio, IList<Song>>> CreateAsync(Artist artist);
+
+        Task<Tuple<Radio, IList<Song>>> CreateAsync(Album album);
     }
 
-    public class RadiosService : IRadiosService
+    public class RadioStationsService : IRadioStationsService
     {
         private readonly IRadioWebService radioWebService;
 
@@ -34,14 +37,27 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         private readonly ISongsRepository songsRepository;
 
-        public RadiosService(
+        private readonly INotificationService notificationService;
+
+        private readonly IApplicationResources applicationResources;
+
+        private ILogger logger;
+
+        public RadioStationsService(
             IRadioWebService radioWebService,
             IRadioStationsRepository radioStationsRepository,
-            ISongsRepository songsRepository)
+            ISongsRepository songsRepository,
+            INotificationService notificationService,
+            IApplicationResources applicationResources,
+            ILogManager logManager)
         {
             this.radioWebService = radioWebService;
             this.radioStationsRepository = radioStationsRepository;
             this.songsRepository = songsRepository;
+            this.notificationService = notificationService;
+            this.applicationResources = applicationResources;
+
+            this.logger = logManager.CreateLogger("RadioStationsService");
         }
 
         public async Task<IList<Song>> GetRadioSongsAsync(string id, IList<Song> currentSongs = null)
@@ -49,7 +65,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             var googleRadio = await this.radioWebService.GetRadioSongsAsync(id, currentSongs ?? new List<Song>());
 
             if (googleRadio != null && googleRadio.Data != null && googleRadio.Data.Stations != null &&
-                googleRadio.Data.Stations.Length == 1 && googleRadio.Data.Stations[0].Tracks != null)
+                googleRadio.Data.Stations.Length == 1)
             {
                 return await this.GetSongsAsync(googleRadio.Data.Stations[0].Tracks);
             }
@@ -82,14 +98,41 @@ namespace OutcoldSolutions.GoogleMusic.Services
             return false;
         }
 
-        public Task<bool> RenameAsync(Radio playlist, string name)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<Tuple<Radio, IList<Song>>> CreateAsync(Song song)
         {
-            var response = await this.radioWebService.CreateStationAsync(song);
+            var radio = await this.radioStationsRepository.FindByGoogleSongId(song.SongId);
+            if (radio != null)
+            {
+                return Tuple.Create(radio, await this.GetRadioSongsAsync(radio.RadioId));
+            }
+
+            return await this.HandleCreationResponse(await this.radioWebService.CreateStationAsync(song));
+        }
+
+        public async Task<Tuple<Radio, IList<Song>>> CreateAsync(Artist artist)
+        {
+            var radio = await this.radioStationsRepository.FindByGoogleArtistId(artist.GoogleArtistId);
+            if (radio != null)
+            {
+                return Tuple.Create(radio, await this.GetRadioSongsAsync(radio.RadioId));
+            }
+
+            return await this.HandleCreationResponse(await this.radioWebService.CreateStationAsync(artist));
+        }
+
+        public async Task<Tuple<Radio, IList<Song>>> CreateAsync(Album album)
+        {
+            var radio = await this.radioStationsRepository.FindByGoogleAlbumId(album.GoogleAlbumId);
+            if (radio != null)
+            {
+                return Tuple.Create(radio, await this.GetRadioSongsAsync(radio.RadioId));
+            }
+
+            return await this.HandleCreationResponse(await this.radioWebService.CreateStationAsync(album));
+        }
+
+        private async Task<Tuple<Radio, IList<Song>>> HandleCreationResponse(GoogleMusicMutateResponse response)
+        {
             if (response.MutateResponse != null && response.MutateResponse.Length == 1)
             {
                 var mutateResponse = response.MutateResponse[0];
@@ -98,12 +141,12 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 {
                     var radio = mutateResponse.Station.ToRadio();
                     await this.radioStationsRepository.InsertAsync(new[] { radio });
-                    IList<Song> tracks = null;
-                    if (mutateResponse.Station.Tracks != null)
-                    {
-                        tracks = await this.GetSongsAsync(mutateResponse.Station.Tracks);
-                    }
-                    return Tuple.Create(radio, tracks ?? new List<Song>());
+                    IList<Song> tracks = await this.GetSongsAsync(mutateResponse.Station.Tracks);
+                    return Tuple.Create(radio, tracks);
+                }
+                else
+                {
+                    this.logger.Error("Could not create radio, because of {0}", mutateResponse.ResponseCode);
                 }
             }
 
@@ -114,17 +157,25 @@ namespace OutcoldSolutions.GoogleMusic.Services
         {
             List<Song> songs = new List<Song>();
 
-            foreach (var track in radioTracks)
+            if (radioTracks != null)
             {
-                Song song = await this.songsRepository.FindSongAsync(track.Id);
-
-                if (song == null)
+                foreach (var track in radioTracks)
                 {
-                    song = track.ToSong();
-                    song.IsLibrary = false;
-                }
+                    Song song = await this.songsRepository.FindSongAsync(track.Id);
 
-                songs.Add(song);
+                    if (song == null)
+                    {
+                        song = track.ToSong();
+                        song.IsLibrary = false;
+                    }
+
+                    songs.Add(song);
+                }
+            }
+
+            if (songs.Count == 0)
+            {
+                await this.notificationService.ShowMessageAsync(this.applicationResources.GetString("Radio_CouldNotPrepare"));
             }
 
             return songs;

@@ -148,7 +148,7 @@
     <Compile Include="Services\IAlbumArtCacheService.cs" />
     <Compile Include="Services\InAppPurchases.cs" />
     <Compile Include="Services\PlaylistsService.cs" />
-    <Compile Include="Services\RadiosService.cs" />
+    <Compile Include="Services\RadioStationsService.cs" />
     <Compile Include="Services\SongsCachingService.cs" />
     <Compile Include="Web\ConfigWebService.cs" />
     <Compile Include="Web\GoogleMusicApisService.cs" />

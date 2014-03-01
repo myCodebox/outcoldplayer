@@ -64,5 +64,7 @@ namespace OutcoldSolutions.GoogleMusic.Models
         public string TrackLockerId { get; set; }
 
         public string GoogleArtistId { get; set; }
+
+        public string GoogleAlbumId { get; set; }
     }
 }
