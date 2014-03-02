@@ -277,7 +277,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 url += "&";
             }
 
-            url += "alt=json&hl=" + CultureInfo.CurrentCulture.Name.Replace("-", "_");
+            url += "alt=json&hl=" + "en_US"; // TODO: CultureInfo.CurrentCulture.Name.Replace("-", "_");
 
             return url;
         }
