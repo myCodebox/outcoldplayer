@@ -60,9 +60,19 @@ namespace OutcoldSolutions.GoogleMusic.Models
 
         public bool AccessControlled { get; set; }
 
+        public string Description { get; set; }
+
         public Uri ArtUrl { get; set; }
 
         [Indexed]
         public DateTime Recent { get; set; }
+
+        public bool IsShared
+        {
+            get
+            {
+                return string.Equals(this.Type, "SHARED", StringComparison.OrdinalIgnoreCase);
+            }
+        }
     }
 }

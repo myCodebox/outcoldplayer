@@ -195,7 +195,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
                 IList<UserPlaylist> toBeUpdated = new List<UserPlaylist>();
                 IList<UserPlaylist> toBeInserted = new List<UserPlaylist>();
 
-                foreach (var googleMusicPlaylist in chunk.Where(x => string.Equals(x.Type, "USER_GENERATED", StringComparison.OrdinalIgnoreCase)))
+                foreach (var googleMusicPlaylist in chunk)
                 {
                     if (googleMusicPlaylist.Deleted)
                     {
@@ -247,7 +247,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
             await progress.SafeReportAsync(0.85d);
 
             this.logger.Debug("LoadPlaylistsAsync: loading playlist entries.");
-            await this.playlistsWebService.GetAllPlaylistEntries(libraryFreshnessDate, chunkHandler: async (chunk) =>
+            await this.playlistsWebService.GetAllPlaylistEntriesAsync(libraryFreshnessDate, chunkHandler: async (chunk) =>
             {
                 IList<UserPlaylistEntry> toBeDeleted = new List<UserPlaylistEntry>();
                 IList<UserPlaylistEntry> toBeUpdated = new List<UserPlaylistEntry>();

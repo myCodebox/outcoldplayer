@@ -110,5 +110,10 @@ namespace OutcoldSolutions.GoogleMusic.Models
         public DateTime Recent { get; set; }
 
         public uint ServerPlayCount { get; set; }
+
+        // 
+
+        [Ignore]
+        public bool UnknownSong { get; set; }
     }
 }

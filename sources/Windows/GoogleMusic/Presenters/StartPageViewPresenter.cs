@@ -74,10 +74,15 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.cachingService = cachingService;
             this.stateService = stateService;
 
+            Func<bool> canExecute = () => this.BindingModel.SelectedItems.Count > 0
+                                          && this.BindingModel.SelectedItems.All(x =>
+                                                  x.Playlist.PlaylistType != PlaylistType.Radio
+                                                  || (x.Playlist.PlaylistType == PlaylistType.UserPlaylist && !((UserPlaylist)x.Playlist).IsShared));
+
             this.PlayCommand = new DelegateCommand(this.Play);
-            this.QueueCommand = new DelegateCommand(this.Queue, () => this.BindingModel.SelectedItems.Count > 0 && this.BindingModel.SelectedItems.All(x => x.Playlist.PlaylistType != PlaylistType.Radio));
-            this.DownloadCommand = new DelegateCommand(this.Download, () => this.BindingModel.SelectedItems.Count > 0 && this.BindingModel.SelectedItems.All(x => x.Playlist.PlaylistType != PlaylistType.Radio));
-            this.UnPinCommand = new DelegateCommand(this.UnPin, () => this.BindingModel.SelectedItems.Count > 0 && this.BindingModel.SelectedItems.All(x => x.Playlist.PlaylistType != PlaylistType.Radio));
+            this.QueueCommand = new DelegateCommand(this.Queue, canExecute);
+            this.DownloadCommand = new DelegateCommand(this.Download, canExecute);
+            this.UnPinCommand = new DelegateCommand(this.UnPin, canExecute);
 
             this.sessionService.SessionCleared += async (sender, args) => 
                     {

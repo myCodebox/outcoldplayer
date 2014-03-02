@@ -35,6 +35,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         private readonly IRadioStationsService radioStationsService;
 
+        private readonly IUserPlaylistsService userPlaylistsService;
+
         private readonly IApplicationResources applicationResources;
 
         private readonly ISettingsService settingsService;
@@ -42,11 +44,13 @@ namespace OutcoldSolutions.GoogleMusic.Services
         public PlaylistsService(
             IDependencyResolverContainer container,
             IRadioStationsService radioStationsService,
+            IUserPlaylistsService userPlaylistsService,
             IApplicationResources applicationResources,
             ISettingsService settingsService)
         {
             this.container = container;
             this.radioStationsService = radioStationsService;
+            this.userPlaylistsService = userPlaylistsService;
             this.applicationResources = applicationResources;
             this.settingsService = settingsService;
         }
@@ -87,22 +91,28 @@ namespace OutcoldSolutions.GoogleMusic.Services
             return this.GetSongsAsync(playlist.PlaylistType, playlist.Id);
         }
 
-        public Task<IList<Song>> GetSongsAsync(PlaylistType playlistType, string id)
+        public async Task<IList<Song>> GetSongsAsync(PlaylistType playlistType, string id)
         {
             switch (playlistType)
             {
                 case PlaylistType.Album:
-                    return this.GetRepository<Album>().GetSongsAsync(id);
+                    return await this.GetRepository<Album>().GetSongsAsync(id);
                 case PlaylistType.Artist:
-                    return this.GetRepository<Artist>().GetSongsAsync(id);
+                    return await this.GetRepository<Artist>().GetSongsAsync(id);
                 case PlaylistType.Genre:
-                    return this.GetRepository<Genre>().GetSongsAsync(id);
+                    return await this.GetRepository<Genre>().GetSongsAsync(id);
                 case PlaylistType.UserPlaylist:
-                    return this.GetRepository<UserPlaylist>().GetSongsAsync(id);
+                    var playlistRepository = this.GetRepository<UserPlaylist>();
+                    var playlist = await playlistRepository.GetAsync(id);
+                    if (playlist.IsShared)
+                    {
+                        return await this.userPlaylistsService.GetSharedPlaylistSongsAsync(playlist);
+                    }
+                    return await playlistRepository.GetSongsAsync(id);
                 case PlaylistType.SystemPlaylist:
-                    return this.GetRepository<SystemPlaylist>().GetSongsAsync(id);
+                    return await this.GetRepository<SystemPlaylist>().GetSongsAsync(id);
                 case PlaylistType.Radio:
-                    return this.radioStationsService.GetRadioSongsAsync(id);
+                    return await this.radioStationsService.GetRadioSongsAsync(id);
                 default:
                     throw new ArgumentOutOfRangeException("playlistType");
             }

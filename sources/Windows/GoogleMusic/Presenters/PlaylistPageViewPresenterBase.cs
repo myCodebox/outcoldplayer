@@ -49,8 +49,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
             this.QueueCommand = new DelegateCommand(this.Queue, () => this.BindingModel != null && this.BindingModel.SongsBindingModel.SelectedItems.Count > 0);
             this.AddToPlaylistCommand = new DelegateCommand(this.AddToPlaylist, () => this.BindingModel != null && this.BindingModel.SongsBindingModel.SelectedItems.Count > 0);
-            this.DownloadCommand = new DelegateCommand(this.Download, () => this.BindingModel != null && this.BindingModel.SongsBindingModel.SelectedItems.Count > 0);
-            this.UnPinCommand = new DelegateCommand(this.UnPin, () => this.BindingModel != null && this.BindingModel.SongsBindingModel.SelectedItems.Count > 0);
+            this.DownloadCommand = new DelegateCommand(this.Download, () => this.BindingModel != null && this.BindingModel.SongsBindingModel.SelectedItems.Count(x => !x.Metadata.UnknownSong) > 0);
+            this.UnPinCommand = new DelegateCommand(this.UnPin, () => this.BindingModel != null && this.BindingModel.SongsBindingModel.SelectedItems.Count(x => !x.Metadata.UnknownSong) > 0);
             this.RateSongCommand = new DelegateCommand(this.RateSong);
             this.StartRadioCommand = new DelegateCommand(this.StartRadio, () => this.BindingModel != null && this.BindingModel.SongsBindingModel.SelectedItems.Count == 1);
         }

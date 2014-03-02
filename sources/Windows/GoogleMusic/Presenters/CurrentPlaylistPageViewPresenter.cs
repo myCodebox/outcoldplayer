@@ -57,8 +57,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.RemoveSelectedSongCommand = new DelegateCommand(this.RemoveSelectedSong, () => this.BindingModel.SelectedItems.Count > 0);
             this.AddToPlaylistCommand = new DelegateCommand(this.AddToPlaylist, () => this.BindingModel.SelectedItems.Count > 0);
             this.RateSongCommand = new DelegateCommand(this.RateSong);
-            this.DownloadCommand = new DelegateCommand(this.Download, () => this.BindingModel.SelectedItems.Count  > 0);
-            this.UnPinCommand = new DelegateCommand(this.UnPin, () => this.BindingModel.SelectedItems.Count  > 0);
+            this.DownloadCommand = new DelegateCommand(this.Download, () => this.BindingModel.SelectedItems.Count(x => !x.Metadata.UnknownSong) > 0);
+            this.UnPinCommand = new DelegateCommand(this.UnPin, () => this.BindingModel.SelectedItems.Count(x => !x.Metadata.UnknownSong) > 0);
             this.StartRadioCommand = new DelegateCommand(this.StartRadio, () => this.BindingModel != null && this.BindingModel.SelectedItems.Count == 1);
 
             this.playQueueService.StateChanged += async (sender, args) => await this.Dispatcher.RunAsync(async () => 
@@ -256,19 +256,16 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
             yield return new CommandMetadata(CommandIcon.Remove, this.resources.GetString("Toolbar_QueueButton"), this.RemoveSelectedSongCommand);
 
-            if (!this.playQueueService.IsRadio)
+            if (this.BindingModel.SelectedItems.Any(x => !x.IsCached))
             {
-                if (this.BindingModel.SelectedItems.Any(x => !x.IsCached))
+                if (this.stateService.IsOnline())
                 {
-                    if (this.stateService.IsOnline())
-                    {
-                        yield return new CommandMetadata(CommandIcon.Pin, this.resources.GetString("Toolbar_KeepLocal"), this.DownloadCommand);
-                    }
+                    yield return new CommandMetadata(CommandIcon.Pin, this.resources.GetString("Toolbar_KeepLocal"), this.DownloadCommand);
                 }
-                else
-                {
-                    yield return new CommandMetadata(CommandIcon.UnPin, this.resources.GetString("Toolbar_RemoveLocal"), this.UnPinCommand);
-                }
+            }
+            else
+            {
+                yield return new CommandMetadata(CommandIcon.UnPin, this.resources.GetString("Toolbar_RemoveLocal"), this.UnPinCommand);
             }
         }
 

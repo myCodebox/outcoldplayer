@@ -159,6 +159,7 @@
     <Compile Include="Web\Models\GoogleMusicMutateResponse.cs" />
     <Compile Include="Web\Models\GoogleMusicPlaylistBatchResponse.cs" />
     <Compile Include="Web\Models\GoogleMusicPlaylistEntriesBatchResponse.cs" />
+    <Compile Include="Web\Models\GoogleMusicSharedPlaylistEntriesResponse.cs" />
     <Compile Include="Web\Models\GoogleMusicSongMutateResponse.cs" />
     <Compile Include="Web\Models\GoogleMusicStationFeed.cs" />
     <Compile Include="Web\Models\GoogleMusicTrackStatResponse.cs" />

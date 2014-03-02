@@ -248,9 +248,13 @@ namespace OutcoldSolutions.GoogleMusic.Shell
                     titleAdded = true;
                 }
 
+                string subtitle = playlist.PlaylistType == PlaylistType.UserPlaylist && ((UserPlaylist)playlist).IsShared ?
+                    string.Format(CultureInfo.CurrentCulture, "By {0}", ((UserPlaylist)playlist).OwnerName) :
+                    string.Format(CultureInfo.CurrentCulture, this.resources.GetString("SearchItem_SongsFormat"), playlist.SongsCount);
+
                 result.Add(new SearchResult(
                     playlist.Title,
-                    string.Format(CultureInfo.CurrentCulture, this.resources.GetString("SearchItem_SongsFormat"), playlist.SongsCount),
+                    subtitle,
                     string.Format(CultureInfo.CurrentCulture, "{0}:{1}", playlistType, playlist.Id),
                     playlist.ArtUrl));
             }

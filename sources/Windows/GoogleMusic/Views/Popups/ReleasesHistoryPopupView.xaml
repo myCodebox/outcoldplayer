@@ -34,7 +34,7 @@
             <ScrollViewer Grid.Row="2" Margin="0, 20, 0, 0">
                 <StackPanel>
                     <TextBlock Style="{StaticResource TitleTextStyle}" Margin="0, 10, 0, 0" >
-                    <Run>vNext - Version 2.3</Run>
+                    <Run>03/02/2014 - Version 2.3</Run>
                     </TextBlock>
                     <RichTextBlock Style="{StaticResource BodyRichTextStyle}">
                         <Paragraph>[+] Implement "Block explicit songs in radio." settings (disabled by default). You can enable it in application settings.</Paragraph>
@@ -43,6 +43,7 @@
                         <Paragraph>[+] For users without All Access mode show Instant Mixes instead of Radio.</Paragraph>
                         <Paragraph>[+] Add ability to create radio from Artists and Albums.</Paragraph>
                         <Paragraph>[+] Improved song statistics syncronization (Play Count, Last Played).</Paragraph>
+                        <Paragraph>[+] Add ability to play Shared playlists.</Paragraph>
                     </RichTextBlock>
                     
                     <TextBlock Style="{StaticResource TitleTextStyle}" Margin="0, 10, 0, 0" >

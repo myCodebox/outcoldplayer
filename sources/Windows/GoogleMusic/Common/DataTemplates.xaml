@@ -152,11 +152,15 @@
                 </Border>
                 <StackPanel Grid.Column="1" Margin="0,15,10,0">
                     <TextBlock Text="{Binding Path=Playlist.Title, Mode=OneWay}"  Style="{StaticResource BodyTextStyle}" TextWrapping="Wrap"  TextTrimming="WordEllipsis" MaxHeight="40"/>
-                    <StackPanel Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal" Visibility="{Binding Path=Playlist.IsShared, Converter={StaticResource BooleanToInvisibilityConverter}, Mode=OneTime}">
                         <TextBlock Text="{Binding Path=Playlist, Mode=OneTime, Converter={StaticResource PlaylistDurationConverter}}" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
                         <TextBlock Text=" (" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
                         <TextBlock Text="{Binding Path=Playlist, Mode=OneTime, Converter={StaticResource PlaylistSongsCountConverter}}" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
                         <TextBlock Text=")" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Visibility="{Binding Path=Playlist.IsShared, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneTime}">
+                        <TextBlock Text="By" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap" Margin="0, 0, 5, 0"/>
+                        <TextBlock Text="{Binding Path=Playlist.OwnerName, Mode=OneTime}" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
                     </StackPanel>
                 </StackPanel>
                 <Button Grid.Column="1"

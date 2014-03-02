@@ -77,7 +77,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
             this.Logger.LogTask(Task.Run(async () =>
                 {
                     var songsWithEntries = await Task.WhenAll(this.Songs.Select(async x => Tuple.Create(x, await this.userPlaylistsRepository.GetAllSongEntriesAsync(x.SongId))).ToList());
-                    var result = (await this.userPlaylistsRepository.GetAllAsync(Order.Name)).Select(x => new AddToSongMusicPlaylist(x, songsWithEntries)).ToList();
+                    var result = (await this.userPlaylistsRepository.GetAllUserPlaylistsAsync()).Select(x => new AddToSongMusicPlaylist(x, songsWithEntries)).ToList();
 
                     await this.Dispatcher.RunAsync(() => this.Playlists = result);
                     await this.Dispatcher.RunAsync(() => this.IsLoading = false);

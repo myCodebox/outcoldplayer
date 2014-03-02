@@ -43,6 +43,11 @@ namespace OutcoldSolutions.GoogleMusic.Views
                 {
                     this.GetPresenter<RadioPageViewPresenter>().PlayRadio(playlistBindingModel.Playlist);
                 }
+                else if (playlistBindingModel.Playlist.PlaylistType == PlaylistType.UserPlaylist
+                    && ((UserPlaylist)playlistBindingModel.Playlist).IsShared)
+                {
+                    this.GetPresenter<UserPlaylistsPageViewPresenter>().PlaySharedPlaylist(playlistBindingModel.Playlist);
+                }
                 else
                 {
                     this.NavigationService.NavigateToPlaylist(playlistBindingModel.Playlist);

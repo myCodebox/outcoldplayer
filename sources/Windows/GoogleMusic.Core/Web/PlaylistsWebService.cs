@@ -5,6 +5,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
     using System.Threading.Tasks;
 
@@ -15,7 +16,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
     {
         Task<IList<GoogleMusicPlaylist>> GetAllAsync(DateTime? lastUpdate, IProgress<int> progress = null, Func<IList<GoogleMusicPlaylist>, Task> chunkHandler = null);
 
-        Task<IList<GoogleMusicPlaylistEntry>> GetAllPlaylistEntries(DateTime? lastUpdate, IProgress<int> progress = null, Func<IList<GoogleMusicPlaylistEntry>, Task> chunkHandler = null);
+        Task<IList<GoogleMusicPlaylistEntry>> GetAllPlaylistEntriesAsync(DateTime? lastUpdate, IProgress<int> progress = null, Func<IList<GoogleMusicPlaylistEntry>, Task> chunkHandler = null);
 
         Task<GoogleMusicPlaylistBatchResponse> CreateAsync(string name);
 
@@ -28,6 +29,10 @@ namespace OutcoldSolutions.GoogleMusic.Web
         Task<GoogleMusicPlaylistEntriesBatchResponse> RemoveSongsAsync(
             UserPlaylist playlist,
             IList<UserPlaylistEntry> entries);
+
+        Task<GoogleMusicSharedPlaylistEntriesResponse> GetAllPlaylistEntriesSharedAsync(
+            IList<UserPlaylist> sharedPlaylists,
+            DateTime? lastUpdate = null);
     }
 
     public class PlaylistsWebService : IPlaylistsWebService
@@ -36,6 +41,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
         private const string PlEntryFeed = "plentryfeed";
         private const string PlaylistBatch = "playlistbatch";
         private const string PlEntriesBatch = "plentriesbatch";
+        private const string PlEntriesShared = "plentries/shared";
 
         private readonly IGoogleMusicApisService googleMusicApisService;
 
@@ -50,9 +56,26 @@ namespace OutcoldSolutions.GoogleMusic.Web
             return this.googleMusicApisService.DownloadList(PlaylistFeed, lastUpdate, progress, chunkHandler);
         }
 
-        public Task<IList<GoogleMusicPlaylistEntry>> GetAllPlaylistEntries(DateTime? lastUpdate, IProgress<int> progress = null, Func<IList<GoogleMusicPlaylistEntry>, Task> chunkHandler = null)
+        public Task<IList<GoogleMusicPlaylistEntry>> GetAllPlaylistEntriesAsync(DateTime? lastUpdate, IProgress<int> progress = null, Func<IList<GoogleMusicPlaylistEntry>, Task> chunkHandler = null)
         {
             return this.googleMusicApisService.DownloadList(PlEntryFeed, lastUpdate, progress, chunkHandler);
+        }
+
+        public Task<GoogleMusicSharedPlaylistEntriesResponse> GetAllPlaylistEntriesSharedAsync(IList<UserPlaylist> sharedPlaylists, DateTime? lastUpdate = null)
+        {
+            var json = new
+                       {
+                           entries = sharedPlaylists.Select(x => 
+                                         new
+                                         {
+                                             maxResults = 20000,
+                                             shareToken = x.ShareToken,
+                                             updatedMin = lastUpdate.HasValue ? ((ulong)lastUpdate.Value.ToUnixFileTime() * 1000L).ToString("G", CultureInfo.InvariantCulture) : 0.ToString()
+                                         }),
+                           includeDeleted = false
+                       };
+
+            return this.googleMusicApisService.PostAsync<GoogleMusicSharedPlaylistEntriesResponse>(PlEntriesShared, json);
         }
 
         public async Task<GoogleMusicPlaylistBatchResponse> CreateAsync(string name)

@@ -31,6 +31,8 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
         Task<UserPlaylist> FindUserPlaylistAsync(Song song);
 
         Task<UserPlaylistEntry> GetEntryAsync(string id);
+
+        Task<List<UserPlaylist>> GetAllUserPlaylistsAsync();
     }
 
     public class UserPlaylistsRepository : RepositoryBase, IUserPlaylistsRepository
@@ -94,7 +96,7 @@ limit 1
 
             if (this.stateService.IsOffline())
             {
-                query = query.Where(a => a.OfflineSongsCount > 0);
+                query = query.Where(a => a.OfflineSongsCount > 0 && a.Type == "USER_GENERATED");
             }
 
             if (order == Order.Name)
@@ -246,6 +248,12 @@ limit 1
             }
 
             return (await this.Connection.QueryAsync<UserPlaylist>(SqlFindFirstUserPlaylist, song.SongId)).FirstOrDefault();
+        }
+
+
+        public Task<List<UserPlaylist>> GetAllUserPlaylistsAsync()
+        {
+            return this.Connection.Table<UserPlaylist>().Where(a => a.Type == "USER_GENERATED").OrderBy(x => x.TitleNorm).ToListAsync();
         }
     }
 }

@@ -8,7 +8,7 @@
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400"
-    Title="gMusic"
+    Title="gMusicW"
     Subtitle="{Binding Path=BindingModel.Title}">
 
     <Grid Margin="0, 0, 20, 0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">

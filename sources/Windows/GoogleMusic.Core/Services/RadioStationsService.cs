@@ -194,6 +194,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     {
                         song = track.ToSong();
                         song.IsLibrary = false;
+                        song.UnknownSong = true;
                     }
 
                     songs.Add(song);

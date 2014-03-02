@@ -54,10 +54,13 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.radioStationsService = radioStationsService;
             this.settingsService = settingsService;
 
+            Func<bool> canExecute = () => this.BindingModel.SelectedItems.Count > 0
+                                         && this.BindingModel.SelectedItems.All(x => (x.Playlist.PlaylistType == PlaylistType.UserPlaylist && !((UserPlaylist)x.Playlist).IsShared));
+
             this.PlayCommand = new DelegateCommand(this.Play);
-            this.QueueCommand = new DelegateCommand(this.Queue, () => this.BindingModel.SelectedItems.Count > 0);
-            this.DownloadCommand = new DelegateCommand(this.Download, () => this.BindingModel.SelectedItems.Count > 0);
-            this.UnPinCommand = new DelegateCommand(this.UnPin, () => this.BindingModel.SelectedItems.Count > 0);
+            this.QueueCommand = new DelegateCommand(this.Queue, canExecute);
+            this.DownloadCommand = new DelegateCommand(this.Download, canExecute);
+            this.UnPinCommand = new DelegateCommand(this.UnPin, canExecute);
             this.StartRadioCommand = new DelegateCommand(this.StartRadio, () => this.BindingModel != null && this.BindingModel.SelectedItems.Count == 1);
         }
 

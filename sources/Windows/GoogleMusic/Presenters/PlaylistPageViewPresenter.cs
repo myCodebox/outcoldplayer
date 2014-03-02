@@ -35,7 +35,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         protected override IEnumerable<CommandMetadata> GetContextCommands()
         {
             var commandMetadatas = base.GetContextCommands();
-            if (this.BindingModel.Playlist is UserPlaylist)
+            if (this.BindingModel.Playlist is UserPlaylist && !((UserPlaylist)this.BindingModel.Playlist).IsShared)
             {
                 commandMetadatas = new List<CommandMetadata>(commandMetadatas)
                                        {

@@ -21,6 +21,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     public class UserPlaylistsPageViewPresenter : PlaylistsPageViewPresenterBase<IUserPlaylistsPageView, PlaylistsPageViewBindingModel>
     {
         private readonly IApplicationResources resources;
+
+        private readonly INavigationService navigationService;
+
+        private readonly IPlayQueueService playQueueService;
+
         private readonly IUserPlaylistsService userPlaylistsService;
         private readonly IApplicationStateService stateService;
 
@@ -37,10 +42,12 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             : base(resources, playlistsService, navigationService, playQueueService, cachingService, stateService, radioStationsService, settingsService)
         {
             this.resources = resources;
+            this.navigationService = navigationService;
+            this.playQueueService = playQueueService;
             this.userPlaylistsService = userPlaylistsService;
             this.stateService = stateService;
             this.AddPlaylistCommand = new DelegateCommand(this.AddPlaylist);
-            this.EditPlaylistCommand = new DelegateCommand(this.EditPlaylist, () => this.BindingModel.SelectedItems.Count == 1);
+            this.EditPlaylistCommand = new DelegateCommand(this.EditPlaylist, () => this.BindingModel.SelectedItems.Count == 1 && !((UserPlaylist)this.BindingModel.SelectedItems[0].Playlist).IsShared);
             this.DeletePlaylistsCommand = new DelegateCommand(this.DeletePlaylists, () => this.BindingModel.SelectedItems.Count > 0);
         }
 
@@ -49,6 +56,25 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         public DelegateCommand DeletePlaylistsCommand { get; private set; }
 
         public DelegateCommand EditPlaylistCommand { get; private set; }
+
+        public void PlaySharedPlaylist(IPlaylist playlist)
+        {
+            if (this.PlayCommand.CanExecute(playlist) && ((UserPlaylist)playlist).IsShared)
+            {
+                var currentPlaylist = this.playQueueService.CurrentPlaylist;
+
+                if (currentPlaylist != null
+                    && currentPlaylist.PlaylistType == PlaylistType.UserPlaylist
+                    && string.Equals(currentPlaylist.Id, playlist.Id, StringComparison.Ordinal))
+                {
+                    this.navigationService.NavigateTo<ICurrentPlaylistPageView>();
+                }
+                else
+                {
+                    this.PlayCommand.Execute(playlist);
+                }
+            }
+        }
 
         protected override IEnumerable<CommandMetadata> GetViewCommands()
         {

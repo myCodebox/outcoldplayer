@@ -12,6 +12,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Web;
+    using OutcoldSolutions.GoogleMusic.Web.Models;
+    using OutcoldSolutions.GoogleMusic.Web.Synchronization;
 
     public interface IUserPlaylistsService
     {
@@ -24,6 +26,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
         Task<bool> RemoveSongsAsync(UserPlaylist playlist, IEnumerable<Song> entry);
 
         Task<bool> AddSongsAsync(UserPlaylist playlist, IEnumerable<Song> song);
+
+        Task<IList<Song>> GetSharedPlaylistSongsAsync(UserPlaylist userPlaylist);
     }
 
     public class UserPlaylistsService : IUserPlaylistsService
@@ -31,17 +35,20 @@ namespace OutcoldSolutions.GoogleMusic.Services
         private readonly ILogger logger;
         private readonly IPlaylistsWebService webService;
         private readonly IUserPlaylistsRepository repository;
+        private readonly ISongsRepository songsRepository;
         private readonly IEventAggregator eventAggregator;
 
         public UserPlaylistsService(
             ILogManager logManager,
             IPlaylistsWebService webService,
             IUserPlaylistsRepository repository,
+            ISongsRepository songsRepository,
             IEventAggregator eventAggregator)
         {
             this.logger = logManager.CreateLogger("UserPlaylistsService");
             this.webService = webService;
             this.repository = repository;
+            this.songsRepository = songsRepository;
             this.eventAggregator = eventAggregator;
         }
 
@@ -265,6 +272,45 @@ namespace OutcoldSolutions.GoogleMusic.Services
             }
 
             return toInsert.Count > 0;
+        }
+
+        public async Task<IList<Song>> GetSharedPlaylistSongsAsync(UserPlaylist userPlaylist)
+        {
+            List<Song> songs = new List<Song>();
+
+            var resp = await this.webService.GetAllPlaylistEntriesSharedAsync(new UserPlaylist[] { userPlaylist });
+            if (resp.Entries.Length == 1
+                && string.Equals(resp.Entries[0].ResponseCode, "OK", StringComparison.OrdinalIgnoreCase))
+            {
+                GoogleMusicSharedPlaylist googleMusicSharedPlaylist = resp.Entries[0];
+                if (string.Equals(
+                    googleMusicSharedPlaylist.ShareToken,
+                    userPlaylist.ShareToken,
+                    StringComparison.OrdinalIgnoreCase) && googleMusicSharedPlaylist.PlaylistEntry != null)
+                {
+                    foreach (var entry in googleMusicSharedPlaylist.PlaylistEntry)
+                    {
+                        var song = await this.songsRepository.FindSongAsync(entry.TrackId);
+
+                        if (song == null)
+                        {
+                            song = entry.Track.ToSong();
+                            song.IsLibrary = false;
+                            song.UnknownSong = true;
+                        }
+
+                        songs.Add(song);
+                    }
+                }
+            }
+
+            if (songs.Count > 0)
+            {
+                userPlaylist.ArtUrl = songs[0].AlbumArtUrl;
+                await this.repository.UpdateAsync(new[] { userPlaylist });
+            }
+
+            return songs;
         }
     }
 }
