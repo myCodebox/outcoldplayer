@@ -69,7 +69,11 @@ select t.*,
     s.[ContentType] as [Song.ContentType],
     s.[TrackAvailableForSubscription] as [Song.TrackAvailableForSubscription],
     s.[TrackAvailableForPurchase] as [Song.TrackAvailableForPurchase],
-    s.[AlbumAvailableForPurchase] as [Song.AlbumAvailableForPurchase]
+    s.[AlbumAvailableForPurchase] as [Song.AlbumAvailableForPurchase],
+    s.[StatsPlayCount] as [Song.StatsPlayCount],
+    s.[StatsRecent] as [Song.StatsRecent],
+    s.[ServerRecent] as [Song.ServerRecent],
+    s.[ServerPlayCount] as [Song.ServerPlayCount]
 from [CachedSong] as t
      inner join [Song] s on s.SongId = t.SongId
 where t.[FileName] is null

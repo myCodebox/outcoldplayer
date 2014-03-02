@@ -12,8 +12,6 @@ namespace OutcoldSolutions.GoogleMusic.Web
     using System.Text;
     using System.Threading.Tasks;
 
-    using Newtonsoft.Json;
-
     using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services;
@@ -33,7 +31,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
         Task<GoogleMusicSongUrl> GetSongUrlAsync(Song song);
 
-        Task<bool> RecordPlayingAsync(string songId, string playlistId, bool updateRecentAlbum, bool updateRecentPlaylist, int playCount);
+        Task<GoogleMusicTrackStatResponse> SendStatsAsync(IList<Song> songs);
 
         Task<GoogleMusicSongMutateResponse> UpdateRatingsAsync(IDictionary<Song, int> ratings);
     }
@@ -47,12 +45,13 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
         private const string SongUrlFormat = "play?songid={0}&pt=e&dt=pe&targetkbps=320&start=0";
         private const string SongUrlFromStoreFormat = "play?mjck={0}&slt={1}&sig={2}&pt=e&dt=pe&targetkbps=320&start=0";
-        private const string RecordPlayingUrl = "services/recordplaying";
+
+        private const string TrackStats = "trackstats";
         private const string TrackBatch = "trackbatch";
         
         private const string GetStatusUrl = "services/getstatus";
 
-        private const string StreamingLoadAllTracks = "trackfeed?art-dimension=512";
+        private const string TrackFeed = "trackfeed?art-dimension=512";
 
         private readonly IGoogleMusicWebService googleMusicWebService;
 
@@ -80,7 +79,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
         public Task<IList<GoogleMusicSong>> GetAllAsync(DateTime? lastUpdate, IProgress<int> progress, Func<IList<GoogleMusicSong>, Task> chunkHandler = null)
         {
-            return this.googleMusicApisService.DownloadList(StreamingLoadAllTracks, lastUpdate, progress, chunkHandler);
+            return this.googleMusicApisService.DownloadList(TrackFeed, lastUpdate, progress, chunkHandler);
         }
 
         public async Task<GoogleMusicSongUrl> GetSongUrlAsync(Song song)
@@ -127,20 +126,22 @@ namespace OutcoldSolutions.GoogleMusic.Web
             return await this.GetSongUrlInternalAsync(song, forceSwitch: false);
         }
 
-        public async Task<bool> RecordPlayingAsync(string songId, string playlistId, bool updateRecentAlbum, bool updateRecentPlaylist, int playCount)
+        public async Task<GoogleMusicTrackStatResponse> SendStatsAsync(IList<Song> songs)
         {
-            var jsonProperties = new Dictionary<string, string>
-                                     {
-                                         { "songId", JsonConvert.ToString(songId) },
-                                         { "playCount", JsonConvert.ToString(playCount) },
-                                         { "updateRecentAlbum", JsonConvert.ToString(updateRecentAlbum) },
-                                         { "updateRecentPlaylist", JsonConvert.ToString(updateRecentPlaylist) },
-                                         { "playlistId", JsonConvert.ToString(playlistId) }
-                                     };
+            var json = new
+                       {
+                           track_stats = songs.Select(
+                               x =>
+                               new 
+                               {
+                                   id = x.SongId,
+                                   incremental_plays = x.StatsPlayCount,
+                                   last_play_time_millis = ((long)x.StatsRecent.ToUnixFileTime() * 1000L).ToString("G"),
+                                   type = x.TrackType == StreamType.EphemeralSubscription ? 2 : 1
+                               })
+                       };
 
-            var response = await this.googleMusicWebService.PostAsync<CommonResponse>(RecordPlayingUrl, jsonProperties: jsonProperties);
-
-            return response.Success.HasValue && response.Success.Value;
+            return await this.googleMusicApisService.PostAsync<GoogleMusicTrackStatResponse>(TrackStats, json);
         }
 
         public async Task<GoogleMusicSongMutateResponse> UpdateRatingsAsync(IDictionary<Song, int> ratings)

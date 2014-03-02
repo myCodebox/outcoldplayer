@@ -94,11 +94,14 @@ namespace OutcoldSolutions.GoogleMusic.Converters
             catch (FileNotFoundException e)
             {
                 this.logger.Value.Debug(e, "File was removed.");
+                this.logger.Value.LogTask(this.cacheService.Value.DeleteBrokenLinkAsync(uri, size));
             }
             catch (Exception e)
             {
                 this.logger.Value.Error(e, "Exception while tried to load album art with GetImageAsync.");
             }
+
+
         }
     }
 }

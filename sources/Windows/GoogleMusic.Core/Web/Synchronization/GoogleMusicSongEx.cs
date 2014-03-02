@@ -37,12 +37,12 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
             song.TotalDiscs = googleMusicSong.TotalDiscCount;
             song.Duration = TimeSpan.FromMilliseconds(googleMusicSong.DurationMillis);
             song.SongId = string.IsNullOrEmpty(googleMusicSong.Id) ? googleMusicSong.Nid : googleMusicSong.Id;
-            song.Recent = DateTimeExtensions.FromUnixFileTime(googleMusicSong.RecentTimestamp / 1000);
+            song.ServerRecent = DateTimeExtensions.FromUnixFileTime(googleMusicSong.RecentTimestamp / 1000);
             song.CreationDate = DateTimeExtensions.FromUnixFileTime(googleMusicSong.CreationTimestamp / 1000);
             song.LastModified = DateTimeExtensions.FromUnixFileTime(googleMusicSong.LastModifiedTimestamp / 1000);
             song.BeatsPerMinute = googleMusicSong.BeatsPerMinute;
             song.EstimatedSize = googleMusicSong.EstimatedSize;
-            song.PlayCount = googleMusicSong.PlayCount;
+            song.ServerPlayCount = googleMusicSong.PlayCount;
             song.Rating = (byte)(googleMusicSong.Rating < 0 ? 0 : googleMusicSong.Rating);
             song.Title = (googleMusicSong.Title ?? string.Empty).Trim();
             song.TitleNorm = (googleMusicSong.Title ?? string.Empty).Trim().Normalize();
@@ -63,6 +63,8 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
                 : string.Empty;
             song.Nid = googleMusicSong.Nid;
             song.IsLibrary = true;
+            song.Recent = song.ServerRecent > song.StatsRecent ? song.ServerRecent : song.StatsRecent;
+            song.PlayCount = Math.Max(song.ServerPlayCount, song.PlayCount);
         }
 
         public static bool IsVisualMatch(GoogleMusicSong googleMusicSong, Song song)

@@ -97,6 +97,28 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
 
             await progress.SafeReportAsync(0.05d);
 
+            // If this is not an initial load - let's send statistics first
+            if (libraryFreshnessDate.HasValue)
+            {
+                var songsForStat = await this.songsRepository.GetSongsForStatUpdateAsync();
+
+                if (songsForStat.Count > 0)
+                {
+                    var result = await this.songsWebService.SendStatsAsync(songsForStat);
+                    foreach (var response in result.Responses)
+                    {
+                        if (string.Equals(response.ResponseCode, "OK", StringComparison.OrdinalIgnoreCase))
+                        {
+                            var song =
+                                songsForStat.FirstOrDefault(
+                                    x => string.Equals(x.SongId, response.Id, StringComparison.OrdinalIgnoreCase));
+
+                            await this.songsRepository.ResetStatsAsync(song);
+                        }
+                    }
+                }
+            }
+
             await this.songsWebService.GetAllAsync(
                 libraryFreshnessDate,
                 subProgress,

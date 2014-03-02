@@ -42,7 +42,7 @@
                         <Paragraph>[+] Add support for "I'm feeling lucky radio/mix".</Paragraph>
                         <Paragraph>[+] For users without All Access mode show Instant Mixes instead of Radio.</Paragraph>
                         <Paragraph>[+] Add ability to create radio from Artists and Albums.</Paragraph>
-                        <Paragraph>[b] Hide "Radio Stations" from not subscribed to All Access users.</Paragraph>
+                        <Paragraph>[+] Improved song statistics syncronization (Play Count, Last Played).</Paragraph>
                     </RichTextBlock>
                     
                     <TextBlock Style="{StaticResource TitleTextStyle}" Margin="0, 10, 0, 0" >

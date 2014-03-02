@@ -42,10 +42,8 @@ namespace OutcoldSolutions.GoogleMusic.Models
 
         public Uri ArtistArtUrl { get; set; }
 
-        [Indexed]
-        public DateTime Recent { get; set; }
+        public DateTime ServerRecent { get; set; }
 
-        [Indexed]
         public DateTime CreationDate { get; set; }
 
         public string Comment { get; set; }
@@ -100,5 +98,17 @@ namespace OutcoldSolutions.GoogleMusic.Models
         public bool AlbumAvailableForPurchase { get; set; }
 
         public string Nid { get; set; }
+
+        // Statistics
+
+        [Indexed]
+        public uint StatsPlayCount { get; set; }
+
+        public DateTime StatsRecent { get; set; }
+
+        [Indexed]
+        public DateTime Recent { get; set; }
+
+        public uint ServerPlayCount { get; set; }
     }
 }

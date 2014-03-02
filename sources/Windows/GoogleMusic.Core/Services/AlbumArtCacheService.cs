@@ -105,6 +105,11 @@ namespace OutcoldSolutions.GoogleMusic.Services
             return Path.Combine(AlbumArtCacheFolder, cache.FileName.Substring(0, 1), cache.FileName);
         }
 
+        public Task DeleteBrokenLinkAsync(Uri url, uint size)
+        {
+            return this.cachedAlbumArtsRepository.DeleteBrokenLinkAsync(url, size);
+        }
+
         public async Task<StorageFolder> GetCacheFolderAsync()
         {
             await this.InitializeCacheFolderAsync();
