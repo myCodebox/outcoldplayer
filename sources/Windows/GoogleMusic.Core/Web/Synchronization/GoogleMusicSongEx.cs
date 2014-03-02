@@ -12,7 +12,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
     {
         public static Song ToSong(this GoogleMusicSong googleMusicSong)
         {
-            var song = new Song();
+            var song = new Song { IsLibrary = true };
 
             Mapper(googleMusicSong, song);
 
@@ -62,7 +62,6 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
                 ? googleMusicSong.ArtistId[0]
                 : string.Empty;
             song.Nid = googleMusicSong.Nid;
-            song.IsLibrary = true;
             song.Recent = song.ServerRecent > song.StatsRecent ? song.ServerRecent : song.StatsRecent;
             song.PlayCount = Math.Max(song.ServerPlayCount, song.PlayCount);
         }
