@@ -12,9 +12,14 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
         public RepositoryBase()
         {
             this.dbContext = new DbContext();
-            this.Connection = this.dbContext.CreateConnection();
         }
 
-        protected SQLiteAsyncConnection Connection { get; private set; }
+        protected SQLiteAsyncConnection Connection
+        {
+            get
+            {
+                return this.dbContext.CreateConnection();
+            }
+        }
     }
 }

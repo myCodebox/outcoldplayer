@@ -36,7 +36,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
             song.Disc = googleMusicSong.DiscNumber;
             song.TotalDiscs = googleMusicSong.TotalDiscCount;
             song.Duration = TimeSpan.FromMilliseconds(googleMusicSong.DurationMillis);
-            song.SongId = string.IsNullOrEmpty(googleMusicSong.Id) ? googleMusicSong.Nid : googleMusicSong.Id;
+            song.SongId = string.IsNullOrEmpty(googleMusicSong.Id) ? googleMusicSong.StoreId : googleMusicSong.Id;
             song.ServerRecent = DateTimeExtensions.FromUnixFileTime(googleMusicSong.RecentTimestamp / 1000);
             song.CreationDate = DateTimeExtensions.FromUnixFileTime(googleMusicSong.CreationTimestamp / 1000);
             song.LastModified = DateTimeExtensions.FromUnixFileTime(googleMusicSong.LastModifiedTimestamp / 1000);

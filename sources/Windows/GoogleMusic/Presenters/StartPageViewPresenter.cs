@@ -116,7 +116,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 .Subscribe(async (e) =>
                 {
                     await this.DeinitializeAsync();
-                    this.ShowProgressLoadingPopupView(forceToRefreshDb: true);
+                    this.ShowProgressLoadingPopupView();
                 });
         }
 
@@ -136,15 +136,16 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             if (result != null && result.Succeed)
             {
                 var currentVersion = this.settingsService.GetValue<string>("Version", null);
+                var dbContext = new DbContext();
                 bool fCurrentVersion = string.Equals(currentVersion, Package.Current.Id.Version.ToVersionString(), StringComparison.OrdinalIgnoreCase);
 
-                if (fCurrentVersion)
+                if (fCurrentVersion && await dbContext.CheckVersionAsync())
                 {
                     await this.OnViewInitializedAsync();
                 }
                 else
                 {
-                    this.ShowProgressLoadingPopupView(forceToRefreshDb: false);
+                    this.ShowProgressLoadingPopupView();
                 }
             }
             else
@@ -165,15 +166,15 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private void AuthentificationPopupView_Closed(object sender, EventArgs eventArgs)
         {
             ((IAuthentificationPopupView)sender).Closed -= this.AuthentificationPopupView_Closed;
-            this.ShowProgressLoadingPopupView(forceToRefreshDb: true);
+            this.ShowProgressLoadingPopupView();
         }
 
-        private void ShowProgressLoadingPopupView(bool forceToRefreshDb)
+        private void ShowProgressLoadingPopupView()
         {
             this.Dispatcher.RunAsync(
                 () =>
                     {
-                        this.MainFrame.ShowPopup<IProgressLoadingPopupView>(PopupRegion.Full, new ProgressLoadingPopupViewRequest(forceToRefreshDb)).Closed += this.ProgressLoadingPopupView_Closed;
+                        this.MainFrame.ShowPopup<IProgressLoadingPopupView>(PopupRegion.Full).Closed += this.ProgressLoadingPopupView_Closed;
                     });
         }
 

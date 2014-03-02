@@ -7,7 +7,6 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
     using System.Threading.Tasks;
 
     using OutcoldSolutions.Diagnostics;
-    using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Services;
 
@@ -72,23 +71,6 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
                 
                 throw exception;
             }
-        }
-
-        private async Task ClearLocalDatabaseAsync()
-        {
-            await this.dbContext.CreateConnection().RunInTransactionAsync(
-                c =>
-                {
-                    c.DeleteAll<UserPlaylist>();
-                    c.DeleteAll<UserPlaylistEntry>();
-                    c.DeleteAll<Album>();
-                    c.DeleteAll<Artist>();
-                    c.DeleteAll<Genre>();
-                    c.DeleteAll<Song>();
-                    c.DeleteAll<CachedSong>();
-                    c.DeleteAll<CachedAlbumArt>();
-                    c.DeleteAll<Radio>();
-                });
         }
     }
 }

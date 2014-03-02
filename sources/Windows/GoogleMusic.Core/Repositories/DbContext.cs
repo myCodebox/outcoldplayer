@@ -32,7 +32,9 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
 
             if (Path.IsPathRooted(dbFileName))
             {
-                throw new ArgumentException("Path to database cannot be rooted. It should be relative path to base (local) folder.", "dbFileName");
+                throw new ArgumentException(
+                    "Path to database cannot be rooted. It should be relative path to base (local) folder.",
+                    "dbFileName");
             }
             else
             {
@@ -40,23 +42,14 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
             }
         }
 
-        public enum DatabaseStatus
-        {
-            Unknown = 0,
-            New = 1,
-            Updated = 2,
-            Existed = 3
-        }
-
         public SQLiteAsyncConnection CreateConnection()
         {
             return new SQLiteAsyncConnection(this.GetDatabaseFilePath(), openFlags: SQLiteOpenFlags.Create | SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.SharedCache | SQLiteOpenFlags.NoMutex, storeDateTimeAsTicks: true);
         }
 
-        public async Task<DatabaseUpdateInformation> InitializeAsync(bool forceToUpdate)
+        public async Task<bool> CheckVersionAsync()
         {
             bool fDbExists = false;
-
 #if NETFX_CORE
             fDbExists = (await ApplicationData.Current.LocalFolder.GetFilesAsync())
                 .Any(f => string.Equals(f.Name, this.dbFileName));
@@ -65,61 +58,59 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
 #endif
             SQLite3.Config(SQLite3.ConfigOption.MultiThread);
 
-            int currentVersion = -1;
+            if (fDbExists)
+            {
+                SQLiteAsyncConnection connection = this.CreateConnection();
+                int currentVersion = await connection.ExecuteScalarAsync<int>("PRAGMA user_version");
+
+                if (currentVersion == CurrentDatabaseVersion)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public async Task InitializeAsync()
+        {
+            bool fDbExists = false;
+
+#if NETFX_CORE
+            fDbExists = (await ApplicationData.Current.LocalFolder.GetFilesAsync())
+                .Any(f => string.Equals(f.Name, this.dbFileName));
+#else
+            fDbExists = File.Exists(this.GetDatabaseFilePath());
+#endif   
 
             SQLiteAsyncConnection connection = null;
-
             if (fDbExists)
             {
                 connection = this.CreateConnection();
-                currentVersion = await connection.ExecuteScalarAsync<int>("PRAGMA user_version");
-
-                if (currentVersion == CurrentDatabaseVersion && !forceToUpdate)
-                {
-                    return new DatabaseUpdateInformation(CurrentDatabaseVersion, DatabaseStatus.Existed);
-                }
-            }
-
-            bool versionUpdated = false;
-
-            if ((currentVersion >= 2 && currentVersion < CurrentDatabaseVersion)
-                && !forceToUpdate)
-            {
-                await this.DropAllTriggersAsync(connection);
-
-                if (currentVersion != CurrentDatabaseVersion)
-                {
-                    forceToUpdate = true;
-                }
-
-                versionUpdated = true;
-            }
-
-            if (!versionUpdated || forceToUpdate)
-            {
-                currentVersion = -1;
-
                 if (connection != null)
                 {
                     connection.Close();
                     await this.DeleteDatabaseAsync();
                 }
-
-                connection = this.CreateConnection();
-                await this.CreateBasicObjectsAsync(connection);
             }
 
-            if (connection != null)
-            {
-                await this.CreateTriggersAsync(connection);
-                await connection.ExecuteAsync(string.Format(CultureInfo.InvariantCulture, "PRAGMA user_version = {0} ;", CurrentDatabaseVersion));
-            }
+            connection = this.CreateConnection();
+            SQLite3.Config(SQLite3.ConfigOption.MultiThread);
 
-            return new DatabaseUpdateInformation(currentVersion, currentVersion == -1 ? DatabaseStatus.New : DatabaseStatus.Updated);
+            await this.CreateBasicObjectsAsync(connection);
+
+            await this.CreateTriggersAsync(connection);
+            await connection.ExecuteAsync(string.Format(CultureInfo.InvariantCulture, "PRAGMA user_version = {0} ;", CurrentDatabaseVersion));
         }
 
         public async Task DeleteDatabaseAsync()
         {
+            var connection = this.CreateConnection();
+            if (connection != null)
+            {
+                connection.Close();
+            }
+
 #if NETFX_CORE
             var dbFile = (await ApplicationData.Current.LocalFolder.GetFilesAsync())
                 .FirstOrDefault(f => string.Equals(f.Name, this.dbFileName));
@@ -715,19 +706,6 @@ CREATE TRIGGER update_song_parenttitlesupdate AFTER UPDATE OF [AlbumTitleNorm], 
         {
             [Column("name")]
             public string Name { get; set; }
-        }
-
-        public class DatabaseUpdateInformation
-        {
-            public DatabaseUpdateInformation(int dbVersion, DatabaseStatus databaseStatus)
-            {
-                this.PreviousVersion = dbVersion;
-                this.Status = databaseStatus;
-            }
-
-            public int PreviousVersion { get; private set; }
-
-            public DatabaseStatus Status { get; private set; }
         }
     }
 }

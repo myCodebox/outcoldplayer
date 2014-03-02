@@ -67,7 +67,10 @@ from CachedAlbumArt c
         public async Task DeleteBrokenLinkAsync(Uri url, uint size)
         {
             var brokenCache = await this.FindAsync(url, size);
-            await this.Connection.DeleteAsync(brokenCache);
+            if (brokenCache != null)
+            {
+                await this.Connection.DeleteAsync(brokenCache);
+            }
         }
     }
 }

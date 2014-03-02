@@ -33,15 +33,23 @@ namespace OutcoldSolutions.GoogleMusic.Shell
 
         ~MediaControlIntegration()
         {
-            this.Dispose();
+            this.Dispose(disposing: false);
         }
 
         public void Dispose()
         {
-            this.ChangeSubscriptionToMediaControl(subscribe: false);
-            this.ChangeSubscriptionToNextTrackMediaControl(subscribe: false);
-            this.ChangeSubscriptionToPreviousTrackMediaControl(subscribe: false);
+            this.Dispose(disposing: true);
             GC.SuppressFinalize(this);
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                this.ChangeSubscriptionToMediaControl(subscribe: false);
+                this.ChangeSubscriptionToNextTrackMediaControl(subscribe: false);
+                this.ChangeSubscriptionToPreviousTrackMediaControl(subscribe: false);
+            }
         }
 
         private void StateChanged(object sender, StateChangedEventArgs eventArgs)

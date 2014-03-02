@@ -282,15 +282,12 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
 
                         if (entry.Track != null)
                         {
-                            Song currentSong = entry.Track.ToSong();
-                            if (libraryFreshnessDate.HasValue)
-                            {
-                                currentSong = await this.songsRepository.FindSongAsync(currentSong.SongId);
-                            }
+                            var serverSong = entry.Track.ToSong();
+                            Song currentSong = await this.songsRepository.FindSongAsync(serverSong.SongId);
                             
                             if (currentSong != null)
                             {
-                                if (!songsToUpdate.ContainsKey(currentSong.SongId))
+                                if (!songsToUpdate.ContainsKey(currentSong.SongId) && libraryFreshnessDate.HasValue)
                                 {
                                     GoogleMusicSongEx.Mapper(entry.Track, currentSong);
                                     songsToUpdate.Add(currentSong.SongId, currentSong);
@@ -298,7 +295,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
                             }
                             else
                             {
-                                currentSong = entry.Track.ToSong();
+                                currentSong = serverSong;
                                 if (!songsToInsert.ContainsKey(currentSong.SongId))
                                 {
                                     currentSong.IsLibrary = false;

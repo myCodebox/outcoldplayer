@@ -35,18 +35,15 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
         private readonly IApplicationResources resources;
         private readonly ISettingsService settingsService;
         private readonly IInitialSynchronization initialSynchronization;
-        private readonly ProgressLoadingPopupViewRequest request;
 
         internal ProgressLoadingPopupViewPresenter(
             IApplicationResources resources,
             ISettingsService settingsService, 
-            IInitialSynchronization initialSynchronization,
-            ProgressLoadingPopupViewRequest request)
+            IInitialSynchronization initialSynchronization)
         {
             this.resources = resources;
             this.settingsService = settingsService;
             this.initialSynchronization = initialSynchronization;
-            this.request = request;
             this.BindingModel = new ProgressLoadingPageViewBindingModel();
 
             this.ReloadSongsCommand = new DelegateCommand(this.LoadSongs, () => this.BindingModel.IsFailed);
@@ -117,30 +114,27 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
         private async Task InitializeRepositoriesAsync()
         {
             DbContext dbContext = new DbContext();
-            var updateInformation = await dbContext.InitializeAsync(this.request.ForceToUpdate);
+            await dbContext.InitializeAsync();
 
-            if (updateInformation.Status == DbContext.DatabaseStatus.New)
-            {
-                await this.Dispatcher.RunAsync(
+            await this.Dispatcher.RunAsync(
                     () =>
                     {
                         this.BindingModel.Progress = 0;
                         this.BindingModel.Message = this.resources.GetString("Loading_LoadingMusicLibrary");
                     });
 
-                Progress<double> progress = new Progress<double>();
-                progress.ProgressChanged += async (sender, i) =>
-                    {
-                        await this.Dispatcher.RunAsync(
-                            CoreDispatcherPriority.High, () => { this.BindingModel.Progress = i; });
-                    };
+            Progress<double> progress = new Progress<double>();
+            progress.ProgressChanged += async (sender, i) =>
+            {
+                await this.Dispatcher.RunAsync(
+                    CoreDispatcherPriority.High, () => { this.BindingModel.Progress = i; });
+            };
 
-                this.settingsService.ResetLibraryFreshness();
+            this.settingsService.ResetLibraryFreshness();
 
-                await this.initialSynchronization.InitializeAsync(progress);
+            await this.initialSynchronization.InitializeAsync(progress);
 
-                await progress.SafeReportAsync(1.0);
-            }
+            await progress.SafeReportAsync(1.0);
         }
 
         private Task ShowErrorInfoAsync()
