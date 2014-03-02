@@ -581,7 +581,7 @@ This setting allows to prevent this when gMusicW application is in foreground (o
     <comment>09.png</comment>
   </data>
   <data name="SettingsUpgrade_AddFreePackageDescription.Text" xml:space="preserve">
-    <value>You can buy for $1.99 AdFree package, which will remove all advertisements (limited offer):</value>
+    <value>You can buy for $4.99 AdFree package, which will remove all advertisements:</value>
     <comment>09.png</comment>
   </data>
   <data name="SettingsUpgrade_RemoveAdsTitle.Text" xml:space="preserve">
@@ -597,7 +597,7 @@ This setting allows to prevent this when gMusicW application is in foreground (o
     <comment>09.png</comment>
   </data>
   <data name="SettingsUpgrade_UltimatePackageDescription.Text" xml:space="preserve">
-    <value>Or you can spend $4.99 for Ultimate package. This package does not offer any additional features now (other than Ad Free package has). 
+    <value>Or you can spend $9.99 for Ultimate package. This package does not offer any additional features now (other than Ad Free package has). 
 But it will contains all additional features, which we will ship in future. For now we can say, that this is a way to support development of our app.</value>
     <comment>09.png</comment>
   </data>
