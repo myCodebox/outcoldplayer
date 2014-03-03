@@ -4,9 +4,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:controls="using:OutcoldSolutions.Controls" 
-    xmlns:controls2="using:OutcoldSolutions.GoogleMusic.Controls"
-    xmlns:views="using:OutcoldSolutions.Views"
+    xmlns:controls="using:OutcoldSolutions.GoogleMusic.Controls"
+    xmlns:views="using:OutcoldSolutions.GoogleMusic.Views"
     mc:Ignorable="d"
     d:DesignHeight="700"
     d:DesignWidth="320">
@@ -33,7 +32,7 @@
                 <Button Margin="20, 20, 0, 0" Height="116" Width="116" Click="CurrentSongButtonClick" VerticalAlignment="Top">
                     <Button.Template>
                         <ControlTemplate>
-                            <controls2:AlbumArtControl Height="116" 
+                            <controls:AlbumArtControl Height="116" 
                                                        Width="116" 
                                                        ImageSize="116" 
                                                        Canvas.ZIndex="1"
@@ -147,7 +146,7 @@
                     </Button.Template>
                 </Button>
 
-                <controls2:Rating x:Name="RatingControl"
+                <controls:Rating x:Name="RatingControl"
                               Grid.Row="1"
                               Grid.Column="1" 
                               HorizontalAlignment="Right" 
@@ -253,7 +252,7 @@
                                 <RowDefinition Height="20" /> 
                             </Grid.RowDefinitions>
 
-                            <controls2:FakeEqualizerControl Grid.Column="0" 
+                            <controls:FakeEqualizerControl Grid.Column="0" 
                                                             Grid.RowSpan="2"
                                                             HorizontalAlignment="Center" 
                                                             VerticalAlignment="Center" 

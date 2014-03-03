@@ -6,7 +6,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
     using System;
     using System.Reflection;
 
-    using OutcoldSolutions.Diagnostics;
+    using OutcoldSolutions.GoogleMusic.Diagnostics;
+    using OutcoldSolutions.GoogleMusic.EventAggregator;
     using OutcoldSolutions.GoogleMusic.Models;
 
     using Windows.Storage;

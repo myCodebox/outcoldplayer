@@ -14,10 +14,9 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
     using Newtonsoft.Json;
 
-    using OutcoldSolutions.Diagnostics;
+    using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Web.Models;
-    using OutcoldSolutions.Web;
 
     public class GoogleMusicApisService : WebServiceBase, IGoogleMusicApisService
     {

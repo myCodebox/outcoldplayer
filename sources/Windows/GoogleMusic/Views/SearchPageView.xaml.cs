@@ -3,10 +3,9 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Views
 {
-    using OutcoldSolutions.Controls;
     using OutcoldSolutions.GoogleMusic.BindingModels;
+    using OutcoldSolutions.GoogleMusic.Controls;
     using OutcoldSolutions.GoogleMusic.Presenters;
-    using OutcoldSolutions.Views;
 
     using Windows.UI.Xaml.Controls;
 

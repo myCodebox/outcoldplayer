@@ -4,8 +4,8 @@
 namespace OutcoldSolutions.GoogleMusic
 {
     using OutcoldSolutions.GoogleMusic.Services;
+    using OutcoldSolutions.GoogleMusic.Shell;
     using OutcoldSolutions.GoogleMusic.Views.Settings;
-    using OutcoldSolutions.Shell;
 
     public static class ApplicationSettingViews
     {

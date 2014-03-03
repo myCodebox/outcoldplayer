@@ -1,17 +1,14 @@
-﻿<outcoldSolutions:ApplicationBase
+﻿<googleMusic:ApplicationBase
     x:Class="OutcoldSolutions.GoogleMusic.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
-    xmlns:outcoldSolutions="using:OutcoldSolutions">
+    xmlns:googleMusic="using:OutcoldSolutions.GoogleMusic">
 
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
 
-                <ResourceDictionary Source="OutcoldSolutions.Presentation/Common/Base.xaml"/>
-                <ResourceDictionary Source="OutcoldSolutions.Presentation/Common/Buttons.xaml"/>
-                <ResourceDictionary Source="OutcoldSolutions.Presentation/Common/Converters.xaml"/>
-
+                <ResourceDictionary Source="Common/Base.xaml"/>
                 <ResourceDictionary Source="Common/StandardStyles.xaml"/>
                 <ResourceDictionary Source="Common/Converters.xaml"/>
                 <ResourceDictionary Source="Common/Buttons.xaml"/>
@@ -21,4 +18,4 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
-</outcoldSolutions:ApplicationBase>
+</googleMusic:ApplicationBase>

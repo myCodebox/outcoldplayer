@@ -5,7 +5,7 @@ namespace OutcoldSolutions.GoogleMusic.Shell
 {
     using System;
 
-    using OutcoldSolutions.Diagnostics;
+    using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Services;
 
     using Windows.Media;

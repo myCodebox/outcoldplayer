@@ -5,7 +5,6 @@
 namespace OutcoldSolutions.GoogleMusic.Views.Popups
 {
     using OutcoldSolutions.GoogleMusic.Presenters.Popups;
-    using OutcoldSolutions.Views;
 
     using Windows.UI.Xaml.Controls;
 

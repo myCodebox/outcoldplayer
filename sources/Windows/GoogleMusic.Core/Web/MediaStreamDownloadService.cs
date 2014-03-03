@@ -12,11 +12,11 @@ namespace OutcoldSolutions.GoogleMusic.Web
     using System.Threading;
     using System.Threading.Tasks;
 
-    using OutcoldSolutions.Diagnostics;
-
     using Windows.Foundation;
     using Windows.Storage;
     using Windows.Storage.Streams;
+
+    using OutcoldSolutions.GoogleMusic.Diagnostics;
 
     public class MediaStreamDownloadService : IMediaStreamDownloadService
     {

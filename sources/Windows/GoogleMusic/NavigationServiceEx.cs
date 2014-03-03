@@ -7,7 +7,6 @@ namespace OutcoldSolutions.GoogleMusic
 
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Views;
-    using OutcoldSolutions.Views;
 
     public static class NavigationServiceEx 
     {

@@ -9,7 +9,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views.Popups;
-    using OutcoldSolutions.Presenters;
 
     public class QueueActionsPopupViewPresenter : ViewPresenterBase<IQueueActionsPopupView>
     {

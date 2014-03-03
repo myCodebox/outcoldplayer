@@ -7,14 +7,13 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
     using System.Net;
     using System.Threading.Tasks;
 
-    using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.BindingModels;
+    using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views.Popups;
     using OutcoldSolutions.GoogleMusic.Web;
     using OutcoldSolutions.GoogleMusic.Web.Synchronization;
-    using OutcoldSolutions.Presenters;
 
     using Windows.System;
     using Windows.UI.Core;

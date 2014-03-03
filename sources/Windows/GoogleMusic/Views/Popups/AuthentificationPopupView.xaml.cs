@@ -3,8 +3,6 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Views.Popups
 {
-    using OutcoldSolutions.Views;
-
     public interface IAuthentificationPopupView : IPopupView
     {
     }

@@ -7,12 +7,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
     using System;
     using System.Globalization;
 
-    using OutcoldSolutions.Diagnostics;
+    using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Shell;
     using OutcoldSolutions.GoogleMusic.Views.Popups;
-    using OutcoldSolutions.Presenters;
 
     public interface IPlaylistEditPopupViewPresenter
     {

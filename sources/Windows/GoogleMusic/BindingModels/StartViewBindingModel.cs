@@ -6,8 +6,6 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
 
-    using OutcoldSolutions.BindingModels;
-
     public class StartViewBindingModel : BindingModelBase
     {
         private readonly ObservableCollection<PlaylistBindingModel> selectedItems;

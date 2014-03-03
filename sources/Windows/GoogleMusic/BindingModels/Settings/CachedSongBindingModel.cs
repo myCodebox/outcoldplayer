@@ -3,7 +3,6 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.BindingModels.Settings
 {
-    using OutcoldSolutions.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
 
     public class CachedSongBindingModel : BindingModelBase

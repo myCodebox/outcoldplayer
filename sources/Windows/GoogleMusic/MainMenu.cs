@@ -8,10 +8,10 @@ namespace OutcoldSolutions.GoogleMusic
     using System.Collections.Generic;
     using System.Reactive.Linq;
 
+    using OutcoldSolutions.GoogleMusic.EventAggregator;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
-    using OutcoldSolutions.Views;
 
     public static class MainMenu
     {

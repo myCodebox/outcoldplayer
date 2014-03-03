@@ -6,7 +6,6 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
 
-    using OutcoldSolutions.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
 
     public class ArtistPageViewBindingModel : BindingModelBase

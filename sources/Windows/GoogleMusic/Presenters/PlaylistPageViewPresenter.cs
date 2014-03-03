@@ -7,6 +7,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using System.Collections.Generic;
     using System.Linq;
 
+    using OutcoldSolutions.GoogleMusic.InversionOfControl;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;

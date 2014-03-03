@@ -8,7 +8,7 @@ namespace OutcoldSolutions.GoogleMusic.Converters
     using System.IO;
     using System.Net;
 
-    using OutcoldSolutions.Diagnostics;
+    using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services;
 

@@ -5,12 +5,13 @@ namespace OutcoldSolutions.GoogleMusic.Services
 {
     using Microsoft.Advertising.WinRT.UI;
 
-    using OutcoldSolutions.Diagnostics;
-    using OutcoldSolutions.Shell;
-    using OutcoldSolutions.Views;
+    using OutcoldSolutions.GoogleMusic.Diagnostics;
+    using OutcoldSolutions.GoogleMusic.Shell;
 
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
+
+    using OutcoldSolutions.GoogleMusic.Views;
 
     public class RightRegionControlService 
     {

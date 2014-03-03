@@ -6,7 +6,6 @@ namespace OutcoldSolutions.GoogleMusic.Views.Settings
     using System;
 
     using OutcoldSolutions.GoogleMusic.BindingModels.Settings;
-    using OutcoldSolutions.Views;
 
     using Windows.Storage;
     using Windows.System;

@@ -10,8 +10,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Shell;
     using OutcoldSolutions.GoogleMusic.Views;
-    using OutcoldSolutions.Presenters;
-    using OutcoldSolutions.Views;
 
     public abstract class PlayerViewPresenterBase<TPlayerBindingModel, TView> : ViewPresenterBase<TView>
         where TPlayerBindingModel : PlayerBindingModel

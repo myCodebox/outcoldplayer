@@ -5,7 +5,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
 {
     using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Presenters;
-    using OutcoldSolutions.Views;
 
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Input;

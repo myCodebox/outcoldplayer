@@ -3,8 +3,6 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.BindingModels.Settings
 {
-    using OutcoldSolutions.BindingModels;
-
     public class AccountViewBindingModel : BindingModelBase
     {
         private string accountName;

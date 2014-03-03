@@ -10,8 +10,6 @@ namespace OutcoldSolutions.GoogleMusic.Diagnostics
 
     using BugSense.Core.Model;
 
-    using OutcoldSolutions.Diagnostics;
-
     using Windows.UI.Core;
 
     public class BugSenseLogWriter : ILogWriter

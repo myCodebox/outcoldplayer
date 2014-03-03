@@ -5,6 +5,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
 {
     using System;
 
+    using OutcoldSolutions.GoogleMusic.EventAggregator;
+
     public enum ApplicationState
     {
         Unknown = 0,

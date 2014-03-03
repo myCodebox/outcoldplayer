@@ -3,11 +3,10 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
 {
-    using OutcoldSolutions.Diagnostics;
+    using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Services;
-    using OutcoldSolutions.Presenters;
-    using OutcoldSolutions.Shell;
-    using OutcoldSolutions.Views;
+    using OutcoldSolutions.GoogleMusic.Shell;
+    using OutcoldSolutions.GoogleMusic.Views;
 
     public class UpgradeViewPresenter : ViewPresenterBase<IView>
     {

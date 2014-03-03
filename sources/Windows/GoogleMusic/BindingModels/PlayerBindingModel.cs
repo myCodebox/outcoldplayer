@@ -3,7 +3,6 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.BindingModels
 {
-    using OutcoldSolutions.BindingModels;
     using OutcoldSolutions.GoogleMusic.Services;
 
     public class PlayerBindingModel : BindingModelBase

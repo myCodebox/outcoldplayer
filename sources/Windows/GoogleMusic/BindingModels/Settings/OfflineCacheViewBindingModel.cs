@@ -6,7 +6,6 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels.Settings
     using System.Collections.ObjectModel;
     using System.Collections.Specialized;
 
-    using OutcoldSolutions.BindingModels;
     using OutcoldSolutions.GoogleMusic.Services;
 
     public class OfflineCacheViewBindingModel : BindingModelBase

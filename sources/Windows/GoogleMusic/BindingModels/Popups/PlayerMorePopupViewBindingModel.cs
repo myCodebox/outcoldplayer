@@ -6,7 +6,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels.Popups
 {
     using System;
 
-    using OutcoldSolutions.BindingModels;
+    using OutcoldSolutions.GoogleMusic.EventAggregator;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Shell;

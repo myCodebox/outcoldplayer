@@ -12,13 +12,12 @@ namespace OutcoldSolutions.GoogleMusic.Web.Lastfm
     using System.Text;
     using System.Threading.Tasks;
 
-    using OutcoldSolutions.Diagnostics;
-    using OutcoldSolutions.Web;
-
     using Windows.Security.Credentials;
     using Windows.Security.Cryptography;
     using Windows.Security.Cryptography.Core;
     using Windows.Storage.Streams;
+
+    using OutcoldSolutions.GoogleMusic.Diagnostics;
 
     public class LastfmWebService : WebServiceBase, ILastfmWebService
     {

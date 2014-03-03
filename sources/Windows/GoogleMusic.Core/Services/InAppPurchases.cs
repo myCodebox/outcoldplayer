@@ -8,11 +8,11 @@ namespace OutcoldSolutions.GoogleMusic.Services
     using System.Linq;
     using System.Threading.Tasks;
 
-    using OutcoldSolutions.Diagnostics;
-
     using Windows.ApplicationModel;
     using Windows.ApplicationModel.Store;
     using Windows.Storage;
+
+    using OutcoldSolutions.GoogleMusic.Diagnostics;
 
     [Flags]
     public enum GoogleMusicFeatures

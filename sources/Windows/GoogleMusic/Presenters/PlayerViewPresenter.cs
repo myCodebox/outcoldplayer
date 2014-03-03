@@ -8,7 +8,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using OutcoldSolutions.GoogleMusic.Shell;
     using OutcoldSolutions.GoogleMusic.Views;
     using OutcoldSolutions.GoogleMusic.Views.Popups;
-    using OutcoldSolutions.Views;
 
     public class PlayerViewPresenter : PlayerViewPresenterBase<PlayerBindingModel, IPlayerView> 
     {

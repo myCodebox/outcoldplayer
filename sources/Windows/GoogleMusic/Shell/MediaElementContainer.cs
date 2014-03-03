@@ -6,7 +6,7 @@ namespace OutcoldSolutions.GoogleMusic.Shell
     using System;
     using System.Threading.Tasks;
 
-    using OutcoldSolutions.Diagnostics;
+    using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Services;
 
     using Windows.Storage.Streams;

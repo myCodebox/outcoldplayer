@@ -4,8 +4,7 @@
 namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
 {
     using OutcoldSolutions.GoogleMusic.Services;
-    using OutcoldSolutions.Presenters;
-    using OutcoldSolutions.Views;
+    using OutcoldSolutions.GoogleMusic.Views;
 
     public class AppSettingsViewPresenter : ViewPresenterBase<IView>
     {

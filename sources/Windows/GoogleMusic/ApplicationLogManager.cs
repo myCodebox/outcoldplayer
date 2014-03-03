@@ -9,8 +9,8 @@ namespace OutcoldSolutions.GoogleMusic
     using System.Reactive.Linq;
     using System.Threading.Tasks;
 
-    using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Diagnostics;
+    using OutcoldSolutions.GoogleMusic.EventAggregator;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services;
 

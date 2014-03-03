@@ -17,7 +17,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using Windows.UI.Popups;
 
     using OutcoldSolutions.GoogleMusic.Views.Popups;
-    using OutcoldSolutions.Views;
 
     public class RadioPageViewPresenter : PlaylistsPageViewPresenterBase<IRadioPageView, PlaylistsPageViewBindingModel>
     {

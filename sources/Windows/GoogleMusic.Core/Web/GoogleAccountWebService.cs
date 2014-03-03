@@ -10,9 +10,8 @@ namespace OutcoldSolutions.GoogleMusic.Web
     using System.Text;
     using System.Threading.Tasks;
 
-    using OutcoldSolutions.Diagnostics;
+    using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Web.Models;
-    using OutcoldSolutions.Web;
 
     public class GoogleAccountWebService : WebServiceBase, IGoogleAccountWebService
     {

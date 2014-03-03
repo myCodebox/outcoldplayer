@@ -10,7 +10,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
     using System.Linq;
     using System.Reactive.Linq;
 
-    using OutcoldSolutions.BindingModels;
+    using OutcoldSolutions.GoogleMusic.EventAggregator;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services;
 

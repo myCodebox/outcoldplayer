@@ -10,12 +10,11 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
     using Microsoft.Advertising.WinRT.UI;
 
-    using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Controls;
+    using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Presenters;
     using OutcoldSolutions.GoogleMusic.Services;
-    using OutcoldSolutions.Views;
 
     using Windows.UI.Core;
     using Windows.UI.Xaml;

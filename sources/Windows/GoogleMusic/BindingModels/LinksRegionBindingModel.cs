@@ -4,8 +4,6 @@
 
 namespace OutcoldSolutions.GoogleMusic.BindingModels
 {
-    using OutcoldSolutions.BindingModels;
-
     public class LinksRegionBindingModel : BindingModelBase 
     {
         private bool showProgressRing;

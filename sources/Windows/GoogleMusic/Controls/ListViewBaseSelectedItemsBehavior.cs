@@ -10,13 +10,13 @@ namespace OutcoldSolutions.GoogleMusic.Controls
     using System.Linq;
     using System.Threading.Tasks;
 
-    using OutcoldSolutions.Diagnostics;
-
     using Windows.UI.Core;
     using Windows.UI.Interactivity;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Data;
+
+    using OutcoldSolutions.GoogleMusic.Diagnostics;
 
     public class ListViewBaseSelectedItemsBehavior : Behavior<ListViewBase>
     {

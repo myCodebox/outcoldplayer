@@ -5,6 +5,8 @@
 namespace OutcoldSolutions.GoogleMusic
 {
     using System;
+
+    using OutcoldSolutions.GoogleMusic.EventAggregator;
     using OutcoldSolutions.GoogleMusic.Services;
 
     internal class ApplicationStateChangeHandler

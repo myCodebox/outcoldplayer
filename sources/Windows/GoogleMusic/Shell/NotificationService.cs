@@ -6,9 +6,9 @@ namespace OutcoldSolutions.GoogleMusic.Shell
     using System;
     using System.Threading.Tasks;
 
-    using OutcoldSolutions.Diagnostics;
-
     using Windows.UI.Popups;
+
+    using OutcoldSolutions.GoogleMusic.Diagnostics;
 
     public class NotificationService : INotificationService
     {

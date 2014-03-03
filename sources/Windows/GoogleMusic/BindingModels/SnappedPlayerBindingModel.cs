@@ -5,6 +5,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 {
     using System;
 
+    using OutcoldSolutions.GoogleMusic.EventAggregator;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Shell;

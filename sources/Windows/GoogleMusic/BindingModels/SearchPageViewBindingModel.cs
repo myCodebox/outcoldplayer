@@ -5,8 +5,6 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 {
     using System.Collections.Generic;
 
-    using OutcoldSolutions.BindingModels;
-
     public class SearchPageViewBindingModel : BindingModelBase
     {
         private List<SearchGroupBindingModel> groups;

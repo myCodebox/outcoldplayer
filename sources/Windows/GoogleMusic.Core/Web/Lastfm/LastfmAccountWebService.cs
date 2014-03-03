@@ -9,8 +9,6 @@ namespace OutcoldSolutions.GoogleMusic.Web.Lastfm
     using System.Net.Http;
     using System.Threading.Tasks;
 
-    using OutcoldSolutions.Web;
-
     public class LastfmAccountWebService : ILastfmAccountWebService
     {
         private readonly ILastfmWebService webService;

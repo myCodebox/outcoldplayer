@@ -7,11 +7,10 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Services.Publishers;
+    using OutcoldSolutions.GoogleMusic.Shell;
+    using OutcoldSolutions.GoogleMusic.Views;
     using OutcoldSolutions.GoogleMusic.Views.Popups;
     using OutcoldSolutions.GoogleMusic.Web.Lastfm;
-    using OutcoldSolutions.Presenters;
-    using OutcoldSolutions.Shell;
-    using OutcoldSolutions.Views;
 
     public class AccountsViewPresenter : ViewPresenterBase<IView>
     {

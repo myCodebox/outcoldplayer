@@ -3,7 +3,19 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:converters="using:OutcoldSolutions.GoogleMusic.Converters">
 
-    <converters:StringFormatConverter x:Key="StringFormatConverter"/>
+    <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    <converters:BooleanToVisibilityConverter x:Key="BooleanToInvisibilityConverter" Invert="True" />
+    <converters:InvertBooleanConverter x:Key="InvertBooleanConverter" />
+    <converters:ValueToVisibilityConverter x:Key="ValueToVisibilityConverter" />
+    <converters:ValueToVisibilityConverter x:Key="ValueToInvisibilityConverter" Invert="True"/>
+    <converters:ValueToVisibilityConverter x:Key="NullToVisibilityConverter"/>
+    <converters:ValueToVisibilityConverter x:Key="NullToInvisibilityConverter" Invert="True"/>
+    <converters:StringToResourceConverter x:Key="StringToResourceConverter" />
+    <converters:ValueToBooleanConverter x:Key="ValueToBooleanConverter" />
+    <converters:ValueToBooleanConverter x:Key="ValueToInvertBooleanConverter" Invert="True"/>
+    <converters:ValueToBooleanConverter x:Key="NullToBooleanConverter"/>
+    <converters:ValueToBooleanConverter x:Key="NullToInvertBooleanConverter" Invert="True"/>
+    <converters:StringFormatConverter x:Key="StringFormatConverter" />
     <converters:StringFormatConverter x:Key="PercentageStringFormatConverter" Format="P0" />
     <converters:DoubleToTimeConverter x:Key="DoubleToTimeConverter"/>
     <converters:TimeSpanToTimeConverter x:Key="TimeSpanToTimeConverter" />

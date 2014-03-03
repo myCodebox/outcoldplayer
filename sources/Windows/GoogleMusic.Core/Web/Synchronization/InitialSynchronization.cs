@@ -6,7 +6,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
     using System;
     using System.Threading.Tasks;
 
-    using OutcoldSolutions.Diagnostics;
+    using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Services;
 

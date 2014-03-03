@@ -3,8 +3,6 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.BindingModels.Popups
 {
-    using OutcoldSolutions.BindingModels;
-
     public class LastfmAuthentificationBindingModel : BindingModelBase
     {
         private string message;

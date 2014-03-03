@@ -4,10 +4,10 @@
 
 namespace OutcoldSolutions.GoogleMusic
 {
-    using OutcoldSolutions.BindingModels;
     using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.BindingModels.Popups;
     using OutcoldSolutions.GoogleMusic.BindingModels.Settings;
+    using OutcoldSolutions.GoogleMusic.InversionOfControl;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Presenters;
     using OutcoldSolutions.GoogleMusic.Presenters.Popups;

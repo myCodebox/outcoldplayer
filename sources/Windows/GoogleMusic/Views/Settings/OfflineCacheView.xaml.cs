@@ -6,8 +6,6 @@ namespace OutcoldSolutions.GoogleMusic.Views.Settings
 {
     using Windows.UI.Xaml.Input;
 
-    using OutcoldSolutions.Views;
-
     public sealed partial class OfflineCacheView : ViewBase, IApplicationSettingsContent
     {
         public OfflineCacheView()

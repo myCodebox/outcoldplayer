@@ -9,15 +9,20 @@ namespace OutcoldSolutions.GoogleMusic
     using System.Globalization;
     using System.Threading.Tasks;
 
+    using Windows.ApplicationModel.Activation;
+    using Windows.UI.Core;
+
     using BugSense;
     using BugSense.Core.Model;
     using BugSense.Model;
 
-    using OutcoldSolutions.BindingModels;
-    using OutcoldSolutions.Controls;
-    using OutcoldSolutions.Diagnostics;
     using OutcoldSolutions.GoogleMusic.BindingModels;
+    using OutcoldSolutions.GoogleMusic.Controls;
+    using OutcoldSolutions.GoogleMusic.Diagnostics;
+    using OutcoldSolutions.GoogleMusic.EventAggregator;
+    using OutcoldSolutions.GoogleMusic.InversionOfControl;
     using OutcoldSolutions.GoogleMusic.Models;
+    using OutcoldSolutions.GoogleMusic.Presenters;
     using OutcoldSolutions.GoogleMusic.Presenters.Popups;
     using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Services;
@@ -28,8 +33,6 @@ namespace OutcoldSolutions.GoogleMusic
     using OutcoldSolutions.GoogleMusic.Web;
     using OutcoldSolutions.GoogleMusic.Web.Lastfm;
     using OutcoldSolutions.GoogleMusic.Web.Synchronization;
-    using OutcoldSolutions.Shell;
-    using OutcoldSolutions.Views;
 
     using Windows.ApplicationModel;
     using Windows.UI.Notifications;
@@ -43,6 +46,8 @@ namespace OutcoldSolutions.GoogleMusic
         public App()
         {
             this.InitializeComponent();
+
+            this.Suspending += this.OnSuspending;
 #if !DEBUG
             BugSense.BugSenseHandler.Instance.UnregisterUnobservedTaskExceptions();
             BugSense.BugSenseHandler.Instance.InitAndStartSession(new ExceptionManager(this), "w8c8d6b5");
@@ -70,7 +75,84 @@ namespace OutcoldSolutions.GoogleMusic
 #endif
         }
 
-        protected override void InitializeApplication()
+        /// <summary>
+        /// The on search activated.
+        /// </summary>
+        /// <param name="args">
+        /// The args.
+        /// </param>
+        protected override void OnSearchActivated(SearchActivatedEventArgs args)
+        {
+            this.InitializeInternal();
+
+            base.OnSearchActivated(args);
+        }
+
+        /// <summary>
+        /// The on launched.
+        /// </summary>
+        /// <param name="args">
+        /// The args.
+        /// </param>
+        protected override void OnLaunched(LaunchActivatedEventArgs args)
+        {
+            this.InitializeInternal();
+
+            base.OnLaunched(args);
+        }
+
+        private void InitializeInternal()
+        {
+            bool isFirstTimeActivate = false;
+
+            MainFrame mainFrame = Window.Current.Content as MainFrame;
+            if (mainFrame == null)
+            {
+                isFirstTimeActivate = true;
+
+                if (ApplicationBase.Container == null)
+                {
+                    ApplicationBase.Container = new DependencyResolverContainer();
+
+                    using (var registration = ApplicationBase.Container.Registration())
+                    {
+                        registration.Register<IEventAggregator>().AsSingleton<EventAggregator.EventAggregator>();
+                        registration.Register<ILogManager>().AsSingleton<LogManager>();
+                        registration.Register<INavigationService>().AsSingleton<NavigationService>();
+                        registration.Register<IDispatcher>().AsSingleton(new DispatcherContainer(CoreWindow.GetForCurrentThread().Dispatcher));
+
+                        registration.Register<IMainFrame>()
+                                    .And<IMainFrameRegionProvider>()
+                                    .InjectionRule<BindingModelBase, MainFramePresenter>()
+                                    .AsSingleton<MainFrame>();
+                        registration.Register<MainFramePresenter>().AsSingleton();
+
+                        registration.Register<IApplicationSettingFrame>()
+                                    .InjectionRule<BindingModelBase, ApplicationSettingFramePresenter>()
+                                    .As<ApplicationSettingFrame>();
+                        registration.Register<ApplicationSettingFramePresenter>();
+
+                        registration.Register<IApplicationSettingViewsService>()
+                                    .AsSingleton<ApplicationSettingViewsService>();
+                    }
+
+                    this.Logger = ApplicationBase.Container.Resolve<ILogManager>().CreateLogger(this.GetType().Name);
+
+                    this.InitializeApplication();
+                }
+
+                mainFrame = (MainFrame)ApplicationBase.Container.Resolve<IMainFrame>();
+                ((IViewPresenterBase)ApplicationBase.Container.Resolve<MainFramePresenter>()).Initialize(mainFrame);
+                Container.Resolve<INavigationService>().RegisterRegionProvider(mainFrame);
+                Window.Current.Content = mainFrame;
+            }
+
+            Window.Current.Activate();
+
+            this.OnActivated(isFirstTimeActivate);
+        }
+
+        private void InitializeApplication()
         {
             this.Resources["ApplicationName"] = string.Format(CultureInfo.CurrentCulture, "gMusicW {0}", Package.Current.Id.Version.ToVersionString());
 
@@ -194,7 +276,7 @@ namespace OutcoldSolutions.GoogleMusic
             Container.Resolve<ISearchService>();
         }
 
-        protected override void OnActivated(bool isFirstTimeActivated)
+        private void OnActivated(bool isFirstTimeActivated)
         {
             if (isFirstTimeActivated)
             {
@@ -238,7 +320,7 @@ namespace OutcoldSolutions.GoogleMusic
             }
         }
 
-        protected override async Task OnSuspendingAsync()
+        private async Task OnSuspendingAsync()
         {
             await Container.Resolve<IGoogleMusicSessionService>().SaveCurrentSessionAsync();
 
@@ -246,6 +328,22 @@ namespace OutcoldSolutions.GoogleMusic
 
             TileUpdateManager.CreateTileUpdaterForApplication().Clear();
         }
+
+        private void OnSuspending(object sender, SuspendingEventArgs suspendingEventArgs)
+        {
+            var suspendingTask = this.OnSuspendingAsync();
+            
+            var deferral = suspendingEventArgs.SuspendingOperation.GetDeferral();
+
+            suspendingTask.ContinueWith((t) =>
+            {
+                if (this.Logger != null)
+                {
+                    this.Logger.LogTask(t);
+                }
+
+                deferral.Complete();
+            });        }
 
 #if DEBUG
         private class DebugConsole : IDebugConsole
