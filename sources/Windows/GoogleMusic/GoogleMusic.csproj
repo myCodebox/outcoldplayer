@@ -112,7 +112,6 @@
     <Compile Include="ApplicationStateChangeHandler.cs" />
     <Compile Include="BindingModels\ArtistPageViewBindingModel.cs" />
     <Compile Include="BindingModels\LinksRegionBindingModel.cs" />
-    <Compile Include="BindingModels\MainFrameBindingModel.cs" />
     <Compile Include="BindingModels\Settings\CachedSongBindingModel.cs" />
     <Compile Include="BindingModels\Settings\OfflineCacheViewBindingModel.cs" />
     <Compile Include="BindingModels\SnappedPlayerBindingModel.cs" />
@@ -168,8 +167,6 @@
     <Compile Include="Diagnostics\BugSenseLogWriter.cs" />
     <Compile Include="GoogleMusicSettingsServiceExtensions.cs" />
     <Compile Include="INavigationService.cs" />
-    <Compile Include="MainMenu.cs" />
-    <Compile Include="MenuItemMetadata.cs" />
     <Compile Include="Models\PlaylistTypeEx.cs" />
     <Compile Include="Models\QueueChangeEvent.cs" />
     <Compile Include="Models\ReloadSongsEvent.cs" />
@@ -186,6 +183,7 @@
     <Compile Include="Presenters\IPagePresenterBase.cs" />
     <Compile Include="Presenters\LinksRegionViewPresenter.cs" />
     <Compile Include="Presenters\MainFramePresenter.cs" />
+    <Compile Include="Presenters\MainMenuPresenter.cs" />
     <Compile Include="Presenters\PagePresenterBase.cs" />
     <Compile Include="Presenters\PlayerViewPresenterBase.cs" />
     <Compile Include="Presenters\PlaylistsPageViewPresenterBase.cs" />
@@ -277,6 +275,9 @@
       <DependentUpon>MainFrame.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\MainFrameRegion.cs" />
+    <Compile Include="Views\MainMenu.xaml.cs">
+      <DependentUpon>MainMenu.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\PageViewBase.cs" />
     <Compile Include="Views\PopupRegion.cs" />
     <Compile Include="Views\Popups\AddToPlaylistCompletedEventArgs.cs" />
@@ -468,6 +469,10 @@
     <Page Include="Views\MainFrame.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\MainMenu.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Popups\AddToPlaylistPopupView.xaml">
       <SubType>Designer</SubType>

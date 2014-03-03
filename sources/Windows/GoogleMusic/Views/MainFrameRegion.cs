@@ -41,11 +41,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
         /// <summary>
         /// Region for snapped view.
         /// </summary>
-        SnappedView = 6,
-
-        /// <summary>
-        /// The region in top right corner of App Bar.
-        /// </summary>
-        TopAppBarRightZone = 7,
+        SnappedView = 6
     }
 }

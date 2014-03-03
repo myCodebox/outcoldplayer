@@ -33,14 +33,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
         bool IsBottomAppBarOpen { get; set; }
 
         /// <summary>
-        /// Set menu items.
-        /// </summary>
-        /// <param name="menuItems">
-        /// The menu items.
-        /// </param>
-        void SetMenuItems(IEnumerable<MenuItemMetadata> menuItems);
-
-        /// <summary>
         /// Set view commands.
         /// </summary>
         /// <param name="commands">
@@ -161,6 +153,13 @@ namespace OutcoldSolutions.GoogleMusic.Views
                         this.bottomToolWasOpen = false;
                     }
                 };
+
+            this.Loaded += this.OnLoaded;
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
+        {
+            this.MainMenuContainer.Content = this.container.Resolve<IMainMenu>();
         }
 
         /// <inheritdoc />
@@ -175,12 +174,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
             {
                 this.BottomAppBar.IsOpen = value;
             }
-        }
-
-        /// <inheritdoc />
-        public void SetMenuItems(IEnumerable<MenuItemMetadata> menuItems)
-        {
-            this.MainMenuItemsControl.ItemsSource = menuItems;
         }
 
         /// <inheritdoc />
@@ -268,10 +261,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
                     this.SetSnappedRegion(content);
                     break;
 
-                case MainFrameRegion.TopAppBarRightZone:
-                    this.SetTopAppBarRightZoneRegion(content);
-                    break;
-
                 default:
                     throw new NotSupportedException(string.Format(CultureInfo.CurrentCulture, "Region {0} is not supported.", region));
             }
@@ -322,10 +311,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
                 case MainFrameRegion.SnappedView:
                     this.SnappedViewContentControl.Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
-                    break;
-
-                case MainFrameRegion.TopAppBarRightZone:
-                    this.TopAppBarRightZoneRegionContentControl.Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
                     break;
 
                 default:
@@ -420,19 +405,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
                 {
                     ((Storyboard)this.Resources["ActivateContent"]).Begin();
                 }
-            }
-        }
-
-        private void MainMenuItemClick(object sender, ItemClickEventArgs e)
-        {
-            var menuItemMetadata = e.ClickedItem as MenuItemMetadata;
-            if (menuItemMetadata != null)
-            {
-                this.presenter.NavigateTo(menuItemMetadata);
-            }
-            else
-            {
-                this.logger.Error("Could not find MenuItemMetadata in ClickedItem.");
             }
         }
 
@@ -588,11 +560,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
         private void SetSnappedRegion(object content)
         {
             this.SnappedViewContentControl.Content = content;
-        }
-
-        private void SetTopAppBarRightZoneRegion(object content)
-        {
-            this.TopAppBarRightZoneRegionContentControl.Content = content;
         }
 
         private void SetBottomAppBarRightZoneRegion(object content)

@@ -171,6 +171,11 @@ namespace OutcoldSolutions.GoogleMusic
             registration.Register<LinksRegionView>()
                         .InjectionRule<BindingModelBase, LinksRegionViewPresenter>();
             registration.Register<LinksRegionViewPresenter>();
+
+            registration.Register<IMainMenu>()
+                       .InjectionRule<BindingModelBase, MainMenuPresenter>()
+                       .AsSingleton<Views.MainMenu>();
+            registration.Register<MainMenuPresenter>();
         }
     }
 }

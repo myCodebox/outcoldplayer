@@ -1,12 +1,17 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // Outcold Solutions (http://outcoldman.com)
 // --------------------------------------------------------------------------------------------------------------------
-namespace OutcoldSolutions.GoogleMusic.Presenters
+namespace OutcoldSolutions.GoogleMusic.Views
 {
-    using OutcoldSolutions.GoogleMusic.Views;
-
-    internal class MainFramePresenter : ViewPresenterBase<IMainFrame>
+    public interface IMainMenu : IView
     {
+    }
 
+    public sealed partial class MainMenu : ViewBase, IMainMenu
+    {
+        public MainMenu()
+        {
+            this.InitializeComponent();
+        }
     }
 }

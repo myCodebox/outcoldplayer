@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:views="using:OutcoldSolutions.GoogleMusic.Views"
     mc:Ignorable="d"
     x:Name="This">
 
@@ -74,84 +75,43 @@
 
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="120" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <Grid Grid.RowSpan="3">
-
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="10" />
-                    <RowDefinition Height="37" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-
-                <Border Height="10" Background="{StaticResource ApplicationThemeBrush}" Grid.ColumnSpan="2"  />
-
-                <TextBlock Margin="30, 0, 0, 10" 
-                           VerticalAlignment="Bottom" 
-                           Text="{StaticResource ApplicationName}"
-                           Style="{StaticResource ApplicationTitleStyle}" 
-                           Grid.Row="1"  />
-
-                <ListView x:Name="MainMenuItemsControl" 
-                          Grid.Row="2" 
-                          ItemClick="MainMenuItemClick" 
-                          IsItemClickEnabled="True"
-                          Style="{StaticResource ListViewMainMenu}"/>
-
-                <ContentControl Grid.Column="1"
-                                Grid.RowSpan="2"
-                                Grid.Row="2"
-                                Margin="20, 0, 20, 0"
-                                HorizontalAlignment="Right"
-                                VerticalAlignment="Stretch"
-                                HorizontalContentAlignment="Right"
-                                VerticalContentAlignment="Stretch"
-                                x:Name="TopAppBarRightZoneRegionContentControl" />
-            </Grid>
+            <ContentControl Grid.RowSpan="2"
+                            x:Name="MainMenuContainer"
+                            VerticalAlignment="Stretch"
+                            HorizontalAlignment="Stretch"
+                            VerticalContentAlignment="Stretch"
+                            HorizontalContentAlignment="Stretch" />
 
             <ContentControl Grid.Row="0" 
-                        Grid.RowSpan="3"
-                        Grid.Column="1"
-                        Grid.ColumnSpan="3"
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Stretch"
-                        HorizontalContentAlignment="Stretch"
-                        VerticalContentAlignment="Stretch"
-                        x:Name="BackgroundContentControl"
-                        Visibility="{Binding Path=Content, RelativeSource={RelativeSource Self}, Converter={StaticResource NullToInvisibilityConverter}}"/>
+                            Grid.RowSpan="3"
+                            Grid.Column="1"
+                            Grid.ColumnSpan="2"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch"
+                            HorizontalContentAlignment="Stretch"
+                            VerticalContentAlignment="Stretch"
+                            x:Name="BackgroundContentControl"
+                            Visibility="{Binding Path=Content, RelativeSource={RelativeSource Self}, Converter={StaticResource NullToInvisibilityConverter}}"/>
 
             <ContentControl HorizontalAlignment="Right" 
                             VerticalAlignment="Top"
                             Margin="0, 20, 0, 0" 
-                            Grid.Column="1" 
-                            Grid.ColumnSpan="2" 
+                            Grid.Column="1"  
                             Grid.Row="0" 
                             Grid.RowSpan="2"
                             x:Name="LinksContentControl"
                             Visibility="{Binding Path=Content, RelativeSource={RelativeSource Self}, Converter={StaticResource NullToInvisibilityConverter}}"/>
 
-            <Button Grid.Column="1"
-                Grid.Row="0"
-                Style="{StaticResource BackButtonStyle}" 
-                VerticalAlignment="Top" 
-                HorizontalAlignment="Left"
-                Visibility="{Binding Path=BindingModel.IsBackButtonVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                Command="{Binding Path=GoBackCommand, Mode=OneTime}" Margin="36, 52, 36, 0"/>
-
             <Grid Grid.Row="0"
-              Grid.Column="2"
-              HorizontalAlignment="Left"
-              Margin="0, 0, 20, 0" 
-              Height="100" 
-              x:Name="TitleGrid" >
+                  Grid.Column="1"
+                  HorizontalAlignment="Left"
+                  Margin="40, 0, 20, 0" 
+                  Height="100" 
+                  x:Name="TitleGrid" >
 
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
@@ -160,11 +120,11 @@
                 </Grid.ColumnDefinitions>
 
                 <Image Source="ms-appx:///Assets/StoreLogo.png"
-                   x:Name="StoreLogoImage"
-                   VerticalAlignment="Bottom" 
-                   Margin="0,-20,20,0" 
-                   Width="50" 
-                   Height="50"/>
+                       x:Name="StoreLogoImage"
+                       VerticalAlignment="Bottom" 
+                       Margin="0,-20,20,0" 
+                       Width="50" 
+                       Height="50"/>
 
                 <TextBlock Style="{StaticResource HeaderTextStyle}" 
                        x:Name="TitleTextBox"
@@ -182,12 +142,10 @@
 
             <ProgressRing x:Name="ProgressRing" 
                       Grid.Row="1" 
-                      Grid.Column="1" 
-                      Grid.ColumnSpan="2"/>
+                      Grid.Column="1" />
 
             <ContentControl Grid.Row="1"
                         Grid.Column="1"
-                        Grid.ColumnSpan="2"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch"
                         HorizontalContentAlignment="Stretch"
@@ -197,7 +155,7 @@
 
             <ContentControl Grid.Row="0" 
                         Grid.RowSpan="2"
-                        Grid.Column="3"
+                        Grid.Column="2"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch"
                         HorizontalContentAlignment="Stretch"
@@ -212,7 +170,7 @@
                Closed="PopupViewClosed"
                Grid.Row="1"
                Grid.Column="1"
-               Grid.ColumnSpan="3" >
+               Grid.ColumnSpan="2" >
                 <Popup.ChildTransitions>
                     <TransitionCollection>
                         <PopupThemeTransition FromHorizontalOffset="0" FromVerticalOffset="30" />
@@ -227,7 +185,7 @@
                Closed="PopupViewClosed"
                Grid.Row="1"
                Grid.Column="1"
-               Grid.ColumnSpan="3">
+               Grid.ColumnSpan="2">
                 <Popup.ChildTransitions>
                     <TransitionCollection>
                         <PopupThemeTransition FromHorizontalOffset="0" FromVerticalOffset="30" />

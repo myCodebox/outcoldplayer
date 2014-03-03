@@ -155,6 +155,7 @@ namespace OutcoldSolutions.GoogleMusic
         private void InitializeApplication()
         {
             this.Resources["ApplicationName"] = string.Format(CultureInfo.CurrentCulture, "gMusicW {0}", Package.Current.Id.Version.ToVersionString());
+            this.Resources["ApplicationVersion"] = Package.Current.Id.Version.ToVersionString();
 
             using (var registration = Container.Registration())
             {
@@ -300,17 +301,10 @@ namespace OutcoldSolutions.GoogleMusic
 
                 mainFrameRegionProvider.SetContent(MainFrameRegion.BottomAppBarRightZone, Container.Resolve<IPlayerView>());
                 mainFrameRegionProvider.SetContent(MainFrameRegion.SnappedView, Container.Resolve<ISnappedPlayerView>());
-                mainFrameRegionProvider.SetContent(MainFrameRegion.TopAppBarRightZone, new LogoView());
 
                 var page = (Page)Window.Current.Content;
                 VisualTreeHelperEx.GetVisualChild<Panel>(page).Children.Add(Container.Resolve<MediaElement>());
 
-                MainMenu.Initialize(
-                    Container.Resolve<IMainFrame>(),
-                    Container.Resolve<IApplicationResources>(),
-                    Container.Resolve<IApplicationStateService>(),
-                    Container.Resolve<ISettingsService>(),
-                    Container.Resolve<IEventAggregator>());
                 ApplicationSettingViews.Initialize(Container.Resolve<IApplicationSettingViewsService>(), Container.Resolve<IApplicationResources>());
 
                 Container.Resolve<MediaControlIntegration>();
