@@ -210,7 +210,15 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private async Task DeinitializeAsync()
         {
-            await this.cachingService.ClearCacheAsync();
+            try
+            {
+                await this.cachingService.ClearCacheAsync();
+            }
+            catch (Exception e)
+            {
+                this.Logger.Debug("Could not clear cache", e);
+            }
+
             await this.Dispatcher.RunAsync(
                 () =>
                 {

@@ -46,7 +46,14 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
 
             try
             {
-                await this.albumArtCacheService.ClearCacheAsync();
+                try
+                {
+                    await this.albumArtCacheService.ClearCacheAsync();
+                }
+                catch (Exception e)
+                {
+                    this.logger.Debug(e, "Could not clear the cache, possible that tables are empty");
+                }
 
                 await this.synchronizationService.Update(progress);
 
