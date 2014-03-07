@@ -76,15 +76,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether is store logo visible.
-        /// </summary>
-        public bool IsStoreLogoVisible
-        {
-            get { return (bool)this.GetValue(IsStoreLogoVisibleProperty); }
-            set { this.SetValue(IsStoreLogoVisibleProperty, value); }
-        }
-
-        /// <summary>
         /// Gets the navigation service.
         /// </summary>
         protected INavigationService NavigationService { get; private set; }

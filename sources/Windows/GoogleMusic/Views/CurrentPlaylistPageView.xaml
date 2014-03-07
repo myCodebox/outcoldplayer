@@ -21,7 +21,7 @@
 
         <Border Grid.Row="0" 
                 HorizontalAlignment="Stretch"
-                Margin="40, 20, 20, 0" 
+                Margin="0, 0, 20, 0" 
                 Padding="0, 0, 0, 7"
                 Height="35"
                 Background="{StaticResource ListViewItemBorder}"
@@ -88,7 +88,7 @@
                   HorizontalContentAlignment="Stretch"
                   IsTapEnabled="False"
                   ItemsSource="{Binding Path=BindingModel.Songs, Mode=OneWay}"
-                  Margin="40, 0, 20, 20" 
+                  Margin="0, 0, 20, 20" 
                   DoubleTapped="ListDoubleTapped"
                   x:Name="ListView">
             

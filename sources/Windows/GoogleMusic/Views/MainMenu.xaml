@@ -90,41 +90,13 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         
         <Border Height="10" 
                 Background="{StaticResource ApplicationThemeBrush}" />
 
-        <TextBlock Margin="60, 15, 0, 0" 
-                   Opacity="0.4"
-                   VerticalAlignment="Bottom"
-                   HorizontalAlignment="Left"  
-                   Text="gMusicW"
-                   Style="{StaticResource ApplicationTitleStyle}" 
-                   Grid.Row="1"/>
-
-        <Border Grid.Row="1"
-                Grid.RowSpan="2"
-                Visibility="{Binding Path=IsBackButtonVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
-            <Border.Background>
-                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-                    <GradientStop Color="#FF3F3F3F" Offset="0.3"/>
-                    <GradientStop Color="#003F3F3F" Offset="0.7"/>
-                </LinearGradientBrush>
-            </Border.Background>
-            
-            <Button Style="{StaticResource SnappedBackButtonStyle}" 
-                    Command="{Binding Path=GoBackCommand, Mode=OneTime}"
-                    VerticalAlignment="Top"
-                    HorizontalAlignment="Left"
-                    Margin="15, 10, 0, 0"/>
-        </Border>
-
-        <StackPanel Grid.Row="2" Margin="0, 15, 0, 0">
-            <Border Style="{StaticResource SeparatorStyle}" />
+        <StackPanel Grid.Row="1" Margin="0, 0, 0, 0">
             
             <Button Style="{StaticResource MenuButtonStyle}"
                     Command="{Binding Path=HomeCommand, Mode=OneTime}">
@@ -137,6 +109,8 @@
                 </StackPanel>
             </Button>
 
+            <Border Style="{StaticResource SeparatorStyle}" />
+            
             <Button Style="{StaticResource MenuButtonStyle}"
                     Command="{Binding Path=QueueCommand, Mode=OneTime}" >
                 <StackPanel Orientation="Horizontal">
@@ -214,11 +188,11 @@
             <Border Style="{StaticResource SeparatorStyle}" />
         </StackPanel>
         
-        <views:LogoView Grid.Row="4"
+        <views:LogoView Grid.Row="2"
                         VerticalAlignment="Bottom"
                         Margin="0, 0, 0, 30"/>
 
-        <TextBlock Grid.Row="4"
+        <TextBlock Grid.Row="2"
                    Style="{StaticResource SmallTextStyle}"
                    Opacity="0.5"
                    HorizontalAlignment="Center"

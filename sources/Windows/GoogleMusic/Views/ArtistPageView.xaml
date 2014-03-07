@@ -14,37 +14,45 @@
     Subtitle="Albums"
     x:Uid="ArtistPageView">
 
-    <Grid Margin="0, 40, 0, 0"
-          Visibility="{Binding Path=IsDataLoading, Converter={StaticResource BooleanToInvisibilityConverter}}">
+    <ScrollViewer HorizontalScrollBarVisibility="Disabled"
+                  HorizontalScrollMode="Disabled"
+                  VerticalScrollBarVisibility="Auto"
+                  VerticalScrollMode="Auto"
+                  Visibility="{Binding Path=IsDataLoading, Converter={StaticResource BooleanToInvisibilityConverter}}">
+        <StackPanel>
 
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="190" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
+            <StackPanel Orientation="Horizontal">
+                <Border Width="256" Height="125" Background="Gray">
+                    <Image Width="256" Height="125" Source="{Binding Path=BindingModel.Artist.ArtUrl, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=256, Mode=OneWay}" Stretch="Uniform"/>
+                </Border>
 
-        <StackPanel Width="150" 
-                    Margin="40, 0, 0, 0"
-                    Grid.Column="0">
-            
-            <StackPanel Orientation="Horizontal" Margin="0, 7, 0, 0">
-                <TextBlock Style="{StaticResource TitleTextStyle}" Text="Albums: " x:Uid="ArtistPageView_AlbumsCountLabel" />
-                <TextBlock Style="{StaticResource SubtitleTextStyle}" Margin="7, 0, 0, 0" Text="{Binding Path=BindingModel.Artist, Converter={StaticResource ArtistAlbumsCountConverter}, Mode=OneWay}" />
+                <StackPanel Width="150" 
+                        Margin="20, 0, 0, 0">
+
+                    <StackPanel Orientation="Horizontal" Margin="0, 0, 0, 0">
+                        <TextBlock Style="{StaticResource SubtitleTextStyle}" Text="Albums: " x:Uid="ArtistPageView_AlbumsCountLabel" />
+                        <TextBlock Style="{StaticResource ItemTextStyle}" Margin="7, 0, 0, 0" Text="{Binding Path=BindingModel.Artist, Converter={StaticResource ArtistAlbumsCountConverter}, Mode=OneWay}" />
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Margin="0, 7, 0, 0">
+                        <TextBlock Style="{StaticResource SubtitleTextStyle}" Text="Songs: " x:Uid="ArtistPageView_SongsCountLabel" />
+                        <TextBlock Style="{StaticResource ItemTextStyle}" Margin="7, 0, 0, 0" Text="{Binding Path=BindingModel.Artist, Converter={StaticResource PlaylistSongsCountConverter}, Mode=OneWay}" />
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Margin="0, 7, 0, 0">
+                        <TextBlock Style="{StaticResource SubtitleTextStyle}" Text="Duration: " x:Uid="ArtistPageView_DurationSumLabel" />
+                        <TextBlock Style="{StaticResource ItemTextStyle}" Margin="7, 0, 0, 0" Text="{Binding Path=BindingModel.Artist, Converter={StaticResource PlaylistDurationConverter}, Mode=OneWay}" />
+                    </StackPanel>
+
+                </StackPanel>
+
             </StackPanel>
 
-            <StackPanel Orientation="Horizontal" Margin="0, 7, 0, 0">
-                <TextBlock Style="{StaticResource TitleTextStyle}" Text="Songs: " x:Uid="ArtistPageView_SongsCountLabel" />
-                <TextBlock Style="{StaticResource SubtitleTextStyle}" Margin="7, 0, 0, 0" Text="{Binding Path=BindingModel.Artist, Converter={StaticResource PlaylistSongsCountConverter}, Mode=OneWay}" />
-            </StackPanel>
+            <TextBlock Style="{StaticResource SubheaderTextStyle}"
+                   Margin="0, 20, 0, 0">My Library Albums</TextBlock>
 
-            <StackPanel Orientation="Horizontal" Margin="0, 7, 0, 0">
-                <TextBlock Style="{StaticResource TitleTextStyle}" Text="Duration: " x:Uid="ArtistPageView_DurationSumLabel" />
-                <TextBlock Style="{StaticResource SubtitleTextStyle}" Margin="7, 0, 0, 0" Text="{Binding Path=BindingModel.Artist, Converter={StaticResource PlaylistDurationConverter}, Mode=OneWay}" />
-            </StackPanel>
-
-        </StackPanel>
-        
-        <ListView x:Name="ListView"
-                  Grid.Column="1"
+            <ListView x:Name="ListView"
+                  Margin="0, 20, 0, 0"
                   Padding="0"
                   ItemsSource="{Binding Path=BindingModel.Albums}"
                   SelectionMode="Extended"
@@ -52,9 +60,11 @@
                   IsItemClickEnabled="True"
                   ItemTemplate="{StaticResource AlbumDataTemplate}"
                   Style="{StaticResource PlaylistsListView}">
-            <interactivity:Interaction.Behaviors>
-                <controls:ListViewBaseSelectedItemsBehavior SelectedItems="{Binding Path=BindingModel.SelectedItems, Mode=OneWay}" />
-            </interactivity:Interaction.Behaviors>
-        </ListView>
-    </Grid>
+                <interactivity:Interaction.Behaviors>
+                    <controls:ListViewBaseSelectedItemsBehavior SelectedItems="{Binding Path=BindingModel.SelectedItems, Mode=OneWay}" />
+                </interactivity:Interaction.Behaviors>
+            </ListView>
+        </StackPanel>
+    </ScrollViewer>
+    
 </views:PageViewBase>

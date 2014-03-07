@@ -105,29 +105,35 @@
                             Grid.RowSpan="2"
                             x:Name="LinksContentControl"
                             Visibility="{Binding Path=Content, RelativeSource={RelativeSource Self}, Converter={StaticResource NullToInvisibilityConverter}}"/>
-
+    
             <Grid Grid.Row="0"
                   Grid.Column="1"
                   HorizontalAlignment="Left"
                   Margin="40, 0, 20, 0" 
-                  Height="100" 
+                  Height="80" 
                   x:Name="TitleGrid" >
 
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="50"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
+                <Button Style="{StaticResource BackButtonStyle}" 
+                        Visibility="{Binding Path=IsBackButtonVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                        Command="{Binding Path=GoBackCommand}"
+                        Margin="5, 0, 0, 0"/>
+                
                 <Image Source="ms-appx:///Assets/StoreLogo.png"
-                       x:Name="StoreLogoImage"
-                       VerticalAlignment="Bottom" 
-                       Margin="0,-20,20,0" 
+                       Visibility="{Binding Path=IsBackButtonVisible, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}"
+                       VerticalAlignment="Bottom"  
+                       Margin="0,-20,0,0" 
                        Width="50" 
                        Height="50"/>
 
                 <TextBlock Style="{StaticResource HeaderTextStyle}" 
                        x:Name="TitleTextBox"
+                       Margin="20, 0, 0, 0"
                        Grid.Column="1" 
                        VerticalAlignment="Bottom" 
                        TextWrapping="NoWrap" 
@@ -146,6 +152,7 @@
 
             <ContentControl Grid.Row="1"
                         Grid.Column="1"
+                        Margin="40, 20, 10, 0"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch"
                         HorizontalContentAlignment="Stretch"

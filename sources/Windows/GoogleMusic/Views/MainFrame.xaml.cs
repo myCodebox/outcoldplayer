@@ -485,7 +485,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
             this.TitleTextBox.ClearValue(TextBlock.TextProperty);
             this.SubtitleTextBox.ClearValue(TextBlock.TextProperty);
             this.TitleGrid.ClearValue(UIElement.VisibilityProperty);
-            this.StoreLogoImage.ClearValue(UIElement.VisibilityProperty);
 
             this.currentView = content as IView;
 
@@ -517,16 +516,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
                         Source = this.currentView,
                         Mode = BindingMode.OneWay,
                         Path = new PropertyPath(PropertyNameExtractor.GetPropertyName(() => pageView.IsTitleVisible)),
-                        Converter = (IValueConverter)Application.Current.Resources["BooleanToVisibilityConverter"]
-                    });
-
-                this.StoreLogoImage.SetBinding(
-                    UIElement.VisibilityProperty,
-                    new Binding()
-                    {
-                        Source = this.currentView,
-                        Mode = BindingMode.OneWay,
-                        Path = new PropertyPath(PropertyNameExtractor.GetPropertyName(() => pageView.IsStoreLogoVisible)),
                         Converter = (IValueConverter)Application.Current.Resources["BooleanToVisibilityConverter"]
                     });
             }

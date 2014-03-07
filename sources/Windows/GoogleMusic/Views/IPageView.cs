@@ -24,11 +24,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
         bool IsTitleVisible { get; }
 
         /// <summary>
-        /// Gets a value indicating whether is store logo visible.
-        /// </summary>
-        bool IsStoreLogoVisible { get; }
-
-        /// <summary>
         /// On navigated to.
         /// </summary>
         /// <param name="eventArgs">

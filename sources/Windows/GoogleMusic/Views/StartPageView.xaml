@@ -11,16 +11,15 @@
     d:DesignHeight="300"
     d:DesignWidth="400"
     Title="Home"
-    IsStoreLogoVisible="True"
     x:Uid="StartPageView">
 
     <views:PageViewBase.Resources>
         <CollectionViewSource x:Name="Groups" IsSourceGrouped="true" ItemsPath="Playlists" Source="{Binding Path=BindingModel.Groups}" />
     </views:PageViewBase.Resources>
 
-    <Grid Margin="0, 0, 20, 0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
+    <Grid Margin="0, 0, 0, 0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
 
-        <GridView Margin="0, 40, 0, 0"
+        <ListView Margin="0, 0, 0, 0"
                   Opacity="0"
                   Visibility="{Binding Path=IsDataLoading, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}"
                   ItemsSource="{Binding Source={StaticResource Groups}}"
@@ -28,62 +27,60 @@
                   IsItemClickEnabled="True"
                   SelectionMode="Extended"
                   ItemClick="PlaylistItemClick"  
-                  Padding="120, 0, 0, 0"
-                  x:Name="GridView"
+                  Padding="0, 0, 0, 0"
+                  x:Name="ListView"
                   ManipulationMode="None">
             
             <interactivity:Interaction.Behaviors>
                 <controls:ListViewBaseSelectedItemsBehavior SelectedItems="{Binding Path=BindingModel.SelectedItems, Mode=OneWay}" />
             </interactivity:Interaction.Behaviors>
-            
-            <GridView.Transitions>
+
+            <ListView.Transitions>
                 <TransitionCollection/>
-            </GridView.Transitions>
-            
-            <GridView.ItemsPanel>
+            </ListView.Transitions>
+
+            <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <StackPanel Orientation="Horizontal"/>
+                    <StackPanel Orientation="Vertical" Margin="0, 0, 0, 40"/>
                 </ItemsPanelTemplate>
-            </GridView.ItemsPanel>
-            
-            <GridView.ItemContainerStyle>
-                <Style TargetType="GridViewItem">
+            </ListView.ItemsPanel>
+
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
                     <Setter Property="Margin" Value="0" />
                     <Setter Property="Padding" Value="0" />
                 </Style>
-            </GridView.ItemContainerStyle>
-            
-            <GridView.GroupStyle>
+            </ListView.ItemContainerStyle>
+
+            <ListView.GroupStyle>
                 <GroupStyle>
                     <GroupStyle.HeaderTemplate>
                         <DataTemplate>
-                            <Border Height="30">
-                                <Button Margin="10, 0, 160, 0" Click="NavigateTo" Visibility="{Binding Path=Title, Converter={StaticResource NullToInvisibilityConverter}}">
-                                    <Button.Template>
-                                        <ControlTemplate>
-                                            <StackPanel Orientation="Horizontal" >
-                                                <TextBlock Style="{StaticResource GroupHeaderTextStyle}" Text="{Binding Path=Title, Mode=OneWay}" />
-                                                <TextBlock Style="{StaticResource GroupHeaderTextStyle}" Text=" (" />
-                                                <TextBlock Style="{StaticResource GroupHeaderTextStyle}" Text="{Binding Path=ItemsCount, Mode=OneWay}" />
-                                                <TextBlock Style="{StaticResource GroupHeaderTextStyle}" Text=")" />
-                                                <TextBlock Style="{StaticResource GroupHeaderTextStyle}" Margin="10, 0, 0, 0" FontFamily="Segoe UI Symbol" Text="{StaticResource ChevronGlyph}"/>
-                                            </StackPanel>
-                                        </ControlTemplate>
-                                    </Button.Template>
-                                </Button>
-                            </Border>
+                            <Button Margin="10, 20, 160, 0" Height="30" Click="NavigateTo" Visibility="{Binding Path=Title, Converter={StaticResource NullToInvisibilityConverter}}">
+                                <Button.Template>
+                                    <ControlTemplate>
+                                        <StackPanel Orientation="Horizontal" >
+                                            <TextBlock Style="{StaticResource GroupHeaderTextStyle}" Text="{Binding Path=Title, Mode=OneWay}" />
+                                            <TextBlock Style="{StaticResource GroupHeaderTextStyle}" Text=" (" />
+                                            <TextBlock Style="{StaticResource GroupHeaderTextStyle}" Text="{Binding Path=ItemsCount, Mode=OneWay}" />
+                                            <TextBlock Style="{StaticResource GroupHeaderTextStyle}" Text=")" />
+                                            <TextBlock Style="{StaticResource GroupHeaderTextStyle}" Margin="10, 0, 0, 0" FontFamily="Segoe UI Symbol" Text="{StaticResource ChevronGlyph}"/>
+                                        </StackPanel>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
                         </DataTemplate>
                     </GroupStyle.HeaderTemplate>
 
                     <GroupStyle.Panel>
                         <ItemsPanelTemplate>
-                            <VariableSizedWrapGrid Orientation="Vertical" MaximumRowsOrColumns="4" Margin="0, 20, 40, 0" ItemWidth="304" ItemHeight="156" />
+                            <VariableSizedWrapGrid Orientation="Horizontal" Margin="0, 20, 40, 0" ItemWidth="304" ItemHeight="156" />
                         </ItemsPanelTemplate>
                     </GroupStyle.Panel>
                 </GroupStyle>
-            </GridView.GroupStyle>
+            </ListView.GroupStyle>
 
-        </GridView>
+        </ListView>
         
     </Grid>
 </views:PageViewBase>

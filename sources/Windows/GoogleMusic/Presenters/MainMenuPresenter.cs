@@ -47,7 +47,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.UserPlaylistsCommand = new DelegateCommand(() => this.navigationService.NavigateTo<IUserPlaylistsPageView>(PlaylistType.UserPlaylist));
             this.RadioStationsCommand = new DelegateCommand(() => this.navigationService.NavigateTo<IRadioPageView>(PlaylistType.Radio));
             this.PlaylistsCommand = new DelegateCommand(this.NavigatePlaylistsView);
-            this.GoBackCommand = new DelegateCommand(this.NavigateBack);
 
             eventAggregator.GetEvent<ApplicationStateChangeEvent>()
                 .Subscribe((e) => this.RaisePropertyChanged(() => this.IsRadioVisible));
@@ -68,21 +67,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         public DelegateCommand PlaylistsCommand { get; set; }
 
-        public DelegateCommand GoBackCommand { get; set; }
-
         public bool IsRadioVisible
         {
             get
             {
                 return this.applicationStateService.IsOnline();
-            }
-        }
-
-        public bool IsBackButtonVisible
-        {
-            get
-            {
-                return this.navigationService.CanGoBack();
             }
         }
 
@@ -204,17 +193,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.IsGenresSelected = (args.View is IPlaylistsPageView && (PlaylistType)args.Parameter == PlaylistType.Genre) ||
                 (args.View is IPlaylistPageView && ((PlaylistNavigationRequest)args.Parameter).PlaylistType == PlaylistType.UserPlaylist);
 
-            this.RaisePropertyChanged(() => this.IsBackButtonVisible);
-
             this.UnfreezeNotifications();
-        }
-
-        private void NavigateBack()
-        {
-            if (this.navigationService.CanGoBack())
-            {
-                this.navigationService.GoBack();
-            }
         }
 
         private void NavigatePlaylistsView(object obj)

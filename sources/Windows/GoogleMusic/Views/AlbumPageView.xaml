@@ -14,7 +14,7 @@
     Subtitle="Album"
     x:Uid="AlbumPageView">
 
-    <Grid Margin="40, 0, 20, 0">
+    <Grid Margin="0, 0, 0, 0">
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="140" />
@@ -58,7 +58,7 @@
 
             <Border Grid.Row="0" 
                 HorizontalAlignment="Stretch"
-                Margin="40, 20, 0, 0" 
+                Margin="40, 0, 20, 0" 
                 Height="35"
                 Background="{StaticResource ListViewItemBorder}">
                 <Grid Margin="0, 0, 0, 0">
@@ -128,7 +128,7 @@
                   HorizontalContentAlignment="Stretch"
                   ItemsSource="{Binding Path=BindingModel.SongsBindingModel.Songs, Mode=OneWay}"
                   IsTapEnabled="False"
-                  Margin="40, 0, 0, 20" 
+                  Margin="40, 0, 20, 20" 
                   ManipulationMode="None"
                   DoubleTapped="ListDoubleTapped"
                   x:Name="ListView">
