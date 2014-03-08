@@ -45,6 +45,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private readonly ISongsCachingService cachingService;
         private readonly IApplicationStateService stateService;
 
+        private readonly ISelectedObjectsService selectedObjectsService;
+
         private bool initialized = false;
 
         public StartPageViewPresenter(
@@ -58,7 +60,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             IGoogleMusicSessionService sessionService,
             ISearchService searchService,
             ISongsCachingService cachingService,
-            IApplicationStateService stateService)
+            IApplicationStateService stateService,
+            ISelectedObjectsService selectedObjectsService)
         {
             this.resources = resources;
             this.settingsService = settingsService;
@@ -71,16 +74,9 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.searchService = searchService;
             this.cachingService = cachingService;
             this.stateService = stateService;
-
-            Func<bool> canExecute = () => this.BindingModel.SelectedItems.Count > 0
-                                          && this.BindingModel.SelectedItems.All(x =>
-                                                  x.Playlist.PlaylistType != PlaylistType.Radio
-                                                  || (x.Playlist.PlaylistType == PlaylistType.UserPlaylist && !((UserPlaylist)x.Playlist).IsShared));
+            this.selectedObjectsService = selectedObjectsService;
 
             this.PlayCommand = new DelegateCommand(this.Play);
-            this.QueueCommand = new DelegateCommand(this.Queue, canExecute);
-            this.DownloadCommand = new DelegateCommand(this.Download, canExecute);
-            this.UnPinCommand = new DelegateCommand(this.UnPin, canExecute);
 
             this.sessionService.SessionCleared += async (sender, args) => 
                     {
@@ -90,12 +86,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         }
 
         public DelegateCommand PlayCommand { get; set; }
-
-        public DelegateCommand QueueCommand { get; private set; }
-
-        public DelegateCommand DownloadCommand { get; set; }
-
-        public DelegateCommand UnPinCommand { get; set; }
 
         protected override async Task LoadDataAsync(NavigatedToEventArgs navigatedToEventArgs)
         {
@@ -121,6 +111,9 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     await this.DeinitializeAsync();
                     this.ShowProgressLoadingPopupView();
                 });
+
+            this.EventAggregator.GetEvent<SelectionClearedEvent>()
+               .Subscribe<SelectionClearedEvent>(async (e) => await this.Dispatcher.RunAsync(() => this.BindingModel.ClearSelectedItems()));
         }
 
         private async Task InitializeOnFirstLaunchAsync()
@@ -321,36 +314,9 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private void SelectedItemsOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            this.OnSelectedItemsChanged();
-        }
-
-        private void OnSelectedItemsChanged()
-        {
-            if (this.BindingModel.SelectedItems.Count > 0)
-            {
-                this.MainFrame.SetContextCommands(this.GetContextCommands());
-            }
-            else
-            {
-                this.MainFrame.ClearContextCommands();
-            }
-        }
-
-        private IEnumerable<CommandMetadata> GetContextCommands()
-        {
-            yield return new CommandMetadata(CommandIcon.OpenWith, this.resources.GetString("Toolbar_QueueButton"), this.QueueCommand);
-
-            if (this.BindingModel.SelectedItems.Any(x => x.Playlist.OfflineSongsCount != x.Playlist.SongsCount))
-            {
-                if (this.stateService.IsOnline())
-                {
-                    yield return new CommandMetadata(CommandIcon.Pin, this.resources.GetString("Toolbar_KeepLocal"), this.DownloadCommand);
-                }
-            }
-            else
-            {
-                yield return new CommandMetadata(CommandIcon.UnPin, this.resources.GetString("Toolbar_RemoveLocal"), this.UnPinCommand);
-            }
+            this.selectedObjectsService.Update(
+                e.NewItems == null ? null : e.NewItems.Cast<PlaylistBindingModel>().Select(x => x.Playlist),
+                e.OldItems == null ? null : e.OldItems.Cast<PlaylistBindingModel>().Select(x => x.Playlist));
         }
 
         private PlaylistsGroupBindingModel CreateGroup(string title, int playlistsCount, IEnumerable<IPlaylist> playlists, PlaylistType type)
@@ -378,62 +344,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 this.MainFrame.IsBottomAppBarOpen = true;
                 this.Logger.LogTask(this.playQueueService.PlayAsync(playlist));
                 this.navigationService.NavigateTo<ICurrentPlaylistPageView>();
-            }
-        }
-
-        private void Queue()
-        {
-            this.MainFrame.ShowPopup<IQueueActionsPopupView>(
-                PopupRegion.AppToolBarLeft,
-                new SelectedItems(this.BindingModel.SelectedItems.Select(bm => bm.Playlist).ToList())).Closed += this.QueueActionsPopupView_Closed;
-        }
-
-        private void QueueActionsPopupView_Closed(object sender, EventArgs eventArgs)
-        {
-            ((IPopupView)sender).Closed -= this.QueueActionsPopupView_Closed;
-            if (eventArgs is QueueActionsCompletedEventArgs)
-            {
-                this.BindingModel.ClearSelectedItems();
-            }
-        }
-
-        private async void Download()
-        {
-            try
-            {
-                IEnumerable<Song> songs = Enumerable.Empty<Song>();
-
-                foreach (var playlistBindingModel in this.BindingModel.SelectedItems)
-                {
-                    songs = songs.Union(await this.playlistsService.GetSongsAsync(playlistBindingModel.Playlist));
-                }
-
-                await this.cachingService.QueueForDownloadAsync(songs);
-                this.BindingModel.ClearSelectedItems();
-            }
-            catch (Exception e)
-            {
-                this.Logger.Error(e, "Cannot add songs to download queue");
-            }
-        }
-
-        private async void UnPin()
-        {
-            try
-            {
-                IEnumerable<Song> songs = Enumerable.Empty<Song>();
-
-                foreach (var playlistBindingModel in this.BindingModel.SelectedItems)
-                {
-                    songs = songs.Union(await this.playlistsService.GetSongsAsync(playlistBindingModel.Playlist));
-                }
-
-                await this.cachingService.ClearCachedAsync(songs);
-                this.BindingModel.ClearSelectedItems();
-            }
-            catch (Exception e)
-            {
-                this.Logger.Error(e, "Cannot remove from cache selected songs.");
             }
         }
 

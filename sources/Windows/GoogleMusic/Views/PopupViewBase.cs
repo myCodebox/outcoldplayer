@@ -16,6 +16,21 @@ namespace OutcoldSolutions.GoogleMusic.Views
         /// <inheritdoc />
         public event EventHandler<EventArgs> Closed;
 
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+
+            this.Loaded += (sender, args) =>
+                {
+                    var popup = this.Parent as Popup;
+                    Debug.Assert(popup != null, "popup != null");
+                    if (popup != null)
+                    {
+                        popup.Closed += this.PopupOnClosed;
+                    }
+                };
+        }
+
         /// <inheritdoc />
         public void Close()
         {
@@ -32,12 +47,18 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
             var popup = this.Parent as Popup;
             Debug.Assert(popup != null, "popup != null");
-            if (popup != null)
+            if (popup != null && popup.IsOpen)
             {
                 popup.IsOpen = false;
+                this.RaiseClosed(eventArgs);
             }
+        }
 
-            this.RaiseClosed(eventArgs);
+        private void PopupOnClosed(object sender, object o)
+        {
+            var popup = (Popup)sender;
+            popup.Closed -= this.PopupOnClosed;
+            this.RaiseClosed(EventArgs.Empty);
         }
 
         private void RaiseClosed(EventArgs eventArgs)

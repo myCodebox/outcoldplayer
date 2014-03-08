@@ -27,13 +27,13 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
         private const int LastAddedSongsCount = 500;
 
         private const string SqlHiglyRatedSongsPlaylists = @"
-select count(*) as SongsCount, sum(s.[Duration]) as Duration, count(*) as OfflineSongsCount, sum(s.[Duration]) as OfflineDuration, ?3 as [SystemPlaylistType]
+select count(*) as SongsCount, sum(s.[Duration]) as Duration, sum(s.IsCached) as OfflineSongsCount, sum(s.[Duration]) as OfflineDuration, ?3 as [SystemPlaylistType]
 from [Song] as s
 where (?1 = 1 or s.[IsCached] = 1) and s.IsLibrary = 1 and s.[Rating] >= ?2 
 ";
 
         private const string SqlLastAddedPlaylist = @"
-select count(*) as SongsCount, sum(x.[Duration]) as Duration, count(*) as OfflineSongsCount, sum(x.[Duration]) as OfflineDuration, ?3 as [SystemPlaylistType] from 
+select count(*) as SongsCount, sum(x.[Duration]) as Duration, sum(x.IsCached) as OfflineSongsCount, sum(x.[Duration]) as OfflineDuration, ?3 as [SystemPlaylistType] from 
 (
   select *
   from [Song] as s  
@@ -44,7 +44,7 @@ select count(*) as SongsCount, sum(x.[Duration]) as Duration, count(*) as Offlin
 ";
 
         private const string SqlAllSongsPlaylist = @"
-select count(*) as SongsCount, sum(s.[Duration]) as Duration, count(*) as OfflineSongsCount, sum(s.[Duration]) as OfflineDuration, ?2 as [SystemPlaylistType] from [Song] as s where (?1 = 1 or s.[IsCached] = 1) and s.IsLibrary = 1 
+select count(*) as SongsCount, sum(s.[Duration]) as Duration, sum(s.IsCached) as OfflineSongsCount, sum(s.[Duration]) as OfflineDuration, ?2 as [SystemPlaylistType] from [Song] as s where (?1 = 1 or s.[IsCached] = 1) and s.IsLibrary = 1 
 ";
 
         private const string SqlAllSongs = @"

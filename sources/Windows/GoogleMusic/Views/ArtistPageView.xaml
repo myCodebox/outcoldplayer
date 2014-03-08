@@ -64,6 +64,10 @@
                     <controls:ListViewBaseSelectedItemsBehavior SelectedItems="{Binding Path=BindingModel.SelectedItems, Mode=OneWay}" />
                 </interactivity:Interaction.Behaviors>
             </ListView>
+                      
+            <TextBlock Style="{StaticResource SubheaderTextStyle}"
+                       Margin="0, 20, 0, 0">My Library Collections
+            </TextBlock>
         </StackPanel>
     </ScrollViewer>
     

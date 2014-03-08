@@ -92,5 +92,11 @@ namespace OutcoldSolutions.GoogleMusic
         /// Navigate to current view again (if you need to refresh current view).
         /// </summary>
         void RefreshCurrentView();
+
+        /// <summary>
+        /// Get current view.
+        /// </summary>
+        /// <returns>Get current view.</returns>
+        IPageView GetCurrentView();
     }
 }

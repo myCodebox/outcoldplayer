@@ -119,6 +119,16 @@ namespace OutcoldSolutions.GoogleMusic
             }
         }
 
+        public IPageView GetCurrentView()
+        {
+            if (this.viewsHistory.Count > 0)
+            {
+                return this.viewsHistory.Last.Value.View;
+            }
+
+            return null;
+        }
+
         private void NavigateToCurrentView()
         {
             var item = this.viewsHistory.Last.Value;

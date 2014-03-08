@@ -26,6 +26,7 @@ namespace OutcoldSolutions.GoogleMusic
     using OutcoldSolutions.GoogleMusic.Presenters.Popups;
     using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Services;
+    using OutcoldSolutions.GoogleMusic.Services.Actions;
     using OutcoldSolutions.GoogleMusic.Services.Publishers;
     using OutcoldSolutions.GoogleMusic.Shell;
     using OutcoldSolutions.GoogleMusic.Views;
@@ -257,6 +258,21 @@ namespace OutcoldSolutions.GoogleMusic
 
                 registration.Register<ScreenLocker>();
                 registration.Register<ApplicationStateChangeHandler>();
+
+                // Actions
+                registration.Register<ISelectedObjectsService>()
+                            .AsSingleton<SelectedObjectsService>();
+
+                registration.Register<QueueAction>().AsSingleton();
+                registration.Register<StartRadioAction>().AsSingleton();
+                registration.Register<AddToPlaylistAction>().AsSingleton();
+                registration.Register<EditPlaylistAction>().AsSingleton();
+                registration.Register<DownloadAction>().AsSingleton();
+                registration.Register<RemoveLocalAction>().AsSingleton();
+                registration.Register<RemoveFromPlaylistAction>().AsSingleton();
+                registration.Register<RemoveSelectedSongAction>().AsSingleton();
+                registration.Register<DeletePlaylistAction>().AsSingleton();
+                registration.Register<DeleteRadioStationsAction>().AsSingleton();
             }
 
             Container.Resolve<ApplicationLogManager>();
@@ -268,6 +284,21 @@ namespace OutcoldSolutions.GoogleMusic
             currentSongPublisherService.AddPublisher<GoogleMusicCurrentSongPublisher>();
             currentSongPublisherService.AddPublisher<MediaControlCurrentSongPublisher>();
             currentSongPublisherService.AddPublisher<TileCurrentSongPublisher>();
+
+            var selectedObjectsService = Container.Resolve<ISelectedObjectsService>();
+            selectedObjectsService.AddActions(new ISelectedObjectAction []
+                                              {
+                                                  Container.Resolve<QueueAction>(),
+                                                  Container.Resolve<StartRadioAction>(),
+                                                  Container.Resolve<AddToPlaylistAction>(),
+                                                  Container.Resolve<EditPlaylistAction>(),
+                                                  Container.Resolve<DownloadAction>(),
+                                                  Container.Resolve<RemoveLocalAction>(),
+                                                  Container.Resolve<RemoveFromPlaylistAction>(),
+                                                  Container.Resolve<RemoveSelectedSongAction>(),
+                                                  Container.Resolve<DeletePlaylistAction>(),
+                                                  Container.Resolve<DeleteRadioStationsAction>()
+                                              });
 
             if (Container.Resolve<ILastfmWebService>().RestoreSession())
             {

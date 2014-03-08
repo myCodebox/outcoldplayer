@@ -13,6 +13,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
     using OutcoldSolutions.GoogleMusic.Shell;
     using OutcoldSolutions.GoogleMusic.Views.Popups;
 
+    public class PlaylistEditCompletedEventArgs : EventArgs
+    {
+        
+    }
+
     public interface IPlaylistEditPopupViewPresenter
     {
         string Title { get; set; }
@@ -88,7 +93,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
                 this.Logger.LogTask(this.userPlaylistsService.CreateAsync(this.Title));
             }
             
-            this.View.Close();
+            this.View.Close(new PlaylistEditCompletedEventArgs());
         }
 
         private bool CanSave()

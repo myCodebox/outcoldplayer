@@ -16,6 +16,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
     public interface ISongsService
     {
         Task UpdateRatingAsync(Song song, byte newRating);
+
+        Task<IList<Song>> AddToLibraryAsync(List<Song> songs);
     }
 
     public class SongsService : ISongsService
@@ -79,6 +81,11 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     }
                 }
             }
+        }
+
+        public Task<IList<Song>> AddToLibraryAsync(List<Song> songs)
+        {
+            throw new NotImplementedException();
         }
     }
 }

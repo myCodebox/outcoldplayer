@@ -4,7 +4,6 @@
 namespace OutcoldSolutions.GoogleMusic.Presenters
 {
     using System;
-    using System.Collections.Generic;
     using System.Collections.Specialized;
     using System.Diagnostics;
     using System.Linq;
@@ -15,49 +14,29 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
-    using OutcoldSolutions.GoogleMusic.Views.Popups;
 
     public class CurrentPlaylistPageViewPresenter : PagePresenterBase<ICurrentPlaylistPageView>
     {
-        private readonly IApplicationResources resources;
         private readonly IPlayQueueService playQueueService;
         private readonly ISongsService metadataEditService;
-        private readonly ISongsCachingService cachingService;
-        private readonly IApplicationStateService stateService;
-        private readonly INavigationService navigationService;
-        private readonly IRadioStationsService radioStationsService;
-        private readonly ISettingsService settingsService;
+
+        private readonly ISelectedObjectsService selectedObjectsService;
 
         internal CurrentPlaylistPageViewPresenter(
-            IApplicationResources resources,
             IPlayQueueService playQueueService,
             ISongsService metadataEditService,
-            ISongsCachingService cachingService,
-            IApplicationStateService stateService,
-            INavigationService navigationService,
-            IRadioStationsService radioStationsService,
-            ISettingsService settingsService,
-            SongsBindingModel songsBindingModel)
+            SongsBindingModel songsBindingModel,
+            ISelectedObjectsService selectedObjectsService)
         {
-            this.resources = resources;
             this.playQueueService = playQueueService;
             this.metadataEditService = metadataEditService;
-            this.cachingService = cachingService;
-            this.stateService = stateService;
-            this.navigationService = navigationService;
-            this.radioStationsService = radioStationsService;
-            this.settingsService = settingsService;
+            this.selectedObjectsService = selectedObjectsService;
             this.BindingModel = songsBindingModel;
 
             this.playQueueService.QueueChanged += async (sender, args) => await this.Dispatcher.RunAsync(this.UpdateSongs);
 
             //this.SaveAsPlaylistCommand = new DelegateCommand(this.SaveAsPlaylist, () => this.BindingModel.Songs.Count > 0);
-            this.RemoveSelectedSongCommand = new DelegateCommand(this.RemoveSelectedSong, () => this.BindingModel.SelectedItems.Count > 0);
-            this.AddToPlaylistCommand = new DelegateCommand(this.AddToPlaylist, () => this.BindingModel.SelectedItems.Count > 0);
             this.RateSongCommand = new DelegateCommand(this.RateSong);
-            this.DownloadCommand = new DelegateCommand(this.Download, () => this.BindingModel.SelectedItems.Count(x => !x.Metadata.UnknownSong) > 0);
-            this.UnPinCommand = new DelegateCommand(this.UnPin, () => this.BindingModel.SelectedItems.Count(x => !x.Metadata.UnknownSong) > 0);
-            this.StartRadioCommand = new DelegateCommand(this.StartRadio, () => this.BindingModel != null && this.BindingModel.SelectedItems.Count == 1);
 
             this.playQueueService.StateChanged += async (sender, args) => await this.Dispatcher.RunAsync(async () => 
                 {
@@ -75,19 +54,9 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 });
         }
 
-        public DelegateCommand AddToPlaylistCommand { get; private set; }
-
         public DelegateCommand SaveAsPlaylistCommand { get; private set; }
 
-        public DelegateCommand RemoveSelectedSongCommand { get; set; }
-
         public DelegateCommand RateSongCommand { get; set; }
-
-        public DelegateCommand DownloadCommand { get; set; }
-
-        public DelegateCommand UnPinCommand { get; set; }
-
-        public DelegateCommand StartRadioCommand { get; set; }
 
         public SongsBindingModel BindingModel { get; set; }
 
@@ -108,6 +77,9 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             base.OnInitialized();
 
             this.BindingModel.SelectedItems.CollectionChanged += this.SelectedSongChanged;
+
+            this.EventAggregator.GetEvent<SelectionClearedEvent>()
+               .Subscribe<SelectionClearedEvent>(async (e) => await this.Dispatcher.RunAsync(() => this.BindingModel.ClearSelectedItems()));
         }
 
         //protected override IEnumerable<CommandMetadata> GetViewCommands()
@@ -129,52 +101,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     });
         }
 
-        private void AddToPlaylist()
-        {
-            var selectedSongs = this.BindingModel.GetSelectedSongs().ToList();
-            if (selectedSongs != null)
-            {
-                this.MainFrame.ShowPopup<IAddToPlaylistPopupView>(
-                    PopupRegion.AppToolBarLeft, 
-                    selectedSongs).Closed += this.AddToPlaylist_Closed;
-            }
-        }
-
-        private void AddToPlaylist_Closed(object sender, EventArgs eventArgs)
-        {
-            ((IPopupView)sender).Closed -= this.AddToPlaylist_Closed;
-            if (eventArgs is AddToPlaylistCompletedEventArgs)
-            {
-                this.BindingModel.ClearSelectedItems();
-            }
-        }
-
-        private async void Download()
-        {
-            try
-            {
-                await this.cachingService.QueueForDownloadAsync(this.BindingModel.GetSelectedSongs());
-                this.BindingModel.ClearSelectedItems();
-            }
-            catch (Exception e)
-            {
-                this.Logger.Error(e, "Cannot add songs to download queue");
-            }
-        }
-
-        private async void UnPin()
-        {
-            try
-            {
-                await this.cachingService.ClearCachedAsync(this.BindingModel.GetSelectedSongs());
-                this.BindingModel.ClearSelectedItems();
-            }
-            catch (Exception e)
-            {
-                this.Logger.Error(e, "Cannot clear cache for selected songs");
-            }
-        }
-
         private void RateSong(object parameter)
         {
             var ratingEventArgs = parameter as RatingEventArgs;
@@ -186,118 +112,16 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             }
         }
 
-        private async void RemoveSelectedSong()
-        {
-            var collection = this.BindingModel.GetSelectedIndexes().ToList();
-            if (collection.Count > 0)
-            {
-                await this.playQueueService.RemoveAsync(collection);
-
-                await this.Dispatcher.RunAsync(
-                    () =>
-                        {
-                            if (collection.Count == 1)
-                            {
-                                int selectedSongIndex = collection.First();
-                                if (selectedSongIndex < this.BindingModel.Songs.Count)
-                                {
-                                    this.BindingModel.SelectSongByIndex(selectedSongIndex);
-                                }
-                                else if (this.BindingModel.Songs.Count > 0)
-                                {
-                                    this.BindingModel.SelectSongByIndex(selectedSongIndex - 1);
-                                }
-                            }
-                        });
-            }
-        }
-
         private void UpdateSongs()
         {
             this.BindingModel.SetCollection(this.playQueueService.GetQueue());
         }
 
-        private void SelectedSongChanged(object sender, NotifyCollectionChangedEventArgs notifyCollectionChangedEventArgs)
+        private void SelectedSongChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            this.AddToPlaylistCommand.RaiseCanExecuteChanged();
-            this.RemoveSelectedSongCommand.RaiseCanExecuteChanged();
-            this.StartRadioCommand.RaiseCanExecuteChanged();
-
-            if (this.BindingModel.SelectedItems.Count > 0)
-            {
-                this.MainFrame.SetContextCommands(this.GetContextCommands());
-            }
-            else
-            {
-                this.MainFrame.ClearContextCommands();
-            }
-
-            this.AddToPlaylistCommand.RaiseCanExecuteChanged();
-            // this.SaveAsPlaylistCommand.RaiseCanExecuteChanged();
-            this.DownloadCommand.RaiseCanExecuteChanged();
-            this.RemoveSelectedSongCommand.RaiseCanExecuteChanged();
-        }
-
-        private IEnumerable<CommandMetadata> GetContextCommands()
-        {
-            if (this.stateService.IsOnline())
-            {
-                yield return new CommandMetadata(CommandIcon.Add, this.resources.GetString("Toolbar_PlaylistButton"), this.AddToPlaylistCommand);
-                yield return
-                         new CommandMetadata(
-                             CommandIcon.MusicInfo,
-                             this.settingsService.GetIsAllAccessAvailable()
-                                 ? this.resources.GetString("Toolbar_StartRadio")
-                                 : this.resources.GetString("Toolbar_StartInstantMix"),
-                             this.StartRadioCommand);
-            }
-
-            yield return new CommandMetadata(CommandIcon.Remove, this.resources.GetString("Toolbar_QueueButton"), this.RemoveSelectedSongCommand);
-
-            if (this.BindingModel.SelectedItems.Any(x => !x.IsCached))
-            {
-                if (this.stateService.IsOnline())
-                {
-                    yield return new CommandMetadata(CommandIcon.Pin, this.resources.GetString("Toolbar_KeepLocal"), this.DownloadCommand);
-                }
-            }
-            else
-            {
-                yield return new CommandMetadata(CommandIcon.UnPin, this.resources.GetString("Toolbar_RemoveLocal"), this.UnPinCommand);
-            }
-        }
-
-        private async void StartRadio()
-        {
-            if (this.StartRadioCommand.CanExecute())
-            {
-                var songBindingModel = this.BindingModel.SelectedItems.FirstOrDefault();
-                if (songBindingModel != null)
-                {
-                    try
-                    {
-                        this.IsDataLoading = true;
-
-                        var radioResp = await this.radioStationsService.CreateAsync(songBindingModel.Metadata);
-
-                        if (radioResp != null)
-                        {
-                            await this.playQueueService.PlayAsync(radioResp.Item1, radioResp.Item2, -1);
-                            this.IsDataLoading = false;
-
-                            this.navigationService.NavigateTo<ICurrentPlaylistPageView>();
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        this.Logger.Error(e, "Cannot start radio");
-                    }
-                    finally
-                    {
-                        this.IsDataLoading = false;
-                    }
-                }
-            }
+            this.selectedObjectsService.Update(
+                e.NewItems == null ? null : e.NewItems.Cast<SongBindingModel>().Select(x => x.Metadata),
+                e.OldItems == null ? null : e.OldItems.Cast<SongBindingModel>().Select(x => x.Metadata));
         }
     }
 }
