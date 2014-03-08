@@ -26,5 +26,6 @@
     <converters:PlaylistSongsCountConverter x:Key="PlaylistSongsCountConverter" />
     <converters:ArtistAlbumsCountConverter x:Key="ArtistAlbumsCountConverter" />
     <converters:BooleanToColumnWidthConverter x:Key="BooleanToColumnWidthConverter" />
+    <converters:NotEmptyToVisibilityConverter x:Key="NotEmptyToVisibilityConverter" />
     
 </ResourceDictionary>

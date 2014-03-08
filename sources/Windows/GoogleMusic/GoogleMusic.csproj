@@ -129,6 +129,7 @@
     <Compile Include="BindingModels\Settings\AccountViewBindingModel.cs" />
     <Compile Include="BindingModels\Settings\SupportBindingModel.cs" />
     <Compile Include="BindingModels\SongResultBindingModel.cs" />
+    <Compile Include="Converters\NotEmptyToVisibilityConverter.cs" />
     <Compile Include="Presenters\SongsListViewPresenter.cs" />
     <Compile Include="BindingModels\StartViewBindingModel.cs" />
     <Compile Include="BindingModels\AuthentificationPageViewBindingModel.cs" />

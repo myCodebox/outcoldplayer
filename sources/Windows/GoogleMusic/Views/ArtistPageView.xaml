@@ -4,8 +4,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:interactivity="using:Windows.UI.Interactivity"
-    xmlns:controls="using:OutcoldSolutions.GoogleMusic.Controls"
     xmlns:views="using:OutcoldSolutions.GoogleMusic.Views"
     mc:Ignorable="d"
     d:DesignHeight="300"
@@ -49,20 +47,20 @@
             </StackPanel>
 
             <TextBlock Style="{StaticResource SubheaderTextStyle}"
-                       Visibility="{Binding Path=BindingModel.Albums, Converter={StaticResource NullToInvisibilityConverter}}"
+                       Visibility="{Binding Path=BindingModel.Albums, Converter={StaticResource NotEmptyToVisibilityConverter}}"
                        Margin="0, 20, 0, 0">My Library Albums</TextBlock>
 
             <ContentPresenter x:Name="LibraryAlbumsContentPresenter"
-                              Visibility="{Binding Path=BindingModel.Albums, Converter={StaticResource NullToInvisibilityConverter}}"
+                              Visibility="{Binding Path=BindingModel.Albums, Converter={StaticResource NotEmptyToVisibilityConverter}}"
                               Margin="0, 20, 0, 0"/>
                       
             <TextBlock Style="{StaticResource SubheaderTextStyle}"
-                       Visibility="{Binding Path=BindingModel.Collections, Converter={StaticResource NullToInvisibilityConverter}}"
+                       Visibility="{Binding Path=BindingModel.Collections, Converter={StaticResource NotEmptyToVisibilityConverter}}"
                        Margin="0, 20, 0, 0">My Library Collections
             </TextBlock>
 
             <ContentPresenter x:Name="LibraryCollectionsContentPresenter"
-                              Visibility="{Binding Path=BindingModel.Collections, Converter={StaticResource NullToInvisibilityConverter}}"
+                              Visibility="{Binding Path=BindingModel.Collections, Converter={StaticResource NotEmptyToVisibilityConverter}}"
                               Margin="0, 20, 0, 0"/>
         </StackPanel>
     </ScrollViewer>
