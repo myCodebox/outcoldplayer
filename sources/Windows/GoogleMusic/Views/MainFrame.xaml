@@ -32,25 +32,16 @@
                 Style="{StaticResource BottomAppBarStyle}">
             <Grid >
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-
-                <ItemsControl x:Name="ViewButtonsItemsControl" 
-                              Style="{StaticResource ToolBarItemsControlStyle}" />
                 
-                <Border Grid.Column="1" 
-                        Style="{StaticResource AppBarSeparator}" 
-                        x:Name="AppToolbarSeparator" />
-                
-                <ItemsControl Grid.Column="2" 
+                <ItemsControl Grid.Column="0" 
                               x:Name="ContextButtonsItemsControl" 
                               Style="{StaticResource ToolBarItemsControlStyle}"
                               HorizontalAlignment="Right"/>
 
-                <ContentControl Grid.Column="3" 
+                <ContentControl Grid.Column="1" 
                                 x:Name="BottomAppBarRightZoneRegionContentControl"
                                 Visibility="{Binding Path=Content, RelativeSource={RelativeSource Self}, Converter={StaticResource NullToInvisibilityConverter}}" />
             </Grid>
@@ -171,13 +162,13 @@
                         Visibility="{Binding Path=Content, RelativeSource={RelativeSource Self}, Converter={StaticResource NullToInvisibilityConverter}}"/>
 
             <Popup IsLightDismissEnabled="True" 
-               x:Name="AppToolBarLeftPopup" 
-               HorizontalAlignment="Left" 
-               VerticalAlignment="Bottom" 
-               Closed="PopupViewClosed"
-               Grid.Row="1"
-               Grid.Column="1"
-               Grid.ColumnSpan="2" >
+                   x:Name="AppToolBarLeftPopup" 
+                   HorizontalAlignment="Left" 
+                   VerticalAlignment="Bottom" 
+                   Closed="PopupViewClosed"
+                   Grid.Row="1"
+                   Grid.Column="0"
+                   Grid.ColumnSpan="3" >
                 <Popup.ChildTransitions>
                     <TransitionCollection>
                         <PopupThemeTransition FromHorizontalOffset="0" FromVerticalOffset="30" />
@@ -186,13 +177,13 @@
             </Popup>
 
             <Popup IsLightDismissEnabled="True" 
-               x:Name="AppToolBarRightPopup" 
-               HorizontalAlignment="Right" 
-               VerticalAlignment="Bottom" 
-               Closed="PopupViewClosed"
-               Grid.Row="1"
-               Grid.Column="1"
-               Grid.ColumnSpan="2">
+                   x:Name="AppToolBarRightPopup" 
+                   HorizontalAlignment="Right" 
+                   VerticalAlignment="Bottom" 
+                   Closed="PopupViewClosed"
+                   Grid.Row="1"
+                   Grid.Column="1"
+                   Grid.ColumnSpan="2">
                 <Popup.ChildTransitions>
                     <TransitionCollection>
                         <PopupThemeTransition FromHorizontalOffset="0" FromVerticalOffset="30" />

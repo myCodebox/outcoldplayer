@@ -92,6 +92,8 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
         private Popup fullScreenPopup;
 
+        private IMainMenu mainMenu;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="MainFrame"/> class.
         /// </summary>
@@ -159,7 +161,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
         private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
         {
-            this.MainMenuContainer.Content = this.container.Resolve<IMainMenu>();
+            this.MainMenuContainer.Content = this.mainMenu = this.container.Resolve<IMainMenu>();
         }
 
         /// <inheritdoc />
@@ -179,14 +181,26 @@ namespace OutcoldSolutions.GoogleMusic.Views
         /// <inheritdoc />
         public void SetViewCommands(IEnumerable<CommandMetadata> commands)
         {
-            this.ViewButtonsItemsControl.ItemsSource = commands;
+            if (this.mainMenu != null)
+            {
+                this.mainMenu.GetPresenter<MainMenuPresenter>().ViewCommands.Clear();
+                foreach (var commandMetadata in commands)
+                {
+                    this.mainMenu.GetPresenter<MainMenuPresenter>().ViewCommands.Add(commandMetadata);
+                }
+            }
+
             this.UpdateBottomAppBar();
         }
 
         /// <inheritdoc />
         public void ClearViewCommands()
         {
-            this.ViewButtonsItemsControl.ItemsSource = null;
+            if (this.mainMenu != null)
+            {
+                this.mainMenu.GetPresenter<MainMenuPresenter>().ViewCommands.Clear();
+            }
+
             this.UpdateBottomAppBar();
         }
 
@@ -570,24 +584,12 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
         private void UpdateBottomAppBar()
         {
-            if (this.ContextButtonsItemsControl.Items != null && this.ContextButtonsItemsControl.Items.Count > 0
-                && this.ViewButtonsItemsControl.Items != null && this.ViewButtonsItemsControl.Items.Count > 0
-                && this.BottomAppBarRightZoneRegionContentControl.Content != null)
-            {
-                this.AppToolbarSeparator.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                this.AppToolbarSeparator.Visibility = Visibility.Collapsed;
-            }
-
             this.UpdateBottomAppBarVisibility();
         }
 
         private void UpdateBottomAppBarVisibility()
         {
             bool isVisible = (this.ContextButtonsItemsControl.Items != null && this.ContextButtonsItemsControl.Items.Count > 0)
-                             || (this.ViewButtonsItemsControl.Items != null && this.ViewButtonsItemsControl.Items.Count > 0)
                              || this.BottomAppBarRightZoneRegionContentControl.Content != null;
             this.UpdateToolBarVisibility(this.BottomAppBar, isVisible);
         }

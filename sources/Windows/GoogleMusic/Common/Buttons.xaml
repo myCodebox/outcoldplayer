@@ -892,12 +892,6 @@
         <Setter Property="Content" Value="&#xE11A;"/>
     </Style>
 
-    <Style x:Key="ListAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
-        <Setter Property="AutomationProperties.AutomationId" Value="ListAppBarButton"/>
-        <Setter Property="AutomationProperties.Name" Value="List"/>
-        <Setter Property="Content" Value="&#xE14C;"/>
-    </Style>
-
     <Style x:Key="VolumeAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
         <Setter Property="AutomationProperties.AutomationId" Value="VolumeAppBarButton"/>
         <Setter Property="AutomationProperties.Name" Value="Volume"/>
@@ -908,12 +902,6 @@
         <Setter Property="AutomationProperties.AutomationId" Value="OpenWithAppBarButton"/>
         <Setter Property="AutomationProperties.Name" Value="Open With"/>
         <Setter Property="Content" Value="&#xE17D;"/>
-    </Style>
-
-    <Style x:Key="PageAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
-        <Setter Property="AutomationProperties.AutomationId" Value="PageAppBarButton"/>
-        <Setter Property="AutomationProperties.Name" Value="Page"/>
-        <Setter Property="Content" Value="&#xE132;"/>
     </Style>
 
     <Style x:Key="DownloadAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">

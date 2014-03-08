@@ -80,7 +80,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         protected override IEnumerable<CommandMetadata> GetViewCommands()
         {
-            yield return new CommandMetadata(CommandIcon.List, this.resources.GetString("Toolbar_ShowAllButton"), this.ShowAllCommand);
+            yield return new CommandMetadata(CommandSymbol.List, this.resources.GetString("Toolbar_ShowAllButton"), this.ShowAllCommand);
         }
 
         private void SelectedItemsOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)

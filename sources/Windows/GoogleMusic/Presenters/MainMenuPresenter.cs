@@ -5,6 +5,7 @@
 namespace OutcoldSolutions.GoogleMusic.Presenters
 {
     using System;
+    using System.Collections.ObjectModel;
     using System.Reactive.Linq;
 
     using OutcoldSolutions.GoogleMusic.EventAggregator;
@@ -55,6 +56,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 .Subscribe((e) => this.RaisePropertyChanged(() => this.RadioText));
 
             this.navigationService.NavigatedTo += this.NavigationServiceOnNavigatedTo;
+
+            this.ViewCommands = new ObservableCollection<CommandMetadata>();
         }
 
         public DelegateCommand HomeCommand { get; set; }
@@ -66,6 +69,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         public DelegateCommand RadioStationsCommand { get; set; }
 
         public DelegateCommand PlaylistsCommand { get; set; }
+
+        public ObservableCollection<CommandMetadata> ViewCommands { get; set; } 
 
         public bool IsRadioVisible
         {

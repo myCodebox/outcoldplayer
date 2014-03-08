@@ -52,11 +52,6 @@ namespace OutcoldSolutions.GoogleMusic.Services.Actions
                 return false;
             }
 
-            if (selectedObjects.Count != 1)
-            {
-                return false;
-            }
-
             return selectedObjects.All(x => x is UserPlaylist);
         }
 

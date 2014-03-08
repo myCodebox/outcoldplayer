@@ -186,6 +186,32 @@
             </Button>
 
             <Border Style="{StaticResource SeparatorStyle}" />
+            
+            <ListView ItemsSource="{Binding Path=ViewCommands}"
+                      Margin="0"
+                      Padding="0">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="Margin" Value="0"/>
+                        <Setter Property="Padding" Value="0"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate>
+                                    <Button Style="{StaticResource MenuButtonStyle}"
+                                            Command="{Binding Path=Command, Mode=OneTime}">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Style="{Binding Path=IconName, Converter={StaticResource StringToResourceConverter}}"/>
+                                            <TextBlock Text="{Binding Path=Title}"
+                                                       Style="{StaticResource SmallTextStyle}"
+                                                       VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                    </Button>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ListView.ItemContainerStyle>
+            </ListView>
         </StackPanel>
         
         <views:LogoView Grid.Row="2"
