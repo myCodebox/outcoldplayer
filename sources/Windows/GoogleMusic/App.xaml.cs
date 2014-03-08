@@ -273,6 +273,8 @@ namespace OutcoldSolutions.GoogleMusic
                 registration.Register<RemoveSelectedSongAction>().AsSingleton();
                 registration.Register<DeletePlaylistAction>().AsSingleton();
                 registration.Register<DeleteRadioStationsAction>().AsSingleton();
+                registration.Register<AddToLibraryAction>().AsSingleton();
+                registration.Register<RemoveFromLibraryAction>().AsSingleton();
             }
 
             Container.Resolve<ApplicationLogManager>();
@@ -292,9 +294,11 @@ namespace OutcoldSolutions.GoogleMusic
                                                   Container.Resolve<StartRadioAction>(),
                                                   Container.Resolve<AddToPlaylistAction>(),
                                                   Container.Resolve<EditPlaylistAction>(),
+                                                  Container.Resolve<AddToLibraryAction>(),
                                                   Container.Resolve<DownloadAction>(),
                                                   Container.Resolve<RemoveLocalAction>(),
                                                   Container.Resolve<RemoveFromPlaylistAction>(),
+                                                  Container.Resolve<RemoveFromLibraryAction>(),
                                                   Container.Resolve<RemoveSelectedSongAction>(),
                                                   Container.Resolve<DeletePlaylistAction>(),
                                                   Container.Resolve<DeleteRadioStationsAction>()

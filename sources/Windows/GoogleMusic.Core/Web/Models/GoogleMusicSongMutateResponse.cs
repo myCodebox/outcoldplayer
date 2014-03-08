@@ -13,6 +13,9 @@ namespace OutcoldSolutions.GoogleMusic.Web.Models
 
     public class GoogleMusicSongMutateItem
     {
+        public string Id { get; set; }
+        public string Client_Id { get; set; }
         public string ResponseCode { get; set; }
+        public string Response_Code { get; set; }
     }
 }

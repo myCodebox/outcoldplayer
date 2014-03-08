@@ -124,7 +124,6 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
                 subProgress,
                 async (gSongs) =>
                 {
-                    IList<Song> toBeDeleted = new List<Song>();
                     IList<Song> toBeUpdated = new List<Song>();
                     IList<Song> toBeInserted = new List<Song>();
 
@@ -132,14 +131,18 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
                     {
                         if (googleMusicSong.Deleted)
                         {
-                            toBeDeleted.Add(googleMusicSong.ToSong());
-                            
+                            Song song = googleMusicSong.ToSong();
+                            if (await this.songsRepository.RemoveFromLibraryAsync(song.SongId, song.StoreId) > 0)
+                            {
+                                updateStatus.SetBreakingChange();
+                            }
                         }
                         else
                         {
                             Song song = null;
                             if (libraryFreshnessDate.HasValue)
                             {
+                                await this.songsRepository.AddSongToLibraryAsync(googleMusicSong.Id, googleMusicSong.ClientId, googleMusicSong.StoreId);
                                 song = await this.songsRepository.FindSongAsync(googleMusicSong.Id);
                             }
 
@@ -161,14 +164,6 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
                             {
                                 toBeInserted.Add(googleMusicSong.ToSong());
                             }
-                        }
-                    }
-
-                    if (toBeDeleted.Count > 0)
-                    {
-                        if (await this.songsRepository.DeleteAsync(toBeDeleted) > 0)
-                        {
-                            updateStatus.SetBreakingChange();
                         }
                     }
 

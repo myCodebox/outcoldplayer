@@ -100,6 +100,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                                             if (result.Value)
                                             {
                                                 this.ClearSelection();
+                                                this.navigationService.RefreshCurrentView();
                                             }
                                         }
                                         else

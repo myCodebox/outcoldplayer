@@ -132,9 +132,15 @@ namespace OutcoldSolutions.GoogleMusic
         private void NavigateToCurrentView()
         {
             var item = this.viewsHistory.Last.Value;
+
+            item.View.OnNavigatingFrom(new NavigatingFromEventArgs(item.State));
+
             this.mainFrameRegionProvider.SetContent(MainFrameRegion.Content, item.View);
+
             var navigatedToEventArgs = new NavigatedToEventArgs(item.View, item.State, item.Parameter, isBack: true);
+
             item.View.OnNavigatedTo(navigatedToEventArgs);
+
             this.RaiseNavigatedTo(navigatedToEventArgs);
         }
 

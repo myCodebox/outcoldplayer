@@ -200,12 +200,14 @@
     <Compile Include="Presenters\UserPlaylistsPageViewPresenter.cs" />
     <Compile Include="Presenters\ViewPresenterBase.cs" />
     <Compile Include="Registration.cs" />
+    <Compile Include="Services\Actions\AddToLibraryAction.cs" />
     <Compile Include="Services\Actions\AddToPlaylistAction.cs" />
     <Compile Include="Services\Actions\DeletePlaylistAction.cs" />
     <Compile Include="Services\Actions\DeleteRadioStationsAction.cs" />
     <Compile Include="Services\Actions\DownloadAction.cs" />
     <Compile Include="Services\Actions\EditPlaylistAction.cs" />
     <Compile Include="Services\Actions\QueueAction.cs" />
+    <Compile Include="Services\Actions\RemoveFromLibraryAction.cs" />
     <Compile Include="Services\Actions\RemoveFromPlaylistAction.cs" />
     <Compile Include="Services\Actions\RemoveLocalAction.cs" />
     <Compile Include="Services\Actions\RemoveSelectedSongAction.cs" />

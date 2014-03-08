@@ -33,6 +33,10 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
         Task<int> DeleteAsync(IEnumerable<Song> songs);
 
         Task<int> UpdateAsync(IEnumerable<Song> songs);
+
+        Task<int> AddSongToLibraryAsync(string songId, string clientId, string storeId);
+
+        Task<int> RemoveFromLibraryAsync(string songId, string storeId);
     }
 
     public class SongsRepository : RepositoryBase, ISongsRepository
@@ -134,6 +138,52 @@ where SongId = ?2", song.StatsPlayCount, song.SongId);
         public async Task<Song> GetSongAsync(string songId)
         {
             return (await this.Connection.QueryAsync<Song>(SqlSong, this.stateService.IsOnline(), songId)).FirstOrDefault();
+        }
+
+        public async Task<int> AddSongToLibraryAsync(string songId, string clientId, string storeId)
+        {
+            int result = 0;
+
+            await this.Connection.RunInTransactionAsync((connection) =>
+                {
+                    connection.Execute(@"update UserPlaylistEntry set SongId = ?1 where SongId = ?2", songId, storeId);
+                    connection.Execute(@"update CachedSong set SongId = ?1 where SongId = ?2", songId, storeId);
+                    result = connection.Execute(@"update Song set SongId = ?1, ClientId = ?2, IsLibrary = 1 where SongId = ?3 and IsLibrary = 0", songId, clientId, storeId);
+                });
+
+            return result;
+        }
+
+        public async Task<int> RemoveFromLibraryAsync(string songId, string storeId)
+        {
+            int result = 0;
+
+            await this.Connection.RunInTransactionAsync((connection) =>
+                {
+                    int entries = 0;
+
+                    if (string.IsNullOrEmpty(storeId))
+                    {
+                        connection.Execute(@"delete from UserPlaylistEntry where SongId = ?2", songId);
+                    }
+                    else
+                    {
+                        entries = connection.Execute(@"update UserPlaylistEntry set SongId = ?1 where SongId = ?2", storeId, songId);
+                    }
+
+                    if (entries > 0)
+                    {
+                        connection.Execute(@"update CachedSong set SongId = ?1 where SongId = ?2", storeId, songId);
+                        result = connection.Execute(@"update Song set SongId = ?1, ClientId = null, IsLibrary = 0 where SongId = ?2 and IsLibrary = 1", storeId, songId);
+                    }
+                    else
+                    {
+                        // Cached song should be cleared after
+                        connection.Execute(@"delete from Song where SongId = ?1 and IsLibrary = 1", songId);
+                    }
+                });
+
+            return result;
         }
     }
 }

@@ -368,7 +368,7 @@ CREATE TRIGGER update_song_artistarturl AFTER UPDATE OF [ArtistArtUrl] ON [Song]
 ");
 
             await connection.ExecuteAsync(@"
-CREATE TRIGGER update_song_parenttitlesupdate AFTER UPDATE OF [AlbumTitleNorm], [GenreTitleNorm], [AlbumArtistTitleNorm], [ArtistTitleNorm], [GoogleAlbumId], [GoogleArtistId] ON [Song]
+CREATE TRIGGER update_song_parenttitlesupdate AFTER UPDATE OF [AlbumTitleNorm], [GenreTitleNorm], [AlbumArtistTitleNorm], [ArtistTitleNorm], [GoogleAlbumId], [GoogleArtistId], [IsLibrary] ON [Song]
   BEGIN  
 
     -------------- DELETE -------------------

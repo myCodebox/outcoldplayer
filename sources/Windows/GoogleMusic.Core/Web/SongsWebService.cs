@@ -34,6 +34,10 @@ namespace OutcoldSolutions.GoogleMusic.Web
         Task<GoogleMusicTrackStatResponse> SendStatsAsync(IList<Song> songs);
 
         Task<GoogleMusicSongMutateResponse> UpdateRatingsAsync(IDictionary<Song, int> ratings);
+
+        Task<GoogleMusicSongMutateResponse> AddSongsAsync(IList<Song> songs);
+
+        Task<GoogleMusicSongMutateResponse> RemoveSongsAsync(IList<Song> songs);
     }
 
     public class SongsWebService : ISongsWebService
@@ -162,6 +166,99 @@ namespace OutcoldSolutions.GoogleMusic.Web
                                             deleted = false,
                                             lastModifiedTimestamp = ((long)DateTime.UtcNow.ToUnixFileTime() * 1000L).ToString("G")
                                         }
+                                })
+                };
+
+            return await this.googleMusicApisService.PostAsync<GoogleMusicSongMutateResponse>(TrackBatch, json);
+        }
+
+        public async Task<GoogleMusicSongMutateResponse> AddSongsAsync(IList<Song> songs)
+        {
+            var json =
+                new
+                {
+                    mutations = songs.Select(create =>
+                        {
+                            dynamic request;
+                            
+                            if (string.IsNullOrEmpty(create.ClientId))
+                            {
+                                request = new
+                                {
+                                    album = create.AlbumTitle,
+                                    albumArtist = create.AlbumArtistTitle,
+                                    albumId = create.GoogleAlbumId,
+                                    artist = create.ArtistTitle,
+                                    beatsPerMinute = -1,
+                                    composer = create.Composer,
+                                    creationTimestamp = "-1",
+                                    deleted = false,
+                                    discNumber = create.Disc,
+                                    durationMillis = create.Duration.TotalMilliseconds.ToString(),
+                                    estimatedSize= create.EstimatedSize.ToString(),
+                                    genre = create.GenreTitle,
+                                    lastModifiedTimestamp = "0",
+                                    nid = create.Nid[0] != 'T' ? ("T" + create.Nid) : create.Nid,
+                                    playCount = create.PlayCount,
+                                    rating = create.Rating.ToString(),
+                                    storeId = create.StoreId,
+                                    title = create.Title,
+                                    totalDiscCount = create.TotalDiscs ?? (int?)0,
+                                    trackAvailableForPurchase = create.TrackAvailableForPurchase,
+                                    trackAvailableForSubscription = create.TrackAvailableForSubscription,
+                                    trackNumber = create.Track,
+                                    trackType = 8, // TODO: ???
+                                    year = create.Year ?? (int?)0
+                                };
+                            }
+                            else
+                            {
+                                request = new
+                                {
+                                    album = create.AlbumTitle,
+                                    albumArtist = create.AlbumArtistTitle,
+                                    albumId = create.GoogleAlbumId,
+                                    artist = create.ArtistTitle,
+                                    beatsPerMinute = -1,
+                                    clientId = create.ClientId,
+                                    composer = create.Composer,
+                                    creationTimestamp = "-1",
+                                    deleted = false,
+                                    discNumber = create.Disc.ToString(),
+                                    durationMillis = create.Duration.TotalMilliseconds.ToString(),
+                                    estimatedSize = create.EstimatedSize.ToString(),
+                                    genre = create.GenreTitle,
+                                    lastModifiedTimestamp = "0",
+                                    nid = create.Nid[0] != 'T' ? ("T" + create.Nid) : create.Nid,
+                                    playCount = create.PlayCount,
+                                    rating = create.Rating.ToString(),
+                                    storeId = create.StoreId,
+                                    title = create.Title,
+                                    totalDiscCount = create.TotalDiscs ?? (int?)0,
+                                    trackAvailableForPurchase = create.TrackAvailableForPurchase,
+                                    trackAvailableForSubscription = create.TrackAvailableForSubscription,
+                                    trackNumber = create.Track,
+                                    trackType = 8, // TODO: ???
+                                    year = create.Year ?? (int?)0
+                                };
+                            }
+
+                            return new { create = request };
+                        })
+                };
+
+            return await this.googleMusicApisService.PostAsync<GoogleMusicSongMutateResponse>(TrackBatch, json);
+        }
+
+        public async Task<GoogleMusicSongMutateResponse> RemoveSongsAsync(IList<Song> songs)
+        {
+            var json =
+                new
+                {
+                    mutations = songs.Select(delete =>
+                                new
+                                {
+                                    delete = delete.SongId
                                 })
                 };
 

@@ -12,12 +12,16 @@ namespace OutcoldSolutions.GoogleMusic.Services
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Web;
+    using System.Globalization;
+    using System.Diagnostics;
 
     public interface ISongsService
     {
         Task UpdateRatingAsync(Song song, byte newRating);
 
-        Task<IList<Song>> AddToLibraryAsync(List<Song> songs);
+        Task<IList<Song>> AddToLibraryAsync(IList<Song> songs);
+
+        Task<IList<Song>> RemoveFromLibraryAsync(IList<Song> songs);
     }
 
     public class SongsService : ISongsService
@@ -25,6 +29,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
         private readonly IEventAggregator eventAggregator;
         private readonly ISongsWebService songsWebService;
         private readonly ISongsRepository songsRepository;
+        private readonly IUserPlaylistsRepository userPlaylistsRepository;
 
         private readonly ILogger logger;
 
@@ -32,11 +37,13 @@ namespace OutcoldSolutions.GoogleMusic.Services
             ILogManager logManager,
             IEventAggregator eventAggregator,
             ISongsWebService songsWebService,
-            ISongsRepository songsRepository)
+            ISongsRepository songsRepository,
+            IUserPlaylistsRepository userPlaylistsRepository)
         {
             this.eventAggregator = eventAggregator;
             this.songsWebService = songsWebService;
             this.songsRepository = songsRepository;
+            this.userPlaylistsRepository = userPlaylistsRepository;
             this.logger = logManager.CreateLogger("SongMetadataEditService");
         }
 
@@ -83,9 +90,79 @@ namespace OutcoldSolutions.GoogleMusic.Services
             }
         }
 
-        public Task<IList<Song>> AddToLibraryAsync(List<Song> songs)
+        public async Task<IList<Song>> AddToLibraryAsync(IList<Song> songs)
         {
-            throw new NotImplementedException();
+            var response = await this.songsWebService.AddSongsAsync(songs);
+            if (response == null || response.MutateResponse == null || response.MutateResponse.Length != songs.Count)
+            {
+                return null;
+            }
+
+            List<Song> updates = new List<Song>();
+            List<Song> inserts = new List<Song>();
+
+            for (int i = 0; i < songs.Count; i++)
+            {
+                if (string.Equals(response.MutateResponse[i].Response_Code, "OK", StringComparison.OrdinalIgnoreCase))
+                {
+                    Song song = songs[i];
+                    if (song.UnknownSong)
+                    {
+                        inserts.Add(song);
+                    }
+                    else
+                    {
+                        int count = await this.songsRepository.AddSongToLibraryAsync(response.MutateResponse[i].Id, response.MutateResponse[i].Client_Id, song.SongId);
+                        Debug.Assert(count == 1, "One song should be updated!");
+                    }
+
+                    song.IsLibrary = true;
+                    song.UnknownSong = false;
+                    song.SongId = response.MutateResponse[i].Id;
+                    song.ClientId = response.MutateResponse[i].Client_Id;
+                }
+            }
+
+            int insertsCount = await this.songsRepository.InsertAsync(inserts);
+            int updatesCount = await this.songsRepository.UpdateAsync(updates);
+
+            if (insertsCount != inserts.Count || updatesCount != updates.Count)
+            {
+                return null;
+            }
+
+            this.eventAggregator.Publish(new SongsUpdatedEvent(songs));
+
+            return songs;
+        }
+
+        public async Task<IList<Song>> RemoveFromLibraryAsync(IList<Song> songs)
+        {
+            var response = await this.songsWebService.RemoveSongsAsync(songs);
+            if (response == null || response.MutateResponse == null || response.MutateResponse.Length != songs.Count)
+            {
+                return null;
+            }
+
+            List<Song> updates = new List<Song>();
+            List<Song> deletes = new List<Song>();
+
+            foreach (var song in songs)
+            {
+                int keeped = await this.songsRepository.RemoveFromLibraryAsync(song.SongId, song.StoreId);
+
+                song.IsLibrary = false;
+                song.SongId = song.StoreId;
+                song.ClientId = null;
+                if (keeped == 0)
+                {
+                    song.UnknownSong = false;
+                }
+            }
+
+            this.eventAggregator.Publish(new SongsUpdatedEvent(songs));
+
+            return songs;
         }
     }
 }
