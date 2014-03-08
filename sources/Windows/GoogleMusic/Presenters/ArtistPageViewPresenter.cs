@@ -23,6 +23,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private readonly IPlaylistsService playlistsService;
         private readonly IAlbumsRepository albumsRepository;
         private readonly ISelectedObjectsService selectedObjectsService;
+        private readonly IRadioStationsService radioStationsService;
+        private readonly IApplicationStateService applicationStateService;
 
         internal ArtistPageViewPresenter(
             IApplicationResources resources,
@@ -30,7 +32,9 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             INavigationService navigationService,
             IPlaylistsService playlistsService,
             IAlbumsRepository albumsRepository,
-            ISelectedObjectsService selectedObjectsService)
+            ISelectedObjectsService selectedObjectsService,
+            IRadioStationsService radioStationsService,
+            IApplicationStateService applicationStateService)
         {
             this.resources = resources;
             this.playQueueService = playQueueService;
@@ -38,13 +42,18 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.playlistsService = playlistsService;
             this.albumsRepository = albumsRepository;
             this.selectedObjectsService = selectedObjectsService;
+            this.radioStationsService = radioStationsService;
+            this.applicationStateService = applicationStateService;
             this.PlayCommand = new DelegateCommand(this.Play);
             this.ShowAllCommand = new DelegateCommand(this.ShowAll);
+            this.StartRadioCommand = new DelegateCommand(this.StartRadio);
         }
 
         public DelegateCommand PlayCommand { get; set; }
 
         public DelegateCommand ShowAllCommand { get; set; }
+
+        public DelegateCommand StartRadioCommand { get; set; }
 
         public override void OnNavigatingFrom(NavigatingFromEventArgs eventArgs)
         {
@@ -81,6 +90,10 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         protected override IEnumerable<CommandMetadata> GetViewCommands()
         {
             yield return new CommandMetadata(CommandSymbol.List, this.resources.GetString("Toolbar_ShowAllButton"), this.ShowAllCommand);
+            if (this.applicationStateService.IsOnline())
+            {
+                yield return new CommandMetadata(CommandSymbol.Radio, "Start radio", this.StartRadioCommand);
+            }
         }
 
         private void SelectedItemsOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -105,6 +118,25 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     this.navigationService.NavigateToPlaylist(playlist);
                     this.playQueueService.PlayAsync(playlist);
                     this.MainFrame.IsBottomAppBarOpen = true;
+                }
+            }
+        }
+
+        private async void StartRadio()
+        {
+            if (!this.IsDataLoading)
+            {
+                await this.Dispatcher.RunAsync(() => this.IsDataLoading = true);
+
+                var radio = await this.radioStationsService.CreateAsync(this.BindingModel.Artist);
+
+                if (radio != null)
+                {
+                    await this.playQueueService.PlayAsync(radio.Item1, radio.Item2, -1);
+
+                    await this.Dispatcher.RunAsync(() => this.IsDataLoading = false);
+
+                    this.navigationService.NavigateTo<ICurrentPlaylistPageView>();
                 }
             }
         }

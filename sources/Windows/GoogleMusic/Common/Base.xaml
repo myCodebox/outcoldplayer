@@ -175,5 +175,9 @@
     <Style x:Key="ListMainMenuSubitemIconStyle" TargetType="TextBlock" BasedOn="{StaticResource MainMenuSubitemIconStyle}">
         <Setter Property="Text" Value="&#xE14C;" />
     </Style>
+    
+    <Style x:Key="RadioMainMenuSubitemIconStyle" TargetType="TextBlock" BasedOn="{StaticResource MainMenuSubitemIconStyle}">
+        <Setter Property="Text" Value="&#xE142;" />
+    </Style>
 
 </ResourceDictionary>

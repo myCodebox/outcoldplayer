@@ -33,5 +33,7 @@ namespace OutcoldSolutions.GoogleMusic
         public const string Page = "PageMainMenuSubitemIconStyle";
 
         public const string List = "ListMainMenuSubitemIconStyle";
+
+        public const string Radio = "RadioMainMenuSubitemIconStyle";
     }
 }
