@@ -3,6 +3,8 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.BindingModels
 {
+    using System.Collections.Generic;
+
     using OutcoldSolutions.GoogleMusic.Models;
 
     public class PlaylistPageViewBindingModel<TPlaylist> : BindingModelBase where TPlaylist : class, IPlaylist
@@ -11,11 +13,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
 
         private string playlistType;
 
-        public PlaylistPageViewBindingModel(
-            SongsBindingModel songsBindingModel)
-        {
-            this.SongsBindingModel = songsBindingModel;
-        }
+        private IList<Song> songs;
 
         public TPlaylist Playlist
         {
@@ -31,7 +29,18 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             }
         }
 
-        public SongsBindingModel SongsBindingModel { get; private set; }
+        public IList<Song> Songs
+        {
+            get
+            {
+                return this.songs;
+            }
+
+            set
+            {
+                this.SetValue(ref this.songs, value);
+            }
+        }
 
         public string Type
         {

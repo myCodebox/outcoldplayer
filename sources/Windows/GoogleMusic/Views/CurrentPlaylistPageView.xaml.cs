@@ -4,47 +4,34 @@
 
 namespace OutcoldSolutions.GoogleMusic.Views
 {
-    using System;
     using System.Threading.Tasks;
 
-    using OutcoldSolutions.GoogleMusic.BindingModels;
+    using Windows.UI.Xaml.Data;
+
+    using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Presenters;
 
-    using Windows.UI.Core;
     using Windows.UI.Xaml;
-    using Windows.UI.Xaml.Input;
 
     public interface ICurrentPlaylistPageView : IPageView
     {
-        Task ScrollIntoCurrentSongAsync(SongBindingModel songBindingModel);
+        ISongsListView GetSongsListView();
     }
 
     public sealed partial class CurrentPlaylistPageView : PageViewBase, ICurrentPlaylistPageView
     {
         private CurrentPlaylistPageViewPresenter presenter;
 
+        private ISongsListView songsListView;
+
         public CurrentPlaylistPageView()
         {
             this.InitializeComponent();
-            this.TrackItemsControl(this.ListView);
         }
 
-        public async Task ScrollIntoCurrentSongAsync(SongBindingModel songBindingModel)
+        public ISongsListView GetSongsListView()
         {
-            await Task.Run(
-                async () =>
-                    {
-                        if (this.presenter != null && songBindingModel != null)
-                        {
-                            SongsBindingModel songsBindingModel = this.presenter.BindingModel;
-                            if (songsBindingModel != null 
-                                && songsBindingModel.Songs != null)
-                            {
-                                await this.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, this.UpdateLayout);
-                                await this.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => this.ListView.ScrollIntoView(songBindingModel));
-                            }
-                        }
-                    });
+            return this.songsListView;
         }
 
         protected override void OnInitialized()
@@ -52,18 +39,34 @@ namespace OutcoldSolutions.GoogleMusic.Views
             base.OnInitialized();
 
             this.presenter = this.GetPresenter<CurrentPlaylistPageViewPresenter>();
-        }
 
-        private void ListDoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
-        {
-            var frameworkElement = e.OriginalSource as FrameworkElement;
+            this.ContentPresenter.Content = this.songsListView = this.Container.Resolve<ISongsListView>();
+
+            var frameworkElement = this.songsListView as SongsListView;
+
             if (frameworkElement != null)
             {
-                var songBindingModel = frameworkElement.DataContext as SongBindingModel;
-                if (songBindingModel != null)
-                {
-                    this.presenter.PlaySong(songBindingModel);
-                }
+                frameworkElement.SetBinding(
+                    SongsListView.ItemsSourceProperty,
+                    new Binding()
+                    {
+                        Source = this.presenter,
+                        Mode = BindingMode.OneWay,
+                        Path = new PropertyPath(
+                            PropertyNameExtractor.GetPropertyName(() => this.presenter.Songs))
+                    });
+
+                frameworkElement.SetBinding(
+                    SongsListView.ViewPlaylistProperty,
+                    new Binding()
+                    {
+                        Source = this.presenter,
+                        Mode = BindingMode.OneWay,
+                        Path = new PropertyPath(
+                            PropertyNameExtractor.GetPropertyName(() => this.presenter.ViewPlaylist))
+                    });
+
+                this.TrackItemsControl(frameworkElement.GetListView());
             }
         }
     }

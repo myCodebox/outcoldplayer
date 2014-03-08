@@ -161,21 +161,19 @@ namespace OutcoldSolutions.GoogleMusic
             registration.Register<PlayerBindingModel>().AsSingleton();
             registration.Register<PlayerViewPresenter>().AsSingleton();
 
-            registration.Register<ISnappedPlayerView>()
-                        .InjectionRule<BindingModelBase, SnappedPlayerViewPresenter>()
-                        .AsSingleton<SnappedPlayerView>();
-
-            registration.Register<SnappedPlayerBindingModel>().AsSingleton();
-            registration.Register<SnappedPlayerViewPresenter>().AsSingleton();
-
             registration.Register<LinksRegionView>()
                         .InjectionRule<BindingModelBase, LinksRegionViewPresenter>();
             registration.Register<LinksRegionViewPresenter>();
 
             registration.Register<IMainMenu>()
                        .InjectionRule<BindingModelBase, MainMenuPresenter>()
-                       .AsSingleton<Views.MainMenu>();
+                       .AsSingleton<MainMenu>();
             registration.Register<MainMenuPresenter>();
+
+            registration.Register<ISongsListView>()
+                       .InjectionRule<BindingModelBase, SongsListViewPresenter>()
+                       .As<SongsListView>();
+            registration.Register<SongsListViewPresenter>();
         }
     }
 }

@@ -6,6 +6,7 @@ namespace OutcoldSolutions.GoogleMusic.Controls
 {
     using System;
     using System.Collections;
+    using System.Collections.Generic;
     using System.Collections.Specialized;
     using System.Linq;
     using System.Threading.Tasks;
@@ -199,9 +200,12 @@ namespace OutcoldSolutions.GoogleMusic.Controls
         {
             if (this.AssociatedObject != null)
             {
+                IList<object> collection = this.SelectedItems is IList
+                    ? (this.SelectedItems as IList).Cast<object>().ToList()
+                    : null;
+
                 this.AssociatedObject.SelectedItems.Clear();
 
-                var collection = this.SelectedItems as IList;
                 if (collection != null)
                 {
                     foreach (var selectedItem in collection)

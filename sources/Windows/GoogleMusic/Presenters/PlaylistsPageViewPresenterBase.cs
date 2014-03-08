@@ -8,7 +8,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using System.Linq;
     using System.Reactive.Linq;
     using System.Threading.Tasks;
-    using System.Xml.Linq;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Diagnostics;

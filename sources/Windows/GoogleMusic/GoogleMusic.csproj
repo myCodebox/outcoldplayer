@@ -114,7 +114,6 @@
     <Compile Include="BindingModels\LinksRegionBindingModel.cs" />
     <Compile Include="BindingModels\Settings\CachedSongBindingModel.cs" />
     <Compile Include="BindingModels\Settings\OfflineCacheViewBindingModel.cs" />
-    <Compile Include="BindingModels\SnappedPlayerBindingModel.cs" />
     <Compile Include="BindingModels\PlaylistPageViewBindingModel.cs" />
     <Compile Include="BindingModels\PlaylistResultBindingModel.cs" />
     <Compile Include="BindingModels\PlaylistsGroupBindingModel.cs" />
@@ -130,7 +129,7 @@
     <Compile Include="BindingModels\Settings\AccountViewBindingModel.cs" />
     <Compile Include="BindingModels\Settings\SupportBindingModel.cs" />
     <Compile Include="BindingModels\SongResultBindingModel.cs" />
-    <Compile Include="BindingModels\SongsBindingModel.cs" />
+    <Compile Include="BindingModels\SongsListViewPresenter.cs" />
     <Compile Include="BindingModels\StartViewBindingModel.cs" />
     <Compile Include="BindingModels\AuthentificationPageViewBindingModel.cs" />
     <Compile Include="CommandMetadata.cs" />
@@ -142,6 +141,11 @@
     <Compile Include="Controls\Rating.cs" />
     <Compile Include="Controls\RatingEventArgs.cs" />
     <Compile Include="Controls\ListViewBaseSelectedItemsBehavior.cs" />
+    <Compile Include="Converters\BooleanToColumnWidthConverter.cs" />
+    <Compile Include="Services\SelectSongEvent.cs" />
+    <Compile Include="Views\SongsListView.xaml.cs">
+      <DependentUpon>SongsListView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\SortableHeaderControl.cs" />
     <Compile Include="Controls\ValueChangedEventArgs.cs" />
     <Compile Include="Controls\VisualTreeHelperEx.cs" />
@@ -193,7 +197,6 @@
     <Compile Include="Presenters\Popups\RadioEditPopupViewPresenter.cs" />
     <Compile Include="Presenters\RadioPageViewPresenter.cs" />
     <Compile Include="Presenters\Settings\OfflineCacheViewPresenter.cs" />
-    <Compile Include="Presenters\SnappedPlayerViewPresenter.cs" />
     <Compile Include="Presenters\Popups\PlayerMorePopupViewPresenter.cs" />
     <Compile Include="Presenters\Settings\AppSettingsViewPresenter.cs" />
     <Compile Include="Presenters\Settings\UpgradeViewPresenter.cs" />
@@ -354,9 +357,6 @@
     <Compile Include="Views\Settings\UpgradeView.xaml.cs">
       <DependentUpon>UpgradeView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\SnappedPlayerView.xaml.cs">
-      <DependentUpon>SnappedPlayerView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\StartPageView.xaml.cs">
       <DependentUpon>StartPageView.xaml</DependentUpon>
     </Compile>
@@ -454,6 +454,10 @@
     <Page Include="Common\StandardStyles.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\SongsListView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\AlbumPageView.xaml">
       <SubType>Designer</SubType>
@@ -560,10 +564,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Settings\UpgradeView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\SnappedPlayerView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

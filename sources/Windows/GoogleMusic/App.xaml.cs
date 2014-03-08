@@ -169,8 +169,6 @@ namespace OutcoldSolutions.GoogleMusic
                 Registration.RegisterPopupViews(registration);
                 Registration.RegisterViews(registration);
 
-                registration.Register<SongsBindingModel>();
-
                 registration.Register<IApplicationResources>().AsSingleton<ApplicationResources>();
 
                 // Settings
@@ -335,7 +333,6 @@ namespace OutcoldSolutions.GoogleMusic
                     });
 
                 mainFrameRegionProvider.SetContent(MainFrameRegion.BottomAppBarRightZone, Container.Resolve<IPlayerView>());
-                mainFrameRegionProvider.SetContent(MainFrameRegion.SnappedView, Container.Resolve<ISnappedPlayerView>());
 
                 var page = (Page)Window.Current.Content;
                 VisualTreeHelperEx.GetVisualChild<Panel>(page).Children.Add(Container.Resolve<MediaElement>());

@@ -3,12 +3,12 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Presenters
 {
-    using System.Linq;
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.InversionOfControl;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Repositories;
+    using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
 
     public class AlbumPageViewPresenter : PlaylistPageViewPresenterBase<IAlbumPageView, Album>
@@ -36,12 +36,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                             navigatedToEventArgs.State,
                             new PlaylistNavigationRequest(PlaylistType.Album, album.Id),
                             navigatedToEventArgs.IsNavigationBack));
-                
-                var songBindingModel = this.BindingModel.SongsBindingModel.Songs.FirstOrDefault(s => s.Metadata.SongId == songId);
-                if (songBindingModel != null)
-                {
-                    await this.Dispatcher.RunAsync(() => this.BindingModel.SongsBindingModel.SelectedItems.Add(songBindingModel));
-                }
+
+                this.EventAggregator.Publish(new SelectSongByIdEvent(songId));
             }
             else
             {

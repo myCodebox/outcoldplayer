@@ -31,7 +31,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         /// <summary>
         /// Gets the view.
         /// </summary>
-        protected TView View { get; private set; }
+        public TView View { get; private set; }
 
         /// <summary>
         /// Gets the main frame.

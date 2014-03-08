@@ -8,6 +8,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Actions
     using System.Linq;
     using System.Threading.Tasks;
 
+    using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Presenters;
     using OutcoldSolutions.GoogleMusic.Views;
 
@@ -63,7 +64,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Actions
 
             if (currentView != null)
             {
-                var bindingModel = currentView.GetPresenter<CurrentPlaylistPageViewPresenter>().BindingModel;
+                var bindingModel = currentView.GetPresenter<CurrentPlaylistPageViewPresenter>().View.GetSongsListView().GetPresenter<SongsListViewPresenter>();
                 IList<int> selectedIndexes = bindingModel.GetSelectedIndexes().ToList();
 
                 await this.playQueueService.RemoveAsync(selectedIndexes);
