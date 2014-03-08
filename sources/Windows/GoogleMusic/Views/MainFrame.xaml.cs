@@ -154,6 +154,11 @@ namespace OutcoldSolutions.GoogleMusic.Views
                         this.BottomAppBar.IsOpen = this.bottomToolWasOpen;
                         this.bottomToolWasOpen = false;
                     }
+
+                    if (this.container != null)
+                    {
+                        this.container.Resolve<INavigationService>().RefreshCurrentView();
+                    }
                 };
 
             this.Loaded += this.OnLoaded;

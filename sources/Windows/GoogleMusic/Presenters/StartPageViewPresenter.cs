@@ -26,7 +26,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
     public class StartPageViewPresenter : PagePresenterBase<IStartPageView, StartViewBindingModel>
     {
-        private const int MaxItems = 12;
+        private const int MaxItems = 16;
 
         private const int AskForReviewStarts = 10;
         private const string DoNotAskToReviewKey = "DoNotAskToReviewKey";
