@@ -4,8 +4,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:interactivity="using:Windows.UI.Interactivity"
-    xmlns:controls="using:OutcoldSolutions.GoogleMusic.Controls"
     xmlns:views="using:OutcoldSolutions.GoogleMusic.Views"
     mc:Ignorable="d"
     d:DesignHeight="300"
@@ -16,20 +14,8 @@
     <SemanticZoom VerticalAlignment="Stretch"
                   Visibility="{Binding Path=IsDataLoading, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}" 
                   IsZoomOutButtonEnabled="True" 
+                  x:Name="SemanticZoom"
                   ViewChangeStarted="SemanticZoom_OnViewChangeStarted" >
-        <SemanticZoom.ZoomedInView>
-            <ListView x:Name="ListView"
-                      SelectionMode="Extended"
-                      IsItemClickEnabled="True"
-                      ItemClick="PlaylistItemClick"
-                      ItemsSource="{Binding Path=BindingModel.Playlists, Mode=OneWay}"
-                      Style="{StaticResource PlaylistsListView}"
-                      Padding="0, 0, 0, 40">
-                <interactivity:Interaction.Behaviors>
-                    <controls:ListViewBaseSelectedItemsBehavior SelectedItems="{Binding Path=BindingModel.SelectedItems, Mode=OneWay}" />
-                </interactivity:Interaction.Behaviors>
-            </ListView>
-        </SemanticZoom.ZoomedInView>
         <SemanticZoom.ZoomedOutView>
             <ListView x:Name="ListViewGroups"
                       ItemsSource="{Binding Path=BindingModel.Groups, Mode=OneWay}"

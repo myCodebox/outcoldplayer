@@ -3,15 +3,10 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Views
 {
-    using System.Collections.Generic;
-    using System.Collections.Specialized;
-    using System.Diagnostics;
+    using Windows.UI.Xaml;
+    using Windows.UI.Xaml.Data;
 
-    using OutcoldSolutions.GoogleMusic.BindingModels;
-    using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Presenters;
-
-    using Windows.UI.Xaml.Controls;
 
     public interface IArtistPageView : IPageView
     {
@@ -20,27 +15,47 @@ namespace OutcoldSolutions.GoogleMusic.Views
     public sealed partial class ArtistPageView : PageViewBase, IArtistPageView
     {
         private ArtistPageViewPresenter presenter;
+        private IPlaylistsListView libraryAlbums;
+        private IPlaylistsListView libraryCollections;
 
         public ArtistPageView()
         {
             this.InitializeComponent();
-            this.TrackItemsControl(this.ListView);
         }
 
         protected override void OnInitialized()
         {
             base.OnInitialized();
+
             this.presenter = this.GetPresenter<ArtistPageViewPresenter>();
-        }
 
-        private void PlaylistItemClick(object sender, ItemClickEventArgs e)
-        {
-            var album = e.ClickedItem as PlaylistBindingModel;
+            this.LibraryAlbumsContentPresenter.Content = (this.libraryAlbums = this.Container.Resolve<IPlaylistsListView>());
+            this.LibraryCollectionsContentPresenter.Content = (this.libraryCollections = this.Container.Resolve<IPlaylistsListView>());
 
-            Debug.Assert(album != null, "album != null");
-            if (album != null)
+            var frameworkElement = this.libraryAlbums as PlaylistsListView;
+            if (frameworkElement != null)
             {
-                this.NavigationService.NavigateToPlaylist(album.Playlist);
+                frameworkElement.SetBinding(
+                    PlaylistsListView.ItemsSourceProperty,
+                    new Binding()
+                    {
+                        Source = presenter,
+                        Mode = BindingMode.OneWay,
+                        Path = new PropertyPath("BindingModel.Albums")
+                    });
+            }
+
+            frameworkElement = this.libraryCollections as PlaylistsListView;
+            if (frameworkElement != null)
+            {
+                frameworkElement.SetBinding(
+                    PlaylistsListView.ItemsSourceProperty,
+                    new Binding()
+                    {
+                        Source = presenter,
+                        Mode = BindingMode.OneWay,
+                        Path = new PropertyPath("BindingModel.Collections")
+                    });
             }
         }
     }

@@ -4,19 +4,17 @@
 namespace OutcoldSolutions.GoogleMusic.BindingModels
 {
     using System.Collections.Generic;
-    using System.Collections.ObjectModel;
 
     using OutcoldSolutions.GoogleMusic.Models;
 
     public class ArtistPageViewBindingModel : BindingModelBase
     {
-        private readonly ObservableCollection<PlaylistBindingModel> selectedItems;
         private Artist artist;
-        private IList<PlaylistBindingModel> albums;
+        private IList<IPlaylist> albums;
+        private IList<IPlaylist> collections;
 
         public ArtistPageViewBindingModel()
         {
-            this.selectedItems = new ObservableCollection<PlaylistBindingModel>();
         }
 
         public Artist Artist
@@ -32,7 +30,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             }
         }
 
-        public IList<PlaylistBindingModel> Albums
+        public IList<IPlaylist> Albums
         {
             get
             {
@@ -45,19 +43,16 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             }
         }
 
-        public ObservableCollection<PlaylistBindingModel> SelectedItems
+        public IList<IPlaylist> Collections
         {
             get
             {
-                return this.selectedItems;
+                return this.collections;
             }
-        }
 
-        public void ClearSelectedItems()
-        {
-            if (this.selectedItems.Count > 0)
+            set
             {
-                this.selectedItems.Clear();
+                this.SetValue(ref this.collections, value);
             }
         }
     }

@@ -17,6 +17,8 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
     {
         Task<IList<Album>> GetArtistAlbumsAsync(string artistId);
 
+        Task<IList<Album>> GetArtistCollectionsAsync(string artistId);
+
         Task<Album> FindSongAlbumAsync(string songId);
     }
 
@@ -87,9 +89,6 @@ order by x.[TitleNorm]
 
         // TODO: We need to include here also not-artist albums but which contain artist songs
         private const string SqlArtistAlbums = @"
-select *
-from
-(
 select 
        x.[AlbumId],
        x.[Title],  
@@ -119,9 +118,10 @@ select
 from [Album] x 
      inner join [Artist] as a on x.[ArtistTitleNorm] = a.[TitleNorm]     
 where (?1 = 1 or x.[OfflineSongsCount] > 0) and a.[ArtistId] = ?2
+order by x.Year 
+";
 
-union
-
+        private const string SqlArtistCollections = @"
 select 
        a.[AlbumId],
        a.[Title],  
@@ -155,8 +155,7 @@ where (?1 = 1 or s.IsCached = 1) and
     s.IsLibrary = 1 and
     s.[ArtistTitleNorm] <> coalesce(nullif(s.[AlbumArtistTitleNorm], ''), s.[ArtistTitleNorm]) and ar.[ArtistId] = ?2
 group by a.[AlbumId], a.[Title], a.[TitleNorm], a.[ArtistTitleNorm], a.[Year], a.[ArtUrl], a.[Recent]
-) as x
-order by x.IsCollection, x.Year 
+order by a.Year 
 ";
 
         private const string SqlAlbumsSongs = @"
@@ -240,6 +239,11 @@ where (?1 = 1 or x.[OfflineSongsCount] > 0) and s.IsLibrary = 1 and s.[SongId] =
         public async Task<IList<Album>> GetArtistAlbumsAsync(string artistId)
         {
             return await this.Connection.QueryAsync<Album>(SqlArtistAlbums, this.stateService.IsOnline(), artistId);
+        }
+
+        public async Task<IList<Album>> GetArtistCollectionsAsync(string artistId)
+        {
+            return await this.Connection.QueryAsync<Album>(SqlArtistCollections, this.stateService.IsOnline(), artistId);
         }
 
         public async Task<Album> FindSongAlbumAsync(string songId)

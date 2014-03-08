@@ -49,25 +49,21 @@
             </StackPanel>
 
             <TextBlock Style="{StaticResource SubheaderTextStyle}"
-                   Margin="0, 20, 0, 0">My Library Albums</TextBlock>
+                       Visibility="{Binding Path=BindingModel.Albums, Converter={StaticResource NullToInvisibilityConverter}}"
+                       Margin="0, 20, 0, 0">My Library Albums</TextBlock>
 
-            <ListView x:Name="ListView"
-                  Margin="0, 20, 0, 0"
-                  Padding="0"
-                  ItemsSource="{Binding Path=BindingModel.Albums}"
-                  SelectionMode="Extended"
-                  ItemClick="PlaylistItemClick"
-                  IsItemClickEnabled="True"
-                  ItemTemplate="{StaticResource AlbumDataTemplate}"
-                  Style="{StaticResource PlaylistsListView}">
-                <interactivity:Interaction.Behaviors>
-                    <controls:ListViewBaseSelectedItemsBehavior SelectedItems="{Binding Path=BindingModel.SelectedItems, Mode=OneWay}" />
-                </interactivity:Interaction.Behaviors>
-            </ListView>
+            <ContentPresenter x:Name="LibraryAlbumsContentPresenter"
+                              Visibility="{Binding Path=BindingModel.Albums, Converter={StaticResource NullToInvisibilityConverter}}"
+                              Margin="0, 20, 0, 0"/>
                       
             <TextBlock Style="{StaticResource SubheaderTextStyle}"
+                       Visibility="{Binding Path=BindingModel.Collections, Converter={StaticResource NullToInvisibilityConverter}}"
                        Margin="0, 20, 0, 0">My Library Collections
             </TextBlock>
+
+            <ContentPresenter x:Name="LibraryCollectionsContentPresenter"
+                              Visibility="{Binding Path=BindingModel.Collections, Converter={StaticResource NullToInvisibilityConverter}}"
+                              Margin="0, 20, 0, 0"/>
         </StackPanel>
     </ScrollViewer>
     

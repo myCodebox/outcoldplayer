@@ -129,7 +129,7 @@
     <Compile Include="BindingModels\Settings\AccountViewBindingModel.cs" />
     <Compile Include="BindingModels\Settings\SupportBindingModel.cs" />
     <Compile Include="BindingModels\SongResultBindingModel.cs" />
-    <Compile Include="BindingModels\SongsListViewPresenter.cs" />
+    <Compile Include="Presenters\SongsListViewPresenter.cs" />
     <Compile Include="BindingModels\StartViewBindingModel.cs" />
     <Compile Include="BindingModels\AuthentificationPageViewBindingModel.cs" />
     <Compile Include="CommandMetadata.cs" />
@@ -142,7 +142,11 @@
     <Compile Include="Controls\RatingEventArgs.cs" />
     <Compile Include="Controls\ListViewBaseSelectedItemsBehavior.cs" />
     <Compile Include="Converters\BooleanToColumnWidthConverter.cs" />
+    <Compile Include="Presenters\PlaylistsListViewPresenter.cs" />
     <Compile Include="Services\SelectSongEvent.cs" />
+    <Compile Include="Views\PlaylistsListView.xaml.cs">
+      <DependentUpon>PlaylistsListView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\SongsListView.xaml.cs">
       <DependentUpon>SongsListView.xaml</DependentUpon>
     </Compile>
@@ -454,6 +458,10 @@
     <Page Include="Common\StandardStyles.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\PlaylistsListView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\SongsListView.xaml">
       <SubType>Designer</SubType>

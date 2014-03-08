@@ -4,24 +4,17 @@
 namespace OutcoldSolutions.GoogleMusic.BindingModels
 {
     using System.Collections.Generic;
-    using System.Collections.ObjectModel;
     using System.Linq;
 
     using OutcoldSolutions.GoogleMusic.Models;
 
     public class PlaylistsPageViewBindingModel : BindingModelBase
     {
-        private readonly ObservableCollection<PlaylistBindingModel> selectedItems;
-        private IList<PlaylistBindingModel> playlists;
+        private IList<IPlaylist> playlists;
         private IList<PlaylistsGroupBindingModel> groups;
 
         private string title;
         private PlaylistType playlistType;
-
-        public PlaylistsPageViewBindingModel()
-        {
-            this.selectedItems = new ObservableCollection<PlaylistBindingModel>();
-        }
 
         public string Title
         {
@@ -57,7 +50,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             }
         }
 
-        public IList<PlaylistBindingModel> Playlists
+        public IList<IPlaylist> Playlists
         {
             get
             {
@@ -87,22 +80,6 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             }
         }
 
-        public ObservableCollection<PlaylistBindingModel> SelectedItems
-        {
-            get
-            {
-                return this.selectedItems;
-            }
-        }
-
-        public void ClearSelectedItems()
-        {
-            if (this.selectedItems.Count > 0)
-            {
-                this.selectedItems.Clear();
-            }
-        }
-
         private void RecalculateGroups()
         {
             if (this.Playlists == null)
@@ -111,8 +88,8 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             }
             else
             {
-                this.Groups = this.Playlists.GroupBy(p => p.Playlist.Title.Length > 0 ? char.ToUpper(p.Playlist.Title[0]) : ' ')
-                                                        .Select(g => new PlaylistsGroupBindingModel(g.Key.ToString(), g.Count(), g.ToList()))
+                this.Groups = this.Playlists.GroupBy(p => p.Title.Length > 0 ? char.ToUpper(p.Title[0]) : ' ')
+                                                        .Select(g => new PlaylistsGroupBindingModel(g.Key.ToString(), g.Count(), g.Select(x => new PlaylistBindingModel(x)).ToList()))
                                                         .ToList();
             }
         }

@@ -19,6 +19,8 @@ namespace OutcoldSolutions.GoogleMusic.Views
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Input;
 
+    using OutcoldSolutions.GoogleMusic.Presenters;
+
     public interface ISongsListView : IView
     {
         ListView GetListView();

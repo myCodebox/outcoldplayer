@@ -2,7 +2,7 @@
 // Outcold Solutions (http://outcoldman.com)
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace OutcoldSolutions.GoogleMusic.BindingModels
+namespace OutcoldSolutions.GoogleMusic.Presenters
 {
     using System;
     using System.Collections.Generic;
@@ -12,11 +12,13 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
     using System.Linq;
     using System.Reactive.Linq;
 
+    using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Controls;
     using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.EventAggregator;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services;
+    using OutcoldSolutions.GoogleMusic.Views;
 
     public enum SongsSorting
     {
@@ -37,7 +39,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         PlaysCountDescending = 14
     }
 
-    public class SongsListViewPresenter : BindingModelBase
+    public class SongsListViewPresenter : ViewPresenterBase<ISongsListView>
     {
         private readonly IPlayQueueService playQueueService;
 

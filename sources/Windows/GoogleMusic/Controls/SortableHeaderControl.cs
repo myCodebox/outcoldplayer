@@ -6,10 +6,10 @@ namespace OutcoldSolutions.GoogleMusic.Controls
 {
     using System.Windows.Input;
 
-    using OutcoldSolutions.GoogleMusic.BindingModels;
-
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
+
+    using OutcoldSolutions.GoogleMusic.Presenters;
 
     [TemplateVisualState(GroupName = "SortDirection", Name = "Unknown")]
     [TemplateVisualState(GroupName = "SortDirection", Name = "Up")]

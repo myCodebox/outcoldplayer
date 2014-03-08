@@ -7,8 +7,10 @@ namespace OutcoldSolutions.GoogleMusic.Views
     using System.Collections.Generic;
     using System.Linq;
 
+    using Windows.UI.Xaml;
+    using Windows.UI.Xaml.Data;
+
     using OutcoldSolutions.GoogleMusic.BindingModels;
-    using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Presenters;
 
     using Windows.UI.Xaml.Controls;
@@ -27,30 +29,35 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
     public sealed partial class PlaylistsPageView : PageViewBase, IPlaylistsPageView, IUserPlaylistsPageView, IRadioPageView
     {
+        private IPlaylistsListView playlistsListView;
+
         public PlaylistsPageView()
         {
             this.InitializeComponent();
-            this.TrackItemsControl(this.ListView);
         }
 
-        private void PlaylistItemClick(object sender, ItemClickEventArgs e)
+        protected override void OnInitialized()
         {
-            var playlistBindingModel = e.ClickedItem as PlaylistBindingModel;
-            if (playlistBindingModel != null)
+            base.OnInitialized();
+
+            var presenter = this.GetPresenter<BindingModelBase>();
+
+            this.SemanticZoom.ZoomedInView = (this.playlistsListView = this.Container.Resolve<IPlaylistsListView>()) as PlaylistsListView;
+
+            var frameworkElement = this.playlistsListView as PlaylistsListView;
+
+            if (frameworkElement != null)
             {
-                if (playlistBindingModel.Playlist.PlaylistType == PlaylistType.Radio)
-                {
-                    this.GetPresenter<RadioPageViewPresenter>().PlayRadio(playlistBindingModel.Playlist);
-                }
-                else if (playlistBindingModel.Playlist.PlaylistType == PlaylistType.UserPlaylist
-                    && ((UserPlaylist)playlistBindingModel.Playlist).IsShared)
-                {
-                    this.GetPresenter<UserPlaylistsPageViewPresenter>().PlaySharedPlaylist(playlistBindingModel.Playlist);
-                }
-                else
-                {
-                    this.NavigationService.NavigateToPlaylist(playlistBindingModel.Playlist);
-                }
+                frameworkElement.SetBinding(
+                    PlaylistsListView.ItemsSourceProperty,
+                    new Binding()
+                    {
+                        Source = presenter,
+                        Mode = BindingMode.OneWay,
+                        Path = new PropertyPath("BindingModel.Playlists")
+                    });
+
+                this.TrackItemsControl(frameworkElement.GetListView());
             }
         }
 
@@ -61,7 +68,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
                 var groups = this.ListViewGroups.ItemsSource as IEnumerable<PlaylistsGroupBindingModel>;
                 if (groups != null)
                 {
-                    e.DestinationItem.Item = groups.FirstOrDefault(x => x.Playlists.Contains(e.SourceItem.Item));
+                    e.DestinationItem.Item = groups.FirstOrDefault(x => x.Playlists.Any(p => p.Playlist == e.SourceItem.Item));
                 }
             }
             else
@@ -69,7 +76,13 @@ namespace OutcoldSolutions.GoogleMusic.Views
                 var group = e.SourceItem.Item as PlaylistsGroupBindingModel;
                 if (group != null)
                 {
-                    e.DestinationItem.Item = group.Playlists.FirstOrDefault();
+                    var groupPlaylist = group.Playlists.Select(x => x.Playlist).FirstOrDefault();
+                    if (groupPlaylist != null)
+                    {
+                        e.DestinationItem.Item =
+                            this.playlistsListView.GetPresenter<PlaylistsListViewPresenter>()
+                                .Playlists.FirstOrDefault(x => x.Playlist == groupPlaylist);
+                    }
                 }
             }
         }

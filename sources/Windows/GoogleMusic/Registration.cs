@@ -174,6 +174,11 @@ namespace OutcoldSolutions.GoogleMusic
                        .InjectionRule<BindingModelBase, SongsListViewPresenter>()
                        .As<SongsListView>();
             registration.Register<SongsListViewPresenter>();
+
+            registration.Register<IPlaylistsListView>()
+                       .InjectionRule<BindingModelBase, PlaylistsListViewPresenter>()
+                       .As<PlaylistsListView>();
+            registration.Register<PlaylistsListViewPresenter>();
         }
     }
 }
