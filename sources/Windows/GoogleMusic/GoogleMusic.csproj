@@ -129,6 +129,7 @@
     <Compile Include="BindingModels\Settings\AccountViewBindingModel.cs" />
     <Compile Include="BindingModels\Settings\SupportBindingModel.cs" />
     <Compile Include="BindingModels\SongResultBindingModel.cs" />
+    <Compile Include="Controls\TextChangedBindingBehavior.cs" />
     <Compile Include="Converters\NotEmptyToVisibilityConverter.cs" />
     <Compile Include="Presenters\SongsListViewPresenter.cs" />
     <Compile Include="BindingModels\StartViewBindingModel.cs" />
@@ -261,10 +262,8 @@
     <Compile Include="Presenters\Settings\AccountsViewPresenter.cs" />
     <Compile Include="Presenters\StartPageViewPresenter.cs" />
     <Compile Include="Services\RightRegionControlService.cs" />
-    <Compile Include="Shell\ISearchService.cs" />
     <Compile Include="Services\Publishers\TileCurrentSongPublisher.cs" />
     <Compile Include="Shell\ScreenLocker.cs" />
-    <Compile Include="Shell\SearchService.cs" />
     <Compile Include="Services\SettingsService.cs" />
     <Compile Include="Services\GoogleAccountService.cs" />
     <Compile Include="Views\AlbumPageView.xaml.cs">

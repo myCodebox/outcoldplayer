@@ -12,7 +12,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
 
     public class RadioEditPopupViewPresenter : DisposableViewPresenterBase<IPlaylistEditPopupView>, IPlaylistEditPopupViewPresenter
     {
-        private readonly ISearchService searchService;
         private readonly IRadioStationsService radioStationsService;
         private readonly Radio radio;
 
@@ -21,11 +20,9 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
         private bool isRenaming = false;
 
         public RadioEditPopupViewPresenter(
-            ISearchService searchService,
             IRadioStationsService radioStationsService,
             Radio radio)
         {
-            this.searchService = searchService;
             this.radioStationsService = radioStationsService;
             this.radio = radio;
             this.SaveCommand = new DelegateCommand(this.Save, this.CanSave);
@@ -52,18 +49,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
         public DelegateCommand SaveCommand { get; private set; }
 
         public DelegateCommand CancelCommand { get; private set; }
-
-        protected override void OnInitialized()
-        {
-            base.OnInitialized();
-            this.searchService.SetShowOnKeyboardInput(false);
-        }
-
-        protected override void OnDisposing()
-        {
-            base.OnDisposing();
-            this.searchService.SetShowOnKeyboardInput(true);
-        }
 
         private async void Save()
         {

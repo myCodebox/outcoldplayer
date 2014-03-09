@@ -8,18 +8,18 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
     public class SearchPageViewBindingModel : BindingModelBase
     {
         private List<SearchGroupBindingModel> groups;
-        private string title;
+        private string searchText;
 
-        public string Title
+        public string SearchText
         {
             get
             {
-                return this.title;
+                return this.searchText;
             }
 
             set
             {
-                this.SetValue(ref this.title, value);
+                this.SetValue(ref this.searchText, value);
             }
         }
 

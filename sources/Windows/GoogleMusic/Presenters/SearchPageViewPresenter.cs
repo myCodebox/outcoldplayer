@@ -4,8 +4,10 @@
 namespace OutcoldSolutions.GoogleMusic.Presenters
 {
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.Globalization;
     using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
@@ -21,6 +23,9 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private readonly IPlaylistsService playlistsService;
         private readonly INavigationService navigationService;
         private readonly IUserPlaylistsRepository userPlaylistsRepository;
+
+        private readonly SemaphoreSlim mutex = new SemaphoreSlim(1);
+        private CancellationTokenSource cancellationTokenSource;
 
         public SearchPageViewPresenter(
             IApplicationResources resources,
@@ -61,18 +66,69 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             }
         }
 
-        protected override async Task LoadDataAsync(NavigatedToEventArgs navigatedToEventArgs)
+        protected override void OnInitialized()
         {
-            var query = navigatedToEventArgs.Parameter as string;
+            base.OnInitialized();
 
-            this.BindingModel.Title = string.Format(CultureInfo.CurrentCulture, this.resources.GetString("SearchPageView_SubtitleFormat"), query);
-
-            var searchGroupBindingModels = string.IsNullOrEmpty(query) ? new List<SearchGroupBindingModel>() : await this.Search(query);
-            searchGroupBindingModels.Insert(0, new SearchGroupBindingModel(this.resources.GetString("SearchPageView_AllTitle"), searchGroupBindingModels.SelectMany(x => x.Results).ToList()));
-            this.BindingModel.Groups = searchGroupBindingModels;
+            this.BindingModel.Subscribe(() => this.BindingModel.SearchText, OnSearchChanged);
         }
 
-        private async Task<List<SearchGroupBindingModel>> Search(string query)
+        public override void OnNavigatingFrom(NavigatingFromEventArgs eventArgs)
+        {
+            eventArgs.State.Add("SearchText", this.BindingModel.SearchText);
+        }
+
+        protected override Task LoadDataAsync(NavigatedToEventArgs eventArgs)
+        {
+            return this.Dispatcher.RunAsync(
+                () =>
+                {
+                    if (eventArgs.State.ContainsKey("SearchText"))
+                    {
+                        this.BindingModel.SearchText = eventArgs.State["SearchText"] as string;
+                    }
+                });
+        }
+
+        private async void OnSearchChanged(object sender, PropertyChangedEventArgs eventArgs)
+        {
+            await this.mutex.WaitAsync().ConfigureAwait(continueOnCapturedContext: false);
+
+            if (this.cancellationTokenSource != null)
+            {
+                this.cancellationTokenSource.Cancel();
+            }
+
+            CancellationTokenSource source = this.cancellationTokenSource = new CancellationTokenSource();
+            string searchText = this.BindingModel.SearchText;
+
+            this.mutex.Release(1);
+
+            var searchGroupBindingModels = string.IsNullOrEmpty(searchText) ? new List<SearchGroupBindingModel>() : await this.Search(searchText, source.Token);
+
+            await this.mutex.WaitAsync().ConfigureAwait(continueOnCapturedContext: false);
+
+            if (this.cancellationTokenSource == source)
+            {
+                this.cancellationTokenSource = null;
+            }
+
+            this.mutex.Release(1);
+
+            await this.Dispatcher.RunAsync(
+                () =>
+                {
+                    if (!source.IsCancellationRequested)
+                    {
+                        searchGroupBindingModels.Insert(0, new SearchGroupBindingModel(this.resources.GetString("SearchPageView_AllTitle"), searchGroupBindingModels.SelectMany(x => x.Results).ToList()));
+                        this.BindingModel.Groups = searchGroupBindingModels;
+
+                        this.View.UpdateListViewItems(scrollToZero: true);
+                    }
+                });
+        }
+
+        private async Task<List<SearchGroupBindingModel>> Search(string query, CancellationToken cancellationToken)
         {
             var results = new List<SearchGroupBindingModel>();
 

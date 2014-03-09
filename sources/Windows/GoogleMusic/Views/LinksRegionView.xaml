@@ -35,11 +35,5 @@
                 Command="{Binding Path=UpdateLibraryCommand, Mode=OneTime}"
                 Visibility="{Binding Path=BindingModel.MessageText, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
                 VerticalAlignment="Center" />
-        
-        <Button Margin="0, -15, 0, 0" Style="{StaticResource SearchPopupMenuButtonStyle}" 
-                AutomationProperties.Name=""
-                Command="{Binding Path=ShowSearchCommand, Mode=OneTime}"
-                Visibility="{Binding Path=IsShowSearchCommandVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                VerticalAlignment="Center" />
     </StackPanel>
 </views:ViewBase>

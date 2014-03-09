@@ -29,18 +29,15 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
 
     public class PlaylistEditPopupViewPresenter : DisposableViewPresenterBase<IPlaylistEditPopupView>, IPlaylistEditPopupViewPresenter
     {
-        private readonly ISearchService searchService;
         private readonly IUserPlaylistsService userPlaylistsService;
         private readonly UserPlaylist userPlaylist;
 
         private string title;
 
         public PlaylistEditPopupViewPresenter(
-            ISearchService searchService,
             IUserPlaylistsService userPlaylistsService,
             UserPlaylist userPlaylist)
         {
-            this.searchService = searchService;
             this.userPlaylistsService = userPlaylistsService;
             this.userPlaylist = userPlaylist;
             this.SaveCommand = new DelegateCommand(this.Save, this.CanSave);
@@ -69,18 +66,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
         public DelegateCommand SaveCommand { get; private set; }
 
         public DelegateCommand CancelCommand { get; private set; }
-
-        protected override void OnInitialized()
-        {
-            base.OnInitialized();
-            this.searchService.SetShowOnKeyboardInput(false);
-        }
-
-        protected override void OnDisposing()
-        {
-            base.OnDisposing();
-            this.searchService.SetShowOnKeyboardInput(true);
-        }
 
         private void Save()
         {

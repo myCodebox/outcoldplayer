@@ -41,7 +41,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private readonly IPlaylistsService playlistsService;
         private readonly IMainFrameRegionProvider mainFrameRegionProvider;
         private readonly IGoogleMusicSessionService sessionService;
-        private readonly ISearchService searchService;
         private readonly ISongsCachingService cachingService;
         private readonly IApplicationStateService stateService;
 
@@ -58,7 +57,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             IPlaylistsService playlistsService,
             IMainFrameRegionProvider mainFrameRegionProvider,
             IGoogleMusicSessionService sessionService,
-            ISearchService searchService,
             ISongsCachingService cachingService,
             IApplicationStateService stateService,
             ISelectedObjectsService selectedObjectsService)
@@ -71,7 +69,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.playlistsService = playlistsService;
             this.mainFrameRegionProvider = mainFrameRegionProvider;
             this.sessionService = sessionService;
-            this.searchService = searchService;
             this.cachingService = cachingService;
             this.stateService = stateService;
             this.selectedObjectsService = selectedObjectsService;
@@ -215,7 +212,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             await this.Dispatcher.RunAsync(
                 () =>
                 {
-                    this.searchService.Unregister();
                     this.mainFrameRegionProvider.SetContent(MainFrameRegion.Links, null);
                     this.BindingModel.ClearSelectedItems();
                     this.BindingModel.Groups = null;
@@ -242,11 +238,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     }
                 }
 
-                await this.Dispatcher.RunAsync(() =>
-                    {
-                        this.searchService.Register();
-                        this.mainFrameRegionProvider.SetContent(MainFrameRegion.Links, ApplicationBase.Container.Resolve<LinksRegionView>());
-                    });
+                await this.Dispatcher.RunAsync(() => this.mainFrameRegionProvider.SetContent(MainFrameRegion.Links, ApplicationBase.Container.Resolve<LinksRegionView>()));
 
                 this.cachingService.StartDownloadTask();
 

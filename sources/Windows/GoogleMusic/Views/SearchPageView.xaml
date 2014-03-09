@@ -5,21 +5,31 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:views="using:OutcoldSolutions.GoogleMusic.Views"
+    xmlns:interactivity="using:Windows.UI.Interactivity"
+    xmlns:controls="using:OutcoldSolutions.GoogleMusic.Controls"
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400"
-    Title="gMusicW"
-    Subtitle="{Binding Path=BindingModel.Title}">
+    Title="Search">
 
-    <Grid Margin="0, 0, 20, 0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+    <Grid Margin="70, 0, 20, 0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
+        <StackPanel Orientation="Horizontal" Margin="0, 20, 0, 0">
+            <TextBox Width="300">
+                <interactivity:Interaction.Behaviors>
+                    <controls:TextChangedBindingBehavior Text="{Binding Path=BindingModel.SearchText, Mode=TwoWay}" />
+                </interactivity:Interaction.Behaviors>
+            </TextBox>
+        </StackPanel>
+        
         <ListView x:Name="Groups"
-                  Margin="120, 40, 0, 20" 
-                  Grid.Row="0"
+                  Margin="0, 20, 0, 20" 
+                  Grid.Row="1"
                   Visibility="{Binding Path=IsDataLoading, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}"
                   ItemsSource="{Binding Path=BindingModel.Groups, Mode=OneWay}"
                   ScrollViewer.HorizontalScrollMode="Disabled"
@@ -207,7 +217,7 @@
             </ListView.ItemTemplate>
         </ListView>
         
-        <ListView Grid.Row="1"
+        <ListView Grid.Row="2"
                   Visibility="{Binding Path=IsDataLoading, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}"
                   SelectionMode="None"
                   ScrollViewer.HorizontalScrollMode="Enabled"
@@ -215,8 +225,8 @@
                   ScrollViewer.VerticalScrollMode="Disabled"
                   ScrollViewer.VerticalScrollBarVisibility="Disabled"
                   IsTapEnabled="False"
-                  Margin="0, 20, 0, 20" 
-                  Padding="120, 0, 0 ,0"
+                  Margin="0, 0, 0, 20" 
+                  Padding="0, 0, 0 ,0"
                   IsItemClickEnabled="True"
                   ItemClick="ListViewOnItemClick"
                   x:Name="ListView">

@@ -77,19 +77,6 @@ namespace OutcoldSolutions.GoogleMusic
         }
 
         /// <summary>
-        /// The on search activated.
-        /// </summary>
-        /// <param name="args">
-        /// The args.
-        /// </param>
-        protected override void OnSearchActivated(SearchActivatedEventArgs args)
-        {
-            this.InitializeInternal();
-
-            base.OnSearchActivated(args);
-        }
-
-        /// <summary>
         /// The on launched.
         /// </summary>
         /// <param name="args">
@@ -172,8 +159,6 @@ namespace OutcoldSolutions.GoogleMusic
                 registration.Register<IApplicationResources>().AsSingleton<ApplicationResources>();
 
                 // Settings
-                registration.Register<ISearchService>().AsSingleton<SearchService>();
-
                 registration.Register<ILastfmAuthentificationView>()
                             .InjectionRule<BindingModelBase, LastfmAuthentificationPresenter>()
                             .As<LastfmAuthentificationPageView>();
@@ -308,8 +293,6 @@ namespace OutcoldSolutions.GoogleMusic
             {
                 currentSongPublisherService.AddPublisher<LastFmCurrentSongPublisher>();
             }
-
-            Container.Resolve<ISearchService>();
         }
 
         private void OnActivated(bool isFirstTimeActivated)

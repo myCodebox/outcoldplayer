@@ -11,6 +11,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
     public interface ISearchPageView : IPageView
     {
+        void UpdateListViewItems(bool scrollToZero);
     }
 
     public sealed partial class SearchPageView : PageViewBase, ISearchPageView
@@ -38,7 +39,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
                 this.Groups.SelectedIndex = (int)index;
                 this.UpdateListViewItems(scrollToZero: false);
             }
-            else
+            else if (this.Groups.Items != null && this.Groups.Items.Count > 0)
             {
                 this.Groups.SelectedIndex = 0;
                 this.UpdateListViewItems(scrollToZero: true);
@@ -59,20 +60,16 @@ namespace OutcoldSolutions.GoogleMusic.Views
             this.Groups.SelectionChanged -= this.GroupsOnSelectionChanged;
         }
 
-        private void ListViewOnItemClick(object sender, ItemClickEventArgs e)
-        {
-            this.GetPresenter<SearchPageViewPresenter>().NavigateToView(e.ClickedItem);
-        }
-
-        private void GroupsOnSelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            this.UpdateListViewItems(scrollToZero: true);
-        }
-
-        private void UpdateListViewItems(bool scrollToZero)
+        public void UpdateListViewItems(bool scrollToZero)
         {
             if (this.Groups.Items != null)
             {
+                if (this.Groups.SelectedValue == null && this.Groups.Items.Count > 0)
+                {
+                    this.Groups.SelectedIndex = this.Groups.SelectedIndex;
+                    return;
+                }
+
                 var searchGroupBindingModel = this.Groups.SelectedValue as SearchGroupBindingModel;
                 if (searchGroupBindingModel != null)
                 {
@@ -83,6 +80,16 @@ namespace OutcoldSolutions.GoogleMusic.Views
                     }
                 }
             }
+        }
+
+        private void ListViewOnItemClick(object sender, ItemClickEventArgs e)
+        {
+            this.GetPresenter<SearchPageViewPresenter>().NavigateToView(e.ClickedItem);
+        }
+
+        private void GroupsOnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            this.UpdateListViewItems(scrollToZero: true);
         }
     }
 }

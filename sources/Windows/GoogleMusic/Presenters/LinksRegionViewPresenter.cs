@@ -33,7 +33,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         public LinksRegionViewPresenter(
             IApplicationStateService stateService,
             IApplicationResources resources,
-            ISearchService searchService,
             IDispatcher dispatcher,
             IGoogleMusicSynchronizationService googleMusicSynchronizationService,
             IApplicationSettingViewsService applicationSettingViewsService,
@@ -46,7 +45,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.googleMusicSynchronizationService = googleMusicSynchronizationService;
             this.sessionService = sessionService;
             this.navigationService = navigationService;
-            this.ShowSearchCommand = new DelegateCommand(searchService.Activate);
             this.NavigateToDownloadQueue = new DelegateCommand(async () =>
             {
                 if (!this.disableClickToCache)
@@ -77,8 +75,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
             this.sessionService.SessionCleared += this.SessionServiceOnSessionCleared;
         }
-
-        public DelegateCommand ShowSearchCommand { get; private set; }
 
         public DelegateCommand NavigateToDownloadQueue { get; private set; }
 

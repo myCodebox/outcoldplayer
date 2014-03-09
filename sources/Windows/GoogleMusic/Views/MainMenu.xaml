@@ -112,12 +112,12 @@
             <Border Style="{StaticResource SeparatorStyle}" />
             
             <Button Style="{StaticResource MenuButtonStyle}"
-                    Command="{Binding Path=QueueCommand, Mode=OneTime}" >
+                    Command="{Binding Path=SearchCommand, Mode=OneTime}" >
                 <StackPanel Orientation="Horizontal">
                     <Image Style="{StaticResource MenuIconStyle}"
                            Source="ms-appx:///Resources/queue.png"/>
 
-                    <TextBlock Text="Queue"
+                    <TextBlock Text="Search"
                                Style="{StaticResource MenuTextStyle}" />
                 </StackPanel>
             </Button>
