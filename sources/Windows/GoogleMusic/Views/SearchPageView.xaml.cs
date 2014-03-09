@@ -66,7 +66,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
             {
                 if (this.Groups.SelectedValue == null && this.Groups.Items.Count > 0)
                 {
-                    this.Groups.SelectedIndex = this.Groups.SelectedIndex;
+                    this.Groups.SelectedIndex = 0;
                     return;
                 }
 

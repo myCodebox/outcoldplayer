@@ -55,7 +55,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     var playlist = await this.userPlaylistsRepository.FindUserPlaylistAsync(song);
                     if (playlist != null)
                     {
-                        await this.Dispatcher.RunAsync(() => this.navigationService.NavigateTo<IPlaylistPageView>(new PlaylistNavigationRequest(PlaylistType.UserPlaylist, playlist.Id, song.SongId)));
+                        await this.Dispatcher.RunAsync(() => this.navigationService.NavigateTo<IPlaylistPageView>(new PlaylistNavigationRequest(playlist, song.SongId)));
                     }
                 }
                 

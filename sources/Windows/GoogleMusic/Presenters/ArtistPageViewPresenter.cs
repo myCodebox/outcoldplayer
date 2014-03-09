@@ -48,11 +48,41 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.allAccessService = allAccessService;
             this.ShowAllCommand = new DelegateCommand(this.ShowAll);
             this.StartRadioCommand = new DelegateCommand(this.StartRadio);
+
+            this.NavigateToTopSongs = new DelegateCommand(
+                () => this.navigationService.NavigateTo<IPlaylistPageView>(
+                    new PlaylistNavigationRequest(
+                        this.BindingModel.ArtistInfo.Artist, 
+                        this.BindingModel.ArtistInfo.Artist.Title,
+                        "Artist Top Songs",
+                        this.BindingModel.ArtistInfo.TopSongs)));
+
+            this.NavigateToAlbums = new DelegateCommand(
+                () => this.navigationService.NavigateTo<IPlaylistsPageView>(
+                    new PlaylistNavigationRequest(
+                        this.BindingModel.ArtistInfo.Artist,
+                        this.BindingModel.ArtistInfo.Artist.Title,
+                        "Artist Albums",
+                        this.BindingModel.ArtistInfo.GoogleAlbums.Cast<IPlaylist>().ToList())));
+
+            this.NavigateToArtists = new DelegateCommand(
+               () => this.navigationService.NavigateTo<IPlaylistsPageView>(
+                   new PlaylistNavigationRequest(
+                       this.BindingModel.ArtistInfo.Artist,
+                       this.BindingModel.ArtistInfo.Artist.Title,
+                       "Related Artists",
+                       this.BindingModel.ArtistInfo.RelatedArtists.Cast<IPlaylist>().ToList())));
         }
 
         public DelegateCommand ShowAllCommand { get; set; }
 
         public DelegateCommand StartRadioCommand { get; set; }
+
+        public DelegateCommand NavigateToTopSongs { get; set; }
+
+        public DelegateCommand NavigateToAlbums { get; set; }
+
+        public DelegateCommand NavigateToArtists { get; set; }
 
         public override void OnNavigatingFrom(NavigatingFromEventArgs eventArgs)
         {
@@ -61,9 +91,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.BindingModel.Artist = null;
             this.BindingModel.Albums = null;
             this.BindingModel.Collections = null;
-            this.BindingModel.TopSongs = null;
-            this.BindingModel.GoogleMusicAlbums = null;
-            this.BindingModel.RelatedArtists = null;
+            this.BindingModel.ArtistInfo = null;
         }
 
         protected override async Task LoadDataAsync(NavigatedToEventArgs navigatedToEventArgs)
@@ -94,14 +122,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
             if (this.applicationStateService.IsOnline())
             {
-                var info = await this.allAccessService.GetArtistInfoAsync(artist);
-                if (info != null)
-                {
-                    this.BindingModel.Artist = info.Artist;
-                    this.BindingModel.TopSongs = info.TopSongs;
-                    this.BindingModel.GoogleMusicAlbums = info.GoogleAlbums == null ? null : info.GoogleAlbums.Cast<IPlaylist>().ToList();
-                    this.BindingModel.RelatedArtists = info.RelatedArtists == null ? null : info.RelatedArtists.Cast<IPlaylist>().ToList();
-                }
+                this.BindingModel.ArtistInfo = await this.allAccessService.GetArtistInfoAsync(artist);
             }
         }
 

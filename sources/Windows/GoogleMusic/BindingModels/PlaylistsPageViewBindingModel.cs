@@ -14,6 +14,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         private IList<PlaylistsGroupBindingModel> groups;
 
         private string title;
+        private string subtitle;
         private PlaylistType playlistType;
 
         public string Title
@@ -33,7 +34,12 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         {
             get
             {
-                return this.Playlists == null ? string.Empty : this.Playlists.Count.ToString();
+                return this.subtitle;
+            }
+
+            set
+            {
+                this.SetValue(ref this.subtitle, value);
             }
         }
 

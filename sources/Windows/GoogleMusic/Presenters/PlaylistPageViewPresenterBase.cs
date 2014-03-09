@@ -32,7 +32,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
             this.BindingModel.Songs = null;
             this.BindingModel.Playlist = default(TPlaylist);
-            this.BindingModel.Type = null;
+            this.BindingModel.Title = null;
+            this.BindingModel.Subtitle = null;
         }
 
         protected override async Task LoadDataAsync(NavigatedToEventArgs navigatedToEventArgs)
@@ -43,21 +44,36 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 throw new NotSupportedException("Request parameter should be PlaylistNavigationRequest.");
             }
 
-            var songs = await this.playlistsService.GetSongsAsync(request.PlaylistType, request.PlaylistId);
-            var playlist = await this.playlistsService.GetAsync(request.PlaylistType, request.PlaylistId);
-
-            await this.Dispatcher.RunAsync(
-                () =>
+            if (request.Songs != null)
+            {
+                await this.Dispatcher.RunAsync(
+                    () =>
+                    {
+                        this.BindingModel.Songs = request.Songs;
+                        this.BindingModel.Playlist = (TPlaylist)request.Playlist;
+                        this.BindingModel.Title = request.Title;
+                        this.BindingModel.Subtitle = request.Subtitle;
+                    });
+            }
+            else
+            {
+                var songs = await this.playlistsService.GetSongsAsync(request.PlaylistType, request.PlaylistId);
+                var playlist = await this.playlistsService.GetAsync(request.PlaylistType, request.PlaylistId);
+                await this.Dispatcher.RunAsync(
+                    () =>
                     {
                         this.BindingModel.Songs = songs;
                         this.BindingModel.Playlist = (TPlaylist)playlist;
-                        this.BindingModel.Type = this.resources.GetTitle(playlist.PlaylistType);
-
-                        if (!string.IsNullOrEmpty(request.SongId))
-                        {
-                            this.EventAggregator.Publish(new SelectSongByIdEvent(request.SongId));
-                        }
+                        this.BindingModel.Title =  this.BindingModel.Playlist.Title;
+                        this.BindingModel.Subtitle = this.resources.GetTitle(playlist.PlaylistType);
                     });
+            }
+
+            if (!string.IsNullOrEmpty(request.SongId))
+            {
+                await this.Dispatcher.RunAsync(
+                    () => this.EventAggregator.Publish(new SelectSongByIdEvent(request.SongId)));
+            }
         }
     }
 }

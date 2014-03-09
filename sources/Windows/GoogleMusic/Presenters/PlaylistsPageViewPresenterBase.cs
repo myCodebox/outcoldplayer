@@ -45,6 +45,9 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         {
             base.OnNavigatingFrom(eventArgs);
 
+            this.BindingModel.Title = null;
+            this.BindingModel.Subtitle = null;
+
             if (this.playlistsChangeSubscription != null)
             {
                 this.playlistsChangeSubscription.Dispose();
@@ -56,6 +59,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         {
             this.BindingModel.PlaylistType = (PlaylistType)navigatedToEventArgs.Parameter;
             this.BindingModel.Title = this.resources.GetPluralTitle(this.BindingModel.PlaylistType);
+
             await this.LoadPlaylistsAsync();
         }
 
@@ -66,6 +70,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             await this.Dispatcher.RunAsync(() =>
             {
                 this.BindingModel.Playlists = playlists.ToList();
+                this.BindingModel.Subtitle = this.BindingModel.Playlists == null ? string.Empty : this.BindingModel.Playlists.Count.ToString();
             });
         }
     }

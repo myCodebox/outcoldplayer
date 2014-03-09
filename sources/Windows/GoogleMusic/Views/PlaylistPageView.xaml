@@ -8,8 +8,8 @@
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400"
-    Title="{Binding Path=BindingModel.Playlist.Title, Mode=OneWay}"
-    Subtitle="{Binding Path=BindingModel.Type, Mode=OneWay}">
+    Title="{Binding Path=BindingModel.Title, Mode=OneWay}"
+    Subtitle="{Binding Path=BindingModel.Subtitle, Mode=OneWay}">
 
     <ContentPresenter x:Name="ContentPresenter"
                       Visibility="{Binding Path=IsDataLoading, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}"/>

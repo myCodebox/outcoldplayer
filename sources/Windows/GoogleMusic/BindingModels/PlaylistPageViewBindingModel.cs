@@ -11,7 +11,8 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
     {
         private TPlaylist playlist;
 
-        private string playlistType;
+        private string title;
+        private string subtitle;
 
         private IList<Song> songs;
 
@@ -25,7 +26,6 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             set
             {
                 this.SetValue(ref this.playlist, value);
-                this.RaisePropertyChanged(() => this.Type);
             }
         }
 
@@ -42,16 +42,30 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             }
         }
 
-        public string Type
+        public string Title
         {
             get
             {
-                return this.playlistType;
+                return this.title;
             }
 
             set
             {
-                this.SetValue(ref this.playlistType, value);
+                this.SetValue(ref this.title, value);
+            }
+        }
+
+
+        public string Subtitle
+        {
+            get
+            {
+                return this.subtitle;
+            }
+
+            set
+            {
+                this.SetValue(ref this.subtitle, value);
             }
         }
     }

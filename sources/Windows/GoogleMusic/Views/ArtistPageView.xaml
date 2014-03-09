@@ -63,31 +63,64 @@
                               Visibility="{Binding Path=BindingModel.Collections, Converter={StaticResource NotEmptyToVisibilityConverter}}"
                               Margin="0, 20, 0, 0"/>
 
-            <TextBlock Style="{StaticResource SubheaderTextStyle}"
-                       Visibility="{Binding Path=BindingModel.TopSongs, Converter={StaticResource NotEmptyToVisibilityConverter}}"
-                       Margin="0, 20, 0, 0">Artist Top Songs
-            </TextBlock>
+            <Button Margin="0, 20, 0, 0" 
+                    Visibility="{Binding Path=BindingModel.TopSongsLimited, Converter={StaticResource NotEmptyToVisibilityConverter}}"
+                    Command="{Binding Path=NavigateToTopSongs, Mode=OneTime}">
+                <Button.Template>
+                    <ControlTemplate>
+                        <StackPanel Orientation="Horizontal" >
+                            <TextBlock Style="{StaticResource SubheaderTextStyle}" Text="Artist Top Songs" />
+                            <TextBlock Style="{StaticResource SubheaderTextStyle}" Text=" (" />
+                            <TextBlock Style="{StaticResource SubheaderTextStyle}" Text="{Binding Path=BindingModel.TopSongsCount, Mode=OneWay}" />
+                            <TextBlock Style="{StaticResource SubheaderTextStyle}" Text=")" />
+                            <TextBlock Style="{StaticResource SubheaderTextStyle}" Margin="10, 0, 0, 0" FontFamily="Segoe UI Symbol" Text="{StaticResource ChevronGlyph}"/>
+                        </StackPanel>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
 
             <ContentPresenter x:Name="TopSongsContentPresenter"
-                              Visibility="{Binding Path=BindingModel.TopSongs, Converter={StaticResource NotEmptyToVisibilityConverter}}"
+                              Visibility="{Binding Path=BindingModel.TopSongsLimited, Converter={StaticResource NotEmptyToVisibilityConverter}}"
                               Margin="0, 20, 0, 0"/>
 
-            <TextBlock Style="{StaticResource SubheaderTextStyle}"
-                       Visibility="{Binding Path=BindingModel.GoogleMusicAlbums, Converter={StaticResource NotEmptyToVisibilityConverter}}"
-                       Margin="0, 20, 0, 0">Artist Albums
-            </TextBlock>
-
+            <Button Margin="0, 20, 0, 0" 
+                    Visibility="{Binding Path=BindingModel.GoogleMusicAlbumsLimited, Converter={StaticResource NotEmptyToVisibilityConverter}}"
+                    Command="{Binding Path=NavigateToAlbums, Mode=OneTime}">
+                <Button.Template>
+                    <ControlTemplate>
+                        <StackPanel Orientation="Horizontal" >
+                            <TextBlock Style="{StaticResource SubheaderTextStyle}" Text="Artist Albums" />
+                            <TextBlock Style="{StaticResource SubheaderTextStyle}" Text=" (" />
+                            <TextBlock Style="{StaticResource SubheaderTextStyle}" Text="{Binding Path=BindingModel.GoogleMusicAlbumsCount, Mode=OneWay}" />
+                            <TextBlock Style="{StaticResource SubheaderTextStyle}" Text=")" />
+                            <TextBlock Style="{StaticResource SubheaderTextStyle}" Margin="10, 0, 0, 0" FontFamily="Segoe UI Symbol" Text="{StaticResource ChevronGlyph}"/>
+                        </StackPanel>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+            
             <ContentPresenter x:Name="GoogleMusicAlbumsContentPresenter"
-                              Visibility="{Binding Path=BindingModel.GoogleMusicAlbums, Converter={StaticResource NotEmptyToVisibilityConverter}}"
+                              Visibility="{Binding Path=BindingModel.GoogleMusicAlbumsLimited, Converter={StaticResource NotEmptyToVisibilityConverter}}"
                               Margin="0, 20, 0, 0"/>
 
-            <TextBlock Style="{StaticResource SubheaderTextStyle}"
-                       Visibility="{Binding Path=BindingModel.RelatedArtists, Converter={StaticResource NotEmptyToVisibilityConverter}}"
-                       Margin="0, 20, 0, 0">Related Artists
-            </TextBlock>
+            <Button Margin="0, 20, 0, 0" 
+                    Visibility="{Binding Path=BindingModel.RelatedArtistsLimited, Converter={StaticResource NotEmptyToVisibilityConverter}}"
+                    Command="{Binding Path=NavigateToArtists, Mode=OneTime}">
+                <Button.Template>
+                    <ControlTemplate>
+                        <StackPanel Orientation="Horizontal" >
+                            <TextBlock Style="{StaticResource SubheaderTextStyle}" Text="Related Artists" />
+                            <TextBlock Style="{StaticResource SubheaderTextStyle}" Text=" (" />
+                            <TextBlock Style="{StaticResource SubheaderTextStyle}" Text="{Binding Path=BindingModel.RelatedArtistsCount, Mode=OneWay}" />
+                            <TextBlock Style="{StaticResource SubheaderTextStyle}" Text=")" />
+                            <TextBlock Style="{StaticResource SubheaderTextStyle}" Margin="10, 0, 0, 0" FontFamily="Segoe UI Symbol" Text="{StaticResource ChevronGlyph}"/>
+                        </StackPanel>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
 
             <ContentPresenter x:Name="RelatedArtistsContentPresenter"
-                              Visibility="{Binding Path=BindingModel.RelatedArtists, Converter={StaticResource NotEmptyToVisibilityConverter}}"
+                              Visibility="{Binding Path=BindingModel.RelatedArtistsLimited, Converter={StaticResource NotEmptyToVisibilityConverter}}"
                               Margin="0, 20, 0, 0"/>
         </StackPanel>
     </ScrollViewer>

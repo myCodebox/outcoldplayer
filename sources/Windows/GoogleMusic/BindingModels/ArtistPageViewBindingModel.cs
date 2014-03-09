@@ -4,12 +4,14 @@
 namespace OutcoldSolutions.GoogleMusic.BindingModels
 {
     using System.Collections.Generic;
+    using System.Linq;
 
     using OutcoldSolutions.GoogleMusic.Models;
 
     public class ArtistPageViewBindingModel : BindingModelBase
     {
         private Artist artist;
+        private ArtistInfo artistInfo;
         private IList<IPlaylist> albums;
         private IList<IPlaylist> collections;
         private IList<Song> topSongs;
@@ -30,6 +32,25 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             set
             {
                 this.SetValue(ref this.artist, value);
+            }
+        }
+
+        public ArtistInfo ArtistInfo
+        {
+            get
+            {
+                return this.artistInfo;
+            }
+
+            set
+            {
+                this.SetValue(ref this.artistInfo, value);
+                this.RaisePropertyChanged(() => this.TopSongsLimited);
+                this.RaisePropertyChanged(() => this.GoogleMusicAlbumsLimited);
+                this.RaisePropertyChanged(() => this.RelatedArtistsLimited);
+                this.RaisePropertyChanged(() => this.TopSongsCount);
+                this.RaisePropertyChanged(() => this.GoogleMusicAlbumsCount);
+                this.RaisePropertyChanged(() => this.RelatedArtistsCount);
             }
         }
 
@@ -59,42 +80,51 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             }
         }
 
-        public IList<Song> TopSongs
+        public IList<Song> TopSongsLimited
         {
             get
             {
-                return this.topSongs;
-            }
-
-            set
-            {
-                this.SetValue(ref this.topSongs, value);
+                return (this.ArtistInfo == null || this.ArtistInfo.TopSongs == null) ? null : this.ArtistInfo.TopSongs.Take(5).ToList();
             }
         }
 
-        public IList<IPlaylist> GoogleMusicAlbums
+        public IList<IPlaylist> GoogleMusicAlbumsLimited
         {
             get
             {
-                return this.googleMusicAlbums;
-            }
-
-            set
-            {
-                this.SetValue(ref this.googleMusicAlbums, value);
+                return (this.ArtistInfo == null || this.ArtistInfo.GoogleAlbums == null) ? null : this.ArtistInfo.GoogleAlbums.Take(4).Cast<IPlaylist>().ToList();
             }
         }
 
-        public IList<IPlaylist> RelatedArtists
+        public IList<IPlaylist> RelatedArtistsLimited
         {
             get
             {
-                return this.realatedArtists;
+                return (this.ArtistInfo == null || this.ArtistInfo.RelatedArtists == null) ? null : this.ArtistInfo.RelatedArtists.Take(4).Cast<IPlaylist>().ToList();
             }
+        }
 
-            set
+        public int TopSongsCount
+        {
+            get
             {
-                this.SetValue(ref this.realatedArtists, value);
+                return (this.ArtistInfo == null || this.ArtistInfo.TopSongs == null) ? 0 : this.ArtistInfo.TopSongs.Count;
+            }
+        }
+
+        public int GoogleMusicAlbumsCount
+        {
+            get
+            {
+                return (this.ArtistInfo == null || this.ArtistInfo.GoogleAlbums == null) ? 0 : this.ArtistInfo.GoogleAlbums.Count;
+            }
+        }
+
+        public int RelatedArtistsCount
+        {
+            get
+            {
+                return (this.ArtistInfo == null || this.ArtistInfo.RelatedArtists == null) ? 0 : this.ArtistInfo.RelatedArtists.Count;
             }
         }
     }

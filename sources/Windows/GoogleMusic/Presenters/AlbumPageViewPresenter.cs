@@ -40,7 +40,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                         new NavigatedToEventArgs(
                             navigatedToEventArgs.View,
                             navigatedToEventArgs.State,
-                            new PlaylistNavigationRequest(PlaylistType.Album, album.Id, songId),
+                            new PlaylistNavigationRequest(album, songId),
                             navigatedToEventArgs.IsNavigationBack));
             }
             else
@@ -52,7 +52,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
                     this.BindingModel.Songs = result.Item2;
                     this.BindingModel.Playlist = result.Item1;
-                    this.BindingModel.Type = this.resources.GetTitle(result.Item1.PlaylistType);
+                    this.BindingModel.Title = result.Item1.Title;
+                    this.BindingModel.Subtitle = this.resources.GetTitle(result.Item1.PlaylistType);
 
                     if (!string.IsNullOrEmpty(request.SongId))
                     {

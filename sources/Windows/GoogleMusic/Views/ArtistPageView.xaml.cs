@@ -73,7 +73,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
                     {
                         Source = presenter,
                         Mode = BindingMode.OneWay,
-                        Path = new PropertyPath("BindingModel.GoogleMusicAlbums")
+                        Path = new PropertyPath("BindingModel.GoogleMusicAlbumsLimited")
                     });
             }
 
@@ -86,7 +86,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
                     {
                         Source = presenter,
                         Mode = BindingMode.OneWay,
-                        Path = new PropertyPath("BindingModel.RelatedArtists")
+                        Path = new PropertyPath("BindingModel.RelatedArtistsLimited")
                     });
             }
 
@@ -99,7 +99,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
                     {
                         Source = presenter,
                         Mode = BindingMode.OneWay,
-                        Path = new PropertyPath("BindingModel.TopSongs")
+                        Path = new PropertyPath("BindingModel.TopSongsLimited")
                     });
             }
 
