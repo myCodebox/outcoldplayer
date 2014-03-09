@@ -80,6 +80,18 @@ namespace OutcoldSolutions.GoogleMusic.Views
             set { SetValue(IsAlbumColumnVisibleProperty, value); }
         }
 
+        public int MaxItems
+        {
+            get { return this.GetPresenter<SongsListViewPresenter>().MaxItems; }
+            set { this.GetPresenter<SongsListViewPresenter>().MaxItems = value; }
+        }
+
+        public bool AllowSorting
+        {
+            get { return this.GetPresenter<SongsListViewPresenter>().AllowSorting; }
+            set { this.GetPresenter<SongsListViewPresenter>().AllowSorting = value; }
+        }
+
         public ListView GetListView()
         {
             return this.ListView;

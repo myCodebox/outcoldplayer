@@ -35,6 +35,12 @@ namespace OutcoldSolutions.GoogleMusic.Views
             this.InitializeComponent();
         }
 
+        public int MaxItems
+        {
+            get { return this.GetPresenter<PlaylistsListViewPresenter>().MaxItems; }
+            set { this.GetPresenter<PlaylistsListViewPresenter>().MaxItems = value; }
+        }
+
         public IEnumerable ItemsSource
         {
             get { return (IEnumerable)GetValue(ItemsSourceProperty); }

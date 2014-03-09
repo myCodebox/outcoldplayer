@@ -113,9 +113,10 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 artist = await this.playlistsService.GetRepository<Artist>().GetAsync(request.PlaylistId);
             }
 
+            this.BindingModel.Artist = artist;
+
             if (artist.ArtistId > 0)
             {
-                this.BindingModel.Artist = artist;
                 this.BindingModel.Albums = (await this.albumsRepository.GetArtistAlbumsAsync(artist.Id)).Cast<IPlaylist>().ToList();
                 this.BindingModel.Collections = (await this.albumsRepository.GetArtistCollectionsAsync(artist.Id)).Cast<IPlaylist>().ToList();
             }

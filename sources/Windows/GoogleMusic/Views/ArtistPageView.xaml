@@ -71,7 +71,7 @@
                         <StackPanel Orientation="Horizontal" >
                             <TextBlock Style="{StaticResource SubheaderTextStyle}" Text="Artist Top Songs" />
                             <TextBlock Style="{StaticResource SubheaderTextStyle}" Text=" (" />
-                            <TextBlock Style="{StaticResource SubheaderTextStyle}" Text="{Binding Path=BindingModel.TopSongsCount, Mode=OneWay}" />
+                            <TextBlock Style="{StaticResource SubheaderTextStyle}" Text="{Binding Path=BindingModel.TopSongs.Count, Mode=OneWay}" />
                             <TextBlock Style="{StaticResource SubheaderTextStyle}" Text=")" />
                             <TextBlock Style="{StaticResource SubheaderTextStyle}" Margin="10, 0, 0, 0" FontFamily="Segoe UI Symbol" Text="{StaticResource ChevronGlyph}"/>
                         </StackPanel>
@@ -91,7 +91,7 @@
                         <StackPanel Orientation="Horizontal" >
                             <TextBlock Style="{StaticResource SubheaderTextStyle}" Text="Artist Albums" />
                             <TextBlock Style="{StaticResource SubheaderTextStyle}" Text=" (" />
-                            <TextBlock Style="{StaticResource SubheaderTextStyle}" Text="{Binding Path=BindingModel.GoogleMusicAlbumsCount, Mode=OneWay}" />
+                            <TextBlock Style="{StaticResource SubheaderTextStyle}" Text="{Binding Path=BindingModel.GoogleMusicAlbums.Count, Mode=OneWay}" />
                             <TextBlock Style="{StaticResource SubheaderTextStyle}" Text=")" />
                             <TextBlock Style="{StaticResource SubheaderTextStyle}" Margin="10, 0, 0, 0" FontFamily="Segoe UI Symbol" Text="{StaticResource ChevronGlyph}"/>
                         </StackPanel>
@@ -111,7 +111,7 @@
                         <StackPanel Orientation="Horizontal" >
                             <TextBlock Style="{StaticResource SubheaderTextStyle}" Text="Related Artists" />
                             <TextBlock Style="{StaticResource SubheaderTextStyle}" Text=" (" />
-                            <TextBlock Style="{StaticResource SubheaderTextStyle}" Text="{Binding Path=BindingModel.RelatedArtistsCount, Mode=OneWay}" />
+                            <TextBlock Style="{StaticResource SubheaderTextStyle}" Text="{Binding Path=BindingModel.RelatedArtists.Count, Mode=OneWay}" />
                             <TextBlock Style="{StaticResource SubheaderTextStyle}" Text=")" />
                             <TextBlock Style="{StaticResource SubheaderTextStyle}" Margin="10, 0, 0, 0" FontFamily="Segoe UI Symbol" Text="{StaticResource ChevronGlyph}"/>
                         </StackPanel>

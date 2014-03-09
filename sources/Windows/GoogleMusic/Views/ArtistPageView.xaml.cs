@@ -67,39 +67,43 @@ namespace OutcoldSolutions.GoogleMusic.Views
             frameworkElement = this.allAccessAlbums as PlaylistsListView;
             if (frameworkElement != null)
             {
+                frameworkElement.MaxItems = 4;
                 frameworkElement.SetBinding(
                     PlaylistsListView.ItemsSourceProperty,
                     new Binding()
                     {
                         Source = presenter,
                         Mode = BindingMode.OneWay,
-                        Path = new PropertyPath("BindingModel.GoogleMusicAlbumsLimited")
+                        Path = new PropertyPath("BindingModel.GoogleMusicAlbums")
                     });
             }
 
             frameworkElement = this.realtedArtists as PlaylistsListView;
             if (frameworkElement != null)
             {
+                frameworkElement.MaxItems = 4;
                 frameworkElement.SetBinding(
                     PlaylistsListView.ItemsSourceProperty,
                     new Binding()
                     {
                         Source = presenter,
                         Mode = BindingMode.OneWay,
-                        Path = new PropertyPath("BindingModel.RelatedArtistsLimited")
+                        Path = new PropertyPath("BindingModel.RelatedArtists")
                     });
             }
 
             var songsListViewFrameworkElement = this.songsListView as SongsListView;
             if (songsListViewFrameworkElement != null)
             {
+                songsListViewFrameworkElement.MaxItems = 5;
+                songsListViewFrameworkElement.AllowSorting = false;
                 songsListViewFrameworkElement.SetBinding(
                     SongsListView.ItemsSourceProperty,
                     new Binding()
                     {
                         Source = presenter,
                         Mode = BindingMode.OneWay,
-                        Path = new PropertyPath("BindingModel.TopSongsLimited")
+                        Path = new PropertyPath("BindingModel.TopSongs")
                     });
             }
 

@@ -28,6 +28,10 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private ObservableCollection<PlaylistBindingModel> playlists;
 
+        private int maxItems = int.MaxValue;
+
+        private IList<IPlaylist> collection; 
+
         public PlaylistsListViewPresenter(
             IPlayQueueService playQueueService,
             INavigationService navigationService,
@@ -68,15 +72,29 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             }
         }
 
+        public int MaxItems
+        {
+            get
+            {
+                return this.maxItems;
+            }
+
+            set
+            {
+                this.maxItems = value;
+            }
+        }
+
         public void SetCollection(IEnumerable<IPlaylist> enumerable)
         {
-            if (enumerable == null)
+            this.collection = enumerable == null ? null : enumerable.ToList();
+            if (this.collection == null)
             {
                 this.Playlists = null;
             }
             else
             {
-                this.Playlists = new ObservableCollection<PlaylistBindingModel>(enumerable.Select(x => new PlaylistBindingModel(x) { PlayCommand = this.PlayCommand }));
+                this.Playlists = new ObservableCollection<PlaylistBindingModel>(this.collection.Take(this.MaxItems).Select(x => new PlaylistBindingModel(x) { PlayCommand = this.PlayCommand }));
             }
         }
 
