@@ -12,6 +12,9 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         private Artist artist;
         private IList<IPlaylist> albums;
         private IList<IPlaylist> collections;
+        private IList<Song> topSongs;
+        private IList<IPlaylist> googleMusicAlbums;
+        private IList<IPlaylist> realatedArtists;
 
         public ArtistPageViewBindingModel()
         {
@@ -53,6 +56,45 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             set
             {
                 this.SetValue(ref this.collections, value);
+            }
+        }
+
+        public IList<Song> TopSongs
+        {
+            get
+            {
+                return this.topSongs;
+            }
+
+            set
+            {
+                this.SetValue(ref this.topSongs, value);
+            }
+        }
+
+        public IList<IPlaylist> GoogleMusicAlbums
+        {
+            get
+            {
+                return this.googleMusicAlbums;
+            }
+
+            set
+            {
+                this.SetValue(ref this.googleMusicAlbums, value);
+            }
+        }
+
+        public IList<IPlaylist> RelatedArtists
+        {
+            get
+            {
+                return this.realatedArtists;
+            }
+
+            set
+            {
+                this.SetValue(ref this.realatedArtists, value);
             }
         }
     }

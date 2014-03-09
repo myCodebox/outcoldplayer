@@ -14,6 +14,15 @@ namespace OutcoldSolutions.GoogleMusic
             this.SongId = songId;
         }
 
+        public PlaylistNavigationRequest(IPlaylist playlist)
+        {
+            this.PlaylistType = playlist.PlaylistType;
+            this.PlaylistId = playlist.Id;
+            this.Playlist = playlist;
+        }
+
+        public IPlaylist Playlist { get; set; }
+
         public PlaylistType PlaylistType { get; set; }
 
         public string PlaylistId { get; set; }

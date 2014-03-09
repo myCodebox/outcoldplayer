@@ -62,6 +62,33 @@
             <ContentPresenter x:Name="LibraryCollectionsContentPresenter"
                               Visibility="{Binding Path=BindingModel.Collections, Converter={StaticResource NotEmptyToVisibilityConverter}}"
                               Margin="0, 20, 0, 0"/>
+
+            <TextBlock Style="{StaticResource SubheaderTextStyle}"
+                       Visibility="{Binding Path=BindingModel.TopSongs, Converter={StaticResource NotEmptyToVisibilityConverter}}"
+                       Margin="0, 20, 0, 0">Artist Top Songs
+            </TextBlock>
+
+            <ContentPresenter x:Name="TopSongsContentPresenter"
+                              Visibility="{Binding Path=BindingModel.TopSongs, Converter={StaticResource NotEmptyToVisibilityConverter}}"
+                              Margin="0, 20, 0, 0"/>
+
+            <TextBlock Style="{StaticResource SubheaderTextStyle}"
+                       Visibility="{Binding Path=BindingModel.GoogleMusicAlbums, Converter={StaticResource NotEmptyToVisibilityConverter}}"
+                       Margin="0, 20, 0, 0">Artist Albums
+            </TextBlock>
+
+            <ContentPresenter x:Name="GoogleMusicAlbumsContentPresenter"
+                              Visibility="{Binding Path=BindingModel.GoogleMusicAlbums, Converter={StaticResource NotEmptyToVisibilityConverter}}"
+                              Margin="0, 20, 0, 0"/>
+
+            <TextBlock Style="{StaticResource SubheaderTextStyle}"
+                       Visibility="{Binding Path=BindingModel.RelatedArtists, Converter={StaticResource NotEmptyToVisibilityConverter}}"
+                       Margin="0, 20, 0, 0">Related Artists
+            </TextBlock>
+
+            <ContentPresenter x:Name="RelatedArtistsContentPresenter"
+                              Visibility="{Binding Path=BindingModel.RelatedArtists, Converter={StaticResource NotEmptyToVisibilityConverter}}"
+                              Margin="0, 20, 0, 0"/>
         </StackPanel>
     </ScrollViewer>
     

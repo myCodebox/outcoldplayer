@@ -22,6 +22,8 @@ namespace OutcoldSolutions.GoogleMusic
 
         private IMainFrameRegionProvider mainFrameRegionProvider;
 
+        private bool navigation = false;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="NavigationService"/> class.
         /// </summary>
@@ -113,7 +115,7 @@ namespace OutcoldSolutions.GoogleMusic
         /// <inheritdoc />
         public void RefreshCurrentView()
         {
-            if (this.viewsHistory.Count > 0)
+            if (this.viewsHistory.Count > 0 && !this.navigation)
             {
                 this.NavigateToCurrentView();
             }
@@ -131,68 +133,84 @@ namespace OutcoldSolutions.GoogleMusic
 
         private void NavigateToCurrentView()
         {
-            var item = this.viewsHistory.Last.Value;
+            try
+            {
+                this.navigation = true;
 
-            item.View.OnNavigatingFrom(new NavigatingFromEventArgs(item.State));
+                var item = this.viewsHistory.Last.Value;
 
-            this.mainFrameRegionProvider.SetContent(MainFrameRegion.Content, item.View);
+                item.View.OnNavigatingFrom(new NavigatingFromEventArgs(item.State));
 
-            var navigatedToEventArgs = new NavigatedToEventArgs(item.View, item.State, item.Parameter, isBack: true);
+                this.mainFrameRegionProvider.SetContent(MainFrameRegion.Content, item.View);
 
-            item.View.OnNavigatedTo(navigatedToEventArgs);
+                var navigatedToEventArgs = new NavigatedToEventArgs(item.View, item.State, item.Parameter, isBack: true);
 
-            this.RaiseNavigatedTo(navigatedToEventArgs);
+                item.View.OnNavigatedTo(navigatedToEventArgs);
+
+                this.RaiseNavigatedTo(navigatedToEventArgs);
+            }
+            finally
+            {
+                this.navigation = false;
+            }
         }
 
         private IPageView NavigateToInternal(Type pageViewType, object parameter = null, bool keepInHistory = true)
         {
-            if (this.mainFrameRegionProvider == null)
+            try
             {
-                throw new NotSupportedException("Register region provider first.");
-            }
-
-            this.logger.Debug("Navigating to {0}. Parameter {1}.", pageViewType, parameter);
-
-            IView currentView = null;
-
-            if (this.viewsHistory.Count > 0)
-            {
-                var value = this.viewsHistory.Last.Value;
-                if (object.Equals(value.Parameter, parameter)
-                    && value.ViewType == pageViewType)
+                if (this.mainFrameRegionProvider == null)
                 {
-                    this.logger.Warning("Double click found. Ignoring...");
-                    return value.View;
+                    throw new NotSupportedException("Register region provider first.");
                 }
 
-                currentView = this.viewsHistory.Last.Value.View;
+                this.logger.Debug("Navigating to {0}. Parameter {1}.", pageViewType, parameter);
 
-                this.viewsHistory.Last.Value.View.OnNavigatingFrom(new NavigatingFromEventArgs(this.viewsHistory.Last.Value.State));
+                IView currentView = null;
+
+                if (this.viewsHistory.Count > 0)
+                {
+                    var value = this.viewsHistory.Last.Value;
+                    if (object.Equals(value.Parameter, parameter)
+                        && value.ViewType == pageViewType)
+                    {
+                        this.logger.Warning("Double click found. Ignoring...");
+                        return value.View;
+                    }
+
+                    currentView = this.viewsHistory.Last.Value.View;
+
+                    this.viewsHistory.Last.Value.View.OnNavigatingFrom(new NavigatingFromEventArgs(this.viewsHistory.Last.Value.State));
+                }
+
+                var view = (IPageView)this.container.Resolve(pageViewType);
+
+                HistoryItem historyItem = null;
+                if (keepInHistory)
+                {
+                    historyItem = new HistoryItem(view, pageViewType, parameter);
+                    this.viewsHistory.AddLast(historyItem);
+                }
+
+                if (currentView == null || !currentView.Equals(view))
+                {
+                    this.mainFrameRegionProvider.SetContent(MainFrameRegion.Content, view);
+                }
+                else
+                {
+                    this.logger.Debug("View the same: {0}.", pageViewType);
+                }
+
+                var navigatedToEventArgs = new NavigatedToEventArgs(view, historyItem == null ? null : historyItem.State, parameter, isBack: false);
+                view.OnNavigatedTo(navigatedToEventArgs);
+                this.RaiseNavigatedTo(navigatedToEventArgs);
+
+                return view;
             }
-
-            var view = (IPageView)this.container.Resolve(pageViewType);
-
-            HistoryItem historyItem = null;
-            if (keepInHistory)
+            finally
             {
-                historyItem = new HistoryItem(view, pageViewType, parameter);
-                this.viewsHistory.AddLast(historyItem);
+                this.navigation = false;
             }
-
-            if (currentView == null || !currentView.Equals(view))
-            {
-                this.mainFrameRegionProvider.SetContent(MainFrameRegion.Content, view);
-            }
-            else
-            {
-                this.logger.Debug("View the same: {0}.", pageViewType);
-            }
-
-            var navigatedToEventArgs = new NavigatedToEventArgs(view, historyItem == null ? null : historyItem.State, parameter, isBack: false);
-            view.OnNavigatedTo(navigatedToEventArgs);
-            this.RaiseNavigatedTo(navigatedToEventArgs);
-
-            return view;
         }
 
         private void RaiseNavigatedTo(NavigatedToEventArgs eventArgs)

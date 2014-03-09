@@ -22,7 +22,7 @@ namespace OutcoldSolutions.GoogleMusic
                 throw new ArgumentNullException("playlist");
             }
 
-            var request = new PlaylistNavigationRequest(playlist.PlaylistType, playlist.Id);
+            var request = new PlaylistNavigationRequest(playlist);
 
             return @this.NavigateToPlaylist(request);
         }

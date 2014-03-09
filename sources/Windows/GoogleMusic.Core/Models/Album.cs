@@ -19,7 +19,7 @@ namespace OutcoldSolutions.GoogleMusic.Models
         {
             get
             {
-                return this.AlbumId.ToString(CultureInfo.InvariantCulture);
+                return this.AlbumId == 0 ? string.Empty : this.AlbumId.ToString(CultureInfo.InvariantCulture);
             }
         }
 
@@ -65,5 +65,7 @@ namespace OutcoldSolutions.GoogleMusic.Models
 
         [Reference]
         public Artist Artist { get; set; }
+
+        public string Description { get; set; }
     }
 }

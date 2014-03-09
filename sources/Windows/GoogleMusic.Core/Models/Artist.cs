@@ -19,7 +19,7 @@ namespace OutcoldSolutions.GoogleMusic.Models
         {
             get
             {
-                return this.ArtistId.ToString(CultureInfo.InvariantCulture);
+                return this.ArtistId == 0 ? string.Empty : this.ArtistId.ToString(CultureInfo.InvariantCulture);
             }
         }
 
@@ -52,6 +52,8 @@ namespace OutcoldSolutions.GoogleMusic.Models
         public Uri ArtUrl { get; set; }
 
         public string GoogleArtistId { get; set; }
+
+        public string Bio { get; set; }
 
         [Indexed]
         public DateTime Recent { get; set; }

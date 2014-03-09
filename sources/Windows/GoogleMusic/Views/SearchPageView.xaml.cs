@@ -20,7 +20,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
         public SearchPageView()
         {
             this.InitializeComponent();
-            this.TrackItemsControl(this.ListView);
+            this.TrackScrollViewer(this.ListView);
         }
 
         public override void OnDataLoading(NavigatedToEventArgs eventArgs)

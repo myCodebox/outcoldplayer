@@ -21,7 +21,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
         public StartPageView()
         {
             this.InitializeComponent();
-            this.TrackItemsControl(this.ListView);
+            this.TrackScrollViewer(this.ListView);
         }
 
         private void PlaylistItemClick(object sender, ItemClickEventArgs e)

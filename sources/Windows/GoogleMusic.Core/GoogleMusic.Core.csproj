@@ -138,6 +138,7 @@
     <Compile Include="InversionOfControl\IRegistrationContext.cs" />
     <Compile Include="InversionOfControl\RegistrationContext.cs" />
     <Compile Include="Models\AlbumArtUrlExtensions.cs" />
+    <Compile Include="Models\ArtistInfo.cs" />
     <Compile Include="Models\CachedAlbumArt.cs" />
     <Compile Include="Models\CachedSong.cs" />
     <Compile Include="Models\PlaylistsChangeEvent.cs" />
@@ -179,6 +180,7 @@
     <Compile Include="Repositories\RepositoryBase.cs" />
     <Compile Include="Repositories\SystemPlaylistsRepository.cs" />
     <Compile Include="Services\AlbumArtCacheService.cs" />
+    <Compile Include="Services\AllAccessService.cs" />
     <Compile Include="Services\ApplicationStateService.cs" />
     <Compile Include="Services\IAlbumArtCacheService.cs" />
     <Compile Include="Services\InAppPurchases.cs" />
@@ -186,11 +188,13 @@
     <Compile Include="Services\RadioStationsService.cs" />
     <Compile Include="Services\SongsCachingService.cs" />
     <Compile Include="TaskExtensions.cs" />
+    <Compile Include="Web\AllAccessWebService.cs" />
     <Compile Include="Web\ConfigWebService.cs" />
     <Compile Include="Web\GoogleMusicApisService.cs" />
     <Compile Include="Web\HttpContentExtensions.cs" />
     <Compile Include="Web\IGoogleMusicApisService.cs" />
     <Compile Include="Web\Models\GoogleConfigResponse.cs" />
+    <Compile Include="Web\Models\GoogleMusicAlbum.cs" />
     <Compile Include="Web\Models\GoogleMusicArtist.cs" />
     <Compile Include="Web\Models\GoogleMusicErrorResponse.cs" />
     <Compile Include="Web\Models\GoogleMusicMutateResponse.cs" />

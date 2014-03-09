@@ -195,7 +195,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         public void SelectSongByIndex(int index)
         {
-            if (this.Songs.Count <= index)
+            if (this.Songs == null || this.Songs.Count <= index)
             {
                 return;
             }

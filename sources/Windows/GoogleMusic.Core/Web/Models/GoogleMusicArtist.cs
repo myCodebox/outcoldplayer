@@ -4,6 +4,8 @@
 
 namespace OutcoldSolutions.GoogleMusic.Web.Models
 {
+    using Newtonsoft.Json;
+
     public class GoogleMusicArtist
     {
         public string Kind { get; set; }
@@ -17,5 +19,12 @@ namespace OutcoldSolutions.GoogleMusic.Web.Models
         public string ArtistBio { get; set; }
 
         public int? Total_Albums { get; set; }
+
+        public GoogleMusicAlbum[] Albums { get; set; }
+
+        public GoogleMusicSong[] TopTracks { get; set; }
+
+        [JsonProperty("related_artists")]
+        public GoogleMusicArtist[] RelatedArtists { get; set; }
     }
 }

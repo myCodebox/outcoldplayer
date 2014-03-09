@@ -20,7 +20,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
     public class GoogleMusicApisService : WebServiceBase, IGoogleMusicApisService
     {
-        private const string OriginUrl = "https://www.googleapis.com/sj/v1.3/";
+        private const string OriginUrl = "https://www.googleapis.com/sj/v1.4/";
 
         private readonly ILogger logger;
         private readonly HttpClient httpClient;

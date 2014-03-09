@@ -57,7 +57,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
                         Path = new PropertyPath("BindingModel.Playlists")
                     });
 
-                this.TrackItemsControl(frameworkElement.GetListView());
+                this.TrackScrollViewer(frameworkElement.GetListView());
             }
         }
 

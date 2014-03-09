@@ -13,6 +13,9 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
 
     public interface IArtistsRepository : IPlaylistRepository<Artist>
     {
+        Task UpdateBioAsync(Artist artist, string bio);
+
+        Task<Artist> FindByGoogleIdAsync(string googleMusicId);
     }
 
     public class ArtistsRepository : RepositoryBase, IArtistsRepository
@@ -122,6 +125,16 @@ order by x.IsCollection, x.Year, x.[AlbumTitleNorm], coalesce(nullif(x.Disc, 0),
         public async Task<IList<Song>> GetSongsAsync(string id, bool includeAll = false)
         {
             return await this.Connection.QueryAsync<Song>(SqlArtistSongs, includeAll || this.stateService.IsOnline(), id);
+        }
+
+        public Task UpdateBioAsync(Artist artist, string bio)
+        {
+            return this.Connection.ExecuteAsync(@"update Artist set Bio = ?1 where ArtistId = ?2", bio, artist.Id);
+        }
+
+        public Task<Artist> FindByGoogleIdAsync(string googleMusicId)
+        {
+            return this.Connection.Table<Artist>().Where(x => x.GoogleArtistId == googleMusicId).FirstOrDefaultAsync();
         }
     }
 }

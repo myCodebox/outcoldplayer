@@ -57,7 +57,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
                             PropertyNameExtractor.GetPropertyName(() => this.presenter.BindingModel.Playlist))
                     });
 
-                this.TrackItemsControl(frameworkElement.GetListView());
+                this.TrackScrollViewer(frameworkElement.GetListView());
             }
         }
     }

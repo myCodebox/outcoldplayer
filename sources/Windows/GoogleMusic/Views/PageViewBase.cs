@@ -45,7 +45,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
         private const string HorizontalScrollOffset = "ListView_HorizontalScrollOffset";
         private const string VerticalScrollOffset = "ListView_VerticalScrollOffset";
 
-        private ItemsControl trackingItemsControl;
+        private FrameworkElement trackingControl;
         private Storyboard trackingListStoryboard;
 
         /// <summary>
@@ -91,14 +91,14 @@ namespace OutcoldSolutions.GoogleMusic.Views
         {
             ((IPagePresenterBase)this.DataContext).OnNavigatingFrom(eventArgs);
 
-            if (this.trackingItemsControl != null)
+            if (this.trackingControl != null)
             {
                 eventArgs.State[HorizontalScrollOffset] =
-                    this.trackingItemsControl.GetScrollViewerHorizontalOffset();
+                    this.trackingControl.GetScrollViewerHorizontalOffset();
                 eventArgs.State[VerticalScrollOffset] =
-                    this.trackingItemsControl.GetScrollViewerVerticalOffset();
+                    this.trackingControl.GetScrollViewerVerticalOffset();
 
-                this.trackingItemsControl.Opacity = 0;
+                this.trackingControl.Opacity = 0;
             }
         }
         
@@ -110,10 +110,10 @@ namespace OutcoldSolutions.GoogleMusic.Views
         /// </param>
         public virtual void OnDataLoading(NavigatedToEventArgs eventArgs)
         {
-            if (this.trackingItemsControl != null)
+            if (this.trackingControl != null)
             {
-                this.trackingItemsControl.ScrollToHorizontalZero();
-                this.trackingItemsControl.ScrollToVerticalZero();
+                this.trackingControl.ScrollToHorizontalZero();
+                this.trackingControl.ScrollToVerticalZero();
             }
         }
 
@@ -135,21 +135,21 @@ namespace OutcoldSolutions.GoogleMusic.Views
         /// </param>
         public virtual void OnDataLoaded(NavigatedToEventArgs eventArgs)
         {
-            if (this.trackingItemsControl != null)
+            if (this.trackingControl != null)
             {
                 if (eventArgs.IsNavigationBack)
                 {
-                    this.trackingItemsControl.UpdateLayout();
+                    this.trackingControl.UpdateLayout();
 
                     object offset;
                     if (eventArgs.State.TryGetValue(HorizontalScrollOffset, out offset))
                     {
-                        this.trackingItemsControl.ScrollToHorizontalOffset((double)offset);
+                        this.trackingControl.ScrollToHorizontalOffset((double)offset);
                     }
 
                     if (eventArgs.State.TryGetValue(VerticalScrollOffset, out offset))
                     {
-                        this.trackingItemsControl.ScrollToVerticalOffset((double)offset);
+                        this.trackingControl.ScrollToVerticalOffset((double)offset);
                     }
                 }
 
@@ -160,31 +160,31 @@ namespace OutcoldSolutions.GoogleMusic.Views
         /// <summary>
         /// Track list view base.
         /// </summary>
-        /// <param name="itemsControl">
+        /// <param name="frameworkElement">
         /// The list view base.
         /// </param>
         /// <exception cref="ArgumentNullException">
-        /// If <paramref name="itemsControl"/> is null.
+        /// If <paramref name="frameworkElement"/> is null.
         /// </exception>
-        protected void TrackItemsControl(ItemsControl itemsControl)
+        protected void TrackScrollViewer(FrameworkElement frameworkElement)
         {
-            if (itemsControl == null)
+            if (frameworkElement == null)
             {
-                throw new ArgumentNullException("itemsControl");
+                throw new ArgumentNullException("frameworkElement");
             }
 
-            Debug.Assert(this.trackingItemsControl == null, "this.trackingItemsControl == null. Only one list view tracking supported.");
-            this.trackingItemsControl = itemsControl;
-            if (this.trackingItemsControl.Transitions != null)
+            Debug.Assert(this.trackingControl == null, "this.trackingControl == null. Only one list view tracking supported.");
+            this.trackingControl = frameworkElement;
+            if (this.trackingControl.Transitions != null)
             {
-                this.trackingItemsControl.Transitions.Clear();
+                this.trackingControl.Transitions.Clear();
             }
 
-            this.trackingItemsControl.Opacity = 0;
+            this.trackingControl.Opacity = 0;
 
             this.trackingListStoryboard = new Storyboard();
             DoubleAnimationUsingKeyFrames doubleAnimationUsingKeyFrames = new DoubleAnimationUsingKeyFrames();
-            Storyboard.SetTarget(doubleAnimationUsingKeyFrames, this.trackingItemsControl);
+            Storyboard.SetTarget(doubleAnimationUsingKeyFrames, this.trackingControl);
             Storyboard.SetTargetProperty(doubleAnimationUsingKeyFrames, "Opacity");
             doubleAnimationUsingKeyFrames.KeyFrames.Add(new LinearDoubleKeyFrame() { KeyTime = KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(0)), Value = 0 });
             doubleAnimationUsingKeyFrames.KeyFrames.Add(new LinearDoubleKeyFrame() { KeyTime = KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(100)), Value = 0 });

@@ -13,13 +13,19 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
     public class AlbumPageViewPresenter : PlaylistPageViewPresenterBase<IAlbumPageView, Album>
     {
+        private readonly IApplicationResources resources;
+        private readonly IAllAccessService allAccessService;
         private readonly IAlbumsRepository albumsRepository;
 
         public AlbumPageViewPresenter(
             IDependencyResolverContainer container,
+            IApplicationResources resources,
+            IAllAccessService allAccessService,
             IAlbumsRepository albumsRepository)
             : base(container)
         {
+            this.resources = resources;
+            this.allAccessService = allAccessService;
             this.albumsRepository = albumsRepository;
         }
 
@@ -34,14 +40,29 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                         new NavigatedToEventArgs(
                             navigatedToEventArgs.View,
                             navigatedToEventArgs.State,
-                            new PlaylistNavigationRequest(PlaylistType.Album, album.Id),
+                            new PlaylistNavigationRequest(PlaylistType.Album, album.Id, songId),
                             navigatedToEventArgs.IsNavigationBack));
-
-                this.EventAggregator.Publish(new SelectSongByIdEvent(songId));
             }
             else
             {
-                await base.LoadDataAsync(navigatedToEventArgs);
+                var request = navigatedToEventArgs.Parameter as PlaylistNavigationRequest;
+                if (request != null && request.Playlist != null && ((Album)request.Playlist).AlbumId == 0)
+                {
+                    var result = await this.allAccessService.GetAlbumAsync((Album)request.Playlist);
+
+                    this.BindingModel.Songs = result.Item2;
+                    this.BindingModel.Playlist = result.Item1;
+                    this.BindingModel.Type = this.resources.GetTitle(result.Item1.PlaylistType);
+
+                    if (!string.IsNullOrEmpty(request.SongId))
+                    {
+                        this.EventAggregator.Publish(new SelectSongByIdEvent(request.SongId));
+                    }
+                }
+                else
+                {
+                    await base.LoadDataAsync(navigatedToEventArgs);
+                }
             }
         }
     }
