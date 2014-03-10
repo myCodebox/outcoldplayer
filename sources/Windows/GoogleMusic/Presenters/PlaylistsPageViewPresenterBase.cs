@@ -37,7 +37,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             base.OnNavigatedTo(parameter);
 
             this.playlistsChangeSubscription = this.EventAggregator.GetEvent<PlaylistsChangeEvent>()
-                                                    .Where(e => e.PlaylistType == (PlaylistType)parameter.Parameter)
+                                                    .Where(e => !(parameter.Parameter is PlaylistType) || e.PlaylistType == (PlaylistType)parameter.Parameter)
                                                     .Subscribe((e) => this.Logger.LogTask(this.LoadPlaylistsAsync()));
         }
 
