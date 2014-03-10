@@ -128,7 +128,6 @@
     <Compile Include="Controls\TextChangedBindingBehavior.cs" />
     <Compile Include="Converters\NotEmptyToVisibilityConverter.cs" />
     <Compile Include="Presenters\SongsListViewPresenter.cs" />
-    <Compile Include="BindingModels\StartViewBindingModel.cs" />
     <Compile Include="BindingModels\AuthentificationPageViewBindingModel.cs" />
     <Compile Include="CommandMetadata.cs" />
     <Compile Include="Controls\AlbumArtControl.cs" />
@@ -357,9 +356,6 @@
     <Compile Include="Views\Settings\UpgradeView.xaml.cs">
       <DependentUpon>UpgradeView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\StartPageView.xaml.cs">
-      <DependentUpon>StartPageView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\ViewBase.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -568,10 +564,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Settings\UpgradeView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\StartPageView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -5,7 +5,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 {
     using System;
     using System.Collections.Generic;
-    using System.Collections.Specialized;
     using System.Linq;
     using System.Threading.Tasks;
 
@@ -15,7 +14,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using OutcoldSolutions.GoogleMusic.Presenters.Popups;
     using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Services;
-    using OutcoldSolutions.GoogleMusic.Shell;
     using OutcoldSolutions.GoogleMusic.Views;
     using OutcoldSolutions.GoogleMusic.Views.Popups;
 
@@ -24,9 +22,9 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using Windows.System;
     using Windows.UI.Popups;
 
-    public class StartPageViewPresenter : PagePresenterBase<IStartPageView, StartViewBindingModel>
+    public class StartPageViewPresenter : PlaylistsPageViewPresenterBase<IStartPageView, PlaylistsPageViewBindingModel>
     {
-        private const int MaxItems = 16;
+        private const int MaxItems = 5;
 
         private const int AskForReviewStarts = 10;
         private const string DoNotAskToReviewKey = "DoNotAskToReviewKey";
@@ -36,15 +34,12 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private readonly ISettingsService settingsService;
         private readonly IAuthentificationService authentificationService;
-        private readonly IPlayQueueService playQueueService;
         private readonly INavigationService navigationService;
         private readonly IPlaylistsService playlistsService;
         private readonly IMainFrameRegionProvider mainFrameRegionProvider;
         private readonly IGoogleMusicSessionService sessionService;
         private readonly ISongsCachingService cachingService;
         private readonly IApplicationStateService stateService;
-
-        private readonly ISelectedObjectsService selectedObjectsService;
 
         private bool initialized = false;
 
@@ -53,27 +48,22 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             ISettingsService settingsService,
             IAuthentificationService authentificationService,
             INavigationService navigationService,
-            IPlayQueueService playQueueService,
             IPlaylistsService playlistsService,
             IMainFrameRegionProvider mainFrameRegionProvider,
             IGoogleMusicSessionService sessionService,
             ISongsCachingService cachingService,
-            IApplicationStateService stateService,
-            ISelectedObjectsService selectedObjectsService)
+            IApplicationStateService stateService)
+            : base(resources, playlistsService)
         {
             this.resources = resources;
             this.settingsService = settingsService;
             this.authentificationService = authentificationService;
-            this.playQueueService = playQueueService;
             this.navigationService = navigationService;
             this.playlistsService = playlistsService;
             this.mainFrameRegionProvider = mainFrameRegionProvider;
             this.sessionService = sessionService;
             this.cachingService = cachingService;
             this.stateService = stateService;
-            this.selectedObjectsService = selectedObjectsService;
-
-            this.PlayCommand = new DelegateCommand(this.Play);
 
             this.sessionService.SessionCleared += async (sender, args) => 
                     {
@@ -82,17 +72,19 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     };
         }
 
-        public DelegateCommand PlayCommand { get; set; }
-
         protected override async Task LoadDataAsync(NavigatedToEventArgs navigatedToEventArgs)
         {
+            this.BindingModel.IsSemanticZoomEnabled = false;
+            this.BindingModel.PlaylistType = PlaylistType.Unknown;
+            this.BindingModel.Title = "Home";
+
             if (!this.initialized)
             {
                 await this.InitializeOnFirstLaunchAsync();
             }
             else
             {
-                await this.LoadGroupsAsync();
+                await this.LoadPlaylists();
             }
         }
 
@@ -100,17 +92,12 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         {
             base.OnInitialized();
 
-            this.BindingModel.SelectedItems.CollectionChanged += this.SelectedItemsOnCollectionChanged;
-
             this.EventAggregator.GetEvent<ReloadSongsEvent>()
                 .Subscribe(async (e) =>
                 {
                     await this.DeinitializeAsync();
                     this.ShowProgressLoadingPopupView();
                 });
-
-            this.EventAggregator.GetEvent<SelectionClearedEvent>()
-               .Subscribe<SelectionClearedEvent>(async (e) => await this.Dispatcher.RunAsync(() => this.BindingModel.ClearSelectedItems()));
         }
 
         private async Task InitializeOnFirstLaunchAsync()
@@ -213,8 +200,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 () =>
                 {
                     this.mainFrameRegionProvider.SetContent(MainFrameRegion.Links, null);
-                    this.BindingModel.ClearSelectedItems();
-                    this.BindingModel.Groups = null;
+                    this.BindingModel.Playlists = null;
                     this.navigationService.ClearHistory();
                     this.initialized = false;
                 });
@@ -249,7 +235,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
             try
             {
-                await this.LoadGroupsAsync();
+                await this.LoadPlaylists();
             }
             catch (Exception e)
             {
@@ -264,79 +250,30 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             }
         }
 
-        private async Task LoadGroupsAsync()
+        private async Task LoadPlaylists()
         {
-            PlaylistType[] types;
+            List<IPlaylist> results = new List<IPlaylist>();
+
+            List<IPlaylist> allPlaylists = new List<IPlaylist>();
 
             if (this.stateService.IsOnline())
             {
-                types = new[]
-                        {
-                            PlaylistType.SystemPlaylist, PlaylistType.UserPlaylist, PlaylistType.Radio,
-                            PlaylistType.Artist, PlaylistType.Album, PlaylistType.Genre
-                        };
+                allPlaylists.AddRange(await this.playlistsService.GetAllAsync(PlaylistType.Radio, Order.LastPlayed, MaxItems));
+
+                results.Add(allPlaylists[0]);
+                allPlaylists.RemoveAt(0);
             }
-            else
+
+            results.AddRange(await this.playlistsService.GetAllAsync(PlaylistType.SystemPlaylist, Order.LastPlayed, MaxItems));
+            foreach (var playlistType in new[] { PlaylistType.UserPlaylist, PlaylistType.Artist, PlaylistType.Album, PlaylistType.Genre })
             {
-                types = new[]
-                        {
-                            PlaylistType.SystemPlaylist, PlaylistType.UserPlaylist, PlaylistType.Artist,
-                            PlaylistType.Album, PlaylistType.Genre
-                        };
+                allPlaylists.AddRange(await this.playlistsService.GetAllAsync(playlistType, Order.LastPlayed, MaxItems));
             }
 
-            var groups = await Task.WhenAll(
-                types.Select(
-                    (t) => Task.Run(
-                        async () =>
-                            {
-                                var countTask = this.playlistsService.GetCountAsync(t);
-                                var getAllTask = this.playlistsService.GetAllAsync(t, Order.LastPlayed, MaxItems);
+            results.AddRange(allPlaylists.OrderByDescending(x => x.Recent));
+           
 
-                                await Task.WhenAll(countTask, getAllTask);
-
-                                int count = await countTask;
-                                IEnumerable<IPlaylist> playlists = await getAllTask;
-
-                                return this.CreateGroup(this.resources.GetPluralTitle(t), count, playlists, t);
-                            })));
-
-            await this.Dispatcher.RunAsync(() => { this.BindingModel.Groups = groups.Where(g => g.Playlists.Count > 0).ToList(); });
-        }
-
-        private void SelectedItemsOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            this.selectedObjectsService.Update(
-                e.NewItems == null ? null : e.NewItems.Cast<PlaylistBindingModel>().Select(x => x.Playlist),
-                e.OldItems == null ? null : e.OldItems.Cast<PlaylistBindingModel>().Select(x => x.Playlist));
-        }
-
-        private PlaylistsGroupBindingModel CreateGroup(string title, int playlistsCount, IEnumerable<IPlaylist> playlists, PlaylistType type)
-        {
-            List<PlaylistBindingModel> groupItems =
-                playlists.Select(
-                    playlist =>
-                    new PlaylistBindingModel(playlist)
-                        {
-                            PlayCommand = this.PlayCommand
-                        }).ToList();
-
-            return new PlaylistsGroupBindingModel(
-                title,
-                playlistsCount,
-                groupItems,
-                type);
-        }
-
-        private void Play(object commandParameter)
-        {
-            IPlaylist playlist = commandParameter as IPlaylist;
-            if (playlist != null)
-            {
-                this.MainFrame.IsBottomAppBarOpen = true;
-                this.Logger.LogTask(this.playQueueService.PlayAsync(playlist));
-                this.navigationService.NavigateTo<ICurrentPlaylistPageView>();
-            }
+            await this.Dispatcher.RunAsync(() => { this.BindingModel.Playlists = results; });
         }
 
         private void VerifyIfCanAskForReview()
