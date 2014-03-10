@@ -11,10 +11,9 @@
     d:DesignHeight="300"
     d:DesignWidth="400"
     Title="Search">
+    <Grid>
 
-    <Grid Margin="70, 0, 20, 0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
@@ -26,244 +25,144 @@
                 </interactivity:Interaction.Behaviors>
             </TextBox>
         </StackPanel>
-        
-        <ListView x:Name="Groups"
-                  Margin="0, 20, 0, 20" 
-                  Grid.Row="1"
-                  Visibility="{Binding Path=IsDataLoading, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}"
-                  ItemsSource="{Binding Path=BindingModel.Groups, Mode=OneWay}"
-                  ScrollViewer.HorizontalScrollMode="Disabled"
-                  ScrollViewer.VerticalScrollMode="Disabled"
-                  SelectionMode="Single" 
-                  ManipulationMode="None">
+
+        <ProgressRing Grid.Row="1"  
+                      IsActive="{Binding Path=IsSearching}"
+                      Visibility="{Binding Path=IsSearching, Converter={StaticResource BooleanToInvisibilityConverter}}"/>
+
+        <ScrollViewer HorizontalScrollBarVisibility="Disabled"
+                      HorizontalScrollMode="Disabled"
+                      VerticalScrollBarVisibility="Auto"
+                      VerticalScrollMode="Auto"
+                      Visibility="{Binding Path=IsSearching, Converter={StaticResource BooleanToInvisibilityConverter}}"
+                      x:Name="ScrollViewer"
+                      Grid.Row="1">
             
-             <ListView.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <StackPanel Orientation="Horizontal" />
-                </ItemsPanelTemplate>
-            </ListView.ItemsPanel>
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem" >
-                    <Setter Property="FontFamily" Value="{StaticResource ContentControlThemeFontFamily}" />
-                    <Setter Property="FontSize" Value="{StaticResource ControlContentThemeFontSize}" />
-                    <Setter Property="Background" Value="Transparent"/>
-                    <Setter Property="TabNavigation" Value="Local"/>
-                    <Setter Property="IsHoldingEnabled" Value="True"/>
-                    <Setter Property="Margin" Value="0,0,18,2"/>
-                    <Setter Property="HorizontalContentAlignment" Value="Left"/>
-                    <Setter Property="VerticalContentAlignment" Value="Top"/>
-                    <Setter Property="Template">
-                        <Setter.Value>
-                            <ControlTemplate TargetType="ListViewItem">
-                                <Border x:Name="OuterContainer">
-                                    <VisualStateManager.VisualStateGroups>
-                                        <VisualStateGroup x:Name="CommonStates">
-                                            <VisualState x:Name="Normal"/>
-                                            <VisualState x:Name="PointerOver"/>
-                                            <VisualState x:Name="Pressed">
-                                                <Storyboard>
-                                                    <PointerDownThemeAnimation TargetName="contentPresenter" />
-                                                </Storyboard>
-                                            </VisualState>
-                                            <VisualState x:Name="PointerOverPressed"/>
-                                            <VisualState x:Name="Disabled">
-                                                <Storyboard>
-                                                    <DoubleAnimation Storyboard.TargetName="contentPresenter"
-                                                     Storyboard.TargetProperty="Opacity"
-                                                     Duration="0"
-                                                     To="{StaticResource ListViewItemDisabledThemeOpacity}" />
-                                                </Storyboard>
-                                            </VisualState>
-                                        </VisualStateGroup>
-                                        <VisualStateGroup x:Name="SelectionStates">
-                                            <VisualState x:Name="Unselecting">
-                                                <Storyboard>
-                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="contentPresenter"
-                                                                   Storyboard.TargetProperty="Foreground">
-                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource DefaultTextForegroundThemeBrush}" />
-                                                    </ObjectAnimationUsingKeyFrames>
-                                                </Storyboard>
-                                            </VisualState>
-                                            <VisualState x:Name="Unselected">
-                                                <Storyboard>
-                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="contentPresenter"
-                                                                   Storyboard.TargetProperty="Foreground">
-                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource DefaultTextForegroundThemeBrush}" />
-                                                    </ObjectAnimationUsingKeyFrames>
-                                                </Storyboard>
-                                            </VisualState>
-                                            <VisualState x:Name="UnselectedPointerOver">
-                                                <Storyboard>
-                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="contentPresenter"
-                                                                   Storyboard.TargetProperty="Foreground">
-                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource DefaultTextForegroundThemeBrush}" />
-                                                    </ObjectAnimationUsingKeyFrames>
-                                                </Storyboard>
-                                            </VisualState>
-                                            <VisualState x:Name="UnselectedSwiping">
-                                                <Storyboard>
-                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="contentPresenter"
-                                                                   Storyboard.TargetProperty="Foreground">
-                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource DefaultTextForegroundThemeBrush}" />
-                                                    </ObjectAnimationUsingKeyFrames>
-                                                </Storyboard>
-                                            </VisualState>
-                                            <VisualState x:Name="Selecting">
-                                                <Storyboard>
-                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="contentPresenter"
-                                                                   Storyboard.TargetProperty="Foreground">
-                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource TextHighlightedBrush}" />
-                                                    </ObjectAnimationUsingKeyFrames>
-                                                </Storyboard>
-                                            </VisualState>
-                                            <VisualState x:Name="Selected">
-                                                <Storyboard>
-                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="contentPresenter"
-                                                                   Storyboard.TargetProperty="Foreground">
-                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource TextHighlightedBrush}" />
-                                                    </ObjectAnimationUsingKeyFrames>
-                                                </Storyboard>
-                                            </VisualState>
-                                            <VisualState x:Name="SelectedSwiping">
-                                                <Storyboard>
-                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="contentPresenter"
-                                                                   Storyboard.TargetProperty="Foreground">
-                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource TextHighlightedBrush}" />
-                                                    </ObjectAnimationUsingKeyFrames>
-                                                </Storyboard>
-                                            </VisualState>
-                                            <VisualState x:Name="SelectedUnfocused">
-                                                <Storyboard>
-                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="contentPresenter"
-                                                                   Storyboard.TargetProperty="Foreground">
-                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource TextHighlightedBrush}" />
-                                                    </ObjectAnimationUsingKeyFrames>
-                                                </Storyboard>
-                                            </VisualState>
-                                        </VisualStateGroup>
-                                    </VisualStateManager.VisualStateGroups>
-                                    <Grid x:Name="ReorderHintContent" Background="Transparent">
-                                        
-                                        <Border x:Name="ContentContainer">
-                                            <Grid x:Name="InnerDragContent">
-                                                <Rectangle x:Name="FocusVisual"
-                                                   IsHitTestVisible="False"
-                                                   Opacity="0"
-                                                   StrokeThickness="2"
-                                                   Stroke="{StaticResource ListViewItemFocusBorderThemeBrush}" />
-                                                <Border x:Name="ContentBorder"
-                                                    Background="{TemplateBinding Background}"
-                                                    BorderBrush="{TemplateBinding BorderBrush}"
-                                                    BorderThickness="{TemplateBinding BorderThickness}"
-                                                    Margin="4">
-                                                    <Grid>
-                                                        <ContentPresenter x:Name="contentPresenter"
-                                                          ContentTransitions="{TemplateBinding ContentTransitions}"
-                                                          ContentTemplate="{TemplateBinding ContentTemplate}"
-                                                          Content="{TemplateBinding Content}"
-                                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                                          Margin="{TemplateBinding Padding}" />
-                                                        <!-- The 'Xg' text simulates the amount of space one line of text will occupy.
-                                                                 In the DataPlaceholder state, the Content is not loaded yet so we
-                                                                 approximate the size of the item using placeholder text. -->
-                                                        <TextBlock x:Name="PlaceholderTextBlock"
-                                                           Opacity="0"
-                                                           Text="Xg"
-                                                           Foreground="{x:Null}"
-                                                           Margin="{TemplateBinding Padding}"
-                                                           IsHitTestVisible="False"/>
-                                                        <Rectangle x:Name="PlaceholderRect"
-                                                           Visibility="Collapsed"
-                                                           Fill="{StaticResource ListViewItemPlaceholderBackgroundThemeBrush}"
-                                                           IsHitTestVisible="False"/>
-                                                        <Rectangle x:Name="MultiArrangeOverlayBackground"
-                                                           IsHitTestVisible="False"
-                                                           Opacity="0"
-                                                           Fill="{StaticResource ListViewItemDragBackgroundThemeBrush}" />
-                                                    </Grid>
-                                                </Border>
-                                                
-                                                <TextBlock x:Name="MultiArrangeOverlayText"
-                                                   Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.DragItemsCount}"
-                                                   Foreground="{StaticResource ListViewItemDragForegroundThemeBrush}"
-                                                   FontFamily="{StaticResource ContentControlThemeFontFamily}"
-                                                   FontSize="26.667"
-                                                   IsHitTestVisible="False"
-                                                   Opacity="0"
-                                                   TextWrapping="Wrap"
-                                                   TextTrimming="WordEllipsis"
-                                                   Margin="18,9,0,0" />
-                                            </Grid>
-                                        </Border>
-                                    </Grid>
-                                </Border>
-                            </ControlTemplate>
-                        </Setter.Value>
-                    </Setter>
-                </Style>
+            <ScrollViewer.Transitions>
+                <TransitionCollection/>
+            </ScrollViewer.Transitions>
 
+            <StackPanel>
+                <Button Margin="0, 20, 0, 0" 
+                    Visibility="{Binding Path=BindingModel.Artists, Converter={StaticResource NotEmptyToVisibilityConverter}}"
+                    Command="{Binding Path=NavigateToArtists, Mode=OneTime}">
+                    <Button.Template>
+                        <ControlTemplate>
+                            <StackPanel Orientation="Horizontal" >
+                                <TextBlock Style="{StaticResource SubheaderTextStyle}" Text="Artists" />
+                                <TextBlock Style="{StaticResource SubheaderTextStyle}" Text=" (" />
+                                <TextBlock Style="{StaticResource SubheaderTextStyle}" Text="{Binding Path=BindingModel.Artists.Count, Mode=OneWay}" />
+                                <TextBlock Style="{StaticResource SubheaderTextStyle}" Text=")" />
+                                <TextBlock Style="{StaticResource SubheaderTextStyle}" Margin="10, 0, 0, 0" FontFamily="Segoe UI Symbol" Text="{StaticResource ChevronGlyph}"/>
+                            </StackPanel>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
 
-            </ListView.ItemContainerStyle>
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Style="{StaticResource GroupHeaderTextStyle}" Text="{Binding Path=Title, Mode=OneTime}" />
-                        <TextBlock Style="{StaticResource GroupHeaderTextStyle}" Text=" (" />
-                        <TextBlock Style="{StaticResource GroupHeaderTextStyle}" Text="{Binding Path=Results.Count, Mode=OneTime}" />
-                        <TextBlock Style="{StaticResource GroupHeaderTextStyle}" Text=")" />
-                    </StackPanel>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
-        
-        <ListView Grid.Row="2"
-                  Visibility="{Binding Path=IsDataLoading, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}"
-                  SelectionMode="None"
-                  ScrollViewer.HorizontalScrollMode="Enabled"
-                  ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                  ScrollViewer.VerticalScrollMode="Disabled"
-                  ScrollViewer.VerticalScrollBarVisibility="Disabled"
-                  IsTapEnabled="False"
-                  Margin="0, 0, 0, 20" 
-                  Padding="0, 0, 0 ,0"
-                  IsItemClickEnabled="True"
-                  ItemClick="ListViewOnItemClick"
-                  x:Name="ListView">
-            <ListView.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <WrapGrid Orientation="Vertical" />
-                </ItemsPanelTemplate>
-            </ListView.ItemsPanel>
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem">
-                    <Setter Property="Margin" Value="0"/>
-                    <Setter Property="Padding" Value="0"/>
-                </Style>
-            </ListView.ItemContainerStyle>
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <Grid Width="294" Margin="6">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <Border Background="{StaticResource ListViewItemPlaceholderBackgroundThemeBrush}" Margin="0,0,0,10" Width="40" Height="40">
-                            <Image Source="{Binding Path=ImageUrl, Converter={StaticResource AlbumArtUrlToImageConverter}, Mode=OneTime, ConverterParameter=40}" Stretch="UniformToFill"/>
-                        </Border>
-                        <StackPanel Grid.Column="1" Margin="10,-10,0,0">
-                            <TextBlock Style="{StaticResource BodyTextStyle}" TextWrapping="NoWrap" TextTrimming="WordEllipsis">
-                                <TextBlock.Inlines>
-                                    <Run Text="{Binding Path=PreTitle, Mode=OneTime}" /><Run Text="{Binding Path=HighlightedTitle, Mode=OneTime}" Foreground="{StaticResource TextHighlightedBrush}"/><Run Text="{Binding Path=PostTitle, Mode=OneTime}"  />
-                                </TextBlock.Inlines>
-                            </TextBlock>
-                            <TextBlock Text="{Binding Path=Subtitle, Mode=OneTime}" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
-                            <TextBlock Text="{Binding Path=Description, Mode=OneTime}" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
-                        </StackPanel>
-                    </Grid>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+                <ContentPresenter x:Name="ArtistsContentPresenter"
+                              Visibility="{Binding Path=BindingModel.Artists, Converter={StaticResource NotEmptyToVisibilityConverter}}"
+                              Margin="0, 20, 0, 0"/>
 
+                <Button Margin="0, 20, 0, 0" 
+                    Visibility="{Binding Path=BindingModel.Albums, Converter={StaticResource NotEmptyToVisibilityConverter}}"
+                    Command="{Binding Path=NavigateToAlbums, Mode=OneTime}">
+                    <Button.Template>
+                        <ControlTemplate>
+                            <StackPanel Orientation="Horizontal" >
+                                <TextBlock Style="{StaticResource SubheaderTextStyle}" Text="Albums" />
+                                <TextBlock Style="{StaticResource SubheaderTextStyle}" Text=" (" />
+                                <TextBlock Style="{StaticResource SubheaderTextStyle}" Text="{Binding Path=BindingModel.Albums.Count, Mode=OneWay}" />
+                                <TextBlock Style="{StaticResource SubheaderTextStyle}" Text=")" />
+                                <TextBlock Style="{StaticResource SubheaderTextStyle}" Margin="10, 0, 0, 0" FontFamily="Segoe UI Symbol" Text="{StaticResource ChevronGlyph}"/>
+                            </StackPanel>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+
+                <ContentPresenter x:Name="AlbumsContentPresenter"
+                              Visibility="{Binding Path=BindingModel.Albums, Converter={StaticResource NotEmptyToVisibilityConverter}}"
+                              Margin="0, 20, 0, 0"/>
+
+                <Button Margin="0, 20, 0, 0" 
+                    Visibility="{Binding Path=BindingModel.Songs, Converter={StaticResource NotEmptyToVisibilityConverter}}"
+                    Command="{Binding Path=NavigateToSongs, Mode=OneTime}">
+                    <Button.Template>
+                        <ControlTemplate>
+                            <StackPanel Orientation="Horizontal" >
+                                <TextBlock Style="{StaticResource SubheaderTextStyle}" Text="Songs" />
+                                <TextBlock Style="{StaticResource SubheaderTextStyle}" Text=" (" />
+                                <TextBlock Style="{StaticResource SubheaderTextStyle}" Text="{Binding Path=BindingModel.Songs.Count, Mode=OneWay}" />
+                                <TextBlock Style="{StaticResource SubheaderTextStyle}" Text=")" />
+                                <TextBlock Style="{StaticResource SubheaderTextStyle}" Margin="10, 0, 0, 0" FontFamily="Segoe UI Symbol" Text="{StaticResource ChevronGlyph}"/>
+                            </StackPanel>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+
+                <ContentPresenter x:Name="SongsContentPresenter"
+                              Visibility="{Binding Path=BindingModel.Songs, Converter={StaticResource NotEmptyToVisibilityConverter}}"
+                              Margin="0, 20, 0, 0"/>
+
+                <Button Margin="0, 20, 0, 0" 
+                    Visibility="{Binding Path=BindingModel.UserPlaylists, Converter={StaticResource NotEmptyToVisibilityConverter}}"
+                    Command="{Binding Path=NavigateToUserPlaylists, Mode=OneTime}">
+                    <Button.Template>
+                        <ControlTemplate>
+                            <StackPanel Orientation="Horizontal" >
+                                <TextBlock Style="{StaticResource SubheaderTextStyle}" Text="Playlists" />
+                                <TextBlock Style="{StaticResource SubheaderTextStyle}" Text=" (" />
+                                <TextBlock Style="{StaticResource SubheaderTextStyle}" Text="{Binding Path=BindingModel.UserPlaylists.Count, Mode=OneWay}" />
+                                <TextBlock Style="{StaticResource SubheaderTextStyle}" Text=")" />
+                                <TextBlock Style="{StaticResource SubheaderTextStyle}" Margin="10, 0, 0, 0" FontFamily="Segoe UI Symbol" Text="{StaticResource ChevronGlyph}"/>
+                            </StackPanel>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+
+                <ContentPresenter x:Name="UserPlaylistsContentPresenter"
+                              Visibility="{Binding Path=BindingModel.UserPlaylists, Converter={StaticResource NotEmptyToVisibilityConverter}}"
+                              Margin="0, 20, 0, 0"/>
+
+                <Button Margin="0, 20, 0, 0" 
+                    Visibility="{Binding Path=BindingModel.RadioStations, Converter={StaticResource NotEmptyToVisibilityConverter}}"
+                    Command="{Binding Path=NavigateToRadios, Mode=OneTime}">
+                    <Button.Template>
+                        <ControlTemplate>
+                            <StackPanel Orientation="Horizontal" >
+                                <TextBlock Style="{StaticResource SubheaderTextStyle}" Text="Radio Stations" />
+                                <TextBlock Style="{StaticResource SubheaderTextStyle}" Text=" (" />
+                                <TextBlock Style="{StaticResource SubheaderTextStyle}" Text="{Binding Path=BindingModel.RadioStations.Count, Mode=OneWay}" />
+                                <TextBlock Style="{StaticResource SubheaderTextStyle}" Text=")" />
+                                <TextBlock Style="{StaticResource SubheaderTextStyle}" Margin="10, 0, 0, 0" FontFamily="Segoe UI Symbol" Text="{StaticResource ChevronGlyph}"/>
+                            </StackPanel>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+
+                <ContentPresenter x:Name="RadioStationsContentPresenter"
+                              Visibility="{Binding Path=BindingModel.RadioStationsLimited, Converter={StaticResource NotEmptyToVisibilityConverter}}"
+                              Margin="0, 20, 0, 0"/>
+
+                <Button Margin="0, 20, 0, 0" 
+                    Visibility="{Binding Path=BindingModel.Genres, Converter={StaticResource NotEmptyToVisibilityConverter}}"
+                    Command="{Binding Path=NavigateToGenres, Mode=OneTime}">
+                    <Button.Template>
+                        <ControlTemplate>
+                            <StackPanel Orientation="Horizontal" >
+                                <TextBlock Style="{StaticResource SubheaderTextStyle}" Text="Genres" />
+                                <TextBlock Style="{StaticResource SubheaderTextStyle}" Text=" (" />
+                                <TextBlock Style="{StaticResource SubheaderTextStyle}" Text="{Binding Path=BindingModel.Genres.Count, Mode=OneWay}" />
+                                <TextBlock Style="{StaticResource SubheaderTextStyle}" Text=")" />
+                                <TextBlock Style="{StaticResource SubheaderTextStyle}" Margin="10, 0, 0, 0" FontFamily="Segoe UI Symbol" Text="{StaticResource ChevronGlyph}"/>
+                            </StackPanel>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+
+                <ContentPresenter x:Name="GenresContentPresenter"
+                              Visibility="{Binding Path=BindingModel.Genres, Converter={StaticResource NotEmptyToVisibilityConverter}}"
+                              Margin="0, 20, 0, 0"/>
+            </StackPanel>
+        </ScrollViewer>
     </Grid>
 </views:PageViewBase>

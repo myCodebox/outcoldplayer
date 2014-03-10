@@ -3,93 +3,105 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Views
 {
-    using OutcoldSolutions.GoogleMusic.BindingModels;
-    using OutcoldSolutions.GoogleMusic.Controls;
-    using OutcoldSolutions.GoogleMusic.Presenters;
+    using Windows.UI.Xaml;
+    using Windows.UI.Xaml.Data;
 
-    using Windows.UI.Xaml.Controls;
+    using OutcoldSolutions.GoogleMusic.Presenters;
 
     public interface ISearchPageView : IPageView
     {
-        void UpdateListViewItems(bool scrollToZero);
     }
 
     public sealed partial class SearchPageView : PageViewBase, ISearchPageView
     {
-        private const string SelectedIndex = "Groups_SelectedIndex";
+        private IPlaylistsListView albums;
+        private IPlaylistsListView artists;
+        private IPlaylistsListView genres;
+        private IPlaylistsListView userPlaylists;
+        private IPlaylistsListView radioStations;
+        private ISongsListView songs;
 
         public SearchPageView()
         {
             this.InitializeComponent();
-            this.TrackScrollViewer(this.ListView);
+            
         }
 
-        public override void OnDataLoading(NavigatedToEventArgs eventArgs)
+        protected override void OnInitialized()
         {
-            this.Groups.SelectedIndex = -1;
+            base.OnInitialized();
 
-            base.OnDataLoading(eventArgs);
-        }
+            var presenter = this.GetPresenter<SearchPageViewPresenter>();
 
-        public override void OnDataLoaded(NavigatedToEventArgs eventArgs)
-        {
-            object index;
-            if (eventArgs.IsNavigationBack && eventArgs.State.TryGetValue(SelectedIndex, out index))
-            {
-                this.Groups.SelectedIndex = (int)index;
-                this.UpdateListViewItems(scrollToZero: false);
-            }
-            else if (this.Groups.Items != null && this.Groups.Items.Count > 0)
-            {
-                this.Groups.SelectedIndex = 0;
-                this.UpdateListViewItems(scrollToZero: true);
-            }
+            this.AlbumsContentPresenter.Content = (this.albums = this.Container.Resolve<IPlaylistsListView>());
+            this.ArtistsContentPresenter.Content = (this.artists = this.Container.Resolve<IPlaylistsListView>());
+            this.GenresContentPresenter.Content = (this.genres = this.Container.Resolve<IPlaylistsListView>());
+            this.RadioStationsContentPresenter.Content = (this.radioStations = this.Container.Resolve<IPlaylistsListView>());
+            this.UserPlaylistsContentPresenter.Content = (this.userPlaylists = this.Container.Resolve<IPlaylistsListView>());
+            this.SongsContentPresenter.Content = (this.songs = this.Container.Resolve<ISongsListView>());
 
-            base.OnDataLoaded(eventArgs);
-
-            this.Groups.SelectionChanged -= this.GroupsOnSelectionChanged;
-            this.Groups.SelectionChanged += this.GroupsOnSelectionChanged;
-        }
-
-        public override void OnNavigatingFrom(NavigatingFromEventArgs eventArgs)
-        {
-            base.OnNavigatingFrom(eventArgs);
-
-            eventArgs.State[SelectedIndex] = this.Groups.SelectedIndex;
-
-            this.Groups.SelectionChanged -= this.GroupsOnSelectionChanged;
-        }
-
-        public void UpdateListViewItems(bool scrollToZero)
-        {
-            if (this.Groups.Items != null)
-            {
-                if (this.Groups.SelectedValue == null && this.Groups.Items.Count > 0)
+            ((PlaylistsListView)this.albums).MaxItems = 5;
+            ((PlaylistsListView)this.albums).SetBinding(
+                PlaylistsListView.ItemsSourceProperty,
+                new Binding()
                 {
-                    this.Groups.SelectedIndex = 0;
-                    return;
-                }
+                    Source = presenter,
+                    Mode = BindingMode.OneWay,
+                    Path = new PropertyPath("BindingModel.Albums")
+                });
 
-                var searchGroupBindingModel = this.Groups.SelectedValue as SearchGroupBindingModel;
-                if (searchGroupBindingModel != null)
+            ((PlaylistsListView)this.artists).MaxItems = 5;
+            ((PlaylistsListView)this.artists).SetBinding(
+                PlaylistsListView.ItemsSourceProperty,
+                new Binding()
                 {
-                    this.ListView.ItemsSource = searchGroupBindingModel.Results;
-                    if (scrollToZero)
-                    {
-                        this.ListView.ScrollToHorizontalZero();
-                    }
-                }
-            }
-        }
+                    Source = presenter,
+                    Mode = BindingMode.OneWay,
+                    Path = new PropertyPath("BindingModel.Artists")
+                });
 
-        private void ListViewOnItemClick(object sender, ItemClickEventArgs e)
-        {
-            this.GetPresenter<SearchPageViewPresenter>().NavigateToView(e.ClickedItem);
-        }
+            ((PlaylistsListView)this.genres).MaxItems = 5;
+            ((PlaylistsListView)this.genres).SetBinding(
+                PlaylistsListView.ItemsSourceProperty,
+                new Binding()
+                {
+                    Source = presenter,
+                    Mode = BindingMode.OneWay,
+                    Path = new PropertyPath("BindingModel.Genres")
+                });
 
-        private void GroupsOnSelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            this.UpdateListViewItems(scrollToZero: true);
+            ((PlaylistsListView)this.userPlaylists).MaxItems = 5;
+            ((PlaylistsListView)this.userPlaylists).SetBinding(
+                PlaylistsListView.ItemsSourceProperty,
+                new Binding()
+                {
+                    Source = presenter,
+                    Mode = BindingMode.OneWay,
+                    Path = new PropertyPath("BindingModel.UserPlaylists")
+                });
+
+            ((PlaylistsListView)this.radioStations).MaxItems = 5;
+            ((PlaylistsListView)this.radioStations).SetBinding(
+                PlaylistsListView.ItemsSourceProperty,
+                new Binding()
+                {
+                    Source = presenter,
+                    Mode = BindingMode.OneWay,
+                    Path = new PropertyPath("BindingModel.RadioStations")
+                });
+
+            ((SongsListView)this.songs).AllowSorting = false;
+            ((SongsListView)this.songs).MaxItems = 5;
+            ((SongsListView)this.songs).SetBinding(
+                SongsListView.ItemsSourceProperty,
+                new Binding()
+                {
+                    Source = presenter,
+                    Mode = BindingMode.OneWay,
+                    Path = new PropertyPath("BindingModel.Songs")
+                });
+
+            this.TrackScrollViewer(this.ScrollViewer);
         }
     }
 }

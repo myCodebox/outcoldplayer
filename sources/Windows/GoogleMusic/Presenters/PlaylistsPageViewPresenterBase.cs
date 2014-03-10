@@ -57,10 +57,25 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         protected override async Task LoadDataAsync(NavigatedToEventArgs navigatedToEventArgs)
         {
-            this.BindingModel.PlaylistType = (PlaylistType)navigatedToEventArgs.Parameter;
-            this.BindingModel.Title = this.resources.GetPluralTitle(this.BindingModel.PlaylistType);
+            var request = navigatedToEventArgs.Parameter as PlaylistNavigationRequest;
+            if (request != null)
+            {
+                this.BindingModel.Title = request.Title;
+                this.BindingModel.Subtitle = request.Subtitle;
+                if (request.Playlists.Count > 0)
+                {
+                    this.BindingModel.PlaylistType = request.Playlists.Select(x => x.PlaylistType).First();
+                }
 
-            await this.LoadPlaylistsAsync();
+                this.BindingModel.Playlists = request.Playlists;
+            }
+            else
+            {
+                this.BindingModel.PlaylistType = (PlaylistType)navigatedToEventArgs.Parameter;
+                this.BindingModel.Title = this.resources.GetPluralTitle(this.BindingModel.PlaylistType);
+
+                await this.LoadPlaylistsAsync();
+            }
         }
 
         protected async virtual Task LoadPlaylistsAsync()

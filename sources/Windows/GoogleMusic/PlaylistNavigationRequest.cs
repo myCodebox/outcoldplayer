@@ -37,6 +37,20 @@ namespace OutcoldSolutions.GoogleMusic
             this.Playlists = playlists;
         }
 
+        public PlaylistNavigationRequest(string title, string subtitle, IList<Song> songs)
+        {
+            this.Title = title;
+            this.Subtitle = subtitle;
+            this.Songs = songs;
+        }
+
+        public PlaylistNavigationRequest(string title, string subtitle, IList<IPlaylist> playlists)
+        {
+            this.Title = title;
+            this.Subtitle = subtitle;
+            this.Playlists = playlists;
+        }
+
         public IPlaylist Playlist { get; set; }
 
         public PlaylistType PlaylistType { get; set; }

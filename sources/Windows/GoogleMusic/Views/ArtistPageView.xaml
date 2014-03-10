@@ -64,7 +64,7 @@
                               Margin="0, 20, 0, 0"/>
 
             <Button Margin="0, 20, 0, 0" 
-                    Visibility="{Binding Path=BindingModel.TopSongsLimited, Converter={StaticResource NotEmptyToVisibilityConverter}}"
+                    Visibility="{Binding Path=BindingModel.TopSongs, Converter={StaticResource NotEmptyToVisibilityConverter}}"
                     Command="{Binding Path=NavigateToTopSongs, Mode=OneTime}">
                 <Button.Template>
                     <ControlTemplate>
@@ -80,11 +80,11 @@
             </Button>
 
             <ContentPresenter x:Name="TopSongsContentPresenter"
-                              Visibility="{Binding Path=BindingModel.TopSongsLimited, Converter={StaticResource NotEmptyToVisibilityConverter}}"
+                              Visibility="{Binding Path=BindingModel.TopSongs, Converter={StaticResource NotEmptyToVisibilityConverter}}"
                               Margin="0, 20, 0, 0"/>
 
             <Button Margin="0, 20, 0, 0" 
-                    Visibility="{Binding Path=BindingModel.GoogleMusicAlbumsLimited, Converter={StaticResource NotEmptyToVisibilityConverter}}"
+                    Visibility="{Binding Path=BindingModel.GoogleMusicAlbums, Converter={StaticResource NotEmptyToVisibilityConverter}}"
                     Command="{Binding Path=NavigateToAlbums, Mode=OneTime}">
                 <Button.Template>
                     <ControlTemplate>
@@ -100,11 +100,11 @@
             </Button>
             
             <ContentPresenter x:Name="GoogleMusicAlbumsContentPresenter"
-                              Visibility="{Binding Path=BindingModel.GoogleMusicAlbumsLimited, Converter={StaticResource NotEmptyToVisibilityConverter}}"
+                              Visibility="{Binding Path=BindingModel.GoogleMusicAlbums, Converter={StaticResource NotEmptyToVisibilityConverter}}"
                               Margin="0, 20, 0, 0"/>
 
             <Button Margin="0, 20, 0, 0" 
-                    Visibility="{Binding Path=BindingModel.RelatedArtistsLimited, Converter={StaticResource NotEmptyToVisibilityConverter}}"
+                    Visibility="{Binding Path=BindingModel.RelatedArtists, Converter={StaticResource NotEmptyToVisibilityConverter}}"
                     Command="{Binding Path=NavigateToArtists, Mode=OneTime}">
                 <Button.Template>
                     <ControlTemplate>
@@ -120,7 +120,7 @@
             </Button>
 
             <ContentPresenter x:Name="RelatedArtistsContentPresenter"
-                              Visibility="{Binding Path=BindingModel.RelatedArtistsLimited, Converter={StaticResource NotEmptyToVisibilityConverter}}"
+                              Visibility="{Binding Path=BindingModel.RelatedArtists, Converter={StaticResource NotEmptyToVisibilityConverter}}"
                               Margin="0, 20, 0, 0"/>
         </StackPanel>
     </ScrollViewer>

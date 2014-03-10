@@ -143,6 +143,7 @@
     <Compile Include="Models\CachedSong.cs" />
     <Compile Include="Models\PlaylistsChangeEvent.cs" />
     <Compile Include="Models\Radio.cs" />
+    <Compile Include="Models\SearchResult.cs" />
     <Compile Include="Models\SongExtensions.cs" />
     <Compile Include="Models\SongsUpdatedEvent.cs" />
     <Compile Include="CommandIcon.cs" />

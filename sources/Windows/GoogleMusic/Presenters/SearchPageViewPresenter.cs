@@ -3,9 +3,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Presenters
 {
-    using System.Collections.Generic;
     using System.ComponentModel;
-    using System.Globalization;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
@@ -18,51 +16,90 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
     public class SearchPageViewPresenter : PagePresenterBase<ISearchPageView, SearchPageViewBindingModel>
     {
-        private readonly IApplicationResources resources;
         private readonly ISongsRepository songsRepository;
         private readonly IPlaylistsService playlistsService;
         private readonly INavigationService navigationService;
-        private readonly IUserPlaylistsRepository userPlaylistsRepository;
 
         private readonly SemaphoreSlim mutex = new SemaphoreSlim(1);
         private CancellationTokenSource cancellationTokenSource;
+
+        private bool isSearching;
 
         public SearchPageViewPresenter(
             IApplicationResources resources,
             ISongsRepository songsRepository,
             IPlaylistsService playlistsService,
-            INavigationService navigationService,
-            IUserPlaylistsRepository userPlaylistsRepository)
+            INavigationService navigationService)
         {
-            this.resources = resources;
             this.songsRepository = songsRepository;
             this.playlistsService = playlistsService;
             this.navigationService = navigationService;
-            this.userPlaylistsRepository = userPlaylistsRepository;
+
+            this.NavigateToSongs = new DelegateCommand(
+               () => this.navigationService.NavigateTo<IPlaylistPageView>(
+                   new PlaylistNavigationRequest(
+                       string.Format(resources.GetString("SearchPageView_SubtitleFormat"), this.BindingModel.SearchText),
+                       "Songs",
+                       this.BindingModel.Songs)));
+
+            this.NavigateToArtists = new DelegateCommand(
+               () => this.navigationService.NavigateTo<IPlaylistsPageView>(
+                   new PlaylistNavigationRequest(
+                       string.Format(resources.GetString("SearchPageView_SubtitleFormat"), this.BindingModel.SearchText),
+                       "Artists",
+                       this.BindingModel.Artists)));
+
+            this.NavigateToAlbums = new DelegateCommand(
+                () => this.navigationService.NavigateTo<IPlaylistsPageView>(
+                    new PlaylistNavigationRequest(
+                        string.Format(resources.GetString("SearchPageView_SubtitleFormat"), this.BindingModel.SearchText),
+                        "Albums",
+                        this.BindingModel.Albums)));
+
+            this.NavigateToRadios = new DelegateCommand(
+                () => this.navigationService.NavigateTo<IPlaylistsPageView>(
+                    new PlaylistNavigationRequest(
+                        string.Format(resources.GetString("SearchPageView_SubtitleFormat"), this.BindingModel.SearchText),
+                        "Radio Stations",
+                        this.BindingModel.RadioStations)));
+
+
+            this.NavigateToGenres = new DelegateCommand(
+                () => this.navigationService.NavigateTo<IPlaylistsPageView>(
+                    new PlaylistNavigationRequest(
+                        string.Format(resources.GetString("SearchPageView_SubtitleFormat"), this.BindingModel.SearchText),
+                        "Genres",
+                        this.BindingModel.Genres)));
+
+            this.NavigateToUserPlaylists = new DelegateCommand(
+                () => this.navigationService.NavigateTo<IPlaylistsPageView>(
+                    new PlaylistNavigationRequest(
+                        string.Format(resources.GetString("SearchPageView_SubtitleFormat"), this.BindingModel.SearchText),
+                        "Playlists",
+                        this.BindingModel.UserPlaylists)));
         }
 
-        public async void NavigateToView(object clickedItem)
+        public DelegateCommand NavigateToSongs { get; set; }
+
+        public DelegateCommand NavigateToArtists { get; set; }
+
+        public DelegateCommand NavigateToAlbums { get; set; }
+
+        public DelegateCommand NavigateToGenres { get; set; }
+
+        public DelegateCommand NavigateToUserPlaylists { get; set; }
+
+        public DelegateCommand NavigateToRadios { get; set; }
+
+        public bool IsSearching
         {
-            if (clickedItem is SongResultBindingModel)
+            get
             {
-                var song = ((SongResultBindingModel)clickedItem).Result.Metadata;
-                if (song.IsLibrary)
-                {
-                    this.navigationService.NavigateTo<IAlbumPageView>(song.SongId);
-                }
-                else
-                {
-                    var playlist = await this.userPlaylistsRepository.FindUserPlaylistAsync(song);
-                    if (playlist != null)
-                    {
-                        await this.Dispatcher.RunAsync(() => this.navigationService.NavigateTo<IPlaylistPageView>(new PlaylistNavigationRequest(playlist, song.SongId)));
-                    }
-                }
-                
+                return this.isSearching;
             }
-            else if (clickedItem is PlaylistResultBindingModel)
+            set
             {
-                this.navigationService.NavigateToPlaylist(((PlaylistResultBindingModel)clickedItem).Result);
+                this.SetValue(ref this.isSearching, value);
             }
         }
 
@@ -75,7 +112,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         public override void OnNavigatingFrom(NavigatingFromEventArgs eventArgs)
         {
-            eventArgs.State.Add("SearchText", this.BindingModel.SearchText);
+            eventArgs.State["SearchText"] = this.BindingModel.SearchText;
         }
 
         protected override Task LoadDataAsync(NavigatedToEventArgs eventArgs)
@@ -102,81 +139,90 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             CancellationTokenSource source = this.cancellationTokenSource = new CancellationTokenSource();
             string searchText = this.BindingModel.SearchText;
 
-            this.mutex.Release(1);
-
-            var searchGroupBindingModels = string.IsNullOrEmpty(searchText) ? new List<SearchGroupBindingModel>() : await this.Search(searchText, source.Token);
-
-            await this.mutex.WaitAsync().ConfigureAwait(continueOnCapturedContext: false);
-
-            if (this.cancellationTokenSource == source)
-            {
-                this.cancellationTokenSource = null;
-            }
-
-            this.mutex.Release(1);
-
             await this.Dispatcher.RunAsync(
                 () =>
                 {
-                    if (!source.IsCancellationRequested)
-                    {
-                        searchGroupBindingModels.Insert(0, new SearchGroupBindingModel(this.resources.GetString("SearchPageView_AllTitle"), searchGroupBindingModels.SelectMany(x => x.Results).ToList()));
-                        this.BindingModel.Groups = searchGroupBindingModels;
-
-                        this.View.UpdateListViewItems(scrollToZero: true);
-                    }
+                    this.IsSearching = true;
                 });
+
+            this.mutex.Release(1);
+
+            var result = (string.IsNullOrEmpty(searchText) || searchText.Length < 2) ? new SearchResult(searchText) : await this.Search(searchText, source.Token);
+
+            if (!source.IsCancellationRequested)
+            {
+                await this.mutex.WaitAsync().ConfigureAwait(continueOnCapturedContext: false);
+
+                if (this.cancellationTokenSource == source)
+                {
+                    this.cancellationTokenSource = null;
+                }
+
+                this.mutex.Release(1);
+
+                await this.Dispatcher.RunAsync(
+                    () =>
+                    {
+                        if (!source.IsCancellationRequested)
+                        {
+                            this.BindingModel.FreezeNotifications();
+
+                            this.BindingModel.Artists = result.Artists;
+                            this.BindingModel.Albums = result.Albums;
+                            this.BindingModel.UserPlaylists = result.UserPlaylists;
+                            this.BindingModel.RadioStations = result.RadioStations;
+                            this.BindingModel.Songs = result.Songs;
+
+                            this.BindingModel.UnfreezeNotifications();
+
+                            this.IsSearching = false;
+                        }
+                    });
+            }
         }
 
-        private async Task<List<SearchGroupBindingModel>> Search(string query, CancellationToken cancellationToken)
+        private async Task<SearchResult> Search(string query, CancellationToken cancellationToken)
         {
-            var results = new List<SearchGroupBindingModel>();
+            var searchResult = new SearchResult(query);
 
-            var types = new[] { PlaylistType.Artist, PlaylistType.Album, PlaylistType.Genre, PlaylistType.UserPlaylist };
-            bool hasUserPlaylistsResults = false;
+            searchResult.Songs = await this.songsRepository.SearchAsync(query);
 
-            foreach (var playlistType in types)
+            if (cancellationToken.IsCancellationRequested)
             {
-                var playlists = (await this.playlistsService.SearchAsync(playlistType, query))
-                   .Select(x => new PlaylistResultBindingModel(
-                       query, 
-                       x, 
-                       this.resources.GetTitle(playlistType), 
-                       string.Format(CultureInfo.CurrentCulture, this.resources.GetString("SearchItem_SongsFormat"), x.SongsCount)))
-                   .Cast<SearchResultBindingModel>()
-                   .ToList();
-
-                if (playlists.Count > 0)
-                {
-                    if (playlistType == PlaylistType.UserPlaylist)
-                    {
-                        hasUserPlaylistsResults = true;
-                    }
-
-                    results.Add(new SearchGroupBindingModel(this.resources.GetPluralTitle(playlistType), playlists));
-                }
+                return searchResult;
             }
 
-            var songs = (await this.songsRepository.SearchAsync(query))
-                        .Select(x => new SongResultBindingModel(query, new SongBindingModel(x), this.resources.GetString("Model_Song_Title")))
-                        .Cast<SearchResultBindingModel>()
-                        .ToList();
+            searchResult.Artists = (await this.playlistsService.SearchAsync(PlaylistType.Artist, query)).ToList();
 
-            if (songs.Count > 0)
+            if (cancellationToken.IsCancellationRequested)
             {
-                var item = new SearchGroupBindingModel(this.resources.GetString("Model_Song_Plural_Title"), songs);
-
-                if (hasUserPlaylistsResults)
-                {
-                    results.Insert(results.Count - 1, item);
-                }
-                else
-                {
-                    results.Add(item);
-                }
+                return searchResult;
             }
 
-            return results;
+            searchResult.Albums = (await this.playlistsService.SearchAsync(PlaylistType.Album, query)).ToList();
+
+            if (cancellationToken.IsCancellationRequested)
+            {
+                return searchResult;
+            }
+
+            searchResult.Genres = (await this.playlistsService.SearchAsync(PlaylistType.Genre, query)).ToList();
+
+            if (cancellationToken.IsCancellationRequested)
+            {
+                return searchResult;
+            }
+
+            searchResult.UserPlaylists = (await this.playlistsService.SearchAsync(PlaylistType.UserPlaylist, query)).ToList();
+
+            if (cancellationToken.IsCancellationRequested)
+            {
+                return searchResult;
+            }
+
+            searchResult.RadioStations = (await this.playlistsService.SearchAsync(PlaylistType.Radio, query)).ToList();
+
+            return searchResult;
         }
     }
 }

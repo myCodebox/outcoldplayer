@@ -105,6 +105,11 @@
             <ListView.Transitions>
                 <TransitionCollection />
             </ListView.Transitions>
+            <ListView.ItemContainerTransitions>
+                <TransitionCollection >
+                    <EntranceThemeTransition FromHorizontalOffset="0" FromVerticalOffset="0"  />
+                </TransitionCollection>
+            </ListView.ItemContainerTransitions>
             <ListView.ItemTemplate>
                 <DataTemplate>
 

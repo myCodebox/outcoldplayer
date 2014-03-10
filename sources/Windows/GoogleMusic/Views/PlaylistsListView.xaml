@@ -17,6 +17,14 @@
                 ItemClick="PlaylistItemClick"
                 ItemsSource="{Binding Path=Playlists, Mode=OneWay}"
                 Style="{StaticResource PlaylistsListView}">
+        <ListView.Transitions>
+            <TransitionCollection/>
+        </ListView.Transitions>
+        <ListView.ItemContainerTransitions>
+            <TransitionCollection >
+                <EntranceThemeTransition FromHorizontalOffset="0" FromVerticalOffset="0" />
+            </TransitionCollection>
+        </ListView.ItemContainerTransitions>
         <interactivity:Interaction.Behaviors>
             <controls:ListViewBaseSelectedItemsBehavior SelectedItems="{Binding Path=SelectedItems, Mode=OneWay}" />
         </interactivity:Interaction.Behaviors>
