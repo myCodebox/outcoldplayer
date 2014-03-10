@@ -5,6 +5,8 @@
 namespace OutcoldSolutions.GoogleMusic.Web
 {
     using System.Globalization;
+    using System.Net;
+    using System.Threading;
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.Diagnostics;
@@ -15,12 +17,15 @@ namespace OutcoldSolutions.GoogleMusic.Web
         Task<GoogleMusicArtist> FetchArtistAsync(string googleArtistId);
 
         Task<GoogleMusicAlbum> FetchAlbumAsync(string googleAlbumId);
+
+        Task<GoogleSearchResult> SearchAsync(string query, CancellationToken cancellationToken);
     }
 
     public class AllAccessWebService : IAllAccessWebService
     {
         private const string FetchArtist = "fetchartist?nid={0}&include-albums=true&num-top-tracks=20&num-related-artists=20";
         private const string FetchAlbum = "fetchalbum?nid={0}&include-tracks=true";
+        private const string Search = "query?q={0}&max-results=20";
 
         private readonly IGoogleMusicApisService googleMusicApisService;
 
@@ -42,6 +47,11 @@ namespace OutcoldSolutions.GoogleMusic.Web
         public Task<GoogleMusicAlbum> FetchAlbumAsync(string googleAlbumId)
         {
             return this.googleMusicApisService.GetAsync<GoogleMusicAlbum>(string.Format(CultureInfo.InvariantCulture, FetchAlbum, googleAlbumId));
+        }
+
+        public Task<GoogleSearchResult> SearchAsync(string query, CancellationToken cancellationToken)
+        {
+            return this.googleMusicApisService.GetAsync<GoogleSearchResult>(string.Format(CultureInfo.InvariantCulture, Search, WebUtility.UrlEncode(query)), cancellationToken);
         }
     }
 }

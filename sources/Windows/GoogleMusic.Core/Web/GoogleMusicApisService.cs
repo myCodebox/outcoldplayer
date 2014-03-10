@@ -10,6 +10,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
     using System.Net;
     using System.Net.Http;
     using System.Text;
+    using System.Threading;
     using System.Threading.Tasks;
 
     using Newtonsoft.Json;
@@ -65,7 +66,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
             }
         }
 
-        public async Task<HttpResponseMessage> GetAsync(string url)
+        public async Task<HttpResponseMessage> GetAsync(string url, CancellationToken? cancellationToken = null)
         {
             if (this.Logger.IsDebugEnabled)
             {
@@ -76,12 +77,12 @@ namespace OutcoldSolutions.GoogleMusic.Web
             requestMessage.Headers.Add("Authorization", this.GetAuthorizationHeaderValue());
             requestMessage.Headers.Add("Accept-Encoding", "gzip");
 
-            var responseMessage = await this.SendAsync(requestMessage, HttpCompletionOption.ResponseHeadersRead);
+            var responseMessage = await this.SendAsync(requestMessage, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
 
             return responseMessage;
         }
 
-        public async Task<HttpResponseMessage> PostAsync(string url, dynamic json = null, bool signUrl = false)
+        public async Task<HttpResponseMessage> PostAsync(string url, dynamic json = null, bool signUrl = false, CancellationToken? cancellationToken = null)
         {
             if (this.Logger.IsDebugEnabled)
             {
@@ -96,24 +97,24 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 requestMessage.Content = new StringContent(content, Encoding.UTF8, "application/json");
             }
 
-            var responseMessage = await this.SendAsync(requestMessage, HttpCompletionOption.ResponseContentRead);
+            var responseMessage = await this.SendAsync(requestMessage, HttpCompletionOption.ResponseContentRead, cancellationToken);
 
             return responseMessage;
         }
 
-        public async Task<TResult> GetAsync<TResult>(string url)
+        public async Task<TResult> GetAsync<TResult>(string url, CancellationToken? cancellationToken = null)
         {
             HttpResponseMessage responseMessage = null;
             HttpRequestException exception = null;
             try
             {
-                responseMessage = await this.GetAsync(url);
+                responseMessage = await this.GetAsync(url, cancellationToken);
 
                 // This means that google asked us to relogin. Let's try again this request.
                 if (responseMessage.StatusCode == HttpStatusCode.Found
                     || responseMessage.StatusCode == HttpStatusCode.Forbidden)
                 {
-                    responseMessage = await this.GetAsync(url);
+                    responseMessage = await this.GetAsync(url, cancellationToken);
                 }
 
                 responseMessage.EnsureSuccessStatusCode();
@@ -152,20 +153,20 @@ namespace OutcoldSolutions.GoogleMusic.Web
             return await responseMessage.Content.ReadAsJsonObject<TResult>();
         }
 
-        public async Task<TResult> PostAsync<TResult>(string url, dynamic json = null, bool signUrl = false)
+        public async Task<TResult> PostAsync<TResult>(string url, dynamic json = null, bool signUrl = false, CancellationToken? cancellationToken = null)
         {
             HttpResponseMessage responseMessage = null;
             HttpRequestException exception = null;
 
             try
             {
-                responseMessage = await this.PostAsync(url, json, signUrl);
+                responseMessage = await this.PostAsync(url, json, signUrl, cancellationToken);
 
                 // This means that google asked us to relogin. Let's try again this request.
                 if (responseMessage.StatusCode == HttpStatusCode.Found
                     || responseMessage.StatusCode == HttpStatusCode.Forbidden)
                 {
-                    responseMessage = await this.PostAsync(url, json, signUrl);
+                    responseMessage = await this.PostAsync(url, json, signUrl, cancellationToken);
                 }
 
                 responseMessage.EnsureSuccessStatusCode();

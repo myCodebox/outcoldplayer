@@ -32,13 +32,11 @@ namespace OutcoldSolutions.GoogleMusic.Services
         Task<bool> RenameStationAsync(Radio radio, string title);
     }
 
-    public class RadioStationsService : IRadioStationsService
+    public class RadioStationsService : AllAccessServiceBase, IRadioStationsService
     {
         private readonly IRadioWebService radioWebService;
 
         private readonly IRadioStationsRepository radioStationsRepository;
-
-        private readonly ISongsRepository songsRepository;
 
         private readonly INotificationService notificationService;
 
@@ -56,10 +54,10 @@ namespace OutcoldSolutions.GoogleMusic.Services
             IApplicationResources applicationResources,
             IEventAggregator eventAggregator,
             ILogManager logManager)
+            : base(songsRepository)
         {
             this.radioWebService = radioWebService;
             this.radioStationsRepository = radioStationsRepository;
-            this.songsRepository = songsRepository;
             this.notificationService = notificationService;
             this.applicationResources = applicationResources;
             this.eventAggregator = eventAggregator;
@@ -189,16 +187,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             {
                 foreach (var track in radioTracks)
                 {
-                    Song song = await this.songsRepository.FindSongAsync(track.Id);
-
-                    if (song == null)
-                    {
-                        song = track.ToSong();
-                        song.IsLibrary = false;
-                        song.UnknownSong = true;
-                    }
-
-                    songs.Add(song);
+                    songs.Add(await this.GetSong(track));
                 }
             }
 

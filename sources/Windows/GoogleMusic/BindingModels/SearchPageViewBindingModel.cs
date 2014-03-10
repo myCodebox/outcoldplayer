@@ -10,6 +10,8 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
     public class SearchPageViewBindingModel : BindingModelBase
     {
         private string searchText;
+        private bool isLocalOnly;
+        private bool isOnline;
 
         private IList<IPlaylist> artists;
         private IList<IPlaylist> albums;
@@ -28,6 +30,32 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             set
             {
                 this.SetValue(ref this.searchText, value);
+            }
+        }
+
+        public bool IsLocalOnly
+        {
+            get
+            {
+                return this.isLocalOnly;
+            }
+
+            set
+            {
+                this.SetValue(ref this.isLocalOnly, value);
+            }
+        }
+
+        public bool IsOnline
+        {
+            get
+            {
+                return this.isOnline;
+            }
+
+            set
+            {
+                this.SetValue(ref this.isOnline, value);
             }
         }
 

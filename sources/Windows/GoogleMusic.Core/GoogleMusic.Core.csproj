@@ -182,6 +182,7 @@
     <Compile Include="Repositories\SystemPlaylistsRepository.cs" />
     <Compile Include="Services\AlbumArtCacheService.cs" />
     <Compile Include="Services\AllAccessService.cs" />
+    <Compile Include="Services\AllAccessServiceBase.cs" />
     <Compile Include="Services\ApplicationStateService.cs" />
     <Compile Include="Services\IAlbumArtCacheService.cs" />
     <Compile Include="Services\InAppPurchases.cs" />
@@ -205,6 +206,7 @@
     <Compile Include="Web\Models\GoogleMusicSongMutateResponse.cs" />
     <Compile Include="Web\Models\GoogleMusicStationFeed.cs" />
     <Compile Include="Web\Models\GoogleMusicTrackStatResponse.cs" />
+    <Compile Include="Web\Models\GoogleSearchResult.cs" />
     <Compile Include="Web\Models\UrlRef.cs" />
     <Compile Include="Web\Models\GoogleMusicPlaylist.cs" />
     <Compile Include="Web\Models\GoogleMusicPlaylistEntry.cs" />

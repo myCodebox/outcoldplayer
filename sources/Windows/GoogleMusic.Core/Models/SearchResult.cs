@@ -5,6 +5,15 @@ namespace OutcoldSolutions.GoogleMusic.Models
 {
     using System.Collections.Generic;
 
+    public class SearchResultEntity
+    {
+        public double Score { get; set; }
+
+        public IPlaylist Playlist { get; set; }
+
+        public Song Song { get; set; }
+    }
+
     public class SearchResult
     {
         public SearchResult(string searchString)
@@ -14,16 +23,16 @@ namespace OutcoldSolutions.GoogleMusic.Models
 
         public string SearchString { get; set; }
 
-        public IList<Song> Songs { get; set; }
+        public List<SearchResultEntity> Songs { get; set; }
 
-        public IList<IPlaylist> Artists { get; set; } 
+        public List<SearchResultEntity> Artists { get; set; }
 
-        public IList<IPlaylist> Albums { get; set; } 
+        public List<SearchResultEntity> Albums { get; set; }
 
-        public IList<IPlaylist> Genres { get; set; } 
+        public List<SearchResultEntity> Genres { get; set; }
 
-        public IList<IPlaylist> UserPlaylists { get; set; } 
+        public List<SearchResultEntity> UserPlaylists { get; set; }
 
-        public IList<IPlaylist> RadioStations { get; set; } 
+        public List<SearchResultEntity> RadioStations { get; set; } 
     }
 }

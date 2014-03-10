@@ -3,7 +3,6 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Repositories
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
@@ -17,6 +16,8 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
         Task<Song> GetSongAsync(string songId);
 
         Task<Song> FindSongAsync(string providerSongId);
+
+        Task<Song> FindSongByFileAsync(string fileName);
 
         Task<IList<Song>> SearchAsync(string searchQuery, uint? take = null);
 
@@ -54,6 +55,14 @@ from [Song] as s
 where (?1 = 1 or s.[IsCached] = 1) and s.[SongId] = ?2
 ";
 
+        private const string SqlSongByFile = @"
+select s.* 
+from [Song] as s
+    inner join [CachedSong] cs on s.SongId == cs.SongId
+where cs.FileName = ?1
+limit 1
+";
+
         private readonly IApplicationStateService stateService;
 
         public SongsRepository(IApplicationStateService stateService)
@@ -64,6 +73,11 @@ where (?1 = 1 or s.[IsCached] = 1) and s.[SongId] = ?2
         public Task<Song> FindSongAsync(string providerSongId)
         {
             return this.Connection.Table<Song>().Where(s => s.SongId == providerSongId).FirstOrDefaultAsync();
+        }
+
+        public async Task<Song> FindSongByFileAsync(string fileName)
+        {
+            return (await this.Connection.QueryAsync<Song>(SqlSongByFile, fileName)).FirstOrDefault();
         }
 
         public async Task<IList<Song>> SearchAsync(string searchQuery, uint? take = null)

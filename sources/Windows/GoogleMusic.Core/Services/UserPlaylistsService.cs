@@ -5,6 +5,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
     using System.Threading.Tasks;
 
@@ -31,7 +32,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
         Task<IList<Song>> GetSharedPlaylistSongsAsync(UserPlaylist userPlaylist);
     }
 
-    public class UserPlaylistsService : IUserPlaylistsService
+    public class UserPlaylistsService : AllAccessServiceBase, IUserPlaylistsService
     {
         private readonly ILogger logger;
         private readonly IPlaylistsWebService webService;
@@ -45,6 +46,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             IUserPlaylistsRepository repository,
             ISongsRepository songsRepository,
             IEventAggregator eventAggregator)
+            :base(songsRepository)
         {
             this.logger = logManager.CreateLogger("UserPlaylistsService");
             this.webService = webService;
@@ -291,16 +293,9 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 {
                     foreach (var entry in googleMusicSharedPlaylist.PlaylistEntry)
                     {
-                        var song = await this.songsRepository.FindSongAsync(entry.TrackId);
-
-                        if (song == null)
-                        {
-                            song = entry.Track.ToSong();
-                            song.IsLibrary = false;
-                            song.UnknownSong = true;
-                        }
-
-                        songs.Add(song);
+                        Debug.Assert(string.IsNullOrEmpty(entry.Track.Id), "Track id should be empty");
+                        entry.Track.Id = entry.TrackId;
+                        songs.Add(await this.GetSong(entry.Track));
                     }
                 }
             }

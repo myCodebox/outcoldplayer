@@ -6,6 +6,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 {
     using System;
     using System.Collections.Generic;
+    using System.Threading;
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.Diagnostics;
@@ -13,21 +14,21 @@ namespace OutcoldSolutions.GoogleMusic.Services
     using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Web;
     using OutcoldSolutions.GoogleMusic.Web.Models;
-    using OutcoldSolutions.GoogleMusic.Web.Synchronization;
 
     public interface IAllAccessService
     {
         Task<ArtistInfo> GetArtistInfoAsync(Artist artist);
 
         Task<Tuple<Album, IList<Song>>> GetAlbumAsync(Album album);
+
+        Task<SearchResult> SearchAsync(string search, CancellationToken cancellationToken);
     }
 
-    public class AllAccessService : IAllAccessService
+    public class AllAccessService : AllAccessServiceBase, IAllAccessService
     {
         private readonly IAllAccessWebService allAccessWebService;
         private readonly IArtistsRepository artistsRepository;
         private readonly IAlbumsRepository albumsRepository;
-        private readonly ISongsRepository songsRepository;
         private readonly ILogger logger;
 
         public AllAccessService(
@@ -36,11 +37,11 @@ namespace OutcoldSolutions.GoogleMusic.Services
             IAlbumsRepository albumsRepository,
             ISongsRepository songsRepository,
             ILogManager logManager)
+            : base(songsRepository)
         {
             this.allAccessWebService = allAccessWebService;
             this.artistsRepository = artistsRepository;
             this.albumsRepository = albumsRepository;
-            this.songsRepository = songsRepository;
             this.logger = logManager.CreateLogger("AllAccessService");
         }
 
@@ -83,7 +84,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 info.GoogleAlbums = new List<Album>();
                 foreach (var googleMusicAlbum in googleMusicArtist.Albums)
                 {
-                    info.GoogleAlbums.Add(this.GetAlbum(googleMusicAlbum, artist));
+                    info.GoogleAlbums.Add(GetAlbum(googleMusicAlbum, artist));
                 }
             }
 
@@ -92,16 +93,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 info.TopSongs = new List<Song>();
                 foreach (var googleMusicSong in googleMusicArtist.TopTracks)
                 {
-                    Song song = await this.songsRepository.FindSongAsync(googleMusicSong.Id);
-
-                    if (song == null)
-                    {
-                        song = googleMusicSong.ToSong();
-                        song.IsLibrary = false;
-                        song.UnknownSong = true;
-                    }
-
-                    info.TopSongs.Add(song);
+                    info.TopSongs.Add(await this.GetSong(googleMusicSong));
                 }
             }
 
@@ -110,13 +102,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 info.RelatedArtists = new List<Artist>();
                 foreach (var realtedArtist in googleMusicArtist.RelatedArtists)
                 {
-                    info.RelatedArtists.Add(new Artist()
-                                            {
-                                                GoogleArtistId = realtedArtist.ArtistId,
-                                                Title = realtedArtist.Name,
-                                                TitleNorm = realtedArtist.Name.Normalize(),
-                                                ArtUrl = new Uri(realtedArtist.ArtistArtRef)
-                                            });
+                    info.RelatedArtists.Add(GetArtist(realtedArtist));
                 }
             }
 
@@ -153,23 +139,91 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 songs = new List<Song>();
                 foreach (var googleMusicSong in googleMusicAlbum.Tracks)
                 {
-                    Song song = await this.songsRepository.FindSongAsync(googleMusicSong.Id);
-
-                    if (song == null)
-                    {
-                        song = googleMusicSong.ToSong();
-                        song.IsLibrary = false;
-                        song.UnknownSong = true;
-                    }
-
-                    songs.Add(song);
+                    songs.Add(await this.GetSong(googleMusicSong));
                 }
             }
 
             return Tuple.Create(album, songs);
         }
 
-        private Album GetAlbum(GoogleMusicAlbum googleMusicAlbum, Artist artist)
+        public async Task<SearchResult> SearchAsync(string search, CancellationToken cancellationToken)
+        {
+            SearchResult result = new SearchResult(search);
+            GoogleSearchResult googleSearchResult;
+            try
+            {
+                googleSearchResult = await this.allAccessWebService.SearchAsync(search, cancellationToken);
+            }
+            catch (Exception exception)
+            {
+                this.logger.Debug(exception, "Search failed");
+
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    return result;
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            if (googleSearchResult != null && googleSearchResult.Entries != null)
+            {
+                foreach (var entry in googleSearchResult.Entries)
+                {
+                    if (cancellationToken.IsCancellationRequested)
+                    {
+                        break;
+                    }
+
+                    if (entry.Artist != null)
+                    {
+                        if (result.Artists == null)
+                        {
+                            result.Artists = new List<SearchResultEntity>();
+                        }
+
+                        result.Artists.Add(new SearchResultEntity() { Playlist = GetArtist(entry.Artist), Score = entry.Score });
+                    }
+
+                    if (entry.Album != null)
+                    {
+                        if (result.Albums == null)
+                        {
+                            result.Albums = new List<SearchResultEntity>();
+                        }
+
+                        result.Albums.Add(new SearchResultEntity() { Playlist = GetAlbum(entry.Album, null), Score = entry.Score });
+                    }
+
+                    if (entry.Track != null)
+                    {
+                        if (result.Songs == null)
+                        {
+                            result.Songs = new List<SearchResultEntity>();
+                        }
+
+                        result.Songs.Add(new SearchResultEntity() { Song = await this.GetSong(entry.Track), Score = entry.Score });
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        private static Artist GetArtist(GoogleMusicArtist googleMusicArtist)
+        {
+            return new Artist()
+            {
+                GoogleArtistId = googleMusicArtist.ArtistId,
+                Title = googleMusicArtist.Name,
+                TitleNorm = googleMusicArtist.Name.Normalize(),
+                ArtUrl = string.IsNullOrEmpty(googleMusicArtist.ArtistArtRef) ? null : new Uri(googleMusicArtist.ArtistArtRef)
+            };
+        }
+
+        private static Album GetAlbum(GoogleMusicAlbum googleMusicAlbum, Artist artist)
         {
             return new Album()
                    {
@@ -177,7 +231,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                        Title = googleMusicAlbum.Name,
                        TitleNorm = googleMusicAlbum.Name.Normalize(),
                        Year = (ushort?)googleMusicAlbum.Year,
-                       ArtUrl = new Uri(googleMusicAlbum.AlbumArtRef),
+                       ArtUrl = string.IsNullOrEmpty(googleMusicAlbum.AlbumArtRef) ? null : new Uri(googleMusicAlbum.AlbumArtRef),
                        Artist = artist
                    };
         }

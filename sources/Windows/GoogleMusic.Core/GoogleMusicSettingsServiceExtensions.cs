@@ -14,6 +14,8 @@ namespace OutcoldSolutions.GoogleMusic
 
         public const string IsAllAccessAvailableKey = "IsAllAccessAvailable";
 
+        public const string IsSearchLocalOnlyKey = "IsSearchLocalOnly";
+
         public static bool GetBlockExplicitSongsInRadio(this ISettingsService @this)
         {
             if (@this == null)
@@ -42,6 +44,22 @@ namespace OutcoldSolutions.GoogleMusic
         public static void SetIsAllAccessAvailable(this ISettingsService @this, bool value)
         {
             @this.SetValue(IsAllAccessAvailableKey, value);
+        }
+
+
+        public static bool GetIsSearchLocalOnly(this ISettingsService @this)
+        {
+            if (@this == null)
+            {
+                throw new ArgumentNullException("this");
+            }
+
+            return @this.GetValue<bool>(IsSearchLocalOnlyKey, defaultValue: false);
+        }
+
+        public static void SetIsSearchLocalOnly(this ISettingsService @this, bool value)
+        {
+            @this.SetValue(IsSearchLocalOnlyKey, value);
         }
     }
 }
