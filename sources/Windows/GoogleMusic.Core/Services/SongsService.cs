@@ -144,9 +144,6 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 return null;
             }
 
-            List<Song> updates = new List<Song>();
-            List<Song> deletes = new List<Song>();
-
             foreach (var song in songs)
             {
                 int keeped = await this.songsRepository.RemoveFromLibraryAsync(song.SongId, song.StoreId);

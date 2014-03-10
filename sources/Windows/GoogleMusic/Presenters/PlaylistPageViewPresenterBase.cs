@@ -64,8 +64,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     {
                         this.BindingModel.Songs = songs;
                         this.BindingModel.Playlist = (TPlaylist)playlist;
-                        this.BindingModel.Title =  this.BindingModel.Playlist.Title;
-                        this.BindingModel.Subtitle = this.resources.GetTitle(playlist.PlaylistType);
+                        if (this.BindingModel.Playlist != null)
+                        {
+                            this.BindingModel.Title = this.BindingModel.Playlist.Title;
+                            this.BindingModel.Subtitle = this.resources.GetTitle(playlist.PlaylistType);
+                        }
                     });
             }
 

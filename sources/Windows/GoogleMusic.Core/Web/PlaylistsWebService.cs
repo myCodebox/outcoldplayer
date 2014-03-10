@@ -153,7 +153,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
                                                                 deleted = false,
                                                                 lastModifiedTimestamp = "0",
                                                                 playlistId = userPlaylist.PlaylistId,
-                                                                source = song.Value.TrackType == StreamType.EphemeralSubscription ? 2 : 1,
+                                                                source = string.Equals(song.Value.StoreId, song.Value.SongId, StringComparison.OrdinalIgnoreCase) ? 2 : 1,
                                                                 trackId = song.Value.SongId
                                                             }
                                                }

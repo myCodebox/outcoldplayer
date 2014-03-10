@@ -236,6 +236,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             }
 
             List<UserPlaylistEntry> toInsert = new List<UserPlaylistEntry>();
+            List<Song> songsToInsert = new List<Song>();
 
             var result = await this.webService.AddSongsAsync(playlist, dictionary);
             if (result != null)
@@ -246,6 +247,18 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     if (string.Equals(mutation.ResponseCode, "OK", StringComparison.OrdinalIgnoreCase))
                     {
                         var song = dictionary[mutation.ClientId];
+
+                        if (song.UnknownSong)
+                        {
+                            song = await this.songsRepository.FindSongAsync(song.SongId) ?? song;
+
+                            if (song.UnknownSong)
+                            {
+                                song.UnknownSong = false;
+                                songsToInsert.Add(song);
+                            }
+                        }
+
                         toInsert.Add(
                             new UserPlaylistEntry()
                             {
@@ -254,7 +267,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                                 SongId = song.SongId,
                                 CreationDate = DateTime.UtcNow,
                                 LastModified = DateTime.UtcNow,
-                                Source = song.TrackType == StreamType.EphemeralSubscription ? 2 : 1,
+                                Source = string.Equals(song.StoreId, song.SongId, StringComparison.OrdinalIgnoreCase) ? 2 : 1,
                                 PlaylistOrder = ((1729000000000000000L) + DateTime.UtcNow.Millisecond * 1000L + index).ToString("G"),
                                 PlaylistId = playlist.PlaylistId
                             });
@@ -267,6 +280,11 @@ namespace OutcoldSolutions.GoogleMusic.Services
                             mutation.ResponseCode);
                     }
                 }
+            }
+
+            if (songsToInsert.Count > 0)
+            {
+                await this.songsRepository.InsertAsync(songsToInsert);
             }
 
             if (toInsert.Count > 0)

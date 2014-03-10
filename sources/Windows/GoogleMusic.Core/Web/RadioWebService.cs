@@ -147,7 +147,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
         {
             dynamic createMutation;
 
-            if (song.TrackType == StreamType.EphemeralSubscription)
+            if (string.Equals(song.StoreId, song.SongId, StringComparison.OrdinalIgnoreCase))
             {
                 createMutation = new 
                                 {

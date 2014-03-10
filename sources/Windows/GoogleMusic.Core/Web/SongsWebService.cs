@@ -141,7 +141,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
                                    id = x.SongId,
                                    incremental_plays = x.StatsPlayCount,
                                    last_play_time_millis = ((long)x.StatsRecent.ToUnixFileTime() * 1000L).ToString("G"),
-                                   type = x.TrackType == StreamType.EphemeralSubscription ? 2 : 1
+                                   type = string.Equals(x.StoreId, x.SongId, StringComparison.OrdinalIgnoreCase) ? 2 : 1
                                })
                        };
 

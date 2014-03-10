@@ -105,15 +105,12 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
                 if (songsForStat.Count > 0)
                 {
                     var result = await this.songsWebService.SendStatsAsync(songsForStat);
-                    foreach (var response in result.Responses)
+                    for (int index = 0; index < result.Responses.Length; index++)
                     {
-                        if (string.Equals(response.ResponseCode, "OK", StringComparison.OrdinalIgnoreCase))
+                        var response = result.Responses[index];
+                        if (string.Equals(response.ResponseCode, "OK", StringComparison.OrdinalIgnoreCase) && songsForStat.Count > index)
                         {
-                            var song =
-                                songsForStat.FirstOrDefault(
-                                    x => string.Equals(x.SongId, response.Id, StringComparison.OrdinalIgnoreCase));
-
-                            await this.songsRepository.ResetStatsAsync(song);
+                            await this.songsRepository.ResetStatsAsync(songsForStat[index]);
                         }
                     }
                 }
