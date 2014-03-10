@@ -4,38 +4,27 @@
 
 namespace OutcoldSolutions.GoogleMusic.Services.Actions
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-
-    using Windows.UI.Popups;
 
     using OutcoldSolutions.GoogleMusic.Models;
 
     internal class AddToLibraryAction : ISelectedObjectAction
     {
-        private readonly IApplicationResources applicationResources;
-
         private readonly IApplicationStateService stateService;
 
         private readonly IPlaylistsService playlistsService;
 
-        private readonly ISongsCachingService songsCachingService;
-
         private readonly ISongsService songsService;
 
         public AddToLibraryAction(
-            IApplicationResources applicationResources,
             IApplicationStateService stateService,
             IPlaylistsService playlistsService,
-            ISongsCachingService songsCachingService,
             ISongsService songsService)
         {
-            this.applicationResources = applicationResources;
             this.stateService = stateService;
             this.playlistsService = playlistsService;
-            this.songsCachingService = songsCachingService;
             this.songsService = songsService;
         }
 
