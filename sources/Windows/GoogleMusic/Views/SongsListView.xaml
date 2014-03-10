@@ -135,10 +135,24 @@
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
-
+                            
                             <TextBlock Style="{StaticResource BasicTextStyle}" Text="{Binding Path=Title, Mode=OneWay}" HorizontalAlignment="Left" VerticalAlignment="Center" TextTrimming="WordEllipsis" />
-                            <TextBlock Grid.Column="1" 
+                            <Border Grid.Column="1" 
+                                    BorderBrush="Red" 
+                                    BorderThickness="1"
+                                    Visibility="{Binding Path=IsExplicit, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                    VerticalAlignment="Center"
+                                    Padding="3, 0, 3, 0">
+                                <TextBlock 
+                                        Text="EXPLICIT"
+                                        Style="{StaticResource SmallTextStyle}"
+                                        Foreground="Red"
+                                        FontSize="9"/>
+                            </Border>
+                            
+                            <TextBlock Grid.Column="2" 
                                        Style="{StaticResource SongCachedIconTextBlock}"
                                        Visibility="{Binding Path=IsCached, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
                         </Grid>

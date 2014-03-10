@@ -122,6 +122,14 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             }
         }
 
+        public bool IsExplicit
+        {
+            get
+            {
+                return this.Metadata.ContentType == 1;
+            }
+        }
+
         public void RaiseAllPropertiesChanged()
         {
             this.RaisePropertyChanged(() => this.Title);
@@ -130,6 +138,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             this.RaisePropertyChanged(() => this.Album);
             this.RaisePropertyChanged(() => this.PlayCount);
             this.RaisePropertyChanged(() => this.Rating);
+            this.RaisePropertyChanged(() => this.IsExplicit);
         }
     }
 }
