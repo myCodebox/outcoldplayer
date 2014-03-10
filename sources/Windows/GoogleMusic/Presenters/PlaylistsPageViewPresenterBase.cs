@@ -68,11 +68,13 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 }
 
                 this.BindingModel.Playlists = request.Playlists;
+                this.BindingModel.IsSemanticZoomEnabled = false;
             }
             else
             {
                 this.BindingModel.PlaylistType = (PlaylistType)navigatedToEventArgs.Parameter;
                 this.BindingModel.Title = this.resources.GetPluralTitle(this.BindingModel.PlaylistType);
+                this.BindingModel.IsSemanticZoomEnabled = true;
 
                 await this.LoadPlaylistsAsync();
             }

@@ -17,6 +17,8 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         private string subtitle;
         private PlaylistType playlistType;
 
+        private bool isSemanticZoomEnabled = true;
+
         public string Title
         {
             get
@@ -83,6 +85,19 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             set
             {
                 this.SetValue(ref this.groups, value);
+            }
+        }
+
+        public bool IsSemanticZoomEnabled
+        {
+            get
+            {
+                return this.isSemanticZoomEnabled;
+            }
+
+            set
+            {
+                this.SetValue(ref this.isSemanticZoomEnabled, value);
             }
         }
 

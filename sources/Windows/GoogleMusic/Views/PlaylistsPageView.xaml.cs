@@ -61,6 +61,12 @@ namespace OutcoldSolutions.GoogleMusic.Views
             }
         }
 
+        public override void OnNavigatedTo(NavigatedToEventArgs eventArgs)
+        {
+            this.SemanticZoom.IsZoomedInViewActive = true;
+            base.OnNavigatedTo(eventArgs);
+        }
+
         private void SemanticZoom_OnViewChangeStarted(object sender, SemanticZoomViewChangedEventArgs e)
         {
             if (e.IsSourceZoomedInView)

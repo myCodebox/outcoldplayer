@@ -13,7 +13,8 @@
 
     <SemanticZoom VerticalAlignment="Stretch"
                   Visibility="{Binding Path=IsDataLoading, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}" 
-                  IsZoomOutButtonEnabled="True" 
+                  IsZoomOutButtonEnabled="{Binding Path=BindingModel.IsSemanticZoomEnabled}" 
+                  CanChangeViews="{Binding Path=BindingModel.IsSemanticZoomEnabled}"
                   x:Name="SemanticZoom"
                   ViewChangeStarted="SemanticZoom_OnViewChangeStarted" >
         <SemanticZoom.ZoomedOutView>
