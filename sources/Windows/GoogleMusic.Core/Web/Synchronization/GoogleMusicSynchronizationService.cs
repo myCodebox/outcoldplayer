@@ -272,7 +272,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
                         }
                         else
                         {
-                            toBeInserted.Add(entry.ToUserPlaylistEntry());
+                            toBeInserted.Add(currentEntry = entry.ToUserPlaylistEntry());
                         }
 
                         if (entry.Track != null)
@@ -282,6 +282,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
                             
                             if (currentSong != null)
                             {
+                                currentEntry.SongId = currentSong.SongId;
                                 if (!songsToUpdate.ContainsKey(currentSong.SongId) && libraryFreshnessDate.HasValue)
                                 {
                                     GoogleMusicSongEx.Mapper(entry.Track, currentSong);

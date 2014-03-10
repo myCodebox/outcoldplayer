@@ -72,7 +72,7 @@ limit 1
 
         public Task<Song> FindSongAsync(string providerSongId)
         {
-            return this.Connection.Table<Song>().Where(s => s.SongId == providerSongId).FirstOrDefaultAsync();
+            return this.Connection.Table<Song>().Where(s => s.SongId == providerSongId || s.StoreId == providerSongId).FirstOrDefaultAsync();
         }
 
         public async Task<Song> FindSongByFileAsync(string fileName)

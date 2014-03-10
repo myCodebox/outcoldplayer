@@ -81,6 +81,7 @@ namespace OutcoldSolutions.GoogleMusic.Models
 
         public bool IsLibrary { get; set; }
 
+        [Indexed]
         public string StoreId { get; set; }
 
         public DateTime LastModified { get; set; }

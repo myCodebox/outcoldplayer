@@ -11,7 +11,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
     {
         public static UserPlaylistEntry ToUserPlaylistEntry(this GoogleMusicPlaylistEntry googleMusicPlaylistEntry)
         {
-            var entry = new UserPlaylistEntry();
+            var entry = new UserPlaylistEntry { SongId = googleMusicPlaylistEntry.TrackId };
 
             Mapper(googleMusicPlaylistEntry, entry);
 
@@ -22,7 +22,6 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
         {
             entry.Id = googleMusicPlaylistEntry.Id;
             entry.PlaylistOrder = googleMusicPlaylistEntry.AbsolutePosition;
-            entry.SongId = googleMusicPlaylistEntry.TrackId;
             entry.PlaylistId = googleMusicPlaylistEntry.PlaylistId;
             entry.CreationDate = DateTimeExtensions.FromUnixFileTime(googleMusicPlaylistEntry.CreationTimestamp / 1000);
             entry.LastModified =
