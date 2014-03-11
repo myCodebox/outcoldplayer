@@ -26,6 +26,10 @@ namespace OutcoldSolutions.GoogleMusic.Controls
 
         public DataTemplate RadioDataTemplate { get; set; }
 
+        public DataTemplate MixedRadioDataTemplate { get; set; }
+
+        public DataTemplate ArtistRadioDataTemplate { get; set; }
+
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
         {
             var groupPlaylistBindingModel = item as PlaylistBindingModel;
@@ -67,6 +71,16 @@ namespace OutcoldSolutions.GoogleMusic.Controls
 
             if (playlist is Radio)
             {
+                if (((Radio)playlist).ArtUrls.Length > 1)
+                {
+                    return this.MixedRadioDataTemplate;
+                }
+
+                if (!string.IsNullOrEmpty(((Radio)playlist).GoogleArtistId))
+                {
+                    return this.ArtistRadioDataTemplate;
+                }
+
                 Debug.Assert(this.RadioDataTemplate != null, "this.UserPlaylistDataTemplate != null");
                 return this.RadioDataTemplate;
             }

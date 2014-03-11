@@ -141,6 +141,7 @@
     <Compile Include="Models\ArtistInfo.cs" />
     <Compile Include="Models\CachedAlbumArt.cs" />
     <Compile Include="Models\CachedSong.cs" />
+    <Compile Include="Models\IMixedPlaylist.cs" />
     <Compile Include="Models\PlaylistsChangeEvent.cs" />
     <Compile Include="Models\Radio.cs" />
     <Compile Include="Models\SearchResult.cs" />

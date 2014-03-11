@@ -30,6 +30,28 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
             radio.Recent = DateTimeExtensions.FromUnixFileTime(googleMusicRadio.RecentTimestamp / 1000);
             radio.ClientId = googleMusicRadio.ClientId;
             radio.ArtUrl = string.IsNullOrEmpty(googleMusicRadio.ImageUrl) ? null : new Uri(googleMusicRadio.ImageUrl);
+            if (googleMusicRadio.ImageUrls != null && googleMusicRadio.ImageUrls.Length > 1)
+            {
+                if (googleMusicRadio.ImageUrls.Length >= 4)
+                {
+                    radio.ArtUrl3 = new Uri(googleMusicRadio.ImageUrls[3].Url);
+                }
+
+                if (googleMusicRadio.ImageUrls.Length >= 3)
+                {
+                    radio.ArtUrl2 = new Uri(googleMusicRadio.ImageUrls[2].Url);
+                }
+
+                if (googleMusicRadio.ImageUrls.Length >= 2)
+                {
+                    radio.ArtUrl1 = new Uri(googleMusicRadio.ImageUrls[1].Url);
+                }
+
+                if (googleMusicRadio.ImageUrls.Length >= 1)
+                {
+                    radio.ArtUrl = new Uri(googleMusicRadio.ImageUrls[0].Url);
+                }
+            }
             if (googleMusicRadio.Seed != null)
             {
                 radio.SeedType = googleMusicRadio.Seed.SeedType;

@@ -26,6 +26,7 @@ namespace OutcoldSolutions.GoogleMusic.Models
 
         public uint PlayCount { get; set; }
 
+        [Indexed]
         public byte Rating { get; set; }
 
         public int? Disc { get; set; }
@@ -38,12 +39,14 @@ namespace OutcoldSolutions.GoogleMusic.Models
 
         public int? Year { get; set; }
 
+        [Indexed]
         public Uri AlbumArtUrl { get; set; }
 
         public Uri ArtistArtUrl { get; set; }
 
         public DateTime ServerRecent { get; set; }
 
+        [Indexed]
         public DateTime CreationDate { get; set; }
 
         public string Comment { get; set; }
@@ -77,8 +80,10 @@ namespace OutcoldSolutions.GoogleMusic.Models
         [Indexed]
         public string GenreTitleNorm { get; set; }
 
+        [Indexed]
         public bool IsCached { get; set; }
 
+        [Indexed]
         public bool IsLibrary { get; set; }
 
         [Indexed]

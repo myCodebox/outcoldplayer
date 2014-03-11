@@ -9,7 +9,7 @@ namespace OutcoldSolutions.GoogleMusic.Models
     using SQLite;
 
     [Table("Genre")]
-    public class Genre : IPlaylist
+    public class Genre : IPlaylist, IMixedPlaylist
     {
         [PrimaryKey, AutoIncrement, Column("GenreId")]
         public int GenreId { get; set; }
@@ -45,7 +45,11 @@ namespace OutcoldSolutions.GoogleMusic.Models
 
         public TimeSpan OfflineDuration { get; set; }
 
+        [Ignore]
         public Uri ArtUrl { get; set; }
+
+        [Ignore]
+        public Uri[] ArtUrls { get; set; }
 
         [Indexed]
         public DateTime Recent { get; set; }

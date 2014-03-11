@@ -8,7 +8,7 @@ namespace OutcoldSolutions.GoogleMusic.Models
     using SQLite;
 
     [Table("UserPlaylist")]
-    public class UserPlaylist : IPlaylist
+    public class UserPlaylist : IPlaylist, IMixedPlaylist
     {
         [PrimaryKey]
         public string PlaylistId { get; set; }
@@ -62,7 +62,11 @@ namespace OutcoldSolutions.GoogleMusic.Models
 
         public string Description { get; set; }
 
+        [Ignore]
         public Uri ArtUrl { get; set; }
+
+        [Ignore]
+        public Uri[] ArtUrls { get; set; }
 
         [Indexed]
         public DateTime Recent { get; set; }

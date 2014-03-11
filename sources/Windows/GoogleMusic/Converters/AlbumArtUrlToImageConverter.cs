@@ -6,6 +6,7 @@ namespace OutcoldSolutions.GoogleMusic.Converters
     using System;
     using System.Globalization;
     using System.IO;
+    using System.Linq;
     using System.Net;
 
     using OutcoldSolutions.GoogleMusic.Diagnostics;
@@ -28,23 +29,45 @@ namespace OutcoldSolutions.GoogleMusic.Converters
         {
             try
             {
-                var uri = value as Uri;
+                uint size = AlbumArtUrlExtensions.DefaultAlbumArtSize;
+                Uri uri = null;
+
+                var uris = value as Uri[];
+                if (uris != null)
+                {
+                    int index = System.Convert.ToInt32(parameter);
+                    if (uris.Length > index)
+                    {
+                        uri = uris[index];
+                    }
+                    else
+                    {
+                        uri = uris.LastOrDefault();
+                    }
+
+                    size = 79;
+                }
+                else
+                {
+                    uri = value as Uri;
+
+                    if (parameter != null)
+                    {
+                        size = uint.Parse(parameter.ToString());
+                    }
+                }
+                
                 if (uri == null)
                 {
                     if (parameter != null)
                     {
-                        return string.Format(CultureInfo.InvariantCulture, UnknownAlbumArtFormat, parameter);
+                        return string.Format(CultureInfo.InvariantCulture, UnknownAlbumArtFormat, size);
                     }
 
                     return string.Format(CultureInfo.InvariantCulture, UnknownAlbumArtFormat, 116);
                 }
 
                 var result = new BitmapImage();
-                uint size = AlbumArtUrlExtensions.DefaultAlbumArtSize;
-                if (parameter != null)
-                {
-                    size = uint.Parse(parameter.ToString());
-                }
 
                 this.GetImageAsync(result, uri, size);
 

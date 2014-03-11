@@ -64,7 +64,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                         uri => Task.Run(
                             async () =>
                                 {
-                                    CachedAlbumArt downloadedCache = await this.cachedAlbumArtsRepository.FindAsync(url, size);
+                                    CachedAlbumArt downloadedCache = await this.cachedAlbumArtsRepository.FindAsync(uri.AlbumArtUrl, uri.Size);
                                     if (downloadedCache == null)
                                     {
                                         string fileName = Guid.NewGuid().ToString();
@@ -73,7 +73,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                                         var folder = await this.cacheFolder.CreateFolderAsync(subFolderName, CreationCollisionOption.OpenIfExists);
                                         var file = await folder.CreateFileAsync(fileName);
 
-                                        using (var imageStream = await this.httpClient.GetStreamAsync(url.ChangeSize(size)))
+                                        using (var imageStream = await this.httpClient.GetStreamAsync(uri.AlbumArtUrl.ChangeSize(uri.Size)))
                                         {
                                             using (var targetStream = await file.OpenAsync(FileAccessMode.ReadWrite))
                                             {
@@ -87,14 +87,18 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
                                         downloadedCache = new CachedAlbumArt() { AlbumArtUrl = url, Size = size, FileName = fileName };
 
-                                        await this.cachedAlbumArtsRepository.AddAsync(downloadedCache);
+                                        try
+                                        {
+                                            await this.cachedAlbumArtsRepository.AddAsync(downloadedCache);
+                                        }
+                                        catch (Exception e)
+                                        {
+                                            this.logger.Debug(e, "Could not insert the downloaded cache");
+                                        }
                                     }
 
                                     return downloadedCache;
                                 }));
-
-                    Task<CachedAlbumArt> task;
-                    this.downloadTasks.TryRemove(cachedKey, out task);
                 }
                 finally
                 {

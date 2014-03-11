@@ -11,6 +11,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
 
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services;
+    using OutcoldSolutions.GoogleMusic.Web.Models;
 
     public interface ISystemPlaylistsRepository : IPlaylistRepository<SystemPlaylist>
     {
@@ -19,6 +20,8 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
         Task<IList<Song>> GetSongsAsync(SystemPlaylistType systemPlaylistType, bool includeAll = false);
 
         Task<IList<SystemPlaylist>> GetAllAsync();
+
+        Task<Uri[]> GetUrisAsync(SystemPlaylist playlist);
     }
 
     public class SystemPlaylistsRepository : RepositoryBase, ISystemPlaylistsRepository
@@ -32,8 +35,19 @@ from [Song] as s
 where (?1 = 1 or s.[IsCached] = 1) and s.IsLibrary = 1 and s.[Rating] >= ?2 
 ";
 
+        private const string SqlHiglyRatedSongsPlaylistsAlbumArts = @"
+select * 
+from
+(
+ select distinct(s.AlbumArtUrl) as Url
+ from Song s
+ where s.AlbumArtUrl is not null and (?1 = 1 or s.[IsCached] = 1) and s.IsLibrary = 1 and s.[Rating] >= ?2 
+ order by s.Rating, s.PlayCount, s.Recent desc
+)
+limit 4 ";
+
         private const string SqlLastAddedPlaylist = @"
-select count(*) as SongsCount, sum(x.[Duration]) as Duration, sum(x.IsCached) as OfflineSongsCount, sum(x.[Duration]) as OfflineDuration, ?3 as [SystemPlaylistType] from 
+select count(*) as SongsCount, sum(x.[Duration]) as Duration, sum(x.IsCached) as OfflineSongsCount, sum(x.[Duration]) as OfflineDuration, ?3 as [SystemPlaylistType] from
 (
   select *
   from [Song] as s  
@@ -43,9 +57,31 @@ select count(*) as SongsCount, sum(x.[Duration]) as Duration, sum(x.IsCached) as
 ) as x
 ";
 
+        private const string SqlLastAddedPlaylistAlbumArts = @"
+select * 
+from
+(
+ select distinct(s.AlbumArtUrl) as Url
+ from Song s
+ where s.AlbumArtUrl is not null and (?1 = 1 or s.[IsCached] = 1) and s.IsLibrary = 1 
+ order by s.CreationDate desc
+)
+limit 4 ";
+
         private const string SqlAllSongsPlaylist = @"
 select count(*) as SongsCount, sum(s.[Duration]) as Duration, sum(s.IsCached) as OfflineSongsCount, sum(s.[Duration]) as OfflineDuration, ?2 as [SystemPlaylistType] from [Song] as s where (?1 = 1 or s.[IsCached] = 1) and s.IsLibrary = 1 
 ";
+
+        private const string SqlAllSongsPlaylistAlbumArts = @"
+select * 
+from
+(
+ select distinct(s.AlbumArtUrl) as Url
+ from Song s
+ where s.AlbumArtUrl is not null and (?1 = 1 or s.[IsCached] = 1) and s.IsLibrary = 1 
+ order by s.Recent desc
+)
+limit 4 ";
 
         private const string SqlAllSongs = @"
 select s.* 
@@ -90,7 +126,6 @@ limit ?2
         {
             return (await this.Connection.QueryAsync<SystemPlaylist>(SqlAllSongsPlaylist, this.stateService.IsOnline(), SystemPlaylistType.AllSongs)).First();
         }
-
 
         public Task<IList<Song>> GetSongsAsync(string id, bool includeAll = false)
         {
@@ -168,6 +203,21 @@ limit ?2
         private async Task<IList<Song>> GetLastAddedSongsAsync(bool includeAll = false)
         {
             return await this.Connection.QueryAsync<Song>(SqlLastAddedSongs, includeAll || this.stateService.IsOnline(), LastAddedSongsCount);
+        }
+
+        public async Task<Uri[]> GetUrisAsync(SystemPlaylist playlist)
+        {
+            switch (playlist.SystemPlaylistType)
+            {
+                case SystemPlaylistType.AllSongs:
+                    return (await this.Connection.QueryAsync<UrlRef>(SqlAllSongsPlaylistAlbumArts, this.stateService.IsOnline())).Select(x => new Uri(x.Url)).ToArray();
+                case SystemPlaylistType.HighlyRated:
+                    return (await this.Connection.QueryAsync<UrlRef>(SqlHiglyRatedSongsPlaylistsAlbumArts, this.stateService.IsOnline(), HighlyRatedValue)).Select(x => new Uri(x.Url)).ToArray();
+                case SystemPlaylistType.LastAdded:
+                    return (await this.Connection.QueryAsync<UrlRef>(SqlLastAddedPlaylistAlbumArts, this.stateService.IsOnline())).Select(x => new Uri(x.Url)).ToArray();
+                default:
+                    throw new ArgumentOutOfRangeException("playlist");
+            }
         }
     }
 }

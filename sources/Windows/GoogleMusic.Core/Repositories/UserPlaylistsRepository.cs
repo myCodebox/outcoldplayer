@@ -12,6 +12,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
 
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services;
+    using OutcoldSolutions.GoogleMusic.Web.Models;
 
     public interface IUserPlaylistsRepository : IPlaylistRepository<UserPlaylist>
     {
@@ -34,6 +35,8 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
         Task<UserPlaylistEntry> GetEntryAsync(string id);
 
         Task<List<UserPlaylist>> GetAllUserPlaylistsAsync();
+
+        Task<Uri[]> GetUrisAsync(UserPlaylist playlist);
     }
 
     public class UserPlaylistsRepository : RepositoryBase, IUserPlaylistsRepository
@@ -75,6 +78,19 @@ limit 1
         private const string SqlSelectAll = @"
 select p.*
 from UserPlaylist p
+";
+
+        private const string SqlGetUris = @"
+select *
+from
+(
+ select distinct(s.AlbumArtUrl) as Url
+ from Song s 
+    inner join UserPlaylistEntry e on s.SongId = e.SongId and e.PlaylistId = ?2
+ where s.AlbumArtUrl is not null and (?1 = 1 or s.[IsCached] = 1) 
+ order by s.Recent desc
+)
+limit 4
 ";
 
         private readonly IApplicationStateService stateService;
@@ -119,7 +135,7 @@ from UserPlaylist p
                 query = query.AppendFormat(CultureInfo.InvariantCulture, " limit {0}", take.Value);
             }
 
-            return await Connection.QueryAsync<UserPlaylist>(query.ToString());
+            return await Connection.QueryAsync<UserPlaylist>(query.ToString(), this.stateService.IsOnline());
         }
 
         public async Task<UserPlaylist> GetAsync(string id)
@@ -260,6 +276,11 @@ from UserPlaylist p
         public Task<List<UserPlaylist>> GetAllUserPlaylistsAsync()
         {
             return this.Connection.Table<UserPlaylist>().Where(a => a.Type == "USER_GENERATED").OrderBy(x => x.TitleNorm).ToListAsync();
+        }
+
+        public async Task<Uri[]> GetUrisAsync(UserPlaylist playlist)
+        {
+             return (await this.Connection.QueryAsync<UrlRef>(SqlGetUris, this.stateService.IsOnline(), playlist.PlaylistId)).Select(x => new Uri(x.Url)).ToArray();
         }
     }
 }

@@ -6,7 +6,7 @@ namespace OutcoldSolutions.GoogleMusic.Models
 {
     using System;
 
-    public class SystemPlaylist : IPlaylist
+    public class SystemPlaylist : IPlaylist, IMixedPlaylist
     {
         public SystemPlaylistType SystemPlaylistType { get; set; }
 
@@ -49,6 +49,8 @@ namespace OutcoldSolutions.GoogleMusic.Models
         public TimeSpan OfflineDuration { get; set; }
 
         public Uri ArtUrl { get; set; }
+
+        public Uri[] ArtUrls { get; set; }
 
         public DateTime Recent { get; set; }
     }

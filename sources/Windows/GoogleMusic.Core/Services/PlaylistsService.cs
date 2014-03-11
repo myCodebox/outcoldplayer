@@ -5,9 +5,11 @@
 namespace OutcoldSolutions.GoogleMusic.Services
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using System.Xml.Linq;
 
     using OutcoldSolutions.GoogleMusic.InversionOfControl;
     using OutcoldSolutions.GoogleMusic.Models;
@@ -28,6 +30,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
         Task<IEnumerable<IPlaylist>> GetAllAsync(PlaylistType playlistType, Order order, uint? take = null);
 
         Task<IEnumerable<IPlaylist>> SearchAsync(PlaylistType playlistType, string searchQuery, uint? take = null);
+
+        Task GetArtUrisAsync(IMixedPlaylist playlist);
     }
 
     public class PlaylistsService : IPlaylistsService
@@ -42,18 +46,24 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         private readonly ISettingsService settingsService;
 
+        private readonly IApplicationStateService applicationStateService;
+
+        private readonly ConcurrentDictionary<string, Task<Uri[]>> cachedUris = new ConcurrentDictionary<string, Task<Uri[]>>(); 
+
         public PlaylistsService(
             IDependencyResolverContainer container,
             IRadioStationsService radioStationsService,
             IUserPlaylistsService userPlaylistsService,
             IApplicationResources applicationResources,
-            ISettingsService settingsService)
+            ISettingsService settingsService,
+            IApplicationStateService applicationStateService)
         {
             this.container = container;
             this.radioStationsService = radioStationsService;
             this.userPlaylistsService = userPlaylistsService;
             this.applicationResources = applicationResources;
             this.settingsService = settingsService;
+            this.applicationStateService = applicationStateService;
         }
 
         public IPlaylistRepository<TPlaylist> GetRepository<TPlaylist>() where TPlaylist : IPlaylist
@@ -183,6 +193,43 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     return await this.GetRepository<Radio>().SearchAsync(searchQuery, take);
                 default:
                     throw new ArgumentOutOfRangeException("playlistType");
+            }
+        }
+
+        public async Task GetArtUrisAsync(IMixedPlaylist playlist)
+        {
+            switch (playlist.PlaylistType)
+            {
+                case PlaylistType.Genre:
+                    playlist.ArtUrls = await ((IGenresRepository)this.GetRepository<Genre>()).GetUrisAsync((Genre)playlist);
+                    break;
+                case PlaylistType.UserPlaylist:
+                    UserPlaylist userPlaylist = (UserPlaylist)playlist;
+                    if (userPlaylist.IsShared)
+                    {
+                        userPlaylist.ArtUrls = await this.cachedUris.GetOrAdd(userPlaylist.PlaylistId,
+                            s => Task.Run(
+                                async () =>
+                                {
+                                    Uri[] result = null;
+                                    var songs = await this.userPlaylistsService.GetSharedPlaylistSongsAsync(userPlaylist);
+                                    if (songs != null)
+                                    {
+                                        result = songs.OrderByDescending(x => x.Recent).Select(x => x.AlbumArtUrl).Distinct().Take(4).ToArray();
+                                    }
+                                    return result;
+                                }));
+                    }
+                    else
+                    {
+                        playlist.ArtUrls = await ((IUserPlaylistsRepository)this.GetRepository<UserPlaylist>()).GetUrisAsync((UserPlaylist)playlist);
+                    }
+                    break;
+                case PlaylistType.SystemPlaylist:
+                    playlist.ArtUrls = await ((ISystemPlaylistsRepository)this.GetRepository<SystemPlaylist>()).GetUrisAsync((SystemPlaylist)playlist);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("playlist");
             }
         }
 
