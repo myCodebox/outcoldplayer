@@ -25,7 +25,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
         private readonly IApplicationStateService stateService;
         private readonly ICachedAlbumArtsRepository cachedAlbumArtsRepository;
 
-        private readonly SemaphoreSlim semaphoreSlim = new SemaphoreSlim(2);
+        private readonly SemaphoreSlim semaphoreSlim = new SemaphoreSlim(10);
         private readonly SemaphoreSlim initializationSemaphore = new SemaphoreSlim(1);
         private readonly ConcurrentDictionary<CachedKey, Task<CachedAlbumArt>> downloadTasks = new ConcurrentDictionary<CachedKey, Task<CachedAlbumArt>>();
         private readonly HttpClient httpClient = new HttpClient();

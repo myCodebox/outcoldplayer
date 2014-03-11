@@ -30,7 +30,9 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private int maxItems = int.MaxValue;
 
-        private IList<IPlaylist> collection; 
+        private IList<IPlaylist> collection;
+
+        private bool isMixedList = false;
 
         public PlaylistsListViewPresenter(
             IPlayQueueService playQueueService,
@@ -85,6 +87,19 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             }
         }
 
+        public bool IsMixedList
+        {
+            get
+            {
+                return this.isMixedList;
+            }
+
+            set
+            {
+                this.isMixedList = value;
+            }
+        }
+
         public void SetCollection(IEnumerable<IPlaylist> enumerable)
         {
             this.collection = enumerable == null ? null : enumerable.ToList();
@@ -94,7 +109,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             }
             else
             {
-                this.Playlists = new ObservableCollection<PlaylistBindingModel>(this.collection.Take(this.MaxItems).Select(x => new PlaylistBindingModel(x) { PlayCommand = this.PlayCommand }));
+                this.Playlists = new ObservableCollection<PlaylistBindingModel>(this.collection.Take(this.MaxItems).Select(x => new PlaylistBindingModel(x) { PlayCommand = this.PlayCommand, IsMixedList = this.IsMixedList }));
             }
         }
 

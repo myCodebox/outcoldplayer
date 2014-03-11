@@ -22,10 +22,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using Windows.System;
     using Windows.UI.Popups;
 
-    public class StartPageViewPresenter : PlaylistsPageViewPresenterBase<IStartPageView, PlaylistsPageViewBindingModel>
+    public class HomePageViewPresenter : PlaylistsPageViewPresenterBase<IHomePageView, PlaylistsPageViewBindingModel>
     {
-        private const int MaxItems = 5;
-
         private const int AskForReviewStarts = 10;
         private const string DoNotAskToReviewKey = "DoNotAskToReviewKey";
         private const string CountOfStartsBeforeReview = "CountOfStartsBeforeReview";
@@ -43,7 +41,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private bool initialized = false;
 
-        public StartPageViewPresenter(
+        public HomePageViewPresenter(
             IApplicationResources resources,
             ISettingsService settingsService,
             IAuthentificationService authentificationService,
@@ -252,9 +250,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private async Task LoadPlaylists()
         {
+            const int MaxItems = 30;
+
             List<IPlaylist> results = new List<IPlaylist>();
 
-            List<IPlaylist> allPlaylists = new List<IPlaylist>();
+            List<IPlaylist> allPlaylists = new List<IPlaylist>();           
 
             if (this.stateService.IsOnline())
             {
@@ -265,15 +265,31 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             }
 
             results.AddRange(await this.playlistsService.GetAllAsync(PlaylistType.SystemPlaylist, Order.LastPlayed, MaxItems));
-            foreach (var playlistType in new[] { PlaylistType.UserPlaylist, PlaylistType.Artist, PlaylistType.Album, PlaylistType.Genre })
+
+            foreach (var playlistType in new[] { PlaylistType.UserPlaylist, PlaylistType.Album, PlaylistType.Genre })
             {
                 allPlaylists.AddRange(await this.playlistsService.GetAllAsync(playlistType, Order.LastPlayed, MaxItems));
             }
 
-            results.AddRange(allPlaylists.OrderByDescending(x => x.Recent));
-           
+            results.AddRange(allPlaylists.OrderByDescending(
+                x =>
+                {
+                    var userPlaylist = x as UserPlaylist;
+                    if (userPlaylist != null)
+                    {
+                        return userPlaylist.Recent > userPlaylist.CreationDate
+                            ? userPlaylist.Recent
+                            : userPlaylist.CreationDate;
+                    }
 
-            await this.Dispatcher.RunAsync(() => { this.BindingModel.Playlists = results; });
+                    return x.Recent;
+                }).Take(50));
+
+            await this.Dispatcher.RunAsync(
+                () =>
+                {
+                    this.BindingModel.Playlists = results;
+                });
         }
 
         private void VerifyIfCanAskForReview()

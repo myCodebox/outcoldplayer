@@ -48,154 +48,144 @@
         </AppBar>
     </Page.BottomAppBar>
 
-    <Grid Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
-        
-        <ContentControl x:Name="SnappedViewContentControl" 
-                        Visibility="Collapsed"
+    <Grid x:Name="FullViewGrid" Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
+        <ContentControl Grid.RowSpan="2"
+                        x:Name="MainMenuContainer"
                         VerticalAlignment="Stretch"
                         HorizontalAlignment="Stretch"
                         VerticalContentAlignment="Stretch"
-                        HorizontalContentAlignment="Stretch"/>
-        
-        <Grid x:Name="FullViewGrid">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
+                        HorizontalContentAlignment="Stretch" />
 
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-
-            <ContentControl Grid.RowSpan="2"
-                            x:Name="MainMenuContainer"
-                            VerticalAlignment="Stretch"
-                            HorizontalAlignment="Stretch"
-                            VerticalContentAlignment="Stretch"
-                            HorizontalContentAlignment="Stretch" />
-
-            <ContentControl Grid.Row="0" 
-                            Grid.RowSpan="3"
-                            Grid.Column="1"
-                            Grid.ColumnSpan="2"
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Stretch"
-                            HorizontalContentAlignment="Stretch"
-                            VerticalContentAlignment="Stretch"
-                            x:Name="BackgroundContentControl"
-                            Visibility="{Binding Path=Content, RelativeSource={RelativeSource Self}, Converter={StaticResource NullToInvisibilityConverter}}"/>
-
-            <ContentControl HorizontalAlignment="Right" 
-                            VerticalAlignment="Top"
-                            Margin="0, 20, 0, 0" 
-                            Grid.Column="1"  
-                            Grid.Row="0" 
-                            Grid.RowSpan="2"
-                            x:Name="LinksContentControl"
-                            Visibility="{Binding Path=Content, RelativeSource={RelativeSource Self}, Converter={StaticResource NullToInvisibilityConverter}}"/>
-    
-            <Grid Grid.Row="0"
-                  Grid.Column="1"
-                  HorizontalAlignment="Left"
-                  Margin="40, 0, 20, 0" 
-                  Height="80" 
-                  x:Name="TitleGrid" >
-
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="50"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-
-                <Button Style="{StaticResource BackButtonStyle}" 
-                        Visibility="{Binding Path=IsBackButtonVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                        Command="{Binding Path=GoBackCommand}"
-                        Margin="5, 0, 0, 0"/>
-                
-                <Image Source="ms-appx:///Assets/StoreLogo.png"
-                       Visibility="{Binding Path=IsBackButtonVisible, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}"
-                       VerticalAlignment="Bottom"  
-                       Margin="0,-20,0,0" 
-                       Width="50" 
-                       Height="50"/>
-
-                <TextBlock Style="{StaticResource HeaderTextStyle}" 
-                       x:Name="TitleTextBox"
-                       Margin="20, 0, 0, 0"
-                       Grid.Column="1" 
-                       VerticalAlignment="Bottom" 
-                       TextWrapping="NoWrap" 
-                       TextTrimming="WordEllipsis"/>
-
-                <TextBlock Style="{StaticResource SubheaderTextStyle}" 
-                       x:Name="SubtitleTextBox"
-                       Grid.Column="2" 
-                       VerticalAlignment="Bottom" 
-                       Margin="20, 0, 0, 0" />
-            </Grid>
-
-            <ProgressRing x:Name="ProgressRing" 
-                      Grid.Row="1" 
-                      Grid.Column="1" />
-
-            <ContentControl Grid.Row="1"
+        <ContentControl Grid.Row="0" 
+                        Grid.RowSpan="3"
                         Grid.Column="1"
-                        Margin="40, 20, 10, 0"
+                        Grid.ColumnSpan="2"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch"
                         HorizontalContentAlignment="Stretch"
                         VerticalContentAlignment="Stretch"
-                        Visibility="{Binding Path=IsActive, ElementName=ProgressRing, Converter={StaticResource BooleanToInvisibilityConverter}}"
-                        x:Name="ContentControl" />
-
-            <ContentControl Grid.Row="0" 
-                        Grid.RowSpan="2"
-                        Grid.Column="2"
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Stretch"
-                        HorizontalContentAlignment="Stretch"
-                        VerticalContentAlignment="Stretch"
-                        x:Name="RightRegionContentControl"
+                        x:Name="BackgroundContentControl"
                         Visibility="{Binding Path=Content, RelativeSource={RelativeSource Self}, Converter={StaticResource NullToInvisibilityConverter}}"/>
 
-            <Popup IsLightDismissEnabled="True" 
-                   x:Name="AppToolBarLeftPopup" 
-                   HorizontalAlignment="Left" 
-                   VerticalAlignment="Bottom" 
-                   Closed="PopupViewClosed"
-                   Grid.Row="1"
-                   Grid.Column="0"
-                   Grid.ColumnSpan="3" >
-                <Popup.ChildTransitions>
-                    <TransitionCollection>
-                        <PopupThemeTransition FromHorizontalOffset="0" FromVerticalOffset="30" />
-                    </TransitionCollection>
-                </Popup.ChildTransitions>
-            </Popup>
-
-            <Popup IsLightDismissEnabled="True" 
-                   x:Name="AppToolBarRightPopup" 
-                   HorizontalAlignment="Right" 
-                   VerticalAlignment="Bottom" 
-                   Closed="PopupViewClosed"
-                   Grid.Row="1"
-                   Grid.Column="1"
-                   Grid.ColumnSpan="2">
-                <Popup.ChildTransitions>
-                    <TransitionCollection>
-                        <PopupThemeTransition FromHorizontalOffset="0" FromVerticalOffset="30" />
-                    </TransitionCollection>
-                </Popup.ChildTransitions>
-            </Popup>
-
-            <Border Grid.Row="2" 
+        <ContentControl HorizontalAlignment="Right" 
+                        VerticalAlignment="Top"
+                        Margin="0, 20, 0, 0" 
+                        Grid.Column="1"  
+                        Grid.Row="0" 
+                        Grid.RowSpan="2"
+                        x:Name="LinksContentControl"
+                        Visibility="{Binding Path=Content, RelativeSource={RelativeSource Self}, Converter={StaticResource NullToInvisibilityConverter}}"/>
+    
+        <Grid Grid.Row="0"
                 Grid.Column="1"
-                x:Name="BottomAppBarFakeBorder"/>
+                HorizontalAlignment="Left"
+                Margin="40, 0, 20, 0" 
+                Height="80" 
+                x:Name="TitleGrid" >
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="50"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Button Style="{StaticResource BackButtonStyle}" 
+                    Visibility="{Binding Path=IsBackButtonVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                    Command="{Binding Path=GoBackCommand}"
+                    Margin="5, 0, 0, 0"/>
+                
+            <Image Source="ms-appx:///Assets/StoreLogo.png"
+                    Visibility="{Binding Path=IsBackButtonVisible, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}"
+                    VerticalAlignment="Bottom"  
+                    Margin="0,-20,0,0" 
+                    Width="50" 
+                    Height="50"/>
+
+            <TextBlock Style="{StaticResource HeaderTextStyle}" 
+                    x:Name="TitleTextBox"
+                    Margin="20, 0, 0, 0"
+                    Grid.Column="1" 
+                    VerticalAlignment="Bottom" 
+                    TextWrapping="NoWrap" 
+                    TextTrimming="WordEllipsis"/>
+
+            <TextBlock Style="{StaticResource SubheaderTextStyle}" 
+                    x:Name="SubtitleTextBox"
+                    Grid.Column="2" 
+                    VerticalAlignment="Bottom" 
+                    Margin="20, 0, 0, 0" />
         </Grid>
 
+        <ProgressRing x:Name="ProgressRing" 
+                    Grid.Row="1" 
+                    Grid.Column="1" />
+
+        <ContentControl Grid.Row="1"
+                    Grid.Column="1"
+                    Margin="40, 20, 10, 0"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    HorizontalContentAlignment="Stretch"
+                    VerticalContentAlignment="Stretch"
+                    Visibility="{Binding Path=IsActive, ElementName=ProgressRing, Converter={StaticResource BooleanToInvisibilityConverter}}"
+                    x:Name="ContentControl" />
+
+        <ContentControl Grid.Row="0" 
+                    Grid.RowSpan="2"
+                    Grid.Column="2"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    HorizontalContentAlignment="Stretch"
+                    VerticalContentAlignment="Stretch"
+                    x:Name="RightRegionContentControl"
+                    Visibility="{Binding Path=Content, RelativeSource={RelativeSource Self}, Converter={StaticResource NullToInvisibilityConverter}}"/>
+
+        <Popup IsLightDismissEnabled="True" 
+                x:Name="AppToolBarLeftPopup" 
+                HorizontalAlignment="Left" 
+                VerticalAlignment="Bottom" 
+                Closed="PopupViewClosed"
+                Grid.Row="1"
+                Grid.Column="0"
+                Grid.ColumnSpan="3" >
+            <Popup.ChildTransitions>
+                <TransitionCollection>
+                    <PopupThemeTransition FromHorizontalOffset="0" FromVerticalOffset="30" />
+                </TransitionCollection>
+            </Popup.ChildTransitions>
+        </Popup>
+
+        <Popup IsLightDismissEnabled="True" 
+                x:Name="AppToolBarRightPopup" 
+                HorizontalAlignment="Right" 
+                VerticalAlignment="Bottom" 
+                Closed="PopupViewClosed"
+                Grid.Row="1"
+                Grid.Column="1"
+                Grid.ColumnSpan="2">
+            <Popup.ChildTransitions>
+                <TransitionCollection>
+                    <PopupThemeTransition FromHorizontalOffset="0" FromVerticalOffset="30" />
+                </TransitionCollection>
+            </Popup.ChildTransitions>
+        </Popup>
+
+        <Border Grid.Row="2" 
+            Grid.Column="1"
+            x:Name="BottomAppBarFakeBorder"/>
     </Grid>
+
     
 </Page>

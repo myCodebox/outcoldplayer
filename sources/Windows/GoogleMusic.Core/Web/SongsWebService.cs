@@ -270,7 +270,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
             string url = null;
 
             bool useSignature = !string.IsNullOrEmpty(song.StoreId) 
-                                && song.TrackType != StreamType.Free
+                                && song.TrackType != StreamType.Uploaded
                                 && song.TrackType != StreamType.OwnLibrary;
 
             if (forceSwitch)

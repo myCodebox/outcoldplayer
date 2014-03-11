@@ -73,7 +73,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     this.logger.Debug("Playlist was created on the server with id '{0}' for name '{1}'.", mutation.Id, name);
                 }
 
-                var userPlaylist = new UserPlaylist { PlaylistId = mutation.Id, Title = name, TitleNorm = name.Normalize(), Type = "USER_GENERATED" };
+                var userPlaylist = new UserPlaylist { PlaylistId = mutation.Id, Title = name, TitleNorm = name.Normalize(), Type = "USER_GENERATED", CreationDate = new DateTime(), LastModified = new DateTime() };
 
                 await this.repository.InsertAsync(new[] { userPlaylist });
 

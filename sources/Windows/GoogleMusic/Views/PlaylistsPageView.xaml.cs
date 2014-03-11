@@ -27,11 +27,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
     {
     }
 
-    public interface IStartPageView : IPageView
-    {
-    }
-
-    public sealed partial class PlaylistsPageView : PageViewBase, IPlaylistsPageView, IUserPlaylistsPageView, IRadioPageView, IStartPageView
+    public sealed partial class PlaylistsPageView : PageViewBase, IPlaylistsPageView, IUserPlaylistsPageView, IRadioPageView
     {
         private IPlaylistsListView playlistsListView;
 

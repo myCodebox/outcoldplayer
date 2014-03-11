@@ -4,6 +4,7 @@
 namespace OutcoldSolutions.GoogleMusic.Converters
 {
     using System;
+    using System.Globalization;
 
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Data;
@@ -18,15 +19,30 @@ namespace OutcoldSolutions.GoogleMusic.Converters
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             var playlist = value as Artist;
+
+            int count = 0;
+
             if (playlist != null)
             {
                 if (stateService.Value.IsOnline())
                 {
-                    return playlist.AlbumsCount;
+                    count = playlist.AlbumsCount;
                 }
                 else
                 {
-                    return playlist.OfflineAlbumsCount;
+                    count = playlist.OfflineAlbumsCount;
+                }
+            }
+
+            if (count > 0)
+            {
+                if (count == 1)
+                {
+                    return "1 Album";
+                }
+                else
+                {
+                    return string.Format(CultureInfo.CurrentCulture, "{0} Albums", count);
                 }
             }
 

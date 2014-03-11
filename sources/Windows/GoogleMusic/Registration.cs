@@ -21,10 +21,10 @@ namespace OutcoldSolutions.GoogleMusic
         public static void RegisterPages(IRegistrationContext registration)
         {
             // Start page view
-            registration.Register<IStartPageView>()
-                        .InjectionRule<BindingModelBase, StartPageViewPresenter>()
-                        .AsSingleton<PlaylistsPageView>();
-            registration.Register<StartPageViewPresenter>().AsSingleton();
+            registration.Register<IHomePageView>()
+                        .InjectionRule<BindingModelBase, HomePageViewPresenter>()
+                        .AsSingleton<HomePageView>();
+            registration.Register<HomePageViewPresenter>().AsSingleton();
 
             // Playlists view (albums, genres, artists)
             registration.Register<IPlaylistsPageView>()

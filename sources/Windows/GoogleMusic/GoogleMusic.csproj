@@ -126,6 +126,7 @@
     <Compile Include="BindingModels\Settings\AccountViewBindingModel.cs" />
     <Compile Include="BindingModels\Settings\SupportBindingModel.cs" />
     <Compile Include="Controls\TextChangedBindingBehavior.cs" />
+    <Compile Include="Converters\AlbumDetailsConverter.cs" />
     <Compile Include="Converters\NotEmptyToVisibilityConverter.cs" />
     <Compile Include="Presenters\SongsListViewPresenter.cs" />
     <Compile Include="BindingModels\AuthentificationPageViewBindingModel.cs" />
@@ -141,6 +142,9 @@
     <Compile Include="Converters\BooleanToColumnWidthConverter.cs" />
     <Compile Include="Presenters\PlaylistsListViewPresenter.cs" />
     <Compile Include="Services\SelectSongEvent.cs" />
+    <Compile Include="Views\HomePageView.xaml.cs">
+      <DependentUpon>HomePageView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\PlaylistsListView.xaml.cs">
       <DependentUpon>PlaylistsListView.xaml</DependentUpon>
     </Compile>
@@ -255,7 +259,7 @@
     <Compile Include="Presenters\Popups\ReleasesHistoryPopupViewPresenter.cs" />
     <Compile Include="Presenters\SearchPageViewPresenter.cs" />
     <Compile Include="Presenters\Settings\AccountsViewPresenter.cs" />
-    <Compile Include="Presenters\StartPageViewPresenter.cs" />
+    <Compile Include="Presenters\HomePageViewPresenter.cs" />
     <Compile Include="Services\RightRegionControlService.cs" />
     <Compile Include="Services\Publishers\TileCurrentSongPublisher.cs" />
     <Compile Include="Shell\ScreenLocker.cs" />
@@ -450,6 +454,10 @@
     <Page Include="Common\StandardStyles.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\HomePageView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\PlaylistsListView.xaml">
       <SubType>Designer</SubType>

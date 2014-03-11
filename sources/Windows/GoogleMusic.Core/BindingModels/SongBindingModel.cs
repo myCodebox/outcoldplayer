@@ -126,7 +126,23 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         {
             get
             {
-                return this.Metadata.ContentType == 1;
+                return this.Metadata.IsExplicit();
+            }
+        }
+
+        public bool IsDeleted
+        {
+            get
+            {
+                return this.Metadata.IsDeleted();
+            }
+        }
+
+        public bool IsAllAccess
+        {
+            get
+            {
+                return this.Metadata.IsAllAccess();
             }
         }
 
@@ -139,6 +155,8 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             this.RaisePropertyChanged(() => this.PlayCount);
             this.RaisePropertyChanged(() => this.Rating);
             this.RaisePropertyChanged(() => this.IsExplicit);
+            this.RaisePropertyChanged(() => this.IsDeleted);
+            this.RaisePropertyChanged(() => this.IsAllAccess);
         }
     }
 }

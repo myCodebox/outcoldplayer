@@ -67,7 +67,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
             frameworkElement = this.allAccessAlbums as PlaylistsListView;
             if (frameworkElement != null)
             {
-                frameworkElement.MaxItems = 4;
+                frameworkElement.MaxItems = 6;
                 frameworkElement.SetBinding(
                     PlaylistsListView.ItemsSourceProperty,
                     new Binding()
@@ -81,7 +81,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
             frameworkElement = this.realtedArtists as PlaylistsListView;
             if (frameworkElement != null)
             {
-                frameworkElement.MaxItems = 4;
+                frameworkElement.MaxItems = 3;
                 frameworkElement.SetBinding(
                     PlaylistsListView.ItemsSourceProperty,
                     new Binding()

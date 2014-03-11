@@ -3,203 +3,161 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:controls="using:OutcoldSolutions.GoogleMusic.Controls">
 
     <DataTemplate x:Key="AlbumDataTemplate">
-        <Border >
-            <Grid Width="294" Height="146" Margin="0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
+        <Grid Width="160" Height="240" Background="{StaticResource ListViewItemPlaceholderBackgroundThemeBrush}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="160"/>
+                <RowDefinition Height="80"/>
+            </Grid.RowDefinitions>
 
-                <Border Background="{StaticResource ListViewItemPlaceholderBackgroundThemeBrush}" Grid.ColumnSpan="2" Visibility="{Binding Path=Playlist.IsCollection, Converter={StaticResource BooleanToInvisibilityConverter}}" />
-                <Border Background="{StaticResource ListViewItemPlaceholderBackgroundThemeBrush}" Grid.ColumnSpan="2" Opacity="0.3" Visibility="{Binding Path=Playlist.IsCollection, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+            <Border Width="160" Height="160" Background="Gray">
+                <Image Width="160" Height="160" Source="{Binding Path=Playlist.ArtUrl, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=160, Mode=OneWay}" Stretch="None"/>
+            </Border>
                 
-                <Border Margin="15" Width="116" Height="116" Background="Gray">
-                    <Image Width="116" Height="116" Source="{Binding Path=Playlist.ArtUrl, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=116, Mode=OneWay}" Stretch="None"/>
-                </Border>
-                <StackPanel Grid.Column="1" Margin="0,15,10,0">
-                    <TextBlock Text="{Binding Path=Playlist.Title, Mode=OneWay}"  Style="{StaticResource BodyTextStyle}" TextWrapping="Wrap" TextTrimming="WordEllipsis" MaxHeight="40" Margin="0, 0, 20, 0"/>
-                    <TextBlock Text="{Binding Path=Playlist.Artist.Title, Mode=OneTime}" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="Wrap" TextTrimming="WordEllipsis" MaxHeight="20"/>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{Binding Path=Playlist, Mode=OneTime, Converter={StaticResource PlaylistDurationConverter}}" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
-                        <TextBlock Text=" (" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
-                        <TextBlock Text="{Binding Path=Playlist, Mode=OneTime, Converter={StaticResource PlaylistSongsCountConverter}}" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
-                        <TextBlock Text=")" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
-                    </StackPanel>
-                    <TextBlock Text="{Binding Path=Playlist.Year, Mode=OneTime}" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" Visibility="{Binding Path=BindingModel.Playlist.Year, Converter={StaticResource ValueToInvisibilityConverter}, ConverterParameter=0}"/>
-                </StackPanel>
-                <Button Grid.Column="1"
-                        Width="65"
-                        Height="65"
-                        Style="{StaticResource PlayAppBarButtonStyle}"  
-                        AutomationProperties.Name=""
-                        VerticalAlignment="Bottom"
-                        HorizontalAlignment="Right"
-                        Command="{Binding Path=PlayCommand, Mode=OneTime}"
-                        CommandParameter="{Binding Path=Playlist, Mode=OneTime}"/>
-            </Grid>
-        </Border>
+            <StackPanel Grid.Row="1" Margin="10,5,5,5">
+                <TextBlock Text="{Binding Path=Playlist.Title, Mode=OneWay}"  Style="{StaticResource BodyTextStyle}" TextWrapping="NoWrap" TextTrimming="WordEllipsis" />
+                <TextBlock Text="{Binding Path=Playlist.Artist.Title, Mode=OneTime}" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap" TextTrimming="WordEllipsis" />
+                <TextBlock Text="{Binding Path=Playlist, Mode=OneTime, Converter={StaticResource AlbumDetailsConverter}}" 
+                            Style="{StaticResource SmallTextStyle}" 
+                            Margin="0, 10, 0, 5"/>
+            </StackPanel>
+        </Grid>
     </DataTemplate>
 
     <DataTemplate x:Key="ArtistDataTemplate">
-        <Border Background="{StaticResource ListViewItemPlaceholderBackgroundThemeBrush}">
-            <Grid Width="294" Height="146" Margin="0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <Border Margin="15" Width="116" Height="116" Background="Gray">
-                    <Image Width="116" Height="116" Source="{Binding Path=Playlist.ArtUrl, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=116, Mode=OneWay}" Stretch="None"/>
-                </Border>
-                <StackPanel Grid.Column="1" Margin="0,15,10,0">
-                    <TextBlock Text="{Binding Path=Playlist.Title, Mode=OneWay}"  Style="{StaticResource BodyTextStyle}" TextWrapping="Wrap" TextTrimming="WordEllipsis" MaxHeight="40"/>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{Binding Path=Playlist, Mode=OneTime, Converter={StaticResource ArtistAlbumsCountConverter}}" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" />
-                        <TextBlock Margin="7, 0, 0, 0"  x:Uid="ArtistTile_Albums" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" />
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{Binding Path=Playlist, Mode=OneTime, Converter={StaticResource PlaylistDurationConverter}}" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
-                        <TextBlock Text=" (" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
-                        <TextBlock Text="{Binding Path=Playlist, Mode=OneTime, Converter={StaticResource PlaylistSongsCountConverter}}" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
-                        <TextBlock Text=")" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
-                    </StackPanel>
+        <Grid Width="352" Height="216" Background="{StaticResource ListViewItemPlaceholderBackgroundThemeBrush}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="156"/>
+                <RowDefinition Height="60"/>
+            </Grid.RowDefinitions>
+            <Border  Width="352" Height="156" Background="Gray">
+                <Image Width="352" Height="156" Source="{Binding Path=Playlist.ArtUrl, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=352, Mode=OneWay}" Stretch="None"/>
+            </Border>
+            <StackPanel Grid.Row="1" Margin="10,5,5,5">
+                <TextBlock Text="{Binding Path=Playlist.Title, Mode=OneWay}"  Style="{StaticResource BodyTextStyle}" TextWrapping="NoWrap" TextTrimming="WordEllipsis" />
+                <StackPanel Orientation="Horizontal" Visibility="{Binding Path=Playlist.AlbumsCount, Mode=OneTime, Converter={StaticResource ValueToInvisibilityConverter}, ConverterParameter=0}">
+                    <TextBlock Text="{Binding Path=Playlist, Mode=OneTime, Converter={StaticResource ArtistAlbumsCountConverter}}" 
+                                Style="{StaticResource SmallTextStyle}" 
+                                Margin="0, 10, 0, 5" />
                 </StackPanel>
-                <Button Grid.Column="1"
-                        Width="65"
-                        Height="65"
-                        Style="{StaticResource PlayAppBarButtonStyle}"  
-                        AutomationProperties.Name=""
-                        VerticalAlignment="Bottom"
-                        HorizontalAlignment="Right"
-                        Command="{Binding Path=PlayCommand, Mode=OneTime}"
-                        CommandParameter="{Binding Path=Playlist, Mode=OneTime}"/>
-            </Grid>
-        </Border>
+            </StackPanel>
+        </Grid>
     </DataTemplate>
 
     <DataTemplate x:Key="GenreDataTemplate">
-        <Border Background="{StaticResource ListViewItemPlaceholderBackgroundThemeBrush}">
-            <Grid Width="294" Height="146" Margin="0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <Border Margin="15" Width="116" Height="116" Background="Gray">
-                    <Image Width="116" Height="116" Source="{Binding Path=Playlist.ArtUrl, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=116, Mode=OneWay}" Stretch="None"/>
-                </Border>
-                <StackPanel Grid.Column="1" Margin="0,15,10,0">
-                    <TextBlock Text="{Binding Path=Playlist.Title, Mode=OneWay}"  Style="{StaticResource BodyTextStyle}" TextWrapping="Wrap"  TextTrimming="WordEllipsis" MaxHeight="40"/>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{Binding Path=Playlist, Mode=OneTime, Converter={StaticResource PlaylistDurationConverter}}" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
-                        <TextBlock Text=" (" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
-                        <TextBlock Text="{Binding Path=Playlist, Mode=OneTime, Converter={StaticResource PlaylistSongsCountConverter}}" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
-                        <TextBlock Text=")" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
-                    </StackPanel>
-                </StackPanel>
-                <Button Grid.Column="1"
-                        Width="65"
-                        Height="65"
-                        Style="{StaticResource PlayAppBarButtonStyle}"  
-                        AutomationProperties.Name=""
-                        VerticalAlignment="Bottom"
-                        HorizontalAlignment="Right"
-                        Command="{Binding Path=PlayCommand, Mode=OneTime}"
-                        CommandParameter="{Binding Path=Playlist, Mode=OneTime}"/>
-            </Grid>
-        </Border>
+        <Grid Width="160" Height="Auto" Background="{StaticResource ListViewItemPlaceholderBackgroundThemeBrush}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="160"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+                
+            <Border Width="160" Height="160" Background="Gray">
+                <Image Width="160" Height="160" Source="{Binding Path=Playlist.ArtUrl, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=160, Mode=OneWay}" Stretch="None"/>
+            </Border>
+
+            <StackPanel Grid.Row="1" Margin="10,5,5,5">
+                <TextBlock Text="{Binding Path=Playlist.Title, Mode=OneWay}" 
+                            Style="{StaticResource BodyTextStyle}" 
+                            TextWrapping="Wrap" 
+                            TextTrimming="WordEllipsis"
+                            Height="40"
+                            Margin="0, 0, 0, 10"/>
+                <TextBlock Text="Genre" 
+                            Margin="0, 0, 0, 5" 
+                            Style="{StaticResource SmallTextStyle}" 
+                            TextWrapping="NoWrap" 
+                            Visibility="{Binding Path=IsMixedList, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            </StackPanel>
+        </Grid>
     </DataTemplate>
 
     <DataTemplate x:Key="SystemPlaylistDataTemplate">
-        <Border Background="{StaticResource ListViewItemPlaceholderBackgroundThemeBrush}">
-            <Grid Width="294" Height="146" Margin="0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <Border Margin="15" Width="116" Height="116" Background="Gray">
-                    <Image Width="116" Height="116" Source="ms-appx:///Resources/UnknownArt-116.png" Stretch="None"/>
-                </Border>
-                <StackPanel Grid.Column="1" Margin="0,15,10,0">
-                    <TextBlock Text="{Binding Path=Playlist.Title, Mode=OneWay}"  Style="{StaticResource BodyTextStyle}" TextWrapping="Wrap"  TextTrimming="WordEllipsis" MaxHeight="40"/>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{Binding Path=Playlist, Mode=OneTime, Converter={StaticResource PlaylistDurationConverter}}" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
-                        <TextBlock Text=" (" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
-                        <TextBlock Text="{Binding Path=Playlist, Mode=OneTime, Converter={StaticResource PlaylistSongsCountConverter}}" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
-                        <TextBlock Text=")" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
-                    </StackPanel>
+        <Grid Width="160" Height="240" Background="{StaticResource ListViewItemPlaceholderBackgroundThemeBrush}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="160"/>
+                <RowDefinition Height="80"/>
+            </Grid.RowDefinitions>
+
+            <Border  Width="160" Height="160" Background="Gray">
+                <Image Width="160" Height="160" Source="{Binding Path=Playlist.ArtUrl, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=352, Mode=OneWay}" Stretch="None"/>
+            </Border>
+
+            <StackPanel Grid.Row="1" Margin="10,5,5,5">
+                <TextBlock Text="{Binding Path=Playlist.Title, Mode=OneWay}"  Style="{StaticResource BodyTextStyle}" TextWrapping="NoWrap" TextTrimming="WordEllipsis"
+                            Margin="0, 0, 0, 10"/>
+                <StackPanel Orientation="Horizontal" Margin="0, 20, 0, 5">
+                    <TextBlock Text="{Binding Path=Playlist, Mode=OneTime, Converter={StaticResource PlaylistDurationConverter}}" Style="{StaticResource SmallTextStyle}" TextWrapping="NoWrap"/>
+                    <TextBlock Text=" (" Style="{StaticResource SmallTextStyle}" TextWrapping="NoWrap"/>
+                    <TextBlock Text="{Binding Path=Playlist, Mode=OneTime, Converter={StaticResource PlaylistSongsCountConverter}}" Style="{StaticResource SmallTextStyle}" TextWrapping="NoWrap"/>
+                    <TextBlock Text=")" Style="{StaticResource SmallTextStyle}" TextWrapping="NoWrap"/>
                 </StackPanel>
-                <Button Grid.Column="1"
-                        Width="65"
-                        Height="65"
-                        Style="{StaticResource PlayAppBarButtonStyle}"  
-                        AutomationProperties.Name=""
-                        VerticalAlignment="Bottom"
-                        HorizontalAlignment="Right"
-                        Command="{Binding Path=PlayCommand, Mode=OneTime}"
-                        CommandParameter="{Binding Path=Playlist, Mode=OneTime}"/>
-            </Grid>
-        </Border>
+            </StackPanel>
+        </Grid>
     </DataTemplate>
 
     <DataTemplate x:Key="UserPlaylistDataTemplate">
-        <Border Background="{StaticResource ListViewItemPlaceholderBackgroundThemeBrush}">
-            <Grid Width="294" Height="146" Margin="0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <Border Margin="15" Width="116" Height="116" Background="Gray">
-                    <Image Width="116" Height="116" Source="{Binding Path=Playlist.ArtUrl, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=116, Mode=OneWay}" Stretch="None"/>
-                </Border>
-                <StackPanel Grid.Column="1" Margin="0,15,10,0">
-                    <TextBlock Text="{Binding Path=Playlist.Title, Mode=OneWay}"  Style="{StaticResource BodyTextStyle}" TextWrapping="Wrap"  TextTrimming="WordEllipsis" MaxHeight="40"/>
-                    <StackPanel Orientation="Horizontal" Visibility="{Binding Path=Playlist.IsShared, Converter={StaticResource BooleanToInvisibilityConverter}, Mode=OneTime}">
-                        <TextBlock Text="{Binding Path=Playlist, Mode=OneTime, Converter={StaticResource PlaylistDurationConverter}}" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
-                        <TextBlock Text=" (" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
-                        <TextBlock Text="{Binding Path=Playlist, Mode=OneTime, Converter={StaticResource PlaylistSongsCountConverter}}" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
-                        <TextBlock Text=")" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal" Visibility="{Binding Path=Playlist.IsShared, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneTime}">
-                        <TextBlock Text="By" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap" Margin="0, 0, 5, 0"/>
-                        <TextBlock Text="{Binding Path=Playlist.OwnerName, Mode=OneTime}" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
-                    </StackPanel>
+        <Grid Width="160" Height="Auto" Background="{StaticResource ListViewItemPlaceholderBackgroundThemeBrush}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="160"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Border Width="160" Height="160" Background="Gray">
+                <Image Width="160" Height="160" Source="{Binding Path=Playlist.ArtUrl, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=160, Mode=OneWay}" Stretch="None"/>
+            </Border>
+
+            <StackPanel Grid.Row="1" Margin="10,5,5,5">
+                <TextBlock Text="{Binding Path=Playlist.Title, Mode=OneWay}"  Style="{StaticResource BodyTextStyle}" TextWrapping="NoWrap" TextTrimming="WordEllipsis" />
+                <StackPanel Orientation="Horizontal" Height="20" Margin="0, 0, 0, 10">
+                    <TextBlock Text="By" 
+                                Style="{StaticResource BodyTextStyle}" 
+                                Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" 
+                                TextWrapping="NoWrap" 
+                                Margin="0, 0, 5, 0" 
+                                Visibility="{Binding Path=Playlist.IsShared, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneTime}"/>
+                    <TextBlock Text="{Binding Path=Playlist.OwnerName, Mode=OneTime}" 
+                                Style="{StaticResource BodyTextStyle}" 
+                                Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" 
+                                TextWrapping="NoWrap"
+                                Visibility="{Binding Path=Playlist.IsShared, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneTime}"/>
                 </StackPanel>
-                <Button Grid.Column="1"
-                        Width="65"
-                        Height="65"
-                        Style="{StaticResource PlayAppBarButtonStyle}"  
-                        AutomationProperties.Name=""
-                        VerticalAlignment="Bottom"
-                        HorizontalAlignment="Right"
-                        Command="{Binding Path=PlayCommand, Mode=OneTime}"
-                        CommandParameter="{Binding Path=Playlist, Mode=OneTime}"/>
-            </Grid>
-        </Border>
+                <TextBlock Text="Playlist" 
+                            Margin="0, 0, 0, 5" 
+                            Style="{StaticResource SmallTextStyle}" 
+                            TextWrapping="NoWrap" 
+                            Visibility="{Binding Path=IsMixedList, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            </StackPanel>
+        </Grid>
     </DataTemplate>
 
     <DataTemplate x:Key="RadioDataTemplate">
-        <Border Background="{StaticResource ListViewItemPlaceholderBackgroundThemeBrush}">
-            <Grid Width="294" Height="146" Margin="0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <Border Margin="15" Width="116" Height="116" Background="Gray">
-                    <Image Width="116" Height="116" Source="{Binding Path=Playlist.ArtUrl, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=116, Mode=OneWay}" Stretch="None"/>
-                </Border>
-                <StackPanel Grid.Column="1" Margin="0,15,10,0">
-                    <TextBlock Text="{Binding Path=Playlist.Title, Mode=OneWay}"  Style="{StaticResource BodyTextStyle}" TextWrapping="Wrap"  TextTrimming="WordEllipsis" MaxHeight="40"/>
-                </StackPanel>
-                <Button Grid.Column="1"
-                        Width="65"
-                        Height="65"
-                        Style="{StaticResource PlayAppBarButtonStyle}"  
-                        AutomationProperties.Name=""
-                        VerticalAlignment="Bottom"
-                        HorizontalAlignment="Right"
-                        Command="{Binding Path=PlayCommand, Mode=OneTime}"
-                        CommandParameter="{Binding Path=Playlist, Mode=OneTime}"/>
-            </Grid>
-        </Border>
+        <Grid Width="160" Height="Auto" Background="{StaticResource ListViewItemPlaceholderBackgroundThemeBrush}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="160"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Border Width="160" Height="160" Background="Gray" Grid.Row="0">
+                <Image Width="160" Height="160" Source="{Binding Path=Playlist.ArtUrl, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=160, Mode=OneWay}" Stretch="UniformToFill" Opacity="0.5"  />
+            </Border>
+
+            <Border Width="160" Height="160" Background="Transparent" Grid.Row="0">
+                <Image Width="160" Height="160" Source="{Binding Path=Playlist.ArtUrl, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=160, Mode=OneWay}" Stretch="None"  />
+            </Border>
+
+            <StackPanel Grid.Row="1" Margin="10,5,5,5">
+                <TextBlock Text="{Binding Path=Playlist.Title, Mode=OneWay}" 
+                            Style="{StaticResource BodyTextStyle}" 
+                            TextWrapping="Wrap" 
+                            TextTrimming="WordEllipsis"
+                            Height="40"
+                            Margin="0, 0, 0, 10"/>
+                <TextBlock Text="Radio" 
+                            Margin="0, 0, 0, 5" 
+                            Style="{StaticResource SmallTextStyle}" 
+                            TextWrapping="NoWrap" 
+                            Visibility="{Binding Path=IsMixedList, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            </StackPanel>
+        </Grid>
     </DataTemplate>
 
     <controls:PlaylistDataTemplateSelector 
@@ -221,7 +179,7 @@
         <Setter Property="ItemContainerStyle">
             <Setter.Value>
                 <Style TargetType="ListViewItem">
-                    <Setter Property="Margin" Value="0" />
+                    <Setter Property="Margin" Value="12" />
                     <Setter Property="Padding" Value="0" />
                 </Style>
             </Setter.Value>
@@ -232,14 +190,6 @@
                     <WrapGrid Orientation="Horizontal"
                               Margin="0, 0, 0, 40"/>
                 </ItemsPanelTemplate>
-            </Setter.Value>
-        </Setter>
-        <Setter Property="ItemContainerStyle">
-            <Setter.Value>
-                <Style TargetType="ListViewItem">
-                    <Setter Property="Margin" Value="0" />
-                    <Setter Property="Padding" Value="0" />
-                </Style>
             </Setter.Value>
         </Setter>
     </Style>

@@ -100,8 +100,6 @@ namespace OutcoldSolutions.GoogleMusic.Converters
             {
                 this.logger.Value.Error(e, "Exception while tried to load album art with GetImageAsync.");
             }
-
-
         }
     }
 }

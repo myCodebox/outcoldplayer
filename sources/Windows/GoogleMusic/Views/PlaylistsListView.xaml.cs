@@ -41,6 +41,12 @@ namespace OutcoldSolutions.GoogleMusic.Views
             set { this.GetPresenter<PlaylistsListViewPresenter>().MaxItems = value; }
         }
 
+        public bool IsMixedList
+        {
+            get { return this.GetPresenter<PlaylistsListViewPresenter>().IsMixedList; }
+            set { this.GetPresenter<PlaylistsListViewPresenter>().IsMixedList = value; }
+        }
+
         public IEnumerable ItemsSource
         {
             get { return (IEnumerable)GetValue(ItemsSourceProperty); }

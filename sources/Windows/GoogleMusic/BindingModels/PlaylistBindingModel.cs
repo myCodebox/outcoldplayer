@@ -30,5 +30,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
                 return this.playlist;
             }
         }
+
+        public bool IsMixedList { get; set; }
     }
 }

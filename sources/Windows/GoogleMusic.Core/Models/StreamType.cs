@@ -8,14 +8,18 @@ namespace OutcoldSolutions.GoogleMusic.Models
     [Flags]
     public enum StreamType : byte
     {
-        Free = 0,
+        Uploaded = 0,
 
         EphemeralSubscription = 1,
 
         OwnLibrary = 2,
 
-        Type6 = 6,
+        Purchased = 4,
 
-        Type7 = 7
+        Free = 6,
+
+        AllAccess = 7,
+
+        AllAccessLibrary = 8
     }
 }

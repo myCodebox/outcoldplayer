@@ -44,7 +44,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.settingsService = settingsService;
             this.applicationResources = applicationResources;
 
-            this.HomeCommand = new DelegateCommand(() => this.navigationService.NavigateTo<IStartPageView>());
+            this.HomeCommand = new DelegateCommand(() => this.navigationService.NavigateTo<IHomePageView>());
             this.QueueCommand = new DelegateCommand(() => this.navigationService.NavigateTo<ICurrentPlaylistPageView>());
             this.UserPlaylistsCommand = new DelegateCommand(() => this.navigationService.NavigateTo<IUserPlaylistsPageView>(PlaylistType.UserPlaylist));
             this.RadioStationsCommand = new DelegateCommand(() => this.navigationService.NavigateTo<IRadioPageView>(PlaylistType.Radio));
@@ -52,10 +52,10 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.PlaylistsCommand = new DelegateCommand(this.NavigatePlaylistsView);
 
             eventAggregator.GetEvent<ApplicationStateChangeEvent>()
-                .Subscribe((e) => this.RaisePropertyChanged(() => this.IsRadioVisible));
+                .Subscribe(async (e) => await this.Dispatcher.RunAsync(() => this.RaisePropertyChanged(() => this.IsRadioVisible)));
             eventAggregator.GetEvent<SettingsChangeEvent>()
                 .Where(x => string.Equals(x.Key, GoogleMusicCoreSettingsServiceExtensions.IsAllAccessAvailableKey, StringComparison.OrdinalIgnoreCase))
-                .Subscribe((e) => this.RaisePropertyChanged(() => this.RadioText));
+                .Subscribe(async (e) => await this.Dispatcher.RunAsync(() => this.RaisePropertyChanged(() => this.RadioText)));
 
             this.navigationService.NavigatedTo += this.NavigationServiceOnNavigatedTo;
 
@@ -202,18 +202,18 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         {
             this.FreezeNotifications();
 
-            this.IsHomeSelected = args.View is IStartPageView;
+            this.IsHomeSelected = args.View is IHomePageView;
             this.IsQueueSelected = args.View is ICurrentPlaylistPageView;
-            this.IsPlaylistsSelected = (args.View is IUserPlaylistsPageView) || 
-                (args.View is IPlaylistPageView && ((PlaylistNavigationRequest)args.Parameter).PlaylistType == PlaylistType.UserPlaylist);
+            this.IsPlaylistsSelected = (args.View is IUserPlaylistsPageView) ||
+                (args.View is IPlaylistPageView && args.Parameter is PlaylistNavigationRequest && ((PlaylistNavigationRequest)args.Parameter).PlaylistType == PlaylistType.UserPlaylist);
             this.IsRadioSelected = (args.View is IRadioPageView) ||
-                (args.View is IPlaylistPageView && ((PlaylistNavigationRequest)args.Parameter).PlaylistType == PlaylistType.Radio);
+                (args.View is IPlaylistPageView && args.Parameter is PlaylistNavigationRequest && ((PlaylistNavigationRequest)args.Parameter).PlaylistType == PlaylistType.Radio);
             this.IsArtistsSelected = (args.View is IPlaylistsPageView && args.Parameter is PlaylistType && (PlaylistType)args.Parameter == PlaylistType.Artist) ||
-                (args.View is IPlaylistPageView && ((PlaylistNavigationRequest)args.Parameter).PlaylistType == PlaylistType.Artist);
+                (args.View is IPlaylistPageView && args.Parameter is PlaylistNavigationRequest && ((PlaylistNavigationRequest)args.Parameter).PlaylistType == PlaylistType.Artist);
             this.IsAlbumsSelected = (args.View is IPlaylistsPageView && args.Parameter is PlaylistType && (PlaylistType)args.Parameter == PlaylistType.Album) ||
-                (args.View is IPlaylistPageView && ((PlaylistNavigationRequest)args.Parameter).PlaylistType == PlaylistType.Album);
+                (args.View is IPlaylistPageView && args.Parameter is PlaylistNavigationRequest && ((PlaylistNavigationRequest)args.Parameter).PlaylistType == PlaylistType.Album);
             this.IsGenresSelected = (args.View is IPlaylistsPageView && args.Parameter is PlaylistType && (PlaylistType)args.Parameter == PlaylistType.Genre) ||
-                (args.View is IPlaylistPageView && ((PlaylistNavigationRequest)args.Parameter).PlaylistType == PlaylistType.Genre);
+                (args.View is IPlaylistPageView && args.Parameter is PlaylistNavigationRequest && ((PlaylistNavigationRequest)args.Parameter).PlaylistType == PlaylistType.Genre);
             this.IsSearchSelected = args.View is ISearchPageView;
 
             this.UnfreezeNotifications();

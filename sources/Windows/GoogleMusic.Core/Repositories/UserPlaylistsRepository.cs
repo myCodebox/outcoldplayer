@@ -5,6 +5,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
@@ -71,6 +72,11 @@ where exists(select * from UserPlaylistEntry e where e.PlaylistId = p.PlaylistId
 limit 1
 ";
 
+        private const string SqlSelectAll = @"
+select p.*
+from UserPlaylist p
+";
+
         private readonly IApplicationStateService stateService;
 
         public UserPlaylistsRepository(IApplicationStateService stateService)
@@ -92,28 +98,28 @@ limit 1
 
         public async Task<IList<UserPlaylist>> GetAllAsync(Order order, uint? take = null)
         {
-            var query = this.Connection.Table<UserPlaylist>();
+            StringBuilder query = new StringBuilder(SqlSelectAll);
 
             if (this.stateService.IsOffline())
             {
-                query = query.Where(a => a.OfflineSongsCount > 0 && a.Type == "USER_GENERATED");
+                query.Append(" where p.OfflineSongsCount > 0 and p.Type == \"USER_GENERATED\"");
             }
 
             if (order == Order.Name)
             {
-                query = query.OrderBy(p => p.TitleNorm);
+                query = query.Append(" order by p.TitleNorm");
             }
             else if (order == Order.LastPlayed)
             {
-                query = query.OrderByDescending(p => p.Recent);
+                query = query.Append(" order by max(p.Recent, p.CreationDate)");
             }
 
             if (take.HasValue)
             {
-                query = query.Take((int)take.Value);
+                query = query.AppendFormat(CultureInfo.InvariantCulture, " limit {0}", take.Value);
             }
 
-            return await query.ToListAsync();
+            return await Connection.QueryAsync<UserPlaylist>(query.ToString());
         }
 
         public async Task<UserPlaylist> GetAsync(string id)

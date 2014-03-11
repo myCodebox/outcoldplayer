@@ -327,7 +327,7 @@ namespace OutcoldSolutions.GoogleMusic
                 Container.Resolve<MediaControlIntegration>();
                 Container.Resolve<ScreenLocker>();
 
-                Container.Resolve<INavigationService>().NavigateTo<IStartPageView>();
+                Container.Resolve<INavigationService>().NavigateTo<IHomePageView>();
             }
         }
 

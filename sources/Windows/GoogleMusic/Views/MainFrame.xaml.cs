@@ -121,31 +121,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
             this.SizeChanged += (sender, args) =>
                 {
-                    if (ApplicationView.Value == ApplicationViewState.Snapped)
-                    {
-                        this.FullViewGrid.Visibility = Visibility.Collapsed;
-                        this.SnappedViewContentControl.Visibility = Visibility.Visible;
-
-                        var control = this.SnappedViewContentControl.Content as Control;
-                        if (control != null)
-                        {
-                            control.Focus(FocusState.Programmatic);
-                        }
-
-                        this.bottomToolWasOpen = this.BottomAppBar.IsOpen;
-                    }
-                    else
-                    {
-                        this.FullViewGrid.Visibility = Visibility.Visible;
-                        this.SnappedViewContentControl.Visibility = Visibility.Collapsed;
-
-                        var control = this.ContentControl.Content as Control;
-                        if (control != null)
-                        {
-                            control.Focus(FocusState.Programmatic);
-                        }
-                    }
-
                     this.UpdateFullScreenPopupSize();
                     this.UpdateBottomAppBarVisibility();
 
@@ -271,10 +246,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
                     this.SetLinksRegion(content);
                     break;
 
-                case MainFrameRegion.SnappedView:
-                    this.SetSnappedRegion(content);
-                    break;
-
                 default:
                     throw new NotSupportedException(string.Format(CultureInfo.CurrentCulture, "Region {0} is not supported.", region));
             }
@@ -321,10 +292,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
                 case MainFrameRegion.Links:
                     this.LinksContentControl.Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
-                    break;
-
-                case MainFrameRegion.SnappedView:
-                    this.SnappedViewContentControl.Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
                     break;
 
                 default:
@@ -558,11 +525,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
         private void SetLinksRegion(object content)
         {
             this.LinksContentControl.Content = content;
-        }
-
-        private void SetSnappedRegion(object content)
-        {
-            this.SnappedViewContentControl.Content = content;
         }
 
         private void SetBottomAppBarRightZoneRegion(object content)

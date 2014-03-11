@@ -36,11 +36,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
         /// <summary>
         /// The links region (top right corner).
         /// </summary>
-        Links = 5,
-
-        /// <summary>
-        /// Region for snapped view.
-        /// </summary>
-        SnappedView = 6
+        Links = 5
     }
 }

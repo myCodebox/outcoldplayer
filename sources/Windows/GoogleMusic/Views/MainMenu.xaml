@@ -24,7 +24,7 @@
             <Setter Property="Margin" Value="20, 0, 20, 0" />
         </Style>
 
-        <Style x:Key="MenuTextStyle" TargetType="TextBlock" BasedOn="{StaticResource TitleTextStyle}">
+        <Style x:Key="MenuTextStyle" TargetType="TextBlock" BasedOn="{StaticResource BodyTextStyle}">
             <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="Margin" Value="0, 0, 0, 10" />
         </Style>
@@ -203,6 +203,7 @@
                                             <TextBlock Style="{Binding Path=IconName, Converter={StaticResource StringToResourceConverter}}"/>
                                             <TextBlock Text="{Binding Path=Title}"
                                                        Style="{StaticResource SmallTextStyle}"
+                                                       FontWeight="SemiLight"
                                                        VerticalAlignment="Center"/>
                                         </StackPanel>
                                     </Button>
