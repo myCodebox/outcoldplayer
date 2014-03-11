@@ -21,6 +21,7 @@
             <Setter Property="TextTrimming" Value="WordEllipsis" />
             <Setter Property="TextWrapping" Value="NoWrap" />
         </Style>
+        <x:String x:Key="TimeIcon">&#xE121;</x:String>
     </views:ViewBase.Resources>
     
     <Grid>
@@ -37,12 +38,12 @@
                 Background="{StaticResource ListViewItemBorder}">
             <Grid Margin="0, 0, 0, 0">
                 <Grid.ColumnDefinitions >
-                    <ColumnDefinition Width="40" />
+                    <ColumnDefinition Width="35" />
                     <ColumnDefinition Width="2*" />
-                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="70" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="{Binding Path=IsAlbumColumnVisible, ElementName=This, Converter={StaticResource BooleanToColumnWidthConverter}}" />
-                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="70" />
                     <ColumnDefinition Width="150" />
                 </Grid.ColumnDefinitions>
 
@@ -52,13 +53,17 @@
                                                 CurrentSorting="{Binding Path=CurrentSorting, Mode=OneWay}"
                                                 UpSorting="TitleDescending"
                                                 DownSorting="Title" 
+                                                FontSize="18"
+                                                FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                                                Margin="-10, 0, 0, 0"
                                                 x:Uid="SongsList_SongTitle"/>
 
                 <controls:SortableHeaderControl Grid.Column="2" 
                                                 SortCommand="{Binding Path=SortCommand}"
-                                                Title="&#xE121;"
+                                                Title="{StaticResource TimeIcon}"
                                                 FontFamily="Segoe UI Symbol"
-                                                FontWeight="Normal"
+                                                FontWeight="SemiLight"
+                                                FontSize="18"
                                                 CurrentSorting="{Binding Path=CurrentSorting, Mode=OneWay}"
                                                 UpSorting="DurationDescending"
                                                 DownSorting="Duration"/>
@@ -69,6 +74,8 @@
                                                 CurrentSorting="{Binding Path=CurrentSorting, Mode=OneWay}"
                                                 UpSorting="ArtistDescending"
                                                 DownSorting="Artist"
+                                                FontSize="18"
+                                                FontFamily="{StaticResource ContentControlThemeFontFamily}"
                                                 x:Uid="SongsList_SongArtist"/>
 
                 <controls:SortableHeaderControl Grid.Column="4" 
@@ -77,16 +84,20 @@
                                                 CurrentSorting="{Binding Path=CurrentSorting, Mode=OneWay}"
                                                 UpSorting="AlbumDescending"
                                                 DownSorting="Album" 
+                                                FontSize="18"
+                                                FontFamily="{StaticResource ContentControlThemeFontFamily}"
                                                 Visibility="{Binding Path=IsAlbumColumnVisible, ElementName=This, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneTime}"
                                                 x:Uid="SongsList_SongAlbum"/>
 
                 <controls:SortableHeaderControl Grid.Column="5" 
                                                 SortCommand="{Binding Path=SortCommand}"
-                                                Title="plays"
+                                                Title="&#xE189;"
                                                 CurrentSorting="{Binding Path=CurrentSorting, Mode=OneWay}"
                                                 UpSorting="PlaysCountDescending"
                                                 DownSorting="PlaysCount"
-                                                x:Uid="SongsList_SongPlayCounts"/>
+                                                FontFamily="Segoe UI Symbol"
+                                                FontWeight="SemiLight"
+                                                FontSize="18" />
 
                 <controls:SortableHeaderControl Grid.Column="6" 
                                                 SortCommand="{Binding Path=SortCommand}"
@@ -94,6 +105,8 @@
                                                 CurrentSorting="{Binding Path=CurrentSorting, Mode=OneWay}"
                                                 UpSorting="RatingDescending"
                                                 DownSorting="Rating" 
+                                                FontSize="18"
+                                                FontFamily="{StaticResource ContentControlThemeFontFamily}"
                                                 x:Uid="SongsList_SongRating"/>
             </Grid>
         </Border>
@@ -129,10 +142,10 @@
                         <Grid.ColumnDefinitions >
                             <ColumnDefinition Width="35" />
                             <ColumnDefinition Width="2*" />
-                            <ColumnDefinition Width="80" />
+                            <ColumnDefinition Width="70" />
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="{Binding Path=IsAlbumColumnVisible, ElementName=This, Converter={StaticResource BooleanToColumnWidthConverter}}" />
-                            <ColumnDefinition Width="80" />
+                            <ColumnDefinition Width="70" />
                             <ColumnDefinition Width="150" />
                         </Grid.ColumnDefinitions>
 
@@ -154,7 +167,7 @@
 
                             <TextBlock Style="{StaticResource SongTitleStyle}" Text="{Binding Path=Title, Mode=OneWay}" HorizontalAlignment="Left" TextTrimming="WordEllipsis" />
                             <Border Grid.Column="1" 
-                                    BorderBrush="LightSalmon" 
+                                    BorderBrush="{StaticResource ApplicationThemeCompound3Brush}" 
                                     BorderThickness="1"
                                     Visibility="{Binding Path=IsExplicit, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                                     VerticalAlignment="Center"
@@ -163,12 +176,12 @@
                                 <TextBlock 
                                         Text="EXPLICIT"
                                         Style="{StaticResource SmallTextStyle}"
-                                        Foreground="LightSalmon"
+                                        Foreground="{StaticResource ApplicationThemeCompound3Brush}"
                                         FontSize="9"/>
                             </Border>
 
                             <Border Grid.Column="2" 
-                                    BorderBrush="Red" 
+                                    BorderBrush="{StaticResource ApplicationThemeCompound4Brush}" 
                                     BorderThickness="1"
                                     Visibility="{Binding Path=IsDeleted, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                                     VerticalAlignment="Center"
@@ -177,12 +190,12 @@
                                 <TextBlock 
                                         Text="DELETED"
                                         Style="{StaticResource SmallTextStyle}"
-                                        Foreground="Red"
+                                        Foreground="{StaticResource ApplicationThemeCompound4Brush}"
                                         FontSize="9"/>
                             </Border>
 
                             <Border Grid.Column="3" 
-                                    BorderBrush="LightSeaGreen"
+                                    BorderBrush="{StaticResource ApplicationThemeCompound1Brush}"
                                     BorderThickness="1"
                                     Visibility="{Binding Path=IsAllAccess, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                                     VerticalAlignment="Center"
@@ -191,7 +204,7 @@
                                 <TextBlock 
                                         Text="AA"
                                         Style="{StaticResource SmallTextStyle}"
-                                        Foreground="LightSeaGreen"
+                                        Foreground="{StaticResource ApplicationThemeCompound1Brush}"
                                         FontSize="9"/>
                             </Border>
 
