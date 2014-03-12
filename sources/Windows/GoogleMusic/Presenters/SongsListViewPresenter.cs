@@ -344,6 +344,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 this.ClearSelectedItems();
                 this.Songs = new ObservableCollection<SongBindingModel>(enumerable.Select(x => new SongBindingModel(x)));
                 this.CurrentSorting = songsSorting;
+                this.UpdateSongStates(this.playQueueService.GetCurrentSong(), this.playQueueService.State);
             }
         }
 

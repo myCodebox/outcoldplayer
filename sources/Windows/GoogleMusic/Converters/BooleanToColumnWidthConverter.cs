@@ -15,6 +15,11 @@ namespace OutcoldSolutions.GoogleMusic.Converters
         {
             if ((bool)value)
             {
+                if (parameter != null)
+                {
+                    return new GridLength(System.Convert.ToDouble(parameter), GridUnitType.Pixel);
+                }
+
                 return new GridLength(1, GridUnitType.Star);
             }
 

@@ -36,7 +36,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
             if (frameworkElement != null)
             {
                 frameworkElement.IsAlbumColumnVisible = false;
-
+                frameworkElement.IsNumColumnVisible = true;
                 frameworkElement.SetBinding(
                     SongsListView.ItemsSourceProperty,
                     new Binding()

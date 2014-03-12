@@ -39,6 +39,9 @@ namespace OutcoldSolutions.GoogleMusic.Views
         public static readonly DependencyProperty IsAlbumColumnVisibleProperty =
            DependencyProperty.Register("IsAlbumColumnVisible", typeof(bool), typeof(SongsListView), new PropertyMetadata(true));
 
+        public static readonly DependencyProperty IsNumColumnVisibleProperty =
+            DependencyProperty.Register("IsNumColumnVisible", typeof(bool), typeof(SongsListView), new PropertyMetadata(false));
+
         public SongsListView()
         {
             this.InitializeComponent();
@@ -78,6 +81,12 @@ namespace OutcoldSolutions.GoogleMusic.Views
         {
             get { return (bool)GetValue(IsAlbumColumnVisibleProperty); }
             set { SetValue(IsAlbumColumnVisibleProperty, value); }
+        }
+
+        public bool IsNumColumnVisible
+        {
+            get { return (bool)GetValue(IsNumColumnVisibleProperty); }
+            set { SetValue(IsNumColumnVisibleProperty, value); }
         }
 
         public int MaxItems
