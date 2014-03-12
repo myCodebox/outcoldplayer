@@ -63,11 +63,11 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             }
         }
 
-        public int? Track
+        public string Track
         {
             get
             {
-                return this.Metadata.Track;
+                return !this.Metadata.Track.HasValue || this.Metadata.Track.Value == 0 ? string.Empty : this.Metadata.Track.Value.ToString();
             }
         }
 

@@ -16,11 +16,11 @@ namespace OutcoldSolutions.GoogleMusic.Controls
     [TemplateVisualState(GroupName = "SortDirection", Name = "Down")] 
     public class SortableHeaderControl : Control
     {
-        public static readonly DependencyProperty UpSortingProperty = DependencyProperty.Register(
-            "UpSorting", typeof(SongsSorting), typeof(SortableHeaderControl), new PropertyMetadata(SongsSorting.Unknown));
+        public static readonly DependencyProperty AscendingSortingProperty = DependencyProperty.Register(
+            "AscendingSorting", typeof(SongsSorting), typeof(SortableHeaderControl), new PropertyMetadata(SongsSorting.Unknown));
 
-        public static readonly DependencyProperty DownSortingProperty = DependencyProperty.Register(
-            "DownSorting", typeof(SongsSorting), typeof(SortableHeaderControl), new PropertyMetadata(SongsSorting.Unknown));
+        public static readonly DependencyProperty DescensingSortingProperty = DependencyProperty.Register(
+            "DescensingSorting", typeof(SongsSorting), typeof(SortableHeaderControl), new PropertyMetadata(SongsSorting.Unknown));
 
         public static readonly DependencyProperty CurrentSortingProperty = DependencyProperty.Register(
             "CurrentSorting", typeof(SongsSorting), typeof(SortableHeaderControl), new PropertyMetadata(SongsSorting.Unknown, (o, args) => ((SortableHeaderControl)o).OnCurrentSortingChanged()));
@@ -31,16 +31,19 @@ namespace OutcoldSolutions.GoogleMusic.Controls
         public static readonly DependencyProperty TitleProperty = DependencyProperty.Register(
             "Title", typeof(string), typeof(SortableHeaderControl), new PropertyMetadata(string.Empty));
 
-        public SongsSorting UpSorting
+        public static readonly DependencyProperty TitleAlignmentProperty =
+            DependencyProperty.Register("TitleAlignment", typeof(HorizontalAlignment), typeof(SortableHeaderControl), new PropertyMetadata(HorizontalAlignment.Left));
+
+        public SongsSorting AscendingSorting
         {
-            get { return (SongsSorting)this.GetValue(UpSortingProperty); }
-            set { this.SetValue(UpSortingProperty, value); }
+            get { return (SongsSorting)this.GetValue(AscendingSortingProperty); }
+            set { this.SetValue(AscendingSortingProperty, value); }
         }
 
-        public SongsSorting DownSorting
+        public SongsSorting DescensingSorting
         {
-            get { return (SongsSorting)this.GetValue(DownSortingProperty); }
-            set { this.SetValue(DownSortingProperty, value); }
+            get { return (SongsSorting)this.GetValue(DescensingSortingProperty); }
+            set { this.SetValue(DescensingSortingProperty, value); }
         }
 
         public SongsSorting CurrentSorting
@@ -53,6 +56,12 @@ namespace OutcoldSolutions.GoogleMusic.Controls
         {
             get { return (string)this.GetValue(TitleProperty); }
             set { this.SetValue(TitleProperty, value); }
+        }
+
+        public HorizontalAlignment TitleAlignment
+        {
+            get { return (HorizontalAlignment)GetValue(TitleAlignmentProperty); }
+            set { SetValue(TitleAlignmentProperty, value); }
         }
 
         public ICommand SortCommand 
@@ -78,18 +87,18 @@ namespace OutcoldSolutions.GoogleMusic.Controls
         {
             if (this.SortCommand != null)
             {
-                if (this.CurrentSorting == this.DownSorting)
+                if (this.CurrentSorting == this.AscendingSorting)
                 {
-                    if (this.SortCommand.CanExecute(this.UpSorting))
+                    if (this.SortCommand.CanExecute(this.DescensingSorting))
                     {
-                        this.SortCommand.Execute(this.UpSorting);
+                        this.SortCommand.Execute(this.DescensingSorting);
                     }
                 }
                 else
                 {
-                    if (this.SortCommand.CanExecute(this.DownSorting))
+                    if (this.SortCommand.CanExecute(this.AscendingSorting))
                     {
-                        this.SortCommand.Execute(this.DownSorting);
+                        this.SortCommand.Execute(this.AscendingSorting);
                     }
                 }
             }
@@ -97,11 +106,11 @@ namespace OutcoldSolutions.GoogleMusic.Controls
 
         private void OnCurrentSortingChanged()
         {
-            if (this.CurrentSorting == this.UpSorting)
+            if (this.CurrentSorting == this.AscendingSorting)
             {
                 VisualStateManager.GoToState(this, "Up", true);
             }
-            else if (this.CurrentSorting == this.DownSorting)
+            else if (this.CurrentSorting == this.DescensingSorting)
             {
                 VisualStateManager.GoToState(this, "Down", true);
             }

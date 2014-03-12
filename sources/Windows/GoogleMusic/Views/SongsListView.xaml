@@ -38,7 +38,7 @@
                 Background="{StaticResource ListViewItemBorder}">
             <Grid Margin="0, 0, 0, 0">
                 <Grid.ColumnDefinitions >
-                    <ColumnDefinition Width="35" />
+                    <ColumnDefinition Width="60" />
                     <ColumnDefinition Width="2*" />
                     <ColumnDefinition Width="70" />
                     <ColumnDefinition Width="*" />
@@ -47,15 +47,26 @@
                     <ColumnDefinition Width="150" />
                 </Grid.ColumnDefinitions>
 
+                <controls:SortableHeaderControl Grid.Column="0" 
+                                                SortCommand="{Binding Path=SortCommand}"
+                                                Title="#"
+                                                CurrentSorting="{Binding Path=CurrentSorting, Mode=OneWay}"
+                                                AscendingSorting="Track"
+                                                DescensingSorting="TrackDescending" 
+                                                TitleAlignment="Right"
+                                                FontSize="18"
+                                                FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                                                Margin="0, 0, 0, 0"/>
+
                 <controls:SortableHeaderControl Grid.Column="1" 
                                                 SortCommand="{Binding Path=SortCommand}"
                                                 Title="name"
                                                 CurrentSorting="{Binding Path=CurrentSorting, Mode=OneWay}"
-                                                UpSorting="TitleDescending"
-                                                DownSorting="Title" 
+                                                AscendingSorting="Title"
+                                                DescensingSorting="TitleDescending" 
                                                 FontSize="18"
                                                 FontFamily="{StaticResource ContentControlThemeFontFamily}"
-                                                Margin="-10, 0, 0, 0"
+                                                Margin="0, 0, 0, 0"
                                                 x:Uid="SongsList_SongTitle"/>
 
                 <controls:SortableHeaderControl Grid.Column="2" 
@@ -65,15 +76,16 @@
                                                 FontWeight="SemiLight"
                                                 FontSize="18"
                                                 CurrentSorting="{Binding Path=CurrentSorting, Mode=OneWay}"
-                                                UpSorting="DurationDescending"
-                                                DownSorting="Duration"/>
+                                                AscendingSorting="Duration"
+                                                DescensingSorting="DurationDescending"
+                                                TitleAlignment="Right"/>
 
                 <controls:SortableHeaderControl Grid.Column="3" 
                                                 SortCommand="{Binding Path=SortCommand}"
                                                 Title="artist"
                                                 CurrentSorting="{Binding Path=CurrentSorting, Mode=OneWay}"
-                                                UpSorting="ArtistDescending"
-                                                DownSorting="Artist"
+                                                AscendingSorting="Artist"
+                                                DescensingSorting="ArtistDescending"
                                                 FontSize="18"
                                                 FontFamily="{StaticResource ContentControlThemeFontFamily}"
                                                 x:Uid="SongsList_SongArtist"/>
@@ -82,8 +94,8 @@
                                                 SortCommand="{Binding Path=SortCommand}"
                                                 Title="album"
                                                 CurrentSorting="{Binding Path=CurrentSorting, Mode=OneWay}"
-                                                UpSorting="AlbumDescending"
-                                                DownSorting="Album" 
+                                                AscendingSorting="Album"
+                                                DescensingSorting="AlbumDescending" 
                                                 FontSize="18"
                                                 FontFamily="{StaticResource ContentControlThemeFontFamily}"
                                                 Visibility="{Binding Path=IsAlbumColumnVisible, ElementName=This, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneTime}"
@@ -93,18 +105,19 @@
                                                 SortCommand="{Binding Path=SortCommand}"
                                                 Title="&#xE189;"
                                                 CurrentSorting="{Binding Path=CurrentSorting, Mode=OneWay}"
-                                                UpSorting="PlaysCountDescending"
-                                                DownSorting="PlaysCount"
+                                                AscendingSorting="PlaysCount"
+                                                DescensingSorting="PlaysCountDescending"
                                                 FontFamily="Segoe UI Symbol"
                                                 FontWeight="SemiLight"
-                                                FontSize="18" />
+                                                FontSize="18"
+                                                TitleAlignment="Right"/>
 
                 <controls:SortableHeaderControl Grid.Column="6" 
                                                 SortCommand="{Binding Path=SortCommand}"
                                                 Title="rating"
                                                 CurrentSorting="{Binding Path=CurrentSorting, Mode=OneWay}"
-                                                UpSorting="RatingDescending"
-                                                DownSorting="Rating" 
+                                                AscendingSorting="Rating"
+                                                DescensingSorting="RatingDescending" 
                                                 FontSize="18"
                                                 FontFamily="{StaticResource ContentControlThemeFontFamily}"
                                                 x:Uid="SongsList_SongRating"/>
@@ -140,7 +153,7 @@
 
                     <Grid Height="33">
                         <Grid.ColumnDefinitions >
-                            <ColumnDefinition Width="35" />
+                            <ColumnDefinition Width="60" />
                             <ColumnDefinition Width="2*" />
                             <ColumnDefinition Width="70" />
                             <ColumnDefinition Width="*" />
@@ -149,14 +162,19 @@
                             <ColumnDefinition Width="150" />
                         </Grid.ColumnDefinitions>
 
-                        <controls:FakeEqualizerControl 
-                            Grid.Column="0" 
-                            HorizontalAlignment="Center" 
-                            VerticalAlignment="Center" 
-                            Visibility="{Binding Path=IsPlaying, Converter={StaticResource BooleanToVisibilityConverter}}" 
-                            IsPaused="{Binding Path=State, Converter={StaticResource ValueToBooleanConverter}, ConverterParameter={StaticResource StatePaused}}" />
+                        <controls:FakeEqualizerControl Grid.Column="0" 
+                                                        HorizontalAlignment="Center" 
+                                                        VerticalAlignment="Center" 
+                                                        Visibility="{Binding Path=IsPlaying, Converter={StaticResource BooleanToVisibilityConverter}}" 
+                                                        IsPaused="{Binding Path=State, Converter={StaticResource ValueToBooleanConverter}, ConverterParameter={StaticResource StatePaused}}" />
 
-                        <Grid Grid.Column="1" Margin="0, 0, 10, 0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                        <TextBlock Grid.Column="0" Style="{StaticResource SongTitleStyle}" 
+                                   Margin="0, 0, 10, 0" 
+                                   Text="{Binding Path=Track, Mode=OneWay}" 
+                                   HorizontalAlignment="Right"
+                                   Visibility="{Binding Path=IsPlaying, Converter={StaticResource BooleanToInvisibilityConverter}}"/>
+
+                        <Grid Grid.Column="1" Margin="10, 0, 10, 0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />

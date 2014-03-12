@@ -779,6 +779,9 @@
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Border" Storyboard.TargetProperty="Background">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="Transparent" />
                                         </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Canvas" Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed" />
+                                        </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Up">
@@ -792,6 +795,9 @@
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Border" Storyboard.TargetProperty="Background">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="#2C2C2C" />
                                         </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Canvas" Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible" />
+                                        </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Down">
@@ -804,6 +810,9 @@
                                         </ObjectAnimationUsingKeyFrames>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Border" Storyboard.TargetProperty="Background">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="#2C2C2C" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Canvas" Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
@@ -820,23 +829,24 @@
                                 Grid.ColumnSpan="2" />
                         
                         <TextBlock Text="{TemplateBinding Title}" 
-                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="{TemplateBinding TitleAlignment}"
                                    LineHeight="20"
                                    FontWeight="Normal"
                                    LineStackingStrategy="BlockLineHeight"
-                                   Margin="10, 0, 0, 7"
+                                   Margin="10, 0, 5, 7"
                                    Foreground="{StaticResource ApplicationForegroundThemeBrush}">
                             <TextBlock.RenderTransform>
-                                <TranslateTransform X="-1" Y="4"/>
+                                <TranslateTransform X="-1" Y="7"/>
                             </TextBlock.RenderTransform>
                          </TextBlock>
 
                         <Canvas Grid.Column="1" 
                                 HorizontalAlignment="Right" 
                                 VerticalAlignment="Stretch" 
-                                Margin="5, 0, 10, 0"
+                                Margin="0, 7, 10, 0"
                                 Width="16"
-                                Height="16">
+                                Height="16"
+                                x:Name="Canvas">
                             
                             <Path x:Name="ArrowDown"
                                   Fill="{StaticResource ApplicationForegroundThemeBrush}">
