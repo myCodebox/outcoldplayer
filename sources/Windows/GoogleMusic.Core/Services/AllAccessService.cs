@@ -6,6 +6,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -232,7 +233,13 @@ namespace OutcoldSolutions.GoogleMusic.Services
                        TitleNorm = googleMusicAlbum.Name.Normalize(),
                        Year = (ushort?)googleMusicAlbum.Year,
                        ArtUrl = string.IsNullOrEmpty(googleMusicAlbum.AlbumArtRef) ? null : new Uri(googleMusicAlbum.AlbumArtRef),
-                       Artist = artist
+
+                       Artist = artist ?? new Artist()
+                                          {
+                                              GoogleArtistId = googleMusicAlbum.ArtistId == null ? null : googleMusicAlbum.ArtistId.FirstOrDefault(), 
+                                              Title = googleMusicAlbum.AlbumArtist, 
+                                              TitleNorm = googleMusicAlbum.AlbumArtist.Normalize()
+                                          }
                    };
         }
     }
