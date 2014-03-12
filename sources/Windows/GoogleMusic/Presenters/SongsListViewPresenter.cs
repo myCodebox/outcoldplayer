@@ -321,6 +321,10 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                         {
                             song.State = SongState.Paused;
                         }
+                        else if (queueState == QueueState.Busy)
+                        {
+                            song.State = SongState.Loading;
+                        }
                         else
                         {
                             song.State = SongState.None;

@@ -34,12 +34,12 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
             this.BindingModel = playerBindingModel;
 
-            this.SkipBackCommand = new DelegateCommand(this.PreviousSong, () => !this.BindingModel.IsBusy && this.queueService.CanSwitchToPrevious());
+            this.SkipBackCommand = new DelegateCommand(this.PreviousSong, () => this.queueService.CanSwitchToPrevious());
             this.PlayCommand = new DelegateCommand(async () => await this.PlayAsync(), () => !this.BindingModel.IsBusy && (this.BindingModel.State == QueueState.Stopped || this.BindingModel.State == QueueState.Paused));
             this.PauseCommand = new DelegateCommand(async () => await this.PauseAsync(), () => !this.BindingModel.IsBusy && this.BindingModel.IsPlaying);
-            this.SkipAheadCommand = new DelegateCommand(this.NextSong, () => !this.BindingModel.IsBusy && this.queueService.CanSwitchToNext());
-            this.RepeatAllCommand = new DelegateCommand(() => { }, () => this.queueService.State != QueueState.Busy && !queueService.IsRadio);
-            this.ShuffleCommand = new DelegateCommand(() => { }, () => this.queueService.State != QueueState.Busy && !queueService.IsRadio);
+            this.SkipAheadCommand = new DelegateCommand(this.NextSong, () => this.queueService.CanSwitchToNext());
+            this.RepeatAllCommand = new DelegateCommand(() => { }, () => !this.BindingModel.IsBusy && !queueService.IsRadio);
+            this.ShuffleCommand = new DelegateCommand(() => { }, () => !this.BindingModel.IsBusy && !queueService.IsRadio);
 
             this.BindingModel.Subscribe(
                 () => this.BindingModel.CurrentPosition,

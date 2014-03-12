@@ -4,6 +4,7 @@
 namespace OutcoldSolutions.GoogleMusic.Web
 {
     using System.Collections.Generic;
+    using System.Threading;
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.Web.Models;
@@ -16,7 +17,8 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
         Task<TResult> GetAsync<TResult>(
             string url,
-            bool signUrl = true) where TResult : CommonResponse;
+            bool signUrl = true,
+            CancellationToken? token = null) where TResult : CommonResponse;
 
         Task<TResult> PostAsync<TResult>(
             string url,

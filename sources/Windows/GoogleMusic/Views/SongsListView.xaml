@@ -173,6 +173,13 @@
                                                        Visibility="{Binding Path=IsPlaying, Converter={StaticResource BooleanToVisibilityConverter}}" 
                                                        IsPaused="{Binding Path=State, Converter={StaticResource ValueToBooleanConverter}, ConverterParameter={StaticResource StatePaused}}" />
 
+                        <ProgressRing Grid.Column="0"
+                                      Width="16"
+                                      Height="16"
+                                      Margin="5, 0, 0, 0"
+                                      Foreground="{StaticResource ApplicationForegroundThemeBrush}"
+                                      IsActive="{Binding Path=IsLoading, Mode=OneWay}"/>
+                        
                         <TextBlock Grid.Column="1" Style="{StaticResource SongTitleStyle}" 
                                    Margin="-10, 0, 10, 0" 
                                    Text="{Binding Path=Track, Mode=OneWay}" 

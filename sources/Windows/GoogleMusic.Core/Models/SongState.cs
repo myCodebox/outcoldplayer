@@ -7,6 +7,7 @@ namespace OutcoldSolutions.GoogleMusic.Models
     {
         None = 0,
         Playing = 1,
-        Paused = 2
+        Paused = 2,
+        Loading = 3
     }
 }

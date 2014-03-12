@@ -10,6 +10,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
     using System.Net.Http;
     using System.Runtime.InteropServices.WindowsRuntime;
     using System.Text;
+    using System.Threading;
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.Diagnostics;
@@ -29,7 +30,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
             IProgress<int> progress,
             Func<IList<GoogleMusicSong>, Task> chunkHandler = null);
 
-        Task<GoogleMusicSongUrl> GetSongUrlAsync(Song song);
+        Task<GoogleMusicSongUrl> GetSongUrlAsync(Song song, CancellationToken token);
 
         Task<GoogleMusicTrackStatResponse> SendStatsAsync(IList<Song> songs);
 
@@ -86,11 +87,11 @@ namespace OutcoldSolutions.GoogleMusic.Web
             return this.googleMusicApisService.DownloadList(TrackFeed, lastUpdate, progress, chunkHandler);
         }
 
-        public async Task<GoogleMusicSongUrl> GetSongUrlAsync(Song song)
+        public async Task<GoogleMusicSongUrl> GetSongUrlAsync(Song song, CancellationToken token)
         {
             try
             {
-                return await this.GetSongUrlInternalAsync(song, forceSwitch: false);
+                return await this.GetSongUrlInternalAsync(song, forceSwitch: false, token: token);
             }
             catch (WebRequestException e)
             {
@@ -105,7 +106,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
             try
             {
-                return await this.GetSongUrlInternalAsync(song, forceSwitch: true);
+                return await this.GetSongUrlInternalAsync(song, forceSwitch: true, token: token);
             }
             catch (WebRequestException e)
             {
@@ -127,7 +128,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 this.logger.Warning(e, "Could not update google key from dropbox.");
             }
 
-            return await this.GetSongUrlInternalAsync(song, forceSwitch: false);
+            return await this.GetSongUrlInternalAsync(song, forceSwitch: false, token: token);
         }
 
         public async Task<GoogleMusicTrackStatResponse> SendStatsAsync(IList<Song> songs)
@@ -265,13 +266,11 @@ namespace OutcoldSolutions.GoogleMusic.Web
             return await this.googleMusicApisService.PostAsync<GoogleMusicSongMutateResponse>(TrackBatch, json);
         }
 
-        private async Task<GoogleMusicSongUrl> GetSongUrlInternalAsync(Song song, bool forceSwitch)
+        private async Task<GoogleMusicSongUrl> GetSongUrlInternalAsync(Song song, bool forceSwitch, CancellationToken token)
         {
             string url = null;
 
-            bool useSignature = !string.IsNullOrEmpty(song.StoreId) 
-                                && song.TrackType != StreamType.Uploaded
-                                && song.TrackType != StreamType.OwnLibrary;
+            bool useSignature = song.IsAllAccess();
 
             if (forceSwitch)
             {
@@ -315,7 +314,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 url = string.Format(SongUrlFormat, song.SongId);
             }
 
-            return await this.googleMusicWebService.GetAsync<GoogleMusicSongUrl>(url, signUrl: false);
+            return await this.googleMusicWebService.GetAsync<GoogleMusicSongUrl>(url, signUrl: false, token: token);
         }
 
         private string Hash(string value, string key)

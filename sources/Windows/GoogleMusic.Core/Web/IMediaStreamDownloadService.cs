@@ -3,6 +3,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Web
 {
+    using System.Threading;
     using System.Threading.Tasks;
 
     using Windows.Storage;
@@ -10,10 +11,10 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
     public interface IMediaStreamDownloadService
     {
-        Task<INetworkRandomAccessStream> GetStreamAsync(string url);
+        Task<INetworkRandomAccessStream> GetStreamAsync(string url, CancellationToken token);
 
-        Task<INetworkRandomAccessStream> GetStreamAsync(string[] urls);
+        Task<INetworkRandomAccessStream> GetStreamAsync(string[] urls, CancellationToken token);
 
-        Task<IRandomAccessStream> GetCachedStreamAsync(IStorageFile storageFile);
+        Task<IRandomAccessStream> GetCachedStreamAsync(IStorageFile storageFile, CancellationToken token);
     }
 }

@@ -6,6 +6,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.Diagnostics;
@@ -34,7 +35,13 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         private readonly Random random = new Random((int)DateTime.Now.Ticks);
 
+        private readonly SemaphoreSlim semaphore = new SemaphoreSlim(1);
+
         private IRandomAccessStream currentSongStream;
+
+        private CancellationTokenSource currentTokenSource;
+        private CancellationTokenSource predownloadTokenSource;
+
         private int currentQueueIndex; // From queueOrder
 
         private QueueState state;
@@ -154,14 +161,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             {
                 this.state = value;
 
-                if (value == QueueState.Play || value == QueueState.Paused)
-                {
-                    this.RaiseStateChanged(new StateChangedEventArgs(value, this.songsQueue[this.CurrentSongIndex]));
-                }
-                else
-                {
-                    this.RaiseStateChanged(new StateChangedEventArgs(value));
-                }
+                this.RaiseStateChanged(new StateChangedEventArgs(value, (value == QueueState.Stopped || value == QueueState.Unknown) ? null : this.GetCurrentSong()));
             }
         }
 
@@ -198,12 +198,6 @@ namespace OutcoldSolutions.GoogleMusic.Services
         {
             await Task.Run(async () =>
             {
-                if (this.State == QueueState.Busy)
-                {
-                    this.logger.Debug("PlayAsync: Could not do that. Queue is busy.");
-                    return;
-                }
-
                 this.CurrentPlaylist = playlist;
 
                 this.songsQueue.Clear();
@@ -228,12 +222,6 @@ namespace OutcoldSolutions.GoogleMusic.Services
         {
             await Task.Run(async () =>
             {
-                if (this.State == QueueState.Busy)
-                {
-                    this.logger.Debug("PlayAsync: Could not do that. Queue is busy.");
-                    return;
-                }
-
                 this.currentQueueIndex = this.queueOrder.IndexOf(songIndex);
 
                 await this.PlaySongAsyncInternal(this.CurrentSongIndex);
@@ -247,12 +235,6 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         public async Task PlayAsync()
         {
-            if (this.State == QueueState.Busy)
-            {
-                this.logger.Debug("PlayAsync: Could not do that. Queue is busy.");
-                return;
-            }
-
             if (this.State == QueueState.Paused)
             {
                 await this.mediaElement.PlayAsync();
@@ -277,12 +259,6 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         public async Task NextSongAsync()
         {
-            if (this.State == QueueState.Busy)
-            {
-                this.logger.Debug("PlayAsync: Could not do that. Queue is busy.");
-                return;
-            }
-
             if (this.CanSwitchToNext())
             {
                 if (this.currentQueueIndex == (this.queueOrder.Count - 1) && this.IsRepeatAll)
@@ -294,7 +270,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     this.currentQueueIndex++;
                 }
 
-                await this.PlaySongAsyncInternal(this.CurrentSongIndex);
+                await this.PlaySongAsyncInternal(this.CurrentSongIndex, nextSong: true);
             }
         }
 
@@ -305,12 +281,6 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         public async Task PreviousSongAsync()
         {
-            if (this.State == QueueState.Busy)
-            {
-                this.logger.Debug("PlayAsync: Could not do that. Queue is busy.");
-                return;
-            }
-
             if (this.CanSwitchToPrevious())
             {
                 if (this.currentQueueIndex != 0)
@@ -493,7 +463,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             }
         }
 
-        private async Task PlaySongAsyncInternal(int songIndex)
+        private async Task PlaySongAsyncInternal(int songIndex, bool nextSong = false)
         {
             await this.mediaElement.StopAsync();
 
@@ -522,28 +492,77 @@ namespace OutcoldSolutions.GoogleMusic.Services
                         this.logger.Debug("Getting url for song '{0}'.", song.SongId);
                     }
 
-                    var stream = await this.songsCachingService.GetStreamAsync(song);
-                    if (stream != null)
+                    CancellationTokenSource source = null;
+
+                    await this.semaphore.WaitAsync().ConfigureAwait(continueOnCapturedContext: false);
+
+                    try
                     {
-                        if (this.currentSongStream != null)
+                        if (this.currentTokenSource != null)
                         {
-                            this.logger.Debug("Current song is not null. Disposing current stream.");
-
-                            var networkRandomAccessStream = this.currentSongStream as INetworkRandomAccessStream;
-                            if (networkRandomAccessStream != null)
-                            {
-                                networkRandomAccessStream.DownloadProgressChanged -= this.CurrentSongStreamOnDownloadProgressChanged;
-                            }
-
-                            this.currentSongStream.Dispose();
-                            this.currentSongStream = null;
+                            this.currentTokenSource.Cancel();
+                            this.currentTokenSource = null;
                         }
 
-                        this.currentSongStream = stream;
-
-                        if (this.currentSongStream != null)
+                        if (this.predownloadTokenSource != null)
                         {
-                            var networkRandomAccessStream = this.currentSongStream as INetworkRandomAccessStream;
+                            if (nextSong)
+                            {
+                                source = this.predownloadTokenSource;
+                            }
+                            else
+                            {
+                                this.predownloadTokenSource.Cancel();
+                            }
+                           
+                            this.predownloadTokenSource = null;
+                        }
+
+                        if (source == null)
+                        {
+                            source = new CancellationTokenSource();
+                        }
+
+                        this.currentTokenSource = source;
+                    }
+                    finally
+                    {
+                        this.semaphore.Release(1);
+                    }
+
+                    if (source.IsCancellationRequested)
+                    {
+                        return;
+                    }
+
+                    var stream = await this.songsCachingService.GetStreamAsync(song, source.Token);
+                    if (stream != null && !source.IsCancellationRequested)
+                    {
+                        await this.semaphore.WaitAsync(source.Token).ConfigureAwait(continueOnCapturedContext: false);
+
+                        if (source.IsCancellationRequested)
+                        {
+                            return;
+                        }
+
+                        try
+                        {
+                            if (this.currentSongStream != null)
+                            {
+                                this.logger.Debug("Current song is not null. Disposing current stream.");
+
+                                var previousStream = this.currentSongStream as INetworkRandomAccessStream;
+                                if (previousStream != null)
+                                {
+                                    previousStream.DownloadProgressChanged -= this.CurrentSongStreamOnDownloadProgressChanged;
+                                }
+
+                                this.currentSongStream.Dispose();
+                            }
+
+                            this.currentSongStream = stream;
+
+                            var networkRandomAccessStream = stream as INetworkRandomAccessStream;
                             if (networkRandomAccessStream != null && !networkRandomAccessStream.IsReady)
                             {
                                 networkRandomAccessStream.DownloadProgressChanged += this.CurrentSongStreamOnDownloadProgressChanged;
@@ -552,33 +571,38 @@ namespace OutcoldSolutions.GoogleMusic.Services
                             {
                                 this.PredownloadNextSong();
                             }
-
-                            await this.mediaElement.PlayAsync(this.currentSongStream, "audio/mpeg");
-
-                            this.State = QueueState.Play;
-
-                            this.logger.LogTask(this.publisherService.PublishAsync(song, this.CurrentPlaylist));
-
-                            if (this.IsRadio && !this.CanSwitchToNext())
-                            {
-                                try
-                                {
-                                    var newRadioSongs = await this.radioStationsService.GetRadioSongsAsync(this.CurrentPlaylist.Id, this.songsQueue);
-                                    await this.AddRangeAsync(this.CurrentPlaylist, newRadioSongs);
-                                }
-                                catch (Exception e)
-                                {
-                                    this.logger.Error(e, "Cannot fetch next songs for radio");
-                                }
-                            }
                         }
-                        else
+                        finally
                         {
-                            this.State = QueueState.Stopped;
+                            this.semaphore.Release(1);
+                        }
 
-                            if (this.logger.IsWarningEnabled)
+                        if (source.IsCancellationRequested)
+                        {
+                            return;
+                        }
+
+                        await this.mediaElement.PlayAsync(stream, "audio/mpeg");
+
+                        if (source.IsCancellationRequested)
+                        {
+                            return;
+                        }
+
+                        this.State = QueueState.Play;
+
+                        this.logger.LogTask(this.publisherService.PublishAsync(song, this.CurrentPlaylist));
+
+                        if (this.IsRadio && !this.CanSwitchToNext())
+                        {
+                            try
                             {
-                                this.logger.Warning("Stream is null.");
+                                var newRadioSongs = await this.radioStationsService.GetRadioSongsAsync(this.CurrentPlaylist.Id, this.songsQueue);
+                                await this.AddRangeAsync(this.CurrentPlaylist, newRadioSongs);
+                            }
+                            catch (Exception e)
+                            {
+                                this.logger.Error(e, "Cannot fetch next songs for radio");
                             }
                         }
                     }
@@ -609,6 +633,21 @@ namespace OutcoldSolutions.GoogleMusic.Services
             if (this.logger.IsDebugEnabled)
             {
                 this.logger.Debug("Update order.");
+            }
+
+            this.semaphore.Wait();
+
+            try
+            {
+                if (this.predownloadTokenSource != null)
+                {
+                    this.predownloadTokenSource.Cancel();
+                    this.predownloadTokenSource = null;
+                }
+            }
+            finally
+            {
+                this.semaphore.Release(1);
             }
 
             this.queueOrder.Clear();
@@ -648,6 +687,24 @@ namespace OutcoldSolutions.GoogleMusic.Services
             {
                 this.currentQueueIndex = -1;
             }
+
+            this.semaphore.Wait();
+
+            try
+            {
+                if (this.currentSongStream != null)
+                {
+                    var networkRandomAccessStream = this.currentSongStream as INetworkRandomAccessStream;
+                    if (networkRandomAccessStream == null || networkRandomAccessStream.IsReady)
+                    {
+                        this.PredownloadNextSong();
+                    }
+                }
+            }
+            finally
+            {
+                this.semaphore.Release(1);
+            }
         }
 
         private void CurrentSongStreamOnDownloadProgressChanged(object sender, double e)
@@ -668,7 +725,35 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 int nextIndex = this.currentQueueIndex + 1;
                 var nextSong = this.songsQueue[this.queueOrder[nextIndex]];
 
-                await this.songsCachingService.PredownloadStreamAsync(nextSong);
+                CancellationTokenSource source = new CancellationTokenSource();
+
+                await this.semaphore.WaitAsync(source.Token).ConfigureAwait(continueOnCapturedContext: false);
+
+                if (source.IsCancellationRequested)
+                {
+                    return;
+                }
+
+                try
+                {
+                    if (this.predownloadTokenSource != null)
+                    {
+                        this.predownloadTokenSource.Cancel();
+                    }
+
+                    this.predownloadTokenSource = source;
+                }
+                finally
+                {
+                    this.semaphore.Release(1);
+                }
+
+                if (source.IsCancellationRequested)
+                {
+                    return;
+                }
+
+                await this.songsCachingService.PredownloadStreamAsync(nextSong, source.Token);
             }
         }
 

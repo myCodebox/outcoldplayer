@@ -25,19 +25,15 @@ namespace OutcoldSolutions.GoogleMusic.Web
         private const string RangeQueryParamName = "range=";
 
         private readonly ILogger logger;
-        private readonly HttpClient client = new HttpClient() { Timeout = TimeSpan.FromSeconds(20) };
-
-        private volatile CancellationTokenSource cancellationTokenSource;
+        private readonly HttpClient client = new HttpClient() { Timeout = TimeSpan.FromSeconds(60) };
 
         public MediaStreamDownloadService(ILogManager logManager)
         {
             this.logger = logManager.CreateLogger("MediaStreamDownloadService");
         }
 
-        public async Task<INetworkRandomAccessStream> GetStreamAsync(string url)
+        public async Task<INetworkRandomAccessStream> GetStreamAsync(string url, CancellationToken token)
         {
-            CancellationTokenSource source = null;
-
             try
             {
                 if (this.logger.IsDebugEnabled)
@@ -45,29 +41,12 @@ namespace OutcoldSolutions.GoogleMusic.Web
                     this.logger.Debug("Stream requested at url '{0}'.", url);
                 }
 
-                var previousCancellationTokenSource = this.cancellationTokenSource;
-                if (previousCancellationTokenSource != null)
-                {
-                    try
-                    {
-                        previousCancellationTokenSource.Cancel();
-                    }
-                    catch (ObjectDisposedException)
-                    {
-                    }
-                    
-                    this.client.CancelPendingRequests();
-                }
-
-                source = this.cancellationTokenSource = new CancellationTokenSource();
-                var cancellationToken = source.Token;
-
                 var response =
                     await
                         this.client.SendAsync(
                             new HttpRequestMessage(HttpMethod.Get, url),
                             HttpCompletionOption.ResponseHeadersRead,
-                            cancellationToken);
+                            token);
 
                 if (this.logger.IsDebugEnabled)
                 {
@@ -100,19 +79,19 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
                 HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, url);
                 request.Headers.Range = new RangeHeaderValue(start, contentLength);
-                var streamResponse = await this.client.SendAsync(request, cancellationToken);
+                var streamResponse = await this.client.SendAsync(request, token);
 
-                cancellationToken.ThrowIfCancellationRequested();
+                token.ThrowIfCancellationRequested();
 
                 var data = new byte[contentLength];
                 int read;
 
                 using (var audioStreamEnd = await streamResponse.Content.ReadAsStreamAsync())
                 {
-                    read = await audioStreamEnd.ReadAsync(data, (int)start, readCount, cancellationToken);
+                    read = await audioStreamEnd.ReadAsync(data, (int)start, readCount, token);
                 }
 
-                cancellationToken.ThrowIfCancellationRequested();
+                token.ThrowIfCancellationRequested();
 
                 if (this.logger.IsDebugEnabled || this.logger.IsWarningEnabled)
                 {
@@ -126,14 +105,13 @@ namespace OutcoldSolutions.GoogleMusic.Web
                     }
                 }
 
-                this.cancellationTokenSource = null;
-
                 return new MemoryRandomAccessStream(
                     this.logger,
                     await response.Content.ReadAsStreamAsync(),
                     data,
                     response.Content.Headers.ContentType.MediaType,
-                    read);
+                    read,
+                    token);
             }
             catch (HttpRequestException exception)
             {
@@ -160,7 +138,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
             }
             catch (Exception e)
             {
-                if (source == null || !source.IsCancellationRequested)
+                if (!token.IsCancellationRequested)
                 {
                     this.logger.Error(e, "GetStreamAsync: Exception while loading stream");
                 }
@@ -169,10 +147,8 @@ namespace OutcoldSolutions.GoogleMusic.Web
             }
         }
 
-        public async Task<INetworkRandomAccessStream> GetStreamAsync(string[] urls)
+        public async Task<INetworkRandomAccessStream> GetStreamAsync(string[] urls, CancellationToken token)
         {
-            CancellationTokenSource source = null;
-
             try
             {
                 if (urls == null || urls.Length == 0)
@@ -189,41 +165,24 @@ namespace OutcoldSolutions.GoogleMusic.Web
                     this.logger.Warning("Could not parse start and end range from url {0}", lastUri);
                     return null;
                 }
-                
-                var previousCancellationTokenSource = this.cancellationTokenSource;
-                if (previousCancellationTokenSource != null)
-                {
-                    try
-                    {
-                        previousCancellationTokenSource.Cancel();
-                    }
-                    catch (ObjectDisposedException)
-                    {
-                    }
-
-                    this.client.CancelPendingRequests();
-                }
-
-                source = this.cancellationTokenSource = new CancellationTokenSource();
-                var cancellationToken = source.Token;
 
                 var data = new byte[contentLength];
                 int read;
 
-                var streamResponse = await this.client.GetAsync(lastUri, cancellationToken);
+                var streamResponse = await this.client.GetAsync(lastUri, token);
                 using (var audioStreamEnd = await streamResponse.Content.ReadAsStreamAsync())
                 {
-                    read = await audioStreamEnd.ReadAsync(data, (int)chunkStart, (int)(contentLength - chunkStart), cancellationToken);
+                    read = await audioStreamEnd.ReadAsync(data, (int)chunkStart, (int)(contentLength - chunkStart), token);
                 }
 
                 return new MemoryRandomAccessStreamMultiStreams(
                     this.client,
-                    source,
                     this.logger,
                     urls,
                     data,
                     streamResponse.Content.Headers.ContentType.MediaType,
-                    read);
+                    read,
+                    token);
 
             }
             catch (HttpRequestException exception)
@@ -251,7 +210,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
             }
             catch (Exception e)
             {
-                if (source == null || !source.IsCancellationRequested)
+                if (!token.IsCancellationRequested)
                 {
                     this.logger.Error(e, "GetStreamAsync (multiply urls): Exception while loading stream");
                 }
@@ -260,7 +219,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
             }
         }
 
-        public async Task<IRandomAccessStream> GetCachedStreamAsync(IStorageFile storageFile)
+        public async Task<IRandomAccessStream> GetCachedStreamAsync(IStorageFile storageFile, CancellationToken token)
         {
             InMemoryRandomAccessStream memoryRandomAccessStream = new InMemoryRandomAccessStream();
 
@@ -272,11 +231,21 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
                     var chunks = stream.Length / DefaultBufferSize;
 
+                    if (token.IsCancellationRequested)
+                    {
+                        return null;
+                    }
+
                     for (int i = 1; i <= chunks; i++)
                     {
                         stream.Seek(stream.Length - (i * DefaultBufferSize), SeekOrigin.Begin);
-                        await stream.ReadAsync(buffer, 0, DefaultBufferSize);
+                        await stream.ReadAsync(buffer, 0, DefaultBufferSize, token);
                         writer.WriteBytes(buffer);
+                    }
+
+                    if (token.IsCancellationRequested)
+                    {
+                        return null;
                     }
 
                     long lastChunkLength = stream.Length % DefaultBufferSize;
@@ -284,7 +253,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
                     {
                         stream.Seek(0, SeekOrigin.Begin);
                         byte[] lastChunk = new byte[lastChunkLength];
-                        await stream.ReadAsync(lastChunk, 0, lastChunk.Length);
+                        await stream.ReadAsync(lastChunk, 0, lastChunk.Length, token);
                         writer.WriteBytes(lastChunk);
                     }
                 }
@@ -343,9 +312,12 @@ namespace OutcoldSolutions.GoogleMusic.Web
         {
             private readonly ILogger logger;
 
-            private readonly object locker = new object();
+            private readonly SemaphoreSlim semaphore = new SemaphoreSlim(1);
 
             private readonly int endFilled;
+
+            private readonly CancellationToken token;
+
             private readonly int contentLength;
 
             private readonly byte[] readBuffer = new byte[DefaultBufferSize];
@@ -353,15 +325,16 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
             private readonly Task readTask;
 
-            private CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
             private Stream networkStream;
 
             private ulong currentPosition;
             private ulong readPosition;
 
             private double latestDownloadProgressUpdate;
-            
-            public MemoryRandomAccessStream(ILogger logger, Stream networkStream, byte[] data, string contentType, int endFilled)
+
+            private bool isFailed;
+
+            public MemoryRandomAccessStream(ILogger logger, Stream networkStream, byte[] data, string contentType, int endFilled, CancellationToken token)
             {
                 if (networkStream == null)
                 {
@@ -374,13 +347,10 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 this.logger = logger;
                 this.data = data;
                 this.endFilled = endFilled;
+                this.token = token;
                 this.networkStream = networkStream;
 
-                var cancellationToken = this.cancellationTokenSource.Token;
-
-                this.readTask =
-                    Task.Factory.StartNew(() => this.SafeDownloadStream(cancellationToken), cancellationToken)
-                        .ContinueWith(t => this.DisposeNetworkDownloader());
+                this.readTask = this.SafeDownloadStream().ContinueWith(t => this.DisposeNetworkDownloader());
             }
 
             ~MemoryRandomAccessStream()
@@ -392,7 +362,18 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
             public bool IsReady { get; private set; }
 
-            public bool IsFailed { get; private set; }
+            public bool IsFailed
+            {
+                get
+                {
+                    return this.isFailed || this.token.IsCancellationRequested;
+                }
+
+                private set
+                {
+                    this.isFailed = value;
+                }
+            }
 
             public string ContentType { get; private set; }
 
@@ -400,9 +381,22 @@ namespace OutcoldSolutions.GoogleMusic.Web
             {
                 get
                 {
-                    lock (this.locker)
+                    try
                     {
-                        return this.currentPosition < (ulong)this.contentLength;
+                        this.semaphore.Wait(this.token);
+
+                        try
+                        {
+                            return this.currentPosition < (ulong)this.contentLength;
+                        }
+                        finally
+                        {
+                            this.semaphore.Release(1);
+                        }
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        return false;
                     }
                 }
             }
@@ -419,7 +413,20 @@ namespace OutcoldSolutions.GoogleMusic.Web
             {
                 get
                 {
-                    lock (this.locker)
+                    try
+                    {
+                        this.semaphore.Wait(this.token);
+
+                        try
+                        {
+                            return this.currentPosition;
+                        }
+                        finally
+                        {
+                            this.semaphore.Release(1);
+                        }
+                    }
+                    catch (OperationCanceledException)
                     {
                         return this.currentPosition;
                     }
@@ -430,7 +437,20 @@ namespace OutcoldSolutions.GoogleMusic.Web
             {
                 get
                 {
-                    lock (this.locker)
+                    try
+                    {
+                        this.semaphore.Wait(this.token);
+
+                        try
+                        {
+                            return (ulong)this.contentLength;
+                        }
+                        finally
+                        {
+                            this.semaphore.Release(1);
+                        }
+                    }
+                    catch (OperationCanceledException)
                     {
                         return (ulong)this.contentLength;
                     }
@@ -466,35 +486,53 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
             public void Seek(ulong position)
             {
-                lock (this.locker)
+                try
                 {
-                    this.currentPosition = position;
+                    this.semaphore.Wait(this.token);
+
+                    try
+                    {
+                        this.currentPosition = position;
+                    }
+                    finally
+                    {
+                        this.semaphore.Release(1);
+                    }
+                }
+                catch (OperationCanceledException)
+                {
                 }
             }
 
             public IAsyncOperationWithProgress<IBuffer, uint> ReadAsync(IBuffer buffer, uint count, InputStreamOptions options)
             {
-                return AsyncInfo.Run<IBuffer, uint>(async (token, progress) =>
+                return AsyncInfo.Run<IBuffer, uint>(async (t, progress) =>
                     {
                         progress.Report(0);
 
                         bool fReading;
                         do
                         {
-                            lock (this.locker)
+                            await this.semaphore.WaitAsync(t).ConfigureAwait(continueOnCapturedContext: false);
+
+                            try
                             {
                                 fReading = this.readPosition < (this.currentPosition + count)
                                     && this.currentPosition + (ulong)count < (ulong)this.contentLength;
                             }
+                            finally
+                            {
+                                this.semaphore.Release(1);
+                            }
 
                             if (fReading)
                             {
-                                if (token.IsCancellationRequested)
+                                if (t.IsCancellationRequested)
                                 {
                                     return buffer;
                                 }
 
-                                await Task.Delay(10, token);
+                                await Task.Delay(10, t);
                             }
                         } 
                         while (fReading && this.readTask != null);
@@ -545,37 +583,22 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 if (disposing)
                 {
                     this.DisposeNetworkDownloader();
-
-                    lock (this.locker)
-                    {
-                        this.DownloadProgressChanged = null;
-                    }
+                    this.DownloadProgressChanged = null;
                 }
             }
 
             private void DisposeNetworkDownloader()
             {
-                lock (this.locker)
+                try
                 {
-                    if (this.readTask != null && this.cancellationTokenSource != null && !this.cancellationTokenSource.IsCancellationRequested)
-                    {
-                        try
-                        {
-                            this.cancellationTokenSource.Cancel();
-                            this.cancellationTokenSource.Dispose();
-                        }
-                        catch
-                        {
-                        }
-                    }
-
-                    this.cancellationTokenSource = null;
-
                     if (this.networkStream != null)
                     {
                         this.networkStream.Dispose();
                         this.networkStream = null;
                     }
+                }
+                catch
+                {
                 }
             }
 
@@ -593,24 +616,44 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 }
             }
 
-            private void SafeDownloadStream(CancellationToken cancellationToken)
+            private async Task SafeDownloadStream()
             {
+                await Task.Yield();
+
                 try
                 {
                     double downloadProgress = 0d;
 
                     bool canRead;
-                    lock (this.locker)
+
+                    await this.semaphore.WaitAsync(this.token).ConfigureAwait(continueOnCapturedContext: false);
+
+                    if (this.token.IsCancellationRequested)
                     {
-                        cancellationToken.ThrowIfCancellationRequested();
+                        return;
+                    }
+
+                    try
+                    {
                         canRead = this.networkStream.CanRead;
+                    }
+                    finally
+                    {
+                        this.semaphore.Release(1);
                     }
 
                     while (canRead)
                     {
                         int currentRead = DefaultBufferSize;
 
-                        lock (this.locker)
+                        await this.semaphore.WaitAsync(this.token).ConfigureAwait(continueOnCapturedContext: false);
+
+                        if (this.token.IsCancellationRequested)
+                        {
+                            return;
+                        }
+
+                        try
                         {
                             if ((int)this.readPosition >= this.contentLength - this.endFilled)
                             {
@@ -622,10 +665,19 @@ namespace OutcoldSolutions.GoogleMusic.Web
                                 currentRead = (this.contentLength - this.endFilled) - (int)this.readPosition;
                             }
                         }
+                        finally
+                        {
+                            this.semaphore.Release(1);
+                        }
 
                         int read;
-                        cancellationToken.ThrowIfCancellationRequested();
-                        read = this.networkStream.Read(this.readBuffer, 0, currentRead);
+
+                        if (this.token.IsCancellationRequested)
+                        {
+                            return;
+                        }
+
+                        read = await this.networkStream.ReadAsync(this.readBuffer, 0, currentRead, this.token);
 
                         if (read == 0)
                         {
@@ -641,10 +693,20 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
                         this.RaiseDownloadProgressChanged(downloadProgress);
 
-                        lock (this.locker)
+                        await this.semaphore.WaitAsync(this.token).ConfigureAwait(continueOnCapturedContext: false);
+
+                        if (this.token.IsCancellationRequested)
                         {
-                            cancellationToken.ThrowIfCancellationRequested();
+                            return;
+                        }
+
+                        try
+                        {
                             canRead = this.networkStream.CanRead;
+                        }
+                        finally
+                        {
+                            this.semaphore.Release(1);
                         }
                     }
 
@@ -684,7 +746,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 {
                     this.IsFailed = true;
 
-                    if (cancellationToken.IsCancellationRequested)
+                    if (this.token.IsCancellationRequested)
                     {
                         this.logger.Debug(exception, "SafeDownloadStream: Downloading task was canceled .");
                     }
@@ -698,7 +760,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
         private class MemoryRandomAccessStreamMultiStreams : INetworkRandomAccessStream
         {
-            private readonly object locker = new object();
+            private readonly SemaphoreSlim semaphore = new SemaphoreSlim(1);
             private readonly Task downloadTask;
             
             private readonly ILogger logger;
@@ -709,25 +771,32 @@ namespace OutcoldSolutions.GoogleMusic.Web
             private ulong readPosition;
             private ulong currentPosition;
 
-            private CancellationTokenSource cancellationTokenSource;
+            private CancellationToken token;
+
+            private bool isFailed;
 
             public MemoryRandomAccessStreamMultiStreams(
                 HttpClient httpClient,
-                CancellationTokenSource cancellationTokenSource,
                 ILogger logger, 
                 string[] urls, 
                 byte[] data, 
                 string mediaType, 
-                int lastChunk)
+                int lastChunk,
+                CancellationToken token)
             {
-                this.cancellationTokenSource = cancellationTokenSource;
+                this.token = token;
                 this.logger = logger;
                 this.urls = urls;
                 this.data = data;
                 this.mediaType = mediaType;
                 this.lastChunk = lastChunk;
 
-                this.downloadTask = this.DownloadStream(httpClient, cancellationTokenSource.Token);
+                this.downloadTask = this.DownloadStream(httpClient);
+            }
+
+            ~MemoryRandomAccessStreamMultiStreams()
+            {
+                this.Dispose(disposing: false);
             }
 
             public event EventHandler<double> DownloadProgressChanged;
@@ -736,9 +805,22 @@ namespace OutcoldSolutions.GoogleMusic.Web
             {
                 get
                 {
-                    lock (this.locker)
+                    try
                     {
-                        return this.currentPosition < (ulong)this.data.Length;
+                        this.semaphore.Wait(this.token);
+
+                        try
+                        {
+                            return this.currentPosition < (ulong)this.data.Length;
+                        }
+                        finally
+                        {
+                            this.semaphore.Release(1);
+                        }
+                    }
+                    catch(OperationCanceledException)
+                    {
+                        return false;
                     }
                 }
             }
@@ -755,7 +837,20 @@ namespace OutcoldSolutions.GoogleMusic.Web
             {
                 get
                 {
-                    lock (this.locker)
+                    try
+                    {
+                        this.semaphore.Wait(this.token);
+
+                        try
+                        {
+                            return this.currentPosition;
+                        }
+                        finally
+                        {
+                            this.semaphore.Release(1);
+                        }
+                    }
+                    catch (OperationCanceledException)
                     {
                         return this.currentPosition;
                     }
@@ -786,52 +881,55 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
             public bool IsReady { get; private set; }
 
-            public bool IsFailed { get; private set; }
+            public bool IsFailed
+            {
+                get
+                {
+                    return this.isFailed || this.token.IsCancellationRequested;
+                }
+
+                private set
+                {
+                    this.isFailed = value;
+                }
+            }
 
             public void Dispose()
             {
-                lock (this.locker)
-                {
-                    if (this.cancellationTokenSource != null && !this.cancellationTokenSource.IsCancellationRequested)
-                    {
-                        try
-                        {
-                            this.cancellationTokenSource.Cancel();
-                            this.cancellationTokenSource.Dispose();
-                        }
-                        catch
-                        {
-                        }
-                    }
-
-                    this.cancellationTokenSource = null;
-                }
+                this.Dispose(disposing: true);
+                GC.SuppressFinalize(this);
             }
 
             public IAsyncOperationWithProgress<IBuffer, uint> ReadAsync(
                 IBuffer buffer, uint count, InputStreamOptions options)
             {
-                return AsyncInfo.Run<IBuffer, uint>(async (token, progress) =>
+                return AsyncInfo.Run<IBuffer, uint>(async (t, progress) =>
                 {
                     progress.Report(0);
 
                     bool fReading;
                     do
                     {
-                        lock (this.locker)
+                        await this.semaphore.WaitAsync(t).ConfigureAwait(continueOnCapturedContext: false);
+
+                        try
                         {
                             fReading = this.readPosition < (this.currentPosition + count)
                                 && this.currentPosition < (ulong)this.lastChunk;
                         }
+                        finally
+                        {
+                            this.semaphore.Release(1);
+                        }
 
                         if (fReading)
                         {
-                            if (token.IsCancellationRequested)
+                            if (t.IsCancellationRequested)
                             {
                                 return buffer;
                             }
 
-                            await Task.Delay(10, token);
+                            await Task.Delay(10, t);
                         }
                     }
                     while (fReading && this.downloadTask != null);
@@ -849,9 +947,21 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
             public void Seek(ulong position)
             {
-                lock (this.locker)
+                try
                 {
-                    this.currentPosition = position;
+                    this.semaphore.Wait(this.token);
+
+                    try
+                    {
+                        this.currentPosition = position;
+                    }
+                    finally
+                    {
+                        this.semaphore.Release(1);
+                    }
+                }
+                catch (OperationCanceledException)
+                {
                 }
             }
 
@@ -892,15 +1002,29 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
             public async Task SaveToFileAsync(IStorageFile file)
             {
-                lock (this.locker)
+                await this.semaphore.WaitAsync(this.token).ConfigureAwait(continueOnCapturedContext: false);
+
+                try
                 {
                     if (this.readPosition < (ulong)this.data.Length)
                     {
                         throw new NotSupportedException("File is still in downloading state.");
                     }
                 }
+                finally
+                {
+                    this.semaphore.Release(1);
+                }
 
                 await WriteSongToCache(file, this.data);
+            }
+
+            private void Dispose(bool disposing)
+            {
+                if (disposing)
+                {
+                    this.DownloadProgressChanged = null;
+                }
             }
 
             private void RaiseDownloadProgressChanged(double downloadProgress)
@@ -912,8 +1036,10 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 }
             }
 
-            private async Task DownloadStream(HttpClient client, CancellationToken token)
+            private async Task DownloadStream(HttpClient client)
             {
+                await Task.Yield();
+
                 try
                 {
                     for (int i = 0; i < this.urls.Length - 1; i++)
@@ -926,23 +1052,36 @@ namespace OutcoldSolutions.GoogleMusic.Web
                         long end;
                         if (GetChunkPosition(uri, out start, out end))
                         {
-                            lock (this.locker)
+                            await this.semaphore.WaitAsync(this.token).ConfigureAwait(continueOnCapturedContext: false);
+
+                            try
                             {
                                 this.readPosition = (ulong)Math.Max(start - 1, 0);
                             }
+                            finally
+                            {
+                                this.semaphore.Release(1);
+                            }
 
                             double downloadProgress;
-                            lock (this.locker)
+
+                            await this.semaphore.WaitAsync(this.token).ConfigureAwait(continueOnCapturedContext: false);
+
+                            try
                             {
                                 downloadProgress = (double)this.readPosition / (double)this.data.Length;
+                            }
+                            finally
+                            {
+                                this.semaphore.Release(1);
                             }
 
                             this.RaiseDownloadProgressChanged(downloadProgress);
 
-                            var response = await client.GetAsync(uri, token);
+                            var response = await client.GetAsync(uri, this.token);
                             using (var stream = await response.Content.ReadAsStreamAsync())
                             {
-                                int read = await stream.ReadAsync(this.data, (int)start, (int)end - (int)start, token);
+                                int read = await stream.ReadAsync(this.data, (int)start, (int)end - (int)start, this.token);
 
                                 if (read != (int)end - (int)start)
                                 {
@@ -991,7 +1130,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 {
                     this.IsFailed = true;
 
-                    if (token.IsCancellationRequested)
+                    if (this.token.IsCancellationRequested)
                     {
                         this.logger.Debug(exception, "MemoryRandomAccessStreamMultiStreams.SafeDownloadStream: Downloading task was canceled .");
                     }

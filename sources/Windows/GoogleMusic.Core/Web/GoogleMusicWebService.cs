@@ -10,6 +10,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
     using System.Net;
     using System.Net.Http;
     using System.Text;
+    using System.Threading;
     using System.Threading.Tasks;
 
     using Newtonsoft.Json;
@@ -85,7 +86,8 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
         public async Task<HttpResponseMessage> GetAsync(
             string url,
-            bool signUrl = true)
+            bool signUrl = true, 
+            CancellationToken? token = null)
         {
             if (this.Logger.IsDebugEnabled)
             {
@@ -99,7 +101,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
             var requestMessage = new HttpRequestMessage(HttpMethod.Get, url);
             requestMessage.Headers.Add(CookieHeader, this.sessionService.GetCookieContainer().GetCookieHeader());
-            var responseMessage = await this.SendAsync(requestMessage, HttpCompletionOption.ResponseHeadersRead);
+            var responseMessage = await this.SendAsync(requestMessage, HttpCompletionOption.ResponseHeadersRead, token);
 
             IEnumerable<string> responseCookies;
             if (responseMessage.Headers.TryGetValues(SetCookieHeader, out responseCookies))
@@ -148,7 +150,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
             return responseMessage;
         }
 
-        public async Task<TResult> GetAsync<TResult>(string url, bool signUrl = true) where TResult : CommonResponse
+        public async Task<TResult> GetAsync<TResult>(string url, bool signUrl = true, CancellationToken? token = null) where TResult : CommonResponse
         {
             HttpResponseMessage responseMessage = null;
 

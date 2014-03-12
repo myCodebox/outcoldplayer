@@ -4,7 +4,6 @@
 namespace OutcoldSolutions.GoogleMusic.BindingModels
 {
     using System.Globalization;
-    using System.Text;
 
     using OutcoldSolutions.GoogleMusic.Models;
 
@@ -126,6 +125,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
                 this.songState = value;
                 this.RaiseCurrentPropertyChanged();
                 this.RaisePropertyChanged(() => this.IsPlaying);
+                this.RaisePropertyChanged(() => this.IsLoading);
             }
         }
 
@@ -134,6 +134,14 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             get
             {
                 return this.songState == SongState.Playing || this.songState == SongState.Paused;
+            }
+        }
+
+        public bool IsLoading
+        {
+            get
+            {
+                return this.songState == SongState.Loading;
             }
         }
 

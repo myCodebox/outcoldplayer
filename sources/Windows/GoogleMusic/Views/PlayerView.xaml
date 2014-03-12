@@ -31,10 +31,10 @@
             <Button.Template>
                 <ControlTemplate>
                     <controls:AlbumArtControl Height="79" 
-                                              Width="79" 
-                                              ImageSize="79" 
-                                              Canvas.ZIndex="1"
-                                              ImageSource="{Binding Path=BindingModel.CurrentSong.Metadata.AlbumArtUrl, Mode=OneWay}" />
+                                            Width="79" 
+                                            ImageSize="79" 
+                                            Canvas.ZIndex="1"
+                                            ImageSource="{Binding Path=BindingModel.CurrentSong.Metadata.AlbumArtUrl, Mode=OneWay}" />
                 </ControlTemplate>
             </Button.Template>
         </Button>
@@ -70,9 +70,13 @@
                 Visibility="{Binding Path=BindingModel.CurrentSong, Mode=OneWay, Converter={StaticResource NullToInvisibilityConverter}}">
             <Button.Template>
                 <ControlTemplate>
-                    <StackPanel>
-
-                        <StackPanel Orientation="Horizontal">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="14" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        
+                        <StackPanel Orientation="Horizontal" Visibility="{Binding Path=BindingModel.IsBusy, Converter={StaticResource BooleanToInvisibilityConverter}}">
                             <StackPanel.Resources>
                                 <Style TargetType="TextBlock" BasedOn="{StaticResource SmallTextStyle}">
                                     <Setter Property="FontFamily" Value="Arial" />
@@ -91,18 +95,20 @@
                             </StackPanel>
                         </StackPanel>
 
-                        <TextBlock Style="{StaticResource BodyTextStyle}" 
+                        <StackPanel Grid.Row="1">
+                            <TextBlock Style="{StaticResource BodyTextStyle}" 
                                    Text="{Binding Path=BindingModel.CurrentSong.Title, Mode=OneWay}" 
                                    TextWrapping="NoWrap" 
                                    TextTrimming="WordEllipsis"/>
 
-                        <TextBlock Style="{StaticResource BodyTextStyle}" 
+                            <TextBlock Style="{StaticResource BodyTextStyle}" 
                                    Text="{Binding Path=BindingModel.CurrentSong.ArtistAndAlbum, Mode=OneWay}" 
                                    Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}"
                                    TextWrapping="NoWrap" 
                                    TextTrimming="WordEllipsis"/>
+                        </StackPanel>
                         
-                    </StackPanel>
+                    </Grid>
                 </ControlTemplate>
             </Button.Template>
         </Button>
