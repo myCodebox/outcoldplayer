@@ -5,8 +5,10 @@
 namespace OutcoldSolutions.GoogleMusic.Web
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Globalization;
+    using System.Linq;
     using System.Net;
     using System.Net.Http;
     using System.Text;
@@ -27,6 +29,10 @@ namespace OutcoldSolutions.GoogleMusic.Web
         private readonly HttpClient httpClient;
 
         private readonly IGoogleMusicSessionService sessionService;
+
+        private readonly ConcurrentDictionary<CacheKey, object> cache = new ConcurrentDictionary<CacheKey, object>();
+
+        private DateTime lastCacheClear = new DateTime();
 
         public GoogleMusicApisService(
             ILogManager logManager,
@@ -82,19 +88,18 @@ namespace OutcoldSolutions.GoogleMusic.Web
             return responseMessage;
         }
 
-        public async Task<HttpResponseMessage> PostAsync(string url, dynamic json = null, bool signUrl = false, CancellationToken? cancellationToken = null)
+        public async Task<HttpResponseMessage> PostAsync(string url, string jsonContent = null, bool signUrl = false, CancellationToken? cancellationToken = null)
         {
             if (this.Logger.IsDebugEnabled)
             {
-                this.Logger.LogRequest(HttpMethod.Post, url, null, (object)json);
+                this.Logger.LogRequest(HttpMethod.Post, url, null, jsonContent);
             }
 
             var requestMessage = new HttpRequestMessage(HttpMethod.Post, this.UrlDefaultParameters(url));
             requestMessage.Headers.Add("Authorization", this.GetAuthorizationHeaderValue());
-            if (json != null)
+            if (jsonContent != null)
             {
-                var content = json is string ? (string)json : (string)JsonConvert.SerializeObject(json);
-                requestMessage.Content = new StringContent(content, Encoding.UTF8, "application/json");
+                requestMessage.Content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
             }
 
             var responseMessage = await this.SendAsync(requestMessage, HttpCompletionOption.ResponseContentRead, cancellationToken);
@@ -102,8 +107,17 @@ namespace OutcoldSolutions.GoogleMusic.Web
             return responseMessage;
         }
 
-        public async Task<TResult> GetAsync<TResult>(string url, CancellationToken? cancellationToken = null)
+        public async Task<TResult> GetAsync<TResult>(string url, CancellationToken? cancellationToken = null, bool useCache = false)
         {
+            if (useCache)
+            {
+                object cacheItem;
+                if (this.cache.TryGetValue(new CacheKey(url), out cacheItem))
+                {
+                    return (TResult)cacheItem;
+                }
+            }
+
             HttpResponseMessage responseMessage = null;
             HttpRequestException exception = null;
             try
@@ -150,23 +164,45 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 throw new GoogleApiWebRequestException(errorMessage.ToString(), exception, statusCode);
             }
 
-            return await responseMessage.Content.ReadAsJsonObject<TResult>();
+            var result = await responseMessage.Content.ReadAsJsonObject<TResult>();
+
+            if (useCache)
+            {
+                this.cache.TryAdd(new CacheKey(url), result);
+            }
+
+            return result;
         }
 
-        public async Task<TResult> PostAsync<TResult>(string url, dynamic json = null, bool signUrl = false, CancellationToken? cancellationToken = null)
+        public async Task<TResult> PostAsync<TResult>(string url, dynamic json = null, bool signUrl = false, CancellationToken? cancellationToken = null, bool useCache = false)
         {
+            string jsonContent = null;
+            if (json != null)
+            {
+                jsonContent = json is string ? (string)json : (string)JsonConvert.SerializeObject(json);
+            }
+
+            if (useCache)
+            {
+                object cacheItem;
+                if (this.cache.TryGetValue(new CacheKey(url, jsonContent), out cacheItem))
+                {
+                    return (TResult)cacheItem;
+                }
+            }
+
             HttpResponseMessage responseMessage = null;
             HttpRequestException exception = null;
 
             try
             {
-                responseMessage = await this.PostAsync(url, json, signUrl, cancellationToken);
+                responseMessage = await this.PostAsync(url, jsonContent, signUrl, cancellationToken);
 
                 // This means that google asked us to relogin. Let's try again this request.
                 if (responseMessage.StatusCode == HttpStatusCode.Found
                     || responseMessage.StatusCode == HttpStatusCode.Forbidden)
                 {
-                    responseMessage = await this.PostAsync(url, json, signUrl, cancellationToken);
+                    responseMessage = await this.PostAsync(url, jsonContent, signUrl, cancellationToken);
                 }
 
                 responseMessage.EnsureSuccessStatusCode();
@@ -208,7 +244,14 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 throw new GoogleApiWebRequestException(errorMessage.ToString(), exception, statusCode);
             }
 
-            return await responseMessage.Content.ReadAsJsonObject<TResult>();
+            var result = await responseMessage.Content.ReadAsJsonObject<TResult>();
+
+            if (useCache)
+            {
+                this.cache.TryAdd(new CacheKey(url, jsonContent), result);
+            }
+
+            return result;
         }
 
         public async Task<IList<TData>> DownloadList<TData>(
@@ -298,6 +341,65 @@ namespace OutcoldSolutions.GoogleMusic.Web
             }
 
             return value;
+        }
+
+        private void ClearCache()
+        {
+            var now = new DateTime();
+            if ((now - this.lastCacheClear).TotalMinutes > 30)
+            {
+                object c;
+                var oldCache = this.cache.Keys.Where(x => (now - x.Created).TotalMinutes > 30).ToList();
+                foreach (var key in oldCache)
+                {
+                    this.cache.TryRemove(key, out c);
+                }
+
+                this.lastCacheClear = now;
+            }
+        }
+
+        private class CacheKey : IEquatable<CacheKey>
+        {
+            public CacheKey(string query, string request)
+            {
+                this.Query = query;
+                this.Request = request;
+            }
+
+            public CacheKey(string query)
+            {
+                this.Query = query;
+            }
+
+            public string Query { get; set; }
+
+            public string Request { get; set; }
+
+            public DateTime Created { get; set; }
+
+            public bool Equals(CacheKey other)
+            {
+                return string.Equals(this.Query, other.Query, StringComparison.OrdinalIgnoreCase) && string.Equals(this.Request, other.Request, StringComparison.OrdinalIgnoreCase);
+            }
+
+            public override bool Equals(object obj)
+            {
+                if (object.ReferenceEquals(null, obj))
+                {
+                    return false;
+                }
+
+                return obj is CacheKey && this.Equals((CacheKey)obj);
+            }
+
+            public override int GetHashCode()
+            {
+                unchecked
+                {
+                    return (this.Query.GetHashCode() * 397) ^ (this.Request == null ? 0 : this.Request.GetHashCode());
+                }
+            }
         }
     }
 }

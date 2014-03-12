@@ -13,13 +13,15 @@ namespace OutcoldSolutions.GoogleMusic.Web
     {
         Task<TResult> GetAsync<TResult>(
             string url,
-            CancellationToken? cancellationToken = null);
+            CancellationToken? cancellationToken = null,
+            bool useCache = false);
 
         Task<TResult> PostAsync<TResult>(
             string url,
             dynamic json = null,
             bool signUrl = false,
-            CancellationToken? cancellationToken = null);
+            CancellationToken? cancellationToken = null,
+            bool useCache = false);
 
         Task<IList<TData>> DownloadList<TData>(
             string url,

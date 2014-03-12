@@ -75,7 +75,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
                            includeDeleted = false
                        };
 
-            return this.googleMusicApisService.PostAsync<GoogleMusicSharedPlaylistEntriesResponse>(PlEntriesShared, json);
+            return this.googleMusicApisService.PostAsync<GoogleMusicSharedPlaylistEntriesResponse>(PlEntriesShared, json, useCache: true);
         }
 
         public async Task<GoogleMusicPlaylistBatchResponse> CreateAsync(string name)

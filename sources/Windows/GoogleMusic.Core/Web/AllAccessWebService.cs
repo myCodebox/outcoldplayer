@@ -41,17 +41,17 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
         public Task<GoogleMusicArtist> FetchArtistAsync(string googleArtistId)
         {
-            return this.googleMusicApisService.GetAsync<GoogleMusicArtist>(string.Format(CultureInfo.InvariantCulture, FetchArtist, googleArtistId));
+            return this.googleMusicApisService.GetAsync<GoogleMusicArtist>(string.Format(CultureInfo.InvariantCulture, FetchArtist, googleArtistId), useCache: true);
         }
 
         public Task<GoogleMusicAlbum> FetchAlbumAsync(string googleAlbumId)
         {
-            return this.googleMusicApisService.GetAsync<GoogleMusicAlbum>(string.Format(CultureInfo.InvariantCulture, FetchAlbum, googleAlbumId));
+            return this.googleMusicApisService.GetAsync<GoogleMusicAlbum>(string.Format(CultureInfo.InvariantCulture, FetchAlbum, googleAlbumId), useCache: true);
         }
 
         public Task<GoogleSearchResult> SearchAsync(string query, CancellationToken cancellationToken)
         {
-            return this.googleMusicApisService.GetAsync<GoogleSearchResult>(string.Format(CultureInfo.InvariantCulture, Search, WebUtility.UrlEncode(query)), cancellationToken);
+            return this.googleMusicApisService.GetAsync<GoogleSearchResult>(string.Format(CultureInfo.InvariantCulture, Search, WebUtility.UrlEncode(query)), cancellationToken, useCache: true);
         }
     }
 }

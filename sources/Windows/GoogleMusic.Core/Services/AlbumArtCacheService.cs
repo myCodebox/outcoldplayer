@@ -236,10 +236,9 @@ namespace OutcoldSolutions.GoogleMusic.Services
             }
         }
 
-        private struct CachedKey : IEquatable<CachedKey>
+        private class CachedKey : IEquatable<CachedKey>
         {
             public CachedKey(Uri albumArtUrl, uint size)
-                : this()
             {
                 this.AlbumArtUrl = albumArtUrl;
                 this.Size = size;
