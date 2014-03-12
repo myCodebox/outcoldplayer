@@ -41,7 +41,7 @@ namespace OutcoldSolutions.GoogleMusic.Shell
 
             this.mediaElement.Volume = this.settingsService.GetValue(MediaElementVolumeKey, 1d);
 
-            this.timer.Interval = TimeSpan.FromMilliseconds(500);
+            this.timer.Interval = TimeSpan.FromMilliseconds(200);
             this.timer.Tick += this.TimerOnTick;
         }
 

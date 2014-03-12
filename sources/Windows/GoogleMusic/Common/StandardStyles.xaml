@@ -90,7 +90,7 @@
         <Setter Property="Foreground" Value="{StaticResource SliderTrackDecreaseBackgroundThemeBrush}" />
         <Setter Property="ManipulationMode" Value="None" />
         <Setter Property="Padding" Value="0" />
-        <Setter Property="Margin" Value="-6" />
+        <Setter Property="Margin" Value="0" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Slider">

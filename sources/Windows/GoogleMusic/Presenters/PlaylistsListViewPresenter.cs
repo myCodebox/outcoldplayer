@@ -174,7 +174,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             {
                 this.Logger.LogTask(this.playQueueService.PlayAsync(playlist));
                 this.navigationService.NavigateTo<ICurrentPlaylistPageView>();
-                this.MainFrame.IsBottomAppBarOpen = true;
             }
         }
 

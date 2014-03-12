@@ -10,28 +10,24 @@ namespace OutcoldSolutions.GoogleMusic.Views
     using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
 
-    using Windows.UI.ViewManagement;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Controls.Primitives;
     using Windows.UI.Xaml.Data;
+    using Windows.UI.Xaml.Input;
     using Windows.UI.Xaml.Media.Animation;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.InversionOfControl;
     using OutcoldSolutions.GoogleMusic.Presenters;
+    using OutcoldSolutions.GoogleMusic.Services;
 
     /// <summary>
     /// The MainFrame interface.
     /// </summary>
     public interface IMainFrame : IView
     {
-        /// <summary>
-        /// Gets or sets a value indicating whether is bottom app bar open.
-        /// </summary>
-        bool IsBottomAppBarOpen { get; set; }
-
         /// <summary>
         /// Set view commands.
         /// </summary>
@@ -88,11 +84,11 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
         private IView currentView;
 
-        private bool bottomToolWasOpen;
-
         private Popup fullScreenPopup;
 
         private IMainMenu mainMenu;
+
+        private ISelectedObjectsService selectedObjectsService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MainFrame"/> class.
@@ -102,33 +98,17 @@ namespace OutcoldSolutions.GoogleMusic.Views
             this.InitializeComponent();
 
             Debug.Assert(this.BottomAppBar != null, "this.BottomAppBar != null");
-            this.BottomAppBar.Opened += (sender, o) =>
-                {
-                    this.BottomAppBarFakeBorder.Visibility = Visibility.Visible;
-                };
 
             this.BottomAppBar.Closed += (sender, o) =>
                 {
                     this.AppToolBarRightPopup.IsOpen = false;
                     this.AppToolBarLeftPopup.IsOpen = false;
-                    this.BottomAppBarFakeBorder.Visibility = Visibility.Collapsed;
-                };
-
-            this.BottomAppBar.SizeChanged += (sender, args) =>
-                {
-                    this.BottomAppBarFakeBorder.Height = args.NewSize.Height;
                 };
 
             this.SizeChanged += (sender, args) =>
                 {
                     this.UpdateFullScreenPopupSize();
                     this.UpdateBottomAppBarVisibility();
-
-                    if (ApplicationView.Value != ApplicationViewState.Snapped && this.bottomToolWasOpen)
-                    {
-                        this.BottomAppBar.IsOpen = this.bottomToolWasOpen;
-                        this.bottomToolWasOpen = false;
-                    }
                 };
 
             this.Loaded += this.OnLoaded;
@@ -137,20 +117,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
         private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
         {
             this.MainMenuContainer.Content = this.mainMenu = this.container.Resolve<IMainMenu>();
-        }
-
-        /// <inheritdoc />
-        public bool IsBottomAppBarOpen
-        {
-            get
-            {
-                return this.BottomAppBar.IsOpen;
-            }
-
-            set
-            {
-                this.BottomAppBar.IsOpen = value;
-            }
         }
 
         /// <inheritdoc />
@@ -184,8 +150,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
         {
             this.ContextButtonsItemsControl.ItemsSource = commands;
             this.UpdateBottomAppBar();
-            if (this.BottomAppBar != null 
-                && this.BottomAppBar.Visibility == Visibility.Visible 
+            if (this.BottomAppBar.Visibility == Visibility.Visible 
                 && !this.BottomAppBar.IsOpen
                 && this.ContextButtonsItemsControl.Items != null
                 && this.ContextButtonsItemsControl.Items.Count > 0)
@@ -530,17 +495,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
         private void SetBottomAppBarRightZoneRegion(object content)
         {
             this.BottomAppBarRightZoneRegionContentControl.Content = content;
-            if (content == null)
-            {
-                this.ContextButtonsItemsControl.HorizontalAlignment = HorizontalAlignment.Right;
-                this.BottomAppBar.IsSticky = false;
-            }
-            else
-            {
-                this.ContextButtonsItemsControl.HorizontalAlignment = HorizontalAlignment.Left;
-                this.BottomAppBar.IsSticky = true;
-            }
-
             this.UpdateBottomAppBar();
         }
 
@@ -551,8 +505,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
         private void UpdateBottomAppBarVisibility()
         {
-            bool isVisible = (this.ContextButtonsItemsControl.Items != null && this.ContextButtonsItemsControl.Items.Count > 0)
-                             || this.BottomAppBarRightZoneRegionContentControl.Content != null;
+            bool isVisible = (this.ContextButtonsItemsControl.Items != null && this.ContextButtonsItemsControl.Items.Count > 0);
             this.UpdateToolBarVisibility(this.BottomAppBar, isVisible);
         }
 
@@ -562,13 +515,30 @@ namespace OutcoldSolutions.GoogleMusic.Views
             {
                 var currentVisibility = appBar.Visibility == Visibility.Visible && appBar.IsOpen;
 
-                var isVisible = ApplicationView.Value != ApplicationViewState.Snapped && (this.fullScreenPopup == null || !this.fullScreenPopup.IsOpen) && isLogicalVisible;
+                var isVisible = (this.fullScreenPopup == null || !this.fullScreenPopup.IsOpen) && isLogicalVisible;
 
                 appBar.Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
 
                 if (!currentVisibility)
                 {
                     appBar.IsOpen = false;
+                }
+            }
+        }
+
+        private void MainFrame_OnRightTapped(object sender, RightTappedRoutedEventArgs e)
+        {
+            if (!e.Handled)
+            {
+                if (this.selectedObjectsService == null)
+                {
+                    this.selectedObjectsService = this.container.Resolve<ISelectedObjectsService>();
+                }
+
+                if (this.selectedObjectsService.HasSelectedObjects())
+                {
+                    this.selectedObjectsService.ClearSelection();
+                    e.Handled = true;
                 }
             }
         }

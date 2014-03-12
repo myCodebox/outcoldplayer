@@ -3,6 +3,9 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.BindingModels
 {
+    using System.Globalization;
+    using System.Text;
+
     using OutcoldSolutions.GoogleMusic.Models;
 
     public class SongBindingModel : BindingModelBase
@@ -35,7 +38,11 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         {
             get
             {
-                return string.IsNullOrEmpty(this.Metadata.ArtistTitle) ? this.Metadata.AlbumArtistTitle : this.Metadata.ArtistTitle;
+                return string.IsNullOrEmpty(this.Metadata.ArtistTitle) ? 
+                     string.IsNullOrEmpty(this.Metadata.AlbumArtistTitle) ?
+                      "Unknown"
+                     : this.Metadata.AlbumArtistTitle
+                     : this.Metadata.ArtistTitle;
             }
         }
 
@@ -43,7 +50,15 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         {
             get
             {
-                return this.Metadata.AlbumTitle;
+                return string.IsNullOrEmpty(this.Metadata.AlbumTitle) ? "Unknown" : this.Metadata.AlbumTitle;
+            }
+        }
+
+        public string ArtistAndAlbum
+        {
+            get
+            {
+                return string.Format(CultureInfo.CurrentCulture, "{0} - {1}", Artist, Album);
             }
         }
 

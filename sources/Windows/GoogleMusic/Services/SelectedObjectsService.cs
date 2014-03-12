@@ -22,6 +22,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
         void AddActions(IEnumerable<ISelectedObjectAction> actions);
 
         void Update(IEnumerable<object> newItems, IEnumerable<object> oldItems);
+
+        bool HasSelectedObjects();
     }
 
     public interface ISelectedObjectAction
@@ -154,6 +156,11 @@ namespace OutcoldSolutions.GoogleMusic.Services
             {
                 this.UpdateContextCommands();
             }
+        }
+
+        public bool HasSelectedObjects()
+        {
+            return this.selectedObjects.Any();
         }
 
         public void ClearSelection()
