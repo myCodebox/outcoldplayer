@@ -1,38 +1,17 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // Outcold Solutions (http://outcoldman.com)
 // --------------------------------------------------------------------------------------------------------------------
+
 namespace OutcoldSolutions.GoogleMusic.Controls
 {
-    using System;
-
     using Windows.UI.Xaml;
-    using Windows.UI.Xaml.Controls.Primitives;
+    using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Input;
 
-    /// <summary>
-    /// The app bar toggle button.
-    /// </summary>
-    /// <remarks>
-    /// This class just fixes the Visual State "Checked" / "Unchecked" for layout update.
-    /// </remarks>
-    public class AppBarToggleButton : ToggleButton
+    public class ButtonWithHover : Button
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="AppBarToggleButton"/> class.
-        /// </summary>
-        public AppBarToggleButton()
+        public ButtonWithHover()
         {
-        }
-
-        protected override void OnToggle()
-        {
-            base.OnToggle();
-
-            VisualStateManager.GoToState(this, this.IsChecked.HasValue && this.IsChecked.Value ? "Checked" : "Unchecked", false);
-            if (this.IsPointerOver)
-            {
-                VisualStateManager.GoToState(this, "PointerOver", false);
-            }
         }
 
         protected override void OnPointerPressed(PointerRoutedEventArgs e)
@@ -47,10 +26,6 @@ namespace OutcoldSolutions.GoogleMusic.Controls
             base.OnPointerCanceled(e);
 
             VisualStateManager.GoToState(this, "Normal", false);
-            if (this.IsChecked.HasValue && this.IsChecked.Value)
-            {
-                VisualStateManager.GoToState(this, "Checked", false);
-            }
         }
 
         protected override void OnPointerReleased(PointerRoutedEventArgs e)
@@ -61,10 +36,6 @@ namespace OutcoldSolutions.GoogleMusic.Controls
             if (this.IsPointerOver)
             {
                 VisualStateManager.GoToState(this, "PointerOver", false);
-            }
-            if (this.IsChecked.HasValue && this.IsChecked.Value)
-            {
-                VisualStateManager.GoToState(this, "Checked", false);
             }
             if (!this.IsEnabled)
             {
@@ -77,10 +48,6 @@ namespace OutcoldSolutions.GoogleMusic.Controls
             base.OnPointerEntered(e);
 
             VisualStateManager.GoToState(this, "PointerOver", false);
-            if (this.IsChecked.HasValue && this.IsChecked.Value)
-            {
-                VisualStateManager.GoToState(this, "Checked", false);
-            }
 
             if (!this.IsEnabled)
             {
@@ -93,10 +60,6 @@ namespace OutcoldSolutions.GoogleMusic.Controls
             base.OnPointerExited(e);
 
             VisualStateManager.GoToState(this, "Normal", false);
-            if (this.IsChecked.HasValue && this.IsChecked.Value)
-            {
-                VisualStateManager.GoToState(this, "Checked", false);
-            }
 
             if (!this.IsEnabled)
             {

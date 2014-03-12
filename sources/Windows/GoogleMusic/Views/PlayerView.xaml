@@ -110,39 +110,42 @@
 
         <StackPanel Grid.Row="1"
                     Orientation="Horizontal"
+                    VerticalAlignment="Stretch"
                     Grid.Column="2">
 
             <controls:AppBarToggleButton Style="{StaticResource RepeatAllAppBarButtonStyle}" 
                                          IsChecked="{Binding Path=IsRepeatAllEnabled, Mode=TwoWay}"
                                          Command="{Binding Path=RepeatAllCommand, Mode=OneTime}"
+                                         FontSize="16"
                                          AutomationProperties.Name=""/>
-            
-            <Button Style="{StaticResource SkipBackAppBarButtonStyle}" 
+
+            <controls:ButtonWithHover Style="{StaticResource SkipBackAppBarButtonStyle}" 
                     Command="{Binding Path=SkipBackCommand, Mode=OneTime}"
-                    VerticalAlignment="Top"
+                    FontSize="24"
                     AutomationProperties.Name=""
                     Canvas.ZIndex="100"/>
-            <Button Style="{StaticResource PlayAppBarButtonStyle}"  
+            <controls:ButtonWithHover Style="{StaticResource PlayAppBarButtonStyle}"  
                     Visibility="{Binding Path=BindingModel.IsPlaying, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}" 
                     Command="{Binding Path=PlayCommand, Mode=OneTime}"
-                    VerticalAlignment="Top"
+                    FontSize="34"
                     AutomationProperties.Name=""
                     Canvas.ZIndex="100"/>
-            <Button Style="{StaticResource PauseAppBarButtonStyle}" 
+            <controls:ButtonWithHover Style="{StaticResource PauseAppBarButtonStyle}" 
                     Visibility="{Binding Path=BindingModel.IsPlaying, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" 
                     Command="{Binding Path=PauseCommand, Mode=OneTime}"
-                    VerticalAlignment="Top"
+                    FontSize="34"
                     AutomationProperties.Name=""
                     Canvas.ZIndex="100"/>
-            <Button Style="{StaticResource SkipAheadAppBarButtonStyle}"  
+            <controls:ButtonWithHover Style="{StaticResource SkipAheadAppBarButtonStyle}"  
                     Command="{Binding Path=SkipAheadCommand, Mode=OneTime}"
-                    VerticalAlignment="Top"
+                    FontSize="24"
                     AutomationProperties.Name=""
                     Canvas.ZIndex="100"/>
 
             <controls:AppBarToggleButton Style="{StaticResource ShuffleAppBarButtonStyle}" 
                                          IsChecked="{Binding Path=IsShuffleEnabled, Mode=TwoWay}"
                                          Command="{Binding Path=ShuffleCommand, Mode=OneTime}"
+                                         FontSize="16"
                                          AutomationProperties.Name=""/>
 
             

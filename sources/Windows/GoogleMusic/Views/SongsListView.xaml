@@ -167,7 +167,7 @@
                         </Grid.ColumnDefinitions>
 
                         <controls:FakeEqualizerControl Grid.Column="0" 
-                                                       Margin="5, 0, 0, 0"
+                                                       Margin="10, 0, 0, 0"
                                                        HorizontalAlignment="Left" 
                                                        VerticalAlignment="Center" 
                                                        Visibility="{Binding Path=IsPlaying, Converter={StaticResource BooleanToVisibilityConverter}}" 

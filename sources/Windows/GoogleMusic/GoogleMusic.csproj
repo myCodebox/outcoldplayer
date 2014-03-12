@@ -125,6 +125,7 @@
     <Compile Include="BindingModels\SearchPageViewBindingModel.cs" />
     <Compile Include="BindingModels\Settings\AccountViewBindingModel.cs" />
     <Compile Include="BindingModels\Settings\SupportBindingModel.cs" />
+    <Compile Include="Controls\ButtonWithHover.cs" />
     <Compile Include="Controls\TextChangedBindingBehavior.cs" />
     <Compile Include="Converters\AlbumDetailsConverter.cs" />
     <Compile Include="Converters\NotEmptyToVisibilityConverter.cs" />
