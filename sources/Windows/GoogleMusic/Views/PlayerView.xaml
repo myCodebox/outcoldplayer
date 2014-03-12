@@ -112,9 +112,13 @@
                     Orientation="Horizontal"
                     Grid.Column="2">
 
+            <controls:AppBarToggleButton Style="{StaticResource RepeatAllAppBarButtonStyle}" 
+                                         IsChecked="{Binding Path=IsRepeatAllEnabled, Mode=TwoWay}"
+                                         Command="{Binding Path=RepeatAllCommand, Mode=OneTime}"
+                                         AutomationProperties.Name=""/>
+            
             <Button Style="{StaticResource SkipBackAppBarButtonStyle}" 
                     Command="{Binding Path=SkipBackCommand, Mode=OneTime}"
-                    Margin="10, 0, 0, 0"
                     VerticalAlignment="Top"
                     AutomationProperties.Name=""
                     Canvas.ZIndex="100"/>
@@ -135,6 +139,13 @@
                     VerticalAlignment="Top"
                     AutomationProperties.Name=""
                     Canvas.ZIndex="100"/>
+
+            <controls:AppBarToggleButton Style="{StaticResource ShuffleAppBarButtonStyle}" 
+                                         IsChecked="{Binding Path=IsShuffleEnabled, Mode=TwoWay}"
+                                         Command="{Binding Path=ShuffleCommand, Mode=OneTime}"
+                                         AutomationProperties.Name=""/>
+
+            
 
         </StackPanel>
 

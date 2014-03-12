@@ -194,7 +194,6 @@
     <Compile Include="Presenters\MainFramePresenter.cs" />
     <Compile Include="Presenters\MainMenuPresenter.cs" />
     <Compile Include="Presenters\PagePresenterBase.cs" />
-    <Compile Include="Presenters\PlayerViewPresenterBase.cs" />
     <Compile Include="Presenters\PlaylistsPageViewPresenterBase.cs" />
     <Compile Include="Presenters\Popups\PlaylistEditPopupViewPresenter.cs" />
     <Compile Include="Presenters\Popups\ProgressLoadingCloseEventArgs.cs" />

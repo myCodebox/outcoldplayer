@@ -38,7 +38,7 @@
                 Background="{StaticResource ListViewItemBorder}">
             <Grid Margin="0, 0, 0, 0">
                 <Grid.ColumnDefinitions >
-                    <ColumnDefinition Width="30" />
+                    <ColumnDefinition Width="35" />
                     <ColumnDefinition Width="{Binding Path=IsNumColumnVisible, ElementName=This, Converter={StaticResource BooleanToColumnWidthConverter}, ConverterParameter=30}" />
                     <ColumnDefinition Width="2*" />
                     <ColumnDefinition Width="70" />
@@ -57,7 +57,7 @@
                                                 TitleAlignment="Right"
                                                 FontSize="18"
                                                 FontFamily="{StaticResource ContentControlThemeFontFamily}"
-                                                Margin="-30, 0, 0, 0"
+                                                Margin="-35, 0, 0, 0"
                                                 Visibility="{Binding Path=IsNumColumnVisible, ElementName=This, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneTime}"/>
 
                 <controls:SortableHeaderControl Grid.Column="2" 
@@ -156,7 +156,7 @@
 
                     <Grid Height="33">
                         <Grid.ColumnDefinitions >
-                            <ColumnDefinition Width="30" />
+                            <ColumnDefinition Width="35" />
                             <ColumnDefinition Width="{Binding Path=IsNumColumnVisible, ElementName=This, Converter={StaticResource BooleanToColumnWidthConverter}, ConverterParameter=30}" />
                             <ColumnDefinition Width="2*" />
                             <ColumnDefinition Width="70" />
@@ -174,7 +174,7 @@
                                                        IsPaused="{Binding Path=State, Converter={StaticResource ValueToBooleanConverter}, ConverterParameter={StaticResource StatePaused}}" />
 
                         <TextBlock Grid.Column="1" Style="{StaticResource SongTitleStyle}" 
-                                   Margin="0, 0, 10, 0" 
+                                   Margin="-10, 0, 10, 0" 
                                    Text="{Binding Path=Track, Mode=OneWay}" 
                                    HorizontalAlignment="Right"
                                    Visibility="{Binding Path=IsNumColumnVisible, ElementName=This, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneTime}"/>
