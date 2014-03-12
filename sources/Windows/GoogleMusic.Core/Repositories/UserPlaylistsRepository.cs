@@ -36,7 +36,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
 
         Task<List<UserPlaylist>> GetAllUserPlaylistsAsync();
 
-        Task<Uri[]> GetUrisAsync(UserPlaylist playlist);
+        Task<Uri[]> GetUrisAsync(string id);
     }
 
     public class UserPlaylistsRepository : RepositoryBase, IUserPlaylistsRepository
@@ -278,9 +278,9 @@ limit 4
             return this.Connection.Table<UserPlaylist>().Where(a => a.Type == "USER_GENERATED").OrderBy(x => x.TitleNorm).ToListAsync();
         }
 
-        public async Task<Uri[]> GetUrisAsync(UserPlaylist playlist)
+        public async Task<Uri[]> GetUrisAsync(string id)
         {
-             return (await this.Connection.QueryAsync<UrlRef>(SqlGetUris, this.stateService.IsOnline(), playlist.PlaylistId)).Select(x => new Uri(x.Url)).ToArray();
+             return (await this.Connection.QueryAsync<UrlRef>(SqlGetUris, this.stateService.IsOnline(), id)).Select(x => new Uri(x.Url)).ToArray();
         }
     }
 }

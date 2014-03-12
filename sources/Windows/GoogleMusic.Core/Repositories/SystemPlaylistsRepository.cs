@@ -21,7 +21,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
 
         Task<IList<SystemPlaylist>> GetAllAsync();
 
-        Task<Uri[]> GetUrisAsync(SystemPlaylist playlist);
+        Task<Uri[]> GetUrisAsync(SystemPlaylistType systemPlaylistType);
     }
 
     public class SystemPlaylistsRepository : RepositoryBase, ISystemPlaylistsRepository
@@ -205,9 +205,9 @@ limit ?2
             return await this.Connection.QueryAsync<Song>(SqlLastAddedSongs, includeAll || this.stateService.IsOnline(), LastAddedSongsCount);
         }
 
-        public async Task<Uri[]> GetUrisAsync(SystemPlaylist playlist)
+        public async Task<Uri[]> GetUrisAsync(SystemPlaylistType systemPlaylistType)
         {
-            switch (playlist.SystemPlaylistType)
+            switch (systemPlaylistType)
             {
                 case SystemPlaylistType.AllSongs:
                     return (await this.Connection.QueryAsync<UrlRef>(SqlAllSongsPlaylistAlbumArts, this.stateService.IsOnline())).Select(x => new Uri(x.Url)).ToArray();
@@ -216,7 +216,7 @@ limit ?2
                 case SystemPlaylistType.LastAdded:
                     return (await this.Connection.QueryAsync<UrlRef>(SqlLastAddedPlaylistAlbumArts, this.stateService.IsOnline())).Select(x => new Uri(x.Url)).ToArray();
                 default:
-                    throw new ArgumentOutOfRangeException("playlist");
+                    throw new ArgumentOutOfRangeException("systemPlaylistType");
             }
         }
     }

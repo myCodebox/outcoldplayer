@@ -5,12 +5,13 @@
 namespace OutcoldSolutions.GoogleMusic.Services
 {
     using System;
-    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Reactive.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
-    using System.Xml.Linq;
 
+    using OutcoldSolutions.GoogleMusic.EventAggregator;
     using OutcoldSolutions.GoogleMusic.InversionOfControl;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Repositories;
@@ -46,9 +47,10 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         private readonly ISettingsService settingsService;
 
-        private readonly IApplicationStateService applicationStateService;
+        private readonly Dictionary<string, Task<Uri[]>> cachedUris = new Dictionary<string, Task<Uri[]>>();
 
-        private readonly ConcurrentDictionary<string, Task<Uri[]>> cachedUris = new ConcurrentDictionary<string, Task<Uri[]>>(); 
+        private readonly SemaphoreSlim limitSemaphore = new SemaphoreSlim(2);
+        private readonly SemaphoreSlim dataSemaphore = new SemaphoreSlim(1);
 
         public PlaylistsService(
             IDependencyResolverContainer container,
@@ -56,14 +58,38 @@ namespace OutcoldSolutions.GoogleMusic.Services
             IUserPlaylistsService userPlaylistsService,
             IApplicationResources applicationResources,
             ISettingsService settingsService,
-            IApplicationStateService applicationStateService)
+            IEventAggregator eventAggregator)
         {
             this.container = container;
             this.radioStationsService = radioStationsService;
             this.userPlaylistsService = userPlaylistsService;
             this.applicationResources = applicationResources;
             this.settingsService = settingsService;
-            this.applicationStateService = applicationStateService;
+
+            eventAggregator.GetEvent<PlaylistsChangeEvent>()
+                .Where(e => e.HasRemovedPlaylists() || e.HasUpdatedPlaylists())
+                .Subscribe(
+                    async (e) =>
+                    {
+                        var playlists = e.UpdatedPlaylists.Union(e.RemovedPlaylists)
+                            .Where(x => x.PlaylistType == PlaylistType.UserPlaylist || x.PlaylistType == PlaylistType.Genre
+                                    || x.PlaylistType == PlaylistType.Radio
+                                    || x.PlaylistType == PlaylistType.SystemPlaylist);
+
+                        await this.dataSemaphore.WaitAsync().ConfigureAwait(continueOnCapturedContext: false);
+
+                        try
+                        {
+                            foreach(var p in playlists)
+                            {
+                                this.cachedUris.Remove(p.Id);
+                            }
+                        }
+                        finally
+                        {
+                            this.dataSemaphore.Release(1);
+                        }
+                    });
         }
 
         public IPlaylistRepository<TPlaylist> GetRepository<TPlaylist>() where TPlaylist : IPlaylist
@@ -198,36 +224,59 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         public async Task GetArtUrisAsync(IMixedPlaylist playlist)
         {
+            await this.limitSemaphore.WaitAsync().ConfigureAwait(continueOnCapturedContext: false);
+
+            try
+            {
+                Task<Uri[]> task;
+
+                try
+                {
+                    await this.dataSemaphore.WaitAsync().ConfigureAwait(continueOnCapturedContext: false);
+
+                    if (!this.cachedUris.TryGetValue(playlist.Id, out task))
+                    {
+                        this.cachedUris.Add(playlist.Id, task = this.GetUrlsAsync(playlist));
+                    }
+                }
+                finally
+                {
+                    this.dataSemaphore.Release(1);
+                }
+
+                playlist.ArtUrls = await task;
+            }
+            finally
+            {
+                this.limitSemaphore.Release(1);
+            }
+        }
+
+        private async Task<Uri[]> GetUrlsAsync(IMixedPlaylist playlist)
+        {
             switch (playlist.PlaylistType)
             {
                 case PlaylistType.Genre:
-                    playlist.ArtUrls = await ((IGenresRepository)this.GetRepository<Genre>()).GetUrisAsync((Genre)playlist);
-                    break;
+                    return await ((IGenresRepository)this.GetRepository<Genre>()).GetUrisAsync(playlist.TitleNorm);
                 case PlaylistType.UserPlaylist:
                     UserPlaylist userPlaylist = (UserPlaylist)playlist;
                     if (userPlaylist.IsShared)
                     {
-                        userPlaylist.ArtUrls = await this.cachedUris.GetOrAdd(userPlaylist.PlaylistId,
-                            s => Task.Run(
-                                async () =>
-                                {
-                                    Uri[] result = null;
-                                    var songs = await this.userPlaylistsService.GetSharedPlaylistSongsAsync(userPlaylist);
-                                    if (songs != null)
-                                    {
-                                        result = songs.OrderByDescending(x => x.Recent).Select(x => x.AlbumArtUrl).Distinct().Take(4).ToArray();
-                                    }
-                                    return result;
-                                }));
+                        Uri[] result = null;
+                        var songs = await this.userPlaylistsService.GetSharedPlaylistSongsAsync(userPlaylist);
+                        if (songs != null)
+                        {
+                            result = songs.OrderByDescending(x => x.Recent).Select(x => x.AlbumArtUrl).Distinct().Take(4).ToArray();
+                        }
+
+                        return result;
                     }
                     else
                     {
-                        playlist.ArtUrls = await ((IUserPlaylistsRepository)this.GetRepository<UserPlaylist>()).GetUrisAsync((UserPlaylist)playlist);
+                        return await ((IUserPlaylistsRepository)this.GetRepository<UserPlaylist>()).GetUrisAsync(playlist.Id);
                     }
-                    break;
                 case PlaylistType.SystemPlaylist:
-                    playlist.ArtUrls = await ((ISystemPlaylistsRepository)this.GetRepository<SystemPlaylist>()).GetUrisAsync((SystemPlaylist)playlist);
-                    break;
+                    return await ((ISystemPlaylistsRepository)this.GetRepository<SystemPlaylist>()).GetUrisAsync(((SystemPlaylist)playlist).SystemPlaylistType);
                 default:
                     throw new ArgumentOutOfRangeException("playlist");
             }

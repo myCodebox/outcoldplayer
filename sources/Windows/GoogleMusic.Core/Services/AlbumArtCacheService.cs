@@ -5,7 +5,7 @@
 namespace OutcoldSolutions.GoogleMusic.Services
 {
     using System;
-    using System.Collections.Concurrent;
+    using System.Collections.Generic;
     using System.IO;
     using System.Net.Http;
     using System.Threading;
@@ -25,9 +25,9 @@ namespace OutcoldSolutions.GoogleMusic.Services
         private readonly IApplicationStateService stateService;
         private readonly ICachedAlbumArtsRepository cachedAlbumArtsRepository;
 
-        private readonly SemaphoreSlim semaphoreSlim = new SemaphoreSlim(10);
-        private readonly SemaphoreSlim initializationSemaphore = new SemaphoreSlim(1);
-        private readonly ConcurrentDictionary<CachedKey, Task<CachedAlbumArt>> downloadTasks = new ConcurrentDictionary<CachedKey, Task<CachedAlbumArt>>();
+        private readonly SemaphoreSlim limitSemaphore = new SemaphoreSlim(4);
+        private readonly SemaphoreSlim dataSemaphore = new SemaphoreSlim(1);
+        private readonly Dictionary<CachedKey, Task<CachedAlbumArt>> downloadTasks = new Dictionary<CachedKey, Task<CachedAlbumArt>>();
         private readonly HttpClient httpClient = new HttpClient();
         private StorageFolder cacheFolder;
 
@@ -54,64 +54,52 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
             if (cache == null)
             {
-                await this.semaphoreSlim.WaitAsync().ConfigureAwait(continueOnCapturedContext: false);
+                await this.limitSemaphore.WaitAsync().ConfigureAwait(continueOnCapturedContext: false);
 
                 try
                 {
-                    var cachedKey = new CachedKey(url, size);
-                    cache = await this.downloadTasks.GetOrAdd(
-                        cachedKey, 
-                        uri => Task.Run(
-                            async () =>
-                                {
-                                    CachedAlbumArt downloadedCache = await this.cachedAlbumArtsRepository.FindAsync(uri.AlbumArtUrl, uri.Size);
-                                    if (downloadedCache == null)
-                                    {
-                                        string fileName = Guid.NewGuid().ToString();
-                                        string subFolderName = fileName.Substring(0, 1);
+                    Task<CachedAlbumArt> task;
+                    CachedKey cachedKey = new CachedKey(url, size);
 
-                                        var folder = await this.cacheFolder.CreateFolderAsync(subFolderName, CreationCollisionOption.OpenIfExists);
-                                        var file = await folder.CreateFileAsync(fileName);
+                    try
+                    {
+                        await this.dataSemaphore.WaitAsync().ConfigureAwait(continueOnCapturedContext: false);
+                       
+                        if (!this.downloadTasks.TryGetValue(cachedKey, out task))
+                        {
+                            this.downloadTasks.Add(cachedKey, task = this.GetCachedAlbumArtAsync(cachedKey));
+                        }
+                    }
+                    finally 
+                    {
+                        this.dataSemaphore.Release(1);
+                    }
 
-                                        using (var imageStream = await this.httpClient.GetStreamAsync(uri.AlbumArtUrl.ChangeSize(uri.Size)))
-                                        {
-                                            using (var targetStream = await file.OpenAsync(FileAccessMode.ReadWrite))
-                                            {
-                                                using (Stream fileStream = targetStream.AsStreamForWrite())
-                                                {
-                                                    await imageStream.CopyToAsync(fileStream);
-                                                    await fileStream.FlushAsync();
-                                                }
-                                            }
-                                        }
-
-                                        downloadedCache = new CachedAlbumArt() { AlbumArtUrl = url, Size = size, FileName = fileName };
-
-                                        try
-                                        {
-                                            await this.cachedAlbumArtsRepository.AddAsync(downloadedCache);
-                                        }
-                                        catch (Exception e)
-                                        {
-                                            this.logger.Debug(e, "Could not insert the downloaded cache");
-                                        }
-                                    }
-
-                                    return downloadedCache;
-                                }));
+                    cache = await task;
                 }
                 finally
                 {
-                    this.semaphoreSlim.Release(1);
+                    
+                    this.limitSemaphore.Release(1);
                 }
             }
 
             return Path.Combine(AlbumArtCacheFolder, cache.FileName.Substring(0, 1), cache.FileName);
         }
 
-        public Task DeleteBrokenLinkAsync(Uri url, uint size)
+        public async Task DeleteBrokenLinkAsync(Uri url, uint size)
         {
-            return this.cachedAlbumArtsRepository.DeleteBrokenLinkAsync(url, size);
+            try
+            {
+                await this.dataSemaphore.WaitAsync().ConfigureAwait(continueOnCapturedContext: false);
+                this.downloadTasks.Remove(new CachedKey(url, size));
+            }
+            finally
+            {
+                this.dataSemaphore.Release(1);
+            }
+
+            await this.cachedAlbumArtsRepository.DeleteBrokenLinkAsync(url, size);
         }
 
         public async Task<StorageFolder> GetCacheFolderAsync()
@@ -122,6 +110,16 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         public async Task ClearCacheAsync()
         {
+            try
+            {
+                await this.dataSemaphore.WaitAsync().ConfigureAwait(continueOnCapturedContext: false);
+                this.downloadTasks.Clear();
+            }
+            finally
+            {
+                this.dataSemaphore.Release(1);
+            }
+
             await this.cachedAlbumArtsRepository.ClearCacheAsync();
             var folder = await this.GetCacheFolderAsync();
             foreach (var storageItem in await folder.GetItemsAsync())
@@ -130,9 +128,47 @@ namespace OutcoldSolutions.GoogleMusic.Services
             }
         }
 
+        private async Task<CachedAlbumArt> GetCachedAlbumArtAsync(CachedKey cachedKey)
+        {
+            CachedAlbumArt downloadedCache = await this.cachedAlbumArtsRepository.FindAsync(cachedKey.AlbumArtUrl, cachedKey.Size);
+            if (downloadedCache == null)
+            {
+                string fileName = Guid.NewGuid().ToString();
+                string subFolderName = fileName.Substring(0, 1);
+
+                var folder = await this.cacheFolder.CreateFolderAsync(subFolderName, CreationCollisionOption.OpenIfExists);
+                var file = await folder.CreateFileAsync(fileName);
+
+                using (var imageStream = await this.httpClient.GetStreamAsync(cachedKey.AlbumArtUrl.ChangeSize(cachedKey.Size)))
+                {
+                    using (var targetStream = await file.OpenAsync(FileAccessMode.ReadWrite))
+                    {
+                        using (Stream fileStream = targetStream.AsStreamForWrite())
+                        {
+                            await imageStream.CopyToAsync(fileStream);
+                            await fileStream.FlushAsync();
+                        }
+                    }
+                }
+
+                downloadedCache = new CachedAlbumArt() { AlbumArtUrl = cachedKey.AlbumArtUrl, Size = cachedKey.Size, FileName = fileName };
+
+                try
+                {
+                    await this.cachedAlbumArtsRepository.AddAsync(downloadedCache);
+                }
+                catch (Exception e)
+                {
+                    this.logger.Debug(e, "Could not insert the downloaded cache");
+                }
+            }
+
+            return downloadedCache;
+        }
+
         private async Task InitializeCacheFolderAsync()
         {
-            await this.initializationSemaphore.WaitAsync().ConfigureAwait(continueOnCapturedContext: false);
+            await this.dataSemaphore.WaitAsync().ConfigureAwait(continueOnCapturedContext: false);
 
             try
             {
@@ -146,7 +182,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             }
             finally
             {
-                this.initializationSemaphore.Release(1);
+                this.dataSemaphore.Release(1);
             }
         }
 
@@ -159,6 +195,16 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 {
                     try
                     {
+                        try
+                        {
+                            await this.dataSemaphore.WaitAsync().ConfigureAwait(continueOnCapturedContext: false);
+                            this.downloadTasks.Remove(new CachedKey(cache.AlbumArtUrl, cache.Size));
+                        }
+                        finally
+                        {
+                            this.dataSemaphore.Release(1);
+                        }
+
                         var file = await ApplicationData.Current.LocalFolder.GetFileAsync(Path.Combine(AlbumArtCacheFolder, cache.FileName.Substring(0, 1), cache.FileName));
                         if (file != null)
                         {
@@ -199,9 +245,9 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 this.Size = size;
             }
 
-            public Uri AlbumArtUrl { get; set; }
+            public Uri AlbumArtUrl { get; private set; }
 
-            public uint Size { get; set; }
+            public uint Size { get; private set; }
 
             public bool Equals(CachedKey other)
             {

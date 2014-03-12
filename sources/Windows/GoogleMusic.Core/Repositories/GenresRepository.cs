@@ -17,7 +17,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
 
     public interface IGenresRepository : IPlaylistRepository<Genre>
     {
-        Task<Uri[]> GetUrisAsync(Genre genre);
+        Task<Uri[]> GetUrisAsync(string titleNorm);
     }
 
     public class GenresRepository : RepositoryBase, IGenresRepository
@@ -132,9 +132,9 @@ limit 4
             return await this.Connection.QueryAsync<Song>(SqlGenreSongs, includeAll || this.stateService.IsOnline(), id);
         }
 
-        public async Task<Uri[]> GetUrisAsync(Genre genre)
+        public async Task<Uri[]> GetUrisAsync(string titleNorm)
         {
-            return (await this.Connection.QueryAsync<UrlRef>(SqlGetUris, this.stateService.IsOnline(), genre.TitleNorm)).Select(x => new Uri(x.Url)).ToArray();
+            return (await this.Connection.QueryAsync<UrlRef>(SqlGetUris, this.stateService.IsOnline(), titleNorm)).Select(x => new Uri(x.Url)).ToArray();
         }
     }
 }
