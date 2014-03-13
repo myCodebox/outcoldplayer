@@ -19,7 +19,9 @@
         <DefaultTile ShowName="logoOnly" WideLogo="Assets\WideLogo.png" />
         <SplashScreen Image="Assets\SplashScreen.png" BackgroundColor="#207CB0" />
         <InitialRotationPreference>
+          <Rotation Preference="portrait" />
           <Rotation Preference="landscape" />
+          <Rotation Preference="portraitFlipped" />
           <Rotation Preference="landscapeFlipped" />
         </InitialRotationPreference>
       </VisualElements>

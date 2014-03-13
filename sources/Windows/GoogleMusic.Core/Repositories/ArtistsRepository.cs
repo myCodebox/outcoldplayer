@@ -5,8 +5,10 @@
 namespace OutcoldSolutions.GoogleMusic.Repositories
 {
     using System.Collections.Generic;
+    using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using System.Xml.Linq;
 
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services;
@@ -16,6 +18,8 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
         Task UpdateBioAsync(Artist artist, string bio);
 
         Task<Artist> FindByGoogleIdAsync(string googleMusicId);
+
+        Task<Artist> FindByTitleNormAsync(string titleNorm);
     }
 
     public class ArtistsRepository : RepositoryBase, IArtistsRepository
@@ -135,6 +139,11 @@ order by x.IsCollection, x.Year, x.[AlbumTitleNorm], coalesce(nullif(x.Disc, 0),
         public Task<Artist> FindByGoogleIdAsync(string googleMusicId)
         {
             return this.Connection.Table<Artist>().Where(x => x.GoogleArtistId == googleMusicId).FirstOrDefaultAsync();
+        }
+
+        public Task<Artist> FindByTitleNormAsync(string titleNorm)
+        {
+            return this.Connection.Table<Artist>().Where(x => x.TitleNorm == titleNorm).FirstOrDefaultAsync();
         }
     }
 }

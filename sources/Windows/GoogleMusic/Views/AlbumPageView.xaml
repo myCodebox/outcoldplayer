@@ -30,7 +30,16 @@
                Stretch="None"/>
 
             <TextBlock Style="{StaticResource TitleTextStyle}" Text="{Binding Path=BindingModel.Playlist.Title, Mode=OneWay}" TextWrapping="Wrap" TextTrimming="WordEllipsis" />
-            <TextBlock Style="{StaticResource SubtitleTextStyle}" Margin="0, 7, 0, 0" Text="{Binding Path=BindingModel.Playlist.Artist.Title, Mode=OneWay}"  TextWrapping="Wrap" TextTrimming="WordEllipsis" />
+
+            <Button Margin="0, 7, 0, 0"
+                    Command="{Binding Path=NavigateToArtistCommand, Mode=OneWay}">
+                <Button.Template>
+                    <ControlTemplate>
+                        <TextBlock Style="{StaticResource SubtitleTextStyle}" Margin="0, 7, 0, 0" Text="{Binding Path=BindingModel.Playlist.Artist.Title, Mode=OneWay}"  TextWrapping="Wrap" TextTrimming="WordEllipsis" />
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+            
             <TextBlock Style="{StaticResource SubtitleTextStyle}" Margin="0, 14, 0, 0" Text="{Binding Path=BindingModel.Playlist.Year, Mode=OneWay}" Visibility="{Binding Path=BindingModel.Playlist.Year, Converter={StaticResource ValueToInvisibilityConverter}, ConverterParameter=0}" />
             <!-- TODO: Fix genre -->
             <TextBlock Style="{StaticResource SubtitleTextStyle}" Margin="0, 7, 0, 0" Text="{Binding Path=BindingModel.Playlist.Genre, Mode=OneWay}" />

@@ -71,13 +71,24 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 return info;
             }
 
-            if (!string.Equals(artist.Bio, googleMusicArtist.ArtistBio))
+            if (!string.Equals(artist.Bio, googleMusicArtist.ArtistBio, StringComparison.CurrentCulture))
             {
                 artist.Bio = googleMusicArtist.ArtistBio;
                 if (artist.ArtistId > 0)
                 {
                     await this.artistsRepository.UpdateBioAsync(artist, artist.Bio);
                 }
+            }
+
+            if (!string.Equals(artist.Title, googleMusicArtist.Name, StringComparison.CurrentCulture))
+            {
+                artist.Title = googleMusicArtist.Name;
+                artist.TitleNorm = googleMusicArtist.Name.Normalize();
+            }
+
+            if (artist.ArtUrl == null && !string.IsNullOrEmpty(googleMusicArtist.ArtistArtRef))
+            {
+                artist.ArtUrl = new Uri(googleMusicArtist.ArtistArtRef);
             }
 
             if (googleMusicArtist.Albums != null)
@@ -131,6 +142,29 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 {
                     await this.albumsRepository.UpdateDescriptionAsync(album.AlbumId, album.Description);
                 }
+            }
+
+            if (!string.Equals(album.Title, googleMusicAlbum.Name, StringComparison.CurrentCulture))
+            {
+                album.Title = googleMusicAlbum.Name;
+                album.TitleNorm = googleMusicAlbum.Name.Normalize();
+            }
+
+            if (album.ArtUrl == null && !string.IsNullOrEmpty(googleMusicAlbum.AlbumArtRef))
+            {
+                album.ArtUrl = new Uri(googleMusicAlbum.AlbumArtRef);
+            }
+
+            album.Year = (ushort?)googleMusicAlbum.Year;
+
+            if (album.Artist == null)
+            {
+                album.Artist = new Artist()
+                    {
+                        GoogleArtistId = googleMusicAlbum.ArtistId == null ? null : googleMusicAlbum.ArtistId.FirstOrDefault(), 
+                        Title = googleMusicAlbum.AlbumArtist, 
+                        TitleNorm = googleMusicAlbum.AlbumArtist.Normalize()
+                    };
             }
 
             IList<Song> songs = null;

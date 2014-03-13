@@ -24,6 +24,8 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
         Task<Album> FindByGoogleMusicAlbumIdAsync(string googleMusicAlbumId);
 
         Task UpdateDescriptionAsync(int albumId, string description);
+
+        Task<Album> FindByTitleNormAsync(string titleNorm);
     }
 
     public class AlbumsRepository : RepositoryBase, IAlbumsRepository
@@ -263,6 +265,11 @@ where (?1 = 1 or x.[OfflineSongsCount] > 0) and s.IsLibrary = 1 and s.[SongId] =
         public Task UpdateDescriptionAsync(int albumId, string description)
         {
             return this.Connection.ExecuteAsync("update Album set Description = ?1 where AlbumId = ?2", albumId, description);
+        }
+
+        public Task<Album> FindByTitleNormAsync(string titleNorm)
+        {
+            return this.Connection.Table<Album>().Where(x => x.TitleNorm == titleNorm).FirstOrDefaultAsync();
         }
 
         public async Task<IList<Album>> SearchAsync(string searchQuery, uint? take)

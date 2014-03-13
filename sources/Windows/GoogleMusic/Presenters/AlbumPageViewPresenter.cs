@@ -17,17 +17,28 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private readonly IAllAccessService allAccessService;
         private readonly IAlbumsRepository albumsRepository;
 
+        private readonly IApplicationStateService applicationStateService;
+
+        private readonly INavigationService navigationService;
+
         public AlbumPageViewPresenter(
             IDependencyResolverContainer container,
             IApplicationResources resources,
             IAllAccessService allAccessService,
-            IAlbumsRepository albumsRepository)
+            IAlbumsRepository albumsRepository,
+            IApplicationStateService applicationStateService,
+            INavigationService navigationService)
             : base(container)
         {
             this.resources = resources;
             this.allAccessService = allAccessService;
             this.albumsRepository = albumsRepository;
+            this.applicationStateService = applicationStateService;
+            this.navigationService = navigationService;
+            this.NavigateToArtistCommand = new DelegateCommand(NavigateToArtist);
         }
+
+        public DelegateCommand NavigateToArtistCommand { get; set; }
 
         protected override async Task LoadDataAsync(NavigatedToEventArgs navigatedToEventArgs)
         {
@@ -63,6 +74,18 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 else
                 {
                     await base.LoadDataAsync(navigatedToEventArgs);
+                }
+            }
+        }
+
+        private void NavigateToArtist()
+        {
+            var album = this.BindingModel.Playlist as Album;
+            if (album != null && album.Artist != null)
+            {
+                if (this.applicationStateService.IsOnline() || album.Artist.ArtistId > 0)
+                {
+                    this.navigationService.NavigateToPlaylist(album.Artist);
                 }
             }
         }

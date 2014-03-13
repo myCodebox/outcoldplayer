@@ -102,6 +102,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 throw new NotSupportedException("Request should be PlaylistNavigationRequest and playlist type should be artist.");
             }
 
+            this.BindingModel.Artist = null;
+            this.BindingModel.Albums = null;
+            this.BindingModel.Collections = null;
+            this.BindingModel.ArtistInfo = null;
+
             Artist artist = request.Playlist as Artist;
 
             if (artist != null && artist.ArtistId == 0)

@@ -17,6 +17,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.EventAggregator;
     using OutcoldSolutions.GoogleMusic.Models;
+    using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
 
@@ -49,6 +50,14 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private readonly ISelectedObjectsService selectedObjectsService;
 
+        private readonly IArtistsRepository artistsRepository;
+
+        private readonly IAlbumsRepository albumsRepository;
+
+        private readonly INavigationService navigationService;
+
+        private readonly IApplicationStateService applicationStateService;
+
         private ObservableCollection<SongBindingModel> songs;
         private SongsSorting currentSorting = SongsSorting.Unknown;
 
@@ -68,15 +77,25 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             IDispatcher dispatcher,
             ISongsService songsService,
             ISelectedObjectsService selectedObjectsService,
+            IArtistsRepository artistsRepository,
+            IAlbumsRepository albumsRepository,
+            INavigationService navigationService,
+            IApplicationStateService applicationStateService,
             ILogManager logManager)
         {
             this.playQueueService = playQueueService;
             this.dispatcher = dispatcher;
             this.songsService = songsService;
             this.selectedObjectsService = selectedObjectsService;
+            this.artistsRepository = artistsRepository;
+            this.albumsRepository = albumsRepository;
+            this.navigationService = navigationService;
+            this.applicationStateService = applicationStateService;
             this.Songs = new ObservableCollection<SongBindingModel>();
             this.SortCommand = new DelegateCommand(this.SortSongs, (e) => this.AllowSorting);
             this.RateSongCommand = new DelegateCommand(this.RateSong);
+            this.NavigateToAlbumCommand = new DelegateCommand(this.NavigateToAlbum);
+            this.NavigateToArtistCommand = new DelegateCommand(this.NavigateToArtist);
             this.SelectedItems = new ObservableCollection<SongBindingModel>();
 
             this.logger = logManager.CreateLogger("SongsListViewPresenter");
@@ -122,6 +141,10 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         public DelegateCommand SortCommand { get; set; }
 
         public DelegateCommand RateSongCommand { get; set; }
+
+        public DelegateCommand NavigateToArtistCommand { get; set; }
+
+        public DelegateCommand NavigateToAlbumCommand { get; set; }
 
         public ObservableCollection<SongBindingModel> Songs
         {
@@ -424,6 +447,58 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.selectedObjectsService.Update(
                 e.NewItems == null ? null : e.NewItems.Cast<SongBindingModel>().Select(x => x.Metadata),
                 e.OldItems == null ? null : e.OldItems.Cast<SongBindingModel>().Select(x => x.Metadata));
+        }
+
+        private async void NavigateToArtist(object obj)
+        {
+            var song = obj as SongBindingModel;
+            if (song != null)
+            {
+                if (song.Metadata.UnknownSong)
+                {
+                    if (this.applicationStateService.IsOnline())
+                    {
+                        this.navigationService.NavigateToPlaylist(
+                            new Artist()
+                            {
+                                Title = song.Metadata.GetSongArtist(),
+                                TitleNorm = song.Metadata.GetSongArtist().Normalize(),
+                                GoogleArtistId = song.Metadata.GoogleArtistId
+                            });
+                    }
+                }
+                else
+                {
+                    var artist = await this.artistsRepository.FindByTitleNormAsync(song.Metadata.GetSongArtist().Normalize());
+                    this.navigationService.NavigateToPlaylist(artist);
+                }
+            }
+        }
+
+        private async void NavigateToAlbum(object obj)
+        {
+            var song = obj as SongBindingModel;
+            if (song != null)
+            {
+                if (song.Metadata.UnknownSong)
+                {
+                    if (this.applicationStateService.IsOnline())
+                    {
+                        this.navigationService.NavigateToPlaylist(
+                            new Album()
+                            {
+                                Title = song.Metadata.AlbumTitle,
+                                TitleNorm = song.Metadata.AlbumTitleNorm,
+                                GoogleAlbumId = song.Metadata.GoogleAlbumId
+                            });
+                    }
+                }
+                else
+                {
+                    var album = await this.albumsRepository.FindByTitleNormAsync(song.Metadata.AlbumTitleNorm);
+                    this.navigationService.NavigateToPlaylist(album);
+                }
+            }
         }
     }
 }
