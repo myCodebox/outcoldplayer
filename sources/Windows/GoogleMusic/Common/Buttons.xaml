@@ -605,7 +605,7 @@
 
                         <Border x:Name="BackgroundBorder" Background="{StaticResource AppBarItemPointerOverBackgroundThemeBrush}" Opacity="0" />
                         
-                        <StackPanel VerticalAlignment="Center" Margin="10,10,10,0">
+                        <StackPanel VerticalAlignment="Center" Margin="10,15,10,0">
                             
                             <ContentPresenter x:Name="Content" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             
