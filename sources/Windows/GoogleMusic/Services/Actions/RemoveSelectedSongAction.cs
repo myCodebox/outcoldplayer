@@ -4,32 +4,27 @@
 
 namespace OutcoldSolutions.GoogleMusic.Services.Actions
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
+    using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Presenters;
     using OutcoldSolutions.GoogleMusic.Views;
 
     public class RemoveSelectedSongAction: ISelectedObjectAction
     {
-        private readonly IApplicationResources applicationResources;
         private readonly INavigationService navigationService;
         private readonly IPlayQueueService playQueueService;
 
-        private readonly IDispatcher dispatcher;
-
         public RemoveSelectedSongAction(
-            IApplicationResources applicationResources,
             INavigationService navigationService,
-            IPlayQueueService playQueueService,
-            IDispatcher dispatcher)
+            IPlayQueueService playQueueService)
         {
-            this.applicationResources = applicationResources;
             this.navigationService = navigationService;
             this.playQueueService = playQueueService;
-            this.dispatcher = dispatcher;
         }
 
         public string Icon
@@ -44,50 +39,83 @@ namespace OutcoldSolutions.GoogleMusic.Services.Actions
         {
             get
             {
-                return this.applicationResources.GetString("Toolbar_QueueButton");
+                return "Remove from queue";
+            }
+        }
+
+        public ActionGroup Group
+        {
+            get
+            {
+                return ActionGroup.Navigation;
+            }
+        }
+
+
+        public int Priority
+        {
+            get
+            {
+                return 50;
             }
         }
 
         public bool CanExecute(IList<object> selectedObjects)
         {
-            if (!(this.navigationService.GetCurrentView() is ICurrentPlaylistPageView))
+            IPageView currentView = this.navigationService.GetCurrentView();
+
+            if (currentView is ICurrentPlaylistPageView)
             {
-                return false;
+                return true;
             }
 
-            return selectedObjects.Count > 0;
+            if (currentView is IPlaylistPageView)
+            {
+                PlaylistPageViewBindingModel bindingModel = currentView.GetPresenter<PlaylistPageViewPresenter>().BindingModel;
+                IPlaylist currentPlaylist = this.playQueueService.CurrentPlaylist;
+                if (currentPlaylist != null && 
+                    currentPlaylist.PlaylistType != PlaylistType.Radio && 
+                    string.Equals(bindingModel.Playlist.Id, currentPlaylist.Id, StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public async Task<bool?> Execute(IList<object> selectedObjects)
         {
-            ICurrentPlaylistPageView currentView = this.navigationService.GetCurrentView() as ICurrentPlaylistPageView;
-
-            if (currentView != null)
+            if (!this.CanExecute(selectedObjects))
             {
-                var bindingModel = currentView.GetPresenter<CurrentPlaylistPageViewPresenter>().View.GetSongsListView().GetPresenter<SongsListViewPresenter>();
-                IList<int> selectedIndexes = bindingModel.GetSelectedIndexes().ToList();
-
-                await this.playQueueService.RemoveAsync(selectedIndexes);
-
-                await this.dispatcher.RunAsync(
-                    () =>
-                    {
-                        if (selectedIndexes.Count == 1)
-                        {
-                            int selectedSongIndex = selectedIndexes.First();
-                            if (selectedSongIndex < bindingModel.Songs.Count)
-                            {
-                                bindingModel.SelectSongByIndex(selectedSongIndex);
-                            }
-                            else if (bindingModel.Songs.Count > 0)
-                            {
-                                bindingModel.SelectSongByIndex(selectedSongIndex - 1);
-                            }
-                        }
-                    });
+                return null;
             }
 
-            return true;
+            ICurrentPlaylistPageView currentView = this.navigationService.GetCurrentView() as ICurrentPlaylistPageView;
+
+            SongsListViewPresenter songsListViewPresenter = null;
+            if (currentView != null)
+            {
+                songsListViewPresenter = currentView.GetSongsListView().GetPresenter<SongsListViewPresenter>();
+            }
+
+            IPlaylistPageView playlistPageView = this.navigationService.GetCurrentView() as IPlaylistPageView;
+            if (playlistPageView != null)
+            {
+                songsListViewPresenter = playlistPageView.GetSongsListView().GetPresenter<SongsListViewPresenter>();
+            }
+
+            if (songsListViewPresenter != null)
+            {
+                await this.playQueueService.RemoveAsync(songsListViewPresenter.GetSelectedIndexes().ToList());
+            }
+
+            if (playlistPageView != null)
+            {
+                this.navigationService.NavigateTo<ICurrentPlaylistPageView>(keepInHistory: false);
+            }
+
+            return null;
         }
     }
 }

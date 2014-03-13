@@ -38,7 +38,23 @@ namespace OutcoldSolutions.GoogleMusic.Services.Actions
         {
             get
             {
-                return this.applicationResources.GetString("Toolbar_RemoveLocal");
+                return "Remove from device";
+            }
+        }
+
+        public ActionGroup Group
+        {
+            get
+            {
+                return ActionGroup.Cache;
+            }
+        }
+
+        public int Priority
+        {
+            get
+            {
+                return 500;
             }
         }
 
@@ -86,7 +102,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Actions
                 await this.songsCachingService.ClearCachedAsync(songs);
             }
 
-            return true;
+            return null;
         }
     }
 }

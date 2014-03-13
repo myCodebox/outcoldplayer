@@ -3,65 +3,26 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic
 {
-    using System;
+    using OutcoldSolutions.GoogleMusic.Services.Actions;
 
     /// <summary>
     /// The command metadata.
     /// </summary>
     public class CommandMetadata
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="CommandMetadata"/> class.
-        /// </summary>
-        /// <param name="iconName">
-        /// The icon name.
-        /// </param>
-        /// <param name="command">
-        /// The command.
-        /// </param>
-        /// <exception cref="ArgumentNullException">
-        /// If <paramref name="iconName"/> or <paramref name="command"/> are null.
-        /// </exception>
-        public CommandMetadata(string iconName, DelegateCommand command)
+        public CommandMetadata(string iconName, string title, DelegateCommand command)
         {
-            if (iconName == null)
-            {
-                throw new ArgumentNullException("iconName");
-            }
-
-            if (command == null)
-            {
-                throw new ArgumentNullException("command");
-            }
-
             this.IconName = iconName;
             this.Command = command;
+            this.Title = title;
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="CommandMetadata"/> class.
-        /// </summary>
-        /// <param name="iconName">
-        /// The icon name.
-        /// </param>
-        /// <param name="title">
-        /// The title.
-        /// </param>
-        /// <param name="command">
-        /// The command.
-        /// </param>
-        /// <exception cref="ArgumentNullException">
-        /// If <paramref name="iconName"/> or <paramref name="command"/> or <paramref name="title"/> are null.
-        /// </exception>
-        public CommandMetadata(string iconName, string title, DelegateCommand command)
-            : this(iconName, command)
+        public CommandMetadata(string iconName, string title, ActionGroup actionGroup, DelegateCommand command)
         {
-            if (title == null)
-            {
-                throw new ArgumentNullException("title");
-            }
-
+            this.IconName = iconName;
+            this.Command = command;
             this.Title = title;
+            this.ActionGroup = actionGroup;
         }
 
         /// <summary>
@@ -78,5 +39,7 @@ namespace OutcoldSolutions.GoogleMusic
         /// Gets or sets the command.
         /// </summary>
         public DelegateCommand Command { get; set; }
+
+        public ActionGroup ActionGroup { get; set; }
     }
 }

@@ -113,44 +113,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             }
         }
 
-        public void PlaySharedPlaylist(IPlaylist playlist)
-        {
-            if (this.PlayCommand.CanExecute(playlist) && ((UserPlaylist)playlist).IsShared)
-            {
-                var currentPlaylist = this.playQueueService.CurrentPlaylist;
-
-                if (currentPlaylist != null
-                    && currentPlaylist.PlaylistType == PlaylistType.UserPlaylist
-                    && string.Equals(currentPlaylist.Id, playlist.Id, StringComparison.Ordinal))
-                {
-                    this.navigationService.NavigateTo<ICurrentPlaylistPageView>();
-                }
-                else
-                {
-                    this.PlayCommand.Execute(playlist);
-                }
-            }
-        }
-
-        public void PlayRadio(IPlaylist playlist)
-        {
-            if (this.PlayCommand.CanExecute(playlist))
-            {
-                var currentPlaylist = this.playQueueService.CurrentPlaylist;
-
-                if (currentPlaylist != null
-                    && currentPlaylist.PlaylistType == PlaylistType.Radio
-                    && string.Equals(currentPlaylist.Id, playlist.Id, StringComparison.Ordinal))
-                {
-                    this.navigationService.NavigateTo<ICurrentPlaylistPageView>();
-                }
-                else
-                {
-                    this.PlayCommand.Execute(playlist);
-                }
-            }
-        }
-
         protected override void OnInitialized()
         {
             base.OnInitialized();
@@ -173,7 +135,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             if (playlist != null)
             {
                 this.Logger.LogTask(this.playQueueService.PlayAsync(playlist));
-                this.navigationService.NavigateTo<ICurrentPlaylistPageView>();
+                this.navigationService.NavigateToPlaylist(playlist);
             }
         }
 

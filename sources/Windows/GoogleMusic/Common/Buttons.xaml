@@ -1,6 +1,7 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:OutcoldSolutions.GoogleMusic.Controls">
 
     <!-- Button styles -->
 
@@ -890,8 +891,10 @@
         <Setter Property="BorderBrush" Value="{StaticResource AppBarItemForegroundThemeBrush}"/>
     </Style>
 
+   
+    
     <Style TargetType="ItemsControl" x:Key="ToolBarItemsControlStyle">
-        <Setter Property="Height" Value="86" />
+        <Setter Property="Height" Value="100" />
         <Setter Property="ItemsPanel">
             <Setter.Value>
                 <ItemsPanelTemplate>
@@ -899,13 +902,33 @@
                 </ItemsPanelTemplate>
             </Setter.Value>
         </Setter>
-        <Setter Property="ItemTemplate">
+        <Setter Property="ItemTemplateSelector">
             <Setter.Value>
-                <DataTemplate>
-                    <Button Style="{Binding Path=IconName, Mode=OneTime, Converter={StaticResource StringToResourceConverter}}"
-                                        Command="{Binding Path=Command}"
-                                        AutomationProperties.Name="{Binding Path=Title, Mode=OneTime}"/>
-                </DataTemplate>
+                <controls:MenuItemDataTemplateSelector>
+                    <controls:MenuItemDataTemplateSelector.MenuItemDataTemplate>
+                        <DataTemplate>
+                            <Button Style="{Binding Path=IconName, Mode=OneTime, Converter={StaticResource StringToResourceConverter}}"
+                                Command="{Binding Path=Command}"
+                                AutomationProperties.Name="{Binding Path=Title, Mode=OneTime}"/>
+                        </DataTemplate>
+                    </controls:MenuItemDataTemplateSelector.MenuItemDataTemplate>
+                    <controls:MenuItemDataTemplateSelector.SeparatorDataTemplate>
+                        <DataTemplate>
+                            <Border Height="60" 
+                                Margin="10, 0, 10, 0"
+                                VerticalAlignment="Center"
+                                Width="2" >
+                                <Border.Background>
+                                    <LinearGradientBrush>
+                                        <GradientStop Color="#004F4F4F" Offset="0"/>
+                                        <GradientStop Color="#FF4F4F4F" Offset="0.5"/>
+                                        <GradientStop Color="#004F4F4F" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </Border.Background>
+                            </Border>
+                        </DataTemplate>
+                    </controls:MenuItemDataTemplateSelector.SeparatorDataTemplate>
+                </controls:MenuItemDataTemplateSelector>
             </Setter.Value>
         </Setter>
     </Style>
@@ -1084,10 +1107,10 @@
         <Setter Property="Content" Value="&#xE117;"/>
     </Style>
 
-    <Style x:Key="MusicInfoAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
+    <Style x:Key="RadioAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
         <Setter Property="AutomationProperties.AutomationId" Value="MusicInfoAppBarButton"/>
         <Setter Property="AutomationProperties.Name" Value="Music Info"/>
-        <Setter Property="Content" Value="&#xE142;"/>
+        <Setter Property="Content" Value="&#xE1D6;"/>
     </Style>
 
 </ResourceDictionary>

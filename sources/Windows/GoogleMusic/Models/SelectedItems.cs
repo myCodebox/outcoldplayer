@@ -17,6 +17,12 @@ namespace OutcoldSolutions.GoogleMusic.Models
             this.Playlists = playlists;
         }
 
+        public SelectedItems(IList<IPlaylist> playlists, IList<Song> songs)
+        {
+            this.Songs = songs;
+            this.Playlists = playlists;
+        }
+
         public IList<Song> Songs { get; set; }
 
         public IList<IPlaylist> Playlists { get; set; }

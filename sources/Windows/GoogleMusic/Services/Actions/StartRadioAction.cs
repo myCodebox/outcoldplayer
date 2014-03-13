@@ -9,7 +9,6 @@ namespace OutcoldSolutions.GoogleMusic.Services.Actions
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.Models;
-    using OutcoldSolutions.GoogleMusic.Views;
 
     public class StartRadioAction : ISelectedObjectAction
     {
@@ -40,7 +39,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Actions
         {
             get
             {
-                return CommandIcon.MusicInfo;
+                return CommandIcon.Radio;
             }
         }
 
@@ -51,6 +50,22 @@ namespace OutcoldSolutions.GoogleMusic.Services.Actions
                 return this.settingsService.GetIsAllAccessAvailable()
                     ? this.applicationResources.GetString("Toolbar_StartRadio")
                     : this.applicationResources.GetString("Toolbar_StartInstantMix");
+            }
+        }
+
+        public ActionGroup Group
+        {
+            get
+            {
+                return ActionGroup.Navigation;
+            }
+        }
+
+        public int Priority
+        {
+            get
+            {
+                return 1000;
             }
         }
 
@@ -99,10 +114,10 @@ namespace OutcoldSolutions.GoogleMusic.Services.Actions
             if (radio != null)
             {
                 await this.playQueueService.PlayAsync(radio.Item1, radio.Item2, -1);
-                this.navigationService.NavigateTo<ICurrentPlaylistPageView>();
+                this.navigationService.NavigateToPlaylist(radio.Item1);
             }
 
-            return radio != null;
+            return null;
         }
     }
 }

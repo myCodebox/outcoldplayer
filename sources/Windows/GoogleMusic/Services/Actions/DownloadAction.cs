@@ -46,7 +46,23 @@ namespace OutcoldSolutions.GoogleMusic.Services.Actions
         {
             get
             {
-                return this.applicationResources.GetString("Toolbar_KeepLocal");
+                return "Keep on device";
+            }
+        }
+
+        public ActionGroup Group
+        {
+            get
+            {
+                return ActionGroup.Cache;
+            }
+        }
+
+        public int Priority
+        {
+            get
+            {
+                return 1000;
             }
         }
 
@@ -83,8 +99,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Actions
                     }
 
                     var playlist = (IPlaylist)obj;
-                    if (playlist.PlaylistType == PlaylistType.Radio
-                        || (playlist.PlaylistType == PlaylistType.UserPlaylist && ((UserPlaylist)playlist).IsShared))
+                    if (playlist.PlaylistType == PlaylistType.Radio)
                     {
                         return false;
                     }
@@ -117,18 +132,28 @@ namespace OutcoldSolutions.GoogleMusic.Services.Actions
                 }
                 else
                 {
-                    songs.AddRange(await this.playlistsService.GetSongsAsync((IPlaylist)obj));
+                    foreach (var plSong in await this.playlistsService.GetSongsAsync((IPlaylist)obj))
+                    {
+                        if (plSong.UnknownSong)
+                        {
+                            unknownSongs.Add(plSong);
+                        }
+                        else
+                        {
+                            songs.Add(plSong);
+                        }
+                    }
                 }
             }
 
-            if (selectedObjects.Count > 0)
+            if (unknownSongs.Count > 0)
             {
                 var yesUiCommand = new UICommand("Yes");
                 var ignoreUiCommand = new UICommand("Ignore");
                 var cancelUiCommand = new UICommand("Cancel");
 
                 MessageDialog dialog = new MessageDialog("Some of the selected songs are not in your library or playlists. "
-                                                         + "To download them to your cache you need first add them to your library or one of playlists. "
+                                                         + "To download them to your cache you need first add them to your library or one of your playlists. "
                                                          + "Do you want to add them to your library now?");
                 dialog.Commands.Add(yesUiCommand);
                 dialog.Commands.Add(ignoreUiCommand);

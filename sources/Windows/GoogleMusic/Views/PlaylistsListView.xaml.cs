@@ -90,19 +90,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
             var playlistBindingModel = e.ClickedItem as PlaylistBindingModel;
             if (playlistBindingModel != null)
             {
-                if (playlistBindingModel.Playlist.PlaylistType == PlaylistType.Radio)
-                {
-                    this.GetPresenter<PlaylistsListViewPresenter>().PlayRadio(playlistBindingModel.Playlist);
-                }
-                else if (playlistBindingModel.Playlist.PlaylistType == PlaylistType.UserPlaylist
-                    && ((UserPlaylist)playlistBindingModel.Playlist).IsShared)
-                {
-                    this.GetPresenter<PlaylistsListViewPresenter>().PlaySharedPlaylist(playlistBindingModel.Playlist);
-                }
-                else
-                {
-                    this.Container.Resolve<INavigationService>().NavigateToPlaylist(playlistBindingModel.Playlist);
-                }
+                this.Container.Resolve<INavigationService>().NavigateToPlaylist(playlistBindingModel.Playlist);
             }
         }
 

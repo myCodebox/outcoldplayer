@@ -25,7 +25,7 @@ namespace OutcoldSolutions.GoogleMusic
 
         public const string UnPin = "UnPinAppBarButtonStyle";
 
-        public const string MusicInfo = "MusicInfoAppBarButtonStyle";
+        public const string Radio = "RadioAppBarButtonStyle";
     }
 
     public static class CommandSymbol

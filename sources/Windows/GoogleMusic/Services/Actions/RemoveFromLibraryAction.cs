@@ -6,6 +6,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Actions
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
     using System.Threading.Tasks;
 
@@ -51,7 +52,23 @@ namespace OutcoldSolutions.GoogleMusic.Services.Actions
         {
             get
             {
-                return "Library";
+                return "Remove from library";
+            }
+        }
+
+        public ActionGroup Group
+        {
+            get
+            {
+                return ActionGroup.Library;
+            }
+        }
+
+        public int Priority
+        {
+            get
+            {
+                return 100;
             }
         }
 
@@ -76,12 +93,14 @@ namespace OutcoldSolutions.GoogleMusic.Services.Actions
                 else
                 {
                     var playlist = (IPlaylist)obj;
-                    if (playlist.PlaylistType == PlaylistType.Radio)
+                    if (playlist.PlaylistType == PlaylistType.Radio 
+                        || playlist.PlaylistType == PlaylistType.UserPlaylist
+                        || playlist.PlaylistType == PlaylistType.SystemPlaylist)
                     {
                         return false;
                     }
 
-                    hasLibrary |= !string.IsNullOrEmpty(playlist.Id) && !(playlist is UserPlaylist);
+                    hasLibrary |= !string.IsNullOrEmpty(playlist.Id);
                 }
             }
 
@@ -105,16 +124,46 @@ namespace OutcoldSolutions.GoogleMusic.Services.Actions
                 else
                 {
                     var playlist = (IPlaylist)obj;
-                    if (!string.IsNullOrEmpty(playlist.Id) && !(playlist is UserPlaylist))
+                    if (!string.IsNullOrEmpty(playlist.Id))
                     {
-                        songs.AddRange((await this.playlistsService.GetSongsAsync((IPlaylist)obj)).Where(x => x.IsLibrary));
+                        foreach (var plSong in await this.playlistsService.GetSongsAsync((IPlaylist)obj))
+                        {
+                            if (plSong.IsLibrary)
+                            {
+                                songs.Add(plSong);
+                            }
+                        }
                     }
                 }
             }
 
-            IList<Song> removedSongs = await this.songsService.RemoveFromLibraryAsync(songs);
+            if (songs.Count > 0)
+            {
+                var yesUiCommand = new UICommand(this.applicationResources.GetString("MessageBox_DeletePlaylistYes"));
+                var noUiCommand = new UICommand(this.applicationResources.GetString("MessageBox_DeletePlaylistNo"));
 
-            return removedSongs != null;
+                MessageDialog dialog =
+                    new MessageDialog(
+                        string.Format(
+                            CultureInfo.CurrentCulture,
+                            "Are you sure that you want to remove {0} song(s) from your library?",
+                            songs.Count));
+
+                dialog.Commands.Add(yesUiCommand);
+                dialog.Commands.Add(noUiCommand);
+                dialog.DefaultCommandIndex = 0;
+                dialog.CancelCommandIndex = 1;
+
+                var command = await dialog.ShowAsync();
+
+                if (command == yesUiCommand)
+                {
+                    IList<Song> removedSongs = await this.songsService.RemoveFromLibraryAsync(songs);
+                    return removedSongs != null;
+                }
+            }
+
+            return null;
         }
     }
 }

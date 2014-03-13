@@ -14,7 +14,6 @@ namespace OutcoldSolutions.GoogleMusic.Services.Actions
 
     public class AddToPlaylistAction : ISelectedObjectAction
     {
-        private readonly IApplicationResources applicationResources;
         private readonly IApplicationStateService stateService;
         private readonly IPlaylistsService playlistsService;
         private readonly IMainFrame mainFrame;
@@ -22,12 +21,10 @@ namespace OutcoldSolutions.GoogleMusic.Services.Actions
         private TaskCompletionSource<bool?> taskCompletionSource;
 
         public AddToPlaylistAction(
-            IApplicationResources applicationResources,
             IApplicationStateService stateService,
             IPlaylistsService playlistsService,
             IMainFrame mainFrame)
         {
-            this.applicationResources = applicationResources;
             this.stateService = stateService;
             this.playlistsService = playlistsService;
             this.mainFrame = mainFrame;
@@ -45,18 +42,29 @@ namespace OutcoldSolutions.GoogleMusic.Services.Actions
         {
             get
             {
-                return this.applicationResources.GetString("Toolbar_PlaylistButton");
+                return "Add to playlist";
+            }
+        }
+
+        public ActionGroup Group
+        {
+            get
+            {
+                return ActionGroup.Playlist;
+            }
+        }
+
+        public int Priority
+        {
+            get
+            {
+                return 1000;
             }
         }
 
         public bool CanExecute(IList<object> selectedObjects)
         {
             if (!this.stateService.IsOnline())
-            {
-                return false;
-            }
-
-            if (selectedObjects.Count == 0)
             {
                 return false;
             }

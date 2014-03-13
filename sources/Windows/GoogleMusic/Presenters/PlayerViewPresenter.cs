@@ -95,7 +95,18 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     this.UpdateCommands();
                 });
             
-            this.NavigateToQueueView = new DelegateCommand(() => this.navigationService.NavigateTo<ICurrentPlaylistPageView>(parameter: true));
+            this.NavigateToQueueView = new DelegateCommand(
+                () =>
+                {
+                    if (this.queueService.CurrentPlaylist != null)
+                    {
+                        this.navigationService.NavigateToPlaylist(this.queueService.CurrentPlaylist);
+                    }
+                    else
+                    {
+                        this.navigationService.NavigateTo<ICurrentPlaylistPageView>(keepInHistory: false);
+                    }
+                });
             this.ShowMoreCommand = new DelegateCommand(() => this.MainFrame.ShowPopup<IPlayerMorePopupView>(PopupRegion.AppToolBarRight));
         }
 

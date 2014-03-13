@@ -9,6 +9,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
     using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
+    using System.Linq;
 
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
@@ -148,7 +149,20 @@ namespace OutcoldSolutions.GoogleMusic.Views
         /// <inheritdoc />
         public void SetContextCommands(IEnumerable<CommandMetadata> commands)
         {
-            this.ContextButtonsItemsControl.ItemsSource = commands;
+            var list = commands.ToList();
+            int i = 1;
+            while (i < list.Count)
+            {
+                if (list[i - 1].ActionGroup != list[i].ActionGroup)
+                {
+                    list.Insert(i, new CommandMetadata(null, null, null));
+                    i++;
+                }
+
+                i++;
+            }
+
+            this.ContextButtonsItemsControl.ItemsSource = list;
             this.UpdateBottomAppBar();
             if (this.BottomAppBar.Visibility == Visibility.Visible 
                 && !this.BottomAppBar.IsOpen

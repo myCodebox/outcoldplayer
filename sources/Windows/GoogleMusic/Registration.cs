@@ -44,7 +44,7 @@ namespace OutcoldSolutions.GoogleMusic
                         .InjectionRule<BindingModelBase, PlaylistPageViewPresenter>()
                         .AsSingleton<PlaylistPageView>();
             registration.Register<PlaylistPageViewPresenter>().AsSingleton();
-            registration.Register<PlaylistPageViewBindingModel<IPlaylist>>().AsSingleton();
+            registration.Register<PlaylistPageViewBindingModel>().AsSingleton();
 
             // Queue view
             registration.Register<ICurrentPlaylistPageView>()
@@ -71,7 +71,6 @@ namespace OutcoldSolutions.GoogleMusic
                         .InjectionRule<BindingModelBase, AlbumPageViewPresenter>()
                         .AsSingleton<AlbumPageView>();
             registration.Register<AlbumPageViewPresenter>().AsSingleton();
-            registration.Register<PlaylistPageViewBindingModel<Album>>().AsSingleton();
 
             // User Playlists view
             registration.Register<IRadioPageView>()

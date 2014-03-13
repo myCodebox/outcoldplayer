@@ -126,6 +126,7 @@
     <Compile Include="BindingModels\Settings\AccountViewBindingModel.cs" />
     <Compile Include="BindingModels\Settings\SupportBindingModel.cs" />
     <Compile Include="Controls\ButtonWithHover.cs" />
+    <Compile Include="Controls\MenuItemDataTemplateSelector.cs" />
     <Compile Include="Controls\TextChangedBindingBehavior.cs" />
     <Compile Include="Converters\AlbumDetailsConverter.cs" />
     <Compile Include="Converters\NotEmptyToVisibilityConverter.cs" />
@@ -142,6 +143,7 @@
     <Compile Include="Controls\ListViewBaseSelectedItemsBehavior.cs" />
     <Compile Include="Converters\BooleanToColumnWidthConverter.cs" />
     <Compile Include="Presenters\PlaylistsListViewPresenter.cs" />
+    <Compile Include="Services\Actions\ActionGroup.cs" />
     <Compile Include="Services\SelectSongEvent.cs" />
     <Compile Include="Views\HomePageView.xaml.cs">
       <DependentUpon>HomePageView.xaml</DependentUpon>

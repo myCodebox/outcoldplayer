@@ -43,7 +43,23 @@ namespace OutcoldSolutions.GoogleMusic.Services.Actions
         {
             get
             {
-                return this.applicationResources.GetString("Toolbar_DeleteButton");
+                return "Delete radio station(s)";
+            }
+        }
+
+        public ActionGroup Group
+        {
+            get
+            {
+                return ActionGroup.RadioStations;
+            }
+        }
+
+        public int Priority
+        {
+            get
+            {
+                return 500;
             }
         }
 

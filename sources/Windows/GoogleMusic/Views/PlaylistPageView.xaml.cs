@@ -11,6 +11,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
     public interface IPlaylistPageView : IPageView
     {
+        ISongsListView GetSongsListView();
     }
 
     public sealed partial class PlaylistPageView : PageViewBase, IPlaylistPageView
@@ -58,6 +59,11 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
                 this.TrackScrollViewer(frameworkElement.GetListView());
             }
+        }
+
+        public ISongsListView GetSongsListView()
+        {
+            return this.songsListView;
         }
     }
 }

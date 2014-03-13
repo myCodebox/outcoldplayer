@@ -9,10 +9,9 @@ namespace OutcoldSolutions.GoogleMusic.Services
     using System.Linq;
     using System.Threading.Tasks;
 
-    using Windows.Networking.Sockets;
-
     using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.EventAggregator;
+    using OutcoldSolutions.GoogleMusic.Services.Actions;
     using OutcoldSolutions.GoogleMusic.Views;
 
     public interface ISelectedObjectsService
@@ -31,6 +30,10 @@ namespace OutcoldSolutions.GoogleMusic.Services
         string Icon { get; }
 
         string Title { get; }
+
+        ActionGroup Group { get; }
+
+        int Priority { get; }
 
         bool CanExecute(IList<object> selectedObjects);
 
@@ -176,7 +179,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
             {
                 this.mainFrame.SetContextCommands(
                     this.objectActions.Where(x => x.Action.CanExecute(this.selectedObjects))
-                        .Select(x => new CommandMetadata(x.Action.Icon, x.Action.Title, x.Command)));
+                        .OrderBy(x => x.Action.Group).ThenByDescending(x => x.Action.Priority)
+                        .Select(x => new CommandMetadata(x.Action.Icon, x.Action.Title, x.Action.Group, x.Command)));
             }
             else
             {

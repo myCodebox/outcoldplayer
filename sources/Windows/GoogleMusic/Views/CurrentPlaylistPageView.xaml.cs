@@ -4,11 +4,8 @@
 
 namespace OutcoldSolutions.GoogleMusic.Views
 {
-    using System.Threading.Tasks;
-
     using Windows.UI.Xaml.Data;
 
-    using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Presenters;
 
     using Windows.UI.Xaml;

@@ -44,34 +44,45 @@ namespace OutcoldSolutions.GoogleMusic.Services.Actions
             }
         }
 
+        public ActionGroup Group
+        {
+            get
+            {
+                return ActionGroup.Navigation;
+            }
+        }
+
+        public int Priority
+        {
+            get
+            {
+                return 2000;
+            }
+        }
+
         public bool CanExecute(IList<object> selectedObjects)
         {
-            return selectedObjects.Count > 0 && 
-                (
-                    selectedObjects.All(x => x is Song && !((Song)x).UnknownSong) || 
-                    selectedObjects.All(
-                        x => x is IPlaylist && 
-                            ( 
-                                ((IPlaylist)x).PlaylistType != PlaylistType.Radio) && 
-                                ((((IPlaylist)x).PlaylistType != PlaylistType.UserPlaylist) || !((UserPlaylist)x).IsShared)
-                            )
-                );
+            foreach (var selectedObject in selectedObjects)
+            {
+                if (!(selectedObject is Song))
+                {
+                    if (((IPlaylist)selectedObject).PlaylistType == PlaylistType.Radio)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
         }
 
         public Task<bool?> Execute(IList<object> selectedObjects)
         {
             this.taskCompletionSource = new TaskCompletionSource<bool?>();
 
-            SelectedItems selectedItems = null;
-
-            if (selectedObjects.All(x => x is Song))
-            {
-                selectedItems = new SelectedItems(selectedObjects.Cast<Song>().ToList());
-            }
-            else
-            {
-                selectedItems = new SelectedItems(selectedObjects.Cast<IPlaylist>().ToList());
-            }
+            SelectedItems selectedItems = new SelectedItems(
+                selectedObjects.Where(x => x is IPlaylist).Cast<IPlaylist>().ToList(), 
+                selectedObjects.Where(x => x is Song).Cast<Song>().ToList());
 
             this.mainFrame.ShowPopup<IQueueActionsPopupView>(
                 PopupRegion.AppToolBarLeft,

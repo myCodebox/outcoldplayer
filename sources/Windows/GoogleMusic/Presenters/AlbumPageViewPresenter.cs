@@ -11,7 +11,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
 
-    public class AlbumPageViewPresenter : PlaylistPageViewPresenterBase<IAlbumPageView, Album>
+    public class AlbumPageViewPresenter : PlaylistPageViewPresenterBase<IAlbumPageView>
     {
         private readonly IApplicationResources resources;
         private readonly IAllAccessService allAccessService;

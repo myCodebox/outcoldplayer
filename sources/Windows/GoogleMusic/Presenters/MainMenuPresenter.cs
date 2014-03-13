@@ -24,7 +24,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private readonly IApplicationResources applicationResources;
 
         private bool isHomeSelected = false;
-        private bool isQueueSelected = false;
         private bool isPlaylistsSelected = false;
         private bool isRadioSelected = false;
         private bool isArtistsSelected = false;
@@ -45,7 +44,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.applicationResources = applicationResources;
 
             this.HomeCommand = new DelegateCommand(() => this.navigationService.NavigateTo<IHomePageView>());
-            this.QueueCommand = new DelegateCommand(() => this.navigationService.NavigateTo<ICurrentPlaylistPageView>());
             this.UserPlaylistsCommand = new DelegateCommand(() => this.navigationService.NavigateTo<IUserPlaylistsPageView>(PlaylistType.UserPlaylist));
             this.RadioStationsCommand = new DelegateCommand(() => this.navigationService.NavigateTo<IRadioPageView>(PlaylistType.Radio));
             this.SearchCommand = new DelegateCommand(() => this.navigationService.NavigateTo<ISearchPageView>());
@@ -104,19 +102,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             set
             {
                 this.SetValue(ref this.isHomeSelected, value);
-            }
-        }
-
-        public bool IsQueueSelected
-        {
-            get
-            {
-                return this.isQueueSelected;
-            }
-
-            set
-            {
-                this.SetValue(ref this.isQueueSelected, value);
             }
         }
 
@@ -203,7 +188,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.FreezeNotifications();
 
             this.IsHomeSelected = args.View is IHomePageView;
-            this.IsQueueSelected = args.View is ICurrentPlaylistPageView;
             this.IsPlaylistsSelected = (args.View is IUserPlaylistsPageView) ||
                 (args.View is IPlaylistPageView && args.Parameter is PlaylistNavigationRequest && ((PlaylistNavigationRequest)args.Parameter).PlaylistType == PlaylistType.UserPlaylist);
             this.IsRadioSelected = (args.View is IRadioPageView) ||

@@ -104,7 +104,10 @@ namespace OutcoldSolutions.GoogleMusic.Converters
                     file = await ApplicationData.Current.LocalFolder.GetFileAsync(path);
                 }
 
-                image.SetSource(await file.OpenReadAsync());
+                if (file != null)
+                {
+                    image.SetSource(await file.OpenReadAsync());
+                }
             }
             catch (OperationCanceledException e)
             {

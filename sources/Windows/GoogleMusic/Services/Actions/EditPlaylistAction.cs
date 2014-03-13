@@ -45,7 +45,23 @@ namespace OutcoldSolutions.GoogleMusic.Services.Actions
         {
             get
             {
-                return this.applicationResources.GetString("Toolbar_RenameButton");
+                return "Edit playlist name";
+            }
+        }
+
+        public ActionGroup Group
+        {
+            get
+            {
+                return ActionGroup.Playlists;
+            }
+        }
+
+        public int Priority
+        {
+            get
+            {
+                return 1000;
             }
         }
 

@@ -34,7 +34,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
             DependencyProperty.Register("ItemsSource", typeof(IEnumerable), typeof(SongsListView), new PropertyMetadata(null, OnItemsSourceChanged));
 
         public static readonly DependencyProperty ViewPlaylistProperty =
-            DependencyProperty.Register("ViewPlaylist", typeof(IPlaylist), typeof(SongsListView), new PropertyMetadata(null, OnViewPlaylistChanged));
+            DependencyProperty.Register("ViewPlaylist", typeof(object), typeof(SongsListView), new PropertyMetadata(null, OnViewPlaylistChanged));
 
         public static readonly DependencyProperty IsAlbumColumnVisibleProperty =
            DependencyProperty.Register("IsAlbumColumnVisible", typeof(bool), typeof(SongsListView), new PropertyMetadata(true));
@@ -71,9 +71,9 @@ namespace OutcoldSolutions.GoogleMusic.Views
             set { SetValue(ItemsSourceProperty, value); }
         }
 
-        public IPlaylist ViewPlaylist
+        public object ViewPlaylist
         {
-            get { return (IPlaylist)GetValue(ViewPlaylistProperty); }
+            get { return (object)GetValue(ViewPlaylistProperty); }
             set { SetValue(ViewPlaylistProperty, value); }
         }
 

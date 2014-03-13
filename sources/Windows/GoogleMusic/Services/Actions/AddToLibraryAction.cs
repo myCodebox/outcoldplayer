@@ -40,7 +40,23 @@ namespace OutcoldSolutions.GoogleMusic.Services.Actions
         {
             get
             {
-                return "Library";
+                return "Add to library";
+            }
+        }
+
+        public ActionGroup Group
+        {
+            get
+            {
+                return ActionGroup.Library;
+            }
+        }
+
+        public int Priority
+        {
+            get
+            {
+                return 1000;
             }
         }
 
@@ -65,12 +81,14 @@ namespace OutcoldSolutions.GoogleMusic.Services.Actions
                 else
                 {
                     var playlist = (IPlaylist)obj;
-                    if (playlist.PlaylistType == PlaylistType.Radio)
+                    if (playlist.PlaylistType == PlaylistType.Radio
+                        || playlist.PlaylistType == PlaylistType.UserPlaylist
+                        || playlist.PlaylistType == PlaylistType.SystemPlaylist)
                     {
                         return false;
                     }
 
-                    hasNotLibrary |= string.IsNullOrEmpty(playlist.Id) || playlist is UserPlaylist;
+                    hasNotLibrary |= string.IsNullOrEmpty(playlist.Id);
                 }
             }
 

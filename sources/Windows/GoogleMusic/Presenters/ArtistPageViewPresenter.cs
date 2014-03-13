@@ -159,7 +159,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
                     await this.Dispatcher.RunAsync(() => this.IsDataLoading = false);
 
-                    this.navigationService.NavigateTo<ICurrentPlaylistPageView>();
+                    this.navigationService.NavigateToPlaylist(radio.Item1);
                 }
             }
         }

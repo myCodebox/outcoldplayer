@@ -41,7 +41,23 @@ namespace OutcoldSolutions.GoogleMusic.Services.Actions
         {
             get
             {
-                return this.applicationResources.GetString("Toolbar_PlaylistButton");
+                return "Remove from playlist";
+            }
+        }
+
+        public ActionGroup Group
+        {
+            get
+            {
+                return ActionGroup.Playlist;
+            }
+        }
+
+        public int Priority
+        {
+            get
+            {
+                return 500;
             }
         }
 
