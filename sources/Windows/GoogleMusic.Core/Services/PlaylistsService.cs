@@ -71,7 +71,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 .Subscribe(
                     async (e) =>
                     {
-                        var playlists = e.UpdatedPlaylists.Union(e.RemovedPlaylists)
+                        var playlists = (e.UpdatedPlaylists ?? Enumerable.Empty<IPlaylist>()).Union(e.RemovedPlaylists)
                             .Where(x => x.PlaylistType == PlaylistType.UserPlaylist || x.PlaylistType == PlaylistType.Genre
                                     || x.PlaylistType == PlaylistType.Radio
                                     || x.PlaylistType == PlaylistType.SystemPlaylist);
