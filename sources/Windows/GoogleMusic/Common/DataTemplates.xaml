@@ -221,7 +221,7 @@
         <Setter Property="ItemContainerStyle">
             <Setter.Value>
                 <Style TargetType="ListViewItem">
-                    <Setter Property="Margin" Value="12" />
+                    <Setter Property="Margin" Value="0, 0, 24, 24" />
                     <Setter Property="Padding" Value="0" />
                 </Style>
             </Setter.Value>
