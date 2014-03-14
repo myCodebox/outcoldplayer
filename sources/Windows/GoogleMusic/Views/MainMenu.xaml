@@ -27,6 +27,17 @@
             <Setter Property="FontFamily" Value="Segoe UI Symbol" />
         </Style>
 
+        <Style x:Key="MenuSubitemIconStyle" TargetType="TextBlock" BasedOn="{StaticResource MenuIconFontStyle}">
+        </Style>
+
+        <Style x:Key="MenuSubitemTextStyle" TargetType="TextBlock" BasedOn="{StaticResource MenuTextStyle}">
+            <Setter Property="FontSize" Value="12" />
+        </Style>
+        
+        <Style x:Key="SelectedItemBorderStyle" TargetType="Border">
+            <Setter Property="Background" Value="{StaticResource ApplicationThemeBrush}"/>
+        </Style>
+
         <Style x:Key="MenuButtonStyle" TargetType="Button">
             <Setter Property="Template">
                 <Setter.Value>
@@ -98,51 +109,70 @@
             
             <Button Style="{StaticResource MenuButtonStyle}"
                     Command="{Binding Path=HomeCommand, Mode=OneTime}">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="&#xE10F;"
+                <Grid>
+                    <Border Style="{StaticResource SelectedItemBorderStyle}" 
+                            Visibility="{Binding Path=IsHomeSelected, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="&#xE10F;"
                                Style="{StaticResource MenuIconFontStyle}"/>
 
-                    <TextBlock Text="Home"
+                        <TextBlock Text="Home"
                                Style="{StaticResource MenuTextStyle}" />
-                </StackPanel>
+                    </StackPanel>
+                </Grid>
             </Button>
 
             <Border Style="{StaticResource SeparatorStyle}" />
             
             <Button Style="{StaticResource MenuButtonStyle}"
                     Command="{Binding Path=SearchCommand, Mode=OneTime}" >
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="&#xE11A;"
+                <Grid>
+                    <Border Style="{StaticResource SelectedItemBorderStyle}" 
+                            Visibility="{Binding Path=IsSearchSelected, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                    <StackPanel Orientation="Horizontal">
+
+                        <TextBlock Text="&#xE11A;"
                                Style="{StaticResource MenuIconFontStyle}"/>
 
-                    <TextBlock Text="Search"
+                        <TextBlock Text="Search"
                                Style="{StaticResource MenuTextStyle}" />
-                </StackPanel>
+                    </StackPanel>
+                </Grid>
             </Button>
 
             <Button Style="{StaticResource MenuButtonStyle}"
                     Command="{Binding Path=UserPlaylistsCommand, Mode=OneTime}" 
                     CommandParameter="{StaticResource PlaylistType_UserPlaylist}">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="&#xE12F;"
+                <Grid>
+                    <Border Style="{StaticResource SelectedItemBorderStyle}" 
+                            Visibility="{Binding Path=IsPlaylistsSelected, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                    <StackPanel Orientation="Horizontal">
+
+                        <TextBlock Text="&#xE12F;"
                                Style="{StaticResource MenuIconFontStyle}"/>
-                    
-                    <TextBlock Text="Playlists"
+
+                        <TextBlock Text="Playlists"
                                Style="{StaticResource MenuTextStyle}" />
-                </StackPanel>
+                    </StackPanel>
+                </Grid>
             </Button>
 
             <Button Style="{StaticResource MenuButtonStyle}"
                     Command="{Binding Path=RadioStationsCommand, Mode=OneTime}"
                     CommandParameter="{StaticResource PlaylistType_Radio}"
                     Visibility="{Binding Path=IsRadioVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="&#xE1D6;"
+                <Grid>
+                    <Border Style="{StaticResource SelectedItemBorderStyle}"  
+                            Visibility="{Binding Path=IsRadioSelected, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="&#xE1D6;"
                                Style="{StaticResource MenuIconFontStyle}"/>
 
-                    <TextBlock Text="{Binding Path=RadioText, Mode=OneWay}"
+                        <TextBlock Text="{Binding Path=RadioText, Mode=OneWay}"
                                Style="{StaticResource MenuTextStyle}" />
-                </StackPanel>
+                    </StackPanel>
+                </Grid>
+                
             </Button>
 
             <Border Style="{StaticResource SeparatorStyle}" />
@@ -150,37 +180,52 @@
             <Button Style="{StaticResource MenuButtonStyle}"
                     Command="{Binding Path=PlaylistsCommand, Mode=OneTime}"
                     CommandParameter="{StaticResource PlaylistType_Artist}">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="&#xE13D;"
+                <Grid>
+                    <Border Style="{StaticResource SelectedItemBorderStyle}" 
+                            Visibility="{Binding Path=IsArtistsSelected, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="&#xE13D;"
                                Style="{StaticResource MenuIconFontStyle}"/>
 
-                    <TextBlock Text="Artists"
+                        <TextBlock Text="Artists"
                                Style="{StaticResource MenuTextStyle}" />
-                </StackPanel>
+                    </StackPanel>
+                </Grid>
+                
             </Button>
 
             <Button Style="{StaticResource MenuButtonStyle}"
                     Command="{Binding Path=PlaylistsCommand, Mode=OneTime}"
                     CommandParameter="{StaticResource PlaylistType_Album}">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="&#xE188;"
+                <Grid>
+                    <Border Style="{StaticResource SelectedItemBorderStyle}" 
+                            Visibility="{Binding Path=IsAlbumsSelected, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                    
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="&#xE188;"
                                Style="{StaticResource MenuIconFontStyle}"/>
 
-                    <TextBlock Text="Albums"
+                        <TextBlock Text="Albums"
                                Style="{StaticResource MenuTextStyle}" />
-                </StackPanel>
+                    </StackPanel>
+                </Grid>                
             </Button>
 
             <Button Style="{StaticResource MenuButtonStyle}"
                     Command="{Binding Path=PlaylistsCommand, Mode=OneTime}"
                     CommandParameter="{StaticResource PlaylistType_Genre}">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="&#xE142;"
+                <Grid>
+                    <Border Style="{StaticResource SelectedItemBorderStyle}" 
+                            Visibility="{Binding Path=IsGenresSelected, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                    <StackPanel Orientation="Horizontal">
+
+                        <TextBlock Text="&#xE142;"
                                Style="{StaticResource MenuIconFontStyle}"/>
 
-                    <TextBlock Text="Genres"
+                        <TextBlock Text="Genres"
                                Style="{StaticResource MenuTextStyle}" />
-                </StackPanel>
+                    </StackPanel>
+                </Grid>
             </Button>
 
             <Border Style="{StaticResource SeparatorStyle}" />
@@ -198,11 +243,10 @@
                                     <Button Style="{StaticResource MenuButtonStyle}"
                                             Command="{Binding Path=Command, Mode=OneTime}">
                                         <StackPanel Orientation="Horizontal">
-                                            <TextBlock Style="{Binding Path=IconName, Converter={StaticResource StringToResourceConverter}}"/>
-                                            <TextBlock Text="{Binding Path=Title}"
-                                                       Style="{StaticResource SmallTextStyle}"
-                                                       FontWeight="SemiLight"
-                                                       VerticalAlignment="Center"/>
+                                            <TextBlock Text="{Binding Path=IconName, Mode=OneTime}"
+                                                       Style="{StaticResource MenuSubitemIconStyle}"/>
+                                            <TextBlock Text="{Binding Path=Title, Mode=OneTime}"
+                                                       Style="{StaticResource MenuSubitemTextStyle}"/>
                                         </StackPanel>
                                     </Button>
                                 </ControlTemplate>
@@ -214,7 +258,7 @@
         </StackPanel>
         
         <StackPanel Margin="0, 20, 0, 40"
-                    Grid.Row="4">
+                    Grid.Row="3">
             <views:LogoView Margin="0, 0, 0, 10"/>
 
             <TextBlock Style="{StaticResource SmallTextStyle}"

@@ -891,7 +891,6 @@
         <Setter Property="BorderBrush" Value="{StaticResource AppBarItemForegroundThemeBrush}"/>
     </Style>
 
-   
     
     <Style TargetType="ItemsControl" x:Key="ToolBarItemsControlStyle">
         <Setter Property="Height" Value="100" />
@@ -908,8 +907,8 @@
                     <controls:MenuItemDataTemplateSelector.MenuItemDataTemplate>
                         <DataTemplate>
                             <Button Style="{Binding Path=IconName, Mode=OneTime, Converter={StaticResource StringToResourceConverter}}"
-                                Command="{Binding Path=Command}"
-                                AutomationProperties.Name="{Binding Path=Title, Mode=OneTime}"/>
+                                    Command="{Binding Path=Command}"
+                                    AutomationProperties.Name="{Binding Path=Title, Mode=OneTime}"/>
                         </DataTemplate>
                     </controls:MenuItemDataTemplateSelector.MenuItemDataTemplate>
                     <controls:MenuItemDataTemplateSelector.SeparatorDataTemplate>

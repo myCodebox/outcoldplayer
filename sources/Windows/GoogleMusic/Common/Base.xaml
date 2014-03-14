@@ -158,26 +158,6 @@
 
     <Style TargetType="AppBar" x:Key="BottomAppBarStyle"/>
 
-    <Style x:Key="MainMenuSubitemIconStyle" TargetType="TextBlock" BasedOn="{StaticResource SmallTextStyle}">
-        <Setter Property="FontFamily" Value="Segoe UI Symbol" />
-        <Setter Property="FontWeight" Value="Normal" />
-        <Setter Property="FontSize" Value="20" />
-        <Setter Property="Width" Value="20" />
-        <Setter Property="Margin" Value="20, 0, 20, 0" />
-        <Setter Property="VerticalAlignment" Value="Center" />
-        <Setter Property="HorizontalAlignment" Value="Center" />
-    </Style>
 
-    <Style x:Key="PageMainMenuSubitemIconStyle" TargetType="TextBlock" BasedOn="{StaticResource MainMenuSubitemIconStyle}">
-        <Setter Property="Text" Value="&#xE132;" />
-    </Style>
-
-    <Style x:Key="ListMainMenuSubitemIconStyle" TargetType="TextBlock" BasedOn="{StaticResource MainMenuSubitemIconStyle}">
-        <Setter Property="Text" Value="&#xE14C;" />
-    </Style>
-    
-    <Style x:Key="RadioMainMenuSubitemIconStyle" TargetType="TextBlock" BasedOn="{StaticResource MainMenuSubitemIconStyle}">
-        <Setter Property="Text" Value="&#xE142;" />
-    </Style>
 
 </ResourceDictionary>

@@ -58,6 +58,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.navigationService.NavigatedTo += this.NavigationServiceOnNavigatedTo;
 
             this.ViewCommands = new ObservableCollection<CommandMetadata>();
+
+            this.IsHomeSelected = true;
         }
 
         public DelegateCommand HomeCommand { get; set; }
@@ -188,13 +190,15 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.FreezeNotifications();
 
             this.IsHomeSelected = args.View is IHomePageView;
-            this.IsPlaylistsSelected = (args.View is IUserPlaylistsPageView) ||
+            this.IsPlaylistsSelected = (args.View is IUserPlaylistsPageView && args.Parameter is PlaylistType && ((PlaylistType)args.Parameter) == PlaylistType.UserPlaylist) ||
                 (args.View is IPlaylistPageView && args.Parameter is PlaylistNavigationRequest && ((PlaylistNavigationRequest)args.Parameter).PlaylistType == PlaylistType.UserPlaylist);
-            this.IsRadioSelected = (args.View is IRadioPageView) ||
+            this.IsRadioSelected = (args.View is IRadioPageView && args.Parameter is PlaylistType && ((PlaylistType)args.Parameter) == PlaylistType.Radio) ||
                 (args.View is IPlaylistPageView && args.Parameter is PlaylistNavigationRequest && ((PlaylistNavigationRequest)args.Parameter).PlaylistType == PlaylistType.Radio);
-            this.IsArtistsSelected = (args.View is IPlaylistsPageView && args.Parameter is PlaylistType && (PlaylistType)args.Parameter == PlaylistType.Artist) ||
+            this.IsArtistsSelected = args.View is IArtistPageView || 
+                (args.View is IPlaylistsPageView && args.Parameter is PlaylistType && (PlaylistType)args.Parameter == PlaylistType.Artist) ||
                 (args.View is IPlaylistPageView && args.Parameter is PlaylistNavigationRequest && ((PlaylistNavigationRequest)args.Parameter).PlaylistType == PlaylistType.Artist);
-            this.IsAlbumsSelected = (args.View is IPlaylistsPageView && args.Parameter is PlaylistType && (PlaylistType)args.Parameter == PlaylistType.Album) ||
+            this.IsAlbumsSelected = args.View is IAlbumPageView ||
+                (args.View is IPlaylistsPageView && args.Parameter is PlaylistType && (PlaylistType)args.Parameter == PlaylistType.Album) ||
                 (args.View is IPlaylistPageView && args.Parameter is PlaylistNavigationRequest && ((PlaylistNavigationRequest)args.Parameter).PlaylistType == PlaylistType.Album);
             this.IsGenresSelected = (args.View is IPlaylistsPageView && args.Parameter is PlaylistType && (PlaylistType)args.Parameter == PlaylistType.Genre) ||
                 (args.View is IPlaylistPageView && args.Parameter is PlaylistNavigationRequest && ((PlaylistNavigationRequest)args.Parameter).PlaylistType == PlaylistType.Genre);

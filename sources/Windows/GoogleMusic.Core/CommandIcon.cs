@@ -30,10 +30,10 @@ namespace OutcoldSolutions.GoogleMusic
 
     public static class CommandSymbol
     {
-        public const string Page = "PageMainMenuSubitemIconStyle";
+        public const string Page = "\uE132";
 
-        public const string List = "ListMainMenuSubitemIconStyle";
+        public const string List = "\uE14C";
 
-        public const string Radio = "RadioMainMenuSubitemIconStyle";
+        public const string Radio = "\uE142";
     }
 }
