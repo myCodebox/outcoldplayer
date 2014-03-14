@@ -18,33 +18,25 @@
                   VerticalScrollMode="Auto"
                   Visibility="{Binding Path=IsDataLoading, Converter={StaticResource BooleanToInvisibilityConverter}}">
         <StackPanel>
+            <Button Command="{Binding Path=ReadMoreCommand}" Margin="0, 0, 0, 40">
+                <Button.Template>
+                    <ControlTemplate>
+                        <Grid>
+                            <Border Width="352" Height="160" Background="Gray" HorizontalAlignment="Left">
+                                <Image Width="352" Height="160" Source="{Binding Path=BindingModel.Artist.ArtUrl, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=352, Mode=OneWay}" Stretch="Uniform"/>
+                            </Border>
 
-            <StackPanel Orientation="Horizontal">
-                <Border Width="256" Height="125" Background="Gray">
-                    <Image Width="256" Height="125" Source="{Binding Path=BindingModel.Artist.ArtUrl, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=256, Mode=OneWay}" Stretch="Uniform"/>
-                </Border>
-
-                <StackPanel Width="150" 
-                        Margin="20, 0, 0, 0">
-
-                    <StackPanel Orientation="Horizontal" Margin="0, 0, 0, 0">
-                        <TextBlock Style="{StaticResource SubtitleTextStyle}" Text="Albums: " x:Uid="ArtistPageView_AlbumsCountLabel" />
-                        <TextBlock Style="{StaticResource ItemTextStyle}" Margin="7, 0, 0, 0" Text="{Binding Path=BindingModel.Artist, Converter={StaticResource ArtistAlbumsCountConverter}, Mode=OneWay}" />
-                    </StackPanel>
-
-                    <StackPanel Orientation="Horizontal" Margin="0, 7, 0, 0">
-                        <TextBlock Style="{StaticResource SubtitleTextStyle}" Text="Songs: " x:Uid="ArtistPageView_SongsCountLabel" />
-                        <TextBlock Style="{StaticResource ItemTextStyle}" Margin="7, 0, 0, 0" Text="{Binding Path=BindingModel.Artist, Converter={StaticResource PlaylistSongsCountConverter}, Mode=OneWay}" />
-                    </StackPanel>
-
-                    <StackPanel Orientation="Horizontal" Margin="0, 7, 0, 0">
-                        <TextBlock Style="{StaticResource SubtitleTextStyle}" Text="Duration: " x:Uid="ArtistPageView_DurationSumLabel" />
-                        <TextBlock Style="{StaticResource ItemTextStyle}" Margin="7, 0, 0, 0" Text="{Binding Path=BindingModel.Artist, Converter={StaticResource PlaylistDurationConverter}, Mode=OneWay}" />
-                    </StackPanel>
-
-                </StackPanel>
-
-            </StackPanel>
+                            <TextBlock Margin="372, 0, 20, 0" 
+                                   Text="{Binding Path=BindingModel.Artist.Bio}"
+                                   MaxHeight="160"
+                                   Style="{StaticResource BodyTextStyle}"
+                                   TextTrimming="WordEllipsis"
+                                   TextWrapping="Wrap"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+            
 
             <TextBlock Style="{StaticResource SubheaderTextStyle}"
                        Visibility="{Binding Path=BindingModel.Albums, Converter={StaticResource NotEmptyToVisibilityConverter}}"
@@ -56,14 +48,14 @@
                       
             <TextBlock Style="{StaticResource SubheaderTextStyle}"
                        Visibility="{Binding Path=BindingModel.Collections, Converter={StaticResource NotEmptyToVisibilityConverter}}"
-                       Margin="0, 20, 0, 0">My Library Collections
+                       Margin="0, 0, 0, 0">My Library Collections
             </TextBlock>
 
             <ContentPresenter x:Name="LibraryCollectionsContentPresenter"
                               Visibility="{Binding Path=BindingModel.Collections, Converter={StaticResource NotEmptyToVisibilityConverter}}"
                               Margin="0, 20, 0, 0"/>
 
-            <Button Margin="0, 20, 0, 0" 
+            <Button Margin="0, 0, 0, 0" 
                     Visibility="{Binding Path=BindingModel.TopSongs, Converter={StaticResource NotEmptyToVisibilityConverter}}"
                     Command="{Binding Path=NavigateToTopSongs, Mode=OneTime}">
                 <Button.Template>
@@ -103,7 +95,7 @@
                               Visibility="{Binding Path=BindingModel.GoogleMusicAlbums, Converter={StaticResource NotEmptyToVisibilityConverter}}"
                               Margin="0, 20, 0, 0"/>
 
-            <Button Margin="0, 20, 0, 0" 
+            <Button Margin="0, 0, 0, 0" 
                     Visibility="{Binding Path=BindingModel.RelatedArtists, Converter={StaticResource NotEmptyToVisibilityConverter}}"
                     Command="{Binding Path=NavigateToArtists, Mode=OneTime}">
                 <Button.Template>

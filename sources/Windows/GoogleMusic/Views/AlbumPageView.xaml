@@ -12,52 +12,49 @@
     Subtitle="Album"
     x:Uid="AlbumPageView">
 
-    <Grid Margin="0, 0, 0, 0">
+    <Grid Margin="0, 0, 0, 0" Visibility="{Binding Path=IsDataLoading, Converter={StaticResource BooleanToInvisibilityConverter}}">
 
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="140" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
 
-        <StackPanel Grid.Column="0"
-                    Visibility="{Binding Path=IsDataLoading, Converter={StaticResource BooleanToInvisibilityConverter}}" >
+        <Button Command="{Binding Path=ReadMoreCommand}">
+            <Button.Template>
+                <ControlTemplate>
+                    <Grid Height="160" Margin="0, 0, 0, 20">
+                        <Border Width="160" Height="160" Background="Gray" HorizontalAlignment="Left">
+                            <Image Width="160" Height="160" Source="{Binding Path=BindingModel.Playlist.ArtUrl, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=160, Mode=OneWay}" Stretch="Uniform"/>
+                        </Border>
 
-            <Image 
-               Margin="0, 32, 0, 32" 
-               Height="116" 
-               Width="116" 
-               Source="{Binding Path=BindingModel.Playlist.ArtUrl, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=116, Mode=OneWay}"
-               Stretch="None"/>
+                        <StackPanel Margin="180, 0, 20, 0" HorizontalAlignment="Stretch">
+                            <Button Command="{Binding Path=NavigateToArtistCommand, Mode=OneWay}">
+                                <Button.Template>
+                                    <ControlTemplate>
+                                        <TextBlock Style="{StaticResource SubtitleTextStyle}" Margin="0, 0, 0, 0" Text="{Binding Path=BindingModel.Playlist.Artist.Title, Mode=OneWay}"  TextWrapping="Wrap" TextTrimming="WordEllipsis" />
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
 
-            <TextBlock Style="{StaticResource TitleTextStyle}" Text="{Binding Path=BindingModel.Playlist.Title, Mode=OneWay}" TextWrapping="Wrap" TextTrimming="WordEllipsis" />
+                            <TextBlock Style="{StaticResource SubtitleTextStyle}" Margin="0, 0, 0, 0" 
+                                       Text="{Binding Path=BindingModel.Playlist.Year, Mode=OneWay}" 
+                                       Visibility="{Binding Path=BindingModel.Playlist.Year, Converter={StaticResource ValueToInvisibilityConverter}, ConverterParameter=0}" />
+                            <TextBlock Style="{StaticResource SubtitleTextStyle}" Margin="0, 0, 0, 10" Text="{Binding Path=BindingModel.Playlist.Genre, Mode=OneWay}" />
 
-            <Button Margin="0, 7, 0, 0"
-                    Command="{Binding Path=NavigateToArtistCommand, Mode=OneWay}">
-                <Button.Template>
-                    <ControlTemplate>
-                        <TextBlock Style="{StaticResource SubtitleTextStyle}" Margin="0, 7, 0, 0" Text="{Binding Path=BindingModel.Playlist.Artist.Title, Mode=OneWay}"  TextWrapping="Wrap" TextTrimming="WordEllipsis" />
-                    </ControlTemplate>
-                </Button.Template>
-            </Button>
-            
-            <TextBlock Style="{StaticResource SubtitleTextStyle}" Margin="0, 14, 0, 0" Text="{Binding Path=BindingModel.Playlist.Year, Mode=OneWay}" Visibility="{Binding Path=BindingModel.Playlist.Year, Converter={StaticResource ValueToInvisibilityConverter}, ConverterParameter=0}" />
-            <!-- TODO: Fix genre -->
-            <TextBlock Style="{StaticResource SubtitleTextStyle}" Margin="0, 7, 0, 0" Text="{Binding Path=BindingModel.Playlist.Genre, Mode=OneWay}" />
-
-            <StackPanel Orientation="Horizontal" Margin="0, 7, 0, 0">
-                <TextBlock Style="{StaticResource TitleTextStyle}" Text="Songs: " x:Uid="AlbumPageView_SongsCountLabel" />
-                <TextBlock Style="{StaticResource SubtitleTextStyle}" Margin="7, 0, 0, 0" Text="{Binding Path=BindingModel.Playlist, Converter={StaticResource PlaylistSongsCountConverter}, Mode=OneWay}" />
-            </StackPanel>
-
-            <StackPanel Orientation="Horizontal" Margin="0, 7, 0, 0">
-                <TextBlock Style="{StaticResource TitleTextStyle}" Text="Duration: " x:Uid="AlbumPageView_DurationSumLabel" />
-                <TextBlock Style="{StaticResource SubtitleTextStyle}" Margin="7, 0, 0, 0" Text="{Binding Path=BindingModel.Playlist, Converter={StaticResource PlaylistDurationConverter}, Mode=OneWay}" />
-            </StackPanel>
-
-        </StackPanel>
+                            <TextBlock  Text="{Binding Path=BindingModel.Playlist.Description}"
+                                        Style="{StaticResource BodyTextStyle}"
+                                        TextTrimming="WordEllipsis"
+                                        TextWrapping="Wrap"
+                                        MaxHeight="80"/>
+                        </StackPanel>
+                       
+                    </Grid>
+                </ControlTemplate>
+            </Button.Template>
+        </Button>
 
         <ContentPresenter x:Name="ContentPresenter"
-                          Grid.Column="1"
+                          Grid.Row="1"
                           Visibility="{Binding Path=IsDataLoading, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}"/>
     </Grid>
 </views:PageViewBase>

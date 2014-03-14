@@ -13,6 +13,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
+    using OutcoldSolutions.GoogleMusic.Views.Popups;
 
     public class ArtistPageViewPresenter : PagePresenterBase<IArtistPageView, ArtistPageViewBindingModel>
     {
@@ -72,6 +73,15 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                        this.BindingModel.ArtistInfo.Artist.Title,
                        "Related Artists",
                        this.BindingModel.ArtistInfo.RelatedArtists.Cast<IPlaylist>().ToList())));
+
+            this.ReadMoreCommand = new DelegateCommand(
+                () =>
+                {
+                    if (this.BindingModel.Artist != null && !string.IsNullOrEmpty(this.BindingModel.Artist.Bio))
+                    {
+                        this.MainFrame.ShowPopup<IReadMorePopup>(PopupRegion.Full, this.BindingModel.Artist.Bio);
+                    }
+                });
         }
 
         public DelegateCommand ShowAllCommand { get; set; }
@@ -83,6 +93,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         public DelegateCommand NavigateToAlbums { get; set; }
 
         public DelegateCommand NavigateToArtists { get; set; }
+
+        public DelegateCommand ReadMoreCommand { get; set; }
 
         public override void OnNavigatingFrom(NavigatingFromEventArgs eventArgs)
         {

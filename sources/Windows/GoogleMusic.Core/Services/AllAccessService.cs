@@ -128,8 +128,18 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 return Tuple.Create<Album, IList<Song>>(album, null);
             }
 
-            var googleMusicAlbum = await this.allAccessWebService.FetchAlbumAsync(album.GoogleAlbumId);
+            GoogleMusicAlbum googleMusicAlbum = null;
 
+            try
+            {
+                googleMusicAlbum = await this.allAccessWebService.FetchAlbumAsync(album.GoogleAlbumId);
+            }
+            catch (Exception e)
+            {
+                this.logger.Error(e, "Could not fetch google album");
+                return Tuple.Create<Album, IList<Song>>(album, null);
+            }
+            
             if (album.AlbumId == 0)
             {
                 album = (await this.albumsRepository.FindByGoogleMusicAlbumIdAsync(album.GoogleAlbumId)) ?? album;

@@ -130,6 +130,7 @@
     <Compile Include="Controls\TextChangedBindingBehavior.cs" />
     <Compile Include="Converters\AlbumDetailsConverter.cs" />
     <Compile Include="Converters\NotEmptyToVisibilityConverter.cs" />
+    <Compile Include="Presenters\Popups\ReadMorePopupPresenter.cs" />
     <Compile Include="Presenters\SongsListViewPresenter.cs" />
     <Compile Include="BindingModels\AuthentificationPageViewBindingModel.cs" />
     <Compile Include="CommandMetadata.cs" />
@@ -150,6 +151,9 @@
     </Compile>
     <Compile Include="Views\PlaylistsListView.xaml.cs">
       <DependentUpon>PlaylistsListView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Popups\ReadMorePopup.xaml.cs">
+      <DependentUpon>ReadMorePopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SongsListView.xaml.cs">
       <DependentUpon>SongsListView.xaml</DependentUpon>
@@ -454,6 +458,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\PlaylistsListView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Popups\ReadMorePopup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
