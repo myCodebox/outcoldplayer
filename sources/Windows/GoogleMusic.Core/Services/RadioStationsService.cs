@@ -112,7 +112,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 return Tuple.Create(radio, await this.GetRadioSongsAsync(radio.RadioId));
             }
 
-            return await this.HandleCreationResponse(await this.radioWebService.CreateStationAsync(song));
+            return await this.HandleCreationResponse(await this.radioWebService.CreateStationAsync(song), song.Title, song.AlbumArtUrl);
         }
 
         public async Task<Tuple<Radio, IList<Song>>> CreateAsync(Artist artist)
@@ -123,7 +123,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 return Tuple.Create(radio, await this.GetRadioSongsAsync(radio.RadioId));
             }
 
-            return await this.HandleCreationResponse(await this.radioWebService.CreateStationAsync(artist));
+            return await this.HandleCreationResponse(await this.radioWebService.CreateStationAsync(artist), artist.Title, artist.ArtUrl);
         }
 
         public async Task<Tuple<Radio, IList<Song>>> CreateAsync(Album album)
@@ -134,7 +134,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 return Tuple.Create(radio, await this.GetRadioSongsAsync(radio.RadioId));
             }
 
-            return await this.HandleCreationResponse(await this.radioWebService.CreateStationAsync(album));
+            return await this.HandleCreationResponse(await this.radioWebService.CreateStationAsync(album), album.Title, album.ArtUrl);
         }
 
         public async Task<bool> RenameStationAsync(Radio radio, string title)
@@ -156,7 +156,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             return false;
         }
 
-        private async Task<Tuple<Radio, IList<Song>>> HandleCreationResponse(GoogleMusicMutateResponse response)
+        private async Task<Tuple<Radio, IList<Song>>> HandleCreationResponse(GoogleMusicMutateResponse response, string name, Uri art)
         {
             if (response.MutateResponse != null && response.MutateResponse.Length == 1)
             {
@@ -165,6 +165,24 @@ namespace OutcoldSolutions.GoogleMusic.Services
                      mutateResponse.Station != null)
                 {
                     var radio = mutateResponse.Station.ToRadio();
+                    if (string.IsNullOrEmpty(radio.RadioId))
+                    {
+                        radio.RadioId = mutateResponse.Id;
+                    }
+                    if (string.IsNullOrEmpty(radio.ClientId))
+                    {
+                        radio.ClientId = mutateResponse.ClientId;
+                    }
+                    if (string.IsNullOrEmpty(radio.Title))
+                    {
+                        radio.Title = name;
+                        radio.TitleNorm = name.Normalize();
+                    }
+                    if (radio.ArtUrl == null)
+                    {
+                        radio.ArtUrl = art;
+                    }
+
                     await this.radioStationsRepository.InsertAsync(new[] { radio });
                     this.eventAggregator.Publish(PlaylistsChangeEvent.New(PlaylistType.Radio).AddAddedPlaylists(radio));
                     IList<Song> tracks = await this.GetSongsAsync(mutateResponse.Station.Tracks);

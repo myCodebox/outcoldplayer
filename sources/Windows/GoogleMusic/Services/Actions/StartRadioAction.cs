@@ -82,8 +82,8 @@ namespace OutcoldSolutions.GoogleMusic.Services.Actions
             }
 
             return selectedObjects[0] is Song ||
-                selectedObjects[0] is Album ||
-                selectedObjects[0] is Artist;
+                (selectedObjects[0] is Album && !string.IsNullOrEmpty(((Album)selectedObjects[0]).GoogleAlbumId)) ||
+                (selectedObjects[0] is Artist && !string.IsNullOrEmpty(((Artist)selectedObjects[0]).GoogleArtistId));
         }
 
         public async Task<bool?> Execute(IList<object> selectedObjects)

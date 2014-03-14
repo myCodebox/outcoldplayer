@@ -151,7 +151,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 yield return new CommandMetadata(CommandIcon.List, this.resources.GetString("Toolbar_ShowAllButton"), this.ShowAllCommand);
             }
 
-            if (this.applicationStateService.IsOnline())
+            if (this.applicationStateService.IsOnline() && this.BindingModel.Artist != null && !string.IsNullOrEmpty(this.BindingModel.Artist.GoogleArtistId))
             {
                 yield return new CommandMetadata(CommandIcon.Radio, "Start radio", this.StartRadioCommand);
             }

@@ -3,6 +3,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Presenters
 {
+    using System.Collections.Generic;
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.InversionOfControl;
@@ -22,13 +23,19 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private readonly INavigationService navigationService;
 
+        private readonly IPlayQueueService playQueueService;
+
+        private readonly IRadioStationsService radioStationsService;
+
         public AlbumPageViewPresenter(
             IDependencyResolverContainer container,
             IApplicationResources resources,
             IAllAccessService allAccessService,
             IAlbumsRepository albumsRepository,
             IApplicationStateService applicationStateService,
-            INavigationService navigationService)
+            INavigationService navigationService,
+            IPlayQueueService playQueueService,
+            IRadioStationsService radioStationsService)
             : base(container)
         {
             this.resources = resources;
@@ -36,8 +43,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.albumsRepository = albumsRepository;
             this.applicationStateService = applicationStateService;
             this.navigationService = navigationService;
+            this.playQueueService = playQueueService;
+            this.radioStationsService = radioStationsService;
             this.NavigateToArtistCommand = new DelegateCommand(this.NavigateToArtist);
 
+            this.StartRadioCommand = new DelegateCommand(this.StartRadio);
 
             this.ReadMoreCommand = new DelegateCommand(
                 () =>
@@ -50,9 +60,22 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 });
         }
 
+        public DelegateCommand StartRadioCommand { get; set; }
+
         public DelegateCommand NavigateToArtistCommand { get; set; }
 
         public DelegateCommand ReadMoreCommand { get; set; }
+
+        protected override IEnumerable<CommandMetadata> GetViewCommands()
+        {
+            if (this.applicationStateService.IsOnline() 
+                && this.BindingModel.Playlist != null 
+                && !string.IsNullOrEmpty(((Album)this.BindingModel.Playlist).GoogleAlbumId))
+            {
+                yield return new CommandMetadata(CommandIcon.Radio, "Start radio", this.StartRadioCommand);
+            }
+        }
+
 
         protected override async Task LoadDataAsync(NavigatedToEventArgs navigatedToEventArgs)
         {
@@ -123,6 +146,25 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 if (this.applicationStateService.IsOnline() || album.Artist.ArtistId > 0)
                 {
                     this.navigationService.NavigateToPlaylist(album.Artist);
+                }
+            }
+        }
+
+        private async void StartRadio()
+        {
+            if (!this.IsDataLoading)
+            {
+                await this.Dispatcher.RunAsync(() => this.IsDataLoading = true);
+
+                var radio = await this.radioStationsService.CreateAsync((Album)this.BindingModel.Playlist);
+
+                if (radio != null)
+                {
+                    await this.playQueueService.PlayAsync(radio.Item1, radio.Item2, -1);
+
+                    await this.Dispatcher.RunAsync(() => this.IsDataLoading = false);
+
+                    this.navigationService.NavigateToPlaylist(radio.Item1);
                 }
             }
         }

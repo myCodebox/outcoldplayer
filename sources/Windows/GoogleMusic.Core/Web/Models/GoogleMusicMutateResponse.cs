@@ -18,6 +18,8 @@ namespace OutcoldSolutions.GoogleMusic.Web.Models
 
         public string ClientId { get; set; }
 
+        public string Client_Id { get; set; }
+
         [JsonProperty("response_code")]
         public string ResponseCode { get; set; }
 
