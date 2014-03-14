@@ -218,6 +218,12 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 await this.repository.DeleteEntriesAsync(toDelete);
             }
 
+            if (toDelete.Count > 0)
+            {
+                this.eventAggregator.Publish(
+                    PlaylistsChangeEvent.New(PlaylistType.UserPlaylist).AddUpdatedPlaylists(playlist));
+            }
+
             return toDelete.Count > 0;
         }
 
@@ -290,6 +296,12 @@ namespace OutcoldSolutions.GoogleMusic.Services
             if (toInsert.Count > 0)
             {
                 await this.repository.InsertEntriesAsync(toInsert);
+            }
+
+            if (toInsert.Count > 0)
+            {
+                this.eventAggregator.Publish(
+                    PlaylistsChangeEvent.New(PlaylistType.UserPlaylist).AddUpdatedPlaylists(playlist));
             }
 
             return toInsert.Count > 0;
