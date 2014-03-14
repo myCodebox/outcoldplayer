@@ -155,9 +155,4 @@
         <Setter Property="Opacity" Value="0.7" />
     </Style>
 
-
-    <Style TargetType="AppBar" x:Key="BottomAppBarStyle"/>
-
-
-
 </ResourceDictionary>

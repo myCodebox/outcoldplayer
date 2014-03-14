@@ -8,7 +8,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
     using OutcoldSolutions.GoogleMusic.Presenters;
 
-    public interface IAlbumPageView : IPageView
+    public interface IAlbumPageView : IPlaylistPageViewBase
     {
     }
 
@@ -59,6 +59,11 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
                 this.TrackScrollViewer(frameworkElement.GetListView());
             }
+        }
+
+        public ISongsListView GetSongsListView()
+        {
+            return this.songsListView;
         }
     }
 }

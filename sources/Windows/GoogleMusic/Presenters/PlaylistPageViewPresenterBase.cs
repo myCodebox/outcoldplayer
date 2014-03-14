@@ -17,7 +17,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
     public class PlaylistPageViewPresenterBase<TView> 
         : PagePresenterBase<TView, PlaylistPageViewBindingModel>
-        where TView : IPageView
+        where TView : IPlaylistPageViewBase
     {
         private readonly IPlaylistsService playlistsService;
         private readonly IApplicationResources resources;
@@ -66,19 +66,19 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
                 bool isRadio = request.PlaylistType == PlaylistType.Radio;
                 bool startPlaying = false;
-                if (isRadio)
+                bool isCurrentPlaylist = false;
+                
+                IPlaylist currentPlaylist = this.playQueueService.CurrentPlaylist;
+                if (currentPlaylist != null && string.Equals(currentPlaylist.Id, request.PlaylistId))
                 {
-                    IPlaylist currentPlaylist = this.playQueueService.CurrentPlaylist;
-                    if (currentPlaylist != null && string.Equals(currentPlaylist.Id, request.PlaylistId))
-                    {
-                        playlist = currentPlaylist;
-                        songs = this.playQueueService.GetQueue().ToList();
-                    }
-                    else
-                    {
-                        await this.playQueueService.StopAsync();
-                        startPlaying = true;
-                    }
+                    playlist = currentPlaylist;
+                    songs = this.playQueueService.GetQueue().ToList();
+                    isCurrentPlaylist = true;
+                }
+                else if (isRadio)
+                {
+                    await this.playQueueService.StopAsync();
+                    startPlaying = true;
                 }
 
                 if (playlist == null && songs == null)
@@ -96,6 +96,12 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                         {
                             this.BindingModel.Title = this.BindingModel.Playlist.Title;
                             this.BindingModel.Subtitle = this.resources.GetTitle(playlist.PlaylistType);
+                        }
+
+                        if (isCurrentPlaylist)
+                        {
+                            this.View.GetSongsListView()
+                                .ScrollIntoCurrentSongAsync(this.playQueueService.GetCurrentSong());
                         }
                     });
 

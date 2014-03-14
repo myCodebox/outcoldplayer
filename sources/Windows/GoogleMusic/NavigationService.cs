@@ -174,7 +174,7 @@ namespace OutcoldSolutions.GoogleMusic
                     if (object.Equals(value.Parameter, parameter)
                         && value.ViewType == pageViewType)
                     {
-                        this.logger.Warning("Double click found. Ignoring...");
+                        this.RefreshCurrentView();
                         return value.View;
                     }
 

@@ -5,31 +5,24 @@ namespace OutcoldSolutions.GoogleMusic
 {
     public static class CommandIcon
     {
-        public const string Play = "PlayAppBarButtonStyle";
+        public const string Add = "\uE109";
 
-        public const string Add = "AddAppBarButtonStyle";
+        public const string OpenWith = "\uE17D";
 
-        public const string OpenWith = "OpenWithAppBarButtonStyle";
+        public const string Edit = "\uE104";
 
-        public const string Edit = "EditAppBarButtonStyle";
+        public const string Delete = "\uE106";
 
-        public const string Delete = "DeleteAppBarButtonStyle";
+        public const string Remove = "\uE108";
 
-        public const string Remove = "RemoveAppBarButtonStyle";
+        public const string Download = "\uE118";
 
-        public const string Download = "DownloadAppBarButtonStyle";
+        public const string SaveLocal = "\uE159";
 
-        public const string SaveLocal = "SaveLocalAppBarButtonStyle";
+        public const string Pin = "\uE141";
 
-        public const string Pin = "PinAppBarButtonStyle";
+        public const string UnPin = "\uE196";
 
-        public const string UnPin = "UnPinAppBarButtonStyle";
-
-        public const string Radio = "RadioAppBarButtonStyle";
-    }
-
-    public static class CommandSymbol
-    {
         public const string Page = "\uE132";
 
         public const string List = "\uE14C";

@@ -454,22 +454,25 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             var song = obj as SongBindingModel;
             if (song != null)
             {
-                if (song.Metadata.UnknownSong)
+                Artist artist = null;
+
+                if (!song.Metadata.UnknownSong)
                 {
-                    if (this.applicationStateService.IsOnline())
-                    {
-                        this.navigationService.NavigateToPlaylist(
-                            new Artist()
-                            {
-                                Title = song.Metadata.GetSongArtist(),
-                                TitleNorm = song.Metadata.GetSongArtist().Normalize(),
-                                GoogleArtistId = song.Metadata.GoogleArtistId
-                            });
-                    }
+                    artist = await this.artistsRepository.FindByTitleNormAsync(song.Metadata.GetSongArtist().Normalize());
                 }
-                else
+
+                if (artist == null && this.applicationStateService.IsOnline())
                 {
-                    var artist = await this.artistsRepository.FindByTitleNormAsync(song.Metadata.GetSongArtist().Normalize());
+                    artist = new Artist()
+                             {
+                                 Title = song.Metadata.GetSongArtist(),
+                                 TitleNorm = song.Metadata.GetSongArtist().Normalize(),
+                                 GoogleArtistId = song.Metadata.GoogleArtistId
+                             };
+                }
+
+                if (artist != null)
+                {
                     this.navigationService.NavigateToPlaylist(artist);
                 }
             }
@@ -480,22 +483,25 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             var song = obj as SongBindingModel;
             if (song != null)
             {
-                if (song.Metadata.UnknownSong)
+                Album album = null;
+
+                if (!song.Metadata.UnknownSong)
                 {
-                    if (this.applicationStateService.IsOnline())
-                    {
-                        this.navigationService.NavigateToPlaylist(
-                            new Album()
-                            {
-                                Title = song.Metadata.AlbumTitle,
-                                TitleNorm = song.Metadata.AlbumTitleNorm,
-                                GoogleAlbumId = song.Metadata.GoogleAlbumId
-                            });
-                    }
+                    album = await this.albumsRepository.FindByTitleNormAsync(song.Metadata.AlbumTitleNorm);
                 }
-                else
+
+                if (album == null && this.applicationStateService.IsOnline())
                 {
-                    var album = await this.albumsRepository.FindByTitleNormAsync(song.Metadata.AlbumTitleNorm);
+                    album = new Album()
+                    {
+                        Title = song.Metadata.AlbumTitle,
+                        TitleNorm = song.Metadata.AlbumTitleNorm,
+                        GoogleAlbumId = song.Metadata.GoogleAlbumId
+                    };
+                }
+
+                if (album != null)
+                {
                     this.navigationService.NavigateToPlaylist(album);
                 }
             }

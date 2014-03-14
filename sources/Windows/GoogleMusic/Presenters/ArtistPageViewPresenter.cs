@@ -136,12 +136,12 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         {
             if (this.BindingModel.Artist.ArtistId > 0)
             { 
-                yield return new CommandMetadata(CommandSymbol.List, this.resources.GetString("Toolbar_ShowAllButton"), this.ShowAllCommand);
+                yield return new CommandMetadata(CommandIcon.List, this.resources.GetString("Toolbar_ShowAllButton"), this.ShowAllCommand);
             }
 
             if (this.applicationStateService.IsOnline())
             {
-                yield return new CommandMetadata(CommandSymbol.Radio, "Start radio", this.StartRadioCommand);
+                yield return new CommandMetadata(CommandIcon.Radio, "Start radio", this.StartRadioCommand);
             }
         }
 

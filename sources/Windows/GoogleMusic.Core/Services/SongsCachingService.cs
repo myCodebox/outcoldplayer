@@ -235,14 +235,10 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     this.logger.LogTask(this.notificationService.ShowMessageAsync("Could not load current song. "
                                                                                   + "Verify network connection and try again."));
                 }
-                else if (result.Item2 == HttpStatusCode.NotFound)
-                {
-                    this.logger.LogTask(this.notificationService.ShowMessageAsync(this.resources.GetString("Msg_Http404")));
-                } 
-                else if (song.IsDeleted())
+                else if (song.IsDeleted() || result.Item2 == HttpStatusCode.NotFound)
                 {
                     this.logger.LogTask(this.notificationService.ShowMessageAsync("It looks like that this songs has been removed from All Access library. "
-                                                                                  + "You can try to search for this song in different albums."));
+                                                                                  + "You may try to search for this song in different albums."));
                 }
                 else
                 {

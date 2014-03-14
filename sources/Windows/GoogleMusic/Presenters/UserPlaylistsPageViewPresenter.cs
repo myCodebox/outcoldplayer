@@ -26,7 +26,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         protected override IEnumerable<CommandMetadata> GetViewCommands()
         {
-            yield return new CommandMetadata(CommandSymbol.Page, "New playlist", this.AddPlaylistCommand);
+            yield return new CommandMetadata(CommandIcon.Page, "New playlist", this.AddPlaylistCommand);
         }
 
         private void AddPlaylist()

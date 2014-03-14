@@ -4,9 +4,12 @@
 namespace OutcoldSolutions.GoogleMusic.Presenters
 {
     using System;
+    using System.Diagnostics;
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
+    using OutcoldSolutions.GoogleMusic.Controls;
+    using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Shell;
@@ -17,6 +20,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     {
         private readonly IPlayQueueService queueService;
         private readonly INavigationService navigationService;
+        private readonly ISongsService songsService;
         private readonly IMediaElementContainer mediaElement;
 
         private double progressPosition;
@@ -25,12 +29,15 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             IMediaElementContainer mediaElementContainer, 
             IGoogleMusicSessionService sessionService, 
             IPlayQueueService queueService, 
-            INavigationService navigationService, 
+            INavigationService navigationService,
+            IApplicationSettingViewsService applicationSettingViewsService,
+            ISongsService songsService,
             PlayerBindingModel playerBindingModel)
         {
             this.mediaElement = mediaElementContainer;
             this.queueService = queueService;
             this.navigationService = navigationService;
+            this.songsService = songsService;
 
             this.BindingModel = playerBindingModel;
 
@@ -98,7 +105,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.NavigateToQueueView = new DelegateCommand(
                 () =>
                 {
-                    if (this.queueService.CurrentPlaylist != null)
+                    if (this.queueService.CurrentPlaylist != null && !(this.queueService.CurrentPlaylist is Artist))
                     {
                         this.navigationService.NavigateToPlaylist(this.queueService.CurrentPlaylist);
                     }
@@ -108,6 +115,22 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     }
                 });
             this.ShowMoreCommand = new DelegateCommand(() => this.MainFrame.ShowPopup<IPlayerMorePopupView>(PopupRegion.AppToolBarRight));
+
+            this.ShowApplicationSettingsCommand = new DelegateCommand(async () =>
+            {
+                await this.Dispatcher.RunAsync(applicationSettingViewsService.Show);
+            });
+
+            this.RateSongCommand = new DelegateCommand(
+                parameter =>
+                {
+                    var ratingEventArgs = parameter as RatingEventArgs;
+                    if (this.BindingModel.CurrentSong != null && ratingEventArgs != null)
+                    {
+                        this.Logger.LogTask(this.songsService.UpdateRatingAsync(
+                                this.BindingModel.CurrentSong.Metadata, (byte)ratingEventArgs.Value));
+                    }
+                });
         }
 
         public PlayerBindingModel BindingModel { get; private set; }
@@ -125,6 +148,10 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         public DelegateCommand ShuffleCommand { get; set; }
 
         public DelegateCommand RepeatAllCommand { get; set; }
+
+        public DelegateCommand ShowApplicationSettingsCommand { get; set; }
+
+        public DelegateCommand RateSongCommand { get; set; }
 
         public bool IsShuffleEnabled
         {

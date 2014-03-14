@@ -97,7 +97,7 @@
         </Grid.RowDefinitions>
         
         <Border Height="10" 
-                Background="{StaticResource ApplicationThemeBrush}" />
+                Background="{StaticResource ListViewItemBorder}" />
 
         <Border Grid.Row="1" Grid.RowSpan="3" Margin="0, 0, 0, -10">
             <Border.Background>
@@ -229,7 +229,7 @@
             </Button>
 
             <Border Style="{StaticResource SeparatorStyle}" />
-            
+
             <ListView ItemsSource="{Binding Path=ViewCommands}"
                       Margin="0"
                       Padding="0">

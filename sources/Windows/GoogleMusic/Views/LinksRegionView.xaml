@@ -9,20 +9,22 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <StackPanel Orientation="Horizontal">
+    <StackPanel Orientation="Horizontal" >
  
         <StackPanel Orientation="Horizontal" 
-                    VerticalAlignment="Top" 
-                    Margin="0, 5, 20, 0" >
+                    Margin="0, 10, 20, 0" >
             <ProgressRing VerticalAlignment="Center" 
-                         IsActive="{Binding Path=BindingModel.ShowProgressRing}" 
-                         Margin="0, 0, 10, 0"/>
+                          IsActive="{Binding Path=BindingModel.ShowProgressRing}" 
+                          Margin="0, 0, 10, 0"
+                          Width="10"
+                          Height="10"/>
 
             <Button Visibility="{Binding Path=BindingModel.IsDownloading}" VerticalAlignment="Center"
-                Command="{Binding Path= NavigateToDownloadQueue, Mode=OneTime}">
+                    Command="{Binding Path= NavigateToDownloadQueue, Mode=OneTime}">
                 <Button.Template>
                     <ControlTemplate>
                         <TextBlock Text="{Binding Path=BindingModel.MessageText, Mode=OneWay}" 
+                                   FontSize="12"
                                    Style="{StaticResource BodyTextStyle}"/>
                     </ControlTemplate>
                 </Button.Template>
@@ -30,10 +32,11 @@
             
         </StackPanel>
 
-        <Button Margin="0, -15, 0, 0" Style="{StaticResource RefreshAppBarButtonStyle}" 
-                AutomationProperties.Name="Update library"
+        <Button Margin="20, 0, 20, 20" Style="{StaticResource RefreshAppBarButtonStyle}" 
+                AutomationProperties.Name=""
+                Height="60"
+                FontSize="14"
                 Command="{Binding Path=UpdateLibraryCommand, Mode=OneTime}"
-                Visibility="{Binding Path=BindingModel.MessageText, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
-                VerticalAlignment="Center" />
+                Visibility="{Binding Path=BindingModel.MessageText, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"/>
     </StackPanel>
 </views:ViewBase>

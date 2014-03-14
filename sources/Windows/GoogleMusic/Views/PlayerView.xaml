@@ -15,11 +15,9 @@
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
         <Button Height="79" 
@@ -39,10 +37,10 @@
             </Button.Template>
         </Button>
 
-        <Slider Grid.Column="1"
-                Grid.ColumnSpan="4"
+        <Slider Grid.Column="0"
+                Grid.ColumnSpan="3"
                 Grid.Row="0"
-                Margin="0, -3, 0, -3"
+                Margin="79, -3, 0, -3"
                 IsThumbToolTipEnabled="False"
                 VerticalAlignment="Bottom"
                 Value="{Binding Path=BindingModel.CurrentPosition, Mode=TwoWay}"
@@ -50,19 +48,11 @@
                 Visibility="{Binding Path=BindingModel.CurrentSong, Mode=OneWay, Converter={StaticResource NullToInvisibilityConverter}}"
                 Canvas.ZIndex="200"/>
 
-        <Border Grid.Column="0" Grid.ColumnSpan="5" Grid.Row="1" >
-            <Border.Background>
-                <LinearGradientBrush  StartPoint="0,0" EndPoint="1,0">
-                    <GradientStop Color="#FF5F5F5F" Offset="0"/>
-                    <GradientStop Color="#FF3F3F3F" Offset="0.7"/>
-                    <GradientStop Color="#FF3F3F3F" Offset="1"/>
-                </LinearGradientBrush>
-            </Border.Background>
-        </Border>
+        <Border Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1" Background="#FF5F5F5F" />
         
         <Button Grid.Row="1" 
-                Grid.Column="1" 
-                Margin="10, 10, 0, 0" 
+                Grid.Column="0" 
+                Margin="89, 10, 0, 0" 
                 Command="{Binding Path=NavigateToQueueView, Mode=OneTime}"
                 Canvas.ZIndex="50"
                 HorizontalAlignment="Left"
@@ -113,11 +103,10 @@
             </Button.Template>
         </Button>
 
-
         <StackPanel Grid.Row="1"
                     Orientation="Horizontal"
                     VerticalAlignment="Stretch"
-                    Grid.Column="2">
+                    Grid.Column="1">
 
             <controls:AppBarToggleButton Style="{StaticResource RepeatAllAppBarButtonStyle}" 
                                          IsChecked="{Binding Path=IsRepeatAllEnabled, Mode=TwoWay}"
@@ -153,21 +142,61 @@
                                          Command="{Binding Path=ShuffleCommand, Mode=OneTime}"
                                          FontSize="16"
                                          AutomationProperties.Name=""/>
+        </StackPanel>
 
+        <StackPanel Grid.Row="1" Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Stretch">
+            <Popup x:Name="VolumePopup" 
+                   IsLightDismissEnabled="True" 
+                   Canvas.ZIndex="1"
+                   VerticalAlignment="Stretch"
+                   Width="140">
+                <StackPanel Height="74" Width="140" Background="{StaticResource AppBarItemPointerOverBackgroundThemeBrush}" >
+
+                    <Slider Value="{Binding Path=BindingModel.Volume, Mode=TwoWay}" 
+                                x:Name="VolumeSlider"
+                                Margin="20, 25, 20, 0"
+                                Maximum="1" 
+                                StepFrequency="0.01" 
+                                Width="100" 
+                                HorizontalAlignment="Center" 
+                                IsThumbToolTipEnabled="False"/>
+
+                    <TextBlock Margin="10, 10, 20, 0"
+                               Text="{Binding Path=Value, ElementName=VolumeSlider, Mode=OneWay, Converter={StaticResource PercentageStringFormatConverter}}" 
+                               Style="{StaticResource SmallTextStyle}"
+                               FontWeight="SemiLight"
+                               HorizontalAlignment="Right"
+                               TextAlignment="Right"/>
+
+                </StackPanel>
+            </Popup>
+
+            <StackPanel Visibility="{Binding Path=BindingModel.CurrentSong, Converter={StaticResource NullToInvisibilityConverter}}"
+                        VerticalAlignment="Center" >
+                <controls:Rating x:Name="RatingControl"
+                                 Value="{Binding Path=BindingModel.CurrentSong.Rating, Mode=OneWay}"
+                                 Margin="10, 0, 10, 5"
+                                 CommandParameter="{Binding Mode=OneTime}"
+                                 Command="{Binding Path=RateSongCommand, Mode=OneTime}"
+                                 Visibility="{Binding Path=IsOpen, ElementName=VolumePopup, Converter={StaticResource BooleanToInvisibilityConverter}}"/>
+            </StackPanel>
             
 
-        </StackPanel>
-
-        <StackPanel Grid.Row="1" Grid.Column="4" Orientation="Horizontal">
-            <Button Style="{StaticResource MoreAppBarButtonStyle}" 
-                    Command="{Binding Path=ShowMoreCommand, Mode=OneTime}"
-                    AutomationProperties.Name=""
-                    Canvas.ZIndex="100"/>
+            <controls:ButtonWithHover Style="{StaticResource VolumeAppBarButtonStyle}"  
+                                      Click="ButtonBase_OnClick"
+                                      FontSize="16"
+                                      AutomationProperties.Name=""
+                                      Canvas.ZIndex="100"/>
+            <controls:ButtonWithHover Style="{StaticResource SettingsPopupMenuButtonStyle}"  
+                                      Command="{Binding Path=ShowApplicationSettingsCommand, Mode=OneTime}"
+                                      FontSize="16"
+                                      AutomationProperties.Name=""
+                                      Canvas.ZIndex="100"/>
+<!--            <Button Style="{StaticResource MoreAppBarButtonStyle}" -->
+<!--                    Command="{Binding Path=ShowMoreCommand, Mode=OneTime}"-->
+<!--                    AutomationProperties.Name=""-->
+<!--                    Canvas.ZIndex="100"/>-->
         </StackPanel>
         
-
     </Grid>
-
-    
-    
 </views:ViewBase>

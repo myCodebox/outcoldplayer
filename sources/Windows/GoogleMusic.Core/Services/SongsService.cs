@@ -29,7 +29,6 @@ namespace OutcoldSolutions.GoogleMusic.Services
         private readonly IEventAggregator eventAggregator;
         private readonly ISongsWebService songsWebService;
         private readonly ISongsRepository songsRepository;
-        private readonly IUserPlaylistsRepository userPlaylistsRepository;
 
         private readonly ILogger logger;
 
@@ -37,13 +36,11 @@ namespace OutcoldSolutions.GoogleMusic.Services
             ILogManager logManager,
             IEventAggregator eventAggregator,
             ISongsWebService songsWebService,
-            ISongsRepository songsRepository,
-            IUserPlaylistsRepository userPlaylistsRepository)
+            ISongsRepository songsRepository)
         {
             this.eventAggregator = eventAggregator;
             this.songsWebService = songsWebService;
             this.songsRepository = songsRepository;
-            this.userPlaylistsRepository = userPlaylistsRepository;
             this.logger = logManager.CreateLogger("SongMetadataEditService");
         }
 
@@ -68,7 +65,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
             
             foreach (var mutation in resp.MutateResponse)
             {
-                if (string.Equals(mutation.ResponseCode, "OK", StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(mutation.ResponseCode, "OK", StringComparison.OrdinalIgnoreCase)
+                    || string.Equals(mutation.Response_Code, "OK", StringComparison.OrdinalIgnoreCase))
                 {
                     song.Rating = newRating;
                     

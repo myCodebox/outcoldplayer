@@ -171,6 +171,8 @@ namespace OutcoldSolutions.GoogleMusic.Views
             {
                 this.BottomAppBar.IsOpen = true;
             }
+
+            this.UpdateMargins();
         }
 
         /// <inheritdoc />
@@ -178,6 +180,8 @@ namespace OutcoldSolutions.GoogleMusic.Views
         {
             this.ContextButtonsItemsControl.ItemsSource = null;
             this.UpdateBottomAppBar();
+
+            this.UpdateMargins();
         }
 
         /// <inheritdoc />
@@ -520,7 +524,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
                 appBar.Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
 
-                if (!currentVisibility)
+                if (currentVisibility)
                 {
                     appBar.IsOpen = false;
                 }
@@ -542,6 +546,32 @@ namespace OutcoldSolutions.GoogleMusic.Views
                     e.Handled = true;
                 }
             }
+        }
+
+        private void AppBar_OnSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            this.UpdateMargins();
+        }
+
+        private void UpdateMargins()
+        {
+            this.ContentControl.Margin = new Thickness(
+                this.ContentControl.Margin.Left,
+                this.ContentControl.Margin.Top,
+                this.ContentControl.Margin.Right,
+                Math.Max(0, (this.BottomAppBar.IsOpen ? this.BottomAppBar.ActualHeight : 0) - this.BottomAppBarRightZoneRegionContentControl.ActualHeight));
+
+            this.AppToolBarLeftPopup.Margin = new Thickness(
+                this.AppToolBarLeftPopup.Margin.Left,
+                this.AppToolBarLeftPopup.Margin.Top,
+                this.AppToolBarLeftPopup.Margin.Right,
+                this.BottomAppBar.IsOpen ? this.BottomAppBar.ActualHeight : 0);
+
+            this.AppToolBarRightPopup.Margin = new Thickness(
+                this.AppToolBarRightPopup.Margin.Left,
+                this.AppToolBarRightPopup.Margin.Top,
+                this.AppToolBarRightPopup.Margin.Right,
+                this.BottomAppBar.IsOpen ? this.BottomAppBar.ActualHeight : 0); 
         }
     }
 }
