@@ -55,7 +55,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     if (this.BindingModel.IsPlaying)
                     {
                         double currentPosition = this.BindingModel.CurrentPosition;
-                        if (Math.Abs(this.progressPosition - currentPosition) > 1)
+                        if (Math.Abs(this.progressPosition - currentPosition) > 1
+                            && (this.BindingModel.DownloadProgress * this.BindingModel.TotalSeconds) >  currentPosition)
                         {
                             await this.mediaElement.SetPositionAsync(TimeSpan.FromSeconds(currentPosition));
                         }

@@ -43,6 +43,7 @@
                 Margin="79, -3, 0, -3"
                 IsThumbToolTipEnabled="False"
                 VerticalAlignment="Bottom"
+                IsEnabled="{Binding Path=BindingModel.IsBusy, Converter={StaticResource InvertBooleanConverter}}"
                 Value="{Binding Path=BindingModel.CurrentPosition, Mode=TwoWay}"
                 Maximum="{Binding Path=BindingModel.TotalSeconds, Mode=OneWay}" 
                 Visibility="{Binding Path=BindingModel.CurrentSong, Mode=OneWay, Converter={StaticResource NullToInvisibilityConverter}}"

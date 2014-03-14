@@ -4,6 +4,8 @@
 
 namespace OutcoldSolutions.GoogleMusic.Views
 {
+    using System;
+
     using Windows.UI.Core;
     using Windows.UI.Xaml;
 
@@ -25,7 +27,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
             base.OnInitialized();
 
             var playerBindingModel = this.GetPresenter<PlayerViewPresenter>().BindingModel;
-            playerBindingModel.Subscribe(() => playerBindingModel.CurrentSong, (o, args) => this.Dispatcher.RunAsync(
+            playerBindingModel.Subscribe(() => playerBindingModel.CurrentSong, async (o, args) => await this.Dispatcher.RunAsync(
                 CoreDispatcherPriority.Normal, 
                 () =>
                 {
