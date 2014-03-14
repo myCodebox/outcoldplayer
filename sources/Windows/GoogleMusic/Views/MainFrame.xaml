@@ -54,7 +54,6 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
         <ContentControl Grid.RowSpan="2"
@@ -67,7 +66,6 @@
         <ContentControl Grid.Row="0" 
                         Grid.RowSpan="3"
                         Grid.Column="1"
-                        Grid.ColumnSpan="2"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch"
                         HorizontalContentAlignment="Stretch"
@@ -138,25 +136,15 @@
                     Visibility="{Binding Path=IsActive, ElementName=ProgressRing, Converter={StaticResource BooleanToInvisibilityConverter}}"
                     x:Name="ContentControl" />
 
-        <ContentControl Grid.Row="0" 
-                    Grid.RowSpan="2"
-                    Grid.Column="2"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Stretch"
-                    HorizontalContentAlignment="Stretch"
-                    VerticalContentAlignment="Stretch"
-                    x:Name="RightRegionContentControl"
-                    Visibility="{Binding Path=Content, RelativeSource={RelativeSource Self}, Converter={StaticResource NullToInvisibilityConverter}}"/>
-
         <Popup IsLightDismissEnabled="True" 
                 x:Name="AppToolBarLeftPopup" 
                 HorizontalAlignment="Left" 
                 VerticalAlignment="Bottom" 
                 Closed="PopupViewClosed"
                 Grid.Row="1"
-               Grid.RowSpan="2"
+                Grid.RowSpan="2"
                 Grid.Column="0"
-                Grid.ColumnSpan="3"
+                Grid.ColumnSpan="2"
                 Margin="0, 0, 0, 100">
             <Popup.ChildTransitions>
                 <TransitionCollection>
@@ -173,7 +161,6 @@
                 Grid.Row="1"
                Grid.RowSpan="2"
                 Grid.Column="1"
-                Grid.ColumnSpan="2"
                Margin="0, 0, 0, 100">
             <Popup.ChildTransitions>
                 <TransitionCollection>
@@ -184,7 +171,7 @@
 
         <ContentControl Grid.Row="2" 
                         Grid.Column="0"
-                        Grid.ColumnSpan="3"
+                        Grid.ColumnSpan="2"
                         HorizontalAlignment="Stretch"
                         HorizontalContentAlignment="Stretch"
                         x:Name="BottomAppBarRightZoneRegionContentControl"

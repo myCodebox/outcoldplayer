@@ -209,10 +209,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
                     this.SetContentRegion(content);
                     break;
 
-                case MainFrameRegion.Right:
-                    this.SetRightRegion(content);
-                    break;
-
                 case MainFrameRegion.BottomAppBarRightZone:
                     this.SetBottomAppBarRightZoneRegion(content);
                     break;
@@ -255,10 +251,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
             {
                 case MainFrameRegion.Content:
                     this.ContentControl.Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
-                    break;
-
-                case MainFrameRegion.Right:
-                    this.RightRegionContentControl.Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
                     break;
 
                 case MainFrameRegion.BottomAppBarRightZone:
@@ -489,11 +481,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
             }
 
             this.ContentControl.Content = this.currentView;
-        }
-
-        private void SetRightRegion(object content)
-        {
-            this.RightRegionContentControl.Content = content;
         }
 
         private void SetBackgroundRegion(object content)

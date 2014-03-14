@@ -50,29 +50,7 @@ namespace OutcoldSolutions.GoogleMusic
 
             this.Suspending += this.OnSuspending;
 #if !DEBUG
-            BugSense.BugSenseHandler.Instance.UnregisterUnobservedTaskExceptions();
             BugSense.BugSenseHandler.Instance.InitAndStartSession(new ExceptionManager(this), "w8c8d6b5");
-            TaskScheduler.UnobservedTaskException += (sender, args) =>
-                {
-                    if (!args.Observed && args.Exception != null)
-                    {
-                        var exception = args.Exception.Flatten();
-                        if (exception.InnerException != null 
-                            && exception.InnerException.Message.IndexOf("fimpression", StringComparison.OrdinalIgnoreCase) < 0
-                            && exception.InnerException.Message.IndexOf("No ad available", StringComparison.OrdinalIgnoreCase) < 0
-                            && (exception.InnerException.InnerException == null
-                                || !exception.InnerException.InnerException.Message.Contains("fimpression")))
-                        {
-                            var logExtra = new LimitedCrashExtraDataList()
-                                               {
-                                                   { "level", "UnobservedTaskException" }
-                                               };
-                            BugSense.BugSenseHandler.Instance.LogException(exception.InnerException, logExtra);
-                        }
-
-                        args.SetObserved();
-                    }
-                };
 #endif
         }
 
@@ -211,7 +189,6 @@ namespace OutcoldSolutions.GoogleMusic
 
                 registration.Register<ISongsService>().AsSingleton<SongsService>();
 
-                registration.Register<RightRegionControlService>().AsSingleton();
                 registration.Register<ApplicationLogManager>().AsSingleton();
 
                 registration.Register<ISongsCachingService>().AsSingleton<SongsCachingService>();
@@ -299,8 +276,6 @@ namespace OutcoldSolutions.GoogleMusic
         {
             if (isFirstTimeActivated)
             {
-                Container.Resolve<RightRegionControlService>();
-
                 Container.Resolve<ApplicationStateChangeHandler>();
 
                 var mainFrameRegionProvider = Container.Resolve<IMainFrameRegionProvider>();

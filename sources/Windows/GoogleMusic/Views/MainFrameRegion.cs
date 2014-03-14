@@ -24,11 +24,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
         BottomAppBarRightZone = 2,
 
         /// <summary>
-        /// Right column ("Ads zone").
-        /// </summary>
-        Right = 3,
-
-        /// <summary>
         /// We give whole area to this region. It can be used to place something in background.
         /// </summary>
         Background = 4,
