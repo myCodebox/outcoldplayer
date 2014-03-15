@@ -32,6 +32,11 @@ namespace OutcoldSolutions.GoogleMusic.Views
     /// </summary>
     public interface IMainFrame : IView
     {
+        string Title { get; set; }
+        string Subtitle { get; set; }
+
+        bool IsCurretView(IPageView view);
+
         /// <summary>
         /// Set view commands.
         /// </summary>
@@ -157,6 +162,37 @@ namespace OutcoldSolutions.GoogleMusic.Views
         private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
         {
             this.MainMenuContainer.Content = this.mainMenu = this.container.Resolve<IMainMenu>();
+        }
+
+        public string Title
+        {
+            set
+            {
+                this.presenter.Title = value;
+            }
+
+            get
+            {
+                return this.presenter.Title;
+            }
+        }
+
+        public string Subtitle
+        {
+            set
+            {
+                this.presenter.Subtitle = value;
+            }
+
+            get
+            {
+                return this.presenter.Subtitle;
+            }
+        }
+
+        public bool IsCurretView(IPageView view)
+        {
+            return this.currentView == view;
         }
 
         /// <inheritdoc />
@@ -486,43 +522,8 @@ namespace OutcoldSolutions.GoogleMusic.Views
             this.ClearContextCommands();
 
             this.ContentControl.Content = null;
-            this.TitleTextBox.ClearValue(TextBlock.TextProperty);
-            this.SubtitleTextBox.ClearValue(TextBlock.TextProperty);
-            this.TitleGrid.ClearValue(UIElement.VisibilityProperty);
 
             this.currentView = content as IView;
-
-            var pageView = this.currentView as IPageView;
-            if (pageView != null)
-            {
-                this.TitleTextBox.SetBinding(
-                    TextBlock.TextProperty,
-                    new Binding()
-                    {
-                        Source = this.currentView,
-                        Mode = BindingMode.OneWay,
-                        Path = new PropertyPath(PropertyNameExtractor.GetPropertyName(() => pageView.Title))
-                    });
-
-                this.SubtitleTextBox.SetBinding(
-                    TextBlock.TextProperty,
-                    new Binding()
-                    {
-                        Source = this.currentView,
-                        Mode = BindingMode.OneWay,
-                        Path = new PropertyPath(PropertyNameExtractor.GetPropertyName(() => pageView.Subtitle))
-                    });
-
-                this.TitleGrid.SetBinding(
-                    UIElement.VisibilityProperty,
-                    new Binding()
-                    {
-                        Source = this.currentView,
-                        Mode = BindingMode.OneWay,
-                        Path = new PropertyPath(PropertyNameExtractor.GetPropertyName(() => pageView.IsTitleVisible)),
-                        Converter = (IValueConverter)Application.Current.Resources["BooleanToVisibilityConverter"]
-                    });
-            }
 
             var dataPageView = this.currentView as IPageView;
             if (dataPageView != null)

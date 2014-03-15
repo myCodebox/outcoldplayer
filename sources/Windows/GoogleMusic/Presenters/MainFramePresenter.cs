@@ -9,6 +9,10 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     {
         private readonly INavigationService navigationService;
 
+        private string title;
+
+        private string subtitle;
+
         public MainFramePresenter(
             INavigationService navigationService)
         {
@@ -18,6 +22,32 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         }
 
         public DelegateCommand GoBackCommand { get; set; }
+
+        public string Title
+        {
+            get
+            {
+                return this.title;
+            }
+
+            set
+            {
+                this.SetValue(ref this.title, value);
+            }
+        }
+
+        public string Subtitle
+        {
+            get
+            {
+                return this.subtitle;
+            }
+
+            set
+            {
+                this.SetValue(ref this.subtitle, value);
+            }
+        }
 
         public bool IsBackButtonVisible
         {

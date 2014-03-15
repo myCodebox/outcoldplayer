@@ -31,6 +31,11 @@ namespace OutcoldSolutions.GoogleMusic.Views
         protected BindingModelBase Presenter { get; private set; }
 
         /// <summary>
+        /// Gets the main frame
+        /// </summary>
+        protected IMainFrame MainFrame { get; private set; }
+
+        /// <summary>
         /// The get presenter.
         /// </summary>
         /// <typeparam name="TPresenter">
@@ -53,6 +58,9 @@ namespace OutcoldSolutions.GoogleMusic.Views
         /// <param name="logManager">
         /// The log manager.
         /// </param>
+        /// <param name="mainFrame">
+        /// The main frame.
+        /// </param>
         /// <param name="presenterBase">
         /// The presenter base.
         /// </param>
@@ -60,12 +68,14 @@ namespace OutcoldSolutions.GoogleMusic.Views
         protected void Initialize(
             IDependencyResolverContainer container, 
             ILogManager logManager,
+            IMainFrame mainFrame,
             BindingModelBase presenterBase)
         {
             this.Container = container;
             this.Presenter = presenterBase;
             this.Logger = logManager.CreateLogger(this.GetType().Name);
             this.DataContext = presenterBase;
+            this.MainFrame = mainFrame;
 
             var viewPresenterBase = presenterBase as IViewPresenterBase;
             if (viewPresenterBase != null)

@@ -42,7 +42,10 @@
                 Command="{Binding Path=UpdateLibraryCommand, Mode=OneTime}"
                 Visibility="{Binding Path=MessageText, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}">
             <ToolTipService.ToolTip>
-                Click to syncronize library with your Google Music Account.
+                <TextBlock MaxWidth="240"
+                           TextWrapping="Wrap">
+                    Syncronize library with your Google Music Account.
+                </TextBlock>
             </ToolTipService.ToolTip>
         </Button>
 
@@ -55,7 +58,10 @@
                 Command="{Binding Path=SwitchModeCommand, Mode=OneTime}"
                 Visibility="{Binding Path=IsOnline, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
             <ToolTipService.ToolTip>
-                Application is connected to your Google Music Account. Click if you want to see songs on device only.
+                <TextBlock MaxWidth="240"
+                           TextWrapping="Wrap">
+                    Online mode. You can listen all music, Click if you want to see songs on device only.
+                </TextBlock>
             </ToolTipService.ToolTip>
         </Button>
 
@@ -67,7 +73,10 @@
                 Command="{Binding Path=SwitchModeCommand, Mode=OneTime}"
                 Visibility="{Binding Path=IsOnline, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}">
             <ToolTipService.ToolTip>
-                Application is in offline mode. Click if you want to see all music, not only local.
+                <TextBlock MaxWidth="240"
+                           TextWrapping="Wrap">
+                    Offline mode. You can see music only which are stored on your device. Click if you want to see all music, not only local.
+                </TextBlock>
             </ToolTipService.ToolTip>
         </Button>
     </StackPanel>

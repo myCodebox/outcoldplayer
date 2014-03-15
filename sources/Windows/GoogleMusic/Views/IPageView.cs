@@ -19,11 +19,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
         string Subtitle { get; }
 
         /// <summary>
-        /// Gets a value indicating whether is title visible.
-        /// </summary>
-        bool IsTitleVisible { get; }
-
-        /// <summary>
         /// On navigated to.
         /// </summary>
         /// <param name="eventArgs">

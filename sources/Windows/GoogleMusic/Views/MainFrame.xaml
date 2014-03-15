@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:converters="using:OutcoldSolutions.GoogleMusic.Converters"
     mc:Ignorable="d"
     x:Name="This"
     RightTapped="MainFrame_OnRightTapped">
@@ -24,6 +25,123 @@
                 <LinearDoubleKeyFrame KeyTime="0:0:0.300" Value="1" />
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
+
+        <Style x:Name="LargeTitleGridStyle" TargetType="ContentControl">
+            <Setter Property="Margin" Value="40, 0, 20, 0" />
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="Height" Value="80" />
+            <Setter Property="Template" >
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="50"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Button Style="{StaticResource BackButtonStyle}" 
+                                    Visibility="{Binding Path=IsBackButtonVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                    Command="{Binding Path=GoBackCommand}"
+                                    Margin="5, 0, 0, 0"/>
+
+                            <Image Source="ms-appx:///Assets/StoreLogo.png"
+                                    Visibility="{Binding Path=IsBackButtonVisible, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}"
+                                    VerticalAlignment="Bottom"  
+                                    Margin="0,-20,0,0" 
+                                    Width="50" 
+                                    Height="50"/>
+
+                            <TextBlock Style="{StaticResource HeaderTextStyle}" 
+                                       Text="{Binding Path=Title, Mode=OneWay}"
+                                       Margin="20, 0, 0, 0"
+                                       Grid.Column="1" 
+                                       VerticalAlignment="Bottom" 
+                                       TextWrapping="NoWrap" 
+                                       TextTrimming="WordEllipsis"/>
+
+                            <TextBlock Style="{StaticResource SubheaderTextStyle}" 
+                                       Text="{Binding Path=Subtitle, Mode=OneWay}"
+                                       Grid.Column="2" 
+                                       VerticalAlignment="Bottom" 
+                                       Margin="20, 0, 0, 0" />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Name="SmallTitleGridStyle" TargetType="ContentControl">
+            <Setter Property="Margin" Value="20, 20, 0, 10" />
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="Height" Value="80" />
+            <Setter Property="Template" >
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="42" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <Button Grid.Row="0"
+                                    HorizontalAlignment="Left"
+                                    Margin="-5, 0, 0, 6"
+                                    Style="{StaticResource SnappedBackButtonStyle}" 
+                                    Visibility="{Binding Path=IsBackButtonVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                    Command="{Binding Path=GoBackCommand}"/>
+
+                            <Image Grid.Row="0"
+                                   HorizontalAlignment="Left"
+                                   Source="ms-appx:///Assets/StoreLogo.png"
+                                   Visibility="{Binding Path=IsBackButtonVisible, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}"
+                                   VerticalAlignment="Bottom"  
+                                   Margin="0,0,0,6" 
+                                   Width="36" 
+                                   Height="36"/>
+
+                            <StackPanel HorizontalAlignment="Left" Grid.Row="1">
+                                <TextBlock 
+                                       HorizontalAlignment="Left"
+                                       Style="{StaticResource HeaderTextStyle}" 
+                                       Text="{Binding Path=Title, Mode=OneWay}"
+                                       VerticalAlignment="Bottom" 
+                                       TextWrapping="NoWrap" 
+                                       TextTrimming="WordEllipsis"
+                                       FontSize="24"
+                                       LineHeight="24"/>
+
+                                <TextBlock HorizontalAlignment="Right"
+                                           Style="{StaticResource SubheaderTextStyle}" 
+                                           Text="{Binding Path=Subtitle, Mode=OneWay}"
+                                           Margin="0, 0, -10, 0"
+                                           FontSize="14"
+                                           LineHeight="14"/>
+                            </StackPanel>
+                            
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <converters:ControlStyles x:Name="TitleControlStyles"
+                                  Large="{StaticResource LargeTitleGridStyle}"
+                                  Medium="{StaticResource LargeTitleGridStyle}"
+                                  Small="{StaticResource SmallTitleGridStyle}"/>
+        
+        <Style x:Name="LargeContentControlStyle" TargetType="ContentControl">
+            <Setter Property="Margin" Value="40, 20, 0, 0" />
+        </Style>
+
+        <Style x:Name="SmalllContentControlStyle" TargetType="ContentControl">
+            <Setter Property="Margin" Value="20, 20, 0, 0" />
+        </Style>
+
+        <converters:ControlStyles x:Name="ContentControlStyles"
+                                  Large="{StaticResource LargeContentControlStyle}"
+                                  Medium="{StaticResource LargeContentControlStyle}"
+                                  Small="{StaticResource SmalllContentControlStyle}"/>
 
     </Page.Resources>
     
@@ -77,53 +195,17 @@
                         x:Name="LinksContentControl"
                         Visibility="{Binding Path=Content, RelativeSource={RelativeSource Self}, Converter={StaticResource NullToInvisibilityConverter}}"/>
     
-        <Grid Grid.Row="0"
-                Grid.Column="1"
-                HorizontalAlignment="Left"
-                Margin="40, 0, 20, 0" 
-                Height="80" 
-                x:Name="TitleGrid" >
-
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="50"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-
-            <Button Style="{StaticResource BackButtonStyle}" 
-                    Visibility="{Binding Path=IsBackButtonVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                    Command="{Binding Path=GoBackCommand}"
-                    Margin="5, 0, 0, 0"/>
-                
-            <Image Source="ms-appx:///Assets/StoreLogo.png"
-                    Visibility="{Binding Path=IsBackButtonVisible, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}"
-                    VerticalAlignment="Bottom"  
-                    Margin="0,-20,0,0" 
-                    Width="50" 
-                    Height="50"/>
-
-            <TextBlock Style="{StaticResource HeaderTextStyle}" 
-                    x:Name="TitleTextBox"
-                    Margin="20, 0, 0, 0"
-                    Grid.Column="1" 
-                    VerticalAlignment="Bottom" 
-                    TextWrapping="NoWrap" 
-                    TextTrimming="WordEllipsis"/>
-
-            <TextBlock Style="{StaticResource SubheaderTextStyle}" 
-                    x:Name="SubtitleTextBox"
-                    Grid.Column="2" 
-                    VerticalAlignment="Bottom" 
-                    Margin="20, 0, 0, 0" />
-        </Grid>
+        <ContentControl Grid.Row="0"
+                        Grid.Column="1"
+                        Style="{Binding Source={StaticResource ApplicationSize}, Path=Instance, Converter={StaticResource StyleSelectorConverter}, ConverterParameter={StaticResource TitleControlStyles}}"/>
 
         <ProgressRing x:Name="ProgressRing" 
-                    Grid.Row="1" 
-                    Grid.Column="1" />
+                      Grid.Row="1" 
+                      Grid.Column="1" />
 
         <ContentControl Grid.Row="1"
                         Grid.Column="1"
-                        Margin="40, 20, 0, 0"
+                        Style="{Binding Source={StaticResource ApplicationSize}, Path=Instance, Converter={StaticResource StyleSelectorConverter}, ConverterParameter={StaticResource ContentControlStyles}}"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch"
                         HorizontalContentAlignment="Stretch"

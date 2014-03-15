@@ -7,7 +7,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
     using System.Diagnostics;
 
     using Windows.UI.Xaml;
-    using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Media.Animation;
 
     using OutcoldSolutions.GoogleMusic.Controls;
@@ -22,25 +21,27 @@ namespace OutcoldSolutions.GoogleMusic.Views
         /// The title dependency property.
         /// </summary>
         public static readonly DependencyProperty TitleProperty = 
-            DependencyProperty.Register("Title", typeof(string), typeof(PageViewBase), new PropertyMetadata(null));
+            DependencyProperty.Register("Title", typeof(string), typeof(PageViewBase), new PropertyMetadata(null,
+                (o, args) =>
+                {
+                    if (((PageViewBase)o).MainFrame != null && ((PageViewBase)o).MainFrame.IsCurretView(((PageViewBase)o)))
+                    {
+                        ((PageViewBase)o).MainFrame.Title = (string)args.NewValue;
+                    }
+                }));
 
         /// <summary>
         /// The subtitle dependency property.
         /// </summary>
         public static readonly DependencyProperty SubtitleProperty =
-            DependencyProperty.Register("Subtitle", typeof(string), typeof(PageViewBase), new PropertyMetadata(null));
-
-        /// <summary>
-        /// The is title visible dependency property.
-        /// </summary>
-        public static readonly DependencyProperty IsTitleVisibleProperty =
-            DependencyProperty.Register("IsTitleVisible", typeof(bool), typeof(PageViewBase), new PropertyMetadata(true));
-
-        /// <summary>
-        /// The is store logo visible dependency property.
-        /// </summary>
-        public static readonly DependencyProperty IsStoreLogoVisibleProperty =
-            DependencyProperty.Register("IsStoreLogoVisible", typeof(bool), typeof(PageViewBase), new PropertyMetadata(false));
+            DependencyProperty.Register("Subtitle", typeof(string), typeof(PageViewBase), new PropertyMetadata(null,
+                (o, args) =>
+                {
+                    if (((PageViewBase)o).MainFrame != null && ((PageViewBase)o).MainFrame.IsCurretView(((PageViewBase)o)))
+                    {
+                        ((PageViewBase)o).MainFrame.Subtitle = (string)args.NewValue;
+                    }
+                }));
 
         private const string HorizontalScrollOffset = "ListView_HorizontalScrollOffset";
         private const string VerticalScrollOffset = "ListView_VerticalScrollOffset";
@@ -67,15 +68,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether is title visible.
-        /// </summary>
-        public bool IsTitleVisible
-        {
-            get { return (bool)this.GetValue(IsTitleVisibleProperty); }
-            set { this.SetValue(IsTitleVisibleProperty, value); }
-        }
-
-        /// <summary>
         /// Gets the navigation service.
         /// </summary>
         protected INavigationService NavigationService { get; private set; }
@@ -83,12 +75,18 @@ namespace OutcoldSolutions.GoogleMusic.Views
         /// <inheritdoc />
         public virtual void OnNavigatedTo(NavigatedToEventArgs eventArgs)
         {
+            this.MainFrame.Title = this.Title;
+            this.MainFrame.Subtitle = this.Subtitle;
+
             ((IPagePresenterBase)this.DataContext).OnNavigatedTo(eventArgs);
         }
 
         /// <inheritdoc />
         public virtual void OnNavigatingFrom(NavigatingFromEventArgs eventArgs)
         {
+            this.MainFrame.Title = string.Empty;
+            this.MainFrame.Subtitle = string.Empty;
+
             ((IPagePresenterBase)this.DataContext).OnNavigatingFrom(eventArgs);
 
             if (this.trackingControl != null)

@@ -139,7 +139,7 @@
     -->
     <Style x:Key="SnappedBackButtonStyle" TargetType="Button">
         <Setter Property="MinWidth" Value="0"/>
-        <Setter Property="Margin" Value="20,0,0,0"/>
+        <Setter Property="Margin" Value="0,0,0,0"/>
         <Setter Property="VerticalAlignment" Value="Bottom"/>
         <Setter Property="FontFamily" Value="Segoe UI Symbol"/>
         <Setter Property="FontWeight" Value="Normal"/>
@@ -150,7 +150,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Grid x:Name="RootGrid" Width="36" Height="36" Margin="-3,0,7,33">
+                    <Grid x:Name="RootGrid" Width="36" Height="36" >
                         <Grid Margin="-1,-1,0,0">
                             <TextBlock x:Name="BackgroundGlyph" Text="&#xE0D4;" Foreground="{StaticResource BackButtonBackgroundThemeBrush}"/>
                             <TextBlock x:Name="NormalGlyph" Text="{StaticResource BackButtonSnappedGlyph}" Foreground="{StaticResource BackButtonForegroundThemeBrush}"/>
