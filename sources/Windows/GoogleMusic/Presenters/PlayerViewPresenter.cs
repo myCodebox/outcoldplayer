@@ -25,6 +25,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private double progressPosition;
 
+        private int visiblePanelIndex;
+
         public PlayerViewPresenter(
             IMediaElementContainer mediaElementContainer, 
             IGoogleMusicSessionService sessionService, 
@@ -32,7 +34,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             INavigationService navigationService,
             IApplicationSettingViewsService applicationSettingViewsService,
             ISongsService songsService,
-            PlayerBindingModel playerBindingModel)
+            PlayerBindingModel playerBindingModel,
+            ApplicationSize applicationSize)
         {
             this.mediaElement = mediaElementContainer;
             this.queueService = queueService;
@@ -130,6 +133,27 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                         this.Logger.LogTask(this.songsService.UpdateRatingAsync(
                                 this.BindingModel.CurrentSong.Metadata, (byte)ratingEventArgs.Value));
                     }
+
+                    this.VisiblePanelIndex = 0;
+                });
+
+            this.SwitchPanelCommand = new DelegateCommand(
+                () =>
+                {
+                    if (this.VisiblePanelIndex == 0 && this.BindingModel.CurrentSong == null)
+                    {
+                        this.VisiblePanelIndex = 2;
+                    }
+                    else
+                    {
+                        this.VisiblePanelIndex = this.VisiblePanelIndex > 2 ? 0 : ++this.VisiblePanelIndex;
+                    }
+                });
+
+            applicationSize.Subscribe(() => applicationSize.IsSmall,
+                (sender, args) =>
+                {
+                    this.VisiblePanelIndex = 0;
                 });
         }
 
@@ -152,6 +176,20 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         public DelegateCommand ShowApplicationSettingsCommand { get; set; }
 
         public DelegateCommand RateSongCommand { get; set; }
+
+        public DelegateCommand SwitchPanelCommand { get; set; }
+
+        public int VisiblePanelIndex
+        {
+            get
+            {
+                return this.visiblePanelIndex;
+            }
+            set
+            {
+                this.SetValue(ref this.visiblePanelIndex, value);
+            }
+        }
 
         public bool IsShuffleEnabled
         {
@@ -195,12 +233,14 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         {
             await this.queueService.NextSongAsync();
             this.UpdateCommands();
+            this.VisiblePanelIndex = 0;
         }
 
         private async void PreviousSong()
         {
             await this.queueService.PreviousSongAsync();
             this.UpdateCommands();
+            this.VisiblePanelIndex = 0;
         }
 
         private async Task PlayAsync()

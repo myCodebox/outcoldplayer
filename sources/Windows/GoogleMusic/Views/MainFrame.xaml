@@ -4,7 +4,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:converters="using:OutcoldSolutions.GoogleMusic.Converters"
     mc:Ignorable="d"
     x:Name="This"
     RightTapped="MainFrame_OnRightTapped">
@@ -26,20 +25,17 @@
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
 
-        <converters:ControlStyles x:Key="ToolBarItemsStyles"
-                                  Large="{StaticResource ToolBarItemsControlStyle}"
-                                  Medium="{StaticResource ToolBarItemsControlStyle}"
-                                  Small="{StaticResource SmallToolBarItemsControlStyle}"/>
     </Page.Resources>
     
     <Page.BottomAppBar>
         <AppBar IsSticky="True"
                 Canvas.ZIndex="1000"
                 Height="Auto"
-                SizeChanged="AppBar_OnSizeChanged">
+                SizeChanged="AppBar_OnSizeChanged"
+                Closed="AppBar_OnClosed">
+
             
-            <ItemsControl x:Name="ContextButtonsItemsControl" 
-                          Style="{Binding Path=Instance, Source={StaticResource ApplicationSize}, Converter={StaticResource StyleSelectorConverter}, ConverterParameter={StaticResource ToolBarItemsStyles}}" />
+
         </AppBar>
     </Page.BottomAppBar>
 

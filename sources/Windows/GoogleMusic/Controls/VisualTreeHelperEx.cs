@@ -3,6 +3,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Controls
 {
+    using System;
     using System.Collections.Generic;
 
     using Windows.UI.Xaml;
@@ -79,6 +80,23 @@ namespace OutcoldSolutions.GoogleMusic.Controls
                     yield return child;
                 }
             }
+        }
+
+        public static T GetVisualChild<T>(DependencyObject parent, string name) where T : DependencyObject
+        {
+            foreach (var visualChild in GetVisualChilds<T>(parent))
+            {
+                var frameworkElement = visualChild as FrameworkElement;
+                if (frameworkElement != null)
+                {
+                    if (string.Equals(frameworkElement.Name, name, StringComparison.Ordinal))
+                    {
+                        return (T)(object)frameworkElement;
+                    }
+                }
+            }
+
+            return null;
         }
     }
 }

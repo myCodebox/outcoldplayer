@@ -85,17 +85,23 @@ namespace OutcoldSolutions.GoogleMusic.Shell
             }
         }
 
-        public void OnSizeChanged(Size newSizes)
+        public bool OnSizeChanged(Size newSizes)
         {
+            bool isLargeOld = this.IsLarge;
+            bool isSmallOld = this.IsSmall;
+            bool isMediumOld = this.IsMedium;
+
             this.Width = newSizes.Width;
             this.Height = newSizes.Height;
 
             this.RaisePropertyChanged(() => this.IsLarge);
-            this.RaisePropertyChanged(() => this.IsLarge);
-            this.RaisePropertyChanged(() => this.IsLarge);
+            this.RaisePropertyChanged(() => this.IsSmall);
+            this.RaisePropertyChanged(() => this.IsMedium);
             this.RaisePropertyChanged(() => this.IsMediumOrLarge);
             this.RaisePropertyChanged(() => this.IsSmallOrMedium);
             this.RaisePropertyChanged(() => this.Instance);
+
+            return this.IsLarge == isLargeOld && this.IsSmall == isSmallOld && this.IsMedium == isMediumOld;
         }
     }
 }

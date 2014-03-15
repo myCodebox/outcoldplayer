@@ -5,10 +5,14 @@
 namespace OutcoldSolutions.GoogleMusic.Views
 {
     using System;
+    using System.Linq;
 
     using Windows.UI.Core;
     using Windows.UI.Xaml;
+    using Windows.UI.Xaml.Controls;
+    using Windows.UI.Xaml.Controls.Primitives;
 
+    using OutcoldSolutions.GoogleMusic.Controls;
     using OutcoldSolutions.GoogleMusic.Presenters;
 
     public interface IPlayerView : IView
@@ -31,16 +35,23 @@ namespace OutcoldSolutions.GoogleMusic.Views
                 CoreDispatcherPriority.Normal, 
                 () =>
                 {
-                    this.RatingControl.Value = playerBindingModel.CurrentSong == null
-                        ? 0
-                        : playerBindingModel.CurrentSong.Rating;
+                    var ratingControl = VisualTreeHelperEx.GetVisualChild<Rating>(this.ContentControl, "RatingControl");
+                    if (ratingControl != null)
+                    {
+                        ratingControl.Value = playerBindingModel.CurrentSong == null
+                            ? 0
+                            : playerBindingModel.CurrentSong.Rating;
+                    }
                 }));
-        
         }
 
-        private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
+        private void VolumeButton_OnClick(object sender, RoutedEventArgs e)
         {
-            VolumePopup.IsOpen = true;
+            var popup = VisualTreeHelperEx.GetVisualChild<Popup>(this.ContentControl, "VolumePopup");
+            if (popup != null)
+            {
+                popup.IsOpen = true;
+            }
         }
     }
 }

@@ -98,6 +98,8 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
         private Size? latestSize;
 
+        private ItemsControl contextButtonsItemsControl;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="MainFrame"/> class.
         /// </summary>
@@ -113,6 +115,11 @@ namespace OutcoldSolutions.GoogleMusic.Views
                     this.AppToolBarLeftPopup.IsOpen = false;
                 };
 
+            this.BottomAppBar.Content = this.contextButtonsItemsControl = new ItemsControl()
+            {
+                Style = (Style)Application.Current.Resources["ToolBarItemsControlStyle"]
+            };
+
             this.SizeChanged += (sender, args) =>
                 {
                     this.UpdateFullScreenPopupSize();
@@ -122,8 +129,23 @@ namespace OutcoldSolutions.GoogleMusic.Views
                     {
                         this.logger.LogTask(this.Dispatcher.RunAsync(
                             CoreDispatcherPriority.Normal,
-                            () => this.applicationSize.OnSizeChanged(args.NewSize)).AsTask());
+                            () =>
+                            {
+                                if (!this.applicationSize.OnSizeChanged(args.NewSize))
+                                {
+                                    object itemsSource = this.contextButtonsItemsControl.ItemsSource;
 
+                                    this.BottomAppBar.Content = this.contextButtonsItemsControl = new ItemsControl()
+                                    {
+                                        Style = (Style)Application.Current.Resources[this.applicationSize.IsSmall ? "SmallToolBarItemsControlStyle" : "ToolBarItemsControlStyle"]
+                                    };
+
+                                    this.contextButtonsItemsControl.ItemsSource = itemsSource;
+                                }
+
+                            }).AsTask());
+
+                        
                     }
 
                     this.latestSize = args.NewSize;
@@ -179,12 +201,12 @@ namespace OutcoldSolutions.GoogleMusic.Views
                 i++;
             }
 
-            this.ContextButtonsItemsControl.ItemsSource = list;
+            this.contextButtonsItemsControl.ItemsSource = list;
             this.UpdateBottomAppBar();
             if (this.BottomAppBar.Visibility == Visibility.Visible 
                 && !this.BottomAppBar.IsOpen
-                && this.ContextButtonsItemsControl.Items != null
-                && this.ContextButtonsItemsControl.Items.Count > 0)
+                && this.contextButtonsItemsControl.Items != null
+                && this.contextButtonsItemsControl.Items.Count > 0)
             {
                 this.BottomAppBar.IsOpen = true;
             }
@@ -195,7 +217,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
         /// <inheritdoc />
         public void ClearContextCommands()
         {
-            this.ContextButtonsItemsControl.ItemsSource = null;
+            this.contextButtonsItemsControl.ItemsSource = null;
             this.UpdateBottomAppBar();
 
             this.UpdateMargins();
@@ -536,7 +558,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
         private void UpdateBottomAppBarVisibility()
         {
-            bool isVisible = (this.ContextButtonsItemsControl.Items != null && this.ContextButtonsItemsControl.Items.Count > 0);
+            bool isVisible = (this.contextButtonsItemsControl.Items != null && this.contextButtonsItemsControl.Items.Count > 0);
             this.UpdateToolBarVisibility(this.BottomAppBar, isVisible);
         }
 
@@ -598,6 +620,17 @@ namespace OutcoldSolutions.GoogleMusic.Views
                 this.AppToolBarRightPopup.Margin.Top,
                 this.AppToolBarRightPopup.Margin.Right,
                 this.BottomAppBar.IsOpen ? this.BottomAppBar.ActualHeight : 0); 
+        }
+
+        private void AppBar_OnClosed(object sender, object e)
+        {
+            if (this.contextButtonsItemsControl.Items != null && this.contextButtonsItemsControl.Items.Count > 0)
+            {
+                this.BottomAppBar.IsOpen = true;
+            }
+
+            this.UpdateBottomAppBar();
+            this.UpdateMargins();
         }
     }
 }
