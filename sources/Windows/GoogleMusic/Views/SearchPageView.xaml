@@ -18,14 +18,23 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <StackPanel Orientation="Horizontal" Margin="0, 20, 0, 0">
+        <StackPanel Orientation="Horizontal" Margin="0, 20, 0, 20">
+            <TextBlock Style="{StaticResource BodyTextStyle}"
+                       FontFamily="Segoe UI Symbol"
+                       VerticalAlignment="Center"
+                       Text="&#xE11A;"
+                       Margin="10, 0, 20, 0"
+                       Width="40"
+                       FontSize="26"
+                       TextAlignment="Left"/>
+            
             <TextBox Width="300" VerticalAlignment="Center">
                 <interactivity:Interaction.Behaviors>
                     <controls:TextChangedBindingBehavior Text="{Binding Path=BindingModel.SearchText, Mode=TwoWay}" />
                 </interactivity:Interaction.Behaviors>
             </TextBox>
             
-            <ToggleSwitch IsOn="{Binding Path=BindingModel.IsLocalOnly, Mode=TwoWay}" IsEnabled="{Binding Path=IsOnline}" OnContent="Local only" OffContent="Local only" />
+            <!--ToggleSwitch IsOn="{Binding Path=BindingModel.IsLocalOnly, Mode=TwoWay}" IsEnabled="{Binding Path=IsOnline}" OnContent="Local only" OffContent="Local only" />-->
         </StackPanel>
 
         <ProgressRing Grid.Row="1"  

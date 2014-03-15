@@ -133,12 +133,11 @@
                   HorizontalAlignment="Stretch"
                   HorizontalContentAlignment="Stretch"
                   IsTapEnabled="False"
-                  Margin="0, 0, 20, 0"
-                  Padding="0, 0, 0, 40"
+                  Margin="0, 0, 20, 20"
                   DoubleTapped="ListDoubleTapped"
                   ManipulationMode="None"
                   x:Name="ListView">
-
+            
             <interactivity:Interaction.Behaviors>
                 <controls:ListViewBaseSelectedItemsBehavior SelectedItems="{Binding Path=SelectedItems, Mode=OneWay}"
                                                             ForceToShow="True"/>
