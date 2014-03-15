@@ -18,7 +18,7 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <StackPanel Orientation="Horizontal" Margin="0, 20, 0, 20">
+        <StackPanel Orientation="Horizontal" Margin="0, 0, 0, 20">
             <TextBlock Style="{StaticResource BodyTextStyle}"
                        FontFamily="Segoe UI Symbol"
                        VerticalAlignment="Center"
@@ -26,9 +26,10 @@
                        Margin="10, 0, 20, 0"
                        Width="40"
                        FontSize="26"
-                       TextAlignment="Left"/>
+                       TextAlignment="Left"
+                       Visibility="{Binding Source={StaticResource ApplicationSize}, Path=IsMediumOrLarge, Converter={StaticResource BooleanToVisibilityConverter}}"/>
             
-            <TextBox Width="300" VerticalAlignment="Center">
+            <TextBox Width="240" VerticalAlignment="Center">
                 <interactivity:Interaction.Behaviors>
                     <controls:TextChangedBindingBehavior Text="{Binding Path=BindingModel.SearchText, Mode=TwoWay}" />
                 </interactivity:Interaction.Behaviors>

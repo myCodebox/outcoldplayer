@@ -131,17 +131,33 @@
                                   Small="{StaticResource SmallTitleGridStyle}"/>
         
         <Style x:Name="LargeContentControlStyle" TargetType="ContentControl">
-            <Setter Property="Margin" Value="40, 20, 0, 0" />
+            <Setter Property="Template" >
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Border Margin="40, 20, 0, 0">
+                            <ContentPresenter />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
 
-        <Style x:Name="SmalllContentControlStyle" TargetType="ContentControl">
-            <Setter Property="Margin" Value="20, 20, 0, 0" />
+        <Style x:Name="SmallContentControlStyle" TargetType="ContentControl">
+            <Setter Property="Template" >
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Border Margin="20, 20, 0, 0">
+                            <ContentPresenter />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
 
         <converters:ControlStyles x:Name="ContentControlStyles"
                                   Large="{StaticResource LargeContentControlStyle}"
                                   Medium="{StaticResource LargeContentControlStyle}"
-                                  Small="{StaticResource SmalllContentControlStyle}"/>
+                                  Small="{StaticResource SmallContentControlStyle}"/>
 
     </Page.Resources>
     

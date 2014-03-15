@@ -41,7 +41,6 @@
     <SolidColorBrush x:Key="HyperlinkPointerOverForegroundThemeBrush" Color="#369EFF" />
     <SolidColorBrush x:Key="HyperlinkPressedForegroundThemeBrush" Color="#369EFF" />
 
-
     <!-- ScrollViewer styles -->
 
     <Style x:Key="HorizontalScrollViewerStyle" TargetType="ScrollViewer">

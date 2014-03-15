@@ -6,11 +6,11 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:views="using:OutcoldSolutions.GoogleMusic.Views"
     mc:Ignorable="d"
-    Width="340" 
+    Width="320" 
     Height="140">
 
-    <Border Padding="20" Background="{StaticResource AppBarBackgroundThemeBrush}" Width="340" Height="140">
-        <StackPanel Width="300">
+    <Border Padding="20" Background="{StaticResource AppBarBackgroundThemeBrush}" Width="320" Height="140">
+        <StackPanel Width="280">
             <TextBox Text="{Binding Path=Title, Mode=OneWay}" x:Name="TextBoxPlaylistName" KeyUp="TextBoxPlaylistNameKeyUp" KeyDown="TextBoxPlaylistNameOnKeyDown" />
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0, 20, 0, 0">
                 <Button MinWidth="80" 
