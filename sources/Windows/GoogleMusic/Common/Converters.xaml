@@ -28,5 +28,6 @@
     <converters:BooleanToColumnWidthConverter x:Key="BooleanToColumnWidthConverter" />
     <converters:NotEmptyToVisibilityConverter x:Key="NotEmptyToVisibilityConverter" />
     <converters:AlbumDetailsConverter x:Key="AlbumDetailsConverter" />
+    <converters:StyleSelectorConverter x:Key="StyleSelectorConverter" />
     
 </ResourceDictionary>

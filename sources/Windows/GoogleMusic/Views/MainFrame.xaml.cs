@@ -11,6 +11,8 @@ namespace OutcoldSolutions.GoogleMusic.Views
     using System.Globalization;
     using System.Linq;
 
+    using Windows.Foundation;
+    using Windows.UI.Core;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Controls.Primitives;
@@ -23,6 +25,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
     using OutcoldSolutions.GoogleMusic.InversionOfControl;
     using OutcoldSolutions.GoogleMusic.Presenters;
     using OutcoldSolutions.GoogleMusic.Services;
+    using OutcoldSolutions.GoogleMusic.Shell;
 
     /// <summary>
     /// The MainFrame interface.
@@ -91,6 +94,10 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
         private ISelectedObjectsService selectedObjectsService;
 
+        private ApplicationSize applicationSize;
+
+        private Size? latestSize;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="MainFrame"/> class.
         /// </summary>
@@ -110,6 +117,16 @@ namespace OutcoldSolutions.GoogleMusic.Views
                 {
                     this.UpdateFullScreenPopupSize();
                     this.UpdateBottomAppBarVisibility();
+
+                    if (this.applicationSize != null)
+                    {
+                        this.logger.LogTask(this.Dispatcher.RunAsync(
+                            CoreDispatcherPriority.Normal,
+                            () => this.applicationSize.OnSizeChanged(args.NewSize)).AsTask());
+
+                    }
+
+                    this.latestSize = args.NewSize;
                 };
 
             this.Loaded += this.OnLoaded;
@@ -284,6 +301,15 @@ namespace OutcoldSolutions.GoogleMusic.Views
             this.presenter = presenterObject;
             this.logger = logManager.CreateLogger("MainFrame");
             this.DataContext = this.presenter;
+            this.applicationSize = this.container.Resolve<ApplicationSize>();
+
+            if (this.latestSize.HasValue)
+            {
+                this.logger.LogTask(this.Dispatcher.RunAsync(
+                    CoreDispatcherPriority.Normal,
+                    () => this.applicationSize.OnSizeChanged(this.latestSize.Value)).AsTask());
+
+            }
         }
 
         private void ShowPopup(PopupRegion region, FrameworkElement content)
@@ -524,7 +550,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
                 appBar.Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
 
-                if (currentVisibility)
+                if (!isVisible && currentVisibility)
                 {
                     appBar.IsOpen = false;
                 }

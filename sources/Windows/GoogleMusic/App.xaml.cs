@@ -237,6 +237,8 @@ namespace OutcoldSolutions.GoogleMusic
                 registration.Register<DeleteRadioStationsAction>().AsSingleton();
                 registration.Register<AddToLibraryAction>().AsSingleton();
                 registration.Register<RemoveFromLibraryAction>().AsSingleton();
+
+                registration.Register<ApplicationSize>().AsSingleton(this.Resources["ApplicationSize"]);
             }
 
             Container.Resolve<ApplicationLogManager>();
