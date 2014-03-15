@@ -6,6 +6,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Reactive.Linq;
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
@@ -23,11 +24,27 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private readonly IApplicationResources resources;
         private readonly IPlayQueueService playQueueService;
 
+        private NavigatedToEventArgs latestRequest = null;
+
         public PlaylistPageViewPresenterBase(IDependencyResolverContainer container)
         {
             this.playlistsService = container.Resolve<IPlaylistsService>();
             this.resources = container.Resolve<IApplicationResources>();
             this.playQueueService = container.Resolve<IPlayQueueService>();
+        }
+
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+
+            this.EventAggregator
+                .GetEvent<PlaylistsChangeEvent>()
+                .Where(e => this.latestRequest != null &&
+                    this.BindingModel.Playlist != null && 
+                    e.PlaylistType == this.BindingModel.Playlist.PlaylistType &&
+                    e.UpdatedPlaylists != null &&
+                    e.UpdatedPlaylists.Any(x => string.Equals(x.Id, this.BindingModel.Playlist.Id, StringComparison.OrdinalIgnoreCase)))
+                .Subscribe(async(e) => await this.LoadDataAsync(this.latestRequest));
         }
 
         public override void OnNavigatingFrom(NavigatingFromEventArgs eventArgs)
@@ -38,6 +55,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.BindingModel.Playlist = null;
             this.BindingModel.Title = null;
             this.BindingModel.Subtitle = null;
+            this.latestRequest = null;
         }
 
         protected override async Task LoadDataAsync(NavigatedToEventArgs navigatedToEventArgs)
@@ -110,6 +128,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     this.Logger.LogTask(this.playQueueService.PlayAsync(playlist, songs, 0));
                 }
             }
+
+            this.latestRequest = navigatedToEventArgs;
 
             if (!string.IsNullOrEmpty(request.SongId))
             {

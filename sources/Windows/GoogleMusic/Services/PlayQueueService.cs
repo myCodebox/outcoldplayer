@@ -599,6 +599,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                             {
                                 var newRadioSongs = await this.radioStationsService.GetRadioSongsAsync(this.CurrentPlaylist.Id, this.songsQueue);
                                 await this.AddRangeAsync(this.CurrentPlaylist, newRadioSongs);
+                                this.eventAggregator.Publish(PlaylistsChangeEvent.New(PlaylistType.Radio).AddUpdatedPlaylists(this.CurrentPlaylist));
                             }
                             catch (Exception e)
                             {
