@@ -12,18 +12,19 @@
     <StackPanel Orientation="Horizontal" >
  
         <StackPanel Orientation="Horizontal" 
-                    Margin="0, 10, 20, 0" >
+                    VerticalAlignment="Top"
+                    Margin="0, 15, 20, 20" >
             <ProgressRing VerticalAlignment="Center" 
-                          IsActive="{Binding Path=BindingModel.ShowProgressRing}" 
+                          IsActive="{Binding Path=ShowProgressRing}" 
                           Margin="0, 0, 10, 0"
                           Width="10"
                           Height="10"/>
 
-            <Button Visibility="{Binding Path=BindingModel.IsDownloading}" VerticalAlignment="Center"
+            <Button Visibility="{Binding Path=IsDownloading}" VerticalAlignment="Center"
                     Command="{Binding Path= NavigateToDownloadQueue, Mode=OneTime}">
                 <Button.Template>
                     <ControlTemplate>
-                        <TextBlock Text="{Binding Path=BindingModel.MessageText, Mode=OneWay}" 
+                        <TextBlock Text="{Binding Path=MessageText, Mode=OneWay}" 
                                    FontSize="12"
                                    Style="{StaticResource BodyTextStyle}"/>
                     </ControlTemplate>
@@ -32,11 +33,42 @@
             
         </StackPanel>
 
-        <Button Margin="20, 0, 20, 20" Style="{StaticResource RefreshAppBarButtonStyle}" 
+        <Button Margin="0, 0, 0, 20" Style="{StaticResource NoBorderAppBarButtonStyle}" 
                 AutomationProperties.Name=""
+                Content="&#xE117;"
                 Height="60"
-                FontSize="14"
+                Width="40"
+                FontSize="10"
                 Command="{Binding Path=UpdateLibraryCommand, Mode=OneTime}"
-                Visibility="{Binding Path=BindingModel.MessageText, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"/>
+                Visibility="{Binding Path=MessageText, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}">
+            <ToolTipService.ToolTip>
+                Click to syncronize library with your Google Music Account.
+            </ToolTipService.ToolTip>
+        </Button>
+
+        <Button Margin="0, 0, 20, 20" Style="{StaticResource NoBorderAppBarButtonStyle}"
+                Width="40"
+                Content="&#xE1D2;"
+                Foreground="{StaticResource ApplicationThemeCompound3Brush}"
+                Height="60"
+                FontSize="10"
+                Command="{Binding Path=SwitchModeCommand, Mode=OneTime}"
+                Visibility="{Binding Path=IsOnline, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <ToolTipService.ToolTip>
+                Application is connected to your Google Music Account. Click if you want to see songs on device only.
+            </ToolTipService.ToolTip>
+        </Button>
+
+        <Button Margin="0, 0, 20, 20" Style="{StaticResource NoBorderAppBarButtonStyle}"
+                Width="40"
+                Content="&#xE1D2;"
+                Height="60"
+                FontSize="10"
+                Command="{Binding Path=SwitchModeCommand, Mode=OneTime}"
+                Visibility="{Binding Path=IsOnline, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}">
+            <ToolTipService.ToolTip>
+                Application is in offline mode. Click if you want to see all music, not only local.
+            </ToolTipService.ToolTip>
+        </Button>
     </StackPanel>
 </views:ViewBase>

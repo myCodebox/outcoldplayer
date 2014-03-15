@@ -1136,12 +1136,6 @@
         <Setter Property="AutomationProperties.Name" Value="Volume"/>
         <Setter Property="Content" Value="&#xE15D;"/>
     </Style>
-    
-    <Style x:Key="GlobePopupMenuButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource PopupMenuButtonStyle}">
-        <Setter Property="AutomationProperties.AutomationId" Value="GlobeAppBarButton"/>
-        <Setter Property="AutomationProperties.Name" Value="Globe"/>
-        <Setter Property="Content" Value="&#xE12B;"/>
-    </Style>
 
     <Style x:Key="SettingsPopupMenuButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource NoBorderAppBarButtonStyle}">
         <Setter Property="AutomationProperties.AutomationId" Value="SettingsAppBarButton"/>

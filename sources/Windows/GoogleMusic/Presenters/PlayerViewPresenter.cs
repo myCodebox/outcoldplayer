@@ -115,7 +115,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                         this.navigationService.NavigateTo<ICurrentPlaylistPageView>(keepInHistory: false);
                     }
                 });
-            this.ShowMoreCommand = new DelegateCommand(() => this.MainFrame.ShowPopup<IPlayerMorePopupView>(PopupRegion.AppToolBarRight));
 
             this.ShowApplicationSettingsCommand = new DelegateCommand(async () =>
             {
@@ -241,7 +240,5 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.ShuffleCommand.RaiseCanExecuteChanged();
             this.RepeatAllCommand.RaiseCanExecuteChanged();
         }
-
-        public DelegateCommand ShowMoreCommand { get; set; }
     }
 }

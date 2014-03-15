@@ -6,7 +6,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using System;
     using System.Threading.Tasks;
 
-    using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Shell;
@@ -30,6 +29,9 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private bool isDownloading = false;
         private bool disableClickToCache = false;
 
+        private bool showProgressRing;
+        private string messageText;
+
         public LinksRegionViewPresenter(
             IApplicationStateService stateService,
             IApplicationResources resources,
@@ -47,7 +49,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.navigationService = navigationService;
             this.NavigateToDownloadQueue = new DelegateCommand(async () =>
             {
-                if (!this.disableClickToCache)
+                if (!this.IsOnline)
+                {
+                    this.SwitchModeCommand.Execute();
+                } 
+                else if (!this.disableClickToCache)
                 {
                     await this.dispatcher.RunAsync(() => applicationSettingViewsService.Show("offlinecache"));
                 }
@@ -62,25 +68,67 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                             await this.Synchronize();
                         }
                     },
-                () => !this.BindingModel.ShowProgressRing);
-
-            this.BindingModel = new LinksRegionBindingModel();
+                () => !this.ShowProgressRing);
 
             this.synchronizationTimer = new DispatcherTimer { Interval = TimeSpan.FromMinutes(5) };
             this.synchronizationTimer.Stop();
 
             this.synchronizationTimer.Tick += this.SynchronizationTimerOnTick;
 
-            this.SetOfflineMessageIfRequired();
-
             this.sessionService.SessionCleared += this.SessionServiceOnSessionCleared;
+
+            this.SwitchModeCommand = new DelegateCommand(
+                () =>
+                {
+                    this.IsOnline = !this.IsOnline;
+                });
         }
 
         public DelegateCommand NavigateToDownloadQueue { get; private set; }
 
         public DelegateCommand UpdateLibraryCommand { get; private set; }
 
-        public LinksRegionBindingModel BindingModel { get; set; }
+        public DelegateCommand SwitchModeCommand { get; set; }
+
+        public bool ShowProgressRing
+        {
+            get
+            {
+                return this.showProgressRing;
+            }
+
+            set
+            {
+                this.SetValue(ref this.showProgressRing, value);
+            }
+        }
+
+        public string MessageText
+        {
+            get
+            {
+                return this.messageText;
+            }
+
+            set
+            {
+                this.SetValue(ref this.messageText, value);
+            }
+        }
+
+        public bool IsOnline
+        {
+            get
+            {
+                return this.stateService.CurrentState == ApplicationState.Online;
+            }
+
+            set
+            {
+                this.stateService.CurrentState = value ? ApplicationState.Online : ApplicationState.Offline;
+                this.RaiseCurrentPropertyChanged();
+            }
+        }
 
         protected override void OnInitialized()
         {
@@ -91,6 +139,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
             this.EventAggregator.GetEvent<ApplicationStateChangeEvent>()
                                 .Subscribe(async e => await this.dispatcher.RunAsync(this.SetOfflineMessageIfRequired));
+
+            this.SetOfflineMessageIfRequired();
 
             this.Logger.LogTask(this.Synchronize());
         }
@@ -107,13 +157,13 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
             if (this.stateService.IsOffline())
             {
-                this.BindingModel.ShowProgressRing = false;
-                this.BindingModel.MessageText = "Offline mode (listen only)";
+                this.ShowProgressRing = false;
+                this.MessageText = "Offline mode";
             }
             else
             {
-                this.BindingModel.ShowProgressRing = false;
-                this.BindingModel.MessageText = null;
+                this.ShowProgressRing = false;
+                this.MessageText = null;
             }
 
             this.UpdateLibraryCommand.RaiseCanExecuteChanged();
@@ -128,8 +178,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     this.isDownloading = true;
                     await this.Dispatcher.RunAsync(() =>
                     {
-                        this.BindingModel.ShowProgressRing = true;
-                        this.BindingModel.MessageText = "Downloading songs to local cache...";
+                        this.ShowProgressRing = true;
+                        this.MessageText = "Downloading songs to local cache...";
                     });
                     break;
                 }
@@ -138,8 +188,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     this.isDownloading = false;
                     await this.Dispatcher.RunAsync(() =>
                     {
-                        this.BindingModel.ShowProgressRing = false;
-                        this.BindingModel.MessageText = "Error happened on download songs to local cache...";
+                        this.ShowProgressRing = false;
+                        this.MessageText = "Error happened on download songs to local cache...";
                         this.UpdateLibraryCommand.RaiseCanExecuteChanged();
                     });
                     break;
@@ -151,7 +201,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     this.isDownloading = false;
                     await this.Dispatcher.RunAsync(() =>
                     {
-                        this.BindingModel.ShowProgressRing = false;
+                        this.ShowProgressRing = false;
                         this.SetOfflineMessageIfRequired();
                         this.UpdateLibraryCommand.RaiseCanExecuteChanged();
                     });
@@ -179,8 +229,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                         if (this.stateService.IsOnline())
                         {
                             this.disableClickToCache = true;
-                            this.BindingModel.ShowProgressRing = true;
-                            this.BindingModel.MessageText = this.resources.GetString("LinksRegion_UpdatingSongs");
+                            this.ShowProgressRing = true;
+                            this.MessageText = this.resources.GetString("LinksRegion_UpdatingSongs");
                             this.UpdateLibraryCommand.RaiseCanExecuteChanged();
                         }
                     });
@@ -204,8 +254,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
                              if (this.stateService.IsOnline())
                              {
-                                 this.BindingModel.ShowProgressRing = false;
-                                 this.BindingModel.MessageText = error ? this.resources.GetString("LinksRegion_FailedToUpdate") : this.resources.GetString("LinksRegion_Updated");
+                                 this.ShowProgressRing = false;
+                                 this.MessageText = error ? this.resources.GetString("LinksRegion_FailedToUpdate") : this.resources.GetString("LinksRegion_Updated");
                              }
                          });
 

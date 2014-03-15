@@ -128,12 +128,6 @@ namespace OutcoldSolutions.GoogleMusic
                         .As<AddToPlaylistPopupView>();
             registration.Register<AddToPlaylistPopupViewPresenter>();
 
-            registration.Register<IPlayerMorePopupView>()
-                        .InjectionRule<BindingModelBase, PlayerMorePopupViewPresenter>()
-                        .As<PlayerMorePopupView>();
-            registration.Register<PlayerMorePopupViewBindingModel>();
-            registration.Register<PlayerMorePopupViewPresenter>();
-
             registration.Register<IPlaylistEditPopupView>()
                         .InjectionRule<BindingModelBase, PlaylistEditPopupViewPresenter>()
                         .As<PlaylistEditPopupView>();
