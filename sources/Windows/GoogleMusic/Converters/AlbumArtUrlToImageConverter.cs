@@ -91,17 +91,25 @@ namespace OutcoldSolutions.GoogleMusic.Converters
             {
                 string path = await this.cacheService.Value.GetCachedImageAsync(uri, size);
 
-                StorageFile file;
-                if (string.IsNullOrEmpty(path))
+                StorageFile file = null;
+                
+                if (!string.IsNullOrEmpty(path))
                 {
-                    file =
-                        await
-                        StorageFile.GetFileFromApplicationUriAsync(
-                            new Uri(string.Format(CultureInfo.InvariantCulture, UnknownAlbumArtFormat, size)));
+                    try
+                    {
+                        file = await ApplicationData.Current.LocalFolder.GetFileAsync(path);
+                    }
+                    catch (FileNotFoundException e)
+                    {
+                        this.logger.Value.Debug(e, "File was removed.");
+                        this.logger.Value.LogTask(this.cacheService.Value.DeleteBrokenLinkAsync(uri, size));
+                    }
                 }
-                else
+
+                if (file == null)
                 {
-                    file = await ApplicationData.Current.LocalFolder.GetFileAsync(path);
+                    file = await StorageFile.GetFileFromApplicationUriAsync(
+                            new Uri(string.Format(CultureInfo.InvariantCulture, UnknownAlbumArtFormat, size)));
                 }
 
                 if (file != null)
@@ -116,11 +124,6 @@ namespace OutcoldSolutions.GoogleMusic.Converters
             catch (WebException e)
             {
                 this.logger.Value.Debug(e, "Web exception.");
-            }
-            catch (FileNotFoundException e)
-            {
-                this.logger.Value.Debug(e, "File was removed.");
-                this.logger.Value.LogTask(this.cacheService.Value.DeleteBrokenLinkAsync(uri, size));
             }
             catch (Exception e)
             {
