@@ -40,7 +40,7 @@
 
         <ProgressRing Grid.Row="1"  
                       IsActive="{Binding Path=IsSearching}"
-                      Visibility="{Binding Path=IsSearching, Converter={StaticResource BooleanToInvisibilityConverter}}"/>
+                      Visibility="{Binding Path=IsSearching, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
         <ScrollViewer HorizontalScrollBarVisibility="Disabled"
                       HorizontalScrollMode="Disabled"
