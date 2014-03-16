@@ -184,7 +184,7 @@
 
         <ContentControl Grid.RowSpan="2"
                         x:Name="MainMenuContainer"
-                        Canvas.ZIndex="100"
+                        Canvas.ZIndex="10"
                         VerticalAlignment="Stretch"
                         HorizontalAlignment="Stretch"
                         VerticalContentAlignment="Stretch"
@@ -262,6 +262,7 @@
         <ContentControl Grid.Row="2" 
                         Grid.Column="0"
                         Grid.ColumnSpan="2"
+                        Canvas.ZIndex="20"
                         HorizontalAlignment="Stretch"
                         HorizontalContentAlignment="Stretch"
                         x:Name="BottomAppBarRightZoneRegionContentControl"
