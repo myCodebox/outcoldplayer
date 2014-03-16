@@ -5,10 +5,8 @@
 namespace OutcoldSolutions.GoogleMusic.Repositories
 {
     using System.Collections.Generic;
-    using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
-    using System.Xml.Linq;
 
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services;
@@ -20,6 +18,8 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
         Task<Artist> FindByGoogleIdAsync(string googleMusicId);
 
         Task<Artist> FindByTitleNormAsync(string titleNorm);
+
+        Task<IList<Artist>> FindGenreArtistsAsync(string genreTitleNorm);
     }
 
     public class ArtistsRepository : RepositoryBase, IArtistsRepository
@@ -51,6 +51,22 @@ from [Song] as s
 where (?1 = 1 or s.[IsCached] = 1) and s.IsLibrary = 1 and s.[ArtistTitleNorm] <> coalesce(nullif(s.[AlbumArtistTitleNorm], ''), s.[ArtistTitleNorm]) and ar.[ArtistId] = ?2
 ) as x
 order by x.IsCollection, x.Year, x.[AlbumTitleNorm], coalesce(nullif(x.Disc, 0), 1), x.Track 
+";
+
+        private const string SqlSearchArtistByGenre = @"
+select a.*
+from [Artist] as a
+inner join
+(
+
+select distinct coalesce(nullif(s.[AlbumArtistTitleNorm], ''), s.[ArtistTitleNorm]) as TitleNorm
+from Song s
+where s.GenreTitleNorm == ?2
+
+) as x on x.TitleNorm = a.TitleNorm
+
+where (?1 = 1 or a.[OfflineSongsCount] > 0) 
+order by a.[TitleNorm];
 ";
 
         private readonly IApplicationStateService stateService;
@@ -144,6 +160,11 @@ order by x.IsCollection, x.Year, x.[AlbumTitleNorm], coalesce(nullif(x.Disc, 0),
         public Task<Artist> FindByTitleNormAsync(string titleNorm)
         {
             return this.Connection.Table<Artist>().Where(x => x.TitleNorm == titleNorm).FirstOrDefaultAsync();
+        }
+
+        public async Task<IList<Artist>> FindGenreArtistsAsync(string genreTitleNorm)
+        {
+            return await this.Connection.QueryAsync<Artist>(SqlSearchArtistByGenre, this.stateService.IsOnline(), genreTitleNorm);
         }
     }
 }

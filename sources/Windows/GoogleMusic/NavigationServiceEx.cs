@@ -37,6 +37,10 @@ namespace OutcoldSolutions.GoogleMusic
             {
                 return @this.NavigateTo<IArtistPageView>(request);
             }
+            else if (request.PlaylistType == PlaylistType.Genre)
+            {
+                return @this.NavigateTo<IGenrePageView>(request);
+            }
             else
             {
                 return @this.NavigateTo<IPlaylistPageView>(request);

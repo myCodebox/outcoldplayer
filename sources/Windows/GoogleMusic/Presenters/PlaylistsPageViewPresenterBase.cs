@@ -53,6 +53,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
             this.BindingModel.Title = null;
             this.BindingModel.Subtitle = null;
+            this.BindingModel.Playlists = null;
 
             if (this.playlistsChangeSubscription != null)
             {

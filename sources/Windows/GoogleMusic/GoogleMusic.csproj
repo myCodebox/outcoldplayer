@@ -129,6 +129,7 @@
     <Compile Include="Converters\AlbumDetailsConverter.cs" />
     <Compile Include="Converters\NotEmptyToVisibilityConverter.cs" />
     <Compile Include="Converters\StyleSelectorConverter.cs" />
+    <Compile Include="Presenters\GenrePageViewPresenter.cs" />
     <Compile Include="Presenters\LinksRegionViewPresenter.cs" />
     <Compile Include="Presenters\Popups\ReadMorePopupPresenter.cs" />
     <Compile Include="Presenters\SongsListViewPresenter.cs" />

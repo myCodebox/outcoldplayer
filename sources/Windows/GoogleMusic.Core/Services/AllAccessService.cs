@@ -61,7 +61,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             {
                 googleMusicArtist = await this.allAccessWebService.FetchArtistAsync(artist.GoogleArtistId, cancellationToken);
             }
-            catch (OperationCanceledException e)
+            catch (OperationCanceledException)
             {
                 throw;
             }
