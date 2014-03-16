@@ -80,13 +80,14 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 }
             }
 
-            if (!string.Equals(artist.Title, googleMusicArtist.Name, StringComparison.CurrentCulture))
+            if (string.IsNullOrEmpty(artist.Title) && 
+                !string.Equals(artist.Title, googleMusicArtist.Name, StringComparison.CurrentCulture))
             {
                 artist.Title = googleMusicArtist.Name;
                 artist.TitleNorm = googleMusicArtist.Name.Normalize();
             }
 
-            if (artist.ArtUrl == null && !string.IsNullOrEmpty(googleMusicArtist.ArtistArtRef))
+            if (!string.IsNullOrEmpty(googleMusicArtist.ArtistArtRef))
             {
                 artist.ArtUrl = new Uri(googleMusicArtist.ArtistArtRef);
             }

@@ -104,6 +104,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.BindingModel.Albums = null;
             this.BindingModel.Collections = null;
             this.BindingModel.ArtistInfo = null;
+            this.BindingModel.IsAllAccessLoading = false;
         }
 
         protected override async Task LoadDataAsync(NavigatedToEventArgs navigatedToEventArgs)
@@ -118,6 +119,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.BindingModel.Albums = null;
             this.BindingModel.Collections = null;
             this.BindingModel.ArtistInfo = null;
+            this.BindingModel.IsAllAccessLoading = false;
 
             Artist artist = request.Playlist as Artist;
 
@@ -140,7 +142,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
             if (this.applicationStateService.IsOnline())
             {
-                this.BindingModel.ArtistInfo = await this.allAccessService.GetArtistInfoAsync(artist);
+                this.LoadAllAccessSongs(artist);
             }
         }
 
@@ -155,6 +157,31 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             {
                 yield return new CommandMetadata(CommandIcon.Radio, "Start radio", this.StartRadioCommand);
             }
+        }
+
+        private async void LoadAllAccessSongs(Artist artist)
+        {
+            await this.Dispatcher.RunAsync(
+                () =>
+                {
+                    this.BindingModel.IsAllAccessLoading = true;
+                });
+
+            var info = await this.allAccessService.GetArtistInfoAsync(artist);
+            if (info != null)
+            {
+                await this.Dispatcher.RunAsync(
+                    () =>
+                    {
+                        this.BindingModel.ArtistInfo = info;
+                    });
+            }
+
+            await this.Dispatcher.RunAsync(
+                () =>
+                {
+                    this.BindingModel.IsAllAccessLoading = false;
+                });
         }
 
         private void ShowAll()

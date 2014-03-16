@@ -15,6 +15,8 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         private IList<IPlaylist> albums;
         private IList<IPlaylist> collections;
 
+        private bool isAllAccessLoading;
+
         public Artist Artist
         {
             get
@@ -38,6 +40,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             set
             {
                 this.SetValue(ref this.artistInfo, value);
+                this.RaisePropertyChanged(() => this.Artist);
                 this.RaisePropertyChanged(() => this.TopSongs);
                 this.RaisePropertyChanged(() => this.GoogleMusicAlbums);
                 this.RaisePropertyChanged(() => this.RelatedArtists);
@@ -91,6 +94,18 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             get
             {
                 return (this.ArtistInfo == null || this.ArtistInfo.RelatedArtists == null) ? null : this.ArtistInfo.RelatedArtists.Cast<IPlaylist>().ToList();
+            }
+        }
+
+        public bool IsAllAccessLoading
+        {
+            get
+            {
+                return this.isAllAccessLoading;
+            }
+            set
+            {
+                this.SetValue(ref this.isAllAccessLoading, value);
             }
         }
     }
