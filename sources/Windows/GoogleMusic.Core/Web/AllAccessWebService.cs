@@ -14,9 +14,9 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
     public interface IAllAccessWebService
     {
-        Task<GoogleMusicArtist> FetchArtistAsync(string googleArtistId);
+        Task<GoogleMusicArtist> FetchArtistAsync(string googleArtistId, CancellationToken cancellationToken);
 
-        Task<GoogleMusicAlbum> FetchAlbumAsync(string googleAlbumId);
+        Task<GoogleMusicAlbum> FetchAlbumAsync(string googleAlbumId, CancellationToken cancellationToken);
 
         Task<GoogleSearchResult> SearchAsync(string query, CancellationToken cancellationToken);
     }
@@ -39,14 +39,14 @@ namespace OutcoldSolutions.GoogleMusic.Web
             this.logger = logManager.CreateLogger("SongsWebService");
         }
 
-        public Task<GoogleMusicArtist> FetchArtistAsync(string googleArtistId)
+        public Task<GoogleMusicArtist> FetchArtistAsync(string googleArtistId, CancellationToken cancellationToken)
         {
-            return this.googleMusicApisService.GetAsync<GoogleMusicArtist>(string.Format(CultureInfo.InvariantCulture, FetchArtist, googleArtistId), useCache: true);
+            return this.googleMusicApisService.GetAsync<GoogleMusicArtist>(string.Format(CultureInfo.InvariantCulture, FetchArtist, googleArtistId), cancellationToken, useCache: true);
         }
 
-        public Task<GoogleMusicAlbum> FetchAlbumAsync(string googleAlbumId)
+        public Task<GoogleMusicAlbum> FetchAlbumAsync(string googleAlbumId, CancellationToken cancellationToken)
         {
-            return this.googleMusicApisService.GetAsync<GoogleMusicAlbum>(string.Format(CultureInfo.InvariantCulture, FetchAlbum, googleAlbumId), useCache: true);
+            return this.googleMusicApisService.GetAsync<GoogleMusicAlbum>(string.Format(CultureInfo.InvariantCulture, FetchAlbum, googleAlbumId), cancellationToken, useCache: true);
         }
 
         public Task<GoogleSearchResult> SearchAsync(string query, CancellationToken cancellationToken)

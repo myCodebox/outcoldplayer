@@ -4,6 +4,7 @@
 namespace OutcoldSolutions.GoogleMusic.Presenters
 {
     using System.Collections.Generic;
+    using System.Threading;
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.InversionOfControl;
@@ -77,7 +78,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         }
 
 
-        protected override async Task LoadDataAsync(NavigatedToEventArgs navigatedToEventArgs)
+        protected override async Task LoadDataAsync(NavigatedToEventArgs navigatedToEventArgs, CancellationToken cancellationToken)
         {
             Album album = null;
             var songId = navigatedToEventArgs.Parameter as string;
@@ -90,14 +91,15 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                             navigatedToEventArgs.View,
                             navigatedToEventArgs.State,
                             new PlaylistNavigationRequest(album, songId),
-                            navigatedToEventArgs.IsNavigationBack));
+                            navigatedToEventArgs.IsNavigationBack),
+                            cancellationToken);
             }
             else
             {
                 var request = navigatedToEventArgs.Parameter as PlaylistNavigationRequest;
                 if (request != null && request.Playlist != null && ((Album)request.Playlist).AlbumId == 0)
                 {
-                    var result = await this.allAccessService.GetAlbumAsync((Album)request.Playlist);
+                    var result = await this.allAccessService.GetAlbumAsync((Album)request.Playlist, cancellationToken);
 
                     if (result != null)
                     {
@@ -119,14 +121,14 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 }
                 else
                 {
-                    await base.LoadDataAsync(navigatedToEventArgs);
+                    await base.LoadDataAsync(navigatedToEventArgs, cancellationToken);
                 }
             }
 
             album = this.BindingModel.Playlist as Album;
             if (album != null && string.IsNullOrEmpty(album.Description) && !string.IsNullOrEmpty(album.GoogleAlbumId))
             {
-                var result = await this.allAccessService.GetAlbumAsync(album);
+                var result = await this.allAccessService.GetAlbumAsync(album, cancellationToken);
                 if (result != null)
                 {
                     await this.Dispatcher.RunAsync(

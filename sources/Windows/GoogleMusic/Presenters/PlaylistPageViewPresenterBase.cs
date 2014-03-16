@@ -7,6 +7,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using System.Collections.Generic;
     using System.Linq;
     using System.Reactive.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
@@ -23,14 +24,14 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private readonly IPlaylistsService playlistsService;
         private readonly IApplicationResources resources;
         private readonly IPlayQueueService playQueueService;
-
-        private NavigatedToEventArgs latestRequest = null;
+        private readonly INavigationService navigationService;
 
         public PlaylistPageViewPresenterBase(IDependencyResolverContainer container)
         {
             this.playlistsService = container.Resolve<IPlaylistsService>();
             this.resources = container.Resolve<IApplicationResources>();
             this.playQueueService = container.Resolve<IPlayQueueService>();
+            this.navigationService = container.Resolve<INavigationService>();
         }
 
         protected override void OnInitialized()
@@ -39,12 +40,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
             this.EventAggregator
                 .GetEvent<PlaylistsChangeEvent>()
-                .Where(e => this.latestRequest != null &&
-                    this.BindingModel.Playlist != null && 
+                .Where(e => this.BindingModel.Playlist != null && 
                     e.PlaylistType == this.BindingModel.Playlist.PlaylistType &&
                     e.UpdatedPlaylists != null &&
                     e.UpdatedPlaylists.Any(x => string.Equals(x.Id, this.BindingModel.Playlist.Id, StringComparison.OrdinalIgnoreCase)))
-                .Subscribe(async(e) => await this.LoadDataAsync(this.latestRequest));
+                .Subscribe((e) => this.navigationService.RefreshCurrentView());
         }
 
         public override void OnNavigatingFrom(NavigatingFromEventArgs eventArgs)
@@ -55,10 +55,9 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.BindingModel.Playlist = null;
             this.BindingModel.Title = null;
             this.BindingModel.Subtitle = null;
-            this.latestRequest = null;
         }
 
-        protected override async Task LoadDataAsync(NavigatedToEventArgs navigatedToEventArgs)
+        protected override async Task LoadDataAsync(NavigatedToEventArgs navigatedToEventArgs, CancellationToken cancellationToken)
         {
             var request = navigatedToEventArgs.Parameter as PlaylistNavigationRequest;
             if (request == null)
@@ -128,8 +127,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     this.Logger.LogTask(this.playQueueService.PlayAsync(playlist, songs, 0));
                 }
             }
-
-            this.latestRequest = navigatedToEventArgs;
 
             if (!string.IsNullOrEmpty(request.SongId))
             {

@@ -3,8 +3,10 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Presenters
 {
+    using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
+    using System.Threading;
     using System.Threading.Tasks;
 
     using Windows.UI.Core;
@@ -22,7 +24,10 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     public abstract class PagePresenterBase<TView> : ViewPresenterBase<TView>, IPagePresenterBase
         where TView : IPageView 
     {
+        private readonly SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1);
+
         private bool isDataLoading;
+        private CancellationTokenSource dataLoadingCancellationTokenSource;
 
         /// <summary>
         /// Gets or sets a value indicating whether is data loading.
@@ -47,10 +52,13 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.View.OnDataLoading(parameter);
             this.Freeze();
 
+            CancellationTokenSource source = this.dataLoadingCancellationTokenSource = new CancellationTokenSource();
+            CancellationToken cancellationToken = source.Token;
+
             this.Logger.LogTask(Task.Factory.StartNew(
                 async () =>
                 {
-                    await this.LoadDataAsync(parameter);
+                    await this.LoadDataAsync(parameter, cancellationToken);
 
                     await this.Dispatcher.RunAsync(
                         () =>
@@ -61,14 +69,26 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                             this.IsDataLoading = false;
                         });
 
-                    await Task.Delay(1);
+                    await Task.Delay(1, cancellationToken);
                     await this.Dispatcher.RunAsync(CoreDispatcherPriority.Low, () => this.View.OnDataLoaded(parameter));
-                }));
+                }, cancellationToken));
         }
 
         /// <inheritdoc />
         public virtual void OnNavigatingFrom(NavigatingFromEventArgs eventArgs)
         {
+            try
+            {
+                if (this.dataLoadingCancellationTokenSource != null)
+                {
+                    this.dataLoadingCancellationTokenSource.Cancel();
+                    this.dataLoadingCancellationTokenSource = null;
+                }
+            }
+            catch (Exception e)
+            {
+                this.Logger.Debug(e, "Could not cancel");
+            }
         }
 
         internal virtual void Freeze()
@@ -85,10 +105,13 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         /// <param name="navigatedToEventArgs">
         /// The navigated to event args.
         /// </param>
+        /// <param name="cancellationToken">
+        /// The cancellation token.
+        /// </param>
         /// <returns>
         /// The <see cref="Task"/>.
         /// </returns>
-        protected abstract Task LoadDataAsync(NavigatedToEventArgs navigatedToEventArgs);
+        protected abstract Task LoadDataAsync(NavigatedToEventArgs navigatedToEventArgs, CancellationToken cancellationToken);
 
         /// <summary>
         /// The get view commands.

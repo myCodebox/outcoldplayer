@@ -127,7 +127,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             eventArgs.State["IsLocalOnly"] = this.BindingModel.IsLocalOnly;
         }
 
-        protected override Task LoadDataAsync(NavigatedToEventArgs eventArgs)
+        protected override Task LoadDataAsync(NavigatedToEventArgs eventArgs, CancellationToken cancellationToken)
         {
             return this.Dispatcher.RunAsync(
                 () =>

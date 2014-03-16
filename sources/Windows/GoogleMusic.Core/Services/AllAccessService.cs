@@ -18,9 +18,9 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
     public interface IAllAccessService
     {
-        Task<ArtistInfo> GetArtistInfoAsync(Artist artist);
+        Task<ArtistInfo> GetArtistInfoAsync(Artist artist, CancellationToken cancellationToken);
 
-        Task<Tuple<Album, IList<Song>>> GetAlbumAsync(Album album);
+        Task<Tuple<Album, IList<Song>>> GetAlbumAsync(Album album, CancellationToken cancellationToken);
 
         Task<SearchResult> SearchAsync(string search, CancellationToken cancellationToken);
     }
@@ -46,7 +46,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             this.logger = logManager.CreateLogger("AllAccessService");
         }
 
-        public async Task<ArtistInfo> GetArtistInfoAsync(Artist artist)
+        public async Task<ArtistInfo> GetArtistInfoAsync(Artist artist, CancellationToken cancellationToken)
         {
             ArtistInfo info = new ArtistInfo() { Artist = artist };
 
@@ -59,7 +59,11 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
             try
             {
-                googleMusicArtist = await this.allAccessWebService.FetchArtistAsync(artist.GoogleArtistId);
+                googleMusicArtist = await this.allAccessWebService.FetchArtistAsync(artist.GoogleArtistId, cancellationToken);
+            }
+            catch (OperationCanceledException e)
+            {
+                throw;
             }
             catch (Exception e)
             {
@@ -122,7 +126,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             return info;
         }
 
-        public async Task<Tuple<Album, IList<Song>>> GetAlbumAsync(Album album)
+        public async Task<Tuple<Album, IList<Song>>> GetAlbumAsync(Album album, CancellationToken cancellationToken)
         {
             if (string.IsNullOrEmpty(album.GoogleAlbumId))
             {
@@ -133,7 +137,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
             try
             {
-                googleMusicAlbum = await this.allAccessWebService.FetchAlbumAsync(album.GoogleAlbumId);
+                googleMusicAlbum = await this.allAccessWebService.FetchAlbumAsync(album.GoogleAlbumId, cancellationToken);
             }
             catch (Exception e)
             {
@@ -203,15 +207,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             catch (Exception exception)
             {
                 this.logger.Debug(exception, "Search failed");
-
-                if (cancellationToken.IsCancellationRequested)
-                {
-                    return result;
-                }
-                else
-                {
-                    throw;
-                }
+                return result;
             }
 
             if (googleSearchResult != null && googleSearchResult.Entries != null)

@@ -6,6 +6,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
@@ -70,7 +71,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     };
         }
 
-        protected override async Task LoadDataAsync(NavigatedToEventArgs navigatedToEventArgs)
+        protected override async Task LoadDataAsync(NavigatedToEventArgs navigatedToEventArgs, CancellationToken cancellationToken)
         {
             this.BindingModel.IsSemanticZoomEnabled = false;
             this.BindingModel.PlaylistType = PlaylistType.Unknown;

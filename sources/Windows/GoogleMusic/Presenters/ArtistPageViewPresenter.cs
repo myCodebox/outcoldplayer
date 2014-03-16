@@ -6,6 +6,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
@@ -107,7 +108,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.BindingModel.IsAllAccessLoading = false;
         }
 
-        protected override async Task LoadDataAsync(NavigatedToEventArgs navigatedToEventArgs)
+        protected override async Task LoadDataAsync(NavigatedToEventArgs navigatedToEventArgs, CancellationToken cancellationToken)
         {
             var request = navigatedToEventArgs.Parameter as PlaylistNavigationRequest;
             if (request == null || request.PlaylistType != PlaylistType.Artist)
@@ -142,7 +143,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
             if (this.applicationStateService.IsOnline())
             {
-                this.LoadAllAccessSongs(artist);
+                this.LoadAllAccessSongs(artist, cancellationToken);
             }
         }
 
@@ -159,7 +160,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             }
         }
 
-        private async void LoadAllAccessSongs(Artist artist)
+        private async void LoadAllAccessSongs(Artist artist, CancellationToken cancellationToken)
         {
             await this.Dispatcher.RunAsync(
                 () =>
@@ -167,7 +168,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     this.BindingModel.IsAllAccessLoading = true;
                 });
 
-            var info = await this.allAccessService.GetArtistInfoAsync(artist);
+            var info = await this.allAccessService.GetArtistInfoAsync(artist, cancellationToken);
             if (info != null)
             {
                 await this.Dispatcher.RunAsync(

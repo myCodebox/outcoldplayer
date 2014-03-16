@@ -6,6 +6,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using System;
     using System.Linq;
     using System.Reactive.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
@@ -60,7 +61,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             }
         }
 
-        protected override async Task LoadDataAsync(NavigatedToEventArgs navigatedToEventArgs)
+        protected override async Task LoadDataAsync(NavigatedToEventArgs navigatedToEventArgs, CancellationToken cancellationToken)
         {
             var request = navigatedToEventArgs.Parameter as PlaylistNavigationRequest;
             if (request != null)
