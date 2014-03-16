@@ -74,7 +74,8 @@
         <Style x:Name="SmallTitleGridStyle" TargetType="ContentControl">
             <Setter Property="Margin" Value="0, 0, 0, 10" />
             <Setter Property="HorizontalAlignment" Value="Left" />
-            <Setter Property="Height" Value="100" />
+            <Setter Property="MinHeight" Value="100" />
+            <Setter Property="MaxHeight" Value="124" />
             <Setter Property="Template" >
                 <Setter.Value>
                     <ControlTemplate>
@@ -101,15 +102,16 @@
                                        Style="{StaticResource HeaderTextStyle}" 
                                        Text="{Binding Path=Title, Mode=OneWay}"
                                        VerticalAlignment="Bottom" 
-                                       TextWrapping="NoWrap" 
+                                       TextWrapping="Wrap" 
                                        TextTrimming="WordEllipsis"
                                        FontSize="24"
-                                       LineHeight="24"/>
+                                       LineHeight="24"
+                                       MaxHeight="48"/>
 
                                 <TextBlock HorizontalAlignment="Left"
                                            Style="{StaticResource SubheaderTextStyle}" 
                                            Text="{Binding Path=Subtitle, Mode=OneWay}"
-                                           Margin="0, 0, 0, 0"
+                                           Margin="0, 2, 0, 0"
                                            FontSize="14"
                                            LineHeight="14"/>
                             </StackPanel>
