@@ -77,52 +77,36 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             }
         }
 
-
         protected override async Task LoadDataAsync(NavigatedToEventArgs navigatedToEventArgs, CancellationToken cancellationToken)
         {
             Album album = null;
-            var songId = navigatedToEventArgs.Parameter as string;
-            if (songId != null)
+            
+            var request = navigatedToEventArgs.Parameter as PlaylistNavigationRequest;
+            if (request != null && request.Playlist != null && ((Album)request.Playlist).AlbumId == 0)
             {
-                album = await this.albumsRepository.FindSongAlbumAsync(songId);
+                var result = await this.allAccessService.GetAlbumAsync((Album)request.Playlist, cancellationToken);
 
-                await base.LoadDataAsync(
-                        new NavigatedToEventArgs(
-                            navigatedToEventArgs.View,
-                            navigatedToEventArgs.State,
-                            new PlaylistNavigationRequest(album, songId),
-                            navigatedToEventArgs.IsNavigationBack),
-                            cancellationToken);
+                if (result != null)
+                {
+                    await this.Dispatcher.RunAsync(
+                        () =>
+                        {
+                            this.BindingModel.Songs = result.Item2;
+                            this.BindingModel.Playlist = result.Item1;
+                            this.BindingModel.Title = result.Item1.Title;
+                            this.BindingModel.Subtitle = this.resources.GetTitle(result.Item1.PlaylistType);
+                        });
+                }
+
+
+                if (!string.IsNullOrEmpty(request.SongId))
+                {
+                    this.EventAggregator.Publish(new SelectSongByIdEvent(request.SongId));
+                }
             }
             else
             {
-                var request = navigatedToEventArgs.Parameter as PlaylistNavigationRequest;
-                if (request != null && request.Playlist != null && ((Album)request.Playlist).AlbumId == 0)
-                {
-                    var result = await this.allAccessService.GetAlbumAsync((Album)request.Playlist, cancellationToken);
-
-                    if (result != null)
-                    {
-                        await this.Dispatcher.RunAsync(
-                            () =>
-                            {
-                                this.BindingModel.Songs = result.Item2;
-                                this.BindingModel.Playlist = result.Item1;
-                                this.BindingModel.Title = result.Item1.Title;
-                                this.BindingModel.Subtitle = this.resources.GetTitle(result.Item1.PlaylistType);
-                            });
-                    }
-
-
-                    if (!string.IsNullOrEmpty(request.SongId))
-                    {
-                        this.EventAggregator.Publish(new SelectSongByIdEvent(request.SongId));
-                    }
-                }
-                else
-                {
-                    await base.LoadDataAsync(navigatedToEventArgs, cancellationToken);
-                }
+                await base.LoadDataAsync(navigatedToEventArgs, cancellationToken);
             }
 
             album = this.BindingModel.Playlist as Album;
