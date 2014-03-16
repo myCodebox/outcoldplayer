@@ -30,6 +30,8 @@ namespace OutcoldSolutions.GoogleMusic.Web
         Task<GoogleMusicMutateResponse> CreateStationAsync(Artist artist);
 
         Task<GoogleMusicMutateResponse> CreateStationAsync(Album album);
+
+        Task<GoogleMusicMutateResponse> CreateStationAsync(AllAccessGenre genre);
     }
 
     public class RadioWebService : IRadioWebService
@@ -240,6 +242,37 @@ namespace OutcoldSolutions.GoogleMusic.Web
                                     seed = new { seedType = 4, albumId = album.GoogleAlbumId },
                                     tracks = new object[0]
                                 };
+
+            var mutation = new RequestCreateMutation()
+            {
+                Create = createMutation,
+                IncludeFeed = true,
+                NumEntries = 25,
+                Params =
+                    new
+                    {
+                        contentFilter = this.settingsService.GetBlockExplicitSongsInRadio() ? 2 : 1
+                    }
+            };
+
+            return await this.googleMusicApisService.PostAsync<GoogleMusicMutateResponse>(
+                EditStation,
+                new { mutations = new[] { mutation } });
+        }
+
+        public async Task<GoogleMusicMutateResponse> CreateStationAsync(AllAccessGenre genre)
+        {
+            dynamic createMutation = new
+            {
+                clientId = Guid.NewGuid().ToString().ToLowerInvariant(),
+                deleted = false,
+                imageType = 1, // TODO: ?
+                lastModifiedTimestamp = -1,
+                name = genre.Title,
+                recentTimestamp = ((long)new DateTime().ToUnixFileTime() * 1000L).ToString("G", CultureInfo.InvariantCulture),
+                seed = new { seedType = 5, genreId = genre.Id },
+                tracks = new object[0]
+            };
 
             var mutation = new RequestCreateMutation()
             {

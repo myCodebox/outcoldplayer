@@ -138,6 +138,7 @@
     <Compile Include="InversionOfControl\IRegistrationContext.cs" />
     <Compile Include="InversionOfControl\RegistrationContext.cs" />
     <Compile Include="Models\AlbumArtUrlExtensions.cs" />
+    <Compile Include="Models\AllAccessGenre.cs" />
     <Compile Include="Models\ArtistInfo.cs" />
     <Compile Include="Models\CachedAlbumArt.cs" />
     <Compile Include="Models\CachedSong.cs" />
@@ -200,12 +201,14 @@
     <Compile Include="Web\Models\GoogleMusicAlbum.cs" />
     <Compile Include="Web\Models\GoogleMusicArtist.cs" />
     <Compile Include="Web\Models\GoogleMusicErrorResponse.cs" />
+    <Compile Include="Web\Models\GoogleMusicGenres.cs" />
     <Compile Include="Web\Models\GoogleMusicMutateResponse.cs" />
     <Compile Include="Web\Models\GoogleMusicPlaylistBatchResponse.cs" />
     <Compile Include="Web\Models\GoogleMusicPlaylistEntriesBatchResponse.cs" />
     <Compile Include="Web\Models\GoogleMusicSharedPlaylistEntriesResponse.cs" />
     <Compile Include="Web\Models\GoogleMusicSongMutateResponse.cs" />
     <Compile Include="Web\Models\GoogleMusicStationFeed.cs" />
+    <Compile Include="Web\Models\GoogleMusicTabs.cs" />
     <Compile Include="Web\Models\GoogleMusicTrackStatResponse.cs" />
     <Compile Include="Web\Models\GoogleSearchResult.cs" />
     <Compile Include="Web\Models\UrlRef.cs" />

@@ -15,10 +15,10 @@ namespace OutcoldSolutions.GoogleMusic.Web.Models
 
         public string Message { get; set; }
 
-        public GoolgeMusicError[] Errors { get; set; }
+        public GoogleMusicError[] Errors { get; set; }
     }
 
-    public class GoolgeMusicError
+    public class GoogleMusicError
     {
         public string Domain { get; set; }
 

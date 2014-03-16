@@ -234,9 +234,16 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 {
                     await this.dataSemaphore.WaitAsync().ConfigureAwait(continueOnCapturedContext: false);
 
-                    if (!this.cachedUris.TryGetValue(playlist.Id, out task))
+                    string id = playlist.Id;
+
+                    if (string.IsNullOrEmpty(id) && playlist.PlaylistType == PlaylistType.UserPlaylist && ((UserPlaylist)playlist).IsShared)
                     {
-                        this.cachedUris.Add(playlist.Id, task = this.GetUrlsAsync(playlist));
+                        id = ((UserPlaylist)playlist).ShareToken;
+                    }
+
+                    if (!this.cachedUris.TryGetValue(id, out task))
+                    {
+                        this.cachedUris.Add(id, task = this.GetUrlsAsync(playlist));
                     }
                 }
                 finally

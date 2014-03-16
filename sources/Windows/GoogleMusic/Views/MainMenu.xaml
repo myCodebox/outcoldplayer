@@ -173,7 +173,7 @@
             <Button Style="{StaticResource MenuButtonStyle}"
                     Command="{Binding Path=RadioStationsCommand, Mode=OneTime}"
                     CommandParameter="{StaticResource PlaylistType_Radio}"
-                    Visibility="{Binding Path=IsRadioVisible, Converter={StaticResource BooleanToVisibilityConverter}}"
+                    Visibility="{Binding Path=IsOnline, Converter={StaticResource BooleanToVisibilityConverter}}"
                     ToolTipService.ToolTip="{Binding Path=RadioText, Mode=OneWay}">
                 <Grid>
                     <Border Style="{StaticResource SelectedItemBorderStyle}"  
@@ -188,6 +188,26 @@
                     </StackPanel>
                 </Grid>
                 
+            </Button>
+
+            <Button Style="{StaticResource MenuButtonStyle}"
+                    Command="{Binding Path=ExploreCommand, Mode=OneTime}"
+                    CommandParameter="{StaticResource PlaylistType_Radio}"
+                    Visibility="{Binding Path=IsOnline, Converter={StaticResource BooleanToVisibilityConverter}}"
+                    ToolTipService.ToolTip="Explore">
+                <Grid>
+                    <Border Style="{StaticResource SelectedItemBorderStyle}"  
+                            Visibility="{Binding Path=IsExploreSelected, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="&#xE128;"
+                               Style="{StaticResource MenuIconFontStyle}"/>
+
+                        <TextBlock Text="Explore"
+                                   Style="{StaticResource MenuTextStyle}"
+                                   Visibility="{Binding Path=IsLarge, Source={StaticResource ApplicationSize}, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                    </StackPanel>
+                </Grid>
+
             </Button>
 
             <Border Style="{StaticResource SeparatorStyle}" />

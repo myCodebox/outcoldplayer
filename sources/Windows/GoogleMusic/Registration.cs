@@ -83,6 +83,12 @@ namespace OutcoldSolutions.GoogleMusic
                         .InjectionRule<BindingModelBase, GenrePageViewPresenter>()
                         .AsSingleton<PlaylistsPageView>();
             registration.Register<GenrePageViewPresenter>().AsSingleton();
+
+            // Explore view
+            registration.Register<IExplorePageView>()
+                        .InjectionRule<BindingModelBase, ExplorePageViewPresenter>()
+                        .AsSingleton<ExplorePageView>();
+            registration.Register<ExplorePageViewPresenter>().AsSingleton();
         }
 
         public static void RegisterSettingViews(IRegistrationContext registration)

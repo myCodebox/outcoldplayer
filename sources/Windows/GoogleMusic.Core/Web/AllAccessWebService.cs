@@ -10,6 +10,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.Diagnostics;
+    using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Web.Models;
 
     public interface IAllAccessWebService
@@ -19,6 +20,11 @@ namespace OutcoldSolutions.GoogleMusic.Web
         Task<GoogleMusicAlbum> FetchAlbumAsync(string googleAlbumId, CancellationToken cancellationToken);
 
         Task<GoogleSearchResult> SearchAsync(string query, CancellationToken cancellationToken);
+
+        Task<GoogleMusicGenres> FetchGenresAsync(AllAccessGenre parent, CancellationToken cancellationToken);
+
+        // 0 = recommended, 1 = featured, 2 = new releases 
+        Task<GoogleMusicTabs> FetchTabAsync(AllAccessGenre parent, int tab, CancellationToken cancellationToken);
     }
 
     public class AllAccessWebService : IAllAccessWebService
@@ -26,6 +32,8 @@ namespace OutcoldSolutions.GoogleMusic.Web
         private const string FetchArtist = "fetchartist?nid={0}&include-albums=true&num-top-tracks=20&num-related-artists=20";
         private const string FetchAlbum = "fetchalbum?nid={0}&include-tracks=true";
         private const string Search = "query?q={0}&max-results=20";
+        private const string ExploreGenres = "explore/genres";
+        private const string ExploreTabs = "explore/tabs?num-items=25&tabs=";
 
         private readonly IGoogleMusicApisService googleMusicApisService;
 
@@ -52,6 +60,16 @@ namespace OutcoldSolutions.GoogleMusic.Web
         public Task<GoogleSearchResult> SearchAsync(string query, CancellationToken cancellationToken)
         {
             return this.googleMusicApisService.GetAsync<GoogleSearchResult>(string.Format(CultureInfo.InvariantCulture, Search, WebUtility.UrlEncode(query)), cancellationToken, useCache: true);
+        }
+
+        public Task<GoogleMusicGenres> FetchGenresAsync(AllAccessGenre parent, CancellationToken cancellationToken)
+        {
+            return this.googleMusicApisService.GetAsync<GoogleMusicGenres>(ExploreGenres + (parent == null ? string.Empty : ("?parent-genre=" + parent.Id)), cancellationToken, useCache: true);
+        }
+
+        public Task<GoogleMusicTabs> FetchTabAsync(AllAccessGenre parent, int tab, CancellationToken cancellationToken)
+        {
+            return this.googleMusicApisService.GetAsync<GoogleMusicTabs>(ExploreTabs + tab + (parent == null ? string.Empty : ("&genre=" + parent.Id)), cancellationToken, useCache: true);
         }
     }
 }

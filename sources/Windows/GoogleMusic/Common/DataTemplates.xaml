@@ -395,8 +395,6 @@
         </StackPanel>
     </DataTemplate>
 
-
-
     <Style TargetType="ListView" x:Key="PlaylistsListView">
         <Setter Property="ScrollViewer.HorizontalScrollMode" Value="Disabled" />
         <Setter Property="ScrollViewer.VerticalScrollMode" Value="Enabled" />

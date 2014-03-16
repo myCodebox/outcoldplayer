@@ -127,8 +127,10 @@
     <Compile Include="Controls\MenuItemDataTemplateSelector.cs" />
     <Compile Include="Controls\TextChangedBindingBehavior.cs" />
     <Compile Include="Converters\AlbumDetailsConverter.cs" />
+    <Compile Include="Controls\ExploreTabGroupTemplateSelector.cs" />
     <Compile Include="Converters\NotEmptyToVisibilityConverter.cs" />
     <Compile Include="Converters\StyleSelectorConverter.cs" />
+    <Compile Include="Presenters\ExplorePageViewPresenter.cs" />
     <Compile Include="Presenters\GenrePageViewPresenter.cs" />
     <Compile Include="Presenters\LinksRegionViewPresenter.cs" />
     <Compile Include="Presenters\Popups\ReadMorePopupPresenter.cs" />
@@ -148,11 +150,17 @@
     <Compile Include="Services\Actions\ActionGroup.cs" />
     <Compile Include="Services\SelectSongEvent.cs" />
     <Compile Include="Shell\ApplicationSize.cs" />
+    <Compile Include="Views\ExplorePageView.xaml.cs">
+      <DependentUpon>ExplorePageView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\HomePageView.xaml.cs">
       <DependentUpon>HomePageView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PlaylistsListView.xaml.cs">
       <DependentUpon>PlaylistsListView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PlaylistsListViewContainerControl.xaml.cs">
+      <DependentUpon>PlaylistsListViewContainerControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Popups\ReadMorePopup.xaml.cs">
       <DependentUpon>ReadMorePopup.xaml</DependentUpon>
@@ -362,6 +370,9 @@
     <Compile Include="Views\Settings\UpgradeView.xaml.cs">
       <DependentUpon>UpgradeView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\SongsListViewContainerControl.xaml.cs">
+      <DependentUpon>SongsListViewContainerControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ViewBase.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -450,11 +461,19 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\ExplorePageView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\HomePageView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\PlaylistsListView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PlaylistsListViewContainerControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -567,6 +586,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Settings\UpgradeView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SongsListViewContainerControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

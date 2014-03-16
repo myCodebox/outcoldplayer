@@ -41,6 +41,8 @@ namespace OutcoldSolutions.GoogleMusic.Web.Models
 
         public string AlbumId { get; set; }
 
+        public string GenreId { get; set; }
+
         public int SeedType { get; set; }
 
         public GoogleMusicRadioMetadataSeed MetadataSeed { get; set; }

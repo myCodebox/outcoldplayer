@@ -210,7 +210,7 @@ namespace OutcoldSolutions.GoogleMusic.Diagnostics
                     }
                     else
                     {
-                        log.AppendFormat("    CONTENT:{0}{1}", Environment.NewLine, content.Substring(0, Math.Min(4096, content.Length)));
+                        log.AppendFormat("    CONTENT:{0}{1}", Environment.NewLine, content);
                         log.AppendLine();
                         log.AppendFormat("    ENDCONTENT.");
                         log.AppendLine();

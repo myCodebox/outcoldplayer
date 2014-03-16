@@ -59,6 +59,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
                 radio.SongId = googleMusicRadio.Seed.TrackId;
                 radio.GoogleArtistId = googleMusicRadio.Seed.ArtistId;
                 radio.GoogleAlbumId = googleMusicRadio.Seed.AlbumId;
+                radio.GoogleGenreId = googleMusicRadio.Seed.GenreId;
             }
         }
     }

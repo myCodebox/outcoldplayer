@@ -48,7 +48,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
                     {
                         return mixedPlaylist.ArtUrls;
                     }
-                    else
+                    else if (mixedPlaylist.PlaylistType != PlaylistType.AllAccessGenre)
                     {
                         LoadArtUris(mixedPlaylist);
                     }

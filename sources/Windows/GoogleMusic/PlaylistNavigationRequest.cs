@@ -19,17 +19,25 @@ namespace OutcoldSolutions.GoogleMusic
 
         public PlaylistNavigationRequest(IPlaylist playlist, IList<Song> songs)
         {
-            this.PlaylistType = playlist.PlaylistType;
-            this.PlaylistId = playlist.Id;
-            this.Playlist = playlist;
+            if (playlist != null)
+            {
+                this.PlaylistType = playlist.PlaylistType;
+                this.PlaylistId = playlist.Id;
+                this.Playlist = playlist;
+            }
+
             this.Songs = songs;
         }
 
         public PlaylistNavigationRequest(IPlaylist playlist, string title, string subtitle, IList<Song> songs)
         {
-            this.PlaylistType = playlist.PlaylistType;
-            this.PlaylistId = playlist.Id;
-            this.Playlist = playlist;
+            if (playlist != null)
+            {
+                this.PlaylistType = playlist.PlaylistType;
+                this.PlaylistId = playlist.Id;
+                this.Playlist = playlist;
+            }
+
             this.Title = title;
             this.Subtitle = subtitle;
             this.Songs = songs;
@@ -37,9 +45,13 @@ namespace OutcoldSolutions.GoogleMusic
 
         public PlaylistNavigationRequest(IPlaylist playlist, string title, string subtitle, IList<IPlaylist> playlists)
         {
-            this.PlaylistType = playlist.PlaylistType;
-            this.PlaylistId = playlist.Id;
-            this.Playlist = playlist;
+            if (playlist != null)
+            {
+                this.PlaylistType = playlist.PlaylistType;
+                this.PlaylistId = playlist.Id;
+                this.Playlist = playlist;
+            }
+
             this.Title = title;
             this.Subtitle = subtitle;
             this.Playlists = playlists;

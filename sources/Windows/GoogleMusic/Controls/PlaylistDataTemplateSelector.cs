@@ -53,7 +53,7 @@ namespace OutcoldSolutions.GoogleMusic.Controls
                 return this.AlbumDataTemplate;
             }
 
-            if (playlist is Genre)
+            if (playlist is Genre || playlist is AllAccessGenre)
             {
                 Debug.Assert(this.GenreDataTemplate != null, "this.GenreDataTemplate != null");
                 return this.GenreDataTemplate;

@@ -15,6 +15,33 @@ namespace OutcoldSolutions.GoogleMusic.Services
     using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Web;
     using OutcoldSolutions.GoogleMusic.Web.Models;
+    using OutcoldSolutions.GoogleMusic.Web.Synchronization;
+
+    public class ExploreTab
+    {
+        public AllAccessGenre ParentGenre { get; set; }
+
+        public IList<AllAccessGenre> Genres { get; set; }
+
+        public IList<ExploreTabGroup> Groups { get; set; }
+    }
+
+    public class ExploreTabGroup
+    {
+        public string Title { get;set; }
+
+        public IList<Song> Songs { get; set; }
+
+        public IList<IPlaylist> Playlists { get; set; }
+
+        public ExploreTabGroup This
+        {
+            get
+            {
+                return this;
+            }
+        }
+    }
 
     public interface IAllAccessService
     {
@@ -23,6 +50,10 @@ namespace OutcoldSolutions.GoogleMusic.Services
         Task<Tuple<Album, IList<Song>>> GetAlbumAsync(Album album, CancellationToken cancellationToken);
 
         Task<SearchResult> SearchAsync(string search, CancellationToken cancellationToken);
+
+        Task<IList<AllAccessGenre>> GetGenresAsync(AllAccessGenre parent, CancellationToken cancellationToken);
+
+        Task<ExploreTab> GetExploreTabAsync(AllAccessGenre parent, CancellationToken cancellationToken);
     }
 
     public class AllAccessService : AllAccessServiceBase, IAllAccessService
@@ -252,6 +283,145 @@ namespace OutcoldSolutions.GoogleMusic.Services
             }
 
             return result;
+        }
+
+        public async Task<IList<AllAccessGenre>> GetGenresAsync(AllAccessGenre parent, CancellationToken cancellationToken)
+        {
+            List<AllAccessGenre> genres = new List<AllAccessGenre>();
+
+            var response = await this.allAccessWebService.FetchGenresAsync(parent, cancellationToken);
+            if (response != null && response.Genres != null)
+            {
+                foreach (var googleMusicGenre in response.Genres)
+                {
+                    genres.Add(new AllAccessGenre()
+                               {
+                                   Title = googleMusicGenre.Name,
+                                   TitleNorm = googleMusicGenre.Name.Normalize(),
+                                   Id = googleMusicGenre.Id,
+                                   ArtUrl = googleMusicGenre.Images == null ? null : googleMusicGenre.Images.Select(x => new Uri(x.Url)).FirstOrDefault(),
+                                   ArtUrls = googleMusicGenre.Images == null ? null : googleMusicGenre.Images.Select(x => new Uri(x.Url)).ToArray(),
+                                   ParentId = googleMusicGenre.ParentId,
+                                   Children = googleMusicGenre.Children
+                               });
+                }
+            }
+
+            return genres;
+        }
+
+        public async Task<ExploreTab> GetExploreTabAsync(AllAccessGenre parent, CancellationToken cancellationToken)
+        {
+            ExploreTab exploreTab = new ExploreTab()
+                                    {
+                                        ParentGenre = parent,
+                                        Groups = new List<ExploreTabGroup>()
+                                    };
+
+            exploreTab.Genres = await this.GetGenresAsync(parent, cancellationToken);
+
+            const int MaxTabs = 3;
+            int firstTabIndex = (parent == null ? 0 : 1);
+
+            Task<IList<ExploreTabGroup>>[] tabTasks = new Task<IList<ExploreTabGroup>>[MaxTabs - firstTabIndex];
+
+            for (var tabIndex = firstTabIndex; tabIndex < MaxTabs; tabIndex++)
+            {
+                tabTasks[tabIndex - firstTabIndex] = this.FetchTabAsync(parent, tabIndex, cancellationToken);
+            }
+
+            var result = await Task.WhenAll(tabTasks);
+
+            foreach (var exploreTabGroup in result.SelectMany(x => x))
+            {
+                exploreTab.Groups.Add(exploreTabGroup);
+            }
+
+            return exploreTab;
+        }
+
+        private async Task<IList<ExploreTabGroup>> FetchTabAsync(
+            AllAccessGenre parent,
+            int tab,
+            CancellationToken cancellationToken)
+        {
+            var response = await this.allAccessWebService.FetchTabAsync(parent, tab, cancellationToken);
+            if (response != null)
+            {
+                return await this.HandleTabResponse(response, cancellationToken);
+            }
+            else
+            {
+                return new List<ExploreTabGroup>();
+            }
+        }
+
+        private async Task<IList<ExploreTabGroup>> HandleTabResponse(GoogleMusicTabs tabs, CancellationToken cancellationToken)
+        {
+            IList<ExploreTabGroup> groups = new List<ExploreTabGroup>();
+
+            if (tabs.Tabs != null)
+            {
+                foreach (var googleMusicTab in tabs.Tabs)
+                {
+                    if (googleMusicTab.Groups != null)
+                    {
+                        foreach (var googleMusicTabGroup in googleMusicTab.Groups)
+                        {
+                            ExploreTabGroup group = new ExploreTabGroup() { Title = googleMusicTabGroup.Title };
+
+                            if (googleMusicTabGroup.Entities != null)
+                            {
+                                foreach (var entity in googleMusicTabGroup.Entities)
+                                {
+                                    if (cancellationToken.IsCancellationRequested)
+                                    {
+                                        break;
+                                    }
+
+                                    if (entity.Track != null)
+                                    {
+                                        var song = await this.GetSong(entity.Track);
+
+                                        if (group.Songs == null)
+                                        {
+                                            group.Songs = new List<Song>();
+                                        }
+
+                                        group.Songs.Add(song);
+                                    }
+                                    else if (entity.Album != null)
+                                    {
+                                        var album = GetAlbum(entity.Album, null);
+
+                                        if (group.Playlists == null)
+                                        {
+                                            group.Playlists = new List<IPlaylist>();
+                                        }
+
+                                        group.Playlists.Add(album);
+                                    }
+                                    else if (entity.Playlist != null)
+                                    {
+                                        var playlist = entity.Playlist.ToUserPlaylist();
+
+                                        if (group.Playlists == null)
+                                        {
+                                            group.Playlists = new List<IPlaylist>();
+                                        }
+
+                                        group.Playlists.Add(playlist);
+                                    }
+                                }
+
+                                groups.Add(group);
+                            }
+                        }
+                    }
+                }
+            }
+
+            return groups;
         }
 
         private static Artist GetArtist(GoogleMusicArtist googleMusicArtist)

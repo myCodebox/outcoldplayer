@@ -29,6 +29,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         Task<Tuple<Radio, IList<Song>>> CreateAsync(Album album);
 
+        Task<Tuple<Radio, IList<Song>>> CreateAsync(AllAccessGenre genre);
+
         Task<bool> RenameStationAsync(Radio radio, string title);
     }
 
@@ -135,6 +137,17 @@ namespace OutcoldSolutions.GoogleMusic.Services
             }
 
             return await this.HandleCreationResponse(await this.radioWebService.CreateStationAsync(album), album.Title, album.ArtUrl);
+        }
+
+        public async Task<Tuple<Radio, IList<Song>>> CreateAsync(AllAccessGenre genre)
+        {
+            var radio = await this.radioStationsRepository.FindByGoogleGenreId(genre.Id);
+            if (radio != null)
+            {
+                return Tuple.Create(radio, await this.GetRadioSongsAsync(radio.RadioId));
+            }
+
+            return await this.HandleCreationResponse(await this.radioWebService.CreateStationAsync(genre), genre.Title, genre.ArtUrl);
         }
 
         public async Task<bool> RenameStationAsync(Radio radio, string title)

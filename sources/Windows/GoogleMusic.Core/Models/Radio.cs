@@ -110,5 +110,7 @@ namespace OutcoldSolutions.GoogleMusic.Models
         public string GoogleArtistId { get; set; }
 
         public string GoogleAlbumId { get; set; }
+
+        public string GoogleGenreId { get; set; }
     }
 }
