@@ -127,12 +127,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     this.Logger.LogTask(this.playQueueService.PlayAsync(playlist, songs, 0));
                 }
             }
-
-            if (!string.IsNullOrEmpty(request.SongId))
-            {
-                await this.Dispatcher.RunAsync(
-                    () => this.EventAggregator.Publish(new SelectSongByIdEvent(request.SongId)));
-            }
         }
     }
 }

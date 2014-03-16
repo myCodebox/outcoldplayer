@@ -3,6 +3,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Presenters
 {
+    using System;
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
@@ -18,7 +19,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     {
         private readonly IApplicationResources resources;
         private readonly IAllAccessService allAccessService;
-        private readonly IAlbumsRepository albumsRepository;
 
         private readonly IApplicationStateService applicationStateService;
 
@@ -28,11 +28,12 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private readonly IRadioStationsService radioStationsService;
 
+        private Tuple<Album, IList<Song>> allAccessAlbum;
+
         public AlbumPageViewPresenter(
             IDependencyResolverContainer container,
             IApplicationResources resources,
             IAllAccessService allAccessService,
-            IAlbumsRepository albumsRepository,
             IApplicationStateService applicationStateService,
             INavigationService navigationService,
             IPlayQueueService playQueueService,
@@ -41,7 +42,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         {
             this.resources = resources;
             this.allAccessService = allAccessService;
-            this.albumsRepository = albumsRepository;
             this.applicationStateService = applicationStateService;
             this.navigationService = navigationService;
             this.playQueueService = playQueueService;
@@ -59,11 +59,26 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                         this.MainFrame.ShowPopup<IReadMorePopup>(PopupRegion.Full, ((Album)this.BindingModel.Playlist).Description);
                     }
                 });
+
+            this.NavigateToAllAccessAlbumCommand = new DelegateCommand(
+                () =>
+                {
+                    if (this.allAccessAlbum != null && this.allAccessAlbum.Item2 != null)
+                    {
+                        this.navigationService.NavigateToPlaylist(
+                            new PlaylistNavigationRequest(this.allAccessAlbum.Item1, this.allAccessAlbum.Item2)
+                            {
+                                ForceToShowAllAccess = true
+                            });
+                    }
+                });
         }
 
         public DelegateCommand StartRadioCommand { get; set; }
 
         public DelegateCommand NavigateToArtistCommand { get; set; }
+
+        public DelegateCommand NavigateToAllAccessAlbumCommand { get; set; }
 
         public DelegateCommand ReadMoreCommand { get; set; }
 
@@ -74,17 +89,39 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 && !string.IsNullOrEmpty(((Album)this.BindingModel.Playlist).GoogleAlbumId))
             {
                 yield return new CommandMetadata(CommandIcon.Radio, "Start radio", this.StartRadioCommand);
+
+                if (this.allAccessAlbum != null)
+                {
+                    yield return new CommandMetadata(CommandIcon.Web, "All Access Album", this.NavigateToAllAccessAlbumCommand);
+                }
             }
+        }
+
+        public override void OnNavigatingFrom(NavigatingFromEventArgs eventArgs)
+        {
+            base.OnNavigatingFrom(eventArgs);
+
+            this.allAccessAlbum = null;
         }
 
         protected override async Task LoadDataAsync(NavigatedToEventArgs navigatedToEventArgs, CancellationToken cancellationToken)
         {
-            Album album = null;
-            
             var request = navigatedToEventArgs.Parameter as PlaylistNavigationRequest;
-            if (request != null && request.Playlist != null && ((Album)request.Playlist).AlbumId == 0)
+            if (request != null 
+                && request.Playlist != null 
+                && (((Album)request.Playlist).AlbumId == 0
+                || request.ForceToShowAllAccess))
             {
-                var result = await this.allAccessService.GetAlbumAsync((Album)request.Playlist, cancellationToken);
+                Tuple<Album, IList<Song>> result = null;
+
+                if (request.Songs != null)
+                {
+                    result = new Tuple<Album, IList<Song>>((Album)request.Playlist, request.Songs);
+                }
+                else
+                {
+                    result = await this.allAccessService.GetAlbumAsync((Album)request.Playlist, cancellationToken);
+                }
 
                 if (result != null)
                 {
@@ -97,29 +134,24 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                             this.BindingModel.Subtitle = this.resources.GetTitle(result.Item1.PlaylistType);
                         });
                 }
-
-
-                if (!string.IsNullOrEmpty(request.SongId))
-                {
-                    this.EventAggregator.Publish(new SelectSongByIdEvent(request.SongId));
-                }
             }
             else
             {
                 await base.LoadDataAsync(navigatedToEventArgs, cancellationToken);
-            }
 
-            album = this.BindingModel.Playlist as Album;
-            if (album != null && string.IsNullOrEmpty(album.Description) && !string.IsNullOrEmpty(album.GoogleAlbumId))
-            {
-                var result = await this.allAccessService.GetAlbumAsync(album, cancellationToken);
-                if (result != null)
+                Album album = this.BindingModel.Playlist as Album;
+                if (album != null && string.IsNullOrEmpty(album.Description) && !string.IsNullOrEmpty(album.GoogleAlbumId))
                 {
-                    await this.Dispatcher.RunAsync(
-                        () =>
-                        {
-                            this.BindingModel.Playlist = result.Item1;
-                        });
+                    var result = await this.allAccessService.GetAlbumAsync(album, cancellationToken);
+                    if (result != null)
+                    {
+                        this.allAccessAlbum = result;
+                        await this.Dispatcher.RunAsync(
+                            () =>
+                            {
+                                this.BindingModel.Playlist = result.Item1;
+                            });
+                    }
                 }
             }
         }

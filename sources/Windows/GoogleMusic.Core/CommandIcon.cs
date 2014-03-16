@@ -28,5 +28,7 @@ namespace OutcoldSolutions.GoogleMusic
         public const string List = "\uE14C";
 
         public const string Radio = "\uE1D6";
+
+        public const string Web = "\uE128";
     }
 }

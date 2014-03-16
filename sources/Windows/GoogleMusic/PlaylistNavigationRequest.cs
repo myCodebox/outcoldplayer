@@ -10,12 +10,19 @@ namespace OutcoldSolutions.GoogleMusic
 
     public class PlaylistNavigationRequest
     {
-        public PlaylistNavigationRequest(IPlaylist playlist, string songId = null)
+        public PlaylistNavigationRequest(IPlaylist playlist)
         {
             this.PlaylistType = playlist.PlaylistType;
             this.PlaylistId = playlist.Id;
             this.Playlist = playlist;
-            this.SongId = songId;
+        }
+
+        public PlaylistNavigationRequest(IPlaylist playlist, IList<Song> songs)
+        {
+            this.PlaylistType = playlist.PlaylistType;
+            this.PlaylistId = playlist.Id;
+            this.Playlist = playlist;
+            this.Songs = songs;
         }
 
         public PlaylistNavigationRequest(IPlaylist playlist, string title, string subtitle, IList<Song> songs)
@@ -58,8 +65,6 @@ namespace OutcoldSolutions.GoogleMusic
 
         public string PlaylistId { get; set; }
 
-        public string SongId { get; set; }
-
         public IList<Song> Songs { get; set; }
 
         public IList<IPlaylist> Playlists { get; set; } 
@@ -67,6 +72,8 @@ namespace OutcoldSolutions.GoogleMusic
         public string Title { get; set; }
 
         public string Subtitle { get; set; }
+
+        public bool ForceToShowAllAccess { get; set; }
 
         public override bool Equals(object obj)
         {
