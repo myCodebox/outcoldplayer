@@ -18,7 +18,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     {
         private readonly IApplicationResources resources;
 
-        private readonly IArtistsRepository artistsRepository;
+        private readonly IAlbumsRepository albumsRepository;
 
         private readonly INavigationService navigationService;
 
@@ -27,12 +27,12 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         public GenrePageViewPresenter(
             IApplicationResources resources, 
             IPlaylistsService playlistsService,
-            IArtistsRepository artistsRepository,
+            IAlbumsRepository albumsRepository,
             INavigationService navigationService)
             : base(resources, playlistsService)
         {
             this.resources = resources;
-            this.artistsRepository = artistsRepository;
+            this.albumsRepository = albumsRepository;
             this.navigationService = navigationService;
 
             this.ShowAllCommand = new DelegateCommand(
@@ -62,13 +62,13 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 this.genre = playlistNavigationRequest.Playlist as Genre;
                 if (this.genre != null)
                 {
-                    var artists = await this.artistsRepository.FindGenreArtistsAsync(this.genre.TitleNorm);
+                    var artists = await this.albumsRepository.FindGenreAlbumsAsync(this.genre.TitleNorm);
                     await this.Dispatcher.RunAsync(
                         () =>
                         {
                             this.BindingModel.Title = this.genre.Title;
-                            this.BindingModel.Subtitle = "Genre - Artists";
-                            this.BindingModel.PlaylistType = PlaylistType.Artist;
+                            this.BindingModel.Subtitle = "Genre - Albums";
+                            this.BindingModel.PlaylistType = PlaylistType.Album;
                             this.BindingModel.Playlists = artists.Cast<IPlaylist>().ToList();
                         });
                 }
