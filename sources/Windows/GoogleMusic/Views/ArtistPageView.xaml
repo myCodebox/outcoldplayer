@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:views="using:OutcoldSolutions.GoogleMusic.Views"
+    xmlns:converters="using:OutcoldSolutions.GoogleMusic.Converters"
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400"
@@ -12,18 +13,17 @@
     Subtitle="Albums"
     x:Uid="ArtistPageView">
 
-    <ScrollViewer HorizontalScrollBarVisibility="Disabled"
-                  HorizontalScrollMode="Disabled"
-                  VerticalScrollBarVisibility="Auto"
-                  VerticalScrollMode="Auto"
-                  Visibility="{Binding Path=IsDataLoading, Converter={StaticResource BooleanToInvisibilityConverter}}">
-        <StackPanel>
-            <Button Command="{Binding Path=ReadMoreCommand}" Margin="0, 20, 0, 40">
-                <Button.Template>
+    <views:PageViewBase.Resources>
+        <Style x:Key="ArtistInfoButtonStyle" TargetType="Button">
+            <Setter Property="Template">
+                <Setter.Value>
                     <ControlTemplate>
                         <Grid>
                             <Border Width="352" Height="176" Background="Gray" HorizontalAlignment="Left">
-                                <Image Width="352" Height="176" Source="{Binding Path=BindingModel.Artist.ArtUrl, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=352, Mode=OneWay}" Stretch="None"/>
+                                <Image Width="352" 
+                                       Height="176" 
+                                       Source="{Binding Path=BindingModel.Artist.ArtUrl, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=352, Mode=OneWay}" 
+                                       Stretch="None"/>
                             </Border>
 
                             <TextBlock Margin="372, 0, 20, 0" 
@@ -34,19 +34,64 @@
                                    TextWrapping="Wrap"/>
                         </Grid>
                     </ControlTemplate>
-                </Button.Template>
-            </Button>
-            
+                </Setter.Value>
+            </Setter>
+        </Style>
 
-            <TextBlock Style="{StaticResource SubheaderTextStyle}"
+        <Style x:Key="SmallArtistInfoButtonStyle" TargetType="Button">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Grid>
+                            <Border Width="200" Height="100" Background="Gray" HorizontalAlignment="Left">
+                                <Image Width="200" 
+                                       Height="100" 
+                                       Source="{Binding Path=BindingModel.Artist.ArtUrl, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=352, Mode=OneWay}" 
+                                       Stretch="Uniform"/>
+                            </Border>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
+        <converters:ControlStyles x:Key="ArtistInfoButtonStyles" 
+                                  Large="{StaticResource ArtistInfoButtonStyle}"
+                                  Medium="{StaticResource ArtistInfoButtonStyle}"
+                                  Small="{StaticResource SmallArtistInfoButtonStyle}" />
+        
+        <converters:ControlStyles x:Key="GroupHeaderControlStyles"
+                                  Large="{StaticResource SubheaderTextStyle}"
+                                  Medium="{StaticResource SubheaderTextStyle}">
+            <converters:ControlStyles.Small>
+                <Style TargetType="TextBlock" BasedOn="{StaticResource SubheaderTextStyle}">
+                    <Setter Property="FontSize" Value="20" />
+                    <Setter Property="LineHeight" Value="24" />
+                </Style>
+            </converters:ControlStyles.Small>
+        </converters:ControlStyles>
+    </views:PageViewBase.Resources>
+    
+    <ScrollViewer HorizontalScrollBarVisibility="Disabled"
+                  HorizontalScrollMode="Disabled"
+                  VerticalScrollBarVisibility="Auto"
+                  VerticalScrollMode="Auto"
+                  Visibility="{Binding Path=IsDataLoading, Converter={StaticResource BooleanToInvisibilityConverter}}">
+        <StackPanel>
+            <Button Command="{Binding Path=ReadMoreCommand}" 
+                    Margin="0, 20, 0, 40"
+                    Style="{Binding Source={StaticResource ApplicationSize}, Path=Instance, Converter={StaticResource StyleSelectorConverter}, ConverterParameter={StaticResource ArtistInfoButtonStyles}}"/>
+
+
+            <TextBlock Style="{Binding Source={StaticResource ApplicationSize}, Path=Instance, Converter={StaticResource StyleSelectorConverter}, ConverterParameter={StaticResource GroupHeaderControlStyles}}"
                        Visibility="{Binding Path=BindingModel.Albums, Converter={StaticResource NotEmptyToVisibilityConverter}}"
                        Margin="0, 20, 0, 0">My Library Albums</TextBlock>
 
             <ContentPresenter x:Name="LibraryAlbumsContentPresenter"
                               Visibility="{Binding Path=BindingModel.Albums, Converter={StaticResource NotEmptyToVisibilityConverter}}"
                               Margin="0, 20, 0, 0"/>
-                      
-            <TextBlock Style="{StaticResource SubheaderTextStyle}"
+
+            <TextBlock Style="{Binding Source={StaticResource ApplicationSize}, Path=Instance, Converter={StaticResource StyleSelectorConverter}, ConverterParameter={StaticResource GroupHeaderControlStyles}}"
                        Visibility="{Binding Path=BindingModel.Collections, Converter={StaticResource NotEmptyToVisibilityConverter}}"
                        Margin="0, 0, 0, 0">My Library Collections
             </TextBlock>
@@ -61,11 +106,11 @@
                 <Button.Template>
                     <ControlTemplate>
                         <StackPanel Orientation="Horizontal" >
-                            <TextBlock Style="{StaticResource SubheaderTextStyle}" Text="Artist Top Songs" />
-                            <TextBlock Style="{StaticResource SubheaderTextStyle}" Text=" (" />
-                            <TextBlock Style="{StaticResource SubheaderTextStyle}" Text="{Binding Path=BindingModel.TopSongs.Count, Mode=OneWay}" />
-                            <TextBlock Style="{StaticResource SubheaderTextStyle}" Text=")" />
-                            <TextBlock Style="{StaticResource SubheaderTextStyle}" Margin="10, 0, 0, 0" FontFamily="Segoe UI Symbol" Text="{StaticResource ChevronGlyph}"/>
+                            <TextBlock Style="{Binding Source={StaticResource ApplicationSize}, Path=Instance, Converter={StaticResource StyleSelectorConverter}, ConverterParameter={StaticResource GroupHeaderControlStyles}}" Text="Artist Top Songs" />
+                            <TextBlock Style="{Binding Source={StaticResource ApplicationSize}, Path=Instance, Converter={StaticResource StyleSelectorConverter}, ConverterParameter={StaticResource GroupHeaderControlStyles}}" Text=" (" />
+                            <TextBlock Style="{Binding Source={StaticResource ApplicationSize}, Path=Instance, Converter={StaticResource StyleSelectorConverter}, ConverterParameter={StaticResource GroupHeaderControlStyles}}" Text="{Binding Path=BindingModel.TopSongs.Count, Mode=OneWay}" />
+                            <TextBlock Style="{Binding Source={StaticResource ApplicationSize}, Path=Instance, Converter={StaticResource StyleSelectorConverter}, ConverterParameter={StaticResource GroupHeaderControlStyles}}" Text=")" />
+                            <TextBlock Style="{Binding Source={StaticResource ApplicationSize}, Path=Instance, Converter={StaticResource StyleSelectorConverter}, ConverterParameter={StaticResource GroupHeaderControlStyles}}" Margin="10, 0, 0, 0" FontFamily="Segoe UI Symbol" Text="{StaticResource ChevronGlyph}"/>
                         </StackPanel>
                     </ControlTemplate>
                 </Button.Template>
@@ -81,11 +126,11 @@
                 <Button.Template>
                     <ControlTemplate>
                         <StackPanel Orientation="Horizontal" >
-                            <TextBlock Style="{StaticResource SubheaderTextStyle}" Text="Artist Albums" />
-                            <TextBlock Style="{StaticResource SubheaderTextStyle}" Text=" (" />
-                            <TextBlock Style="{StaticResource SubheaderTextStyle}" Text="{Binding Path=BindingModel.GoogleMusicAlbums.Count, Mode=OneWay}" />
-                            <TextBlock Style="{StaticResource SubheaderTextStyle}" Text=")" />
-                            <TextBlock Style="{StaticResource SubheaderTextStyle}" Margin="10, 0, 0, 0" FontFamily="Segoe UI Symbol" Text="{StaticResource ChevronGlyph}"/>
+                            <TextBlock Style="{Binding Source={StaticResource ApplicationSize}, Path=Instance, Converter={StaticResource StyleSelectorConverter}, ConverterParameter={StaticResource GroupHeaderControlStyles}}" Text="Artist Albums" />
+                            <TextBlock Style="{Binding Source={StaticResource ApplicationSize}, Path=Instance, Converter={StaticResource StyleSelectorConverter}, ConverterParameter={StaticResource GroupHeaderControlStyles}}" Text=" (" />
+                            <TextBlock Style="{Binding Source={StaticResource ApplicationSize}, Path=Instance, Converter={StaticResource StyleSelectorConverter}, ConverterParameter={StaticResource GroupHeaderControlStyles}}" Text="{Binding Path=BindingModel.GoogleMusicAlbums.Count, Mode=OneWay}" />
+                            <TextBlock Style="{Binding Source={StaticResource ApplicationSize}, Path=Instance, Converter={StaticResource StyleSelectorConverter}, ConverterParameter={StaticResource GroupHeaderControlStyles}}" Text=")" />
+                            <TextBlock Style="{Binding Source={StaticResource ApplicationSize}, Path=Instance, Converter={StaticResource StyleSelectorConverter}, ConverterParameter={StaticResource GroupHeaderControlStyles}}" Margin="10, 0, 0, 0" FontFamily="Segoe UI Symbol" Text="{StaticResource ChevronGlyph}"/>
                         </StackPanel>
                     </ControlTemplate>
                 </Button.Template>
@@ -101,11 +146,11 @@
                 <Button.Template>
                     <ControlTemplate>
                         <StackPanel Orientation="Horizontal" >
-                            <TextBlock Style="{StaticResource SubheaderTextStyle}" Text="Related Artists" />
-                            <TextBlock Style="{StaticResource SubheaderTextStyle}" Text=" (" />
-                            <TextBlock Style="{StaticResource SubheaderTextStyle}" Text="{Binding Path=BindingModel.RelatedArtists.Count, Mode=OneWay}" />
-                            <TextBlock Style="{StaticResource SubheaderTextStyle}" Text=")" />
-                            <TextBlock Style="{StaticResource SubheaderTextStyle}" Margin="10, 0, 0, 0" FontFamily="Segoe UI Symbol" Text="{StaticResource ChevronGlyph}"/>
+                            <TextBlock Style="{Binding Source={StaticResource ApplicationSize}, Path=Instance, Converter={StaticResource StyleSelectorConverter}, ConverterParameter={StaticResource GroupHeaderControlStyles}}" Text="Related Artists" />
+                            <TextBlock Style="{Binding Source={StaticResource ApplicationSize}, Path=Instance, Converter={StaticResource StyleSelectorConverter}, ConverterParameter={StaticResource GroupHeaderControlStyles}}" Text=" (" />
+                            <TextBlock Style="{Binding Source={StaticResource ApplicationSize}, Path=Instance, Converter={StaticResource StyleSelectorConverter}, ConverterParameter={StaticResource GroupHeaderControlStyles}}" Text="{Binding Path=BindingModel.RelatedArtists.Count, Mode=OneWay}" />
+                            <TextBlock Style="{Binding Source={StaticResource ApplicationSize}, Path=Instance, Converter={StaticResource StyleSelectorConverter}, ConverterParameter={StaticResource GroupHeaderControlStyles}}" Text=")" />
+                            <TextBlock Style="{Binding Source={StaticResource ApplicationSize}, Path=Instance, Converter={StaticResource StyleSelectorConverter}, ConverterParameter={StaticResource GroupHeaderControlStyles}}" Margin="10, 0, 0, 0" FontFamily="Segoe UI Symbol" Text="{StaticResource ChevronGlyph}"/>
                         </StackPanel>
                     </ControlTemplate>
                 </Button.Template>

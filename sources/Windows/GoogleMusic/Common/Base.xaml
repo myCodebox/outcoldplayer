@@ -94,6 +94,10 @@
         <Setter Property="FontWeight" Value="SemiLight"/>
     </Style>
 
+    <Style x:Key="PlaylistSmallBodyTextStyle" TargetType="TextBlock" BasedOn="{StaticResource BodyTextStyle}">
+        <Setter Property="FontSize" Value="14"/>
+    </Style>
+
     <Style x:Key="CaptionTextStyle" TargetType="TextBlock" BasedOn="{StaticResource BaselineTextStyle}">
         <Setter Property="FontSize" Value="12"/>
         <Setter Property="Foreground" Value="{StaticResource ApplicationSecondaryForegroundThemeBrush}"/>

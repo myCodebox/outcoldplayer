@@ -146,7 +146,7 @@
             <Setter Property="Template" >
                 <Setter.Value>
                     <ControlTemplate>
-                        <Border Margin="20, 20, 0, 0">
+                        <Border Margin="10, 10, 0, 0">
                             <ContentPresenter />
                         </Border>
                     </ControlTemplate>
