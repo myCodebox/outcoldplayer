@@ -6,6 +6,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using System;
     using System.Threading.Tasks;
 
+    using Windows.UI.ViewManagement;
+
     using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Shell;
@@ -55,7 +57,14 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 } 
                 else if (!this.disableClickToCache)
                 {
-                    await this.dispatcher.RunAsync(() => applicationSettingViewsService.Show("offlinecache"));
+                    await this.dispatcher.RunAsync(
+                        () =>
+                        {
+                            if (ApplicationView.Value != ApplicationViewState.Snapped || ApplicationView.TryUnsnap())
+                            {
+                                applicationSettingViewsService.Show("offlinecache");
+                            }
+                        });
                 }
             });
 
@@ -179,7 +188,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     await this.Dispatcher.RunAsync(() =>
                     {
                         this.ShowProgressRing = true;
-                        this.MessageText = "Downloading songs to local cache...";
+                        this.MessageText = "Downloading songs...";
                     });
                     break;
                 }
@@ -189,7 +198,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     await this.Dispatcher.RunAsync(() =>
                     {
                         this.ShowProgressRing = false;
-                        this.MessageText = "Error happened on download songs to local cache...";
+                        this.MessageText = "Error happened...";
                         this.UpdateLibraryCommand.RaiseCanExecuteChanged();
                     });
                     break;

@@ -107,7 +107,7 @@
 
 
     <DataTemplate x:Key="SmallGenreDataTemplate">
-        <StackPanel Width="2020" Height="80" Orientation="Horizontal" Background="{StaticResource ListViewItemPlaceholderBackgroundThemeBrush}">
+        <StackPanel Width="220" Height="80" Orientation="Horizontal" Background="{StaticResource ListViewItemPlaceholderBackgroundThemeBrush}">
             <Canvas Width="80" Height="80" Background="Gray">
                 <Image Width="39" Height="39" Source="{Binding Path=ArtUris, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=0, Mode=OneWay}" Stretch="Uniform"/>
                 <Image Canvas.Left="41" Width="39" Height="39" Source="{Binding Path=ArtUris, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=1, Mode=OneWay}" Stretch="Uniform"/>
@@ -456,7 +456,7 @@
         <Setter Property="ItemContainerStyle">
             <Setter.Value>
                 <Style TargetType="ListViewItem">
-                    <Setter Property="Margin" Value="0, 0, 24, 24" />
+                    <Setter Property="Margin" Value="0, 0, 10, 10" />
                     <Setter Property="Padding" Value="0" />
                 </Style>
             </Setter.Value>
@@ -465,7 +465,7 @@
             <Setter.Value>
                 <ItemsPanelTemplate>
                     <WrapGrid Orientation="Horizontal"
-                              Margin="0, 0, 0, 40"/>
+                              Margin="0, 0, 0, 20"/>
                 </ItemsPanelTemplate>
             </Setter.Value>
         </Setter>

@@ -72,35 +72,30 @@
         </Style>
 
         <Style x:Name="SmallTitleGridStyle" TargetType="ContentControl">
-            <Setter Property="Margin" Value="20, 20, 0, 10" />
+            <Setter Property="Margin" Value="0, 0, 0, 10" />
             <Setter Property="HorizontalAlignment" Value="Left" />
-            <Setter Property="Height" Value="80" />
+            <Setter Property="Height" Value="100" />
             <Setter Property="Template" >
                 <Setter.Value>
                     <ControlTemplate>
                         <Grid>
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="42" />
+                                <RowDefinition Height="60" />
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
 
                             <Button Grid.Row="0"
-                                    HorizontalAlignment="Left"
-                                    Margin="-5, 0, 0, 6"
-                                    Style="{StaticResource SnappedBackButtonStyle}" 
+                                    Margin="10, 0, 0, 0"
+                                    Content="&#xE112;"
+                                    Height="60"
+                                    Width="40"
+                                    FontSize="14"
+                                    AutomationProperties.Name=""
+                                    Style="{StaticResource NoBorderAppBarButtonStyle}" 
                                     Visibility="{Binding Path=IsBackButtonVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                                     Command="{Binding Path=GoBackCommand}"/>
 
-                            <Image Grid.Row="0"
-                                   HorizontalAlignment="Left"
-                                   Source="ms-appx:///Assets/StoreLogo.png"
-                                   Visibility="{Binding Path=IsBackButtonVisible, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}"
-                                   VerticalAlignment="Bottom"  
-                                   Margin="0,0,0,6" 
-                                   Width="36" 
-                                   Height="36"/>
-
-                            <StackPanel HorizontalAlignment="Left" Grid.Row="1">
+                            <StackPanel Margin="20, 0, 0, 0" HorizontalAlignment="Left" Grid.Row="1">
                                 <TextBlock 
                                        HorizontalAlignment="Left"
                                        Style="{StaticResource HeaderTextStyle}" 
@@ -111,10 +106,10 @@
                                        FontSize="24"
                                        LineHeight="24"/>
 
-                                <TextBlock HorizontalAlignment="Right"
+                                <TextBlock HorizontalAlignment="Left"
                                            Style="{StaticResource SubheaderTextStyle}" 
                                            Text="{Binding Path=Subtitle, Mode=OneWay}"
-                                           Margin="0, 0, -10, 0"
+                                           Margin="0, 0, 0, 0"
                                            FontSize="14"
                                            LineHeight="14"/>
                             </StackPanel>
@@ -187,6 +182,7 @@
 
         <ContentControl Grid.RowSpan="2"
                         x:Name="MainMenuContainer"
+                        Canvas.ZIndex="100"
                         VerticalAlignment="Stretch"
                         HorizontalAlignment="Stretch"
                         VerticalContentAlignment="Stretch"
@@ -194,7 +190,8 @@
 
         <ContentControl Grid.Row="0" 
                         Grid.RowSpan="3"
-                        Grid.Column="1"
+                        Grid.Column="0"
+                        Grid.ColumnSpan="2"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch"
                         HorizontalContentAlignment="Stretch"

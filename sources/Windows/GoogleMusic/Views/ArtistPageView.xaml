@@ -15,6 +15,7 @@
 
     <views:PageViewBase.Resources>
         <Style x:Key="ArtistInfoButtonStyle" TargetType="Button">
+            <Setter Property="Margin" Value="0, 20, 0, 40" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate>
@@ -27,11 +28,11 @@
                             </Border>
 
                             <TextBlock Margin="372, 0, 20, 0" 
-                                   Text="{Binding Path=BindingModel.Artist.Bio}"
-                                   MaxHeight="176"
-                                   Style="{StaticResource BodyTextStyle}"
-                                   TextTrimming="WordEllipsis"
-                                   TextWrapping="Wrap"/>
+                                       Text="{Binding Path=BindingModel.Artist.Bio}"
+                                       MaxHeight="176"
+                                       Style="{StaticResource BodyTextStyle}"
+                                       TextTrimming="WordEllipsis"
+                                       TextWrapping="Wrap"/>
                         </Grid>
                     </ControlTemplate>
                 </Setter.Value>
@@ -39,6 +40,7 @@
         </Style>
 
         <Style x:Key="SmallArtistInfoButtonStyle" TargetType="Button">
+            <Setter Property="Margin" Value="0, 20, 0, 20" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate>
@@ -79,9 +81,7 @@
                   Visibility="{Binding Path=IsDataLoading, Converter={StaticResource BooleanToInvisibilityConverter}}">
         <StackPanel>
             <Button Command="{Binding Path=ReadMoreCommand}" 
-                    Margin="0, 20, 0, 40"
                     Style="{Binding Source={StaticResource ApplicationSize}, Path=Instance, Converter={StaticResource StyleSelectorConverter}, ConverterParameter={StaticResource ArtistInfoButtonStyles}}"/>
-
 
             <TextBlock Style="{Binding Source={StaticResource ApplicationSize}, Path=Instance, Converter={StaticResource StyleSelectorConverter}, ConverterParameter={StaticResource GroupHeaderControlStyles}}"
                        Visibility="{Binding Path=BindingModel.Albums, Converter={StaticResource NotEmptyToVisibilityConverter}}"
