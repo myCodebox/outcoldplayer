@@ -16,6 +16,8 @@ namespace OutcoldSolutions.GoogleMusic.Controls
     {
         public DataTemplate ArtistDataTemplate { get; set; }
 
+        public DataTemplate SmallArtistDataTemplate { get; set; }
+
         public DataTemplate AlbumDataTemplate { get; set; }
 
         public DataTemplate GenreDataTemplate { get; set; }

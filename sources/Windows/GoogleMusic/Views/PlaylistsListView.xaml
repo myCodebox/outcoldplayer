@@ -16,7 +16,7 @@
                 IsItemClickEnabled="True"
                 ItemClick="PlaylistItemClick"
                 ItemsSource="{Binding Path=Playlists, Mode=OneWay}"
-                Style="{StaticResource PlaylistsListView}">
+                Style="{Binding Source={StaticResource ApplicationSize}, Path=Instance, Converter={StaticResource StyleSelectorConverter}, ConverterParameter={StaticResource PlaylistsListViewControlStyles}}">
         <ListView.Transitions>
             <TransitionCollection/>
         </ListView.Transitions>

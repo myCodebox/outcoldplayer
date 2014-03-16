@@ -53,6 +53,7 @@ namespace OutcoldSolutions.GoogleMusic.Controls
         {
             base.OnAttached();
 
+            this.AssociatedObject.SelectionChanged -= this.OnSelectionChanged;
             this.AssociatedObject.SelectionChanged += this.OnSelectionChanged;
             this.Synchronize();
         }
@@ -61,7 +62,8 @@ namespace OutcoldSolutions.GoogleMusic.Controls
         {
             base.OnDetaching();
 
-            this.AssociatedObject.SelectionChanged -= this.OnSelectionChanged;
+            // Note: In WinRT some weird bug that does at first attaching and after detaching
+            //this.AssociatedObject.SelectionChanged -= this.OnSelectionChanged;
         }
 
         private void OnSelectedItemsChanged(DependencyPropertyChangedEventArgs args)

@@ -18,17 +18,17 @@
                   VerticalScrollMode="Auto"
                   Visibility="{Binding Path=IsDataLoading, Converter={StaticResource BooleanToInvisibilityConverter}}">
         <StackPanel>
-            <Button Command="{Binding Path=ReadMoreCommand}" Margin="0, 0, 0, 40">
+            <Button Command="{Binding Path=ReadMoreCommand}" Margin="0, 20, 0, 40">
                 <Button.Template>
                     <ControlTemplate>
                         <Grid>
-                            <Border Width="352" Height="160" Background="Gray" HorizontalAlignment="Left">
-                                <Image Width="352" Height="160" Source="{Binding Path=BindingModel.Artist.ArtUrl, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=352, Mode=OneWay}" Stretch="Uniform"/>
+                            <Border Width="352" Height="176" Background="Gray" HorizontalAlignment="Left">
+                                <Image Width="352" Height="176" Source="{Binding Path=BindingModel.Artist.ArtUrl, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=352, Mode=OneWay}" Stretch="None"/>
                             </Border>
 
                             <TextBlock Margin="372, 0, 20, 0" 
                                    Text="{Binding Path=BindingModel.Artist.Bio}"
-                                   MaxHeight="160"
+                                   MaxHeight="176"
                                    Style="{StaticResource BodyTextStyle}"
                                    TextTrimming="WordEllipsis"
                                    TextWrapping="Wrap"/>

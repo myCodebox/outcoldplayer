@@ -1,6 +1,7 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:controls="using:OutcoldSolutions.GoogleMusic.Controls">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:controls="using:OutcoldSolutions.GoogleMusic.Controls"
+    xmlns:converters="using:OutcoldSolutions.GoogleMusic.Converters">
 
     <DataTemplate x:Key="AlbumDataTemplate">
         <Grid Width="160" Height="240" Background="{StaticResource ListViewItemPlaceholderBackgroundThemeBrush}">
@@ -21,16 +22,36 @@
                             Margin="0, 10, 0, 5"/>
             </StackPanel>
         </Grid>
-    </DataTemplate>
+    </DataTemplate> 
 
     <DataTemplate x:Key="ArtistDataTemplate">
-        <Grid Width="352" Height="216" Background="{StaticResource ListViewItemPlaceholderBackgroundThemeBrush}">
+        <Grid Height="236" Width="352" Background="{StaticResource ListViewItemPlaceholderBackgroundThemeBrush}">
             <Grid.RowDefinitions>
-                <RowDefinition Height="156"/>
+                <RowDefinition Height="176"/>
                 <RowDefinition Height="60"/>
             </Grid.RowDefinitions>
-            <Border  Width="352" Height="156" Background="Gray">
-                <Image Width="352" Height="156" Source="{Binding Path=Playlist.ArtUrl, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=352, Mode=OneWay}" Stretch="None"/>
+            <Border  Width="352" Height="176" Background="Gray">
+                <Image Width="352" Height="176" Source="{Binding Path=Playlist.ArtUrl, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=352, Mode=OneWay}" Stretch="None"/>
+            </Border>
+            <StackPanel Grid.Row="1" Margin="10,5,5,5">
+                <TextBlock Text="{Binding Path=Playlist.Title, Mode=OneWay}"  Style="{StaticResource BodyTextStyle}" TextWrapping="NoWrap" TextTrimming="WordEllipsis" />
+                <StackPanel Orientation="Horizontal" Visibility="{Binding Path=Playlist.AlbumsCount, Mode=OneTime, Converter={StaticResource ValueToInvisibilityConverter}, ConverterParameter=0}">
+                    <TextBlock Text="{Binding Path=Playlist, Mode=OneTime, Converter={StaticResource ArtistAlbumsCountConverter}}" 
+                                Style="{StaticResource SmallTextStyle}" 
+                                Margin="0, 10, 0, 5" />
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="SmallArtistDataTemplate">
+        <Grid Height="160" Width="200" Background="{StaticResource ListViewItemPlaceholderBackgroundThemeBrush}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="100"/>
+                <RowDefinition Height="60"/>
+            </Grid.RowDefinitions>
+            <Border  Width="200" Height="100" Background="Gray">
+                <Image Width="200" Height="100" Source="{Binding Path=Playlist.ArtUrl, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=352, Mode=OneWay}" Stretch="Uniform"/>
             </Border>
             <StackPanel Grid.Row="1" Margin="10,5,5,5">
                 <TextBlock Text="{Binding Path=Playlist.Title, Mode=OneWay}"  Style="{StaticResource BodyTextStyle}" TextWrapping="NoWrap" TextTrimming="WordEllipsis" />
@@ -200,24 +221,27 @@
         </StackPanel>
     </DataTemplate>
 
-    <controls:PlaylistDataTemplateSelector 
-        x:Key="PlaylistDataTemplateSelector"
-        ArtistDataTemplate="{StaticResource ArtistDataTemplate}"
-        AlbumDataTemplate="{StaticResource AlbumDataTemplate}"
-        GenreDataTemplate="{StaticResource GenreDataTemplate}"
-        SystemPlaylistDataTemplate="{StaticResource SystemPlaylistDataTemplate}"
-        UserPlaylistDataTemplate="{StaticResource UserPlaylistDataTemplate}"
-        RadioDataTemplate="{StaticResource RadioDataTemplate}"
-        MixedRadioDataTemplate="{StaticResource MixedRadioDataTemplate}"
-        ArtistRadioDataTemplate="{StaticResource ArtistRadioDataTemplate}"/>
+    
 
     <Style TargetType="ListView" x:Key="PlaylistsListView">
-        <Setter Property="ItemTemplateSelector" Value="{StaticResource PlaylistDataTemplateSelector}" />
         <Setter Property="ScrollViewer.HorizontalScrollMode" Value="Disabled" />
         <Setter Property="ScrollViewer.VerticalScrollMode" Value="Enabled" />
         <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
         <Setter Property="SelectionMode" Value="None" />
+        <Setter Property="ItemTemplateSelector">
+            <Setter.Value>
+                <controls:PlaylistDataTemplateSelector 
+                        ArtistDataTemplate="{StaticResource ArtistDataTemplate}"
+                        AlbumDataTemplate="{StaticResource AlbumDataTemplate}"
+                        GenreDataTemplate="{StaticResource GenreDataTemplate}"
+                        SystemPlaylistDataTemplate="{StaticResource SystemPlaylistDataTemplate}"
+                        UserPlaylistDataTemplate="{StaticResource UserPlaylistDataTemplate}"
+                        RadioDataTemplate="{StaticResource RadioDataTemplate}"
+                        MixedRadioDataTemplate="{StaticResource MixedRadioDataTemplate}"
+                        ArtistRadioDataTemplate="{StaticResource ArtistRadioDataTemplate}"/>
+            </Setter.Value>
+        </Setter>
         <Setter Property="ItemContainerStyle">
             <Setter.Value>
                 <Style TargetType="ListViewItem">
@@ -236,6 +260,49 @@
         </Setter>
     </Style>
 
+    <Style TargetType="ListView" x:Key="SmallPlaylistsListView">
+        <Setter Property="ScrollViewer.HorizontalScrollMode" Value="Disabled" />
+        <Setter Property="ScrollViewer.VerticalScrollMode" Value="Enabled" />
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+        <Setter Property="SelectionMode" Value="None" />
+        <Setter Property="ItemTemplateSelector">
+            <Setter.Value>
+                <controls:PlaylistDataTemplateSelector 
+                        ArtistDataTemplate="{StaticResource SmallArtistDataTemplate}"
+                        AlbumDataTemplate="{StaticResource AlbumDataTemplate}"
+                        GenreDataTemplate="{StaticResource GenreDataTemplate}"
+                        SystemPlaylistDataTemplate="{StaticResource SystemPlaylistDataTemplate}"
+                        UserPlaylistDataTemplate="{StaticResource UserPlaylistDataTemplate}"
+                        RadioDataTemplate="{StaticResource RadioDataTemplate}"
+                        MixedRadioDataTemplate="{StaticResource MixedRadioDataTemplate}"
+                        ArtistRadioDataTemplate="{StaticResource ArtistRadioDataTemplate}"/>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="ItemContainerStyle">
+            <Setter.Value>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="Margin" Value="0, 0, 24, 24" />
+                    <Setter Property="Padding" Value="0" />
+                </Style>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
+                    <WrapGrid Orientation="Horizontal"
+                              Margin="0, 0, 0, 40"/>
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <converters:ControlStyles x:Key="PlaylistsListViewControlStyles"
+                              Large="{StaticResource PlaylistsListView}"
+                              Medium="{StaticResource PlaylistsListView}"
+                              Small="{StaticResource SmallPlaylistsListView}" />
+
+
     <Style TargetType="ListView" x:Key="ZoomOutPlaylistGroupsListView">
         <Setter Property="SelectionMode" Value="None" />
         <Setter Property="VerticalAlignment" Value="Center" />
@@ -247,7 +314,7 @@
         <Setter Property="ItemsPanel">
             <Setter.Value>
                 <ItemsPanelTemplate>
-                    <WrapGrid Orientation="Horizontal"/>
+                    <WrapGrid Orientation="Horizontal" Margin="0, 0, 40, 0"/>
                 </ItemsPanelTemplate>
             </Setter.Value>
         </Setter>
