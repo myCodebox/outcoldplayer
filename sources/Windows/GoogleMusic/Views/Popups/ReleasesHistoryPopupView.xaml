@@ -8,9 +8,9 @@
     mc:Ignorable="d"
     d:DesignHeight="768"
     d:DesignWidth="1366">
-
+    
     <Border Background="{StaticResource AppBarBackgroundThemeBrush}">
-        <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Width="800" Height="640">
+        <Grid HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="800" MinHeight="600" Margin="20, 60, 20, 60">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -18,17 +18,14 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                
-                <Image Source="ms-appx:///Assets/SmallLogo.png" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,0,10,0" Width="30" Height="30"></Image>
-                <TextBlock Style="{StaticResource SubheaderTextStyle}" HorizontalAlignment="Center" Margin="0,-5,0,0" Text="{StaticResource ApplicationName}" />
+            <TextBlock Style="{StaticResource SubheaderTextStyle}" HorizontalAlignment="Center" Margin="0,-5,0,0" Text="{StaticResource ApplicationName}" />
 
-            </StackPanel>
 
             <TextBlock Grid.Row="1" Style="{StaticResource BodyTextStyle}"  Margin="0, 20, 0, 0" x:Uid="ReleaseHistory_Subtitle" >
-                Congratulations! You just installed new version of gMusicW. You can find the list of new feature [+] and fixed bugs [b] below:
+                Congratulations! You just installed new version of outcoldplayer. You can find the list of new feature [+] and fixed bugs [b] below:
             </TextBlock>
 
             <ScrollViewer Grid.Row="2" Margin="0, 20, 0, 0">
@@ -112,7 +109,7 @@
                     <Run>08/24/2013 - Version 2.2.8</Run>
                     </TextBlock>
                     <RichTextBlock Style="{StaticResource BodyRichTextStyle}">
-                        <Paragraph>[b] When user pick song from Search layout gMusicW can navigate to wrong album/artist.</Paragraph>
+                        <Paragraph>[b] When user pick song from Search layout outcoldplayer can navigate to wrong album/artist.</Paragraph>
                         <Paragraph>[b] Stability improvements (crashes and fetching streams).</Paragraph>
                     </RichTextBlock>
                     
@@ -164,7 +161,7 @@
                     </TextBlock>
                     <RichTextBlock Style="{StaticResource BodyRichTextStyle}">
                         <Paragraph>[b] Fix 'Last Added' system playlist.</Paragraph>
-                        <Paragraph>[b] gMusicW can stop to sync library if one of the song contains year in tags with value more than 3000.</Paragraph>
+                        <Paragraph>[b] outcoldplayer can stop to sync library if one of the song contains year in tags with value more than 3000.</Paragraph>
                         <Paragraph>[b] Show "Not found" message in case when some song could not be found on server.</Paragraph>
                         <Paragraph>[b] Show error message on All Access songs (no support yet).</Paragraph>
                     </RichTextBlock> 
@@ -182,11 +179,11 @@
                     <Run>06/03/2013 - Version 2.1.1</Run>
                     </TextBlock>
                     <RichTextBlock Style="{StaticResource BodyRichTextStyle}">
-                        <Paragraph>[+] Add support for songs in user playlists not from user library (all access mode, before gMusicW ignored them).</Paragraph>
+                        <Paragraph>[+] Add support for songs in user playlists not from user library (all access mode, before outcoldplayer ignored them).</Paragraph>
                         <Paragraph>[b] In snapped view rating not always was updated for current song.</Paragraph>
                         <Paragraph>[b] Player keeps next/previous buttons disabled after user adds songs to queue.</Paragraph>
-                        <Paragraph>[b] Fix issues when gMusicW can stop to auto sync library.</Paragraph>
-                        <Paragraph>[b] Sometimes gMusicW does not respond on 'Keep local' button for selected playlists.</Paragraph>
+                        <Paragraph>[b] Fix issues when outcoldplayer can stop to auto sync library.</Paragraph>
+                        <Paragraph>[b] Sometimes outcoldplayer does not respond on 'Keep local' button for selected playlists.</Paragraph>
                     </RichTextBlock>
                     
                     <TextBlock Style="{StaticResource TitleTextStyle}" Margin="0, 10, 0, 0" >
@@ -195,9 +192,9 @@
                     <RichTextBlock Style="{StaticResource BodyRichTextStyle}">
                         <Paragraph>[+] Offline mode (check the "..." button to enable it). No limitation for free version while in beta.</Paragraph>
                         <Paragraph>[+] Predownload of next song in queue.</Paragraph>
-                        <Paragraph>[+] gMusicW caches album art locally.</Paragraph>
+                        <Paragraph>[+] outcoldplayer caches album art locally.</Paragraph>
                         <Paragraph>[+] Add Application Settings button at "..." button, which provides easy access to application settings.</Paragraph>
-                        <Paragraph>[b] gMusicW can continue to work on initial library load if it cannot load playlists.</Paragraph>
+                        <Paragraph>[b] outcoldplayer can continue to work on initial library load if it cannot load playlists.</Paragraph>
                         <Paragraph>[b] Song name on search page can be truncated without '...'.</Paragraph>
                     </RichTextBlock>
                     
@@ -206,7 +203,7 @@
                     </TextBlock>
                     <RichTextBlock Style="{StaticResource BodyRichTextStyle}">
                         <Paragraph>[b] Add support for All Access streams (music which you don't own).</Paragraph>
-                        <Paragraph>[b] gMusicW did not delete songs from local database when they were deleted from server.</Paragraph>
+                        <Paragraph>[b] outcoldplayer did not delete songs from local database when they were deleted from server.</Paragraph>
                     </RichTextBlock>
                     
                     <TextBlock Style="{StaticResource TitleTextStyle}" Margin="0, 10, 0, 0" >
@@ -220,9 +217,9 @@
                     <Run>04/17/2013 - Version 2.0.1</Run>
                     </TextBlock>
                     <RichTextBlock Style="{StaticResource BodyRichTextStyle}">
-                        <Paragraph>[b] When user does not have playlists gMusicW should not show user playlists group in home page.</Paragraph>
+                        <Paragraph>[b] When user does not have playlists outcoldplayer should not show user playlists group in home page.</Paragraph>
                         <Paragraph>[b] Volume level should be stored between application sessions.</Paragraph>
-                        <Paragraph>[b] gMusicW can fail to load library, if some song plays count more than one milliard.</Paragraph>
+                        <Paragraph>[b] outcoldplayer can fail to load library, if some song plays count more than one milliard.</Paragraph>
                         <Paragraph>[b] Library synchronization can be broken if google stores empty playlists.</Paragraph>
                         <Paragraph>[b] Music library initialization can be broken if google contains not unique song identities.</Paragraph>
                         <Paragraph>[b] After purchase app can crash if user will click on Upgrade second time.</Paragraph>
@@ -249,14 +246,14 @@
                     <Run>03/09/2013 - Version 1.3.2</Run>
                     </TextBlock>
                     <RichTextBlock Style="{StaticResource BodyRichTextStyle}">
-                        <Paragraph>[b] gMusicW cannot load load playlist for some users (loading stops on 80-90%).</Paragraph>
+                        <Paragraph>[b] outcoldplayer cannot load load playlist for some users (loading stops on 80-90%).</Paragraph>
                     </RichTextBlock>
 
                     <TextBlock Style="{StaticResource TitleTextStyle}" Margin="0, 10, 0, 0" >
                     <Run>03/01/2013 - Version 1.3.1</Run>
                     </TextBlock>
                     <RichTextBlock Style="{StaticResource BodyRichTextStyle}">
-                        <Paragraph>[b] If song metadata has disc property with value greater than 255 - gMusicW fails to load songs.</Paragraph>
+                        <Paragraph>[b] If song metadata has disc property with value greater than 255 - outcoldplayer fails to load songs.</Paragraph>
                     </RichTextBlock>
 
                     <TextBlock Style="{StaticResource TitleTextStyle}" Margin="0, 10, 0, 0" >
@@ -279,7 +276,7 @@
                     <Run>02/01/2013 - Version 1.2.1</Run>
                     </TextBlock>
                     <RichTextBlock Style="{StaticResource BodyRichTextStyle}">
-                        <Paragraph>[b] On some devices gMusicW cannot load huge songs collection.</Paragraph>
+                        <Paragraph>[b] On some devices outcoldplayer cannot load huge songs collection.</Paragraph>
                         <Paragraph>[b] Increase timeouts for http requests.</Paragraph>
                     </RichTextBlock>
 
@@ -287,13 +284,13 @@
                     <Run>01/17/2013 - Version 1.2</Run>
                     </TextBlock>
                     <RichTextBlock Style="{StaticResource BodyRichTextStyle}">
-                        <Paragraph>[+] Live tiles support (gMusicW updates tiles on the main screen with current playing songs).</Paragraph>
-                        <Paragraph>[+] Last.fm scrobbling support (link Last.fm account in gMusicW settings, Accounts page).</Paragraph>
-                        <Paragraph>[+] gMusicW updates last played albums and playlists in Google Play Music.</Paragraph>
+                        <Paragraph>[+] Live tiles support (outcoldplayer updates tiles on the main screen with current playing songs).</Paragraph>
+                        <Paragraph>[+] Last.fm scrobbling support (link Last.fm account in outcoldplayer settings, Accounts page).</Paragraph>
+                        <Paragraph>[+] outcoldplayer updates last played albums and playlists in Google Play Music.</Paragraph>
                         <Paragraph>[+] Songs load optimization on startup (up to 2 times faster for > 1000 songs).</Paragraph>
                         <Paragraph>[+] Updating list of added/deleted/updated tracks once in 5 minutes from cloud.</Paragraph>
                         <Paragraph>[+] Updating playlists once in 10 minutes from cloud.</Paragraph>
-                        <Paragraph>[b] In background gMusicW memory usage can grow up to 1 GB in a 24 hours playing (without stops and going to foreground).</Paragraph>
+                        <Paragraph>[b] In background outcoldplayer memory usage can grow up to 1 GB in a 24 hours playing (without stops and going to foreground).</Paragraph>
                         <Paragraph>[b] After ~6 hours in session Google Music Service does not save statistic data or playlist changes.</Paragraph>
                         <Paragraph>[b] Some album art pictures can be little blur.</Paragraph>
                         <Paragraph>[b] Search ignored artists from collection albums (like artists of albums with Various Artists).</Paragraph>
@@ -310,8 +307,8 @@
                         <Paragraph>[+] Add two system playlists on Home screen: "All songs" and "Highly rated".</Paragraph>
                         <Paragraph>[+] Playing tracks from queue with turned off screen.</Paragraph>
                         <Paragraph>[+] Clicking on song name in player highlight it in queue.</Paragraph>
-                        <Paragraph>[b] Surface RT (Windows RT devices): some streams do not play until end. gMusicW can switch to next song at the middle of the track.</Paragraph>
-                        <Paragraph>[b] gMusicW can stop to load playlists and songs. Re-signing in is required to make it works again.</Paragraph>
+                        <Paragraph>[b] Surface RT (Windows RT devices): some streams do not play until end. outcoldplayer can switch to next song at the middle of the track.</Paragraph>
+                        <Paragraph>[b] outcoldplayer can stop to load playlists and songs. Re-signing in is required to make it works again.</Paragraph>
                         <Paragraph>[b] Horizontal scrolling not showing on playlists/albums/artists/genres views.</Paragraph>
                         <Paragraph>[b] Fix scrolling by mouse wheel on Home screen.</Paragraph>
                     </RichTextBlock>
@@ -329,33 +326,32 @@
                 </StackPanel>
             </ScrollViewer>
 
-            <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="0, 20, 0, 0">
-                <HyperlinkButton NavigateUri="https://gmusic.uservoice.com">
+            <StackPanel Grid.Row="3" Orientation="Vertical" Margin="0, 40, 0, 0">
+                <HyperlinkButton NavigateUri="https://outcoldplayer.uservoice.com">
                     <HyperlinkButton.Template>
                         <ControlTemplate>
                             <Button>
-                                <Image Source="ms-appx:///Resources/uservoice.png" Height="28" Width="118" VerticalAlignment="Top"  />
+                                <Image Source="ms-appx:///Resources/uservoice.png" Height="28" Width="160" VerticalAlignment="Top" HorizontalAlignment="Center"  />
                             </Button>
                         </ControlTemplate>
                     </HyperlinkButton.Template>
                 </HyperlinkButton>
 
                 <TextBlock Style="{StaticResource BodyTextStyle}" VerticalAlignment="Center" 
-                           Margin="10, 0, 0, 0" 
-                           x:Uid="ReleaseHistory_UserVoice">
-                    UserVoice is the best way to tell us what features you want to see in next versions of gMusicW.
+                           Margin="10, 0, 0, 0" >
+                    UserVoice is the best way to tell us what features you want to see in next versions of outcoldplayer.
                 </TextBlock>
             </StackPanel>
 
-            <StackPanel Grid.Row="4" Orientation="Horizontal" Margin="0, 20, 0, 40">
+            <StackPanel Grid.Row="4" Orientation="Vertical" Margin="0, 40, 0, 40">
 
-                <HyperlinkButton NavigateUri="https://twitter.com/gMusicW">
+                <HyperlinkButton NavigateUri="https://twitter.com/outcoldplayer" HorizontalAlignment="Stretch" >
                     <HyperlinkButton.Template>
                         <ControlTemplate>
                             <Button>
-                                <StackPanel Height="28" Width="118" Orientation="Horizontal" >
+                                <StackPanel Height="28" Width="160" Orientation="Horizontal" HorizontalAlignment="Center" >
                                     <Image Source="ms-appx:///Resources/twitter-logo.png" Height="22" Width="26" Margin="10, 0, 0, 0" VerticalAlignment="Center"  />
-                                    <TextBlock VerticalAlignment="Center" Margin="10, 0, 0, 0">gMusicW</TextBlock>
+                                    <TextBlock VerticalAlignment="Center" Margin="10, 0, 0, 0">outcoldplayer</TextBlock>
                                 </StackPanel>
                             </Button>
                         </ControlTemplate>
@@ -373,12 +369,11 @@
 
             <TextBlock Grid.Row="5" 
                        Style="{StaticResource TitleTextStyle}" 
-                       Margin="0, 0, 0, 0" 
-                       x:Uid="RelaseHistory_ThankYou">
-                Thank you for using gMusicW application!
+                       Margin="0, 0, 0, 0" >
+                Thank you for using outcoldplayer application!
             </TextBlock>
 
-            <Button Grid.Row="5" 
+            <Button Grid.Row="6" 
                     HorizontalAlignment="Right" 
                     Width="80" 
                     Margin="0, 0, 20, 0" 
@@ -388,5 +383,5 @@
             </Button>
         </Grid>
     </Border>
-    
+
 </views:PopupViewBase>

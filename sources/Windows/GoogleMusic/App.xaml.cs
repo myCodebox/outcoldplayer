@@ -120,7 +120,7 @@ namespace OutcoldSolutions.GoogleMusic
 
         private void InitializeApplication()
         {
-            this.Resources["ApplicationName"] = string.Format(CultureInfo.CurrentCulture, "gMusicW {0}", Package.Current.Id.Version.ToVersionString());
+            this.Resources["ApplicationName"] = string.Format(CultureInfo.CurrentCulture, "outcoldplayer {0}", Package.Current.Id.Version.ToVersionString());
             this.Resources["ApplicationVersion"] = Package.Current.Id.Version.ToVersionString();
 
             using (var registration = Container.Registration())

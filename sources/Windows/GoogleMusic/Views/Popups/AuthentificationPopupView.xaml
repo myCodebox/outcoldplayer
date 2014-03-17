@@ -10,7 +10,7 @@
     d:DesignWidth="600">
 
     <Border Background="{StaticResource AppBarBackgroundThemeBrush}">
-        <Grid Width="600" Height="480" >
+        <Grid MaxWidth="600" MaxHeight="580" Margin="20" >
             <Grid  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
@@ -26,14 +26,13 @@
                 <TextBlock Grid.Row="1" 
                            Margin="0, 20, 0, 0" 
                            TextWrapping="Wrap" 
-                           Style="{StaticResource SmallTextStyle}" 
-                           x:Uid="Authorization_SignInInfo">
-                    To use gMusicW player you need to provide your Google Account's email and password. 
-                    If you do not have one, you need to create Google Account. 
-                    Please make sure that you have subscribed to Google Music service. For more details go to the Google Music site.
+                           Style="{StaticResource SmallTextStyle}">
+                    OutcoldPlayer is an unofficial client for Google Music service.
+                    To use it you need to be registered in Google Music with your Google Account. 
+                    For more details please check the Google Music website.
                 </TextBlock>
 
-                <StackPanel Width="400" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" >
+                <StackPanel MaxWidth="400" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" >
                     <TextBlock Style="{StaticResource BasicTextStyle}" 
                                x:Uid="Authorization_EmailLabel" >
                         Email:
@@ -58,17 +57,16 @@
                     </CheckBox>
                 </StackPanel>
 
-                <TextBlock Grid.Row="2" Margin="0, -90, 0, 0" TextWrapping="Wrap" Width="400" TextAlignment="Right"
-                           Style="{StaticResource SmallTextStyle}"
-                           x:Uid="Authorization_PasswordStorageInformation">
-                    Password will be stored in encrypted Windows Storage.
+                <TextBlock Grid.Row="2" Margin="0, -90, 0, 0" TextWrapping="Wrap" MaxWidth="400" TextAlignment="Right"
+                           Style="{StaticResource SmallTextStyle}">
+                    Password will be stored in encrypted Windows Storage. We use your credentials only to get access to Google Music.
                 </TextBlock>
 
                 <TextBlock Grid.Row="2" Margin="0, -60, 0, 0" TextWrapping="Wrap" Foreground="Red" 
                            Text="{Binding Path=BindingModel.ErrorMessage, Mode=OneWay}"
                            Style="{StaticResource SmallTextStyle}" />
 
-                <HyperlinkButton Grid.Row="2" HorizontalAlignment="Left" NavigateUri="https://play.google.com/music">
+                <HyperlinkButton Grid.Row="2" HorizontalAlignment="Left" NavigateUri="https://play.google.com/music" Margin="-5, 0, 0, 0">
                     <StackPanel>
                         <TextBlock FontSize="14" 
                                    x:Uid="Authorization_GoToGoogleMusicLink">Go to Google Music</TextBlock>
