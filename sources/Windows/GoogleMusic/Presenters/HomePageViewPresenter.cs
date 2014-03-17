@@ -10,27 +10,19 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
-    using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Presenters.Popups;
     using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Services;
+    using OutcoldSolutions.GoogleMusic.Shell;
     using OutcoldSolutions.GoogleMusic.Views;
     using OutcoldSolutions.GoogleMusic.Views.Popups;
 
     using Windows.ApplicationModel;
     using Windows.Networking.Connectivity;
-    using Windows.System;
-    using Windows.UI.Popups;
 
     public class HomePageViewPresenter : PlaylistsPageViewPresenterBase<IHomePageView, PlaylistsPageViewBindingModel>
     {
-        private const int AskForReviewStarts = 10;
-        private const string DoNotAskToReviewKey = "DoNotAskToReviewKey";
-        private const string CountOfStartsBeforeReview = "CountOfStartsBeforeReview";
-
-        private readonly IApplicationResources resources;
-
         private readonly ISettingsService settingsService;
         private readonly IAuthentificationService authentificationService;
         private readonly INavigationService navigationService;
@@ -54,7 +46,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             IApplicationStateService stateService)
             : base(resources, playlistsService)
         {
-            this.resources = resources;
             this.settingsService = settingsService;
             this.authentificationService = authentificationService;
             this.navigationService = navigationService;
@@ -180,8 +171,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             {
                 this.MainFrame.ShowPopup<IReleasesHistoryPopupView>(PopupRegion.Full);
             }
-
-            this.VerifyIfCanAskForReview();
         }
 
         private async Task DeinitializeAsync()
@@ -226,6 +215,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 await this.Dispatcher.RunAsync(() => this.mainFrameRegionProvider.SetContent(MainFrameRegion.Links, ApplicationBase.Container.Resolve<LinksRegionView>()));
 
                 this.cachingService.StartDownloadTask();
+
+                this.Container.Resolve<AskForReviewService>();
 
                 this.initialized = true;
             }
@@ -291,57 +282,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 {
                     this.BindingModel.Playlists = results;
                 });
-        }
-
-        private void VerifyIfCanAskForReview()
-        {
-            bool dontAsk = this.settingsService.GetRoamingValue<bool>(DoNotAskToReviewKey);
-            if (!dontAsk)
-            {
-                int startsCount = this.settingsService.GetRoamingValue<int>(CountOfStartsBeforeReview);
-                if (startsCount >= AskForReviewStarts)
-                {
-                    try
-                    {
-                        this.Logger.LogTask(this.VerifyToReview());
-                    }
-                    catch (Exception e) 
-                    {
-                        this.Logger.Error(e, "VerifyToReview failed");
-                    }
-                }
-                else
-                {
-                    this.settingsService.SetRoamingValue<int>(CountOfStartsBeforeReview, startsCount + 1);
-                }
-            }
-        }
-
-        private Task VerifyToReview()
-        {
-            var dialog = new MessageDialog(this.resources.GetString("MessageBox_ReviewMessage"));
-            dialog.Commands.Add(
-                new UICommand(
-                    this.resources.GetString("MessageBox_ReviewButtonRate"),
-                    (cmd) =>
-                    {
-                        this.settingsService.SetRoamingValue<bool>(DoNotAskToReviewKey, true);
-                        this.Logger.LogTask(Launcher.LaunchUriAsync(new Uri("ms-windows-store:REVIEW?PFN=47286outcoldman.gMusic_z1q2m7teapq4y")).AsTask());
-                    }));
-
-            dialog.Commands.Add(
-                new UICommand(
-                    this.resources.GetString("MessageBox_ReviewButtonNoThanks"),
-                    (cmd) =>
-                    this.settingsService.SetRoamingValue<bool>(DoNotAskToReviewKey, true)));
-
-            dialog.Commands.Add(
-                new UICommand(
-                    this.resources.GetString("MessageBox_ReviewButtonRemind"),
-                    (cmd) =>
-                    this.settingsService.SetRoamingValue<int>(CountOfStartsBeforeReview, 0)));
-
-            return dialog.ShowAsync().AsTask();
         }
     }
 }

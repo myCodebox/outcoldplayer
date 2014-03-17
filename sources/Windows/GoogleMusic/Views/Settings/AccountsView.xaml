@@ -60,14 +60,14 @@
                    Margin="0, 40, 0, 0"
                    Visibility="{Binding Path=BindingModel.IsRemembered, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}"
                    x:Uid="SettingsAccount_DoesNotStorePassword">
-                gMusicW does not store email and password of current Google Account.
+                outcoldplayer does not store email and password of current Google Account.
             </TextBlock>
 
             <TextBlock Style="{StaticResource BodyTextStyle}" 
                    Margin="0, 40, 0, 0"
                    Visibility="{Binding Path=BindingModel.IsRemembered, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                    x:Uid="SettingsAccount_StorePasswordInProtectedStore">
-                gMusicW stores email and password in protected Windows store.
+                outcoldplayer stores email and password in protected Windows store.
             </TextBlock>
 
             <Button Command="{Binding Path=ForgetAccountCommand}" 
@@ -84,14 +84,14 @@
             <TextBlock Style="{StaticResource BodyTextStyle}" Margin="0, 20, 0, 0"
                    Visibility="{Binding Path=BindingModel.LastfmAccountName, Converter={StaticResource NullToVisibilityConverter}}"
                    x:Uid="SettingsAccount_LastFmInfo">
-                gMusic can update your "Recently Listened Tracks" list on Last.fm while you are listening music in application. To do this you need to link Last.fm account.
+                outcoldplayer can update your "Recently Listened Tracks" list on Last.fm while you are listening music in application. To do this you need to link Last.fm account.
             </TextBlock>
 
             <TextBlock Style="{StaticResource BodyTextStyle}"
                    Margin="0, 20, 0, 0"
                    Visibility="{Binding Path=BindingModel.LastfmAccountName, Converter={StaticResource NullToInvisibilityConverter}}"
                    x:Uid="SettingsAccount_LastFmAccountLabel">
-                Linked Last.fm account (gMusicW sends updates for your "Recently Listened Tracks" list):
+                Linked Last.fm account (outcoldplayer sends updates to your "Recently Listened Tracks" list):
             </TextBlock>
 
             <TextBlock Text="{Binding Path=BindingModel.LastfmAccountName, Mode=OneWay}" 
@@ -110,11 +110,6 @@
                 Margin="0, 20, 0, 0"
                 Visibility="{Binding Path=BindingModel.LastfmAccountName, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
                 x:Uid="SettingsAccount_LinkLastFmAccountButton"/>
-
-            <TextBlock Style="{StaticResource BodyTextStyle}" Margin="0, 10, 0, 40"
-                   x:Uid="SettingsAccount_LastFmBeta">
-                *Last.fm scrobbing available to all users, while this feature is in beta version.
-            </TextBlock>
 
         </StackPanel>
     </ScrollViewer>

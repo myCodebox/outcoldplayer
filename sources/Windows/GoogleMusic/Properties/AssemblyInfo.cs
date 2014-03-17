@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription("Outcold Solutions Google Music Player for Windows")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Outcold Solutions")]
-[assembly: AssemblyProduct("Outcold Solutions gMusicW")]
+[assembly: AssemblyProduct("Outcold Solutions outcoldplayer")]
 [assembly: AssemblyCopyright("Outcold Solutions © 2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

@@ -49,7 +49,7 @@
             </ToolTipService.ToolTip>
         </Button>
 
-        <Button Margin="0, 0, 20, 20" Style="{StaticResource NoBorderAppBarButtonStyle}"
+        <Button Margin="0, 0, 0, 20" Style="{StaticResource NoBorderAppBarButtonStyle}"
                 Width="40"
                 Content="&#xE1D2;"
                 Foreground="{StaticResource ApplicationThemeCompound3Brush}"
@@ -65,7 +65,7 @@
             </ToolTipService.ToolTip>
         </Button>
 
-        <Button Margin="0, 0, 20, 20" Style="{StaticResource NoBorderAppBarButtonStyle}"
+        <Button Margin="0, 0, 0, 20" Style="{StaticResource NoBorderAppBarButtonStyle}"
                 Width="40"
                 Content="&#xE1D2;"
                 Height="60"
@@ -76,6 +76,20 @@
                 <TextBlock MaxWidth="240"
                            TextWrapping="Wrap">
                     Offline mode. You can see music only which are stored on your device. Click if you want to see all music, not only local.
+                </TextBlock>
+            </ToolTipService.ToolTip>
+        </Button>
+
+        <Button Margin="0, 0, 20, 20" Style="{StaticResource NoBorderAppBarButtonStyle}"
+                Width="40"
+                Content="&#xE11B;"
+                Height="60"
+                FontSize="10"
+                Command="{Binding Path=GetHelpCommand, Mode=OneTime}">
+            <ToolTipService.ToolTip>
+                <TextBlock MaxWidth="240"
+                           TextWrapping="Wrap">
+                    Get help.
                 </TextBlock>
             </ToolTipService.ToolTip>
         </Button>

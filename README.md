@@ -1,7 +1,7 @@
-gMusicW (unofficial Google Music Client for Windows 8)
+outcoldplayer (unofficial Google Music Client for Windows 8)
 =====================
 
-[gMusicW on Windows Store](http://apps.microsoft.com/windows/en-us/app/gmusicw/939f0859-1413-4a52-9ab6-6e50405c8c2e)
+[outcoldplayer on Windows Store](http://apps.microsoft.com/windows/en-us/app/gmusicw/939f0859-1413-4a52-9ab6-6e50405c8c2e)
 
 ## Dependencies 
 

@@ -239,10 +239,12 @@ namespace OutcoldSolutions.GoogleMusic
                 registration.Register<RemoveFromLibraryAction>().AsSingleton();
 
                 registration.Register<ApplicationSize>().AsSingleton(this.Resources["ApplicationSize"]);
+
+                registration.Register<AskForReviewService>().AsSingleton();
             }
 
             Container.Resolve<ApplicationLogManager>();
-
+            
             Container.Resolve<IGoogleMusicSessionService>().LoadSession();
 
             // Publishers

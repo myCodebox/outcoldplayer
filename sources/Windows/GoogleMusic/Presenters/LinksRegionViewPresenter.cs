@@ -79,6 +79,15 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     },
                 () => !this.ShowProgressRing);
 
+            this.GetHelpCommand = new DelegateCommand(
+                () =>
+                {
+                    if (ApplicationView.Value != ApplicationViewState.Snapped || ApplicationView.TryUnsnap())
+                    {
+                        applicationSettingViewsService.Show("support");
+                    }
+                });
+
             this.synchronizationTimer = new DispatcherTimer { Interval = TimeSpan.FromMinutes(5) };
             this.synchronizationTimer.Stop();
 
@@ -98,6 +107,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         public DelegateCommand UpdateLibraryCommand { get; private set; }
 
         public DelegateCommand SwitchModeCommand { get; set; }
+
+        public DelegateCommand GetHelpCommand { get; set; }
 
         public bool ShowProgressRing
         {

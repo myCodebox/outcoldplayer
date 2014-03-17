@@ -5,10 +5,8 @@
 namespace OutcoldSolutions.GoogleMusic
 {
     using OutcoldSolutions.GoogleMusic.BindingModels;
-    using OutcoldSolutions.GoogleMusic.BindingModels.Popups;
     using OutcoldSolutions.GoogleMusic.BindingModels.Settings;
     using OutcoldSolutions.GoogleMusic.InversionOfControl;
-    using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Presenters;
     using OutcoldSolutions.GoogleMusic.Presenters.Popups;
     using OutcoldSolutions.GoogleMusic.Presenters.Settings;
@@ -106,12 +104,11 @@ namespace OutcoldSolutions.GoogleMusic
             registration.Register<OfflineCacheViewPresenter>();
             registration.Register<OfflineCacheViewBindingModel>();
 
-            registration.Register<UpgradeView>()
-                        .InjectionRule<BindingModelBase, UpgradeViewPresenter>();
-            registration.Register<UpgradeViewPresenter>();
+            registration.Register<SupportView>()
+                .InjectionRule<BindingModelBase, SupportViewPresenter>();
+            registration.Register<SupportViewPresenter>();
 
             registration.Register<PrivacyView>();
-            registration.Register<SupportView>();
             registration.Register<LegalView>();
         }
 
@@ -159,6 +156,11 @@ namespace OutcoldSolutions.GoogleMusic
                         .InjectionRule<BindingModelBase, ReadMorePopupPresenter>()
                         .As<ReadMorePopup>();
             registration.Register<ReadMorePopupPresenter>();
+
+            registration.Register<IDonatePopupView>()
+                       .InjectionRule<BindingModelBase, DonatePopupViewPresenter>()
+                       .As<DonatePopupView>();
+            registration.Register<DonatePopupViewPresenter>();
         }
 
         public static void RegisterViews(IRegistrationContext registration)

@@ -1,0 +1,106 @@
+﻿<views:PopupViewBase
+    x:Class="OutcoldSolutions.GoogleMusic.Views.Popups.DonatePopupView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:views="using:OutcoldSolutions.GoogleMusic.Views"
+    xmlns:controls="using:OutcoldSolutions.GoogleMusic.Controls"
+    mc:Ignorable="d">
+
+    <views:PopupViewBase.Resources>
+        <x:String x:Key="Donate199">Donate199</x:String>
+        <x:String x:Key="Donate499">Donate499</x:String>
+        <x:String x:Key="Donate699">Donate699</x:String>
+        <x:String x:Key="Donate999">Donate999</x:String>
+        <x:String x:Key="Donate1999">Donate1999</x:String>
+        <x:String x:Key="Donate4999">Donate4999</x:String>
+    </views:PopupViewBase.Resources>
+
+    <Border Background="{StaticResource AppBarBackgroundThemeBrush}">
+        <ScrollViewer MaxWidth="800" 
+                      HorizontalAlignment="Stretch" 
+                      VerticalAlignment="Center" 
+                      HorizontalScrollMode="Disabled"  
+                      VerticalScrollMode="Auto"
+                      VerticalScrollBarVisibility="Auto">
+            <StackPanel  HorizontalAlignment="Stretch" Margin="20, 40, 20, 40">
+                <TextBlock Style="{StaticResource BodyTextStyle}"  Margin="0, 0, 0, 0">
+                    We are happy to see that you are using outcoldplayer! And we are hoping that you are happy user! There are couple ways how you can help us to improve it and we want to share them with you.
+                </TextBlock>
+
+                <TextBlock Style="{StaticResource SubheaderTextStyle}" Margin="0, 20, 0, 0" Text="Rate our application in Windows Store" />
+
+                <TextBlock Style="{StaticResource BodyTextStyle}" Margin="0, 10, 0, 0" >
+                    If you did not rate our application in Windows Store, please do. Good ratings help us a lot. We are reading every feedback.
+                </TextBlock>
+
+                <Button Click="GotoRating" Margin="0, 10, 0, 0">Rate</Button>
+
+                <TextBlock Style="{StaticResource SubheaderTextStyle}" Margin="0, 20, 0, 0" Text="Tell us what else you want to see in outcoldplayer" />
+
+                <TextBlock Style="{StaticResource BodyTextStyle}"  Margin="0, 10, 0, 0">
+                    Do you have any feature in your mind, which can help you to enjoy using Google Music and outcoldplayer more? Please tell us. UserVoice is the best place where you can do that.
+                </TextBlock>
+
+                <Button Margin="0, 10, 0, 0"  Click="UserVoiceClick">
+                    <Image Source="ms-appx:///Resources/uservoice.png" Height="28" Width="160" VerticalAlignment="Top"  />
+                </Button>
+
+                <TextBlock Style="{StaticResource SubheaderTextStyle}" Margin="0, 20, 0, 20" Text="Help us to develop next version" />
+
+                <TextBlock Style="{StaticResource BodyTextStyle}"  Margin="0, 10, 0, 0">
+                    Any donation will boost our development procces. 
+                </TextBlock>
+
+                <TextBlock Style="{StaticResource BodyTextStyle}"  Margin="0, 0, 0, 10">
+                    You can donate money via Windows Store (Microsoft takes 30%):
+                </TextBlock>
+
+                <controls:WrapPanel Orientation="Horizontal">
+                    <Button Command="{Binding Path=BuyPackageCommand, Mode=OneTime}"
+                        CommandParameter="{StaticResource Donate199}"
+                        Width="80">$1.99</Button>
+                    <Button Command="{Binding Path=BuyPackageCommand, Mode=OneTime}"
+                        CommandParameter="{StaticResource Donate499}"
+                        Width="80">$4.99</Button>
+                    <Button Command="{Binding Path=BuyPackageCommand, Mode=OneTime}"
+                        CommandParameter="{StaticResource Donate699}"
+                        Width="80">$6.99</Button>
+                    <Button Command="{Binding Path=BuyPackageCommand, Mode=OneTime}"
+                        CommandParameter="{StaticResource Donate999}"
+                        Width="80">$9.99</Button>
+                    <Button Command="{Binding Path=BuyPackageCommand, Mode=OneTime}"
+                        CommandParameter="{StaticResource Donate1999}"
+                        Width="80">$19.99</Button>
+                    <Button Command="{Binding Path=BuyPackageCommand, Mode=OneTime}"
+                        CommandParameter="{StaticResource Donate4999}"
+                        Width="80">$49.99</Button>
+                </controls:WrapPanel>
+
+                <TextBlock Style="{StaticResource BodyTextStyle}"  Margin="0, 10, 0, 10">
+                    Or by using PayPal account
+                </TextBlock>
+
+                <Button Click="GotoPayPal">
+                    <Button.Template>
+                        <ControlTemplate>
+                            <Image Source="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" Height="21" Width="74" />
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Click="Later">
+                        Later
+                    </Button>
+                
+                    <Button Click="CloseWindow">
+                        Close
+                    </Button>
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+    </Border>
+    
+</views:PopupViewBase>
