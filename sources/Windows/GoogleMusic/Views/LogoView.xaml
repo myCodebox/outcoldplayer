@@ -30,7 +30,7 @@
             </HyperlinkButton.Template>
         </HyperlinkButton>
 
-        <HyperlinkButton Grid.Row="1" NavigateUri="https://twitter.com/gMusicW" Margin="10, 10, 0, 0" Height="22" Width="26">
+        <HyperlinkButton Grid.Row="1" NavigateUri="https://twitter.com/outcoldplayer" Margin="10, 10, 0, 0" Height="22" Width="26">
             <HyperlinkButton.Template>
                 <ControlTemplate>
                     <Image Source="ms-appx:///Resources/twitter-logo.png" Height="22" Width="26"  />

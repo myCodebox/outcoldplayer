@@ -24,11 +24,25 @@
             <TextBlock Style="{StaticResource SubheaderTextStyle}" HorizontalAlignment="Center" Margin="0,-5,0,0" Text="{StaticResource ApplicationName}" />
 
             <TextBlock Grid.Row="1" Style="{StaticResource BodyTextStyle}"  Margin="0, 20, 0, 0" x:Uid="ReleaseHistory_Subtitle" >
-                Congratulations! You just installed new version of outcoldplayer. You can find the list of new feature [+] and fixed bugs [b] below:
+                Congratulations! You just installed new version of outcoldplayer (former gMusicW). You can find the list of new feature [+] and fixed bugs [b] below:
             </TextBlock>
 
             <ScrollViewer Grid.Row="2" Margin="0, 20, 0, 0">
                 <StackPanel>
+                    <TextBlock Style="{StaticResource TitleTextStyle}" Margin="0, 10, 0, 0" >
+                    <Run>03/21/2014 - Version 3.0.0</Run>
+                    </TextBlock>
+                    <RichTextBlock Style="{StaticResource BodyRichTextStyle}">
+                        <Paragraph>[+] Application redesign and rebranding (gMusicW -> outcoldplayer).</Paragraph>
+                        <Paragraph>[+] No more ad-supported free version. Everybody who downloaded application before that and did not buy the ad-free package - get it for free.</Paragraph>
+                        <Paragraph>[+] All Access search.</Paragraph>
+                        <Paragraph>[+] All Access explore tab.</Paragraph>
+                        <Paragraph>[+] Fully functional snapped view.</Paragraph>
+                        <Paragraph>[+] Support portrait mode.</Paragraph>
+                        <Paragraph>[+] Genres navigate to albums (to songs before).</Paragraph>
+                        <Paragraph>[+] Create radio stations from artists and genres (only tracks were supported before).</Paragraph>
+                    </RichTextBlock>
+
                     <TextBlock Style="{StaticResource TitleTextStyle}" Margin="0, 10, 0, 0" >
                     <Run>03/11/2014 - Version 2.3.2</Run>
                     </TextBlock>

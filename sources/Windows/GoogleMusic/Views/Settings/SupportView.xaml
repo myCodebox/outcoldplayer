@@ -43,8 +43,8 @@
                 Other option is to send email to:
             </TextBlock>
 
-            <HyperlinkButton Padding="0" NavigateUri="mailto:support@OutcoldSolutions.com">
-                support@OutcoldSolutions.com
+            <HyperlinkButton Padding="0" NavigateUri="mailto:support@outcoldplayer.com">
+                support@outcoldplayer.com
             </HyperlinkButton>
 
             <TextBlock Style="{StaticResource BodyTextStyle}"  Margin="0, 20, 0, 0">

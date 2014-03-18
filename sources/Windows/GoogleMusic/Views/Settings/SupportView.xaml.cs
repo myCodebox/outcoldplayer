@@ -32,7 +32,7 @@ namespace OutcoldSolutions.GoogleMusic.Views.Settings
 
         private void TwitterFollowClick(object sender, RoutedEventArgs e)
         {
-            this.Logger.LogTask(Launcher.LaunchUriAsync(new Uri("https://twitter.com/gMusicW")).AsTask());
+            this.Logger.LogTask(Launcher.LaunchUriAsync(new Uri("https://twitter.com/outcoldplayer")).AsTask());
         }
 
         private void GotoPayPal(object sender, RoutedEventArgs e)
