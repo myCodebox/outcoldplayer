@@ -9,7 +9,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using System.Threading;
     using System.Threading.Tasks;
 
-    using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Presenters.Popups;
     using OutcoldSolutions.GoogleMusic.Repositories;
@@ -21,7 +20,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using Windows.ApplicationModel;
     using Windows.Networking.Connectivity;
 
-    public class HomePageViewPresenter : PlaylistsPageViewPresenterBase<IHomePageView, PlaylistsPageViewBindingModel>
+    public class HomePageViewPresenter : PlaylistsPageViewPresenterBase<IHomePageView>
     {
         private readonly ISettingsService settingsService;
         private readonly IAuthentificationService authentificationService;
@@ -60,6 +59,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                         await this.DeinitializeAsync();
                         this.ShowAuthentificationPopupView();
                     };
+
+            this.IsMixedList = true;
         }
 
         protected override async Task LoadDataAsync(NavigatedToEventArgs navigatedToEventArgs, CancellationToken cancellationToken)

@@ -8,6 +8,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
     using Windows.UI.Xaml.Data;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
+    using OutcoldSolutions.GoogleMusic.Presenters;
 
     public interface IUserPlaylistsPageView : IPageView
     {
@@ -25,7 +26,11 @@ namespace OutcoldSolutions.GoogleMusic.Views
     {
     }
 
-    public sealed partial class PlaylistsPageView : PageViewBase, IPlaylistsPageView, IUserPlaylistsPageView, IRadioPageView, IGenrePageView
+    public interface IHomePageView : IPageView
+    {
+    }
+
+    public sealed partial class PlaylistsPageView : PageViewBase, IPlaylistsPageView, IUserPlaylistsPageView, IRadioPageView, IGenrePageView, IHomePageView
     {
         private IPlaylistsListView playlistsListView;
 
@@ -42,11 +47,12 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
             this.PlaylistsContentPresenter.Content = (this.playlistsListView = this.Container.Resolve<IPlaylistsListView>()) as PlaylistsListView;
 
-            var frameworkElement = this.playlistsListView as PlaylistsListView;
+            var listView = this.playlistsListView as PlaylistsListView;
 
-            if (frameworkElement != null)
+            if (listView != null)
             {
-                frameworkElement.SetBinding(
+                listView.IsMixedList = ((IPlaylistsPageViewPresenterBase)presenter).IsMixedList;
+                listView.SetBinding(
                     PlaylistsListView.ItemsSourceProperty,
                     new Binding()
                     {
@@ -55,7 +61,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
                         Path = new PropertyPath("BindingModel.Playlists")
                     });
 
-                this.TrackScrollViewer(frameworkElement.GetListView());
+                this.TrackScrollViewer(listView.GetListView());
             }
         }
     }

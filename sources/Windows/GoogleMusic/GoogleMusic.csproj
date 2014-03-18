@@ -156,9 +156,6 @@
     <Compile Include="Views\ExplorePageView.xaml.cs">
       <DependentUpon>ExplorePageView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\HomePageView.xaml.cs">
-      <DependentUpon>HomePageView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\PlaylistsListView.xaml.cs">
       <DependentUpon>PlaylistsListView.xaml</DependentUpon>
     </Compile>
@@ -464,10 +461,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\ExplorePageView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\HomePageView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

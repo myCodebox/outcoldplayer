@@ -21,7 +21,7 @@ namespace OutcoldSolutions.GoogleMusic
             // Start page view
             registration.Register<IHomePageView>()
                         .InjectionRule<BindingModelBase, HomePageViewPresenter>()
-                        .AsSingleton<HomePageView>();
+                        .AsSingleton<PlaylistsPageView>();
             registration.Register<HomePageViewPresenter>().AsSingleton();
 
             // Playlists view (albums, genres, artists)

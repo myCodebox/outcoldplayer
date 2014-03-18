@@ -16,9 +16,13 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
 
-    public abstract class PlaylistsPageViewPresenterBase<TView, TPlaylistsPageViewBindingModel> : PagePresenterBase<TView, TPlaylistsPageViewBindingModel>
+    public interface IPlaylistsPageViewPresenterBase
+    {
+        bool IsMixedList { get; }
+    }
+
+    public abstract class PlaylistsPageViewPresenterBase<TView> : PagePresenterBase<TView, PlaylistsPageViewBindingModel>, IPlaylistsPageViewPresenterBase
         where TView : IPageView
-        where TPlaylistsPageViewBindingModel : PlaylistsPageViewBindingModel
     {
         private readonly IApplicationResources resources;
         private readonly IPlaylistsService playlistsService;
@@ -31,7 +35,10 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         {
             this.resources = resources;
             this.playlistsService = playlistsService;
+            this.IsMixedList = false;
         }
+
+        public bool IsMixedList { get; protected set; }
 
         public override void OnNavigatedTo(NavigatedToEventArgs parameter)
         {

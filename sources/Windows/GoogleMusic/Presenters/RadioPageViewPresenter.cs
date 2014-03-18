@@ -4,11 +4,10 @@
 
 namespace OutcoldSolutions.GoogleMusic.Presenters
 {
-    using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
 
-    public class RadioPageViewPresenter : PlaylistsPageViewPresenterBase<IRadioPageView, PlaylistsPageViewBindingModel>
+    public class RadioPageViewPresenter : PlaylistsPageViewPresenterBase<IRadioPageView>
     {
         public RadioPageViewPresenter(
             IApplicationResources resources, 
