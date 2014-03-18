@@ -10,18 +10,7 @@
     d:DesignWidth="400"
     Title="{Binding Path=BindingModel.Title, Mode=OneWay}"
     Subtitle="{Binding Path=BindingModel.Subtitle, Mode=OneWay}">
-
-    <SemanticZoom VerticalAlignment="Stretch"
-                  Visibility="{Binding Path=IsDataLoading, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}" 
-                  IsZoomOutButtonEnabled="{Binding Path=BindingModel.IsSemanticZoomEnabled}" 
-                  CanChangeViews="{Binding Path=BindingModel.IsSemanticZoomEnabled}"
-                  x:Name="SemanticZoom"
-                  ViewChangeStarted="SemanticZoom_OnViewChangeStarted" >
-        <SemanticZoom.ZoomedOutView>
-            <ListView x:Name="ListViewGroups"
-                      ItemsSource="{Binding Path=BindingModel.Groups, Mode=OneWay}"
-                      IsItemClickEnabled="False"
-                      Style="{StaticResource ZoomOutPlaylistGroupsListView}"/>
-        </SemanticZoom.ZoomedOutView>
-    </SemanticZoom>
+    
+    <ContentPresenter x:Name="PlaylistsContentPresenter"
+                      Visibility="{Binding Path=BindingModel.Playlists, Converter={StaticResource NotEmptyToVisibilityConverter}}"/>
 </views:PageViewBase>

@@ -64,7 +64,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         protected override async Task LoadDataAsync(NavigatedToEventArgs navigatedToEventArgs, CancellationToken cancellationToken)
         {
-            this.BindingModel.IsSemanticZoomEnabled = false;
             this.BindingModel.PlaylistType = PlaylistType.Unknown;
             this.BindingModel.Title = "Home";
 

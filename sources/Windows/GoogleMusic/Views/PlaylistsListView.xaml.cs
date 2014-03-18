@@ -25,7 +25,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
         Task ScrollIntoCurrentSongAsync(IPlaylist song);
     }
 
-    public sealed partial class PlaylistsListView : ViewBase, IPlaylistsListView, ISemanticZoomInformation
+    public sealed partial class PlaylistsListView : ViewBase, IPlaylistsListView
     {
         public static readonly DependencyProperty ItemsSourceProperty =
             DependencyProperty.Register("ItemsSource", typeof(IEnumerable), typeof(PlaylistsListView), new PropertyMetadata(null, OnItemsSourceChanged));
@@ -91,77 +91,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
             if (playlistBindingModel != null)
             {
                 this.Container.Resolve<INavigationService>().NavigateToPlaylist(playlistBindingModel.Playlist);
-            }
-        }
-
-        public void InitializeViewChange()
-        {
-            this.ListView.InitializeViewChange();
-        }
-
-        public void CompleteViewChange()
-        {
-            this.ListView.CompleteViewChange();
-        }
-
-        public void MakeVisible(SemanticZoomLocation item)
-        {
-            this.ListView.MakeVisible(item);
-        }
-
-        public void StartViewChangeFrom(SemanticZoomLocation source, SemanticZoomLocation destination)
-        {
-            this.ListView.StartViewChangeFrom(source, destination);
-        }
-
-        public void StartViewChangeTo(SemanticZoomLocation source, SemanticZoomLocation destination)
-        {
-            this.ListView.StartViewChangeTo(source, destination);
-        }
-
-        public void CompleteViewChangeFrom(SemanticZoomLocation source, SemanticZoomLocation destination)
-        {
-            this.ListView.CompleteViewChangeFrom(source, destination);
-        }
-
-        public void CompleteViewChangeTo(SemanticZoomLocation source, SemanticZoomLocation destination)
-        {
-            this.ListView.CompleteViewChangeTo(source, destination);
-        }
-
-        public bool IsActiveView
-        {
-            get
-            {
-                return this.ListView.IsActiveView;
-            }
-            set
-            {
-                this.ListView.IsActiveView = value;
-            }
-        }
-
-        public bool IsZoomedInView
-        {
-            get
-            {
-                return this.ListView.IsZoomedInView;
-            }
-            set
-            {
-                this.ListView.IsZoomedInView = value;
-            }
-        }
-
-        public SemanticZoom SemanticZoomOwner
-        {
-            get
-            {
-                return this.ListView.SemanticZoomOwner;
-            }
-            set
-            {
-                this.ListView.SemanticZoomOwner = value;
             }
         }
     }

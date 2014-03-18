@@ -4,20 +4,16 @@
 namespace OutcoldSolutions.GoogleMusic.BindingModels
 {
     using System.Collections.Generic;
-    using System.Linq;
 
     using OutcoldSolutions.GoogleMusic.Models;
 
     public class PlaylistsPageViewBindingModel : BindingModelBase
     {
         private IList<IPlaylist> playlists;
-        private IList<PlaylistsGroupBindingModel> groups;
 
         private string title;
         private string subtitle;
         private PlaylistType playlistType;
-
-        private bool isSemanticZoomEnabled = true;
 
         public string Title
         {
@@ -69,49 +65,8 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             {
                 if (this.SetValue(ref this.playlists, value))
                 {
-                    this.RecalculateGroups();
                     this.RaisePropertyChanged(() => this.Subtitle);
                 }
-            }
-        }
-
-        public IList<PlaylistsGroupBindingModel> Groups
-        {
-            get
-            {
-                return this.groups;
-            }
-
-            set
-            {
-                this.SetValue(ref this.groups, value);
-            }
-        }
-
-        public bool IsSemanticZoomEnabled
-        {
-            get
-            {
-                return this.isSemanticZoomEnabled;
-            }
-
-            set
-            {
-                this.SetValue(ref this.isSemanticZoomEnabled, value);
-            }
-        }
-
-        private void RecalculateGroups()
-        {
-            if (this.Playlists == null)
-            {
-                this.Groups = null;
-            }
-            else
-            {
-                this.Groups = this.Playlists.GroupBy(p => p.Title.Length > 0 ? char.ToUpper(p.Title[0]) : ' ')
-                                                        .Select(g => new PlaylistsGroupBindingModel(g.Key.ToString(), g.Count(), g.Select(x => new PlaylistBindingModel(x)).ToList()))
-                                                        .ToList();
             }
         }
     }

@@ -4,16 +4,10 @@
 
 namespace OutcoldSolutions.GoogleMusic.Views
 {
-    using System.Collections.Generic;
-    using System.Linq;
-
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Data;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
-    using OutcoldSolutions.GoogleMusic.Presenters;
-
-    using Windows.UI.Xaml.Controls;
 
     public interface IUserPlaylistsPageView : IPageView
     {
@@ -46,7 +40,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
             var presenter = this.GetPresenter<BindingModelBase>();
 
-            this.SemanticZoom.ZoomedInView = (this.playlistsListView = this.Container.Resolve<IPlaylistsListView>()) as PlaylistsListView;
+            this.PlaylistsContentPresenter.Content = (this.playlistsListView = this.Container.Resolve<IPlaylistsListView>()) as PlaylistsListView;
 
             var frameworkElement = this.playlistsListView as PlaylistsListView;
 
@@ -62,38 +56,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
                     });
 
                 this.TrackScrollViewer(frameworkElement.GetListView());
-            }
-        }
-
-        public override void OnNavigatedTo(NavigatedToEventArgs eventArgs)
-        {
-            this.SemanticZoom.IsZoomedInViewActive = true;
-            base.OnNavigatedTo(eventArgs);
-        }
-
-        private void SemanticZoom_OnViewChangeStarted(object sender, SemanticZoomViewChangedEventArgs e)
-        {
-            if (e.IsSourceZoomedInView)
-            {
-                var groups = this.ListViewGroups.ItemsSource as IEnumerable<PlaylistsGroupBindingModel>;
-                if (groups != null)
-                {
-                    e.DestinationItem.Item = groups.FirstOrDefault(x => x.Playlists.Any(p => p.Playlist == e.SourceItem.Item));
-                }
-            }
-            else
-            {
-                var group = e.SourceItem.Item as PlaylistsGroupBindingModel;
-                if (group != null)
-                {
-                    var groupPlaylist = group.Playlists.Select(x => x.Playlist).FirstOrDefault();
-                    if (groupPlaylist != null)
-                    {
-                        e.DestinationItem.Item =
-                            this.playlistsListView.GetPresenter<PlaylistsListViewPresenter>()
-                                .Playlists.FirstOrDefault(x => x.Playlist == groupPlaylist);
-                    }
-                }
             }
         }
     }

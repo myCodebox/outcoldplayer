@@ -114,7 +114,6 @@
     <Compile Include="BindingModels\Settings\CachedSongBindingModel.cs" />
     <Compile Include="BindingModels\Settings\OfflineCacheViewBindingModel.cs" />
     <Compile Include="BindingModels\PlaylistPageViewBindingModel.cs" />
-    <Compile Include="BindingModels\PlaylistsGroupBindingModel.cs" />
     <Compile Include="BindingModels\PlayerBindingModel.cs" />
     <Compile Include="BindingModels\PlaylistBindingModel.cs" />
     <Compile Include="BindingModels\PlaylistsPageViewBindingModel.cs" />
