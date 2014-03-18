@@ -41,7 +41,7 @@ namespace OutcoldSolutions.GoogleMusic.Shell
         {
             get
             {
-                return this.width >= 1279;
+                return this.width >= 1024;
             }   
         }
 
