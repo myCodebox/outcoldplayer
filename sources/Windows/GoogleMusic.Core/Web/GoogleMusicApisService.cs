@@ -111,6 +111,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
         {
             if (useCache)
             {
+                this.ClearCache();
                 object cacheItem;
                 if (this.cache.TryGetValue(new CacheKey(url), out cacheItem))
                 {
@@ -184,6 +185,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
             if (useCache)
             {
+                this.ClearCache();
                 object cacheItem;
                 if (this.cache.TryGetValue(new CacheKey(url, jsonContent), out cacheItem))
                 {
@@ -346,12 +348,12 @@ namespace OutcoldSolutions.GoogleMusic.Web
         private void ClearCache()
         {
             var now = new DateTime();
-            if ((now - this.lastCacheClear).TotalMinutes > 30)
+            if ((now - this.lastCacheClear).TotalMinutes > 5)
             {
-                object c;
-                var oldCache = this.cache.Keys.Where(x => (now - x.Created).TotalMinutes > 30).ToList();
+                var oldCache = this.cache.Keys.Where(x => (now - x.Created).TotalMinutes > 5).ToList();
                 foreach (var key in oldCache)
                 {
+                    object c;
                     this.cache.TryRemove(key, out c);
                 }
 

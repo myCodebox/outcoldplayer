@@ -41,6 +41,7 @@
                         <Paragraph>[+] Support portrait mode.</Paragraph>
                         <Paragraph>[+] Genres navigate to albums (to songs before).</Paragraph>
                         <Paragraph>[+] Create radio stations from artists and genres (only tracks were supported before).</Paragraph>
+                        <Paragraph>[+] Better handling for song switching (can switch to next song if current is timing out).</Paragraph>
                     </RichTextBlock>
 
                     <TextBlock Style="{StaticResource TitleTextStyle}" Margin="0, 10, 0, 0" >
