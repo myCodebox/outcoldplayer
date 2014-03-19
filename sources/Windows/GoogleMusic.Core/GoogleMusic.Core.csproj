@@ -188,6 +188,7 @@
     <Compile Include="Services\ApplicationStateService.cs" />
     <Compile Include="Services\IAlbumArtCacheService.cs" />
     <Compile Include="Services\InAppPurchases.cs" />
+    <Compile Include="Services\IRatingCacheService.cs" />
     <Compile Include="Services\PlaylistsService.cs" />
     <Compile Include="Services\RadioStationsService.cs" />
     <Compile Include="Services\SongsCachingService.cs" />

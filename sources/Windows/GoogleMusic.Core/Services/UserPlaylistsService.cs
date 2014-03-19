@@ -45,8 +45,9 @@ namespace OutcoldSolutions.GoogleMusic.Services
             IPlaylistsWebService webService,
             IUserPlaylistsRepository repository,
             ISongsRepository songsRepository,
+            IRatingCacheService ratingCacheService,
             IEventAggregator eventAggregator)
-            :base(songsRepository)
+            : base(songsRepository, ratingCacheService)
         {
             this.logger = logManager.CreateLogger("UserPlaylistsService");
             this.webService = webService;

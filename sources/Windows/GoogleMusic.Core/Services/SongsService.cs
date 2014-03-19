@@ -12,7 +12,6 @@ namespace OutcoldSolutions.GoogleMusic.Services
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Web;
-    using System.Globalization;
     using System.Diagnostics;
 
     public interface ISongsService

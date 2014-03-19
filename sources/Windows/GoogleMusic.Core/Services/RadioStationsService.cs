@@ -55,8 +55,9 @@ namespace OutcoldSolutions.GoogleMusic.Services
             INotificationService notificationService,
             IApplicationResources applicationResources,
             IEventAggregator eventAggregator,
+            IRatingCacheService ratingCacheService,
             ILogManager logManager)
-            : base(songsRepository)
+            : base(songsRepository, ratingCacheService)
         {
             this.radioWebService = radioWebService;
             this.radioStationsRepository = radioStationsRepository;

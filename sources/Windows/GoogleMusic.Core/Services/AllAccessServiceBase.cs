@@ -4,6 +4,7 @@
 
 namespace OutcoldSolutions.GoogleMusic.Services
 {
+    using System;
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.Models;
@@ -14,10 +15,12 @@ namespace OutcoldSolutions.GoogleMusic.Services
     public abstract class AllAccessServiceBase
     {
         private readonly ISongsRepository songsRepository;
+        private readonly IRatingCacheService ratingCacheService;
 
-        protected AllAccessServiceBase(ISongsRepository songsRepository)
+        protected AllAccessServiceBase(ISongsRepository songsRepository, IRatingCacheService ratingCacheService)
         {
             this.songsRepository = songsRepository;
+            this.ratingCacheService = ratingCacheService;
         }
 
         protected async Task<Song> GetSong(GoogleMusicSong googleMusicSong)
@@ -28,6 +31,12 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
             if (storedSong == null)
             {
+                Tuple<DateTime, byte> cachedRating = this.ratingCacheService.GetCachedRating(song);
+                if (cachedRating != null && cachedRating.Item1 > song.LastModified)
+                {
+                    song.Rating = cachedRating.Item2;
+                }
+
                 song.IsLibrary = false;
                 song.UnknownSong = true;
                 return song;

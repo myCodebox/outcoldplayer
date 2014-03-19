@@ -68,8 +68,9 @@ namespace OutcoldSolutions.GoogleMusic.Services
             IArtistsRepository artistsRepository,
             IAlbumsRepository albumsRepository,
             ISongsRepository songsRepository,
+            IRatingCacheService ratingCacheService,
             ILogManager logManager)
-            : base(songsRepository)
+            : base(songsRepository, ratingCacheService)
         {
             this.allAccessWebService = allAccessWebService;
             this.artistsRepository = artistsRepository;

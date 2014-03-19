@@ -241,6 +241,8 @@ namespace OutcoldSolutions.GoogleMusic
                 registration.Register<ApplicationSize>().AsSingleton(this.Resources["ApplicationSize"]);
 
                 registration.Register<AskForReviewService>().AsSingleton();
+
+                registration.Register<IRatingCacheService>().AsSingleton<RatingCacheService>();
             }
 
             Container.Resolve<ApplicationLogManager>();
