@@ -136,7 +136,10 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                             this.Tab.ParentGenre,
                             string.IsNullOrEmpty(this.Subtitle) ? "Explore" : ("Explore - " + this.Subtitle),
                             exploreTabGroup.Title,
-                            exploreTabGroup.Songs));
+                            exploreTabGroup.Songs)
+                        {
+                            PlaylistType = PlaylistType.AllAccessGenre
+                        });
                 }
                 else if (exploreTabGroup.Playlists != null)
                 {
@@ -145,7 +148,10 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                             this.Tab.ParentGenre,
                             string.IsNullOrEmpty(this.Subtitle) ? "Explore" : ("Explore - " + this.Subtitle),
                             exploreTabGroup.Title,
-                            exploreTabGroup.Playlists));
+                            exploreTabGroup.Playlists)
+                        {
+                            PlaylistType = PlaylistType.AllAccessGenre
+                        });
                 }
             }
         }
