@@ -67,7 +67,7 @@
                            Text="{Binding Path=BindingModel.ErrorMessage, Mode=OneWay}"
                            Style="{StaticResource SmallTextStyle}" />
 
-                <HyperlinkButton Grid.Row="3" HorizontalAlignment="Left" NavigateUri="https://play.google.com/music" Margin="-5, 0, 0, 0">
+                <HyperlinkButton Grid.Row="3" HorizontalAlignment="Left" NavigateUri="https://play.google.com/music" Margin="-20, 0, 0, 0">
                     <StackPanel>
                         <TextBlock FontSize="14" 
                                    x:Uid="Authorization_GoToGoogleMusicLink">Go to Google Music</TextBlock>
