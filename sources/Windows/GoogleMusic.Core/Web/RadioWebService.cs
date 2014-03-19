@@ -269,7 +269,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 imageType = 1, // TODO: ?
                 lastModifiedTimestamp = -1,
                 name = genre.Title,
-                recentTimestamp = ((long)new DateTime().ToUnixFileTime() * 1000L).ToString("G", CultureInfo.InvariantCulture),
+                recentTimestamp = ((long)DateTime.UtcNow.ToUnixFileTime() * 1000L).ToString("G", CultureInfo.InvariantCulture),
                 seed = new { seedType = 5, genreId = genre.Id },
                 tracks = new object[0]
             };

@@ -15,6 +15,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
+                    <RowDefinition Height="60" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
@@ -62,11 +63,11 @@
                     Password will be stored in encrypted Windows Storage. We use your credentials only to get access to Google Music.
                 </TextBlock>
 
-                <TextBlock Grid.Row="2" Margin="0, -60, 0, 0" TextWrapping="Wrap" Foreground="Red" 
+                <TextBlock Grid.Row="2" Margin="0, 0, 0, 0" TextWrapping="Wrap" Foreground="Red" 
                            Text="{Binding Path=BindingModel.ErrorMessage, Mode=OneWay}"
                            Style="{StaticResource SmallTextStyle}" />
 
-                <HyperlinkButton Grid.Row="2" HorizontalAlignment="Left" NavigateUri="https://play.google.com/music" Margin="-5, 0, 0, 0">
+                <HyperlinkButton Grid.Row="3" HorizontalAlignment="Left" NavigateUri="https://play.google.com/music" Margin="-5, 0, 0, 0">
                     <StackPanel>
                         <TextBlock FontSize="14" 
                                    x:Uid="Authorization_GoToGoogleMusicLink">Go to Google Music</TextBlock>
@@ -74,7 +75,7 @@
                     </StackPanel> 
                 </HyperlinkButton>
 
-                <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
+                <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
                     <ProgressRing IsActive="{Binding Path=BindingModel.IsSigningIn, Mode=OneWay}" />
                     <Button Width="80" Margin="10, 0, 0, 0" Command="{Binding Path=SignInCommand, Mode=OneTime}"
                             x:Uid="Authorization_SignInButton">

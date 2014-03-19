@@ -207,7 +207,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.FreezeNotifications();
 
             this.IsHomeSelected = (args.View is IHomePageView) && (args.View.GetPresenter<IPlaylistsPageViewPresenterBase>().IsMixedList);
-            this.IsExploreSelected = args.View is IExplorePageView;
+            this.IsExploreSelected = args.View is IExplorePageView || (args.Parameter is PlaylistType && ((PlaylistType)args.Parameter) == PlaylistType.AllAccessGenre) ||
+                (args.View is IPlaylistPageView && args.Parameter is PlaylistNavigationRequest && ((PlaylistNavigationRequest)args.Parameter).PlaylistType == PlaylistType.AllAccessGenre);
             this.IsPlaylistsSelected = (args.View is IUserPlaylistsPageView && args.Parameter is PlaylistType && ((PlaylistType)args.Parameter) == PlaylistType.UserPlaylist) ||
                 (args.View is IPlaylistPageView && args.Parameter is PlaylistNavigationRequest && ((PlaylistNavigationRequest)args.Parameter).PlaylistType == PlaylistType.UserPlaylist);
             this.IsRadioSelected = (args.View is IRadioPageView && args.Parameter is PlaylistType && ((PlaylistType)args.Parameter) == PlaylistType.Radio) ||

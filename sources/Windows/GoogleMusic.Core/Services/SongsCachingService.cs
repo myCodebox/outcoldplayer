@@ -349,7 +349,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                         new CachedSong
                             {
                                 SongId = song.SongId, 
-                                TaskAdded = DateTime.Now,
+                                TaskAdded = DateTime.UtcNow,
                                 IsAddedByUser = true
                             });
             }
@@ -562,7 +562,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                             FileName = file.Name,
                             SongId = song.SongId,
                             IsAddedByUser = true,
-                            TaskAdded = DateTime.Now
+                            TaskAdded = DateTime.UtcNow
                         };
 
                         await this.songsCacheRepository.AddAsync(cachedSong);
@@ -806,7 +806,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
                                 if (cache == null)
                                 {
-                                    cache = new CachedSong() { FileName = file.Name, SongId = nextTask.Song.SongId, TaskAdded = DateTime.Now };
+                                    cache = new CachedSong() { FileName = file.Name, SongId = nextTask.Song.SongId, TaskAdded = DateTime.UtcNow };
                                     await this.songsCacheRepository.AddAsync(cache);
                                 }
                                 else

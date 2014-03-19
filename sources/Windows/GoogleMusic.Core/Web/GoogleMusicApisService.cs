@@ -32,7 +32,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
         private readonly ConcurrentDictionary<CacheKey, object> cache = new ConcurrentDictionary<CacheKey, object>();
 
-        private DateTime lastCacheClear = new DateTime();
+        private DateTime lastCacheClear =  DateTime.Now;
 
         public GoogleMusicApisService(
             ILogManager logManager,
@@ -347,7 +347,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
         private void ClearCache()
         {
-            var now = new DateTime();
+            var now = DateTime.Now;
             if ((now - this.lastCacheClear).TotalMinutes > 5)
             {
                 var oldCache = this.cache.Keys.Where(x => (now - x.Created).TotalMinutes > 5).ToList();
