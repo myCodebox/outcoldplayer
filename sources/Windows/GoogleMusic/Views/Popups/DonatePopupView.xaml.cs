@@ -54,7 +54,7 @@ namespace OutcoldSolutions.GoogleMusic.Views.Popups
 
         private void UserVoiceClick(object sender, RoutedEventArgs e)
         {
-            this.Logger.LogTask(Launcher.LaunchUriAsync(new Uri("https://gmusic.uservoice.com")).AsTask());
+            this.Logger.LogTask(Launcher.LaunchUriAsync(new Uri("https://outcoldplayer.uservoice.com")).AsTask());
         }
     }
 }

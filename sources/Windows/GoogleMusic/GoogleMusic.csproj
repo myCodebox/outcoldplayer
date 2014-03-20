@@ -412,7 +412,7 @@
     <Content Include="Assets\WideLogo.scale-180.png" />
     <Content Include="Assets\WideLogo.scale-80.png" />
     <Content Include="BugSense\BugSense - SDK License Agreement.txt" />
-    <Content Include="Resources\gmusic.splashscreen.png" />
+    <Content Include="Resources\outcoldplayer.splashscreen.png" />
     <Content Include="Resources\in-app-purchase.xml">
       <SubType>Designer</SubType>
     </Content>

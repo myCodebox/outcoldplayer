@@ -38,7 +38,7 @@
             </HyperlinkButton.Template>
         </HyperlinkButton>
 
-        <HyperlinkButton Grid.Row="1" Grid.Column="1" NavigateUri="https://gmusic.uservoice.com" Margin="10, 10, 0, 0" Height="28" Width="31">
+        <HyperlinkButton Grid.Row="1" Grid.Column="1" NavigateUri="https://outcoldplayer.uservoice.com" Margin="10, 10, 0, 0" Height="28" Width="31">
             <HyperlinkButton.Template>
                 <ControlTemplate>
                     <Image Source="ms-appx:///Resources/uservoice-logo.png" Height="28" Width="31"  />

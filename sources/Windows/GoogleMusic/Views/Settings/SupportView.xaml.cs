@@ -22,7 +22,7 @@ namespace OutcoldSolutions.GoogleMusic.Views.Settings
 
         private void UserVoiceClick(object sender, RoutedEventArgs e)
         {
-            this.Logger.LogTask(Launcher.LaunchUriAsync(new Uri("https://gmusic.uservoice.com")).AsTask());
+            this.Logger.LogTask(Launcher.LaunchUriAsync(new Uri("https://outcoldplayer.uservoice.com")).AsTask());
         }
         
         private void LogFolderGotFocus(object sender, RoutedEventArgs e)

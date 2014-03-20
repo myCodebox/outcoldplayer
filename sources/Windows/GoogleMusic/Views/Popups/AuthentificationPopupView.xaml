@@ -28,7 +28,7 @@
                            Margin="0, 20, 0, 0" 
                            TextWrapping="Wrap" 
                            Style="{StaticResource SmallTextStyle}">
-                    OutcoldPlayer is an unofficial client for Google Music service.
+                    outcoldplayer is an unofficial client for Google Music service.
                     To use it you need to be registered in Google Music with your Google Account. 
                     For more details please check the Google Music website.
                 </TextBlock>

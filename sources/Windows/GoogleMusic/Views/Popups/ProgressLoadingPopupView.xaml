@@ -7,7 +7,7 @@
     <Grid Background="{StaticResource AppBarBackgroundThemeBrush}">
 
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" >
-            <Image Source="ms-appx:///Resources/gmusic.splashscreen.png" MaxWidth="620" MaxHeight="300" Stretch="Uniform" />
+            <Image Source="ms-appx:///Resources/outcoldplayer.splashscreen.png" MaxWidth="620" MaxHeight="300" Stretch="Uniform" />
         </StackPanel>
 
         <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="10, 400, 10, 0" >
