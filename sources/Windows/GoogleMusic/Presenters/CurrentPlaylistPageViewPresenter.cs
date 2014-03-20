@@ -10,6 +10,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
+    using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
@@ -91,6 +92,15 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                         if (navigatedToEventArgs.Parameter is bool && (bool)navigatedToEventArgs.Parameter)
                         {
                             this.EventAggregator.Publish(new SelectCurrentPlaylistSongEvent());
+                        }
+                        else
+                        {
+                            this.Logger.LogTask(Task.Factory.StartNew(
+                                   async () =>
+                                   {
+                                       await Task.Delay(100, cancellationToken);
+                                       await this.View.GetSongsListView().ScrollIntoCurrentSongAsync(this.playQueueService.GetCurrentSong());
+                                   }, cancellationToken));
                         }
                     });
         }

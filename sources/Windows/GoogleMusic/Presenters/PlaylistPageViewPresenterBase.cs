@@ -65,6 +65,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 throw new NotSupportedException("Request parameter should be PlaylistNavigationRequest.");
             }
 
+            bool selectCurrentSong = false;
+
             if (request.Songs != null)
             {
                 await this.Dispatcher.RunAsync(
@@ -115,16 +117,28 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                             this.BindingModel.Subtitle = this.resources.GetTitle(playlist.PlaylistType);
                         }
 
+                        
+
                         if (isCurrentPlaylist)
                         {
-                            this.View.GetSongsListView()
-                                .ScrollIntoCurrentSongAsync(this.playQueueService.GetCurrentSong());
+                            selectCurrentSong = true;
+                            
                         }
                     });
 
                 if (startPlaying)
                 {
                     this.Logger.LogTask(this.playQueueService.PlayAsync(playlist, songs, 0));
+                }
+
+                if (selectCurrentSong)
+                {
+                    this.Logger.LogTask(Task.Factory.StartNew(
+                        async () =>
+                        {
+                            await Task.Delay(100, cancellationToken);
+                            await this.View.GetSongsListView().ScrollIntoCurrentSongAsync(this.playQueueService.GetCurrentSong());
+                        }, cancellationToken));
                 }
             }
         }
