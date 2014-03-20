@@ -96,7 +96,7 @@
                        Margin="0, 0, 0, 0">My Library Collections
             </TextBlock>
 
-            <ProgressRing Margin="0, 40, 0, 0"
+            <ProgressRing Margin="0, 40, 0, 100"
                           IsActive="{Binding Path=BindingModel.IsAllAccessLoading, Mode=OneWay}"
                           Visibility="{Binding Path=BindingModel.IsAllAccessLoading, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
             
