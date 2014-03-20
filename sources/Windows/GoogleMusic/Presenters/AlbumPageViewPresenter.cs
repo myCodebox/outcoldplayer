@@ -28,6 +28,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private readonly IRadioStationsService radioStationsService;
 
+        private readonly ISettingsService settingsService;
+
         private Tuple<Album, IList<Song>> allAccessAlbum;
 
         public AlbumPageViewPresenter(
@@ -37,7 +39,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             IApplicationStateService applicationStateService,
             INavigationService navigationService,
             IPlayQueueService playQueueService,
-            IRadioStationsService radioStationsService)
+            IRadioStationsService radioStationsService,
+            ISettingsService settingsService)
             : base(container)
         {
             this.resources = resources;
@@ -46,6 +49,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.navigationService = navigationService;
             this.playQueueService = playQueueService;
             this.radioStationsService = radioStationsService;
+            this.settingsService = settingsService;
             this.NavigateToArtistCommand = new DelegateCommand(this.NavigateToArtist);
 
             this.StartRadioCommand = new DelegateCommand(this.StartRadio);
@@ -90,7 +94,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             {
                 yield return new CommandMetadata(CommandIcon.Radio, "Start radio", this.StartRadioCommand);
 
-                if (this.allAccessAlbum != null)
+                if (this.allAccessAlbum != null && this.settingsService.GetIsAllAccessAvailable())
                 {
                     yield return new CommandMetadata(CommandIcon.Web, "All Access Album", this.NavigateToAllAccessAlbumCommand);
                 }
