@@ -50,11 +50,11 @@
                 <TextBlock Style="{StaticResource SubheaderTextStyle}" Margin="0, 20, 0, 20" Text="Help us to develop next version" />
 
                 <TextBlock Style="{StaticResource BodyTextStyle}"  Margin="0, 10, 0, 0">
-                    Any donation will boost our development procces. 
+                    If you want to participate in backing new features and new versions, we will be really grateful.
                 </TextBlock>
 
                 <TextBlock Style="{StaticResource BodyTextStyle}"  Margin="0, 0, 0, 10">
-                    You can donate money via Windows Store (Microsoft takes 30%):
+                    You can do it with Windows Store (Microsoft takes 30%):
                 </TextBlock>
 
                 <controls:WrapPanel Orientation="Horizontal">
@@ -79,7 +79,7 @@
                 </controls:WrapPanel>
 
                 <TextBlock Style="{StaticResource BodyTextStyle}"  Margin="0, 10, 0, 10">
-                    Or by using PayPal account
+                    Or with PayPal account
                 </TextBlock>
 
                 <Button Click="GotoPayPal">
