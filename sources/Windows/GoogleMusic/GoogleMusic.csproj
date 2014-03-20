@@ -122,6 +122,7 @@
     <Compile Include="BindingModels\SearchPageViewBindingModel.cs" />
     <Compile Include="BindingModels\Settings\AccountViewBindingModel.cs" />
     <Compile Include="Controls\WrapPanel.cs" />
+    <Compile Include="Presenters\Popups\TutorialPopupViewPresenter.cs" />
     <Compile Include="Presenters\Settings\SupportViewPresenter.cs" />
     <Compile Include="Controls\ButtonWithHover.cs" />
     <Compile Include="Controls\MenuItemDataTemplateSelector.cs" />
@@ -167,6 +168,9 @@
     </Compile>
     <Compile Include="Views\Popups\ReadMorePopup.xaml.cs">
       <DependentUpon>ReadMorePopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Popups\TutorialPopupView.xaml.cs">
+      <DependentUpon>TutorialPopupView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SongsListView.xaml.cs">
       <DependentUpon>SongsListView.xaml</DependentUpon>
@@ -415,6 +419,11 @@
     <Content Include="Resources\lastfm_Logo.png" />
     <Content Include="Resources\logo460.png" />
     <Content Include="Resources\outcoldsolutions.png" />
+    <Content Include="Resources\tutorial-page-1.png" />
+    <Content Include="Resources\tutorial-page-2.png" />
+    <Content Include="Resources\tutorial-page-3.png" />
+    <Content Include="Resources\tutorial-page-4.png" />
+    <Content Include="Resources\tutorial-page-5.png" />
     <Content Include="Resources\twitter-logo.png" />
     <Content Include="Resources\UnknownArt-160.png" />
     <Content Include="Resources\UnknownArt-352.png" />
@@ -473,6 +482,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Popups\ReadMorePopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Popups\TutorialPopupView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

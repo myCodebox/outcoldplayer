@@ -30,6 +30,12 @@
                 </TransitionCollection>
             </StackPanel.Transitions>
 
+            <Button Command="{Binding Path=ShowTutorial}">
+                <StackPanel Height="28" Width="160" Orientation="Horizontal" HorizontalAlignment="Center" >
+                    <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Margin="50, 0, 0, 0">Tutorial</TextBlock>
+                </StackPanel>
+            </Button>
+
             <TextBlock Style="{StaticResource BodyTextStyle}">
                 Do you have any issues with application? Or do you want to send feedback to us? Please, do. 
                 UserVoice is the best way to tell us which features you want to see in next versions of outcoldplayer.

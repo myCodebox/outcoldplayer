@@ -169,7 +169,17 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
             if (fUpdate)
             {
-                this.MainFrame.ShowPopup<IReleasesHistoryPopupView>(PopupRegion.Full);
+                this.MainFrame.ShowPopup<IReleasesHistoryPopupView>(PopupRegion.Full).Closed += ReleasesHistoryPopupView_OnClosed;
+            }
+        }
+
+        private void ReleasesHistoryPopupView_OnClosed(object sender, EventArgs eventArgs)
+        {
+            ((IReleasesHistoryPopupView)(sender)).Closed -= this.ReleasesHistoryPopupView_OnClosed;
+            if (this.settingsService.GetRoamingValue("Tutorial-v3", false))
+            {
+                this.MainFrame.ShowPopup<ITutorialPopupView>(PopupRegion.Full);
+                this.settingsService.SetRoamingValue("Tutorial-v3", true);
             }
         }
 

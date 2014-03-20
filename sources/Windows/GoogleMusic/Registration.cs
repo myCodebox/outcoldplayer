@@ -161,6 +161,11 @@ namespace OutcoldSolutions.GoogleMusic
                        .InjectionRule<BindingModelBase, DonatePopupViewPresenter>()
                        .As<DonatePopupView>();
             registration.Register<DonatePopupViewPresenter>();
+
+            registration.Register<ITutorialPopupView>()
+                       .InjectionRule<BindingModelBase, TutorialPopupViewPresenter>()
+                       .As<TutorialPopupView>();
+            registration.Register<TutorialPopupViewPresenter>();
         }
 
         public static void RegisterViews(IRegistrationContext registration)
