@@ -106,6 +106,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                                             {
                                                 this.ClearSelection();
                                                 this.navigationService.RefreshCurrentView();
+                                                this.mainFrame.ShowMessage("Done...");
                                             }
                                         }
                                         else

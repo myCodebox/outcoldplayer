@@ -10,6 +10,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
     using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
     using System.Linq;
+    using System.Threading.Tasks;
 
     using Windows.Foundation;
     using Windows.UI.Core;
@@ -79,6 +80,8 @@ namespace OutcoldSolutions.GoogleMusic.Views
         /// The <see cref="TPopup"/>.
         /// </returns>
         TPopup ShowPopup<TPopup>(PopupRegion popupRegion, params object[] injections) where TPopup : IPopupView;
+
+        void ShowMessage(string text);
     }
 
     /// <summary>
@@ -267,7 +270,19 @@ namespace OutcoldSolutions.GoogleMusic.Views
             this.ShowPopup(popupRegion, uiElement);
             return popupView;
         }
-       
+
+        public async void ShowMessage(string text)
+        {
+            await Task.Run(
+                async () =>
+                {
+                    await this.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => this.MessageText.Text = text);
+                    await this.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => this.MessagePopupShow.Begin());
+                    await Task.Delay(2000);
+                    await this.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => this.MessagePopupHide.Begin());
+                });
+        }
+
         /// <inheritdoc />
         public TPresenter GetPresenter<TPresenter>()
         {

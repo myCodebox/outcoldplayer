@@ -208,6 +208,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                             && networkConnectivityLevel != NetworkConnectivityLevel.InternetAccess)
                         {
                             this.stateService.CurrentState = ApplicationState.Offline;
+                            this.MainFrame.ShowMessage("Switched to offline mode...");
                         }
                     }
                 }

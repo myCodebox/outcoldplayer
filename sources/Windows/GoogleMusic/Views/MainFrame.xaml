@@ -26,6 +26,19 @@
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
 
+        <Storyboard x:Name="MessagePopupShow">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="MessagePopup" Storyboard.TargetProperty="Opacity" >
+                <LinearDoubleKeyFrame KeyTime="0:0:0.000" Value="0" />
+                <LinearDoubleKeyFrame KeyTime="0:0:0.500" Value="0.9" />
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Name="MessagePopupHide">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="MessagePopup" Storyboard.TargetProperty="Opacity" >
+                <LinearDoubleKeyFrame KeyTime="0:0:0.000" Value="0.9" />
+                <LinearDoubleKeyFrame KeyTime="0:0:0.500" Value="0" />
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+        
         <Style x:Name="LargeTitleGridStyle" TargetType="ContentControl">
             <Setter Property="Margin" Value="40, 0, 20, 0" />
             <Setter Property="HorizontalAlignment" Value="Left" />
@@ -221,6 +234,27 @@
                         VerticalContentAlignment="Stretch"
                         Visibility="{Binding Path=IsActive, ElementName=ProgressRing, Converter={StaticResource BooleanToInvisibilityConverter}}"
                         x:Name="ContentControl" />
+
+        <Border CornerRadius="15"
+                x:Name="MessagePopup" 
+                Grid.Row="1" 
+                Grid.Column="0"
+                Grid.ColumnSpan="2"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Bottom"
+                Canvas.ZIndex="10000"
+                Margin="0, 0, 0, 50"
+                Background="#DDDDDD"
+                Opacity="0"
+                MinWidth="200">
+            <TextBlock x:Name="MessageText" 
+                       Style="{StaticResource BodyTextStyle}" 
+                       FontWeight="Normal"
+                       Foreground="Black"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       Margin="20, 0, 20, 10"/>
+        </Border>
 
         <Popup IsLightDismissEnabled="True" 
                 x:Name="AppToolBarLeftPopup" 
