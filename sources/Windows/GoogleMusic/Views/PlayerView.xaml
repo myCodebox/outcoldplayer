@@ -31,13 +31,19 @@
                                     Grid.Column="0"
                                     Grid.RowSpan="2"
                                     Canvas.ZIndex="1"
-                                    Command="{Binding Path=NavigateToQueueView, Mode=OneTime}">
+                                    Command="{Binding Path=NavigateToQueueView, Mode=OneTime}"
+                                    Visibility="{Binding Path=BindingModel.CurrentSong, Mode=OneWay, Converter={StaticResource NullToInvisibilityConverter}}">
                                 <Button.Template>
                                     <ControlTemplate>
-                                        <Image Height="79" 
-                                            Width="79" 
-                                            Canvas.ZIndex="1"
-                                            Source="{Binding Path=BindingModel.CurrentSong.Metadata.AlbumArtUrl, Mode=OneWay}" />
+                                        <Border Background="#FF5F5F5F" 
+                                                Height="79" 
+                                                Width="79" >
+                                            <controls:AlbumArtControl Height="79" 
+                                                                      Width="79" 
+                                                                      ImageSize="79" 
+                                                                      Canvas.ZIndex="1"
+                                                                      ImageSource="{Binding Path=BindingModel.CurrentSong.Metadata.AlbumArtUrl, Mode=OneWay}" />
+                                        </Border>
                                     </ControlTemplate>
                                 </Button.Template>
                             </Button>
@@ -228,13 +234,19 @@
                                     Grid.Column="0"
                                     Grid.RowSpan="2"
                                     Canvas.ZIndex="1"
-                                    Command="{Binding Path=NavigateToQueueView, Mode=OneTime}">
+                                    Command="{Binding Path=NavigateToQueueView, Mode=OneTime}"
+                                    Visibility="{Binding Path=BindingModel.CurrentSong, Mode=OneWay, Converter={StaticResource NullToInvisibilityConverter}}">
                                 <Button.Template>
                                     <ControlTemplate>
-                                        <Image Height="79" 
-                                            Width="79" 
-                                            Canvas.ZIndex="1"
-                                            Source="{Binding Path=BindingModel.CurrentSong.Metadata.AlbumArtUrl, Mode=OneWay}" />
+                                        <Border Background="#FF5F5F5F" 
+                                                Height="79" 
+                                                Width="79" >
+                                            <controls:AlbumArtControl Height="79" 
+                                                                      Width="79" 
+                                                                      ImageSize="79" 
+                                                                      Canvas.ZIndex="1"
+                                                                      ImageSource="{Binding Path=BindingModel.CurrentSong.Metadata.AlbumArtUrl, Mode=OneWay}" />
+                                        </Border>
                                     </ControlTemplate>
                                 </Button.Template>
                             </Button>

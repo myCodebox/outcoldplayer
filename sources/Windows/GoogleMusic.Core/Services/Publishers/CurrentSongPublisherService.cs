@@ -123,7 +123,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
                             cancellationToken);
 
                         await Task.WhenAll(withAlbumArt, withoutAlbumArt);
-                    });
+                    }, cancellationToken);
 
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -161,7 +161,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
                             cancellationToken);
 
                         await Task.WhenAll(withAlbumArt, withoutAlbumArt);
-                    });
+                    }, cancellationToken);
 
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -177,7 +177,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
 
         private async Task<Uri> GetAlbumArtUri(Song song)
         {
-            Uri albumArtUri = new Uri("ms-appx:///Resources/UnknownArt-116.png");
+            Uri albumArtUri = new Uri("ms-appx:///Resources/UnknownArt-160.png");
 
             try
             {
@@ -188,7 +188,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
 
                 if (song.AlbumArtUrl != null)
                 {
-                    string cachedFile = await this.albumArtCacheService.GetCachedImageAsync(song.AlbumArtUrl, size: 116);
+                    string cachedFile = await this.albumArtCacheService.GetCachedImageAsync(song.AlbumArtUrl, size: 160);
                     if (!string.IsNullOrEmpty(cachedFile))
                     {
                         albumArtUri = AlbumArtUrlExtensions.ToLocalUri(cachedFile);

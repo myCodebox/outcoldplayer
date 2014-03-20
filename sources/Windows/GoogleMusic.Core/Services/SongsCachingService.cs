@@ -785,7 +785,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
                         if (nextTask.Song.AlbumArtUrl != null)
                         {
-                            await this.albumArtCacheService.GetCachedImageAsync(nextTask.Song.AlbumArtUrl, size: 116);
+                            await this.albumArtCacheService.GetCachedImageAsync(nextTask.Song.AlbumArtUrl, size: 79);
+                            await this.albumArtCacheService.GetCachedImageAsync(nextTask.Song.AlbumArtUrl, size: 160);
                         }
 
                         if (cancellationToken.IsCancellationRequested)
