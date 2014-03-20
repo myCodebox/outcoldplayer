@@ -52,10 +52,20 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.PlaylistsCommand = new DelegateCommand(this.NavigatePlaylistsView);
 
             eventAggregator.GetEvent<ApplicationStateChangeEvent>()
-                .Subscribe(async (e) => await this.Dispatcher.RunAsync(() => this.RaisePropertyChanged(() => this.IsOnline)));
+                .Subscribe(async (e) => await this.Dispatcher.RunAsync(
+                    () =>
+                    {
+                        this.RaisePropertyChanged(() => this.IsOnline);
+                        this.RaisePropertyChanged(() => this.IsExploreVisible);
+                    }));
             eventAggregator.GetEvent<SettingsChangeEvent>()
                 .Where(x => string.Equals(x.Key, GoogleMusicCoreSettingsServiceExtensions.IsAllAccessAvailableKey, StringComparison.OrdinalIgnoreCase))
-                .Subscribe(async (e) => await this.Dispatcher.RunAsync(() => this.RaisePropertyChanged(() => this.RadioText)));
+                .Subscribe(async (e) => await this.Dispatcher.RunAsync(
+                    () =>
+                    {
+                        this.RaisePropertyChanged(() => this.RadioText);
+                        this.RaisePropertyChanged(() => this.IsExploreVisible);
+                    }));
 
             this.navigationService.NavigatedTo += this.NavigationServiceOnNavigatedTo;
 
@@ -85,6 +95,14 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             get
             {
                 return this.applicationStateService.IsOnline();
+            }
+        }
+
+        public bool IsExploreVisible
+        {
+            get
+            {
+                return this.settingsService.GetIsAllAccessAvailable() && this.IsOnline;
             }
         }
 

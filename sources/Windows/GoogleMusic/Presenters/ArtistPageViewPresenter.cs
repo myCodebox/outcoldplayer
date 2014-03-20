@@ -27,6 +27,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private readonly IRadioStationsService radioStationsService;
         private readonly IApplicationStateService applicationStateService;
         private readonly IAllAccessService allAccessService;
+        private readonly ISettingsService settingsService;
 
         internal ArtistPageViewPresenter(
             IApplicationResources resources,
@@ -37,7 +38,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             IArtistsRepository artistsRepository,
             IRadioStationsService radioStationsService,
             IApplicationStateService applicationStateService,
-            IAllAccessService allAccessService)
+            IAllAccessService allAccessService,
+            ISettingsService settingsService)
         {
             this.resources = resources;
             this.playQueueService = playQueueService;
@@ -48,6 +50,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.radioStationsService = radioStationsService;
             this.applicationStateService = applicationStateService;
             this.allAccessService = allAccessService;
+            this.settingsService = settingsService;
             this.ShowAllCommand = new DelegateCommand(this.ShowAll);
             this.StartRadioCommand = new DelegateCommand(this.StartRadio);
 
@@ -141,7 +144,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 this.BindingModel.Collections = (await this.albumsRepository.GetArtistCollectionsAsync(artist.Id)).Cast<IPlaylist>().ToList();
             }
 
-            if (this.applicationStateService.IsOnline())
+            if (this.applicationStateService.IsOnline() && this.settingsService.GetIsAllAccessAvailable())
             {
                 this.LoadAllAccessSongs(artist, cancellationToken);
             }
@@ -156,7 +159,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
             if (this.applicationStateService.IsOnline() && this.BindingModel.Artist != null && !string.IsNullOrEmpty(this.BindingModel.Artist.GoogleArtistId))
             {
-                yield return new CommandMetadata(CommandIcon.Radio, "Start radio", this.StartRadioCommand);
+                yield return new CommandMetadata(CommandIcon.Radio, this.settingsService.GetIsAllAccessAvailable() ? "Start radio" : "Start instant mix", this.StartRadioCommand);
             }
         }
 

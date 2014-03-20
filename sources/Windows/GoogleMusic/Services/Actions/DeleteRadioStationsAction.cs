@@ -21,14 +21,18 @@ namespace OutcoldSolutions.GoogleMusic.Services.Actions
 
         private readonly IRadioStationsService radioStationsService;
 
+        private readonly ISettingsService settingsService;
+
         public DeleteRadioStationsAction(
             IApplicationResources applicationResources,
             IApplicationStateService stateService,
-            IRadioStationsService radioStationsService)
+            IRadioStationsService radioStationsService,
+            ISettingsService settingsService)
         {
             this.applicationResources = applicationResources;
             this.stateService = stateService;
             this.radioStationsService = radioStationsService;
+            this.settingsService = settingsService;
         }
 
         public string Icon
@@ -43,7 +47,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Actions
         {
             get
             {
-                return "Delete radio station(s)";
+                return this.settingsService.GetIsAllAccessAvailable() ? "Delete radio station(s)" : "Delete instant mixes";
             }
         }
 
@@ -83,7 +87,10 @@ namespace OutcoldSolutions.GoogleMusic.Services.Actions
             var yesUiCommand = new UICommand(this.applicationResources.GetString("MessageBox_DeletePlaylistYes"));
             var noUiCommand = new UICommand(this.applicationResources.GetString("MessageBox_DeletePlaylistNo"));
 
-            MessageDialog dialog = new MessageDialog(this.applicationResources.GetString("MessageBox_DeleteRadioMessage"));
+            MessageDialog dialog =
+                new MessageDialog(this.settingsService.GetIsAllAccessAvailable()
+                            ? "Are you sure want to delete selected radio stations?"
+                            : "Are you sure want to delete selected instant mixes?");
             dialog.Commands.Add(yesUiCommand);
             dialog.Commands.Add(noUiCommand);
             dialog.DefaultCommandIndex = 0;

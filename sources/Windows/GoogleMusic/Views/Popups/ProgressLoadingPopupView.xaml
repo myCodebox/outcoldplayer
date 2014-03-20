@@ -10,7 +10,7 @@
             <Image Source="ms-appx:///Resources/gmusic.splashscreen.png" MaxWidth="620" MaxHeight="300" Stretch="Uniform" />
         </StackPanel>
 
-        <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="10, 400, 10, 0">
+        <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="10, 400, 10, 0" >
 
             <ProgressBar Maximum="1" 
                          Value="{Binding Path=BindingModel.Progress, Mode=OneWay}" 
@@ -24,6 +24,7 @@
                        HorizontalAlignment="Stretch" />
 
             <Button Content="Try Again" 
+                    HorizontalAlignment="Center"
                     Command="{Binding Path=ReloadSongsCommand, Mode=OneTime}" 
                     Visibility="{Binding Path=BindingModel.IsFailed, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
             

@@ -243,7 +243,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             }
         }
 
-        public async Task ClearSession()
+        public async Task ClearSession(bool silent)
         {
             var sessionContainer = this.GetSessionContainer();
             if (sessionContainer != null)
@@ -264,7 +264,10 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     this.logger.Debug(exp, "Could not detele cookies file");
                 }
 
-                this.RaiseSessionCleared();
+                if (!silent)
+                {
+                    this.RaiseSessionCleared();
+                }
             }
             else
             {

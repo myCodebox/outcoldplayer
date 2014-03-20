@@ -22,6 +22,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
         private readonly IGoogleMusicSessionService sessionService;
         private readonly IGoogleAccountWebService googleAccountWebService;
         private readonly IGoogleMusicWebService googleMusicWebService;
+        private readonly IConfigWebService configWebService;
 
         public AuthentificationService(
             IApplicationResources resources,
@@ -29,7 +30,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
             IGoogleAccountService googleAccountService,
             IGoogleMusicSessionService sessionService,
             IGoogleAccountWebService googleAccountWebService,
-            IGoogleMusicWebService googleMusicWebService)
+            IGoogleMusicWebService googleMusicWebService,
+            IConfigWebService configWebService)
         {
             this.logger = logManager.CreateLogger("AuthentificationService");
             this.resources = resources;
@@ -37,6 +39,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             this.sessionService = sessionService;
             this.googleAccountWebService = googleAccountWebService;
             this.googleMusicWebService = googleMusicWebService;
+            this.configWebService = configWebService;
         }
 
         public async Task<AuthentificationResult> CheckAuthentificationAsync(UserInfo userInfo = null)
@@ -80,6 +83,13 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 if (authResponse.CookieCollection != null && authResponse.CookieCollection.Count > 0)
                 {
                     this.sessionService.InitializeCookieContainer(authResponse.CookieCollection.Cast<Cookie>(), authResponse.Auth);
+
+                    if (!await this.configWebService.IsAccesptedUserAsync())
+                    {
+                        await this.sessionService.ClearSession(silent: true);
+                        return AuthentificationResult.FailedResult(this.GetErrorMessage(GoogleAuthResponse.ErrorResponseCode.TermsNotAgreed));
+                    }
+
                     await this.sessionService.SaveCurrentSessionAsync();
                     this.sessionService.GetSession().IsAuthenticated = true;
                     return AuthentificationResult.SucceedResult();

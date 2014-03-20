@@ -13,6 +13,8 @@ namespace OutcoldSolutions.GoogleMusic.Web
     public interface IConfigWebService
     {
         Task<bool> IsAllAccessAvailableAsync();
+
+        Task<bool> IsAccesptedUserAsync();
     }
 
     public class ConfigWebService : IConfigWebService
@@ -26,13 +28,23 @@ namespace OutcoldSolutions.GoogleMusic.Web
             this.googleMusicApisService = googleMusicApisService;
         }
 
-        public async Task<bool> IsAllAccessAvailableAsync()
+        public Task<bool> IsAllAccessAvailableAsync()
+        {
+            return this.IsConfigTrueAsync("isNautilusUser");
+        }
+
+        public Task<bool> IsAccesptedUserAsync()
+        {
+            return this.IsConfigTrueAsync("isAcceptedUser");
+        }
+
+        private async Task<bool> IsConfigTrueAsync(string config)
         {
             var response = await this.googleMusicApisService.GetAsync<GoogleConfigResponse>(Config);
             if (response != null && response.Data != null && response.Data.Entries != null)
             {
                 var entity = response.Data.Entries.FirstOrDefault(
-                    x => string.Equals(x.Key, "isNautilusUser", StringComparison.OrdinalIgnoreCase));
+                    x => string.Equals(x.Key, config, StringComparison.OrdinalIgnoreCase));
                 if (entity != null)
                 {
                     bool value;

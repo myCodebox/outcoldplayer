@@ -181,7 +181,7 @@
     <comment>DO NOT TRANSLATE</comment>
   </data>
   <data name="Authorization_Error_TermsNotAgreed" xml:space="preserve">
-    <value>The user has not agreed to terms. The user will need to access their Google account directly to resolve the issue before logging in using a non-Google application.</value>
+    <value>You need to proceed to Google Music web site to agree with service terms.</value>
     <comment>DO NOT TRANSLATE</comment>
   </data>
   <data name="Authorization_Error_UnexpectedError" xml:space="preserve">
