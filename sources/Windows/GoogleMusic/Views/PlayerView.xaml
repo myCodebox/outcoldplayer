@@ -34,11 +34,10 @@
                                     Command="{Binding Path=NavigateToQueueView, Mode=OneTime}">
                                 <Button.Template>
                                     <ControlTemplate>
-                                        <controls:AlbumArtControl Height="79" 
+                                        <Image Height="79" 
                                             Width="79" 
-                                            ImageSize="79" 
                                             Canvas.ZIndex="1"
-                                            ImageSource="{Binding Path=BindingModel.CurrentSong.Metadata.AlbumArtUrl, Mode=OneWay}" />
+                                            Source="{Binding Path=BindingModel.CurrentSong.Metadata.AlbumArtUrl, Mode=OneWay}" />
                                     </ControlTemplate>
                                 </Button.Template>
                             </Button>
@@ -232,11 +231,10 @@
                                     Command="{Binding Path=NavigateToQueueView, Mode=OneTime}">
                                 <Button.Template>
                                     <ControlTemplate>
-                                        <controls:AlbumArtControl Height="79" 
+                                        <Image Height="79" 
                                             Width="79" 
-                                            ImageSize="79" 
                                             Canvas.ZIndex="1"
-                                            ImageSource="{Binding Path=BindingModel.CurrentSong.Metadata.AlbumArtUrl, Mode=OneWay}" />
+                                            Source="{Binding Path=BindingModel.CurrentSong.Metadata.AlbumArtUrl, Mode=OneWay}" />
                                     </ControlTemplate>
                                 </Button.Template>
                             </Button>

@@ -416,13 +416,9 @@
     <Content Include="Resources\logo460.png" />
     <Content Include="Resources\outcoldsolutions.png" />
     <Content Include="Resources\twitter-logo.png" />
-    <Content Include="Resources\UnknownArt-116.png" />
-    <Content Include="Resources\UnknownArt-140.png" />
-    <Content Include="Resources\UnknownArt-180.png" />
-    <Content Include="Resources\UnknownArt-256.png" />
-    <Content Include="Resources\UnknownArt-40.png" />
-    <Content Include="Resources\UnknownArt-80.png" />
-    <Content Include="Resources\UnknownArt-90.png" />
+    <Content Include="Resources\UnknownArt-160.png" />
+    <Content Include="Resources\UnknownArt-352.png" />
+    <Content Include="Resources\UnknownArt-79.png" />
     <Content Include="Resources\uservoice-logo.png" />
     <Content Include="Resources\uservoice.png" />
   </ItemGroup>
