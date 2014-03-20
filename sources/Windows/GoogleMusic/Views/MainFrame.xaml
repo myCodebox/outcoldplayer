@@ -216,7 +216,8 @@
 
         <ProgressRing x:Name="ProgressRing" 
                       Grid.Row="1" 
-                      Grid.Column="1" />
+                      Grid.Column="0"
+                      Grid.ColumnSpan="2"/>
 
         <ContentControl Grid.Row="1"
                         Grid.Column="1"
