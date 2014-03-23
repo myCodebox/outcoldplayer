@@ -386,11 +386,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
             {
                 this.logger.LogTask(this.Dispatcher.RunAsync(
                     CoreDispatcherPriority.Normal,
-                    () =>
-                    {
-                        this.applicationSize.OnSizeChanged(this.latestSize.Value);
-                        this.analyticsService.SendEvent("Window", "ChangeSize", this.applicationSize.IsLarge ? "Large" : this.applicationSize.IsMedium ? "Medium" : "Small");
-                    }).AsTask());
+                    () => this.applicationSize.OnSizeChanged(this.latestSize.Value)).AsTask());
             }
         }
 

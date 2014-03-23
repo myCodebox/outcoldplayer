@@ -4,6 +4,7 @@
 namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
 {
     using System;
+    using System.Diagnostics;
     using System.Net;
     using System.Threading.Tasks;
 
@@ -137,7 +138,14 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
 
             this.settingsService.ResetLibraryFreshness();
 
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+
             await this.initialSynchronization.InitializeAsync(progress);
+
+            stopwatch.Stop();
+
+            this.analyticsService.SendTiming(stopwatch.Elapsed, "ProgressPopup", "Loading", "Library");
 
             await progress.SafeReportAsync(1.0);
         }

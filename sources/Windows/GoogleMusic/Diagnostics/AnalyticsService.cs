@@ -11,13 +11,18 @@ namespace OutcoldSolutions.GoogleMusic.Diagnostics
     public interface IAnalyticsService
     {
         void SendEvent(string category, string action, string label, int? value = null);
+
+        void SendTiming(TimeSpan timeSpan, string category, string action, string label);
     }
 
     public class FakeAnalyticsService : IAnalyticsService
     {
         public void SendEvent(string category, string action, string label, int? value = null)
+        {   
+        }
+
+        public void SendTiming(TimeSpan timeSpan, string category, string action, string label)
         {
-            
         }
     }
 
@@ -85,6 +90,20 @@ namespace OutcoldSolutions.GoogleMusic.Diagnostics
                 this.dispatcher.RunAsync(
                     CoreDispatcherPriority.Low,
                     () =>GoogleAnalytics.EasyTracker.GetTracker().SendEvent(category, action, label, value.HasValue ? value.Value : 0));
+            }
+            catch (Exception e)
+            {
+                this.logger.Debug(e, "Could not log navigation");
+            }
+        }
+
+        public void SendTiming(TimeSpan timeSpan, string category, string action, string label)
+        {
+            try
+            {
+                this.dispatcher.RunAsync(
+                    CoreDispatcherPriority.Low,
+                    () => GoogleAnalytics.EasyTracker.GetTracker().SendTiming(timeSpan, category, action, label));
             }
             catch (Exception e)
             {
