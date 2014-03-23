@@ -8,6 +8,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using System.Threading;
     using System.Threading.Tasks;
 
+    using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.InversionOfControl;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Repositories;
@@ -30,6 +31,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private readonly ISettingsService settingsService;
 
+        private readonly IAnalyticsService analyticsService;
+
         private Tuple<Album, IList<Song>> allAccessAlbum;
 
         public AlbumPageViewPresenter(
@@ -40,7 +43,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             INavigationService navigationService,
             IPlayQueueService playQueueService,
             IRadioStationsService radioStationsService,
-            ISettingsService settingsService)
+            ISettingsService settingsService,
+            IAnalyticsService analyticsService)
             : base(container)
         {
             this.resources = resources;
@@ -50,6 +54,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.playQueueService = playQueueService;
             this.radioStationsService = radioStationsService;
             this.settingsService = settingsService;
+            this.analyticsService = analyticsService;
             this.NavigateToArtistCommand = new DelegateCommand(this.NavigateToArtist);
 
             this.StartRadioCommand = new DelegateCommand(this.StartRadio);
@@ -67,6 +72,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.NavigateToAllAccessAlbumCommand = new DelegateCommand(
                 () =>
                 {
+                    this.analyticsService.SendEvent("AlbumPage", "Execute", "NavigateToAllAccessAlbum");
+
                     if (this.allAccessAlbum != null && this.allAccessAlbum.Item2 != null)
                     {
                         this.navigationService.NavigateToPlaylist(
@@ -176,17 +183,20 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         {
             if (!this.IsDataLoading)
             {
+                this.analyticsService.SendEvent("AlbumPage", "Execute", "StartRadio");
+
                 await this.Dispatcher.RunAsync(() => this.IsDataLoading = true);
 
                 var radio = await this.radioStationsService.CreateAsync((Album)this.BindingModel.Playlist);
 
                 if (radio != null)
                 {
-                    await this.playQueueService.PlayAsync(radio.Item1, radio.Item2, -1);
+                    if (await this.playQueueService.PlayAsync(radio.Item1, radio.Item2, -1))
+                    {
+                        await this.Dispatcher.RunAsync(() => this.IsDataLoading = false);
 
-                    await this.Dispatcher.RunAsync(() => this.IsDataLoading = false);
-
-                    this.navigationService.NavigateToPlaylist(radio.Item1);
+                        this.navigationService.NavigateToPlaylist(radio.Item1);
+                    }
                 }
             }
         }

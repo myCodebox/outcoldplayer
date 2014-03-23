@@ -27,27 +27,27 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         QueueState State { get; }
 
-        Task PlayAsync(IPlaylist playlist);
+        Task<bool> PlayAsync(IPlaylist playlist);
 
-        Task PlayAsync(IPlaylist playlist, int songIndex);
+        Task<bool> PlayAsync(IPlaylist playlist, int songIndex);
 
-        Task PlayAsync(IPlaylist playlist, IEnumerable<Song> songs, int songIndex);
+        Task<bool> PlayAsync(IPlaylist playlist, IEnumerable<Song> songs, int songIndex);
 
-        Task PlayAsync(int index);
+        Task<bool> PlayAsync(int index);
 
-        Task PlayAsync(IEnumerable<Song> songs);
+        Task<bool> PlayAsync(IEnumerable<Song> songs);
 
-        Task PlayAsync();
+        Task<bool> PlayAsync();
 
         Task PauseAsync();
 
         Task StopAsync();
 
-        Task NextSongAsync();
+        Task<bool> NextSongAsync();
 
         bool CanSwitchToNext();
 
-        Task PreviousSongAsync();
+        Task<bool> PreviousSongAsync();
 
         bool CanSwitchToPrevious();
 

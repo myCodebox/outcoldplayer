@@ -3,6 +3,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
 {
+    using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Shell;
     using OutcoldSolutions.GoogleMusic.Views;
@@ -12,15 +13,21 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
     {
         private readonly ISettingsService settingsService;
 
+        private readonly IAnalyticsService analyticsService;
+
         public SupportViewPresenter(
             ISettingsService settingsService,
-            IApplicationSettingViewsService settingViewsService)
+            IApplicationSettingViewsService settingViewsService,
+            IAnalyticsService analyticsService)
+            : base(analyticsService)
         {
             this.settingsService = settingsService;
+            this.analyticsService = analyticsService;
 
             this.ShowTutorial = new DelegateCommand(
                 () =>
                 {
+                    this.analyticsService.SendEvent("Support", "Execute", "ShowTutorial");
                     settingViewsService.Close();
                     this.MainFrame.ShowPopup<ITutorialPopupView>(PopupRegion.Full);
                 });

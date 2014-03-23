@@ -19,6 +19,9 @@ namespace OutcoldSolutions.GoogleMusic
         /// <param name="view">
         /// The view.
         /// </param>
+        /// <param name="viewType">
+        /// The view type.
+        /// </param>
         /// <param name="state">
         /// The state.
         /// </param>
@@ -33,6 +36,7 @@ namespace OutcoldSolutions.GoogleMusic
         /// </exception>
         public NavigatedToEventArgs(
             IView view,
+            Type viewType,
             IDictionary<string, object> state, 
             object parameter, 
             bool isBack)
@@ -43,6 +47,7 @@ namespace OutcoldSolutions.GoogleMusic
             }
 
             this.View = view;
+            this.ViewType = viewType;
             this.State = state;
             this.Parameter = parameter;
             this.IsNavigationBack = isBack;
@@ -52,6 +57,11 @@ namespace OutcoldSolutions.GoogleMusic
         /// Gets the view.
         /// </summary>
         public IView View { get; private set; }
+
+        /// <summary>
+        /// Gets the view type.
+        /// </summary>
+        public Type ViewType { get; private set; }
 
         /// <summary>
         /// Gets the state.

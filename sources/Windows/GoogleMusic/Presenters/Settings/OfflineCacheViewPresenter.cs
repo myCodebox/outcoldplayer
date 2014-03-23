@@ -10,13 +10,17 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.BindingModels.Settings;
+    using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Models;
+    using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Shell;
     using OutcoldSolutions.GoogleMusic.Views;
     using OutcoldSolutions.GoogleMusic.Web;
 
     using Windows.Storage;
+
+    using SQLite;
 
     internal class OfflineCacheViewPresenter : DisposableViewPresenterBase<IView>
     {
@@ -27,6 +31,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
         private readonly ISongsCachingService cachingService;
         private readonly IGoogleMusicSessionService sessionService;
 
+        private readonly IAnalyticsService analyticsService;
+
         private INetworkRandomAccessStream currentDownloadStream;
         private CachedSongBindingModel currentCachedSong;
 
@@ -36,13 +42,15 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
             ISongsCachingService songsCachingService, 
             OfflineCacheViewBindingModel bindingModel,
             ISongsCachingService cachingService,
-            IGoogleMusicSessionService sessionService)
+            IGoogleMusicSessionService sessionService,
+            IAnalyticsService analyticsService)
         {
             this.stateService = stateService;
             this.albumArtCacheService = albumArtCacheService;
             this.songsCachingService = songsCachingService;
             this.cachingService = cachingService;
             this.sessionService = sessionService;
+            this.analyticsService = analyticsService;
             this.BindingModel = bindingModel;
 
             this.BindingModel.IsLoading = true;
@@ -68,10 +76,23 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
             base.OnInitialized();
 
             await this.UpdateLoadingState(isLoading: true);
-            await this.LoadFolderSizesAsync();
-            if (this.sessionService.GetSession().IsAuthenticated)
+
+            try
             {
-                await this.LoadQueuedTasks();
+                if (this.sessionService.GetSession().IsAuthenticated)
+                {
+                    DbContext context = new DbContext();
+                    if (await context.CheckVersionAsync())
+                    {
+                        await this.LoadFolderSizesAsync();
+
+                        await this.LoadQueuedTasks();
+                    }
+                }
+            }
+            catch (Exception exception)
+            {
+                this.Logger.Warning(exception, "Coult not load page.");
             }
 
             await this.UpdateLoadingState(isLoading: false);
@@ -92,11 +113,14 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
 
         private void StartDownload()
         {
+            this.analyticsService.SendEvent("Settings", "Execute", "StartDownload");
             this.songsCachingService.StartDownloadTask();
         }
         
         private async void ClearAlbumArtsCache()
         {
+            this.analyticsService.SendEvent("Settings", "Execute", "ClearAlbumArtsCache");
+
             await this.UpdateLoadingState(isLoading: true);
             await this.albumArtCacheService.ClearCacheAsync();
             await this.LoadAlbumArtsCacheFolderSizeAsync();
@@ -105,6 +129,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
 
         private async void ClearSongsCache()
         {
+            this.analyticsService.SendEvent("Settings", "Execute", "ClearSongsCache");
+
             await this.UpdateLoadingState(isLoading: true);
             await this.songsCachingService.ClearCacheAsync();
             await this.LoadSongsCacheFolderSizeAsync();
@@ -178,6 +204,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
 
         private async void CancelTask(object task)
         {
+            this.analyticsService.SendEvent("Settings", "Execute", "CancelDownload");
+
             var cachedSong = task as CachedSongBindingModel;
             if (cachedSong != null)
             {

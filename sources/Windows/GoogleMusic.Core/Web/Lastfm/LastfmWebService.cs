@@ -10,6 +10,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Lastfm
     using System.Net.Http;
     using System.Runtime.InteropServices.WindowsRuntime;
     using System.Text;
+    using System.Threading;
     using System.Threading.Tasks;
 
     using Windows.Security.Credentials;
@@ -49,7 +50,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Lastfm
             get { return this.httpClient; }
         }
 
-        public async Task<HttpResponseMessage> CallAsync(string methodName, IDictionary<string, string> parameters = null)
+        public async Task<HttpResponseMessage> CallAsync(string methodName, IDictionary<string, string> parameters = null, CancellationToken? cancellationToken = null)
         {
             var urlBuilder = new StringBuilder("?");
 
@@ -79,7 +80,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Lastfm
             
             string url = urlBuilder.ToString();
 
-            return await this.SendAsync(new HttpRequestMessage(HttpMethod.Post, url), HttpCompletionOption.ResponseContentRead);
+            return await this.SendAsync(new HttpRequestMessage(HttpMethod.Post, url), HttpCompletionOption.ResponseContentRead, cancellationToken);
         }
 
         public void SetToken(string token)

@@ -5,11 +5,12 @@ namespace OutcoldSolutions.GoogleMusic.Web.Lastfm
 {
     using System.Collections.Generic;
     using System.Net.Http;
+    using System.Threading;
     using System.Threading.Tasks;
 
     public interface ILastfmWebService
     {
-        Task<HttpResponseMessage> CallAsync(string methodName, IDictionary<string, string> parameters = null);
+        Task<HttpResponseMessage> CallAsync(string methodName, IDictionary<string, string> parameters = null, CancellationToken? cancellationToken = null);
 
         void SetToken(string token);
 

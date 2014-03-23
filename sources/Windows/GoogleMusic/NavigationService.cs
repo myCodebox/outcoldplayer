@@ -19,7 +19,6 @@ namespace OutcoldSolutions.GoogleMusic
 
         private readonly ILogger logger;
         private readonly IDependencyResolverContainer container;
-
         private IMainFrameRegionProvider mainFrameRegionProvider;
 
         private bool navigation = false;
@@ -143,7 +142,7 @@ namespace OutcoldSolutions.GoogleMusic
 
                 this.mainFrameRegionProvider.SetContent(MainFrameRegion.Content, item.View);
 
-                var navigatedToEventArgs = new NavigatedToEventArgs(item.View, item.State, item.Parameter, isBack: true);
+                var navigatedToEventArgs = new NavigatedToEventArgs(item.View, item.ViewType, item.State, item.Parameter, isBack: true);
 
                 item.View.OnNavigatedTo(navigatedToEventArgs);
 
@@ -201,7 +200,7 @@ namespace OutcoldSolutions.GoogleMusic
                     this.logger.Debug("View the same: {0}.", pageViewType);
                 }
 
-                var navigatedToEventArgs = new NavigatedToEventArgs(view, historyItem == null ? null : historyItem.State, parameter, isBack: false);
+                var navigatedToEventArgs = new NavigatedToEventArgs(view, pageViewType, historyItem == null ? null : historyItem.State, parameter, isBack: false);
                 view.OnNavigatedTo(navigatedToEventArgs);
                 this.RaiseNavigatedTo(navigatedToEventArgs);
 

@@ -82,7 +82,10 @@ namespace OutcoldSolutions.GoogleMusic.Services
                         {
                             foreach(var p in playlists)
                             {
-                                this.cachedUris.Remove(p.Id);
+                                if (!string.IsNullOrEmpty(p.Id))
+                                {
+                                    this.cachedUris.Remove(p.Id);
+                                }
                             }
                         }
                         finally
@@ -141,7 +144,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 case PlaylistType.UserPlaylist:
                     var playlistRepository = this.GetRepository<UserPlaylist>();
                     var playlist = await playlistRepository.GetAsync(id);
-                    if (playlist.IsShared)
+                    if (playlist != null && playlist.IsShared)
                     {
                         return await this.userPlaylistsService.GetSharedPlaylistSongsAsync(playlist);
                     }

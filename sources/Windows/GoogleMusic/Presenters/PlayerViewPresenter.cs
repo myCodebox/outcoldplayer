@@ -21,6 +21,9 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private readonly IPlayQueueService queueService;
         private readonly INavigationService navigationService;
         private readonly ISongsService songsService;
+
+        private readonly IAnalyticsService analyticsService;
+
         private readonly IMediaElementContainer mediaElement;
 
         private double progressPosition;
@@ -34,6 +37,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             INavigationService navigationService,
             IApplicationSettingViewsService applicationSettingViewsService,
             ISongsService songsService,
+            IAnalyticsService analyticsService,
             PlayerBindingModel playerBindingModel,
             ApplicationSize applicationSize)
         {
@@ -41,6 +45,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.queueService = queueService;
             this.navigationService = navigationService;
             this.songsService = songsService;
+            this.analyticsService = analyticsService;
 
             this.BindingModel = playerBindingModel;
 
@@ -148,6 +153,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     {
                         this.VisiblePanelIndex = this.VisiblePanelIndex > 2 ? 0 : ++this.VisiblePanelIndex;
                     }
+
+                    this.analyticsService.SendEvent("Player", "SwitchPanel", this.VisiblePanelIndex.ToString());
                 });
 
             applicationSize.Subscribe(() => applicationSize.IsSmall,
@@ -231,16 +238,20 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private async void NextSong()
         {
-            await this.queueService.NextSongAsync();
-            this.UpdateCommands();
-            this.VisiblePanelIndex = 0;
+            if (await this.queueService.NextSongAsync())
+            {
+                this.UpdateCommands();
+                this.VisiblePanelIndex = 0;
+            }
         }
 
         private async void PreviousSong()
         {
-            await this.queueService.PreviousSongAsync();
-            this.UpdateCommands();
-            this.VisiblePanelIndex = 0;
+            if (await this.queueService.PreviousSongAsync())
+            {
+                this.UpdateCommands();
+                this.VisiblePanelIndex = 0;
+            }
         }
 
         private async Task PlayAsync()

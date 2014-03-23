@@ -6,6 +6,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
     using System.Collections.Generic;
     using System.Threading.Tasks;
 
+    using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views.Popups;
@@ -16,14 +17,18 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
         private readonly IPlayQueueService playQueueService;
         private readonly IPlaylistsService playlistsService;
 
+        private readonly IAnalyticsService analyticsService;
+
         public QueueActionsPopupViewPresenter(
             SelectedItems selectedItems,
             IPlayQueueService playQueueService,
-            IPlaylistsService playlistsService)
+            IPlaylistsService playlistsService,
+            IAnalyticsService analyticsService)
         {
             this.selectedItems = selectedItems;
             this.playQueueService = playQueueService;
             this.playlistsService = playlistsService;
+            this.analyticsService = analyticsService;
             this.ShuffleAllCommand = new DelegateCommand(this.ShuffleAll);
             this.PlayCommand = new DelegateCommand(this.Play);
             this.AddCommand = new DelegateCommand(this.Add);
@@ -37,6 +42,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
 
         private async void Play()
         {
+            this.analyticsService.SendEvent("QueuePopup", "Execute", "Play");
             this.View.Close(new QueueActionsCompletedEventArgs());
 
             this.playQueueService.IsShuffled = false;
@@ -45,6 +51,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
 
         private async void ShuffleAll()
         {
+            this.analyticsService.SendEvent("QueuePopup", "Execute", "ShuffleAll");
             this.View.Close(new QueueActionsCompletedEventArgs());
 
             this.playQueueService.IsShuffled = true;
@@ -53,6 +60,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
 
         private async void Add()
         {
+            this.analyticsService.SendEvent("QueuePopup", "Execute", "Add");
             this.View.Close(new QueueActionsCompletedEventArgs());
 
             var songs = await this.GetAllSongsAsync();

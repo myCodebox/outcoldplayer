@@ -10,6 +10,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
+    using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Services;
@@ -29,6 +30,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private readonly IAllAccessService allAccessService;
         private readonly ISettingsService settingsService;
 
+        private readonly IAnalyticsService analyticsService;
+
         internal ArtistPageViewPresenter(
             IApplicationResources resources,
             IPlayQueueService playQueueService,
@@ -39,7 +42,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             IRadioStationsService radioStationsService,
             IApplicationStateService applicationStateService,
             IAllAccessService allAccessService,
-            ISettingsService settingsService)
+            ISettingsService settingsService,
+            IAnalyticsService analyticsService)
         {
             this.resources = resources;
             this.playQueueService = playQueueService;
@@ -51,32 +55,45 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.applicationStateService = applicationStateService;
             this.allAccessService = allAccessService;
             this.settingsService = settingsService;
+            this.analyticsService = analyticsService;
             this.ShowAllCommand = new DelegateCommand(this.ShowAll);
             this.StartRadioCommand = new DelegateCommand(this.StartRadio);
 
             this.NavigateToTopSongs = new DelegateCommand(
-                () => this.navigationService.NavigateTo<IPlaylistPageView>(
-                    new PlaylistNavigationRequest(
-                        this.BindingModel.ArtistInfo.Artist, 
-                        this.BindingModel.ArtistInfo.Artist.Title,
-                        "Artist Top Songs",
-                        this.BindingModel.ArtistInfo.TopSongs)));
+                () =>
+                {
+                    this.analyticsService.SendEvent("ArtistPage", "Execute", "TopSongs");
+                    this.navigationService.NavigateTo<IPlaylistPageView>(
+                        new PlaylistNavigationRequest(
+                            this.BindingModel.ArtistInfo.Artist,
+                            this.BindingModel.ArtistInfo.Artist.Title,
+                            "Artist Top Songs",
+                            this.BindingModel.ArtistInfo.TopSongs));
+                });
 
             this.NavigateToAlbums = new DelegateCommand(
-                () => this.navigationService.NavigateTo<IPlaylistsPageView>(
-                    new PlaylistNavigationRequest(
-                        this.BindingModel.ArtistInfo.Artist,
-                        this.BindingModel.ArtistInfo.Artist.Title,
-                        "Artist Albums",
-                        this.BindingModel.ArtistInfo.GoogleAlbums.Cast<IPlaylist>().ToList())));
+                () =>
+                {
+                    this.analyticsService.SendEvent("ArtistPage", "Execute", "ArtistAlbums");
+                    this.navigationService.NavigateTo<IPlaylistsPageView>(
+                        new PlaylistNavigationRequest(
+                            this.BindingModel.ArtistInfo.Artist,
+                            this.BindingModel.ArtistInfo.Artist.Title,
+                            "Artist Albums",
+                            this.BindingModel.ArtistInfo.GoogleAlbums.Cast<IPlaylist>().ToList()));
+                });
 
             this.NavigateToArtists = new DelegateCommand(
-               () => this.navigationService.NavigateTo<IPlaylistsPageView>(
-                   new PlaylistNavigationRequest(
-                       this.BindingModel.ArtistInfo.Artist,
-                       this.BindingModel.ArtistInfo.Artist.Title,
-                       "Related Artists",
-                       this.BindingModel.ArtistInfo.RelatedArtists.Cast<IPlaylist>().ToList())));
+               () =>
+               {
+                   this.analyticsService.SendEvent("ArtistPage", "Execute", "RelatedArtists");
+                   this.navigationService.NavigateTo<IPlaylistsPageView>(
+                       new PlaylistNavigationRequest(
+                           this.BindingModel.ArtistInfo.Artist,
+                           this.BindingModel.ArtistInfo.Artist.Title,
+                           "Related Artists",
+                           this.BindingModel.ArtistInfo.RelatedArtists.Cast<IPlaylist>().ToList()));
+               });
 
             this.ReadMoreCommand = new DelegateCommand(
                 () =>
@@ -138,7 +155,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
             this.BindingModel.Artist = artist;
 
-            if (artist.ArtistId > 0)
+            if (artist != null && artist.ArtistId > 0)
             {
                 this.BindingModel.Albums = (await this.albumsRepository.GetArtistAlbumsAsync(artist.Id)).Cast<IPlaylist>().ToList();
                 this.BindingModel.Collections = (await this.albumsRepository.GetArtistCollectionsAsync(artist.Id)).Cast<IPlaylist>().ToList();
@@ -165,31 +182,39 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private async void LoadAllAccessSongs(Artist artist, CancellationToken cancellationToken)
         {
-            await this.Dispatcher.RunAsync(
-                () =>
-                {
-                    this.BindingModel.IsAllAccessLoading = true;
-                });
-
-            var info = await this.allAccessService.GetArtistInfoAsync(artist, cancellationToken);
-            if (info != null)
+            try
             {
                 await this.Dispatcher.RunAsync(
                     () =>
                     {
-                        this.BindingModel.ArtistInfo = info;
+                        this.BindingModel.IsAllAccessLoading = true;
+                    });
+
+                var info = await this.allAccessService.GetArtistInfoAsync(artist, cancellationToken);
+                if (info != null)
+                {
+                    await this.Dispatcher.RunAsync(
+                        () =>
+                        {
+                            this.BindingModel.ArtistInfo = info;
+                        });
+                }
+
+                await this.Dispatcher.RunAsync(
+                    () =>
+                    {
+                        this.BindingModel.IsAllAccessLoading = false;
                     });
             }
-
-            await this.Dispatcher.RunAsync(
-                () =>
-                {
-                    this.BindingModel.IsAllAccessLoading = false;
-                });
+            catch (OperationCanceledException exception)
+            {
+                this.Logger.Debug(exception, "Load All Access Songs cancelled");
+            }
         }
 
         private void ShowAll()
         {
+            this.analyticsService.SendEvent("ArtistPage", "Execute", "ShowAll");
             this.NavigateToShowAllArtistsSongs();
         }
 
@@ -197,17 +222,19 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         {
             if (!this.IsDataLoading)
             {
+                this.analyticsService.SendEvent("ArtistPage", "Execute", "StartRadio");
                 await this.Dispatcher.RunAsync(() => this.IsDataLoading = true);
 
                 var radio = await this.radioStationsService.CreateAsync(this.BindingModel.Artist);
 
                 if (radio != null)
                 {
-                    await this.playQueueService.PlayAsync(radio.Item1, radio.Item2, -1);
+                    if (await this.playQueueService.PlayAsync(radio.Item1, radio.Item2, -1))
+                    {
+                        await this.Dispatcher.RunAsync(() => this.IsDataLoading = false);
 
-                    await this.Dispatcher.RunAsync(() => this.IsDataLoading = false);
-
-                    this.navigationService.NavigateToPlaylist(radio.Item1);
+                        this.navigationService.NavigateToPlaylist(radio.Item1);
+                    }
                 }
             }
         }

@@ -6,27 +6,29 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
     using System;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
+    using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services;
-    using OutcoldSolutions.GoogleMusic.Shell;
     using OutcoldSolutions.GoogleMusic.Views.Popups;
-
-    using Windows.UI.Core;
 
     public class AuthentificationPopupViewPresenter : ViewPresenterBase<IAuthentificationPopupView>
     {
         private readonly IApplicationResources resources;
         private readonly IGoogleAccountService googleAccountService;
         private readonly IAuthentificationService authentificationService;
-       
+
+        private readonly IAnalyticsService analyticsService;
+
         public AuthentificationPopupViewPresenter(
             IApplicationResources resources,
             IGoogleAccountService googleAccountService,
-            IAuthentificationService authentificationService)
+            IAuthentificationService authentificationService,
+            IAnalyticsService analyticsService)
         {
             this.resources = resources;
             this.googleAccountService = googleAccountService;
             this.authentificationService = authentificationService;
+            this.analyticsService = analyticsService;
             this.BindingModel = new AuthentificationPageViewBindingModel();
 
             this.SignInCommand = new DelegateCommand(this.SignIn, () => !this.BindingModel.IsSigningIn);
@@ -96,6 +98,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
                         this.Logger.Debug("User asked to not save user information. Removing user info and password.");
                         this.googleAccountService.ClearUserInfo();
                     }
+
+                    this.analyticsService.SendEvent("Authentification", "SavePassword", rememberPassword.ToString());
 
                     this.Logger.Debug("Saving user info and password.");
                     this.googleAccountService.SetUserInfo(userInfo);

@@ -5,7 +5,6 @@
 namespace OutcoldSolutions.GoogleMusic.Diagnostics
 {
     using System;
-    using System.Collections.Generic;
     using System.Globalization;
 
     using BugSense.Core.Model;
@@ -19,10 +18,15 @@ namespace OutcoldSolutions.GoogleMusic.Diagnostics
         public BugSenseLogWriter(IDispatcher dispatcher)
         {
             this.dispatcher = dispatcher;
-            this.IsEnabled = true;
         }
 
-        public bool IsEnabled { get; private set; }
+        public bool IsEnabled
+        {
+            get
+            {
+                return true;
+            }
+        }
 
         public void Log(DateTime dateTime, LogLevel level, string context, string message, params object[] parameters)
         {

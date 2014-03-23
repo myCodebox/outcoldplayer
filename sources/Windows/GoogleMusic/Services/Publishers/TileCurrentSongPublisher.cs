@@ -7,6 +7,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
     using System.Threading;
     using System.Threading.Tasks;
 
+    using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Models;
 
     using Windows.Data.Xml.Dom;
@@ -16,6 +17,13 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
     {
         private const string CurrentSongTileTag = "CurrentSong";
         private bool isInitialized = false;
+
+        private ILogger logger;
+
+        public TileCurrentSongPublisher(ILogManager logManager)
+        {
+            this.logger = logManager.CreateLogger("TileCurrentSongPublisher");
+        }
 
         public PublisherType PublisherType
         {
@@ -44,7 +52,15 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
                                                    Tag = CurrentSongTileTag
                                                };
 
-                    TileUpdateManager.CreateTileUpdaterForApplication().Update(tileNotification);
+                    try
+                    {
+                        TileUpdateManager.CreateTileUpdaterForApplication().Update(tileNotification);
+                    }
+                    catch (Exception exception)
+                    {
+                        this.logger.Warning(exception, "Could not update tile");
+                    }
+                    
                 }, cancellationToken);
         }
 
@@ -52,8 +68,15 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
         {
             if (!this.isInitialized)
             {
-                TileUpdateManager.CreateTileUpdaterForApplication().EnableNotificationQueue(true);
-                this.isInitialized = true;
+                try
+                {
+                    TileUpdateManager.CreateTileUpdaterForApplication().EnableNotificationQueue(true);
+                    this.isInitialized = true;
+                }
+                catch (Exception exception)
+                {
+                    this.logger.Warning(exception, "Could not initialize tiles service");
+                }
             }
         }
 

@@ -52,29 +52,25 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
                     parameters.Add("albumArtist", song.AlbumArtistTitle);
                 }
 
-                Task nowPlayingTask = this.webService.CallAsync("track.updateNowPlaying", new Dictionary<string, string>(parameters));
+                Task nowPlayingTask = this.webService.CallAsync("track.updateNowPlaying", new Dictionary<string, string>(parameters), cancellationToken);
+                Task scrobbleTask = Task.Run(
+                    async () =>
+                    {
+                        if (song.Duration.TotalSeconds >= 30)
+                        {
+                            // 4 minutes or half of the track
+                            await Task.Delay(Math.Min(4 * 60 * 1000, (int)(song.Duration.TotalMilliseconds / 2)), cancellationToken);
 
-                cancellationToken.ThrowIfCancellationRequested();
+                            var scrobbleParameters = new Dictionary<string, string>(parameters)
+                                                     {
+                                                         { "timestamp", ((int)(startPlaying.ToUnixFileTime() / 1000)).ToString("D") }
+                                                     };
 
-                // Last.fm only accept songs with > 30 seconds
-                if (song.Duration.TotalSeconds >= 30)
-                {
-                    // 4 minutes or half of the track
-                    await Task.Delay(Math.Min(4 * 60 * 1000, (int)(song.Duration.TotalMilliseconds / 2)), cancellationToken);
+                            await this.webService.CallAsync("track.scrobble", scrobbleParameters, cancellationToken);
+                        }
+                    }, cancellationToken);
 
-                    cancellationToken.ThrowIfCancellationRequested();
-
-                    var scrobbleParameters = new Dictionary<string, string>(parameters)
-                                             {
-                                                 { "timestamp", ((int)(startPlaying.ToUnixFileTime() / 1000)).ToString("D") }
-                                             };
-
-                    await this.webService.CallAsync("track.scrobble", scrobbleParameters);
-                }
-
-                cancellationToken.ThrowIfCancellationRequested();
-
-                await nowPlayingTask;
+                await Task.WhenAll(nowPlayingTask, scrobbleTask);
             }
         }
     }

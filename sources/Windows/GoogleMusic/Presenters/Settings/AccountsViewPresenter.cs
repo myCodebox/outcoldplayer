@@ -4,6 +4,7 @@
 namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
 {
     using OutcoldSolutions.GoogleMusic.BindingModels.Settings;
+    using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Services.Publishers;
@@ -22,6 +23,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
         private readonly IApplicationSettingViewsService applicationSettingViewsService;
         private readonly INavigationService navigationService;
 
+        private readonly IAnalyticsService analyticsService;
+
         public AccountsViewPresenter(
             IApplicationResources resources,
             IGoogleAccountService googleAccountService,
@@ -29,7 +32,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
             ILastfmWebService lastfmWebService,
             ICurrentSongPublisherService publisherService,
             IApplicationSettingViewsService applicationSettingViewsService,
-            INavigationService navigationService)
+            INavigationService navigationService,
+            IAnalyticsService analyticsService)
         {
             this.resources = resources;
             this.googleAccountService = googleAccountService;
@@ -38,6 +42,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
             this.publisherService = publisherService;
             this.applicationSettingViewsService = applicationSettingViewsService;
             this.navigationService = navigationService;
+            this.analyticsService = analyticsService;
             this.BindingModel = new AccountViewBindingModel();
             this.ForgetAccountCommand = new DelegateCommand(this.ForgetAccount);
             this.SignOutCommand = new DelegateCommand(this.SignOutAccount);
@@ -75,6 +80,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
 
         private void ForgetAccount()
         {
+            this.analyticsService.SendEvent("Settings", "Execute", "ForgetAccount");
+
             this.googleAccountService.ClearUserInfo();
             this.BindingModel.AccountName = null;
             
@@ -92,12 +99,16 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
 
         private async void SignOutAccount()
         {
+            this.analyticsService.SendEvent("Settings", "Execute", "SignOut");
+
             await this.sessionService.ClearSession();
             this.applicationSettingViewsService.Close();
         }
 
         private void LastfmUnlink()
         {
+            this.analyticsService.SendEvent("Settings", "Execute", "UnLinkLastFm");
+
             this.lastfmWebService.ForgetAccount();
             this.publisherService.RemovePublishers<LastFmCurrentSongPublisher>();
             this.applicationSettingViewsService.Close();
@@ -105,12 +116,14 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
 
         private void LastfmLink()
         {
+            this.analyticsService.SendEvent("Settings", "Execute", "LinkLastFm");
             this.applicationSettingViewsService.Close();
             this.MainFrame.ShowPopup<ILastfmAuthentificationView>(PopupRegion.Full);
         }
 
         private void ReloadSongs()
         {
+            this.analyticsService.SendEvent("Settings", "Execute", "ReloadSongs");
             this.EventAggregator.Publish(new ReloadSongsEvent());
             this.applicationSettingViewsService.Close();
         }

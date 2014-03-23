@@ -6,12 +6,14 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Net;
     using System.Threading;
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.InversionOfControl;
     using OutcoldSolutions.GoogleMusic.Models;
+    using OutcoldSolutions.GoogleMusic.Web;
 
     public class CurrentSongPublisherService : ICurrentSongPublisherService
     {
@@ -172,7 +174,29 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
 
         private async Task PublishAsync(IEnumerable<Lazy<ICurrentSongPublisher>> publishers, Song song, IPlaylist currentPlaylist, Uri albumArtUri, CancellationToken cancellationToken)
         {
-            await Task.WhenAll(publishers.Select(x => x.Value.PublishAsync(song, currentPlaylist, albumArtUri, cancellationToken)).Where(task => task != null));
+            await Task.WhenAll(publishers.Select(
+                async x =>
+                {
+                    try
+                    {
+                        await x.Value.PublishAsync(song, currentPlaylist, albumArtUri, cancellationToken);
+                    }
+                    catch (OperationCanceledException exception)
+                    {
+                        this.logger.Debug(exception, "Publish cancelled");
+                    }
+                    catch (GoogleApiWebRequestException exception)
+                    {
+                        if (exception.StatusCode >= (HttpStatusCode)500)
+                        {
+                            this.logger.Debug(exception, "Publish network error on server");
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }
+                }).Where(task => task != null));
         }
 
         private async Task<Uri> GetAlbumArtUri(Song song)

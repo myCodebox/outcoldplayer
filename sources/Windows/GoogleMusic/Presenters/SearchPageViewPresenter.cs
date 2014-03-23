@@ -10,6 +10,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
+    using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Services;
@@ -24,6 +25,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private readonly IAllAccessService allAccessService;
         private readonly ISettingsService settingsService;
 
+        private readonly IAnalyticsService analyticsService;
+
         private readonly SemaphoreSlim mutex = new SemaphoreSlim(1);
         private CancellationTokenSource cancellationTokenSource;
 
@@ -36,7 +39,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             IPlaylistsService playlistsService,
             INavigationService navigationService,
             IAllAccessService allAccessService,
-            ISettingsService settingsService)
+            ISettingsService settingsService,
+            IAnalyticsService analyticsService)
         {
             this.applicationStateService = applicationStateService;
             this.songsRepository = songsRepository;
@@ -44,49 +48,86 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.navigationService = navigationService;
             this.allAccessService = allAccessService;
             this.settingsService = settingsService;
+            this.analyticsService = analyticsService;
 
             this.NavigateToSongs = new DelegateCommand(
-               () => this.navigationService.NavigateTo<IPlaylistPageView>(
-                   new PlaylistNavigationRequest(
-                       string.Format(resources.GetString("SearchPageView_SubtitleFormat"), this.BindingModel.SearchText),
-                       "Songs",
-                       this.BindingModel.Songs)));
+                () =>
+                {
+                    this.analyticsService.SendEvent("Search", "Navigate", "Songs");
+                    this.navigationService.NavigateTo<IPlaylistPageView>(
+                        new PlaylistNavigationRequest(
+                            string.Format(
+                                resources.GetString("SearchPageView_SubtitleFormat"),
+                                this.BindingModel.SearchText),
+                            "Songs",
+                            this.BindingModel.Songs));
+                });
 
             this.NavigateToArtists = new DelegateCommand(
-               () => this.navigationService.NavigateTo<IPlaylistsPageView>(
-                   new PlaylistNavigationRequest(
-                       string.Format(resources.GetString("SearchPageView_SubtitleFormat"), this.BindingModel.SearchText),
-                       "Artists",
-                       this.BindingModel.Artists)));
+               () =>
+               {
+                   this.analyticsService.SendEvent("Search", "Navigate", "Artists");
+                   this.navigationService.NavigateTo<IPlaylistsPageView>(
+                       new PlaylistNavigationRequest(
+                           string.Format(
+                               resources.GetString("SearchPageView_SubtitleFormat"),
+                               this.BindingModel.SearchText),
+                           "Artists",
+                           this.BindingModel.Artists));
+               });
 
             this.NavigateToAlbums = new DelegateCommand(
-                () => this.navigationService.NavigateTo<IPlaylistsPageView>(
-                    new PlaylistNavigationRequest(
-                        string.Format(resources.GetString("SearchPageView_SubtitleFormat"), this.BindingModel.SearchText),
-                        "Albums",
-                        this.BindingModel.Albums)));
+                () => 
+                {
+                    this.analyticsService.SendEvent("Search", "Navigate", "Albums");
+                    this.navigationService.NavigateTo<IPlaylistsPageView>(
+                        new PlaylistNavigationRequest(
+                            string.Format(
+                                resources.GetString("SearchPageView_SubtitleFormat"),
+                                this.BindingModel.SearchText),
+                            "Albums",
+                            this.BindingModel.Albums));
+                });
 
             this.NavigateToRadios = new DelegateCommand(
-                () => this.navigationService.NavigateTo<IPlaylistsPageView>(
-                    new PlaylistNavigationRequest(
-                        string.Format(resources.GetString("SearchPageView_SubtitleFormat"), this.BindingModel.SearchText),
-                        "Radio Stations",
-                        this.BindingModel.RadioStations)));
+                () =>
+                {
+                    this.analyticsService.SendEvent("Search", "Navigate", "Radio Stations");
+                    this.navigationService.NavigateTo<IPlaylistsPageView>(
+                        new PlaylistNavigationRequest(
+                            string.Format(
+                                resources.GetString("SearchPageView_SubtitleFormat"),
+                                this.BindingModel.SearchText),
+                            "Radio Stations",
+                            this.BindingModel.RadioStations));
+                });
 
 
             this.NavigateToGenres = new DelegateCommand(
-                () => this.navigationService.NavigateTo<IPlaylistsPageView>(
-                    new PlaylistNavigationRequest(
-                        string.Format(resources.GetString("SearchPageView_SubtitleFormat"), this.BindingModel.SearchText),
-                        "Genres",
-                        this.BindingModel.Genres)));
+                () =>
+                {
+                    this.analyticsService.SendEvent("Search", "Navigate", "Genres");
+                    this.navigationService.NavigateTo<IPlaylistsPageView>(
+                        new PlaylistNavigationRequest(
+                            string.Format(
+                                resources.GetString("SearchPageView_SubtitleFormat"),
+                                this.BindingModel.SearchText),
+                            "Genres",
+                            this.BindingModel.Genres));
+                });
 
             this.NavigateToUserPlaylists = new DelegateCommand(
-                () => this.navigationService.NavigateTo<IPlaylistsPageView>(
-                    new PlaylistNavigationRequest(
-                        string.Format(resources.GetString("SearchPageView_SubtitleFormat"), this.BindingModel.SearchText),
-                        "Playlists",
-                        this.BindingModel.UserPlaylists)));
+                () =>
+                {
+                    this.analyticsService.SendEvent("Search", "Navigate", "Playlists");
+                    this.navigationService.NavigateTo<IPlaylistsPageView>(
+                        new PlaylistNavigationRequest(
+                            string.Format(
+                                resources.GetString("SearchPageView_SubtitleFormat"),
+                                this.BindingModel.SearchText),
+                            "Playlists",
+                            this.BindingModel.UserPlaylists));
+                });
         }
 
         public DelegateCommand NavigateToSongs { get; set; }

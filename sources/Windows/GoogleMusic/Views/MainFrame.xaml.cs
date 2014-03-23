@@ -108,6 +108,8 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
         private ItemsControl contextButtonsItemsControl;
 
+        private IAnalyticsService analyticsService;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="MainFrame"/> class.
         /// </summary>
@@ -141,6 +143,8 @@ namespace OutcoldSolutions.GoogleMusic.Views
                             {
                                 if (!this.applicationSize.OnSizeChanged(args.NewSize))
                                 {
+                                    this.analyticsService.SendEvent("Window", "ChangeSize", this.applicationSize.IsLarge ? "Large" : this.applicationSize.IsMedium ? "Medium" : "Small");
+
                                     object itemsSource = this.contextButtonsItemsControl.ItemsSource;
 
                                     this.BottomAppBar.Content = this.contextButtonsItemsControl = new ItemsControl()
@@ -368,6 +372,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
         internal void Initialize(
             IDependencyResolverContainer containerObject,
             ILogManager logManager,
+            IAnalyticsService analyticsService,
             MainFramePresenter presenterObject)
         {
             this.container = containerObject;
@@ -375,13 +380,17 @@ namespace OutcoldSolutions.GoogleMusic.Views
             this.logger = logManager.CreateLogger("MainFrame");
             this.DataContext = this.presenter;
             this.applicationSize = this.container.Resolve<ApplicationSize>();
+            this.analyticsService = analyticsService;
 
             if (this.latestSize.HasValue)
             {
                 this.logger.LogTask(this.Dispatcher.RunAsync(
                     CoreDispatcherPriority.Normal,
-                    () => this.applicationSize.OnSizeChanged(this.latestSize.Value)).AsTask());
-
+                    () =>
+                    {
+                        this.applicationSize.OnSizeChanged(this.latestSize.Value);
+                        this.analyticsService.SendEvent("Window", "ChangeSize", this.applicationSize.IsLarge ? "Large" : this.applicationSize.IsMedium ? "Medium" : "Small");
+                    }).AsTask());
             }
         }
 

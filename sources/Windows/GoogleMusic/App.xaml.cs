@@ -243,6 +243,12 @@ namespace OutcoldSolutions.GoogleMusic
                 registration.Register<AskForReviewService>().AsSingleton();
 
                 registration.Register<IRatingCacheService>().AsSingleton<RatingCacheService>();
+
+#if DEBUG
+                registration.Register<IAnalyticsService>().AsSingleton<FakeAnalyticsService>();
+#else
+                registration.Register<IAnalyticsService>().AsSingleton<AnalyticsService>();
+#endif
             }
 
             Container.Resolve<ApplicationLogManager>();
@@ -318,6 +324,8 @@ namespace OutcoldSolutions.GoogleMusic
 
             Container.Resolve<ILastfmWebService>().SaveCurrentSession();
 
+            await GoogleAnalytics.EasyTracker.Current.Dispatch().AsTask();
+
             TileUpdateManager.CreateTileUpdaterForApplication().Clear();
         }
 
@@ -335,7 +343,8 @@ namespace OutcoldSolutions.GoogleMusic
                 }
 
                 deferral.Complete();
-            });        }
+            });        
+        }
 
 #if DEBUG
         private class DebugConsole : IDebugConsole

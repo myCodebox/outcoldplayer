@@ -3,6 +3,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
 {
+    using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
 
@@ -10,9 +11,14 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
     {
         private readonly ISettingsService settingsService;
 
-        public AppSettingsViewPresenter(ISettingsService settingsService)
+        private readonly IAnalyticsService analyticsService;
+
+        public AppSettingsViewPresenter(
+            ISettingsService settingsService,
+            IAnalyticsService analyticsService)
         {
             this.settingsService = settingsService;
+            this.analyticsService = analyticsService;
         }
 
         public bool IsScreenOn
@@ -24,6 +30,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
 
             set
             {
+                this.analyticsService.SendEvent("Settings", "ChangeIsScreenOn", value.ToString());
                 this.settingsService.SetIsLockScreenEnabled(value);
             }
         }
@@ -37,6 +44,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
 
             set
             {
+                this.analyticsService.SendEvent("Settings", "ChangeBlockExplicitSongsInRadio", value.ToString());
                 this.settingsService.SetBlockExplicitSongsInRadio(value);
             }
         }

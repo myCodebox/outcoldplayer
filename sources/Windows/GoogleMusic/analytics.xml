@@ -1,0 +1,5 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!--More info at https://developers.google.com/analytics/devguides/collection/android/v2/parameters-->
+<analytics xmlns="http://googleanalyticssdk.codeplex.com/ns/easytracker">
+  <trackingId>UA-49247188-1</trackingId>
+</analytics>

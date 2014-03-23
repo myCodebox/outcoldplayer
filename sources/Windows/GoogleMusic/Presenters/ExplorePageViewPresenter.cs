@@ -9,6 +9,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using System.Threading;
     using System.Threading.Tasks;
 
+    using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
@@ -23,6 +24,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private readonly IPlayQueueService playQueueService;
 
+        private readonly IAnalyticsService analyticsService;
+
         private ExploreTab tab;
 
         private string subtitle;
@@ -31,12 +34,14 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             IAllAccessService allAccessService,
             INavigationService navigationService,
             IRadioStationsService radioStationsService,
-            IPlayQueueService playQueueService)
+            IPlayQueueService playQueueService,
+            IAnalyticsService analyticsService)
         {
             this.allAccessService = allAccessService;
             this.navigationService = navigationService;
             this.radioStationsService = radioStationsService;
             this.playQueueService = playQueueService;
+            this.analyticsService = analyticsService;
 
             this.NavigateToGroupCommand = new DelegateCommand(this.NavigateToGroup);
             this.NavigateToGenresCommand = new DelegateCommand(this.NavigateToGenres);
@@ -129,6 +134,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             var exploreTabGroup = obj as ExploreTabGroup;
             if (exploreTabGroup != null)
             {
+                this.analyticsService.SendEvent("Explore", "Navigate", exploreTabGroup.Title);
+
                 if (exploreTabGroup.Songs != null)
                 {
                     this.navigationService.NavigateTo<IPlaylistPageView>(
@@ -160,6 +167,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         {
             if (this.Tab.Genres != null)
             {
+                this.analyticsService.SendEvent("Explore", "Navigate", "Genres");
+
                 this.navigationService.NavigateTo<IPlaylistsPageView>(
                     new PlaylistNavigationRequest(
                         this.Tab.ParentGenre,
@@ -173,17 +182,20 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         {
             if (this.Tab.ParentGenre != null && !this.IsDataLoading)
             {
+                this.analyticsService.SendEvent("Explore", "Execute", "StartRadio");
+
                 await this.Dispatcher.RunAsync(() => this.IsDataLoading = true);
 
                 var radio = await this.radioStationsService.CreateAsync(this.Tab.ParentGenre);
 
                 if (radio != null)
                 {
-                    await this.playQueueService.PlayAsync(radio.Item1, radio.Item2, -1);
+                    if (await this.playQueueService.PlayAsync(radio.Item1, radio.Item2, -1))
+                    {
+                        await this.Dispatcher.RunAsync(() => this.IsDataLoading = false);
 
-                    await this.Dispatcher.RunAsync(() => this.IsDataLoading = false);
-
-                    this.navigationService.NavigateToPlaylist(radio.Item1);
+                        this.navigationService.NavigateToPlaylist(radio.Item1);
+                    }
                 }
             }
         }

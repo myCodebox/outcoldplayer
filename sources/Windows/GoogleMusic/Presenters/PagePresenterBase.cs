@@ -24,8 +24,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     public abstract class PagePresenterBase<TView> : ViewPresenterBase<TView>, IPagePresenterBase
         where TView : IPageView 
     {
-        private readonly SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1);
-
         private bool isDataLoading;
         private CancellationTokenSource dataLoadingCancellationTokenSource;
 

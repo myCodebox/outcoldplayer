@@ -26,6 +26,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private readonly IGoogleMusicSessionService sessionService;
         private readonly INavigationService navigationService;
 
+        private readonly IAnalyticsService analyticsService;
+
         private readonly DispatcherTimer synchronizationTimer;
 
         private bool isDownloading = false;
@@ -41,7 +43,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             IGoogleMusicSynchronizationService googleMusicSynchronizationService,
             IApplicationSettingViewsService applicationSettingViewsService,
             IGoogleMusicSessionService sessionService,
-            INavigationService navigationService)
+            INavigationService navigationService,
+            IAnalyticsService analyticsService)
         {
             this.stateService = stateService;
             this.resources = resources;
@@ -49,6 +52,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.googleMusicSynchronizationService = googleMusicSynchronizationService;
             this.sessionService = sessionService;
             this.navigationService = navigationService;
+            this.analyticsService = analyticsService;
             this.NavigateToDownloadQueue = new DelegateCommand(async () =>
             {
                 if (!this.IsOnline)
@@ -57,6 +61,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 } 
                 else if (!this.disableClickToCache)
                 {
+                    this.analyticsService.SendEvent("LinksRegion", "Execute", "NavigatToDownload");
+
                     await this.dispatcher.RunAsync(
                         () =>
                         {
@@ -71,6 +77,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.UpdateLibraryCommand = new DelegateCommand(
                 async () =>
                     {
+                        this.analyticsService.SendEvent("LinksRegion", "Execute", "UpdateLibrary");
+
                         if (this.UpdateLibraryCommand.CanExecute())
                         {
                             this.synchronizationTimer.Stop();
@@ -82,6 +90,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.GetHelpCommand = new DelegateCommand(
                 () =>
                 {
+                    this.analyticsService.SendEvent("LinksRegion", "Execute", "GetHelp");
                     if (ApplicationView.Value != ApplicationViewState.Snapped || ApplicationView.TryUnsnap())
                     {
                         applicationSettingViewsService.Show("support");
@@ -99,6 +108,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 () =>
                 {
                     this.IsOnline = !this.IsOnline;
+                    this.analyticsService.SendEvent("LinksRegion", "Execute", "SwitchMode to " + (this.IsOnline ? "Online" : "Offline"));
                 });
         }
 

@@ -52,6 +52,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         private readonly INotificationService notificationService;
 
+        private readonly IAnalyticsService analyticsService;
+
         private readonly List<object> selectedObjects = new List<object>();
         private readonly List<SelectedObjectActionContainer> objectActions = new List<SelectedObjectActionContainer>();
 
@@ -71,12 +73,14 @@ namespace OutcoldSolutions.GoogleMusic.Services
             IMainFrame mainFrame,
             IEventAggregator eventAggregator,
             INotificationService notificationService,
+            IAnalyticsService analyticsService,
             ILogManager logManager)
         {
             this.navigationService = navigationService;
             this.mainFrame = mainFrame;
             this.eventAggregator = eventAggregator;
             this.notificationService = notificationService;
+            this.analyticsService = analyticsService;
             this.navigationService.NavigatedTo += this.OnNavigatedTo;
             this.logger = logManager.CreateLogger("SelectedObjectsService");
         }
@@ -89,6 +93,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
                         Command = new DelegateCommand(
                             async () =>
                             {
+                                this.analyticsService.SendEvent("SelectedObjects", "Execute", x.Title);
+
                                 if (!this.isBusy)
                                 {
                                     this.isBusy = true;

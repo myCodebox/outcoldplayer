@@ -92,7 +92,7 @@ namespace OutcoldSolutions.GoogleMusic.Converters
                 string path = await this.cacheService.Value.GetCachedImageAsync(uri, size);
 
                 StorageFile file = null;
-                
+
                 if (!string.IsNullOrEmpty(path))
                 {
                     try
@@ -108,8 +108,10 @@ namespace OutcoldSolutions.GoogleMusic.Converters
 
                 if (file == null)
                 {
-                    file = await StorageFile.GetFileFromApplicationUriAsync(
-                            new Uri(string.Format(CultureInfo.InvariantCulture, UnknownAlbumArtFormat, size)));
+                    file =
+                        await
+                            StorageFile.GetFileFromApplicationUriAsync(
+                                new Uri(string.Format(CultureInfo.InvariantCulture, UnknownAlbumArtFormat, size)));
                 }
 
                 if (file != null)
@@ -124,6 +126,10 @@ namespace OutcoldSolutions.GoogleMusic.Converters
             catch (WebException e)
             {
                 this.logger.Value.Debug(e, "Web exception.");
+            }
+            catch (FileNotFoundException e)
+            {
+                this.logger.Value.Debug(e, "File not found.");
             }
             catch (Exception e)
             {

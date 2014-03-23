@@ -151,6 +151,7 @@
     <Compile Include="Converters\BooleanToColumnWidthConverter.cs" />
     <Compile Include="Presenters\PlaylistsListViewPresenter.cs" />
     <Compile Include="Services\Actions\ActionGroup.cs" />
+    <Compile Include="Diagnostics\AnalyticsService.cs" />
     <Compile Include="Services\SelectSongEvent.cs" />
     <Compile Include="Shell\ApplicationSize.cs" />
     <Compile Include="Shell\AskForReviewService.cs" />
@@ -382,12 +383,16 @@
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
+    <None Include="analytics.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="GoogleMusic_StoreKey.pfx" />
     <None Include="GoogleMusic_TemporaryKey.pfx" />
     <None Include="packages.config" />
     <PRIResource Include="Strings\en\Resources.resw" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="analytics.xml" />
     <Content Include="Assets\Logo.scale-100.png" />
     <Content Include="Assets\Logo.scale-140.png" />
     <Content Include="Assets\Logo.scale-180.png" />
@@ -602,6 +607,9 @@
     <Reference Include="BugSense-W8, Version=3.6.4.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\BugSense.W8.3.6.4.0\lib\netcore45\BugSense-W8.dll</HintPath>
+    </Reference>
+    <Reference Include="GoogleAnalytics">
+      <HintPath>..\..\packages\GoogleAnalyticsSDK.1.1.01\lib\windows8\GoogleAnalytics.winmd</HintPath>
     </Reference>
     <Reference Include="OutcoldSolutions.SQLite, Version=1.1.30513.33825, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

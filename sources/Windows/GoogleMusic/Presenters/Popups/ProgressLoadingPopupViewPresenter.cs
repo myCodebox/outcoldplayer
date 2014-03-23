@@ -35,14 +35,18 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
         private readonly ISettingsService settingsService;
         private readonly IInitialSynchronization initialSynchronization;
 
+        private readonly IAnalyticsService analyticsService;
+
         internal ProgressLoadingPopupViewPresenter(
             IApplicationResources resources,
             ISettingsService settingsService, 
-            IInitialSynchronization initialSynchronization)
+            IInitialSynchronization initialSynchronization,
+            IAnalyticsService analyticsService)
         {
             this.resources = resources;
             this.settingsService = settingsService;
             this.initialSynchronization = initialSynchronization;
+            this.analyticsService = analyticsService;
             this.BindingModel = new ProgressLoadingPageViewBindingModel();
 
             this.ReloadSongsCommand = new DelegateCommand(this.LoadSongs, () => this.BindingModel.IsFailed);
@@ -67,6 +71,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
             try
             {
                 await this.InitializeRepositoriesAsync();
+                this.analyticsService.SendEvent("ProgressLoading", "Loading", "Succeeded");
             }
             catch (Exception e)
             {
@@ -77,6 +82,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
                 }
                 else
                 {
+                    this.analyticsService.SendEvent("ProgressLoading", "Loading", "Failed");
                     isFailed = true;
                     this.Logger.Error(e, "Exception while tried to initialize repositories.");
                 }

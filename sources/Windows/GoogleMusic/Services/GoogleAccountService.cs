@@ -46,7 +46,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 {
                     if (((uint)exception.HResult) != 0x80070490)
                     {
-                        this.logger.Error(exception, "Exception while tried to SetUserInfo.");
+                        this.logger.Warning(exception, "Exception while tried to SetUserInfo.");
                     }
                     else
                     {
