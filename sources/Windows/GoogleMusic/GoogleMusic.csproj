@@ -392,7 +392,9 @@
     <PRIResource Include="Strings\en\Resources.resw" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="analytics.xml" />
+    <Content Include="analytics.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Assets\Logo.scale-100.png" />
     <Content Include="Assets\Logo.scale-140.png" />
     <Content Include="Assets\Logo.scale-180.png" />
@@ -609,7 +611,10 @@
       <HintPath>..\..\packages\BugSense.W8.3.6.4.0\lib\netcore45\BugSense-W8.dll</HintPath>
     </Reference>
     <Reference Include="GoogleAnalytics">
-      <HintPath>..\..\packages\GoogleAnalyticsSDK.1.1.01\lib\windows8\GoogleAnalytics.winmd</HintPath>
+      <HintPath>..\..\packages\GoogleAnalyticsSDK.1.2.01\lib\windows8\GoogleAnalytics.winmd</HintPath>
+    </Reference>
+    <Reference Include="GoogleAnalytics.Core">
+      <HintPath>..\..\packages\GoogleAnalyticsSDK.1.2.01\lib\windows8\GoogleAnalytics.Core.winmd</HintPath>
     </Reference>
     <Reference Include="OutcoldSolutions.SQLite, Version=1.1.30513.33825, Culture=neutral, PublicKeyToken=b9b87f97060f149d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -638,8 +643,8 @@
     <SDKReference Include="Microsoft.VCLibs, version=11.0">
       <Name>Microsoft Visual C++ Runtime Package</Name>
     </SDKReference>
-    <SDKReference Include="SQLite.WinRT, Version=3.8.4.1">
-      <Name>SQLite for Windows Runtime %28SQLite.WinRT, Version=3.8.4.1%29</Name>
+    <SDKReference Include="SQLite.WinRT, Version=3.8.4.2">
+      <Name>SQLite for Windows Runtime</Name>
     </SDKReference>
   </ItemGroup>
   <ItemGroup>
