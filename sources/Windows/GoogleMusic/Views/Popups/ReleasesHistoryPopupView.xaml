@@ -34,6 +34,7 @@
                     </TextBlock>
                     <RichTextBlock Style="{StaticResource BodyRichTextStyle}">
                         <Paragraph>[+] New logo.</Paragraph>
+                        <Paragraph>[+] Special build for Windows 8.1 (snapped view with various sizes).</Paragraph>
                         <Paragraph>[b] Search page does not put focus on search bar when user navigates to this page.</Paragraph>
                         <Paragraph>[b] For some albums player showed wrong title.</Paragraph>
                     </RichTextBlock>

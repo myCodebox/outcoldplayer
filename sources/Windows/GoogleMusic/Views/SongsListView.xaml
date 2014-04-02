@@ -41,7 +41,7 @@
                 <Setter.Value>
                     <DataTemplate>
 
-                        <Grid Height="33">
+                        <Grid Height="33" Background="Transparent">
                             <Grid.ColumnDefinitions >
                                 <ColumnDefinition Width="35" />
                                 <ColumnDefinition Width="{Binding Path=IsNumColumnVisible, ElementName=This, Converter={StaticResource BooleanToColumnWidthConverter}, ConverterParameter=30}" />
@@ -167,7 +167,7 @@
                 <Setter.Value>
                     <DataTemplate>
 
-                        <Grid Height="50">
+                        <Grid Height="50" Background="Transparent" Margin="0, 0, 10, 0">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="26" />
                                 <RowDefinition Height="24" />

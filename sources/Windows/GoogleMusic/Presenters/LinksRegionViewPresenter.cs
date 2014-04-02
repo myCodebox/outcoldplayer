@@ -64,13 +64,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     this.analyticsService.SendEvent("LinksRegion", "Execute", "NavigatToDownload");
 
                     await this.dispatcher.RunAsync(
-                        () =>
-                        {
-                            if (ApplicationView.Value != ApplicationViewState.Snapped || ApplicationView.TryUnsnap())
-                            {
-                                applicationSettingViewsService.Show("offlinecache");
-                            }
-                        });
+                        () => applicationSettingViewsService.Show("offlinecache"));
                 }
             });
 
@@ -91,10 +85,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 () =>
                 {
                     this.analyticsService.SendEvent("LinksRegion", "Execute", "GetHelp");
-                    if (ApplicationView.Value != ApplicationViewState.Snapped || ApplicationView.TryUnsnap())
-                    {
-                        applicationSettingViewsService.Show("support");
-                    }
+                    applicationSettingViewsService.Show("support");
                 });
 
             this.synchronizationTimer = new DispatcherTimer { Interval = TimeSpan.FromMinutes(5) };
