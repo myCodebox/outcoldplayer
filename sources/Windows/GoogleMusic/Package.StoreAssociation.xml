@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <StoreAssociation xmlns="http://schemas.microsoft.com/appx/2010/storeassociation">
   <Publisher>CN=3943AC93-78E3-4C62-BC48-BB69A8AB1704</Publisher>
+  <NamespacePrefix>47286outcoldman</NamespacePrefix>
   <PublisherDisplayName>OutcoldSolutions</PublisherDisplayName>
   <GeneratePackageHash>http://www.w3.org/2001/04/xmlenc#sha256</GeneratePackageHash>
   <SupportedLocales>
@@ -360,18 +361,18 @@
   <PackageInfoList LandingUrl="https://appdev.microsoft.com:443/StorePortals/Developer/Catalog/ReleaseAnchor/939f0859-1413-4a52-9ab6-6e50405c8c2e">
     <PackageInfo>
       <OsMinVersion>6.2.1.0</OsMinVersion>
+      <PackageArchitecture>arm</PackageArchitecture>
+      <PackageMaxArchitectureVersion>3.0.1.99</PackageMaxArchitectureVersion>
+    </PackageInfo>
+    <PackageInfo>
+      <OsMinVersion>6.2.1.0</OsMinVersion>
       <PackageArchitecture>x64</PackageArchitecture>
-      <PackageMaxArchitectureVersion>3.0.0.97</PackageMaxArchitectureVersion>
+      <PackageMaxArchitectureVersion>3.0.1.99</PackageMaxArchitectureVersion>
     </PackageInfo>
     <PackageInfo>
       <OsMinVersion>6.2.1.0</OsMinVersion>
       <PackageArchitecture>x86</PackageArchitecture>
-      <PackageMaxArchitectureVersion>3.0.0.97</PackageMaxArchitectureVersion>
-    </PackageInfo>
-    <PackageInfo>
-      <OsMinVersion>6.2.1.0</OsMinVersion>
-      <PackageArchitecture>arm</PackageArchitecture>
-      <PackageMaxArchitectureVersion>3.0.0.97</PackageMaxArchitectureVersion>
+      <PackageMaxArchitectureVersion>3.0.1.99</PackageMaxArchitectureVersion>
     </PackageInfo>
   </PackageInfoList>
 </StoreAssociation>
