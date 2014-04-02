@@ -321,50 +321,9 @@ namespace OutcoldSolutions.GoogleMusic
             }
         }
 
-        private async void ReportOsVersionAsync()
+        private void ReportOsVersionAsync()
         {
-            try
-            {
-                string version = await GetOSVersionAsync();
-                Container.Resolve<IAnalyticsService>().SendEvent("Windows", "Version", version);
-            }
-            catch (Exception e)
-            {
-                this.Logger.Debug(e,"Cannot report os version");
-            }
-        }
-
-        private Task<string> GetOSVersionAsync()
-        {
-            var t = new TaskCompletionSource<string>();
-
-            try
-            {
-                var w = new WebView { AllowedScriptNotifyUris = WebView.AnyScriptNotifyUri };
-                w.NavigateToString("<html />");
-                NotifyEventHandler h = null;
-                h = (s, e) =>
-                {
-                    try
-                    {
-                        var match = Regex.Match(e.Value, @"Windows\s+NT\s+\d+(\.\d+)?");
-                        if (match.Success)
-                            t.SetResult(match.Value);
-                        else
-                            t.SetResult("Unknowm");
-                    }
-                    catch (Exception ex) { t.SetException(ex); }
-                    finally { /* release */ w.ScriptNotify -= h; }
-                };
-                w.ScriptNotify += h;
-                w.InvokeScript("execScript", new[] { "window.external.notify(navigator.appVersion); " });
-            }
-            catch (Exception e)
-            {
-                t.SetException(e);
-            }
-           
-            return t.Task;
+            Container.Resolve<IAnalyticsService>().SendEvent("Application", "Build", "Windows 8.1");
         }
 
         private async Task OnSuspendingAsync()
