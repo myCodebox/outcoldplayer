@@ -165,6 +165,11 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 throw new GoogleApiWebRequestException(errorMessage.ToString(), exception, statusCode);
             }
 
+            if (cancellationToken.HasValue)
+            {
+                cancellationToken.Value.ThrowIfCancellationRequested();
+            }
+
             var result = await responseMessage.Content.ReadAsJsonObject<TResult>();
 
             if (useCache)
@@ -244,6 +249,11 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 }
                 
                 throw new GoogleApiWebRequestException(errorMessage.ToString(), exception, statusCode);
+            }
+
+            if (cancellationToken.HasValue)
+            {
+                cancellationToken.Value.ThrowIfCancellationRequested();
             }
 
             var result = await responseMessage.Content.ReadAsJsonObject<TResult>();

@@ -29,7 +29,7 @@
                        TextAlignment="Left"
                        Visibility="{Binding Source={StaticResource ApplicationSize}, Path=IsMediumOrLarge, Converter={StaticResource BooleanToVisibilityConverter}}"/>
             
-            <TextBox Width="240" VerticalAlignment="Center">
+            <TextBox Width="240" VerticalAlignment="Center" x:Name="SearchTextBox">
                 <interactivity:Interaction.Behaviors>
                     <controls:TextChangedBindingBehavior Text="{Binding Path=BindingModel.SearchText, Mode=TwoWay}" />
                 </interactivity:Interaction.Behaviors>

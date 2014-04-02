@@ -60,13 +60,14 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
                 if (cancellationToken.HasValue)
                 {
-                    responseMessage = await this.HttpClient.SendAsync(requestMessage, completionOption, cancellationToken.Value);
+                    responseMessage =
+                        await this.HttpClient.SendAsync(requestMessage, completionOption, cancellationToken.Value);
                 }
                 else
                 {
                     responseMessage = await this.HttpClient.SendAsync(requestMessage, completionOption);
                 }
-                
+
 
                 if (this.Logger.IsDebugEnabled)
                 {
@@ -75,9 +76,13 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
                 return responseMessage;
             }
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
             catch (Exception exception)
             {
-                this.Logger.Error(exception, "Exception while sending request, Method: {0}, Uri: {1}.", requestMessage.Method, requestMessage.RequestUri);
+                this.Logger.Debug(exception, "Exception while sending request, Method: {0}, Uri: {1}.", requestMessage.Method, requestMessage.RequestUri);
                 throw;
             }
         }

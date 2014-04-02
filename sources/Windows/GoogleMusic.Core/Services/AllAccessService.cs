@@ -191,7 +191,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 }
             }
 
-            if (!string.Equals(album.Title, googleMusicAlbum.Name, StringComparison.CurrentCulture))
+            if (string.IsNullOrEmpty(album.Title))
             {
                 album.Title = googleMusicAlbum.Name;
                 album.TitleNorm = googleMusicAlbum.Name.Normalize();
@@ -202,7 +202,10 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 album.ArtUrl = new Uri(googleMusicAlbum.AlbumArtRef);
             }
 
-            album.Year = (ushort?)googleMusicAlbum.Year;
+            if (!album.Year.HasValue || album.Year.Value == 0)
+            {
+                album.Year = (ushort?)googleMusicAlbum.Year;
+            }
 
             if (album.Artist == null)
             {

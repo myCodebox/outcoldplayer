@@ -103,5 +103,11 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
             this.TrackScrollViewer(this.ScrollViewer);
         }
+
+        public override void OnDataLoaded(NavigatedToEventArgs eventArgs)
+        {
+            base.OnDataLoaded(eventArgs);
+            this.SearchTextBox.Focus(FocusState.Keyboard);
+        }
     }
 }
