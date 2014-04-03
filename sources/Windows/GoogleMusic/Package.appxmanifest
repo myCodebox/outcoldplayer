@@ -31,7 +31,6 @@
             <Task Type="audio" />
           </BackgroundTasks>
         </Extension>
-        <Extension Category="windows.search" EntryPoint="OutcoldSolutions.GoogleMusic.App" />
       </Extensions>
     </Application>
   </Applications>
