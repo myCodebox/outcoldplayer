@@ -323,7 +323,14 @@ namespace OutcoldSolutions.GoogleMusic
 
         private void ReportOsVersionAsync()
         {
-            Container.Resolve<IAnalyticsService>().SendEvent("Application", "Build", "Windows 8.1");
+            try
+            {
+                Container.Resolve<IAnalyticsService>().SendEvent("Application", "Build", "Windows 8.1");
+            }
+            catch (Exception e)
+            {
+                this.Logger.Debug(e, "Cannot report os version");
+            }
         }
 
         private async Task OnSuspendingAsync()
