@@ -24,7 +24,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         Task<IList<Song>> GetSongsAsync(IPlaylist playlist);
 
-        Task<IList<Song>> GetSongsAsync(PlaylistType playlistType, string id);
+        Task<IList<Song>> GetSongsAsync(PlaylistType playlistType, string id, IPlaylist playlist);
 
         Task<IPlaylist> GetAsync(PlaylistType playlistType, string id);
 
@@ -128,10 +128,10 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 throw new ArgumentNullException("playlist");
             }
 
-            return this.GetSongsAsync(playlist.PlaylistType, playlist.Id);
+            return this.GetSongsAsync(playlist.PlaylistType, playlist.Id, playlist);
         }
 
-        public async Task<IList<Song>> GetSongsAsync(PlaylistType playlistType, string id)
+        public async Task<IList<Song>> GetSongsAsync(PlaylistType playlistType, string id, IPlaylist playlist)
         {
             switch (playlistType)
             {
@@ -143,10 +143,20 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     return await this.GetRepository<Genre>().GetSongsAsync(id);
                 case PlaylistType.UserPlaylist:
                     var playlistRepository = this.GetRepository<UserPlaylist>();
-                    var playlist = await playlistRepository.GetAsync(id);
-                    if (playlist != null && playlist.IsShared)
+
+                    UserPlaylist userPlaylist = null;
+                    if (playlist != null)
                     {
-                        return await this.userPlaylistsService.GetSharedPlaylistSongsAsync(playlist);
+                        userPlaylist = (UserPlaylist)playlist;
+                    }
+                    else
+                    {
+                        userPlaylist = await playlistRepository.GetAsync(id);
+                    }
+
+                    if (userPlaylist != null && userPlaylist.IsShared)
+                    {
+                        return await this.userPlaylistsService.GetSharedPlaylistSongsAsync(userPlaylist);
                     }
                     return await playlistRepository.GetSongsAsync(id);
                 case PlaylistType.SystemPlaylist:

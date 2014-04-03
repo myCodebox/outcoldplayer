@@ -98,12 +98,20 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 {
                     await this.playQueueService.StopAsync();
                     startPlaying = true;
-                }
+                } 
 
                 if (playlist == null && songs == null)
                 {
-                    playlist = await this.playlistsService.GetAsync(request.PlaylistType, request.PlaylistId);
-                    songs = await this.playlistsService.GetSongsAsync(request.PlaylistType, request.PlaylistId);
+                    if (!string.IsNullOrEmpty(request.PlaylistId))
+                    {
+                        playlist = await this.playlistsService.GetAsync(request.PlaylistType, request.PlaylistId);
+                    }
+                    else
+                    {
+                        playlist = request.Playlist;
+                    }
+
+                    songs = await this.playlistsService.GetSongsAsync(request.PlaylistType, request.PlaylistId, playlist);
                 }
 
                 await this.Dispatcher.RunAsync(
@@ -114,15 +122,12 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                         if (this.BindingModel.Playlist != null)
                         {
                             this.BindingModel.Title = this.BindingModel.Playlist.Title;
-                            this.BindingModel.Subtitle = this.resources.GetTitle(playlist.PlaylistType);
+                            this.BindingModel.Subtitle = this.resources.GetTitle(request.PlaylistType);
                         }
-
-                        
 
                         if (isCurrentPlaylist)
                         {
                             selectCurrentSong = true;
-                            
                         }
                     });
 
