@@ -30,6 +30,14 @@
             <ScrollViewer Grid.Row="2" Margin="0, 20, 0, 0">
                 <StackPanel>
                     <TextBlock Style="{StaticResource TitleTextStyle}" Margin="0, 10, 0, 0" >
+                    <Run>04/04/2014 - Version 3.1.2</Run>
+                    </TextBlock>
+                    <RichTextBlock Style="{StaticResource BodyRichTextStyle}">
+                        <Paragraph>[b] Application cannot add playlists and albums on Explore and Search pages to Library or UserPlaylists.</Paragraph>
+                        <Paragraph>[b] Application could download some album art images more than once.</Paragraph>
+                    </RichTextBlock>
+
+                    <TextBlock Style="{StaticResource TitleTextStyle}" Margin="0, 10, 0, 0" >
                     <Run>04/02/2014 - Version 3.1.1</Run>
                     </TextBlock>
                     <RichTextBlock Style="{StaticResource BodyRichTextStyle}">
