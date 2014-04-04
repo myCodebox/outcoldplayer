@@ -28,8 +28,11 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
     {
         private const string SqlRemovedCachedItems = @"select distinct c.* 
 from CachedAlbumArt c
-     left join Song s on s.AlbumArtUrl = c.AlbumArtUrl
- where s.[SongId] is null";
+     left join Song s on s.AlbumArtUrl = c.AlbumArtUrl     
+     left join Album a on a.ArtUrl = c.AlbumArtUrl
+     left join Artist aa on aa.ArtUrl = c.AlbumArtUrl
+     left join Radio r on r.ArtUrl = c.AlbumArtUrl or r.ArtUrl1 = c.AlbumArtUrl or r.ArtUrl2 = c.AlbumArtUrl or r.ArtUrl3 = c.AlbumArtUrl
+ where s.[SongId] is null and a.[AlbumId] is null and aa.ArtistId is null and r.[RadioID] is null";
 
         public Task<CachedAlbumArt> FindAsync(Uri path, uint size)
         {
