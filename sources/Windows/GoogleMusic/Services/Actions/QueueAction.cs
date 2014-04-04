@@ -66,7 +66,18 @@ namespace OutcoldSolutions.GoogleMusic.Services.Actions
             {
                 if (!(selectedObject is Song))
                 {
-                    if (((IPlaylist)selectedObject).PlaylistType == PlaylistType.Radio)
+                    var playlist = (IPlaylist)selectedObject;
+                    if (playlist.PlaylistType == PlaylistType.Radio)
+                    {
+                        return false;
+                    }
+
+                    if (playlist.PlaylistType == PlaylistType.AllAccessGenre)
+                    {
+                        return false;
+                    }
+
+                    if (playlist.PlaylistType == PlaylistType.Artist && string.IsNullOrEmpty(playlist.Id))
                     {
                         return false;
                     }

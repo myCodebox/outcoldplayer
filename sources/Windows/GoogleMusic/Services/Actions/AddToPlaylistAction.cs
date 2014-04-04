@@ -78,6 +78,16 @@ namespace OutcoldSolutions.GoogleMusic.Services.Actions
                     {
                         return false;
                     }
+
+                    if (playlist.PlaylistType == PlaylistType.AllAccessGenre)
+                    {
+                        return false;
+                    }
+
+                    if (playlist.PlaylistType == PlaylistType.Artist && string.IsNullOrEmpty(playlist.Id))
+                    {
+                        return false;
+                    }
                 }
             }
 
