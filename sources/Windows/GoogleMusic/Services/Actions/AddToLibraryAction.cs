@@ -83,7 +83,13 @@ namespace OutcoldSolutions.GoogleMusic.Services.Actions
                     var playlist = (IPlaylist)obj;
                     if (playlist.PlaylistType == PlaylistType.Radio
                         || playlist.PlaylistType == PlaylistType.UserPlaylist
-                        || playlist.PlaylistType == PlaylistType.SystemPlaylist)
+                        || playlist.PlaylistType == PlaylistType.SystemPlaylist
+                        || playlist.PlaylistType == PlaylistType.AllAccessGenre)
+                    {
+                        return false;
+                    }
+
+                    if (playlist.PlaylistType == PlaylistType.Artist && string.IsNullOrEmpty(playlist.Id))
                     {
                         return false;
                     }
