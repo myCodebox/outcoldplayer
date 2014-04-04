@@ -47,6 +47,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         private readonly ISettingsService settingsService;
 
+        private readonly IAllAccessService allAccessService;
+
         private readonly Dictionary<string, Task<Uri[]>> cachedUris = new Dictionary<string, Task<Uri[]>>();
 
         private readonly SemaphoreSlim limitSemaphore = new SemaphoreSlim(2);
@@ -58,13 +60,15 @@ namespace OutcoldSolutions.GoogleMusic.Services
             IUserPlaylistsService userPlaylistsService,
             IApplicationResources applicationResources,
             ISettingsService settingsService,
-            IEventAggregator eventAggregator)
+            IEventAggregator eventAggregator,
+            IAllAccessService allAccessService)
         {
             this.container = container;
             this.radioStationsService = radioStationsService;
             this.userPlaylistsService = userPlaylistsService;
             this.applicationResources = applicationResources;
             this.settingsService = settingsService;
+            this.allAccessService = allAccessService;
 
             eventAggregator.GetEvent<PlaylistsChangeEvent>()
                 .Where(e => e.HasRemovedPlaylists() || e.HasUpdatedPlaylists())
@@ -136,6 +140,17 @@ namespace OutcoldSolutions.GoogleMusic.Services
             switch (playlistType)
             {
                 case PlaylistType.Album:
+                    if (string.IsNullOrEmpty(id) && playlist != null)
+                    {
+                        var albumInfo = await this.allAccessService.GetAlbumAsync((Album)playlist, new CancellationToken());
+                        if (albumInfo == null)
+                        {
+                            return null;
+                        }
+
+                        return albumInfo.Item2;
+                    }
+
                     return await this.GetRepository<Album>().GetSongsAsync(id);
                 case PlaylistType.Artist:
                     return await this.GetRepository<Artist>().GetSongsAsync(id);
