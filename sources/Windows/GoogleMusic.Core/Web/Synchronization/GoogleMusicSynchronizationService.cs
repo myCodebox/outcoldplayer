@@ -78,6 +78,8 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
 
             IProgress<int> subProgress = null;
 
+            IDictionary<string, Song> addedSongs = new Dictionary<string, Song>();
+
             // Get status if we need to report progress
 
             if (!libraryFreshnessDate.HasValue && progress != null)
@@ -159,7 +161,12 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
                             }
                             else
                             {
-                                toBeInserted.Add(googleMusicSong.ToSong());
+                                song = googleMusicSong.ToSong();
+                                if (!addedSongs.ContainsKey(song.SongId))
+                                {
+                                    toBeInserted.Add(song);
+                                    addedSongs.Add(song.SongId, song);
+                                }
                             }
                         }
                     }
