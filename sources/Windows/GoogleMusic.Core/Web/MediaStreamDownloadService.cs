@@ -181,7 +181,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
                     urls,
                     data,
                     streamResponse.Content.Headers.ContentType.MediaType,
-                    read,
+                    (int)chunkStart,
                     token);
 
             }
