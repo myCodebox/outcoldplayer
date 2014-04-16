@@ -5,7 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:OutcoldSolutions.GoogleMusic.Controls" 
-    xmlns:interactivity="using:Windows.UI.Interactivity"
+    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:views="using:OutcoldSolutions.GoogleMusic.Views"
     xmlns:converters="using:OutcoldSolutions.GoogleMusic.Converters"
     x:Name="This"

@@ -6,11 +6,13 @@ namespace OutcoldSolutions.GoogleMusic.Controls
 {
     using System;
 
-    using Windows.UI.Interactivity;
+    using Windows.ApplicationModel;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
 
-    public class TextChangedBindingBehavior : Behavior<TextBox>
+    using Microsoft.Xaml.Interactivity;
+
+    public class TextChangedBindingBehavior : DependencyObject, IBehavior
     {
         public static readonly DependencyProperty TextProperty =
             DependencyProperty.Register("Text", typeof(string), typeof(TextChangedBindingBehavior), new PropertyMetadata(string.Empty, TextPropertyChangedCallback));
@@ -20,7 +22,7 @@ namespace OutcoldSolutions.GoogleMusic.Controls
             var behavior = dependencyObject as TextChangedBindingBehavior;
             if (behavior != null && behavior.AssociatedObject != null)
             {
-                behavior.AssociatedObject.Text = eventArgs.NewValue as string ?? string.Empty;
+                ((TextBox)behavior.AssociatedObject).Text = eventArgs.NewValue as string ?? string.Empty;
             }
         }
 
@@ -30,26 +32,42 @@ namespace OutcoldSolutions.GoogleMusic.Controls
             set { SetValue(TextProperty, value); }
         }
 
-        protected override void OnAttached()
-        {
-            base.OnAttached();
+        public DependencyObject AssociatedObject { get; private set; }
 
-            this.AssociatedObject.Text = this.Text;
-            this.AssociatedObject.TextChanged += AssociatedObjectOnTextChanged;
+        public void Attach(DependencyObject associatedObject)
+        {
+           if (!(associatedObject is TextBox))
+            {
+                throw new ArgumentException("Behavior works only with ListView");
+            }
+
+            if ((associatedObject != this.AssociatedObject) && !DesignMode.DesignModeEnabled)
+            {
+                if (this.AssociatedObject != null)
+                {
+                    throw new InvalidOperationException("Cannot attach behavior multiple times.");
+                }
+
+                this.AssociatedObject = associatedObject;
+
+                ((TextBox)this.AssociatedObject).Text = this.Text;
+                ((TextBox)this.AssociatedObject).TextChanged += AssociatedObjectOnTextChanged;
+            }
         }
 
-        protected override void OnDetaching()
+        public void Detach()
         {
-            base.OnDetaching();
-
-            this.AssociatedObject.TextChanged -= this.AssociatedObjectOnTextChanged;
+            if (this.AssociatedObject != null)
+            {
+                ((TextBox)this.AssociatedObject).TextChanged -= this.AssociatedObjectOnTextChanged;
+            }
         }
 
         private void AssociatedObjectOnTextChanged(object sender, TextChangedEventArgs textChangedEventArgs)
         {
-            if (!string.Equals(this.Text, this.AssociatedObject.Text, StringComparison.CurrentCulture))
+            if (this.AssociatedObject != null && !string.Equals(this.Text, ((TextBox)this.AssociatedObject).Text, StringComparison.CurrentCulture))
             {
-                this.Text = this.AssociatedObject.Text;
+                this.Text = ((TextBox)this.AssociatedObject).Text;
             }
         }
     }

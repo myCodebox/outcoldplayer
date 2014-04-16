@@ -6,26 +6,27 @@ namespace OutcoldSolutions.GoogleMusic.Controls
 {
     using System;
     using System.Collections;
-    using System.Collections.Generic;
     using System.Collections.Specialized;
     using System.Linq;
     using System.Threading.Tasks;
 
+    using Windows.ApplicationModel;
+
+    using Microsoft.Xaml.Interactivity;
+
     using Windows.UI.Core;
-    using Windows.UI.Interactivity;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
-    using Windows.UI.Xaml.Data;
 
     using OutcoldSolutions.GoogleMusic.Diagnostics;
 
-    public class ListViewBaseSelectedItemsBehavior : Behavior<ListViewBase>
+    public class ListViewBaseSelectedItemsBehavior : DependencyObject, IBehavior
     {
         public static readonly DependencyProperty SelectedItemsProperty = DependencyProperty.Register(
             "SelectedItems",
             typeof(object),
             typeof(ListViewBaseSelectedItemsBehavior),
-            new PropertyMetadata(null, (o, args) => 
+            new PropertyMetadata(null, (o, args) =>
             {
                 ((ListViewBaseSelectedItemsBehavior)o).OnSelectedItemsChanged(args);
             }));
@@ -48,22 +49,44 @@ namespace OutcoldSolutions.GoogleMusic.Controls
             get { return (bool)this.GetValue(ForceToShowProperty); }
             set { this.SetValue(ForceToShowProperty, value); }
         }
-        
-        protected override void OnAttached()
-        {
-            base.OnAttached();
 
-            this.AssociatedObject.SelectionChanged -= this.OnSelectionChanged;
-            this.AssociatedObject.SelectionChanged += this.OnSelectionChanged;
-            this.Synchronize();
+        public DependencyObject AssociatedObject { get; private set; }
+
+        public ListViewBase AssociatedListViewBase
+        {
+            get
+            {
+                return (ListViewBase)this.AssociatedObject;
+            }
         }
 
-        protected override void OnDetaching()
+        public void Attach(DependencyObject associatedObject)
         {
-            base.OnDetaching();
+            if (!(associatedObject is ListViewBase))
+            {
+                throw new ArgumentException("Behavior works only with ListView");
+            }
 
-            // Note: In WinRT some weird bug that does at first attaching and after detaching
-            //this.AssociatedObject.SelectionChanged -= this.OnSelectionChanged;
+            if ((associatedObject != this.AssociatedObject) && !DesignMode.DesignModeEnabled)
+            {
+                if (this.AssociatedObject != null)
+                {
+                    throw new InvalidOperationException("Cannot attach behavior multiple times.");
+                }
+
+                this.AssociatedObject = associatedObject;
+
+                this.AssociatedListViewBase.SelectionChanged += this.OnSelectionChanged;
+                this.Synchronize();
+            }
+        }
+
+        public void Detach()
+        {
+            if (this.AssociatedListViewBase != null)
+            {
+                this.AssociatedListViewBase.SelectionChanged -= this.OnSelectionChanged;
+            }
         }
 
         private void OnSelectedItemsChanged(DependencyPropertyChangedEventArgs args)
@@ -131,13 +154,13 @@ namespace OutcoldSolutions.GoogleMusic.Controls
                 return;
             }
 
-            if (this.AssociatedObject != null)
+            if (this.AssociatedListViewBase != null)
             {
                 if (e.NewItems == null && e.OldItems == null)
                 {
-                    if (this.AssociatedObject.SelectedItems != null)
+                    if (this.AssociatedListViewBase.SelectedItems != null)
                     {
-                        this.AssociatedObject.SelectedItems.Clear();
+                        this.AssociatedListViewBase.SelectedItems.Clear();
                     }
                 }
                 else
@@ -146,13 +169,13 @@ namespace OutcoldSolutions.GoogleMusic.Controls
 
                     if (e.OldItems != null)
                     {
-                        if (this.AssociatedObject.SelectedItems != null)
+                        if (this.AssociatedListViewBase.SelectedItems != null)
                         {
                             foreach (object item in e.OldItems)
                             {
-                                if (this.AssociatedObject.SelectedItems.Contains(item))
+                                if (this.AssociatedListViewBase.SelectedItems.Contains(item))
                                 {
-                                    this.AssociatedObject.SelectedItems.Remove(item);
+                                    this.AssociatedListViewBase.SelectedItems.Remove(item);
                                 }
                             }
                         }
@@ -160,13 +183,13 @@ namespace OutcoldSolutions.GoogleMusic.Controls
 
                     if (e.NewItems != null)
                     {
-                        if (this.AssociatedObject.SelectedItems != null)
+                        if (this.AssociatedListViewBase.SelectedItems != null)
                         {
                             foreach (object item in e.NewItems)
                             {
-                                if (!this.AssociatedObject.SelectedItems.Contains(item))
+                                if (!this.AssociatedListViewBase.SelectedItems.Contains(item))
                                 {
-                                    this.AssociatedObject.SelectedItems.Add(item);
+                                    this.AssociatedListViewBase.SelectedItems.Add(item);
                                 }
                             }
                         }
@@ -175,66 +198,63 @@ namespace OutcoldSolutions.GoogleMusic.Controls
                     this.freezed = false;
                 }
 
-                if (this.ForceToShow && e.NewItems != null && this.AssociatedObject.SelectedItems !=null && this.AssociatedObject.SelectedItems.Count == 1)
+                if (this.ForceToShow && e.NewItems != null && this.AssociatedListViewBase.SelectedItems != null && this.AssociatedListViewBase.SelectedItems.Count == 1)
                 {
                     await Task.Yield();
 
                     await this.Dispatcher.RunAsync(
                             CoreDispatcherPriority.Low, () =>
+                            {
+                                try
                                 {
-                                    try
+                                    if (this.AssociatedListViewBase != null && e.NewItems.Count > 0)
                                     {
-                                        if (this.AssociatedObject != null && e.NewItems.Count > 0)
-                                        {
-                                            this.AssociatedObject.ScrollIntoView(e.NewItems[0]);
-                                        }
+                                        this.AssociatedListViewBase.ScrollIntoView(e.NewItems[0]);
                                     }
-                                    catch (Exception exception)
-                                    {
-                                        Logger.Value.Debug(exception, "OnCollectionChanged");
-                                    }
-                                });
+                                }
+                                catch (Exception exception)
+                                {
+                                    Logger.Value.Debug(exception, "OnCollectionChanged");
+                                }
+                            });
                 }
             }
         }
 
         private async void Synchronize()
         {
-            if (this.AssociatedObject != null)
+            if (this.AssociatedListViewBase != null)
             {
-                IList<object> collection = this.SelectedItems is IList
-                    ? (this.SelectedItems as IList).Cast<object>().ToList()
-                    : null;
+                this.AssociatedListViewBase.SelectedItems.Clear();
 
-                this.AssociatedObject.SelectedItems.Clear();
-
+                var collection = this.SelectedItems as IList;
                 if (collection != null)
                 {
                     foreach (var selectedItem in collection)
                     {
-                        this.AssociatedObject.SelectedItems.Add(selectedItem);
+                        this.AssociatedListViewBase.SelectedItems.Add(selectedItem);
                     }
                 }
 
-                if (this.ForceToShow && this.AssociatedObject.SelectedItems.Count == 1)
+                if (this.ForceToShow && this.AssociatedListViewBase.SelectedItems.Count == 1)
                 {
                     await Task.Yield();
 
                     await this.Dispatcher.RunAsync(
                             CoreDispatcherPriority.Low, () =>
+                            {
+                                try
                                 {
-                                    try
+                                    if (this.AssociatedListViewBase != null && this.AssociatedListViewBase.SelectedItems.Count > 0)
                                     {
-                                        if (this.AssociatedObject != null && this.AssociatedObject.SelectedItems.Count > 0)
-                                        {
-                                            this.AssociatedObject.ScrollIntoView(this.AssociatedObject.SelectedItems[0]);
-                                        }
+                                        this.AssociatedListViewBase.ScrollIntoView(this.AssociatedListViewBase.SelectedItems[0]);
                                     }
-                                    catch (Exception exception)
-                                    {
-                                        Logger.Value.Debug(exception, "Synchronize");
-                                    }
-                                });
+                                }
+                                catch (Exception exception)
+                                {
+                                    Logger.Value.Debug(exception, "Synchronize");
+                                }
+                            });
                 }
             }
         }
