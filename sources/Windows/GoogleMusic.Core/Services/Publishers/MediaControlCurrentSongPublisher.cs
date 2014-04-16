@@ -7,17 +7,22 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
     using System.Threading;
     using System.Threading.Tasks;
 
+    using Windows.Storage.Streams;
+
     using OutcoldSolutions.GoogleMusic.Models;
 
     using Windows.Media;
 
     public class MediaControlCurrentSongPublisher : ICurrentSongPublisher
     {
+        private readonly SystemMediaTransportControls systemMediaTransportControls;
+
         private readonly IDispatcher dispatcher;
 
         public MediaControlCurrentSongPublisher(IDispatcher dispatcher)
         {
             this.dispatcher = dispatcher;
+            this.systemMediaTransportControls = SystemMediaTransportControls.GetForCurrentView();
         }
 
         public PublisherType PublisherType
@@ -32,11 +37,14 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
         {
             await this.dispatcher.RunAsync(
                 () =>
-                    {
-                        MediaControl.ArtistName = song.GetSongArtist();
-                        MediaControl.TrackName = song.Title;
-                        MediaControl.AlbumArt = albumArtUri;
-                    });
+                {
+                    var updater = this.systemMediaTransportControls.DisplayUpdater;
+                    updater.MusicProperties.Title = song.Title;
+                    updater.MusicProperties.AlbumArtist = song.AlbumArtistTitle;
+                    updater.MusicProperties.Artist = song.GetSongArtist();
+                    updater.Thumbnail = RandomAccessStreamReference.CreateFromUri(albumArtUri);
+                    updater.Update();
+                });
         }
     }
 }

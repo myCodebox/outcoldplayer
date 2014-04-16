@@ -16,9 +16,7 @@ namespace OutcoldSolutions.GoogleMusic.Shell
         private readonly IDispatcher dispatcher;
         private readonly ILogger logger;
 
-        private bool mediaControlSubscribed = false;
-        private bool mediaControlNextSubscribed = false;
-        private bool mediaControlPreviousSubscribed = false;
+        private readonly SystemMediaTransportControls systemMediaTransportControls;
 
         public MediaControlIntegration(
             ILogManager logManager,
@@ -29,173 +27,94 @@ namespace OutcoldSolutions.GoogleMusic.Shell
             this.playQueueService = playQueueService;
             this.dispatcher = dispatcher;
             this.playQueueService.StateChanged += this.StateChanged;
+
+            this.systemMediaTransportControls = SystemMediaTransportControls.GetForCurrentView();
+            this.systemMediaTransportControls.ButtonPressed += this.OnButtonPressed;
         }
 
         ~MediaControlIntegration()
         {
-            this.Dispose(disposing: false);
+            this.Dispose();
         }
 
         public void Dispose()
         {
-            this.Dispose(disposing: true);
+            this.systemMediaTransportControls.ButtonPressed -= this.OnButtonPressed;
             GC.SuppressFinalize(this);
         }
 
-        private void Dispose(bool disposing)
+        private async void StateChanged(object sender, StateChangedEventArgs eventArgs)
         {
-            if (disposing)
-            {
-                this.ChangeSubscriptionToMediaControl(subscribe: false);
-                this.ChangeSubscriptionToNextTrackMediaControl(subscribe: false);
-                this.ChangeSubscriptionToPreviousTrackMediaControl(subscribe: false);
-            }
-        }
-
-        private void StateChanged(object sender, StateChangedEventArgs eventArgs)
-        {
-            if (eventArgs.State == QueueState.Play 
-                || eventArgs.State == QueueState.Paused 
-                || eventArgs.State == QueueState.Busy)
-            {
-                this.ChangeSubscriptionToMediaControl(subscribe: true);
-            }
-            else
-            {
-                this.ChangeSubscriptionToMediaControl(subscribe: false);
-            }
-
-            this.ChangeSubscriptionToNextTrackMediaControl(this.playQueueService.CanSwitchToNext());
-            this.ChangeSubscriptionToPreviousTrackMediaControl(this.playQueueService.CanSwitchToPrevious());
-        }
-
-        private void ChangeSubscriptionToMediaControl(bool subscribe)
-        {
-            this.dispatcher.RunAsync(() =>
+            await this.dispatcher.RunAsync(
+                () =>
                 {
-                    if (subscribe)
+                    switch (eventArgs.State)
                     {
-                        if (!this.mediaControlSubscribed)
-                        {
-                            try
-                            {
-                                MediaControl.PlayPauseTogglePressed += this.MediaControlPlayPauseTogglePressed;
-                                MediaControl.PlayPressed += this.MediaControlPlayPressed;
-                                MediaControl.PausePressed += this.MediaControlPausePressed;
-                                MediaControl.StopPressed += this.MediaControlStopPressed;
-                            }
-                            catch (Exception e)
-                            {
-                                this.logger.Debug(e, "Could not subscribe to MediaControl events");
-                            }
-                            
-                            this.mediaControlSubscribed = true;
-                        }
+                        case QueueState.Unknown:
+                            this.systemMediaTransportControls.PlaybackStatus = MediaPlaybackStatus.Changing;
+                            break;
+                        case QueueState.Play:
+                            this.systemMediaTransportControls.PlaybackStatus = MediaPlaybackStatus.Playing;
+                            break;
+                        case QueueState.Stopped:
+                            this.systemMediaTransportControls.PlaybackStatus = MediaPlaybackStatus.Stopped;
+                            break;
+                        case QueueState.Paused:
+                            this.systemMediaTransportControls.PlaybackStatus = MediaPlaybackStatus.Paused;
+                            break;
+                        case QueueState.Busy:
+                            this.systemMediaTransportControls.PlaybackStatus = MediaPlaybackStatus.Changing;
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
                     }
-                    else
-                    {
-                        if (this.mediaControlSubscribed)
-                        {
-                            try
-                            {
-                                MediaControl.PlayPauseTogglePressed -= this.MediaControlPlayPauseTogglePressed;
-                                MediaControl.PlayPressed -= this.MediaControlPlayPressed;
-                                MediaControl.PausePressed -= this.MediaControlPausePressed;
-                                MediaControl.StopPressed -= this.MediaControlStopPressed;
-                            }
-                            catch (Exception e)
-                            {
-                                this.logger.Debug(e, "Could not subscribe to MediaControl events");
-                            }
-                            
-                            this.mediaControlSubscribed = false;
-                        }
-                    }
+
+                    this.systemMediaTransportControls.IsChannelDownEnabled = false;
+                    this.systemMediaTransportControls.IsChannelUpEnabled = false;
+                    this.systemMediaTransportControls.IsFastForwardEnabled = false;
+                    this.systemMediaTransportControls.IsNextEnabled = this.playQueueService.CanSwitchToNext();
+                    this.systemMediaTransportControls.IsPauseEnabled = true;
+                    this.systemMediaTransportControls.IsPlayEnabled = true;
+                    this.systemMediaTransportControls.IsPreviousEnabled = this.playQueueService.CanSwitchToPrevious();
+                    this.systemMediaTransportControls.IsRecordEnabled = false;
+                    this.systemMediaTransportControls.IsRewindEnabled = false;
+                    this.systemMediaTransportControls.IsStopEnabled = true;
                 });
-            
         }
 
-        private void ChangeSubscriptionToNextTrackMediaControl(bool subscribe)
+        private async void OnButtonPressed(SystemMediaTransportControls sender, SystemMediaTransportControlsButtonPressedEventArgs args)
         {
-            if (subscribe)
+            this.logger.Debug("Pressed {0}", args.Button);
+            switch (args.Button)
             {
-                if (!this.mediaControlNextSubscribed)
-                {
-                    MediaControl.NextTrackPressed += this.MediaControlOnNextTrackPressed;
-                    this.mediaControlNextSubscribed = true;
-                }
+                case SystemMediaTransportControlsButton.Play:
+                    await this.playQueueService.PlayAsync();
+                    break;
+                case SystemMediaTransportControlsButton.Pause:
+                    await this.playQueueService.PauseAsync();
+                    break;
+                case SystemMediaTransportControlsButton.Stop:
+                    await this.playQueueService.StopAsync();
+                    break;
+                case SystemMediaTransportControlsButton.Record:
+                    break;
+                case SystemMediaTransportControlsButton.FastForward:
+                    break;
+                case SystemMediaTransportControlsButton.Rewind:
+                    break;
+                case SystemMediaTransportControlsButton.Next:
+                    await this.playQueueService.NextSongAsync();
+                    break;
+                case SystemMediaTransportControlsButton.Previous:
+                    await this.playQueueService.PreviousSongAsync();
+                    break;
+                case SystemMediaTransportControlsButton.ChannelUp:
+                    break;
+                case SystemMediaTransportControlsButton.ChannelDown:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
-            else
-            {
-                if (this.mediaControlNextSubscribed)
-                {
-                    MediaControl.NextTrackPressed -= this.MediaControlOnNextTrackPressed;
-                    this.mediaControlNextSubscribed = false;
-                }
-            }
-        }
-
-        private void ChangeSubscriptionToPreviousTrackMediaControl(bool subscribe)
-        {
-            if (subscribe)
-            {
-                if (!this.mediaControlPreviousSubscribed)
-                {
-                    MediaControl.PreviousTrackPressed += this.MediaControlOnPreviousTrackPressed;
-                    this.mediaControlPreviousSubscribed = true;
-                }
-            }
-            else
-            {
-                if (this.mediaControlPreviousSubscribed)
-                {
-                    MediaControl.PreviousTrackPressed -= this.MediaControlOnPreviousTrackPressed;
-                    this.mediaControlPreviousSubscribed = false;
-                }
-            }
-        }
-
-        private async void MediaControlPausePressed(object sender, object e)
-        {
-            this.logger.Debug("MediaControlPausePressed.");
-            await this.playQueueService.PauseAsync();
-        }
-
-        private async void MediaControlPlayPressed(object sender, object e)
-        {
-            this.logger.Debug("MediaControlPlayPressed.");
-            await this.playQueueService.PlayAsync();
-        }
-
-        private async void MediaControlStopPressed(object sender, object e)
-        {
-            this.logger.Debug("MediaControlStopPressed.");
-            await this.playQueueService.StopAsync();
-        }
-
-        private async void MediaControlPlayPauseTogglePressed(object sender, object e)
-        {
-            this.logger.Debug("MediaControlPlayPauseTogglePressed.");
-            if (this.playQueueService.State == QueueState.Play)
-            {
-                await this.playQueueService.PauseAsync();
-            }
-            else
-            {
-                await this.playQueueService.PlayAsync();
-            }
-        }
-
-        private void MediaControlOnNextTrackPressed(object sender, object o)
-        {
-            this.logger.Debug("MediaControlOnNextTrackPressed.");
-            this.playQueueService.NextSongAsync();
-        }
-
-        private void MediaControlOnPreviousTrackPressed(object sender, object o)
-        {
-            this.logger.Debug("MediaControlOnPreviousTrackPressed.");
-            this.playQueueService.PreviousSongAsync();
         }
     }
 }

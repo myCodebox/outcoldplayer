@@ -28,7 +28,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
         public const string UltimateInAppPurchase = "Ultimate";
         public const string AdFreeUnlimitedInAppPurchase = "AdFreeUnlimited";
 
-        private static readonly Lazy<ILogger> Logger = new Lazy<ILogger>(() => ApplicationBase.Container.Resolve<ILogManager>().CreateLogger(typeof(InAppPurchases).Name)); 
+        private static readonly Lazy<ILogger> Logger = new Lazy<ILogger>(() => ApplicationBase.Container.Resolve<ILogManager>().CreateLogger(typeof(InAppPurchases).Name));
         private static readonly List<string> Purchases = new List<string>();
 
         private static event LicenseChangedEventHandler LicenseChangedPrivate;
@@ -69,7 +69,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
         public static GoogleMusicFeatures GetFeatures()
         {
             GoogleMusicFeatures features = GoogleMusicFeatures.None;
-            
+
             if (IsActive(UltimateInAppPurchase))
             {
                 features |= GoogleMusicFeatures.All;
@@ -105,17 +105,17 @@ namespace OutcoldSolutions.GoogleMusic.Services
 #endif
         }
 
-        public static async Task<string> RequestPurchase(string inAppPurchaseName)
+        public static async Task<PurchaseResults> RequestPurchase(string inAppPurchaseName)
         {
-            string receipt = null;
+            PurchaseResults receipt = null;
             try
             {
 #if DEBUG
-                receipt = await CurrentAppSimulator.RequestProductPurchaseAsync(inAppPurchaseName, true).AsTask();
+                receipt = await CurrentAppSimulator.RequestProductPurchaseAsync(inAppPurchaseName).AsTask();
 #else
                 receipt = await CurrentApp.RequestProductPurchaseAsync(inAppPurchaseName, true).AsTask();
 #endif
-                if (!string.IsNullOrWhiteSpace(receipt))
+                if (receipt.Status == ProductPurchaseStatus.Succeeded || receipt.Status == ProductPurchaseStatus.AlreadyPurchased)
                 {
                     Purchases.Add(inAppPurchaseName);
                     RaiseLicenseChanged();

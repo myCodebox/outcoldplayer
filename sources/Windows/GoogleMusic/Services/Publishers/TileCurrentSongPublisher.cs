@@ -82,7 +82,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
 
         private XmlDocument GenerateWideTile(Song song, Uri albumArtUri)
         {
-            XmlDocument templateContent = TileUpdateManager.GetTemplateContent(TileTemplateType.TileWideSmallImageAndText02);
+            XmlDocument templateContent = TileUpdateManager.GetTemplateContent(TileTemplateType.TileWide310x150SmallImageAndText02);
             XmlNodeList images = templateContent.GetElementsByTagName("image");
             ((XmlElement)images[0]).SetAttribute("src", albumArtUri.ToString());
             ((XmlElement)images[0]).SetAttribute("alt", "Album Art");
@@ -95,7 +95,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
 
         private XmlDocument GenerateSquareTile(Song song)
         {
-            XmlDocument templateContent = TileUpdateManager.GetTemplateContent(TileTemplateType.TileSquareText03);
+            XmlDocument templateContent = TileUpdateManager.GetTemplateContent(TileTemplateType.TileSquare150x150Text03);
 
             XmlNodeList textElements = templateContent.GetElementsByTagName("text");
             this.SetTextElements(textElements, templateContent, song);
