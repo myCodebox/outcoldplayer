@@ -105,6 +105,7 @@
   <ItemGroup>
     <Compile Include="ApplicationBase.cs" />
     <Compile Include="ApplicationException.cs" />
+    <Compile Include="ApplicationLogManager.cs" />
     <Compile Include="BindingModels\ArtistPageViewBindingModel.cs" />
     <Compile Include="BindingModels\AuthentificationPageViewBindingModel.cs" />
     <Compile Include="BindingModels\BindingModelBase.cs" />
@@ -145,7 +146,9 @@
     <Compile Include="Converters\VisibilityConverterBase.cs" />
     <Compile Include="DateTimeExtensions.cs" />
     <Compile Include="DelegateCommand.cs" />
+    <Compile Include="Diagnostics\DebugConsole.cs" />
     <Compile Include="Diagnostics\DebugLogWriter.cs" />
+    <Compile Include="Diagnostics\FakeAnalyticsService.cs" />
     <Compile Include="Diagnostics\FileLogWriter.cs" />
     <Compile Include="Diagnostics\IAnalyticsService.cs" />
     <Compile Include="Diagnostics\IDebugConsole.cs" />

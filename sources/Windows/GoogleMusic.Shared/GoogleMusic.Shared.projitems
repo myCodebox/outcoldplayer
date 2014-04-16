@@ -14,4 +14,11 @@
     <Content Include="$(MSBuildThisFileDirectory)Assets\WideLogo.scale-100.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\WideLogo.scale-140.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Page Include="$(MSBuildThisFileDirectory)Common\Converters.xaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
 </Project>

@@ -371,15 +371,5 @@ namespace OutcoldSolutions.GoogleMusic
                 deferral.Complete();
             });        
         }
-
-#if DEBUG
-        private class DebugConsole : IDebugConsole
-        {
-            public void WriteLine(string message)
-            {
-                Debug.WriteLine(message);
-            }
-        }
-#endif
     }
 }
