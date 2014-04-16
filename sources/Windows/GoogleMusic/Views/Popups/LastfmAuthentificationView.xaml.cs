@@ -12,10 +12,6 @@ namespace OutcoldSolutions.GoogleMusic.Views.Popups
     using Windows.UI.Core;
     using Windows.UI.Xaml;
 
-    public interface ILastfmAuthentificationView : IPopupView
-    {
-    }
-
     public sealed partial class LastfmAuthentificationPageView : DisposablePopupViewBase, ILastfmAuthentificationView
     {
         private LastfmAuthentificationPresenter presenter;

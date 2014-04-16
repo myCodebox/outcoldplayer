@@ -108,6 +108,57 @@
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug %28ARM%29|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug %28ARM%29\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;NETFX_CORE</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug %28ARM%29|ARM'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\ARM\Debug %28ARM%29\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;NETFX_CORE</DefineConstants>
+    <NoWarn>;2008</NoWarn>
+    <NoStdLib>true</NoStdLib>
+    <DebugType>full</DebugType>
+    <PlatformTarget>ARM</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug %28ARM%29|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug %28ARM%29\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;NETFX_CORE</DefineConstants>
+    <NoWarn>;2008</NoWarn>
+    <NoStdLib>true</NoStdLib>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug %28ARM%29|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug %28ARM%29\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;NETFX_CORE</DefineConstants>
+    <NoWarn>;2008</NoWarn>
+    <NoStdLib>true</NoStdLib>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
@@ -115,51 +166,18 @@
     <Compile Include="ApplicationLogManager.cs" />
     <Compile Include="ApplicationSettingViews.cs" />
     <Compile Include="ApplicationStateChangeHandler.cs" />
-    <Compile Include="BindingModels\ArtistPageViewBindingModel.cs" />
-    <Compile Include="BindingModels\Settings\CachedSongBindingModel.cs" />
-    <Compile Include="BindingModels\Settings\OfflineCacheViewBindingModel.cs" />
-    <Compile Include="BindingModels\PlaylistPageViewBindingModel.cs" />
-    <Compile Include="BindingModels\PlayerBindingModel.cs" />
-    <Compile Include="BindingModels\PlaylistBindingModel.cs" />
-    <Compile Include="BindingModels\PlaylistsPageViewBindingModel.cs" />
-    <Compile Include="BindingModels\Popups\LastfmAuthentificationBindingModel.cs" />
-    <Compile Include="BindingModels\ProgressLoadingPageViewBindingModel.cs" />
-    <Compile Include="BindingModels\SearchPageViewBindingModel.cs" />
-    <Compile Include="BindingModels\Settings\AccountViewBindingModel.cs" />
-    <Compile Include="Controls\WrapPanel.cs" />
-    <Compile Include="Presenters\Popups\TutorialPopupViewPresenter.cs" />
-    <Compile Include="Presenters\Settings\SupportViewPresenter.cs" />
     <Compile Include="Controls\ButtonWithHover.cs" />
     <Compile Include="Controls\MenuItemDataTemplateSelector.cs" />
     <Compile Include="Controls\TextChangedBindingBehavior.cs" />
-    <Compile Include="Converters\AlbumDetailsConverter.cs" />
     <Compile Include="Controls\ExploreTabGroupTemplateSelector.cs" />
-    <Compile Include="Converters\NotEmptyToVisibilityConverter.cs" />
-    <Compile Include="Converters\StyleSelectorConverter.cs" />
-    <Compile Include="Presenters\DonatePresenterBase.cs" />
-    <Compile Include="Presenters\ExplorePageViewPresenter.cs" />
-    <Compile Include="Presenters\GenrePageViewPresenter.cs" />
-    <Compile Include="Presenters\LinksRegionViewPresenter.cs" />
-    <Compile Include="Presenters\Popups\DonatePopupViewPresenter.cs" />
-    <Compile Include="Presenters\Popups\ReadMorePopupPresenter.cs" />
-    <Compile Include="Presenters\SongsListViewPresenter.cs" />
-    <Compile Include="BindingModels\AuthentificationPageViewBindingModel.cs" />
-    <Compile Include="CommandMetadata.cs" />
     <Compile Include="Controls\AlbumArtControl.cs" />
     <Compile Include="Controls\AppBarToggleButton.cs" />
     <Compile Include="Controls\FakeEqualizerControl.cs" />
-    <Compile Include="Controls\ItemsControlExtensions.cs" />
     <Compile Include="Controls\PlaylistDataTemplateSelector.cs" />
     <Compile Include="Controls\Rating.cs" />
-    <Compile Include="Controls\RatingEventArgs.cs" />
     <Compile Include="Controls\ListViewBaseSelectedItemsBehavior.cs" />
-    <Compile Include="Converters\BooleanToColumnWidthConverter.cs" />
-    <Compile Include="Presenters\PlaylistsListViewPresenter.cs" />
-    <Compile Include="Services\Actions\ActionGroup.cs" />
     <Compile Include="Diagnostics\AnalyticsService.cs" />
-    <Compile Include="Services\SelectSongEvent.cs" />
-    <Compile Include="Shell\ApplicationSize.cs" />
-    <Compile Include="Shell\AskForReviewService.cs" />
+    <Compile Include="Shell\ApplicationSettingViewsService.cs" />
     <Compile Include="Views\ExplorePageView.xaml.cs">
       <DependentUpon>ExplorePageView.xaml</DependentUpon>
     </Compile>
@@ -183,113 +201,12 @@
     </Compile>
     <Compile Include="Controls\SortableHeaderControl.cs" />
     <Compile Include="Controls\ValueChangedEventArgs.cs" />
-    <Compile Include="Controls\VisualTreeHelperEx.cs" />
-    <Compile Include="Converters\AlbumArtUrlToImageConverter.cs" />
-    <Compile Include="Converters\ArtistAlbumsCountConverter.cs" />
-    <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
-    <Compile Include="Converters\DoubleToTimeConverter.cs" />
-    <Compile Include="Converters\InvertBooleanConverter.cs" />
-    <Compile Include="Converters\PlaylistDurationConverter.cs" />
-    <Compile Include="Converters\PlaylistSongsCountConverter.cs" />
-    <Compile Include="Converters\SizeToStringConverter.cs" />
-    <Compile Include="Converters\SongToArtistConverter.cs" />
-    <Compile Include="Converters\StringFormatConverter.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Converters\StringToResourceConverter.cs" />
-    <Compile Include="Converters\TimeSpanToTimeConverter.cs" />
-    <Compile Include="Converters\ValueToBooleanConverter.cs" />
-    <Compile Include="Converters\ValueToVisibilityConverter.cs" />
-    <Compile Include="Converters\VisibilityConverterBase.cs" />
-    <Compile Include="DelegateCommand.cs" />
     <Compile Include="Diagnostics\BugSenseLogWriter.cs" />
-    <Compile Include="GoogleMusicSettingsServiceExtensions.cs" />
-    <Compile Include="INavigationService.cs" />
-    <Compile Include="Models\PlaylistTypeEx.cs" />
-    <Compile Include="Models\QueueChangeEvent.cs" />
-    <Compile Include="Models\ReloadSongsEvent.cs" />
-    <Compile Include="Models\SelectedItems.cs" />
-    <Compile Include="Models\TimeSpanEx.cs" />
-    <Compile Include="NavigatedToEventArgs.cs" />
-    <Compile Include="NavigatingFromEventArgs.cs" />
-    <Compile Include="NavigationService.cs" />
-    <Compile Include="NavigationServiceEx.cs" />
-    <Compile Include="PlaylistNavigationRequest.cs" />
-    <Compile Include="Presenters\ApplicationSettingFramePresenter.cs" />
-    <Compile Include="Presenters\DisposablePagePresenterBase.cs" />
-    <Compile Include="Presenters\DisposableViewPresenterBase.cs" />
-    <Compile Include="Presenters\IPagePresenterBase.cs" />
-    <Compile Include="Presenters\MainFramePresenter.cs" />
-    <Compile Include="Presenters\MainMenuPresenter.cs" />
-    <Compile Include="Presenters\PagePresenterBase.cs" />
-    <Compile Include="Presenters\PlaylistsPageViewPresenterBase.cs" />
-    <Compile Include="Presenters\Popups\PlaylistEditPopupViewPresenter.cs" />
-    <Compile Include="Presenters\Popups\ProgressLoadingCloseEventArgs.cs" />
-    <Compile Include="Presenters\Popups\QueueActionsPopupViewPresenter.cs" />
-    <Compile Include="Presenters\Popups\RadioEditPopupViewPresenter.cs" />
-    <Compile Include="Presenters\RadioPageViewPresenter.cs" />
-    <Compile Include="Presenters\Settings\OfflineCacheViewPresenter.cs" />
-    <Compile Include="Presenters\Settings\AppSettingsViewPresenter.cs" />
-    <Compile Include="Presenters\UserPlaylistsPageViewPresenter.cs" />
-    <Compile Include="Presenters\ViewPresenterBase.cs" />
     <Compile Include="Registration.cs" />
-    <Compile Include="Services\Actions\AddToLibraryAction.cs" />
-    <Compile Include="Services\Actions\AddToPlaylistAction.cs" />
-    <Compile Include="Services\Actions\DeletePlaylistAction.cs" />
-    <Compile Include="Services\Actions\DeleteRadioStationsAction.cs" />
-    <Compile Include="Services\Actions\DownloadAction.cs" />
-    <Compile Include="Services\Actions\EditPlaylistAction.cs" />
-    <Compile Include="Services\Actions\QueueAction.cs" />
-    <Compile Include="Services\Actions\RemoveFromLibraryAction.cs" />
-    <Compile Include="Services\Actions\RemoveFromPlaylistAction.cs" />
-    <Compile Include="Services\Actions\RemoveLocalAction.cs" />
-    <Compile Include="Services\Actions\RemoveSelectedSongAction.cs" />
-    <Compile Include="Services\Actions\StartRadioAction.cs" />
-    <Compile Include="Services\IPlayQueueService.cs" />
-    <Compile Include="Services\SelectedObjectsService.cs" />
-    <Compile Include="Services\PlayQueueService.cs" />
-    <Compile Include="Services\QueueState.cs" />
-    <Compile Include="Services\StateChangedEventArgs.cs" />
     <Compile Include="Shell\ApplicationResources.cs" />
-    <Compile Include="Shell\ApplicationSettingLayoutType.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Shell\ApplicationSettingViewsService.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Shell\IApplicationSettingViewsService.cs">
-      <SubType>
-      </SubType>
-    </Compile>
-    <Compile Include="Shell\IMediaElementContainer.cs" />
-    <Compile Include="Shell\MediaControlIntegration.cs" />
-    <Compile Include="Shell\MediaElementContainer.cs" />
-    <Compile Include="Shell\MediaEndedEventArgs.cs" />
-    <Compile Include="Shell\MediaEndedReason.cs" />
     <Compile Include="Shell\NotificationService.cs" />
-    <Compile Include="Shell\PlayProgressEventArgs.cs" />
-    <Compile Include="Presenters\AlbumPageViewPresenter.cs" />
-    <Compile Include="Presenters\ArtistPageViewPresenter.cs" />
-    <Compile Include="Presenters\Popups\AuthentificationPopupViewPresenter.cs" />
-    <Compile Include="Presenters\CurrentPlaylistPageViewPresenter.cs" />
-    <Compile Include="Presenters\PlaylistPageViewPresenterBase.cs" />
-    <Compile Include="Presenters\Popups\AddToPlaylistPopupViewPresenter.cs" />
-    <Compile Include="Presenters\Popups\LastfmAuthentificationPresenter.cs" />
-    <Compile Include="Presenters\PlayerViewPresenter.cs" />
-    <Compile Include="Presenters\PlaylistsPageViewPresenter.cs" />
-    <Compile Include="Presenters\PlaylistPageViewPresenter.cs" />
-    <Compile Include="Presenters\Popups\ProgressLoadingPopupViewPresenter.cs" />
-    <Compile Include="Presenters\Popups\ReleasesHistoryPopupViewPresenter.cs" />
-    <Compile Include="Presenters\SearchPageViewPresenter.cs" />
-    <Compile Include="Presenters\Settings\AccountsViewPresenter.cs" />
-    <Compile Include="Presenters\HomePageViewPresenter.cs" />
     <Compile Include="Services\Publishers\TileCurrentSongPublisher.cs" />
     <Compile Include="Shell\ScreenLocker.cs" />
-    <Compile Include="Services\SettingsService.cs" />
-    <Compile Include="Services\GoogleAccountService.cs" />
     <Compile Include="Views\AlbumPageView.xaml.cs">
       <DependentUpon>AlbumPageView.xaml</DependentUpon>
     </Compile>
@@ -302,13 +219,6 @@
     <Compile Include="Views\CurrentPlaylistPageView.xaml.cs">
       <DependentUpon>CurrentPlaylistPageView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\DisposablePageViewBase.cs" />
-    <Compile Include="Views\DisposablePopupViewBase.cs" />
-    <Compile Include="Views\IApplicationSettingsContent.cs" />
-    <Compile Include="Views\IMainFrameRegionProvider.cs" />
-    <Compile Include="Views\IPageView.cs" />
-    <Compile Include="Views\IPopupView.cs" />
-    <Compile Include="Views\IView.cs" />
     <Compile Include="Views\LinksRegionView.xaml.cs">
       <DependentUpon>LinksRegionView.xaml</DependentUpon>
     </Compile>
@@ -318,13 +228,9 @@
     <Compile Include="Views\MainFrame.xaml.cs">
       <DependentUpon>MainFrame.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\MainFrameRegion.cs" />
     <Compile Include="Views\MainMenu.xaml.cs">
       <DependentUpon>MainMenu.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\PageViewBase.cs" />
-    <Compile Include="Views\PopupRegion.cs" />
-    <Compile Include="Views\Popups\AddToPlaylistCompletedEventArgs.cs" />
     <Compile Include="Views\Popups\AddToPlaylistPopupView.xaml.cs">
       <DependentUpon>AddToPlaylistPopupView.xaml</DependentUpon>
     </Compile>
@@ -347,7 +253,6 @@
     <Compile Include="Views\Popups\PlaylistEditPopupView.xaml.cs">
       <DependentUpon>PlaylistEditPopupView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Popups\QueueActionsCompletedEventArgs.cs" />
     <Compile Include="Views\Popups\QueueActionsPopupView.xaml.cs">
       <DependentUpon>QueueActionsPopupView.xaml</DependentUpon>
     </Compile>
@@ -357,7 +262,6 @@
     <Compile Include="Views\Popups\ProgressLoadingPopupView.xaml.cs">
       <DependentUpon>ProgressLoadingPopupView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\PopupViewBase.cs" />
     <Compile Include="Views\SearchPageView.xaml.cs">
       <DependentUpon>SearchPageView.xaml</DependentUpon>
     </Compile>
@@ -382,7 +286,6 @@
     <Compile Include="Views\SongsListViewContainerControl.xaml.cs">
       <DependentUpon>SongsListViewContainerControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\ViewBase.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -396,7 +299,9 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
-    <PRIResource Include="Strings\en\Resources.resw" />
+    <PRIResource Include="Strings\en\Resources.resw">
+      <SubType>Designer</SubType>
+    </PRIResource>
   </ItemGroup>
   <ItemGroup>
     <Content Include="analytics.xml">

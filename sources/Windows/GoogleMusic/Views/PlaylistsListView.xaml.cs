@@ -18,13 +18,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Presenters;
 
-    public interface IPlaylistsListView : IView
-    {
-        ListView GetListView();
-
-        Task ScrollIntoCurrentSongAsync(IPlaylist song);
-    }
-
     public sealed partial class PlaylistsListView : ViewBase, IPlaylistsListView
     {
         public static readonly DependencyProperty ItemsSourceProperty =

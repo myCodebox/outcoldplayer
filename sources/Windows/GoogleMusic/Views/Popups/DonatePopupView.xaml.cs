@@ -11,20 +11,6 @@ namespace OutcoldSolutions.GoogleMusic.Views.Popups
 
     using OutcoldSolutions.GoogleMusic.Diagnostics;
 
-    public interface IDonatePopupView : IPopupView
-    {
-    }
-
-    public class DonateCloseEventArgs : EventArgs
-    {
-        public DonateCloseEventArgs(bool later)
-        {
-            this.Later = later;
-        }
-
-        public bool Later { get; set; }
-    }
-
     public sealed partial class DonatePopupView : PopupViewBase, IDonatePopupView
     {
         public DonatePopupView()

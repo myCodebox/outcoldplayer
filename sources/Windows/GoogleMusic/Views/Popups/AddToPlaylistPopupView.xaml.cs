@@ -8,10 +8,6 @@ namespace OutcoldSolutions.GoogleMusic.Views.Popups
 
     using Windows.UI.Xaml.Controls;
 
-    public interface IAddToPlaylistPopupView : IPopupView
-    {
-    }
-
     public sealed partial class AddToPlaylistPopupView : PopupViewBase, IAddToPlaylistPopupView
     {
         private AddToPlaylistPopupViewPresenter presenter;

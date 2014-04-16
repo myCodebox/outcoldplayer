@@ -9,14 +9,6 @@ namespace OutcoldSolutions.GoogleMusic.Views.Popups
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Input;
 
-    public interface IPlaylistEditPopupView : IPopupView
-    {
-    }
-
-    public interface IRadioEditPopupView : IPopupView
-    {
-    }
-
     public sealed partial class PlaylistEditPopupView : PopupViewBase, IPlaylistEditPopupView, IRadioEditPopupView
     {
         private IPlaylistEditPopupViewPresenter presenter;

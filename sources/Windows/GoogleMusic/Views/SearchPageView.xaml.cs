@@ -8,10 +8,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
     using OutcoldSolutions.GoogleMusic.Presenters;
 
-    public interface ISearchPageView : IPageView
-    {
-    }
-
     public sealed partial class SearchPageView : PageViewBase, ISearchPageView
     {
         private IPlaylistsListView albums;
@@ -24,7 +20,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
         public SearchPageView()
         {
             this.InitializeComponent();
-            
         }
 
         protected override void OnInitialized()

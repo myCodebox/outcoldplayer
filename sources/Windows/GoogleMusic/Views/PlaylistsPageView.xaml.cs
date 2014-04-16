@@ -10,26 +10,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
     using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Presenters;
 
-    public interface IUserPlaylistsPageView : IPageView
-    {
-    }
-
-    public interface IPlaylistsPageView : IPageView
-    {
-    }
-
-    public interface IRadioPageView : IPageView
-    {
-    }
-
-    public interface IGenrePageView : IPageView
-    {
-    }
-
-    public interface IHomePageView : IPageView
-    {
-    }
-
     public sealed partial class PlaylistsPageView : PageViewBase, IPlaylistsPageView, IUserPlaylistsPageView, IRadioPageView, IGenrePageView, IHomePageView
     {
         private IPlaylistsListView playlistsListView;

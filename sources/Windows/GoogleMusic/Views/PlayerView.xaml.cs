@@ -15,10 +15,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
     using OutcoldSolutions.GoogleMusic.Controls;
     using OutcoldSolutions.GoogleMusic.Presenters;
 
-    public interface IPlayerView : IView
-    {
-    }
-
     public sealed partial class PlayerView : ViewBase, IPlayerView
     {
         public PlayerView()

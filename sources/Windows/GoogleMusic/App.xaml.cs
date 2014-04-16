@@ -214,7 +214,8 @@ namespace OutcoldSolutions.GoogleMusic
                 registration.Register<INotificationService>()
                             .AsSingleton<NotificationService>();
 
-                registration.Register<MediaControlIntegration>();
+                registration.Register<IMediaControlIntegration>()
+                            .AsSingleton<MediaControlIntegration>();
 
                 registration.Register<IGoogleMusicSynchronizationService>()
                             .AsSingleton<GoogleMusicSynchronizationService>();
@@ -312,12 +313,22 @@ namespace OutcoldSolutions.GoogleMusic
 
                 ApplicationSettingViews.Initialize(Container.Resolve<IApplicationSettingViewsService>(), Container.Resolve<IApplicationResources>());
 
-                Container.Resolve<MediaControlIntegration>();
+                Container.Resolve<IMediaControlIntegration>();
                 Container.Resolve<ScreenLocker>();
 
                 Container.Resolve<INavigationService>().NavigateTo<IHomePageView>();
 
                 this.ReportOsVersionAsync();
+
+                Container.Resolve<IEventAggregator>().GetEvent<ApplicationInitializedEvent>().Subscribe(
+                    async (e) =>
+                    {
+                        var dispatcher = Container.Resolve<IDispatcher>();
+                        await dispatcher.RunAsync(() => Container.Resolve<IMainFrameRegionProvider>().SetContent(MainFrameRegion.Links, ApplicationBase.Container.Resolve<LinksRegionView>()));
+
+                        Container.Resolve<ISongsCachingService>().StartDownloadTask();
+                        Container.Resolve<AskForReviewService>();
+                    });
             }
         }
 

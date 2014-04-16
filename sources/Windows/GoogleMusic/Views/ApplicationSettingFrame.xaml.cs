@@ -7,12 +7,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
     using OutcoldSolutions.GoogleMusic.Presenters;
 
-    internal interface IApplicationSettingFrame : IPopupView
-    {
-        void SetContent(string title, object content);
-    }
-
-    internal sealed partial class ApplicationSettingFrame : PopupViewBase, IApplicationSettingFrame, IDisposable
+    public sealed partial class ApplicationSettingFrame : PopupViewBase, IApplicationSettingFrame, IDisposable
     {
         private ApplicationSettingFramePresenter presenter;
 

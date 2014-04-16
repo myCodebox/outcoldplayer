@@ -10,11 +10,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
     using Windows.UI.Xaml;
 
-    public interface ICurrentPlaylistPageView : IPageView
-    {
-        ISongsListView GetSongsListView();
-    }
-
     public sealed partial class CurrentPlaylistPageView : PageViewBase, ICurrentPlaylistPageView
     {
         private CurrentPlaylistPageViewPresenter presenter;

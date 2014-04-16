@@ -3,9 +3,6 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Views.Popups
 {
-    public interface IProgressLoadingPopupView : IPopupView
-    {
-    }
 
     public sealed partial class ProgressLoadingPopupView : PopupViewBase, IProgressLoadingPopupView
     {

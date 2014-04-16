@@ -4,11 +4,6 @@
 
 namespace OutcoldSolutions.GoogleMusic.Views
 {
-    public interface IExplorePageView : IPageView
-    {
-        
-    }
-
     public sealed partial class ExplorePageView : PageViewBase, IExplorePageView
     {
         public ExplorePageView()

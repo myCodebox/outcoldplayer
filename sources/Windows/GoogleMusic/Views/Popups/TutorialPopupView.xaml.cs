@@ -6,9 +6,6 @@ namespace OutcoldSolutions.GoogleMusic.Views.Popups
 {
     using Windows.UI.Xaml;
 
-    public interface ITutorialPopupView : IPopupView
-    {
-    }
 
     public sealed partial class TutorialPopupView : PopupViewBase, ITutorialPopupView
     {

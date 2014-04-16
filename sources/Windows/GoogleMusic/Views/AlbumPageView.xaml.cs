@@ -8,10 +8,6 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
     using OutcoldSolutions.GoogleMusic.Presenters;
 
-    public interface IAlbumPageView : IPlaylistPageViewBase
-    {
-    }
-
     public sealed partial class AlbumPageView : PageViewBase, IAlbumPageView
     {
         private AlbumPageViewPresenter presenter;
