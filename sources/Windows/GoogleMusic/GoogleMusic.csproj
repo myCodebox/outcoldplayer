@@ -623,8 +623,9 @@
     <Reference Include="GoogleAnalytics.Core">
       <HintPath>..\..\packages\GoogleAnalyticsSDK.1.2.01\lib\windows8\GoogleAnalytics.Core.winmd</HintPath>
     </Reference>
-    <Reference Include="OutcoldSolutions.SQLite">
-      <HintPath>..\..\packages\OutcoldSolutions.SQLite.1.2.40408.1\lib\win8\OutcoldSolutions.SQLite.dll</HintPath>
+    <Reference Include="OutcoldSolutions.SQLite, Version=1.2.40415.32922, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\OutcoldSolutions.SQLite.1.2.40415.2\lib\netcore45\OutcoldSolutions.SQLite.dll</HintPath>
     </Reference>
     <Reference Include="System.Net.Http.Extensions, Version=2.2.20.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

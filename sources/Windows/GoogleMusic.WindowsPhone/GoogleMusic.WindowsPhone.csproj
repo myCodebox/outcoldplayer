@@ -117,6 +117,9 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="OutcoldSolutions.SQLite">
+      <HintPath>..\..\packages\OutcoldSolutions.SQLite.1.2.40415.2\lib\wpa\OutcoldSolutions.SQLite.dll</HintPath>
+    </Reference>
     <Reference Include="System.Net.Http.Extensions">
       <HintPath>..\..\packages\Microsoft.Net.Http.2.2.20\lib\wpa81\System.Net.Http.Extensions.dll</HintPath>
     </Reference>
