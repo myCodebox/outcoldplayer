@@ -12,6 +12,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
     using System.Linq;
     using System.Threading.Tasks;
 
+    using Windows.Phone.UI.Input;
     using Windows.UI.Core;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
@@ -24,6 +25,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
     using OutcoldSolutions.GoogleMusic.InversionOfControl;
     using OutcoldSolutions.GoogleMusic.Presenters;
     using OutcoldSolutions.GoogleMusic.Services;
+    using OutcoldSolutions.GoogleMusic.Views.Popups;
 
     public sealed partial class MainFrame : Page, IMainFrame, IMainFrameRegionProvider
     {
@@ -40,6 +42,8 @@ namespace OutcoldSolutions.GoogleMusic.Views
         private ISelectedObjectsService selectedObjectsService;
 
         private IAnalyticsService analyticsService;
+
+        private INavigationService navigationService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MainFrame"/> class.
@@ -277,6 +281,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
             IDependencyResolverContainer containerObject,
             ILogManager logManager,
             IAnalyticsService analyticsService,
+            INavigationService navigationService,
             MainFramePresenter presenterObject)
         {
             this.container = containerObject;
@@ -284,6 +289,43 @@ namespace OutcoldSolutions.GoogleMusic.Views
             this.logger = logManager.CreateLogger("MainFrame");
             this.DataContext = this.presenter;
             this.analyticsService = analyticsService;
+            this.navigationService = navigationService;
+
+            HardwareButtons.BackPressed += this.HardwareButtonsOnBackPressed;
+        }
+
+        private void HardwareButtonsOnBackPressed(object sender, BackPressedEventArgs e)
+        {
+            if (!e.Handled)
+            {
+                if (this.AppToolBarLeftPopup.IsOpen)
+                {
+                    this.AppToolBarLeftPopup.IsOpen = false;
+                    e.Handled = true;
+                }
+                else if (this.AppToolBarRightPopup.IsOpen)
+                {
+                    this.AppToolBarRightPopup.IsOpen = false;
+                    e.Handled = true;
+                }
+                else if (this.fullScreenPopup != null && this.fullScreenPopup.IsOpen)
+                {
+                    if (!(this.fullScreenPopup.Child is IAuthentificationPopupView))
+                    {
+                        if (!(this.fullScreenPopup.Child is IProgressLoadingPopupView))
+                        {
+                            this.CloseFullScreenPopup();
+                        }
+
+                        e.Handled = true;
+                    }
+                }
+                else if (this.navigationService.CanGoBack())
+                {
+                    this.navigationService.GoBack();
+                    e.Handled = true;
+                }
+            }
         }
 
         private void ShowPopup(PopupRegion region, FrameworkElement content)
@@ -307,13 +349,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
                     this.AppToolBarLeftPopup.IsOpen = true;
                     break;
                 case PopupRegion.Full:
-                    if (this.fullScreenPopup != null)
-                    {
-                        this.DisposePopupContent(this.fullScreenPopup);
-                        this.fullScreenPopup.Closed -= this.FullScreenPopupViewClosed;
-                        this.fullScreenPopup = null;
-                        ((Storyboard)this.Resources["ActivateFullScreenPopup"]).Stop();
-                    }
+                    this.CloseFullScreenPopup();
 
                     this.fullScreenPopup = new Popup()
                     {
@@ -332,6 +368,17 @@ namespace OutcoldSolutions.GoogleMusic.Views
                     break;
                 default:
                     throw new ArgumentOutOfRangeException("region");
+            }
+        }
+
+        private void CloseFullScreenPopup()
+        {
+            if (this.fullScreenPopup != null)
+            {
+                this.DisposePopupContent(this.fullScreenPopup);
+                this.fullScreenPopup.Closed -= this.FullScreenPopupViewClosed;
+                this.fullScreenPopup = null;
+                ((Storyboard)this.Resources["ActivateFullScreenPopup"]).Stop();
             }
         }
 
