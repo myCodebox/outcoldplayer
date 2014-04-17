@@ -4,6 +4,7 @@
 
 namespace OutcoldSolutions.GoogleMusic
 {
+    using System;
     using System.Globalization;
     using System.Threading.Tasks;
 
@@ -14,6 +15,7 @@ namespace OutcoldSolutions.GoogleMusic
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Media;
+    using Windows.UI.Xaml.Media.Imaging;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Controls;
@@ -29,6 +31,7 @@ namespace OutcoldSolutions.GoogleMusic
     using OutcoldSolutions.GoogleMusic.Services.Publishers;
     using OutcoldSolutions.GoogleMusic.Shell;
     using OutcoldSolutions.GoogleMusic.Views;
+    using OutcoldSolutions.GoogleMusic.Views.Popups;
     using OutcoldSolutions.GoogleMusic.Web;
     using OutcoldSolutions.GoogleMusic.Web.Lastfm;
     using OutcoldSolutions.GoogleMusic.Web.Synchronization;
@@ -81,13 +84,13 @@ namespace OutcoldSolutions.GoogleMusic
                                     .AsSingleton<MainFrame>();
                         registration.Register<MainFramePresenter>().AsSingleton();
 
-                        /*registration.Register<IApplicationSettingFrame>()
+                        registration.Register<IApplicationSettingFrame>()
                                     .InjectionRule<BindingModelBase, ApplicationSettingFramePresenter>()
                                     .As<ApplicationSettingFrame>();
                         registration.Register<ApplicationSettingFramePresenter>();
 
                         registration.Register<IApplicationSettingViewsService>()
-                                    .AsSingleton<ApplicationSettingViewsService>();*/
+                                    .AsSingleton<ApplicationSettingViewsService>();
                     }
 
                     this.Logger = ApplicationBase.Container.Resolve<ILogManager>().CreateLogger(this.GetType().Name);
@@ -117,17 +120,17 @@ namespace OutcoldSolutions.GoogleMusic
                 registration.Register<IDebugConsole>().AsSingleton<DebugConsole>();
 #endif
 
-                //Registration.RegisterPages(registration);
-                //Registration.RegisterSettingViews(registration);
-                //Registration.RegisterPopupViews(registration);
-                //Registration.RegisterViews(registration);
+                Registration.RegisterPages(registration);
+                Registration.RegisterSettingViews(registration);
+                Registration.RegisterPopupViews(registration);
+                Registration.RegisterViews(registration);
 
-                //registration.Register<IApplicationResources>().AsSingleton<ApplicationResources>();
+                registration.Register<IApplicationResources>().AsSingleton<ApplicationResources>();
 
                 // Settings
-                //registration.Register<ILastfmAuthentificationView>()
-                //            .InjectionRule<BindingModelBase, LastfmAuthentificationPresenter>()
-                //            .As<LastfmAuthentificationPageView>();
+                registration.Register<ILastfmAuthentificationView>()
+                            .InjectionRule<BindingModelBase, LastfmAuthentificationPresenter>()
+                            .As<LastfmAuthentificationPageView>();
                 registration.Register<LastfmAuthentificationPresenter>();
 
                 // Services
@@ -198,8 +201,8 @@ namespace OutcoldSolutions.GoogleMusic
                 registration.Register<IPlayQueueService>()
                             .AsSingleton<PlayQueueService>();
 
-                //registration.Register<INotificationService>()
-                //            .AsSingleton<NotificationService>();
+                registration.Register<INotificationService>()
+                            .AsSingleton<NotificationService>();
 
                 registration.Register<IMediaControlIntegration>()
                             .AsSingleton<MediaControlIntegration>();
@@ -208,7 +211,7 @@ namespace OutcoldSolutions.GoogleMusic
                             .AsSingleton<GoogleMusicSynchronizationService>();
 
                 //registration.Register<ScreenLocker>();
-                //registration.Register<ApplicationStateChangeHandler>();
+                registration.Register<ApplicationStateChangeHandler>();
 
                 // Actions
                 registration.Register<ISelectedObjectsService>()
@@ -227,7 +230,7 @@ namespace OutcoldSolutions.GoogleMusic
                 registration.Register<AddToLibraryAction>().AsSingleton();
                 registration.Register<RemoveFromLibraryAction>().AsSingleton();
 
-                registration.Register<ApplicationSize>().AsSingleton(this.Resources["ApplicationSize"]);
+                registration.Register<ApplicationSize>().AsSingleton(new ApplicationSize() { Width = 600 });
 
                 registration.Register<AskForReviewService>().AsSingleton();
 
@@ -277,9 +280,9 @@ namespace OutcoldSolutions.GoogleMusic
         {
             if (isFirstTimeActivated)
             {
-                //Container.Resolve<ApplicationStateChangeHandler>();
+                Container.Resolve<ApplicationStateChangeHandler>();
 
-                /*var mainFrameRegionProvider = Container.Resolve<IMainFrameRegionProvider>();
+                var mainFrameRegionProvider = Container.Resolve<IMainFrameRegionProvider>();
                 mainFrameRegionProvider.SetContent(
                     MainFrameRegion.Background,
                     new Image()
@@ -291,9 +294,9 @@ namespace OutcoldSolutions.GoogleMusic
                         HorizontalAlignment = HorizontalAlignment.Right,
                         VerticalAlignment = VerticalAlignment.Top,
                         Opacity = 0.02
-                    });*/
+                    });
 
-               // mainFrameRegionProvider.SetContent(MainFrameRegion.BottomAppBarRightZone, Container.Resolve<IPlayerView>());
+                mainFrameRegionProvider.SetContent(MainFrameRegion.BottomAppBarRightZone, Container.Resolve<IPlayerView>());
 
                 var page = (Page)Window.Current.Content;
                 VisualTreeHelperEx.GetVisualChild<Panel>(page).Children.Add(Container.Resolve<MediaElement>());

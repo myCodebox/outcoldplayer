@@ -164,17 +164,6 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="ApplicationSettingViews.cs" />
-    <Compile Include="ApplicationStateChangeHandler.cs" />
-    <Compile Include="Controls\ButtonWithHover.cs" />
-    <Compile Include="Controls\MenuItemDataTemplateSelector.cs" />
-    <Compile Include="Controls\TextChangedBindingBehavior.cs" />
-    <Compile Include="Controls\ExploreTabGroupTemplateSelector.cs" />
-    <Compile Include="Controls\AlbumArtControl.cs" />
-    <Compile Include="Controls\AppBarToggleButton.cs" />
-    <Compile Include="Controls\FakeEqualizerControl.cs" />
-    <Compile Include="Controls\PlaylistDataTemplateSelector.cs" />
-    <Compile Include="Controls\Rating.cs" />
-    <Compile Include="Controls\ListViewBaseSelectedItemsBehavior.cs" />
     <Compile Include="Diagnostics\AnalyticsService.cs" />
     <Compile Include="Shell\ApplicationSettingViewsService.cs" />
     <Compile Include="Views\ExplorePageView.xaml.cs">
@@ -198,12 +187,9 @@
     <Compile Include="Views\SongsListView.xaml.cs">
       <DependentUpon>SongsListView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\SortableHeaderControl.cs" />
-    <Compile Include="Controls\ValueChangedEventArgs.cs" />
     <Compile Include="Diagnostics\BugSenseLogWriter.cs" />
     <Compile Include="Registration.cs" />
     <Compile Include="Shell\ApplicationResources.cs" />
-    <Compile Include="Shell\NotificationService.cs" />
     <Compile Include="Services\Publishers\TileCurrentSongPublisher.cs" />
     <Compile Include="Shell\ScreenLocker.cs" />
     <Compile Include="Views\AlbumPageView.xaml.cs">
@@ -298,9 +284,6 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
-    <PRIResource Include="Strings\en\Resources.resw">
-      <SubType>Designer</SubType>
-    </PRIResource>
   </ItemGroup>
   <ItemGroup>
     <Content Include="analytics.xml">
@@ -338,20 +321,11 @@
     <Content Include="Resources\in-app-purchase.xml">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="Resources\lastfm_Logo.png" />
-    <Content Include="Resources\logo460.png" />
-    <Content Include="Resources\outcoldsolutions.png" />
     <Content Include="Resources\tutorial-page-1.png" />
     <Content Include="Resources\tutorial-page-2.png" />
     <Content Include="Resources\tutorial-page-3.png" />
     <Content Include="Resources\tutorial-page-4.png" />
     <Content Include="Resources\tutorial-page-5.png" />
-    <Content Include="Resources\twitter-logo.png" />
-    <Content Include="Resources\UnknownArt-160.png" />
-    <Content Include="Resources\UnknownArt-352.png" />
-    <Content Include="Resources\UnknownArt-79.png" />
-    <Content Include="Resources\uservoice-logo.png" />
-    <Content Include="Resources\uservoice.png" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
