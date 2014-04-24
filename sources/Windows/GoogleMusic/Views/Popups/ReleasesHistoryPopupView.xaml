@@ -30,6 +30,13 @@
             <ScrollViewer Grid.Row="2" Margin="0, 20, 0, 0">
                 <StackPanel>
                     <TextBlock Style="{StaticResource TitleTextStyle}" Margin="0, 10, 0, 0" >
+                    <Run>04/23/2014 - Version 3.0.6</Run>
+                    </TextBlock>
+                    <RichTextBlock Style="{StaticResource BodyRichTextStyle}">
+                        <Paragraph>[b] Player plays only first second for some All Access songs.</Paragraph>
+                    </RichTextBlock>
+                    
+                    <TextBlock Style="{StaticResource TitleTextStyle}" Margin="0, 10, 0, 0" >
                     <Run>04/14/2014 - Version 3.0.5</Run>
                     </TextBlock>
                     <RichTextBlock Style="{StaticResource BodyRichTextStyle}">
