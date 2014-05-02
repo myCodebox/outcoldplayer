@@ -184,12 +184,9 @@ namespace OutcoldSolutions.GoogleMusic
 
                 var view = (IPageView)this.container.Resolve(pageViewType);
 
-                HistoryItem historyItem = null;
-                if (keepInHistory)
-                {
-                    historyItem = new HistoryItem(view, pageViewType, parameter);
-                    this.viewsHistory.AddLast(historyItem);
-                }
+                HistoryItem historyItem = new HistoryItem(view, pageViewType, parameter, keepInHistory);
+                this.RemoveNotHistoryItems();
+                this.viewsHistory.AddLast(historyItem);
 
                 if (currentView == null || !currentView.Equals(view))
                 {
@@ -200,7 +197,7 @@ namespace OutcoldSolutions.GoogleMusic
                     this.logger.Debug("View the same: {0}.", pageViewType);
                 }
 
-                var navigatedToEventArgs = new NavigatedToEventArgs(view, pageViewType, historyItem == null ? null : historyItem.State, parameter, isBack: false);
+                var navigatedToEventArgs = new NavigatedToEventArgs(view, pageViewType, historyItem.State, parameter, isBack: false);
                 view.OnNavigatedTo(navigatedToEventArgs);
                 this.RaiseNavigatedTo(navigatedToEventArgs);
 
@@ -221,14 +218,23 @@ namespace OutcoldSolutions.GoogleMusic
             }
         }
 
+        private void RemoveNotHistoryItems()
+        {
+            while (this.viewsHistory.Count > 0 && !this.viewsHistory.Last.Value.KeepInHistory)
+            {
+                this.viewsHistory.RemoveLast();
+            }
+        }
+
         private class HistoryItem
         {
-            public HistoryItem(IPageView view, Type viewType, object parameter)
+            public HistoryItem(IPageView view, Type viewType, object parameter, bool keepInHistory)
             {
                 this.View = view;
                 this.ViewType = viewType;
                 this.Parameter = parameter;
                 this.State = new Dictionary<string, object>();
+                this.KeepInHistory = keepInHistory;
             }
 
             public IPageView View { get; private set; }
@@ -238,6 +244,8 @@ namespace OutcoldSolutions.GoogleMusic
             public object Parameter { get; private set; }
 
             public IDictionary<string, object> State { get; private set; }
+
+            public bool KeepInHistory { get; set; }
         }
     }
 }
