@@ -38,10 +38,10 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
                 {
                     XmlDocument wideTileTemplate = this.GenerateWideTile(song, albumArtUri);
                     XmlDocument squareTileTemplate = this.GenerateSquareTile(song);
-                    XmlDocument square310TileTemplate = this.GenerateSquare310Tile(song, albumArtUri);
+                XmlDocument square310TileTemplate = this.GenerateSquare310Tile(song, albumArtUri);
 
                     IXmlNode squareBindingNode = squareTileTemplate.GetElementsByTagName("binding").Item(0);
-                    IXmlNode square310BindingNode = square310TileTemplate.GetElementsByTagName("binding").Item(0);
+                IXmlNode square310BindingNode = square310TileTemplate.GetElementsByTagName("binding").Item(0);
                     IXmlNode visualNode = wideTileTemplate.GetElementsByTagName("visual").Item(0);
 
                     if (visualNode != null && squareBindingNode != null)
@@ -49,10 +49,10 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
                         visualNode.AppendChild(wideTileTemplate.ImportNode(squareBindingNode, true));
                     }
 
-                    if (visualNode != null && square310BindingNode != null)
-                    {
-                        visualNode.AppendChild(wideTileTemplate.ImportNode(square310BindingNode, true));
-                    }
+                if (visualNode != null && square310BindingNode != null)
+                {
+                    visualNode.AppendChild(wideTileTemplate.ImportNode(square310BindingNode, true));
+                }
 
                     var tileNotification = new TileNotification(wideTileTemplate)
                                                {
@@ -114,7 +114,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
         private XmlDocument GenerateSquare310Tile(Song song, Uri albumArtUri)
         {
             XmlDocument templateContent = TileUpdateManager.GetTemplateContent(TileTemplateType.TileSquare310x310SmallImageAndText01);
-            
+
             XmlNodeList images = templateContent.GetElementsByTagName("image");
             ((XmlElement)images[0]).SetAttribute("src", albumArtUri.ToString());
             ((XmlElement)images[0]).SetAttribute("alt", "Album Art");
@@ -132,8 +132,8 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
             textElements[2].AppendChild(templateContent.CreateTextNode(song.AlbumTitle));
             if (textElements.Count > 3)
             {
-                textElements[3].AppendChild(templateContent.CreateTextNode(song.Duration.ToPresentString()));
-            }
+            textElements[3].AppendChild(templateContent.CreateTextNode(song.Duration.ToPresentString()));
         }
     }
+}
 }

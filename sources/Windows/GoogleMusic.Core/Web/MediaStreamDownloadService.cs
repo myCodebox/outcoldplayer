@@ -107,6 +107,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
                 return new MemoryRandomAccessStream(
                     this.logger,
+                    response,
                     await response.Content.ReadAsStreamAsync(),
                     data,
                     response.Content.Headers.ContentType.MediaType,
@@ -167,12 +168,18 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 }
 
                 var data = new byte[contentLength];
+                using (var streamResponse = await this.client.GetAsync(lastUri, token))
+                {
                 int read;
-
-                var streamResponse = await this.client.GetAsync(lastUri, token);
                 using (var audioStreamEnd = await streamResponse.Content.ReadAsStreamAsync())
                 {
-                    read = await audioStreamEnd.ReadAsync(data, (int)chunkStart, (int)(contentLength - chunkStart), token);
+                        read =
+                            await
+                                audioStreamEnd.ReadAsync(
+                                    data,
+                                    (int)chunkStart,
+                                    (int)(contentLength - chunkStart),
+                                    token);
                 }
 
                 return new MemoryRandomAccessStreamMultiStreams(
@@ -183,6 +190,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
                     streamResponse.Content.Headers.ContentType.MediaType,
                     (int)chunkStart,
                     token);
+                }
 
             }
             catch (HttpRequestException exception)
@@ -334,7 +342,9 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
             private bool isFailed;
 
-            public MemoryRandomAccessStream(ILogger logger, Stream networkStream, byte[] data, string contentType, int endFilled, CancellationToken token)
+            private HttpResponseMessage response;
+
+            public MemoryRandomAccessStream(ILogger logger, HttpResponseMessage response, Stream networkStream, byte[] data, string contentType, int endFilled, CancellationToken token)
             {
                 if (networkStream == null)
                 {
@@ -348,6 +358,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 this.data = data;
                 this.endFilled = endFilled;
                 this.token = token;
+                this.response = response;
                 this.networkStream = networkStream;
 
                 this.readTask = this.SafeDownloadStream().ContinueWith(t => this.DisposeNetworkDownloader());
@@ -595,6 +606,12 @@ namespace OutcoldSolutions.GoogleMusic.Web
                     {
                         this.networkStream.Dispose();
                         this.networkStream = null;
+                    }
+
+                    if (this.response != null)
+                    {
+                        this.response.Dispose();
+                        this.response = null;
                     }
                 }
                 catch

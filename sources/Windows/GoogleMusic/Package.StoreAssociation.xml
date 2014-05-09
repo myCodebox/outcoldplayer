@@ -361,32 +361,32 @@
     <PackageInfo>
       <OsMinVersion>6.2.1.0</OsMinVersion>
       <PackageArchitecture>arm</PackageArchitecture>
-      <PackageMaxArchitectureVersion>3.0.4.111</PackageMaxArchitectureVersion>
+      <PackageMaxArchitectureVersion>3.0.6.114</PackageMaxArchitectureVersion>
     </PackageInfo>
     <PackageInfo>
       <OsMinVersion>6.2.1.0</OsMinVersion>
       <PackageArchitecture>x64</PackageArchitecture>
-      <PackageMaxArchitectureVersion>3.0.4.111</PackageMaxArchitectureVersion>
+      <PackageMaxArchitectureVersion>3.0.6.114</PackageMaxArchitectureVersion>
     </PackageInfo>
     <PackageInfo>
       <OsMinVersion>6.2.1.0</OsMinVersion>
       <PackageArchitecture>x86</PackageArchitecture>
-      <PackageMaxArchitectureVersion>3.0.4.111</PackageMaxArchitectureVersion>
+      <PackageMaxArchitectureVersion>3.0.6.114</PackageMaxArchitectureVersion>
     </PackageInfo>
     <PackageInfo>
       <OsMinVersion>6.3.0.0</OsMinVersion>
       <PackageArchitecture>arm</PackageArchitecture>
-      <PackageMaxArchitectureVersion>3.1.2.102</PackageMaxArchitectureVersion>
+      <PackageMaxArchitectureVersion>3.1.4.104</PackageMaxArchitectureVersion>
     </PackageInfo>
     <PackageInfo>
       <OsMinVersion>6.3.0.0</OsMinVersion>
       <PackageArchitecture>x64</PackageArchitecture>
-      <PackageMaxArchitectureVersion>3.1.2.102</PackageMaxArchitectureVersion>
+      <PackageMaxArchitectureVersion>3.1.4.104</PackageMaxArchitectureVersion>
     </PackageInfo>
     <PackageInfo>
       <OsMinVersion>6.3.0.0</OsMinVersion>
       <PackageArchitecture>x86</PackageArchitecture>
-      <PackageMaxArchitectureVersion>3.1.2.102</PackageMaxArchitectureVersion>
+      <PackageMaxArchitectureVersion>3.1.4.104</PackageMaxArchitectureVersion>
     </PackageInfo>
   </PackageInfoList>
 </StoreAssociation>
