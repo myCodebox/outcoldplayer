@@ -114,10 +114,30 @@ namespace OutcoldSolutions.GoogleMusic
 
         protected bool Equals(PlaylistNavigationRequest other)
         {
-            return this.PlaylistType == other.PlaylistType && this.PlaylistId != null && other.PlaylistId != null
+            bool result = this.PlaylistType == other.PlaylistType && this.PlaylistId != null && other.PlaylistId != null
                    && string.Equals(this.PlaylistId, other.PlaylistId, StringComparison.OrdinalIgnoreCase)
                    && this.Songs == null && other.Songs == null
                    && this.Playlists == null && other.Playlists == null;
+
+            if (result && string.IsNullOrEmpty(this.PlaylistId) && this.Playlist != null)
+            {
+                if (this.PlaylistType == PlaylistType.Album)
+                {
+                    result = string.Equals(
+                        ((Album)this.Playlist).GoogleAlbumId,
+                        ((Album)other.Playlist).GoogleAlbumId,
+                        StringComparison.OrdinalIgnoreCase);
+                }
+                else if (this.PlaylistType == PlaylistType.Artist)
+                {
+                    result = string.Equals(
+                       ((Artist)this.Playlist).GoogleArtistId,
+                       ((Artist)other.Playlist).GoogleArtistId,
+                       StringComparison.OrdinalIgnoreCase);
+                }
+            }
+
+            return result;
         }
     }
 }
