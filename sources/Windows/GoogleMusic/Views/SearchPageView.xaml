@@ -35,7 +35,6 @@
                 </interactivity:Interaction.Behaviors>
             </TextBox>
             
-            <!--ToggleSwitch IsOn="{Binding Path=BindingModel.IsLocalOnly, Mode=TwoWay}" IsEnabled="{Binding Path=IsOnline}" OnContent="Local only" OffContent="Local only" />-->
         </StackPanel>
 
         <ProgressRing Grid.Row="1"  
