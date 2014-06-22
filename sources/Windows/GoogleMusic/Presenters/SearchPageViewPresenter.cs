@@ -159,13 +159,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             base.OnInitialized();
 
             this.BindingModel.Subscribe(() => this.BindingModel.SearchText, this.OnSearchChanged);
-            this.BindingModel.Subscribe(() => this.BindingModel.IsLocalOnly, this.OnSearchChanged);
         }
 
         public override void OnNavigatingFrom(NavigatingFromEventArgs eventArgs)
         {
             eventArgs.State["SearchText"] = this.BindingModel.SearchText;
-            eventArgs.State["IsLocalOnly"] = this.BindingModel.IsLocalOnly;
         }
 
         protected override Task LoadDataAsync(NavigatedToEventArgs eventArgs, CancellationToken cancellationToken)
@@ -174,19 +172,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 () =>
                 {
                     this.BindingModel.IsOnline = this.applicationStateService.IsOnline();
-
-                    if (!this.BindingModel.IsOnline)
-                    {
-                        this.BindingModel.IsLocalOnly = true;
-                    }
-                    else if (eventArgs.State.ContainsKey("IsLocalOnly"))
-                    {
-                        this.BindingModel.IsLocalOnly = (bool)eventArgs.State["IsLocalOnly"];
-                    }
-                    else
-                    {
-                        this.BindingModel.IsLocalOnly = this.settingsService.GetIsSearchLocalOnly();
-                    }
 
                     if (eventArgs.State.ContainsKey("SearchText"))
                     {
@@ -201,8 +186,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private async void OnSearchChanged(object sender, PropertyChangedEventArgs eventArgs)
         {
-            this.settingsService.SetIsSearchLocalOnly(this.BindingModel.IsLocalOnly);
-
             await this.mutex.WaitAsync().ConfigureAwait(continueOnCapturedContext: false);
 
             if (this.cancellationTokenSource != null)
@@ -321,7 +304,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private async Task<SearchResult> SearchCloudAsync(string query, CancellationToken cancellationToken)
         {
-            if (this.applicationStateService.IsOnline() && !this.BindingModel.IsLocalOnly)
+            if (this.applicationStateService.IsOnline())
             {
                 return await this.allAccessService.SearchAsync(query, cancellationToken);
             }

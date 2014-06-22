@@ -33,19 +33,6 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             }
         }
 
-        public bool IsLocalOnly
-        {
-            get
-            {
-                return this.isLocalOnly;
-            }
-
-            set
-            {
-                this.SetValue(ref this.isLocalOnly, value);
-            }
-        }
-
         public bool IsOnline
         {
             get
