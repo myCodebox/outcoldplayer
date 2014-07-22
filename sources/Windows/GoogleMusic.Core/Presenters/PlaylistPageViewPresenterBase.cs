@@ -86,7 +86,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 bool isCurrentPlaylist = false;
                 
                 IPlaylist currentPlaylist = this.playQueueService.CurrentPlaylist;
-                if (currentPlaylist != null && string.Equals(currentPlaylist.Id, request.PlaylistId))
+                if (currentPlaylist != null && string.Equals(currentPlaylist.Id, request.PlaylistId, StringComparison.OrdinalIgnoreCase))
                 {
                     playlist = currentPlaylist;
                     songs = this.playQueueService.GetQueue().ToList();
