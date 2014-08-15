@@ -30,6 +30,13 @@
             <ScrollViewer Grid.Row="2" Margin="0, 20, 0, 0">
                 <StackPanel>
                     <TextBlock Style="{StaticResource TitleTextStyle}" Margin="0, 10, 0, 0" >
+                    <Run>08/14/2014 - Version 3.1.8</Run>
+                    </TextBlock>
+                    <RichTextBlock Style="{StaticResource BodyRichTextStyle}">
+                        <Paragraph>[b] Fix issue with loading Google Music library with song duplicates.</Paragraph>
+                    </RichTextBlock>
+                    
+                    <TextBlock Style="{StaticResource TitleTextStyle}" Margin="0, 10, 0, 0" >
                     <Run>06/22/2014 - Version 3.1.7</Run>
                     </TextBlock>
                     <RichTextBlock Style="{StaticResource BodyRichTextStyle}">
