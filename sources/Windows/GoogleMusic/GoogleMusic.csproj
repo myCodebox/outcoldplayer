@@ -612,17 +612,17 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\BugSense.W8.3.6.6.0\lib\netcore45\BugSense-W8.dll</HintPath>
     </Reference>
-    <Reference Include="GoogleAnalytics, Version=1.2.8.27005, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="GoogleAnalytics, Version=1.2.10.15849, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\GoogleAnalyticsSDK.1.2.08\lib\windows8\GoogleAnalytics.winmd</HintPath>
+      <HintPath>..\..\packages\GoogleAnalyticsSDK.1.2.10\lib\windows8\GoogleAnalytics.winmd</HintPath>
     </Reference>
-    <Reference Include="GoogleAnalytics.Core, Version=1.2.8.27005, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="GoogleAnalytics.Core, Version=1.2.10.15849, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\GoogleAnalyticsSDK.1.2.08\lib\windows8\GoogleAnalytics.Core.winmd</HintPath>
+      <HintPath>..\..\packages\GoogleAnalyticsSDK.1.2.10\lib\windows8\GoogleAnalytics.Core.winmd</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Newtonsoft.Json.6.0.3\lib\netcore45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\..\packages\Newtonsoft.Json.6.0.4\lib\netcore45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="OutcoldSolutions.SQLite, Version=1.2.40415.32922, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -636,17 +636,17 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Microsoft.Net.Http.2.2.22\lib\win8\System.Net.Http.Primitives.dll</HintPath>
     </Reference>
-    <Reference Include="System.Reactive.Core, Version=2.2.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+    <Reference Include="System.Reactive.Core, Version=2.2.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Rx-Core.2.2.4\lib\windows8\System.Reactive.Core.dll</HintPath>
+      <HintPath>..\..\packages\Rx-Core.2.2.5\lib\windows8\System.Reactive.Core.dll</HintPath>
     </Reference>
-    <Reference Include="System.Reactive.Interfaces, Version=2.2.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+    <Reference Include="System.Reactive.Interfaces, Version=2.2.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Rx-Interfaces.2.2.4\lib\windows8\System.Reactive.Interfaces.dll</HintPath>
+      <HintPath>..\..\packages\Rx-Interfaces.2.2.5\lib\windows8\System.Reactive.Interfaces.dll</HintPath>
     </Reference>
-    <Reference Include="System.Reactive.Linq, Version=2.2.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+    <Reference Include="System.Reactive.Linq, Version=2.2.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Rx-Linq.2.2.4\lib\windows8\System.Reactive.Linq.dll</HintPath>
+      <HintPath>..\..\packages\Rx-Linq.2.2.5\lib\windows8\System.Reactive.Linq.dll</HintPath>
     </Reference>
     <Reference Include="Windows.UI.Interactivity">
       <HintPath>..\..\packages\Windows.UI.Interactivity.1.3.0.0\lib\win8\Windows.UI.Interactivity.dll</HintPath>
@@ -656,8 +656,8 @@
     <SDKReference Include="Microsoft.VCLibs, version=11.0">
       <Name>Microsoft Visual C++ Runtime Package</Name>
     </SDKReference>
-    <SDKReference Include="SQLite.WinRT, Version=3.8.4.3">
-      <Name>SQLite for Windows Runtime %28SQLite.WinRT, Version=3.8.4.3%29</Name>
+    <SDKReference Include="SQLite.WinRT, Version=3.8.5">
+      <Name>SQLite for Windows Runtime</Name>
     </SDKReference>
   </ItemGroup>
   <ItemGroup>
