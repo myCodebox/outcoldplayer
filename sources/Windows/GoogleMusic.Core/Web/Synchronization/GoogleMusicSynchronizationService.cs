@@ -121,8 +121,8 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
                 subProgress,
                 async (gSongs) =>
                 {
-                    IList<Song> toBeUpdated = new List<Song>();
-                    IList<Song> toBeInserted = new List<Song>();
+                    IDictionary<string, Song> toBeUpdated = new Dictionary<string, Song>();
+                    IDictionary<string, Song> toBeInserted = new Dictionary<string, Song>();
 
                     foreach (var googleMusicSong in gSongs)
                     {
@@ -146,7 +146,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
                             if (song != null)
                             {
                                 GoogleMusicSongEx.Mapper(googleMusicSong, song);
-                                toBeUpdated.Add(song);
+                                toBeUpdated[song.SongId] = song;
 
                                 if (!GoogleMusicSongEx.IsVisualMatch(googleMusicSong, song))
                                 {
@@ -159,14 +159,15 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
                             }
                             else
                             {
-                                toBeInserted.Add(googleMusicSong.ToSong());
+                                song = googleMusicSong.ToSong();
+                                toBeInserted[song.SongId] = song;
                             }
                         }
                     }
 
                     if (toBeInserted.Count > 0)
                     {
-                        if (await this.songsRepository.InsertAsync(toBeInserted) > 0)
+                        if (await this.songsRepository.InsertAsync(toBeInserted.Values) > 0)
                         {
                             updateStatus.SetBreakingChange();
                         }
@@ -174,7 +175,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
 
                     if (toBeUpdated.Count > 0)
                     {
-                        await this.songsRepository.UpdateAsync(toBeUpdated);
+                        await this.songsRepository.UpdateAsync(toBeUpdated.Values);
                     }
                 });
 
