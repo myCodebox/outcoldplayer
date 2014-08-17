@@ -118,13 +118,15 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
                 }
             }
 
+            HashSet<string> payloadOfNew = new HashSet<string>();
+
             await this.songsWebService.GetAllAsync(
                 libraryFreshnessDate,
                 subProgress,
                 async (gSongs) =>
                 {
-                    IDictionary<string, Song> toBeUpdated = new Dictionary<string, Song>();
-                    IDictionary<string, Song> toBeInserted = new Dictionary<string, Song>();
+                    IList<Song> toBeUpdated = new List<Song>();
+                    IList<Song> toBeInserted = new List<Song>();
 
                     foreach (var googleMusicSong in gSongs)
                     {
@@ -148,7 +150,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
                             if (song != null)
                             {
                                 GoogleMusicSongEx.Mapper(googleMusicSong, song);
-                                toBeUpdated[song.SongId] = song;
+                                toBeUpdated.Add(song);
 
                                 if (!GoogleMusicSongEx.IsVisualMatch(googleMusicSong, song))
                                 {
@@ -163,9 +165,9 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
                             {
                                 song = googleMusicSong.ToSong();
 
-                                if (!addedSongs.ContainsKey(song.SongId))
+                                if (payloadOfNew.Add(song.SongId))
                                 {
-                                    toBeInserted[song.SongId] = song;
+                                    toBeInserted.Add(song);
                                     addedSongs.Add(song.SongId, song);
                                 }
                             }
@@ -174,7 +176,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
 
                     if (toBeInserted.Count > 0)
                     {
-                        if (await this.songsRepository.InsertAsync(toBeInserted.Values) > 0)
+                        if (await this.songsRepository.InsertAsync(toBeInserted) > 0)
                         {
                             updateStatus.SetBreakingChange();
                         }
@@ -182,7 +184,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
 
                     if (toBeUpdated.Count > 0)
                     {
-                        await this.songsRepository.UpdateAsync(toBeUpdated.Values);
+                        await this.songsRepository.UpdateAsync(toBeUpdated);
                     }
                 });
 
