@@ -361,32 +361,32 @@
     <PackageInfo>
       <OsMinVersion>6.2.1.0</OsMinVersion>
       <PackageArchitecture>x64</PackageArchitecture>
-      <PackageMaxArchitectureVersion>3.0.9.123</PackageMaxArchitectureVersion>
-    </PackageInfo>
-    <PackageInfo>
-      <OsMinVersion>6.2.1.0</OsMinVersion>
-      <PackageArchitecture>arm</PackageArchitecture>
-      <PackageMaxArchitectureVersion>3.0.9.123</PackageMaxArchitectureVersion>
+      <PackageMaxArchitectureVersion>3.0.10.124</PackageMaxArchitectureVersion>
     </PackageInfo>
     <PackageInfo>
       <OsMinVersion>6.2.1.0</OsMinVersion>
       <PackageArchitecture>x86</PackageArchitecture>
-      <PackageMaxArchitectureVersion>3.0.9.123</PackageMaxArchitectureVersion>
+      <PackageMaxArchitectureVersion>3.0.10.124</PackageMaxArchitectureVersion>
+    </PackageInfo>
+    <PackageInfo>
+      <OsMinVersion>6.2.1.0</OsMinVersion>
+      <PackageArchitecture>arm</PackageArchitecture>
+      <PackageMaxArchitectureVersion>3.0.10.124</PackageMaxArchitectureVersion>
+    </PackageInfo>
+    <PackageInfo>
+      <OsMinVersion>6.3.0.0</OsMinVersion>
+      <PackageArchitecture>x86</PackageArchitecture>
+      <PackageMaxArchitectureVersion>3.1.8.108</PackageMaxArchitectureVersion>
     </PackageInfo>
     <PackageInfo>
       <OsMinVersion>6.3.0.0</OsMinVersion>
       <PackageArchitecture>arm</PackageArchitecture>
-      <PackageMaxArchitectureVersion>3.1.7.107</PackageMaxArchitectureVersion>
+      <PackageMaxArchitectureVersion>3.1.8.108</PackageMaxArchitectureVersion>
     </PackageInfo>
     <PackageInfo>
       <OsMinVersion>6.3.0.0</OsMinVersion>
       <PackageArchitecture>x64</PackageArchitecture>
-      <PackageMaxArchitectureVersion>3.1.7.107</PackageMaxArchitectureVersion>
-    </PackageInfo>
-    <PackageInfo>
-      <OsMinVersion>6.3.0.0</OsMinVersion>
-      <PackageArchitecture>x86</PackageArchitecture>
-      <PackageMaxArchitectureVersion>3.1.7.107</PackageMaxArchitectureVersion>
+      <PackageMaxArchitectureVersion>3.1.8.108</PackageMaxArchitectureVersion>
     </PackageInfo>
   </PackageInfoList>
 </StoreAssociation>
