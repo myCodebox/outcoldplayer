@@ -3,6 +3,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Repositories
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
@@ -158,11 +159,20 @@ where SongId = ?2", song.StatsPlayCount, song.SongId);
         {
             int result = 0;
 
+            bool equalIds = string.Equals(songId, storeId, StringComparison.OrdinalIgnoreCase);
+
             await this.Connection.RunInTransactionAsync((connection) =>
                 {
-                    connection.Execute(@"update UserPlaylistEntry set SongId = ?1 where SongId = ?2", songId, storeId);
-                    connection.Execute(@"update CachedSong set SongId = ?1 where SongId = ?2", songId, storeId);
-                    result = connection.Execute(@"update Song set SongId = ?1, ClientId = ?2, IsLibrary = 1 where SongId = ?3 and IsLibrary = 0", songId, clientId, storeId);
+                    if (!equalIds)
+                    {
+                        connection.Execute(@"update UserPlaylistEntry set SongId = ?1 where SongId = ?2", songId, storeId);
+                        connection.Execute(@"update CachedSong set SongId = ?1 where SongId = ?2 and not exists(select * from CachedSong cs where cs.SongId = ?1)", songId, storeId);
+                    }
+                    result = connection.Execute(@"update Song set SongId = ?1, ClientId = ?2, IsLibrary = 1 where SongId = ?3 and IsLibrary = 0 and not exists(select * from Song s0 where s0.SongId = ?1)", songId, clientId, storeId);
+                    if (!equalIds)
+                    {
+                        result += connection.Execute("delete from Song where SongId = ?1", storeId);
+                    }
                 });
 
             return result;
