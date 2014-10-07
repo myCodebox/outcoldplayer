@@ -657,7 +657,7 @@
       <Name>Microsoft Visual C++ Runtime Package</Name>
     </SDKReference>
     <SDKReference Include="SQLite.WinRT, Version=3.8.6">
-      <Name>SQLite for Windows Runtime %28SQLite.WinRT, Version=3.8.6%29</Name>
+      <Name>SQLite for Windows Runtime</Name>
     </SDKReference>
   </ItemGroup>
   <ItemGroup>
