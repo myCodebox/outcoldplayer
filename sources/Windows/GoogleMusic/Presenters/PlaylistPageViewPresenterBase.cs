@@ -88,11 +88,29 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 bool isCurrentPlaylist = false;
                 
                 IPlaylist currentPlaylist = this.playQueueService.CurrentPlaylist;
-                if (currentPlaylist != null && string.Equals(currentPlaylist.Id, request.PlaylistId, StringComparison.OrdinalIgnoreCase))
+                if (currentPlaylist != null)
+                {
+                    if (!string.IsNullOrEmpty(currentPlaylist.Id))
+                    {
+                        if (string.Equals(currentPlaylist.Id, request.PlaylistId, StringComparison.OrdinalIgnoreCase))
+                        {
+                            isCurrentPlaylist = true;
+                        }
+                    }
+                    else if (currentPlaylist is UserPlaylist && request.Playlist is UserPlaylist && !string.IsNullOrEmpty(((UserPlaylist)currentPlaylist).ShareToken))
+                    {
+                        // Shared User Playlist
+                        if (string.Equals(((UserPlaylist)currentPlaylist).ShareToken, ((UserPlaylist)request.Playlist).ShareToken, StringComparison.OrdinalIgnoreCase))
+                        {
+                            isCurrentPlaylist = true;
+                        }
+                    }
+                }
+
+                if (isCurrentPlaylist)
                 {
                     playlist = currentPlaylist;
                     songs = this.playQueueService.GetQueue().ToList();
-                    isCurrentPlaylist = true;
                 }
                 else if (isRadio)
                 {
