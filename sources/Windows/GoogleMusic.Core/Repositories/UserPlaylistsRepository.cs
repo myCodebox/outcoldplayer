@@ -275,7 +275,7 @@ limit 4
 
         public Task<List<UserPlaylist>> GetAllUserPlaylistsAsync()
         {
-            return this.Connection.Table<UserPlaylist>().Where(a => a.Type == "USER_GENERATED").OrderBy(x => x.TitleNorm).ToListAsync();
+            return this.Connection.Table<UserPlaylist>().Where(a => a.Type == "USER_GENERATED" || a.Type == null || a.Type == string.Empty).OrderBy(x => x.TitleNorm).ToListAsync();
         }
 
         public async Task<Uri[]> GetUrisAsync(string id)
