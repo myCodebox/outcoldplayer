@@ -118,7 +118,7 @@ limit 4
 
             if (this.stateService.IsOffline())
             {
-                query.Append(" where p.OfflineSongsCount > 0 and p.Type == \"USER_GENERATED\"");
+                query.Append(" where p.OfflineSongsCount > 0 and (p.Type == \"USER_GENERATED\" or p.Type is null or p.Type = \"\")");
             }
 
             if (order == Order.Name)
