@@ -15,8 +15,8 @@
   </Resources>
   <Applications>
     <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="OutcoldSolutions.GoogleMusic.App">
-      <VisualElements DisplayName="outcoldplayer" Logo="Assets\Logo.png" SmallLogo="Assets\SmallLogo.png" Description="outcoldplayer - the best unofficial Google Music Player provided by OutcoldSolution." ForegroundText="light" BackgroundColor="#207CB0">
-        <DefaultTile ShowName="allLogos" WideLogo="Assets\WideLogo.png" />
+      <VisualElements DisplayName="outcoldplayer: a Player for Google Music" Logo="Assets\Logo.png" SmallLogo="Assets\SmallLogo.png" Description="outcoldplayer - the best unofficial Google Music Player provided by OutcoldSolution." ForegroundText="light" BackgroundColor="#207CB0">
+        <DefaultTile ShowName="allLogos" WideLogo="Assets\WideLogo.png" ShortName="outcoldplayer" />
         <SplashScreen Image="Assets\SplashScreen.png" BackgroundColor="#207CB0" />
         <InitialRotationPreference>
           <Rotation Preference="portrait" />
