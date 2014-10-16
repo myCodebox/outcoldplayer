@@ -162,7 +162,7 @@
     <comment>DO NOT TRANSLATE</comment>
   </data>
   <data name="Authorization_Error_BadAuthentication" xml:space="preserve">
-    <value>Username or password is not recognized. If you are using 2-step authentication you need to use one of the generated passwords.</value>
+    <value>Username or password is not recognized. If you are using 2-step authentication you need to use one of the generated passwords. If you still have issues, please click on this message to get more details.</value>
   </data>
   <data name="Authorization_Error_CaptchaRequired" xml:space="preserve">
     <value>A CAPTCHA is required.</value>
