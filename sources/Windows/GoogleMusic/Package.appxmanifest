@@ -22,8 +22,8 @@
           </BackgroundTasks>
         </Extension>
       </Extensions>
-      <m2:VisualElements DisplayName="outcoldplayer" Description="outcoldplayer - the best unofficial Google Music Player provided by OutcoldSolution." BackgroundColor="#207CB0" ForegroundText="light" Square150x150Logo="Assets\Logo.png" Square30x30Logo="Assets\SmallLogo.png">
-        <m2:DefaultTile Wide310x150Logo="Assets\WideLogo.png" Square310x310Logo="Assets\Square310.png">
+      <m2:VisualElements DisplayName="outcoldplayer: a Player for Google Music" Description="outcoldplayer - the best unofficial Google Music Player provided by OutcoldSolution." BackgroundColor="#207CB0" ForegroundText="light" Square150x150Logo="Assets\Logo.png" Square30x30Logo="Assets\SmallLogo.png">
+        <m2:DefaultTile Wide310x150Logo="Assets\WideLogo.png" Square310x310Logo="Assets\Square310.png" ShortName="outcoldplayer">
           <m2:ShowNameOnTiles>
             <m2:ShowOn Tile="square150x150Logo" />
             <m2:ShowOn Tile="wide310x150Logo" />
