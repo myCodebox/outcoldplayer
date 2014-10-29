@@ -118,7 +118,7 @@ limit 4
 
             if (this.stateService.IsOffline())
             {
-                query.Append(" where p.OfflineSongsCount > 0 and p.Type == \"USER_GENERATED\"");
+                query.Append(" where p.OfflineSongsCount > 0 and (p.Type == \"USER_GENERATED\" or p.Type is null or p.Type = \"\")");
             }
 
             if (order == Order.Name)
@@ -275,7 +275,7 @@ limit 4
 
         public Task<List<UserPlaylist>> GetAllUserPlaylistsAsync()
         {
-            return this.Connection.Table<UserPlaylist>().Where(a => a.Type == "USER_GENERATED").OrderBy(x => x.TitleNorm).ToListAsync();
+            return this.Connection.Table<UserPlaylist>().Where(a => a.Type == "USER_GENERATED" || a.Type == null || a.Type == string.Empty).OrderBy(x => x.TitleNorm).ToListAsync();
         }
 
         public async Task<Uri[]> GetUrisAsync(string id)

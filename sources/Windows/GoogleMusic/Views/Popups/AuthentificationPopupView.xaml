@@ -15,7 +15,9 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
-                    <RowDefinition Height="60" />
+                    <RowDefinition Height="80" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
@@ -63,9 +65,15 @@
                     Password will be stored in encrypted Windows Storage. We use your credentials only to get access to Google Music.
                 </TextBlock>
 
-                <TextBlock Grid.Row="2" Margin="0, 0, 0, 0" TextWrapping="Wrap" Foreground="Red" 
-                           Text="{Binding Path=BindingModel.ErrorMessage, Mode=OneWay}"
-                           Style="{StaticResource SmallTextStyle}" />
+                <HyperlinkButton Grid.Row="2" Margin="0, 0, 0, 0" NavigateUri="http://outcoldplayer.uservoice.com/knowledgebase/articles/335940-problems-with-signing-in-cannot-login">
+                    <HyperlinkButton.Template>
+                        <ControlTemplate>
+                            <TextBlock Margin="0, 0, 0, 0" TextWrapping="Wrap" Foreground="Red" 
+                                       Text="{Binding Path=BindingModel.ErrorMessage, Mode=OneWay}"
+                                       Style="{StaticResource SmallTextStyle}" />
+                        </ControlTemplate>
+                    </HyperlinkButton.Template>
+                </HyperlinkButton>
 
                 <HyperlinkButton Grid.Row="3" HorizontalAlignment="Left" NavigateUri="https://play.google.com/music" Margin="-20, 0, 0, 0">
                     <StackPanel>
@@ -82,7 +90,6 @@
                         Sign in
                     </Button>
                 </StackPanel>
-
             </Grid>
         </Grid>
     </Border>
