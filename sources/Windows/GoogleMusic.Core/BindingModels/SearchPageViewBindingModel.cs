@@ -10,7 +10,6 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
     public class SearchPageViewBindingModel : BindingModelBase
     {
         private string searchText;
-        private bool isLocalOnly;
         private bool isOnline;
 
         private IList<IPlaylist> artists;
