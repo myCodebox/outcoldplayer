@@ -19,6 +19,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
 
         private readonly IAnalyticsService analyticsService;
 
+        private string captchaToken;
+
         public AuthentificationPopupViewPresenter(
             IApplicationResources resources,
             IGoogleAccountService googleAccountService,
@@ -78,7 +80,10 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
 
                 try
                 {
-                    result = await this.authentificationService.CheckAuthentificationAsync(userInfo);
+                    result = await this.authentificationService.CheckAuthentificationAsync(userInfo,
+                        this.BindingModel.IsCaptchaRequired ? this.captchaToken : null,
+                        this.BindingModel.IsCaptchaRequired ? this.BindingModel.Captcha : null,
+                        /* forceCaptcha */ false);
                 }
                 catch (OperationCanceledException exception)
                 {
@@ -112,6 +117,10 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
                     {
                         this.Logger.Debug("Authentification is not succeded. {0}.", result.ErrorMessage);
                         this.BindingModel.ErrorMessage = result.ErrorMessage;
+                        this.BindingModel.IsCaptchaRequired = result.IsCaptchaRequired;
+                        this.BindingModel.CaptchaUrl = string.IsNullOrEmpty(result.CaptchaUrl) ? null : new Uri(result.CaptchaUrl);
+                        this.BindingModel.Captcha = string.Empty;
+                        this.captchaToken = result.CaptchaToken;
                     }
                     else
                     {

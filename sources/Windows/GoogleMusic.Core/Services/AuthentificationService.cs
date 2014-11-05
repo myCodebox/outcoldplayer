@@ -7,6 +7,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
     using System.Linq;
     using System.Net;
     using System.Threading.Tasks;
+    using System.Text;
 
     using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Models;
@@ -42,7 +43,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             this.configWebService = configWebService;
         }
 
-        public async Task<AuthentificationResult> CheckAuthentificationAsync(UserInfo userInfo = null)
+        public async Task<AuthentificationResult> CheckAuthentificationAsync(UserInfo userInfo = null, string captchaToken = null, string captcha = null, bool forceCaptcha = false)
         {
             if (userInfo == null)
             {
@@ -75,8 +76,27 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 return AuthentificationResult.FailedResult(null);
             }
 
+#if DEBUG
+            if (forceCaptcha && string.IsNullOrEmpty(captchaToken))
+            {
+                while (true)
+                {
+                    GoogleAuthResponse response = await this.googleAccountWebService.AuthenticateAsync(
+                        new Uri(this.googleMusicWebService.GetServiceUrl()), userInfo.Email, RandomString(), null, null);
+                    if (response.Error == GoogleAuthResponse.ErrorResponseCode.CaptchaRequired)
+                    {
+                        var result = AuthentificationResult.FailedResult(this.GetErrorMessage(response.Error.Value));
+                        result.IsCaptchaRequired = true;
+                        result.CaptchaUrl = response.CaptchaUrl;
+                        result.CaptchaToken = response.CaptchaToken;
+                        return result;
+                    }
+                }
+            }
+#endif
+
             GoogleAuthResponse authResponse = await this.googleAccountWebService.AuthenticateAsync(
-                new Uri(this.googleMusicWebService.GetServiceUrl()), userInfo.Email, userInfo.Password);
+                new Uri(this.googleMusicWebService.GetServiceUrl()), userInfo.Email, userInfo.Password, captchaToken, captcha);
 
             if (authResponse.Success)
             {
@@ -99,7 +119,16 @@ namespace OutcoldSolutions.GoogleMusic.Services
             {
                 string errorMessage = this.GetErrorMessage(authResponse.Error.Value);
                 this.logger.Warning("CheckAuthentificationAsync: ErrorMessage: {0}, error code: {1}", errorMessage, authResponse.Error.Value);
-                return AuthentificationResult.FailedResult(errorMessage);
+                var result = AuthentificationResult.FailedResult(errorMessage);
+
+                if (authResponse.Error.Value == GoogleAuthResponse.ErrorResponseCode.CaptchaRequired)
+                {
+                    result.IsCaptchaRequired = true;
+                    result.CaptchaUrl = authResponse.CaptchaUrl;
+                    result.CaptchaToken = authResponse.CaptchaToken;
+                }
+
+                return result;
             }
 
             this.logger.Error("CheckAuthentificationAsync: showing 'Login_Unknown'.");
@@ -133,18 +162,20 @@ namespace OutcoldSolutions.GoogleMusic.Services
             }
         }
 
-        public class Captcha
+#if DEBUG
+        private static readonly Random Random = new Random((int)DateTime.Now.Ticks);
+        private string RandomString()
         {
-            public Captcha(string captchaToken, string captchaUrl)
+            var builder = new StringBuilder();
+            for (int i = 0; i < Random.Next(1, 12); i++)
             {
-                this.CaptchaToken = captchaToken;
-                this.CaptchaUrl = captchaUrl;
+                char ch = Convert.ToChar(Convert.ToInt32(Math.Floor(26 * Random.NextDouble() + 65)));
+                builder.Append(ch);
             }
 
-            public string CaptchaToken { get; private set; }
-
-            public string CaptchaUrl { get; private set; }
+            return builder.ToString();
         }
+#endif
 
         public class AuthentificationResult
         {
@@ -157,6 +188,12 @@ namespace OutcoldSolutions.GoogleMusic.Services
             public bool Succeed { get; private set; }
 
             public string ErrorMessage { get; set; }
+
+            public bool IsCaptchaRequired { get; set; }
+
+            public string CaptchaToken { get; set; }
+
+            public string CaptchaUrl { get; set; }
 
             public static AuthentificationResult FailedResult(string errorMessage)
             {

@@ -35,7 +35,8 @@
                     For more details please check the Google Music website.
                 </TextBlock>
 
-                <StackPanel MaxWidth="400" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" >
+                <StackPanel MaxWidth="400" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" 
+                            Visibility="{Binding Path=BindingModel.IsCaptchaRequired, Mode=OneWay, Converter={StaticResource BooleanToInvisibilityConverter}}">
                     <TextBlock Style="{StaticResource BasicTextStyle}" 
                                x:Uid="Authorization_EmailLabel" >
                         Email:
@@ -58,6 +59,20 @@
                               x:Uid="Authorization_RememberAccountCheckBox">
                         Remember account
                     </CheckBox>
+                </StackPanel>
+
+                <StackPanel MaxWidth="400" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" 
+                            Visibility="{Binding Path=BindingModel.IsCaptchaRequired, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <TextBlock Style="{StaticResource BasicTextStyle}" >
+                        Captcha:
+                    </TextBlock>
+                    <Image Width="200" Height="70" Source="{Binding Path=BindingModel.CaptchaUrl}" />
+
+                    <TextBlock Margin="0, 20, 0, 0"  Style="{StaticResource BasicTextStyle}">
+                        Answer:
+                    </TextBlock>
+                    <TextBox Text="{Binding Path=BindingModel.Captcha, Mode=TwoWay}" 
+                             IsEnabled="{Binding Path=BindingModel.IsSigningIn, Mode=OneWay, Converter={StaticResource InvertBooleanConverter}}"/>
                 </StackPanel>
 
                 <TextBlock Grid.Row="2" Margin="0, -90, 0, 0" TextWrapping="Wrap" MaxWidth="400" TextAlignment="Right"

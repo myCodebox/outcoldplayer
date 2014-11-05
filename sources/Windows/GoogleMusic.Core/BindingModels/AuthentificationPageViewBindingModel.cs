@@ -1,6 +1,9 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // Outcold Solutions (http://outcoldman.com)
 // --------------------------------------------------------------------------------------------------------------------
+
+using System;
+
 namespace OutcoldSolutions.GoogleMusic.BindingModels
 {
     public class AuthentificationPageViewBindingModel : BindingModelBase
@@ -10,6 +13,9 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
         private bool rememberAccount;
         private string errorMessage;
         private bool isSigningIn;
+        private bool isCaptchaRequired;
+        private string captcha;
+        private Uri captchaUrl;
 
         public string Email
         {
@@ -73,6 +79,45 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             set
             {
                 this.SetValue(ref this.isSigningIn, value);
+            }
+        }
+
+        public bool IsCaptchaRequired
+        {
+            get
+            {
+                return this.isCaptchaRequired;
+            }
+
+            set
+            {
+                this.SetValue(ref this.isCaptchaRequired, value);
+            }
+        }
+
+        public string Captcha
+        {
+            get
+            {
+                return this.captcha;
+            }
+
+            set
+            {
+                this.SetValue(ref this.captcha, value);
+            }
+        }
+
+        public Uri CaptchaUrl
+        {
+            get
+            {
+                return this.captchaUrl;
+            }
+
+            set
+            {
+                this.SetValue(ref this.captchaUrl, value);
             }
         }
     }
