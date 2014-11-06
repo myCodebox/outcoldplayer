@@ -74,7 +74,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Actions
                 return false;
             }
 
-            return selectedObjects.All(x => x is Radio && !string.IsNullOrEmpty(((Radio)x).Id));
+            return selectedObjects.All(x => x is Radio && ((Radio)x).PlaylistType == PlaylistType.Radio && !string.IsNullOrEmpty(((Radio)x).Id));
         }
 
         public async Task<bool?> Execute(IList<object> selectedObjects)
