@@ -7,13 +7,13 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-
+    using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
 
-    public class GenrePageViewPresenter: PlaylistsPageViewPresenterBase<IGenrePageView>
+    public class GenrePageViewPresenter : PlaylistsPageViewPresenterBase<IGenrePageView, PlaylistsPageViewBindingModel>
     {
         private readonly IApplicationResources resources;
 

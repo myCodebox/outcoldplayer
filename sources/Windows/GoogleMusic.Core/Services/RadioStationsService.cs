@@ -23,6 +23,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         Task<bool> DeleteAsync(IList<Radio> radios);
 
+        Task<Tuple<Radio, IList<Song>>> CreateAsync(SituationRadio radio);
+
         Task<Tuple<Radio, IList<Song>>> CreateAsync(Song song);
 
         Task<Tuple<Radio, IList<Song>>> CreateAsync(Artist artist);
@@ -105,6 +107,17 @@ namespace OutcoldSolutions.GoogleMusic.Services
             }
 
             return false;
+        }
+
+        public async Task<Tuple<Radio, IList<Song>>> CreateAsync(SituationRadio radio)
+        {
+            var storedRadio = await this.radioStationsRepository.GetAsync(radio.RadioId);
+            if (storedRadio != null)
+            {
+                return Tuple.Create(storedRadio, await this.GetRadioSongsAsync(radio.RadioId));
+            }
+
+            return await this.HandleCreationResponse(await this.radioWebService.CreateStationAsync(radio), radio.Title, radio.ArtUrl);
         }
 
         public async Task<Tuple<Radio, IList<Song>>> CreateAsync(Song song)

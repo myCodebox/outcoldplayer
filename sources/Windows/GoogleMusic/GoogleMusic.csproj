@@ -170,6 +170,9 @@
     <Compile Include="Views\ExplorePageView.xaml.cs">
       <DependentUpon>ExplorePageView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\HomePageView.xaml.cs">
+      <DependentUpon>HomePageView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\PlaylistsListView.xaml.cs">
       <DependentUpon>PlaylistsListView.xaml</DependentUpon>
     </Compile>
@@ -184,6 +187,12 @@
     </Compile>
     <Compile Include="Views\Popups\TutorialPopupView.xaml.cs">
       <DependentUpon>TutorialPopupView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SituationsPageView.xaml.cs">
+      <DependentUpon>SituationsPageView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SituationStationsPageView.xaml.cs">
+      <DependentUpon>SituationStationsPageView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SongsListView.xaml.cs">
       <DependentUpon>SongsListView.xaml</DependentUpon>
@@ -361,6 +370,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\HomePageView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\PlaylistsListView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -378,6 +391,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Popups\TutorialPopupView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SituationsPageView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SituationStationsPageView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

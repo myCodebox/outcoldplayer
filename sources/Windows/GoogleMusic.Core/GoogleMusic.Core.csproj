@@ -112,6 +112,7 @@
     <Compile Include="BindingModels\AuthentificationPageViewBindingModel.cs" />
     <Compile Include="BindingModels\BindingModelBase.cs" />
     <Compile Include="BindingModels\DisposableBindingModelBase.cs" />
+    <Compile Include="BindingModels\HomePageViewBindingModel.cs" />
     <Compile Include="BindingModels\PlayerBindingModel.cs" />
     <Compile Include="BindingModels\PlaylistBindingModel.cs" />
     <Compile Include="BindingModels\PlaylistPageViewBindingModel.cs" />
@@ -122,6 +123,8 @@
     <Compile Include="BindingModels\Settings\AccountViewBindingModel.cs" />
     <Compile Include="BindingModels\Settings\CachedSongBindingModel.cs" />
     <Compile Include="BindingModels\Settings\OfflineCacheViewBindingModel.cs" />
+    <Compile Include="BindingModels\SituationsPageViewBindingModel.cs" />
+    <Compile Include="BindingModels\SituationStationsPageViewBindingModel.cs" />
     <Compile Include="CommandMetadata.cs" />
     <Compile Include="Controls\ItemsControlExtensions.cs" />
     <Compile Include="Controls\RatingEventArgs.cs" />
@@ -267,6 +270,8 @@
     <Compile Include="Presenters\Settings\AppSettingsViewPresenter.cs" />
     <Compile Include="Presenters\Settings\OfflineCacheViewPresenter.cs" />
     <Compile Include="Presenters\Settings\SupportViewPresenter.cs" />
+    <Compile Include="Presenters\SituationsPageViewPresenter.cs" />
+    <Compile Include="Presenters\SituationStationsPageViewPresenter.cs" />
     <Compile Include="Presenters\SongsListViewPresenter.cs" />
     <Compile Include="Presenters\UserPlaylistsPageViewPresenter.cs" />
     <Compile Include="Presenters\ViewPresenterBase.cs" />
@@ -358,6 +363,7 @@
     <Compile Include="Web\Models\GoogleMusicPlaylistBatchResponse.cs" />
     <Compile Include="Web\Models\GoogleMusicPlaylistEntriesBatchResponse.cs" />
     <Compile Include="Web\Models\GoogleMusicSharedPlaylistEntriesResponse.cs" />
+    <Compile Include="Web\Models\GoogleMusicSituation.cs" />
     <Compile Include="Web\Models\GoogleMusicSongMutateResponse.cs" />
     <Compile Include="Web\Models\GoogleMusicStationFeed.cs" />
     <Compile Include="Web\Models\GoogleMusicTabs.cs" />

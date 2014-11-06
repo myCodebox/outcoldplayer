@@ -8,7 +8,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-
+    using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Presenters.Popups;
     using OutcoldSolutions.GoogleMusic.Repositories;
@@ -19,7 +19,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using Windows.ApplicationModel;
     using Windows.Networking.Connectivity;
 
-    public class HomePageViewPresenter : PlaylistsPageViewPresenterBase<IHomePageView>
+    public class HomePageViewPresenter : PlaylistsPageViewPresenterBase<IHomePageView, HomePageViewBindingModel>
     {
         private readonly ISettingsService settingsService;
         private readonly IAuthentificationService authentificationService;
@@ -29,6 +29,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private readonly IGoogleMusicSessionService sessionService;
         private readonly ISongsCachingService cachingService;
         private readonly IApplicationStateService stateService;
+        private readonly IAllAccessService allAccessService;
 
         private bool initialized = false;
 
@@ -41,7 +42,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             IMainFrameRegionProvider mainFrameRegionProvider,
             IGoogleMusicSessionService sessionService,
             ISongsCachingService cachingService,
-            IApplicationStateService stateService)
+            IApplicationStateService stateService,
+            IAllAccessService allAccessService)
             : base(playlistsService)
         {
             this.settingsService = settingsService;
@@ -52,6 +54,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.sessionService = sessionService;
             this.cachingService = cachingService;
             this.stateService = stateService;
+            this.allAccessService = allAccessService;
 
             this.sessionService.SessionCleared += async (sender, args) => 
                     {
@@ -73,7 +76,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             }
             else
             {
-                await this.LoadPlaylists();
+                await this.LoadPlaylists(cancellationToken);
             }
         }
 
@@ -231,7 +234,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
             try
             {
-                await this.LoadPlaylists();
+                await this.LoadPlaylists(new CancellationToken());
             }
             catch (Exception e)
             {
@@ -246,47 +249,64 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             }
         }
 
-        private async Task LoadPlaylists()
+        private async Task LoadPlaylists(CancellationToken cancellationToken)
         {
-            const int MaxItems = 30;
-
-            List<IPlaylist> results = new List<IPlaylist>();
-
-            List<IPlaylist> allPlaylists = new List<IPlaylist>();           
-
-            if (this.stateService.IsOnline())
+            var taskLoadLocal = Task.Run(async () =>
             {
-                allPlaylists.AddRange(await this.playlistsService.GetAllAsync(PlaylistType.Radio, Order.LastPlayed, MaxItems));
+                const int MaxItems = 18;
 
-                results.Add(allPlaylists[0]);
-                allPlaylists.RemoveAt(0);
-            }
+                List<IPlaylist> results = new List<IPlaylist>();
+                List<IPlaylist> allPlaylists = new List<IPlaylist>();
 
-            results.AddRange(await this.playlistsService.GetAllAsync(PlaylistType.SystemPlaylist, Order.LastPlayed, MaxItems));
-
-            foreach (var playlistType in new[] { PlaylistType.UserPlaylist, PlaylistType.Album, PlaylistType.Genre })
-            {
-                allPlaylists.AddRange(await this.playlistsService.GetAllAsync(playlistType, Order.LastPlayed, MaxItems));
-            }
-
-            results.AddRange(allPlaylists.OrderByDescending(
-                x =>
+                if (this.stateService.IsOnline())
                 {
-                    var userPlaylist = x as UserPlaylist;
-                    if (userPlaylist != null)
-                    {
-                        return userPlaylist.Recent > userPlaylist.CreationDate
-                            ? userPlaylist.Recent
-                            : userPlaylist.CreationDate;
-                    }
+                    allPlaylists.AddRange(
+                        await this.playlistsService.GetAllAsync(PlaylistType.Radio, Order.LastPlayed, MaxItems));
 
-                    return x.Recent;
-                }).Take(50));
+                    results.Add(allPlaylists[0]);
+                    allPlaylists.RemoveAt(0);
+                }
+
+                results.AddRange(
+                    await this.playlistsService.GetAllAsync(PlaylistType.SystemPlaylist, Order.LastPlayed, MaxItems));
+
+                foreach (var playlistType in new[] {PlaylistType.UserPlaylist, PlaylistType.Album, PlaylistType.Genre})
+                {
+                    allPlaylists.AddRange(
+                        await this.playlistsService.GetAllAsync(playlistType, Order.LastPlayed, MaxItems));
+                }
+
+                results.AddRange(allPlaylists.OrderByDescending(
+                    x =>
+                    {
+                        var userPlaylist = x as UserPlaylist;
+                        if (userPlaylist != null)
+                        {
+                            return userPlaylist.Recent > userPlaylist.CreationDate
+                                ? userPlaylist.Recent
+                                : userPlaylist.CreationDate;
+                        }
+
+                        return x.Recent;
+                    }).Take(MaxItems));
+
+                return results;
+            }, cancellationToken);
+
+            var taskLoadSituation = this.stateService.IsOnline() ? this.allAccessService.GetSituationsAsync(cancellationToken) : Task.Run(() => (SituationsGroup)null, cancellationToken);
+
+            await Task.WhenAll(taskLoadLocal, taskLoadSituation);
+
+            SituationsGroup situationsGroup = await taskLoadSituation;
+            List<IPlaylist> localResults = await taskLoadLocal;
 
             await this.Dispatcher.RunAsync(
                 () =>
                 {
-                    this.BindingModel.Playlists = results;
+                    this.BindingModel.Playlists = localResults.GetRange(4, localResults.Count - 4);
+                    this.BindingModel.SystemPlaylists = localResults.GetRange(0, 4);
+                    this.BindingModel.SituationHeader = situationsGroup == null ? null : situationsGroup.Header;
+                    this.BindingModel.Situations = situationsGroup == null ? null : situationsGroup.Situations;
                 });
         }
     }

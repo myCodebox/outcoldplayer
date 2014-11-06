@@ -4,17 +4,19 @@
 
 namespace OutcoldSolutions.GoogleMusic.Views
 {
+    using System;
     using Windows.UI.Xaml;
+    using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Data;
-
     using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Presenters;
+    using OutcoldSolutions.GoogleMusic.Services;
 
-    public sealed partial class PlaylistsPageView : PageViewBase, IPlaylistsPageView, IUserPlaylistsPageView, IRadioPageView, IGenrePageView
+    public sealed partial class SituationStationsPageView : PageViewBase, ISituationStationsPageView
     {
         private IPlaylistsListView playlistsListView;
 
-        public PlaylistsPageView()
+        public SituationStationsPageView()
         {
             this.InitializeComponent();
         }
@@ -28,10 +30,9 @@ namespace OutcoldSolutions.GoogleMusic.Views
             this.PlaylistsContentPresenter.Content = (this.playlistsListView = this.Container.Resolve<IPlaylistsListView>()) as PlaylistsListView;
 
             var listView = this.playlistsListView as PlaylistsListView;
-
             if (listView != null)
             {
-                listView.IsMixedList = ((IPlaylistsPageViewPresenterBase)presenter).IsMixedList;
+                listView.ItemClicked += ListViewOnItemClicked;
                 listView.SetBinding(
                     PlaylistsListView.ItemsSourceProperty,
                     new Binding()
@@ -40,8 +41,21 @@ namespace OutcoldSolutions.GoogleMusic.Views
                         Mode = BindingMode.OneWay,
                         Path = new PropertyPath("BindingModel.Playlists")
                     });
+            }
 
-                this.TrackScrollViewer(listView.GetListView());
+            this.TrackScrollViewer(this);
+        }
+
+        private void ListViewOnItemClicked(object sender, ItemClickEventArgs e)
+        {
+            var playlistBindingModel = e.ClickedItem as PlaylistBindingModel;
+            if (playlistBindingModel != null)
+            {
+                var situationRadio = playlistBindingModel.Playlist as SituationRadio;
+                if (situationRadio != null)
+                {
+                    this.GetPresenter<SituationStationsPageViewPresenter>().NavigateToRadio(situationRadio);
+                }
             }
         }
     }

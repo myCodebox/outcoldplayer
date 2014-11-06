@@ -12,6 +12,9 @@ namespace OutcoldSolutions.GoogleMusic.Models
         UserPlaylist = 4,
         SystemPlaylist = 5,
         Radio = 6,
-        AllAccessGenre = 7
+        AllAccessGenre = 7,
+        Situation = 8,
+        SituationStations = 9,
+        SituationRadio = 10
     }
 }

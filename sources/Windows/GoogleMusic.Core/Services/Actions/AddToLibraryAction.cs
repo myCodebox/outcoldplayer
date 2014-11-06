@@ -84,7 +84,9 @@ namespace OutcoldSolutions.GoogleMusic.Services.Actions
                     if (playlist.PlaylistType == PlaylistType.Radio
                         || playlist.PlaylistType == PlaylistType.UserPlaylist
                         || playlist.PlaylistType == PlaylistType.SystemPlaylist
-                        || playlist.PlaylistType == PlaylistType.AllAccessGenre)
+                        || playlist.PlaylistType == PlaylistType.AllAccessGenre
+                        || playlist.PlaylistType == PlaylistType.Situation
+                        || playlist.PlaylistType == PlaylistType.SituationStations)
                     {
                         return false;
                     }

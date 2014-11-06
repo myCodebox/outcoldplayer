@@ -25,7 +25,7 @@ namespace OutcoldSolutions.GoogleMusic.Models
         }
 
         [Ignore]
-        public PlaylistType PlaylistType
+        public virtual PlaylistType PlaylistType
         {
             get
             {
@@ -112,5 +112,7 @@ namespace OutcoldSolutions.GoogleMusic.Models
         public string GoogleAlbumId { get; set; }
 
         public string GoogleGenreId { get; set; }
+
+        public string CuratedStationId { get; set; }
     }
 }

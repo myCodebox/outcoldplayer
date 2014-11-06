@@ -33,6 +33,7 @@
                     <Run>vNext</Run>
                     </TextBlock>
                     <RichTextBlock Style="{StaticResource BodyRichTextStyle}">
+                        <Paragraph>[+] All Access: add support for smart playlists (Songza's playlists).</Paragraph>
                         <Paragraph>[+] Player: Add "Repeat One" mode for repeating one song.</Paragraph>
                         <Paragraph>[b] Authentication: Handles CAPTCHA requests from Google.</Paragraph>
                     </RichTextBlock>

@@ -21,8 +21,9 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         bool IsMixedList { get; }
     }
 
-    public abstract class PlaylistsPageViewPresenterBase<TView> : PagePresenterBase<TView, PlaylistsPageViewBindingModel>, IPlaylistsPageViewPresenterBase
+    public abstract class PlaylistsPageViewPresenterBase<TView, TBindingModel> : PagePresenterBase<TView, TBindingModel>, IPlaylistsPageViewPresenterBase
         where TView : IPageView
+        where TBindingModel : PlaylistsPageViewBindingModel
     {
         private readonly IPlaylistsService playlistsService;
 

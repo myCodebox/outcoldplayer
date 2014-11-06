@@ -45,6 +45,14 @@ namespace OutcoldSolutions.GoogleMusic
             {
                 return @this.NavigateTo<IExplorePageView>(request);
             }
+            else if (request.PlaylistType == PlaylistType.Situation)
+            {
+                return @this.NavigateTo<ISituationsPageView>(request);
+            }
+            else if (request.PlaylistType == PlaylistType.SituationStations)
+            {
+                return @this.NavigateTo<ISituationStationsPageView>(request);
+            }
             else
             {
                 return @this.NavigateTo<IPlaylistPageView>(request);

@@ -22,6 +22,8 @@ namespace OutcoldSolutions.GoogleMusic.Web.Models
 
         public string ImageUrl { get; set; }
 
+        public string Description { get; set; }
+
         public UrlRef[] ImageUrls { get; set; }
 
         public GoogleMusicRadioSeed Seed { get; set; }
@@ -44,6 +46,8 @@ namespace OutcoldSolutions.GoogleMusic.Web.Models
         public string GenreId { get; set; }
 
         public int SeedType { get; set; }
+
+        public string CuratedStationId { get; set; }
 
         public GoogleMusicRadioMetadataSeed MetadataSeed { get; set; }
     }

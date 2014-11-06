@@ -11,6 +11,7 @@ namespace OutcoldSolutions.GoogleMusic.Controls
 
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
+    using OutcoldSolutions.GoogleMusic.Services;
 
     public class PlaylistDataTemplateSelector : DataTemplateSelector 
     {
@@ -31,6 +32,12 @@ namespace OutcoldSolutions.GoogleMusic.Controls
         public DataTemplate MixedRadioDataTemplate { get; set; }
 
         public DataTemplate ArtistRadioDataTemplate { get; set; }
+
+        public DataTemplate SituationDataTemplate { get; set; }
+
+        public DataTemplate SituationStationsDataTemplate { get; set; }
+
+        public DataTemplate SituationRadioDataTemplate { get; set; }
 
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
         {
@@ -69,6 +76,24 @@ namespace OutcoldSolutions.GoogleMusic.Controls
             {
                 Debug.Assert(this.UserPlaylistDataTemplate != null, "this.UserPlaylistDataTemplate != null");
                 return this.UserPlaylistDataTemplate;
+            }
+
+            if (playlist is SituationGroup)
+            {
+                Debug.Assert(this.SituationDataTemplate != null, "this.SituationDataTemplate != null");
+                return this.SituationDataTemplate;
+            }
+
+            if (playlist is SituationStations)
+            {
+                Debug.Assert(this.SituationStationsDataTemplate != null, "this.SituationStationsDataTemplate != null");
+                return this.SituationStationsDataTemplate;
+            }
+
+            if (playlist is SituationRadio)
+            {
+                Debug.Assert(this.SituationRadioDataTemplate != null, "this.SituationRadioDataTemplate != null");
+                return this.SituationRadioDataTemplate;
             }
 
             if (playlist is Radio)

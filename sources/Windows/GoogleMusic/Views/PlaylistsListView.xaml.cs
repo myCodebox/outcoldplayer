@@ -46,6 +46,8 @@ namespace OutcoldSolutions.GoogleMusic.Views
             set { SetValue(ItemsSourceProperty, value); }
         }
 
+        public event EventHandler<ItemClickEventArgs> ItemClicked;
+
         public static void OnItemsSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var songsListView = d as PlaylistsListView;
@@ -80,10 +82,18 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
         private void PlaylistItemClick(object sender, ItemClickEventArgs e)
         {
-            var playlistBindingModel = e.ClickedItem as PlaylistBindingModel;
-            if (playlistBindingModel != null)
+            EventHandler<ItemClickEventArgs> onItemClicked = this.ItemClicked;
+            if (onItemClicked != null)
             {
-                this.Container.Resolve<INavigationService>().NavigateToPlaylist(playlistBindingModel.Playlist);
+                onItemClicked(sender, e);
+            }
+            else
+            {
+                var playlistBindingModel = e.ClickedItem as PlaylistBindingModel;
+                if (playlistBindingModel != null)
+                {
+                    this.Container.Resolve<INavigationService>().NavigateToPlaylist(playlistBindingModel.Playlist);
+                }
             }
         }
     }
