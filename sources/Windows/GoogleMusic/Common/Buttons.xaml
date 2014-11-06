@@ -1120,6 +1120,12 @@
         <Setter Property="Content" Value="&#xE1CD;"/>
     </Style>
 
+    <Style x:Key="RepeatOneAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource NoBorderAppBarButtonStyle}">
+        <Setter Property="AutomationProperties.AutomationId" Value="RepeatOneAppBarButton"/>
+        <Setter Property="AutomationProperties.Name" Value="Repeat One"/>
+        <Setter Property="Content" Value="&#xE1CC;"/>
+    </Style>
+
     <Style x:Key="AddAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
         <Setter Property="AutomationProperties.AutomationId" Value="AddAppBarButton"/>
         <Setter Property="AutomationProperties.Name" Value="Add"/>

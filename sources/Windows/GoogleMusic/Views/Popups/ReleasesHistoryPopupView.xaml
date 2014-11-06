@@ -24,7 +24,7 @@
             <TextBlock Style="{StaticResource SubheaderTextStyle}" HorizontalAlignment="Center" Margin="0,-5,0,0" Text="{StaticResource ApplicationName}" />
 
             <TextBlock Grid.Row="1" Style="{StaticResource BodyTextStyle}"  Margin="0, 20, 0, 0" x:Uid="ReleaseHistory_Subtitle" >
-                Congratulations! You just installed new version of outcoldplayer (former gMusicW). You can find the list of new feature [+] and fixed bugs [b] below:
+                Congratulations! You just installed new version of outcoldplayer. You can find the list of new feature [+] and fixed bugs [b] below:
             </TextBlock>
 
             <ScrollViewer Grid.Row="2" Margin="0, 20, 0, 0">
@@ -33,6 +33,7 @@
                     <Run>vNext</Run>
                     </TextBlock>
                     <RichTextBlock Style="{StaticResource BodyRichTextStyle}">
+                        <Paragraph>[+] Player: Add "Repeat One" mode for repeating one song.</Paragraph>
                         <Paragraph>[b] Authentication: Handles CAPTCHA requests from Google.</Paragraph>
                     </RichTextBlock>
                     

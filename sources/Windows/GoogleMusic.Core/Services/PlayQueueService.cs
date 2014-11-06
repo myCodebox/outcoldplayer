@@ -40,6 +40,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
         private readonly SemaphoreSlim semaphore = new SemaphoreSlim(1);
 
         private IRandomAccessStream currentSongStream;
+        private Song currentSong;
 
         private CancellationTokenSource currentTokenSource;
         private CancellationTokenSource predownloadTokenSource;
@@ -50,7 +51,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         private bool isShuffled;
 
-        private bool isRepeatAll;
+        private RepeatType repeat;
 
         public PlayQueueService(
             ILogManager logManager,
@@ -75,7 +76,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             this.analyticsService = analyticsService;
             this.currentQueueIndex = -1;
 
-            this.IsRepeatAll = this.settingsService.GetValue("IsRepeatAllEnabled", defaultValue: false);
+            this.Repeat = this.settingsService.GetValue("RepeatValue", defaultValue: RepeatType.None);
             this.IsShuffled = this.settingsService.GetValue("IsShuffleEnabled", defaultValue: false);
 
             this.State = QueueState.Unknown;
@@ -128,21 +129,21 @@ namespace OutcoldSolutions.GoogleMusic.Services
             }
         }
 
-        public bool IsRepeatAll
+        public RepeatType Repeat
         {
             get
             {
-                return this.isRepeatAll && !this.IsRadio;
+                return this.repeat;
             }
             
             set
             {
-                if (this.isRepeatAll != value)
+                if (this.repeat != value)
                 {
-                    this.analyticsService.SendEvent("Media", "IsRepeatAll", value.ToString());
+                    this.analyticsService.SendEvent("Media", "Repeat", value.ToString());
 
-                    this.isRepeatAll = value;
-                    this.settingsService.SetValue("IsRepeatAllEnabled", this.isRepeatAll);
+                    this.repeat = value;
+                    this.settingsService.SetValue("RepeatValue", this.repeat);
                     this.RaiseQueueChanged();
                 }
             }
@@ -288,7 +289,11 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
             if (this.CanSwitchToNext())
             {
-                if (this.currentQueueIndex == (this.queueOrder.Count - 1) && this.IsRepeatAll)
+                if (this.Repeat == RepeatType.One)
+                {
+                    // Just keep the same song
+                }
+                else if (this.currentQueueIndex == (this.queueOrder.Count - 1) && this.Repeat == RepeatType.All)
                 {
                     this.currentQueueIndex = 0;
                 }
@@ -305,7 +310,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         public bool CanSwitchToNext()
         {
-            return this.currentQueueIndex < (this.queueOrder.Count - 1) || (this.IsRepeatAll && this.queueOrder.Count > 0);
+            return this.currentQueueIndex < (this.queueOrder.Count - 1) || (this.Repeat != RepeatType.None && this.queueOrder.Count > 0);
         }
 
         public async Task<bool> PreviousSongAsync()
@@ -314,11 +319,15 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
             if (this.CanSwitchToPrevious())
             {
-                if (this.currentQueueIndex != 0)
+                if (this.Repeat == RepeatType.One)
+                {
+                    // Just keep the same song
+                }
+                else if (this.currentQueueIndex != 0)
                 {
                     this.currentQueueIndex--;
                 }
-                else if (this.IsRepeatAll)
+                else if (this.Repeat == RepeatType.All)
                 {
                     this.currentQueueIndex = this.queueOrder.Count - 1;
                 }
@@ -331,7 +340,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         public bool CanSwitchToPrevious()
         {
-            return this.currentQueueIndex > 0 || (this.IsRepeatAll && this.queueOrder.Count > 0);
+            return this.currentQueueIndex > 0 || (this.Repeat != RepeatType.None && this.queueOrder.Count > 0);
         }
 
         public async Task PauseAsync()
@@ -534,38 +543,49 @@ namespace OutcoldSolutions.GoogleMusic.Services
                             this.logger.Debug("Getting url for song '{0}'.", song.SongId);
                         }
 
+                        bool sameSong = false;
                         CancellationTokenSource source = null;
+                        IRandomAccessStream stream = null;
 
                         await this.semaphore.WaitAsync().ConfigureAwait(continueOnCapturedContext: false);
 
                         try
                         {
-                            if (this.currentTokenSource != null)
+                            if (this.currentSong != null && string.Equals(this.currentSong.SongId, song.SongId, StringComparison.OrdinalIgnoreCase))
                             {
-                                this.currentTokenSource.Cancel();
-                                this.currentTokenSource = null;
+                                sameSong = true;
+                                stream = this.currentSongStream;
+                                source = this.currentTokenSource;
                             }
-
-                            if (this.predownloadTokenSource != null)
+                            else
                             {
-                                if (nextSong)
+                                if (this.currentTokenSource != null)
                                 {
-                                    source = this.predownloadTokenSource;
-                                }
-                                else
-                                {
-                                    this.predownloadTokenSource.Cancel();
+                                    this.currentTokenSource.Cancel();
+                                    this.currentTokenSource = null;
                                 }
 
-                                this.predownloadTokenSource = null;
-                            }
+                                if (this.predownloadTokenSource != null)
+                                {
+                                    if (nextSong)
+                                    {
+                                        source = this.predownloadTokenSource;
+                                    }
+                                    else
+                                    {
+                                        this.predownloadTokenSource.Cancel();
+                                    }
 
-                            if (source == null)
-                            {
-                                source = new CancellationTokenSource();
-                            }
+                                    this.predownloadTokenSource = null;
+                                }
 
-                            this.currentTokenSource = source;
+                                if (source == null)
+                                {
+                                    source = new CancellationTokenSource();
+                                }
+
+                                this.currentTokenSource = source;
+                            }
                         }
                         finally
                         {
@@ -577,49 +597,59 @@ namespace OutcoldSolutions.GoogleMusic.Services
                             return false;
                         }
 
-                        var stream = await this.songsCachingService.GetStreamAsync(song, source.Token);
+                        // if null - playing the same stream
+                        if (!sameSong)
+                        {
+                            stream = await this.songsCachingService.GetStreamAsync(song, source.Token);
+                        }
+
                         if (stream != null && !source.IsCancellationRequested)
                         {
-                            await
-                                this.semaphore.WaitAsync(source.Token).ConfigureAwait(continueOnCapturedContext: false);
-
-                            if (source.IsCancellationRequested)
+                            if (!sameSong)
                             {
-                                return false;
-                            }
+                                await
+                                    this.semaphore.WaitAsync(source.Token)
+                                        .ConfigureAwait(continueOnCapturedContext: false);
 
-                            try
-                            {
-                                if (this.currentSongStream != null)
+                                if (source.IsCancellationRequested)
                                 {
-                                    this.logger.Debug("Current song is not null. Disposing current stream.");
+                                    return false;
+                                }
 
-                                    var previousStream = this.currentSongStream as INetworkRandomAccessStream;
-                                    if (previousStream != null)
+                                try
+                                {
+                                    if (this.currentSongStream != null)
                                     {
-                                        previousStream.DownloadProgressChanged -=
-                                            this.CurrentSongStreamOnDownloadProgressChanged;
+                                        this.logger.Debug("Current song is not null. Disposing current stream.");
+
+                                        var previousStream = this.currentSongStream as INetworkRandomAccessStream;
+                                        if (previousStream != null)
+                                        {
+                                            previousStream.DownloadProgressChanged -=
+                                                this.CurrentSongStreamOnDownloadProgressChanged;
+                                        }
+
+                                        this.currentSongStream.Dispose();
                                     }
 
-                                    this.currentSongStream.Dispose();
-                                }
+                                    this.currentSong = song;
+                                    this.currentSongStream = stream;
 
-                                this.currentSongStream = stream;
-
-                                var networkRandomAccessStream = stream as INetworkRandomAccessStream;
-                                if (networkRandomAccessStream != null && !networkRandomAccessStream.IsReady)
-                                {
-                                    networkRandomAccessStream.DownloadProgressChanged +=
-                                        this.CurrentSongStreamOnDownloadProgressChanged;
+                                    var networkRandomAccessStream = stream as INetworkRandomAccessStream;
+                                    if (networkRandomAccessStream != null && !networkRandomAccessStream.IsReady)
+                                    {
+                                        networkRandomAccessStream.DownloadProgressChanged +=
+                                            this.CurrentSongStreamOnDownloadProgressChanged;
+                                    }
+                                    else
+                                    {
+                                        this.PredownloadNextSong();
+                                    }
                                 }
-                                else
+                                finally
                                 {
-                                    this.PredownloadNextSong();
+                                    this.semaphore.Release(1);
                                 }
-                            }
-                            finally
-                            {
-                                this.semaphore.Release(1);
                             }
 
                             if (source.IsCancellationRequested)
@@ -849,7 +879,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         private void RaiseQueueChanged()
         {
-            this.eventAggregator.Publish(new QueueChangeEvent(this.IsShuffled, this.IsRepeatAll, this.IsRadio, this.songsQueue));
+            this.eventAggregator.Publish(new QueueChangeEvent(this.IsShuffled, this.Repeat, this.IsRadio, this.songsQueue));
 
             var handler = this.QueueChanged;
             if (handler != null)
@@ -865,6 +895,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             this.songsQueue.Clear();
             this.currentQueueIndex = -1;
             this.currentSongStream = null;
+            this.currentSong = null;
             this.CurrentPlaylist = null;
             this.RaiseQueueChanged();
         }

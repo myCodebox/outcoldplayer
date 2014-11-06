@@ -10,6 +10,19 @@
     mc:Ignorable="d">
 
     <views:ViewBase.Resources>
+        <Style x:Key="RepeatAllAppBarPressedButtonStyle" BasedOn="{StaticResource RepeatAllAppBarButtonStyle}" TargetType="ButtonBase">
+            <Setter Property="Foreground" Value="{StaticResource ApplicationThemeCompound3Brush}"></Setter>
+        </Style>
+
+        <Style x:Key="RepeatOneAppBarPressedButtonStyle" BasedOn="{StaticResource RepeatOneAppBarButtonStyle}" TargetType="ButtonBase">
+            <Setter Property="Foreground" Value="{StaticResource ApplicationThemeCompound3Brush}"></Setter>
+        </Style>
+
+        <converters:RepeatToStyleConverter x:Key="RepeatToStyleConverter"
+                                           RepeatAllStyle="{StaticResource RepeatAllAppBarPressedButtonStyle}"
+                                           RepeatOneStyle="{StaticResource RepeatOneAppBarPressedButtonStyle}"
+                                           RepeatNoneStyle="{StaticResource RepeatAllAppBarButtonStyle}"/>
+        
         <Style x:Name="LargePlayer" TargetType="ContentControl">
             <Setter Property="ContentTemplate">
                 <Setter.Value>
@@ -120,11 +133,10 @@
                                         VerticalAlignment="Stretch"
                                         Grid.Column="1">
 
-                                <controls:AppBarToggleButton Style="{StaticResource RepeatAllAppBarButtonStyle}" 
-                                                             IsChecked="{Binding Path=IsRepeatAllEnabled, Mode=TwoWay}"
-                                                             Command="{Binding Path=RepeatAllCommand, Mode=OneTime}"
-                                                             FontSize="16"
-                                                             AutomationProperties.Name=""/>
+                                <controls:ButtonWithHover Style="{Binding Path=RepeatValue, Mode=OneWay, Converter={StaticResource RepeatToStyleConverter}}" 
+                                                          Command="{Binding Path=RepeatCommand, Mode=OneTime}"
+                                                          FontSize="16"
+                                                          AutomationProperties.Name=""/>
 
                                 <controls:ButtonWithHover Style="{StaticResource SkipBackAppBarButtonStyle}" 
                                                             Command="{Binding Path=SkipBackCommand, Mode=OneTime}"
@@ -381,12 +393,11 @@
                                                 VerticalAlignment="Stretch"
                                                 HorizontalAlignment="Center">
 
-                                        <controls:AppBarToggleButton Style="{StaticResource RepeatAllAppBarButtonStyle}" 
-                                                             IsChecked="{Binding Path=IsRepeatAllEnabled, Mode=TwoWay}"
-                                                             Command="{Binding Path=RepeatAllCommand, Mode=OneTime}"
-                                                             FontSize="12"
-                                                             Canvas.ZIndex="1100"
-                                                             AutomationProperties.Name=""/>
+                                        <controls:ButtonWithHover Style="{Binding Path=RepeatValue, Mode=OneWay, Converter={StaticResource RepeatToStyleConverter}}" 
+                                                          Command="{Binding Path=RepeatCommand, Mode=OneTime}"
+                                                          FontSize="12"
+                                                          Canvas.ZIndex="1100"
+                                                          AutomationProperties.Name=""/>
 
                                         <controls:ButtonWithHover Style="{StaticResource SkipBackAppBarButtonStyle}" 
                                                             Command="{Binding Path=SkipBackCommand, Mode=OneTime}"

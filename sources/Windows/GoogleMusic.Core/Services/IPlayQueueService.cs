@@ -9,6 +9,13 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
     using OutcoldSolutions.GoogleMusic.Models;
 
+    public enum RepeatType
+    {
+        None = 0,
+        One = 1,
+        All = 2
+    }
+
     public interface IPlayQueueService
     {
         event EventHandler QueueChanged;
@@ -19,7 +26,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         bool IsShuffled { get; set; }
 
-        bool IsRepeatAll { get; set; }
+        RepeatType Repeat { get; set; }
 
         bool IsRadio { get; }
 

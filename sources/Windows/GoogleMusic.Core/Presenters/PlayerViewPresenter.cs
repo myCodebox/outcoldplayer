@@ -51,7 +51,23 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.PlayCommand = new DelegateCommand(async () => await this.PlayAsync(), () => !this.BindingModel.IsBusy && (this.BindingModel.State == QueueState.Stopped || this.BindingModel.State == QueueState.Paused));
             this.PauseCommand = new DelegateCommand(async () => await this.PauseAsync(), () => !this.BindingModel.IsBusy && this.BindingModel.IsPlaying);
             this.SkipAheadCommand = new DelegateCommand(this.NextSong, () => this.queueService.CanSwitchToNext());
-            this.RepeatAllCommand = new DelegateCommand(() => { }, () => !this.BindingModel.IsBusy && !queueService.IsRadio);
+            this.RepeatCommand = new DelegateCommand(() =>
+            {
+                switch (this.RepeatValue)
+                {
+                    case RepeatType.None:
+                        this.RepeatValue = RepeatType.All;
+                        break;
+                    case RepeatType.One:
+                        this.RepeatValue = RepeatType.None;
+                        break;
+                    case RepeatType.All:
+                        this.RepeatValue = RepeatType.One;
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }, () => !this.BindingModel.IsBusy && !queueService.IsRadio);
             this.ShuffleCommand = new DelegateCommand(() => { }, () => !this.BindingModel.IsBusy && !queueService.IsRadio);
 
             this.BindingModel.Subscribe(
@@ -176,7 +192,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         public DelegateCommand ShuffleCommand { get; set; }
 
-        public DelegateCommand RepeatAllCommand { get; set; }
+        public DelegateCommand RepeatCommand { get; set; }
 
         public DelegateCommand ShowApplicationSettingsCommand { get; set; }
 
@@ -209,16 +225,20 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             }
         }
 
-        public bool IsRepeatAllEnabled
+        public RepeatType RepeatValue
         {
             get
             {
-                return this.queueService.IsRepeatAll;
+                return this.queueService.Repeat;
             }
 
             set
             {
-                this.queueService.IsRepeatAll = value;
+                if (this.queueService.Repeat != value)
+                {
+                    this.queueService.Repeat = value;
+                    this.RaiseCurrentPropertyChanged();
+                }
             }
         }
 
@@ -230,7 +250,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 async (e) => await this.Dispatcher.RunAsync(() =>
                 {
                     this.RaisePropertyChanged(() => this.IsShuffleEnabled);
-                    this.RaisePropertyChanged(() => this.IsRepeatAllEnabled);
+                    this.RaisePropertyChanged(() => this.RepeatValue);
                 }));
         }
 
@@ -287,7 +307,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.SkipAheadCommand.RaiseCanExecuteChanged();
             this.SkipBackCommand.RaiseCanExecuteChanged();
             this.ShuffleCommand.RaiseCanExecuteChanged();
-            this.RepeatAllCommand.RaiseCanExecuteChanged();
+            this.RepeatCommand.RaiseCanExecuteChanged();
         }
     }
 }
