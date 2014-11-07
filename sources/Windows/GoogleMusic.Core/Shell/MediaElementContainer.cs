@@ -63,6 +63,16 @@ namespace OutcoldSolutions.GoogleMusic.Shell
             }
         }
 
+        public bool IsBeginning
+        {
+            get
+            {
+                TimeSpan position = this.mediaElement.Position;
+                TimeSpan duration = this.mediaElement.NaturalDuration.HasTimeSpan ? this.mediaElement.NaturalDuration.TimeSpan : position;
+                return position < duration && position.TotalSeconds < 3;
+            }
+        }
+
         public Task PlayAsync(IRandomAccessStream stream, string mimeType)
         {
             if (this.logger.IsDebugEnabled)

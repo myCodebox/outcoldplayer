@@ -319,7 +319,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
             if (this.CanSwitchToPrevious())
             {
-                if (this.Repeat == RepeatType.One)
+                if (this.Repeat == RepeatType.One || !this.mediaElement.IsBeginning)
                 {
                     // Just keep the same song
                 }
@@ -340,7 +340,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         public bool CanSwitchToPrevious()
         {
-            return this.currentQueueIndex > 0 || (this.Repeat != RepeatType.None && this.queueOrder.Count > 0);
+            return this.currentQueueIndex >= 0 || (this.Repeat != RepeatType.None && this.queueOrder.Count > 0);
         }
 
         public async Task PauseAsync()
