@@ -62,40 +62,6 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels.Settings
             }
         }
 
-        public bool AutomaticCache
-        {
-            get
-            {
-                return this.settingsService.GetAutomaticCache();
-            }
-
-            set
-            {
-                this.settingsService.SetAutomaticCache(value);
-            }
-        }
-
-        public uint MaximumCacheSize
-        {
-            get
-            {
-                return this.settingsService.GetMaximumCacheSize();
-            }
-
-            set
-            {
-                this.settingsService.SetMaximumCacheSize(value);
-            }
-        }
-
-        public bool IsCacheEditable
-        {
-            get
-            {
-                return InAppPurchases.HasFeature(GoogleMusicFeatures.Offline);
-            }
-        }
-
         public ObservableCollection<CachedSongBindingModel> QueuedTasks
         {
             get
