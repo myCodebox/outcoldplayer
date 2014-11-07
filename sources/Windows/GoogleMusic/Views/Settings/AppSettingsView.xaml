@@ -23,16 +23,24 @@
             <ToggleSwitch Margin="0, 0, 0, 0" 
                           IsOn="{Binding Path=BlockExplicitSongsInRadio, Mode=TwoWay}">Block explicit songs in radio.</ToggleSwitch>
             
-            <ToggleSwitch Margin="0, 0, 0, 0" 
+            <ToggleSwitch Margin="0, 20, 0, 0" 
                           IsOn="{Binding Path=IsScreenOn, Mode=TwoWay}"
                           x:Uid="SettingsAppSettings_KeepDisplayOnLabel" >Keep display on.</ToggleSwitch>
 
-            <TextBlock Style="{StaticResource SmallTextStyle}"  Margin="0, 10, 0, 0"
+            <TextBlock Style="{StaticResource SmallTextStyle}"  Margin="0, 5, 0, 0"
                        x:Uid="SettingsAppSettings_KeepDisplayOnDescription">
                 Depending on system power settings, the display may first be dimmed, then turned off if 
                 Windows does not detect any user activity for a certain amount of time. 
                 This setting allows to prevent this when outcoldplayer application is in foreground (on screen).
             </TextBlock>
+
+            <!--<TextBlock Style="{StaticResource SubtitleTextStyle}" Margin="0, 20, 0, 0">Bitrate (kbps): </TextBlock>
+            <ComboBox ItemsSource="{Binding Path=Bitrates, Mode=OneTime}" SelectedValue="{Binding Path=SelectedBitrate, Mode=TwoWay}" Margin="0, 10, 0, 0" />
+
+            <TextBlock Style="{StaticResource SmallTextStyle}"  Margin="0, 10, 0, 0">
+                Higher stream bitrate means higher quality, but it uses more data over internet to download songs and more storage to keep streams offline, also higher bitrate can increase loading times.
+                Sometimes it is very hard to hear difference between 192 and 256kpbs on regular headphones or strereo systems. We beleive that 256kbps is an optimal quality.
+            </TextBlock>-->
 
         </StackPanel>
         

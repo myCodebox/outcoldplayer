@@ -3,6 +3,8 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
 {
+    using System.Collections;
+    using System.Collections.Generic;
     using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views;
@@ -46,6 +48,25 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
             {
                 this.analyticsService.SendEvent("Settings", "ChangeBlockExplicitSongsInRadio", value.ToString());
                 this.settingsService.SetBlockExplicitSongsInRadio(value);
+            }
+        }
+
+        public IList<uint> Bitrates
+        {
+            get { return this.settingsService.GetStreamBitrates(); }
+        }
+
+        public uint SelectedBitrate
+        {
+            get
+            {
+                return this.settingsService.GetStreamBitrate();
+            }
+
+            set
+            {
+                this.analyticsService.SendEvent("Settings", "ChangeStreamBitrate", value.ToString());
+                this.settingsService.SetStreamBitrate(value);
             }
         }
     }
