@@ -19,6 +19,7 @@
                 <Setter Property="VerticalAlignment" Value="Center" />
                 <Setter Property="Stretch" Value="Uniform" />
                 <Setter Property="Margin" Value="40" />
+                <Setter Property="Opacity" Value="0.5" />
             </Style>
         </Grid.Resources>
         
