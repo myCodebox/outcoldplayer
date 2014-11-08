@@ -13,6 +13,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Shell;
     using OutcoldSolutions.GoogleMusic.Views;
+    using OutcoldSolutions.GoogleMusic.Views.Popups;
 
     public class PlayerViewPresenter : ViewPresenterBase<IPlayerView>
     {
@@ -138,6 +139,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     }
                 });
 
+            this.NavigateToFullScreenView = new DelegateCommand(() =>
+            {
+                this.MainFrame.ShowPopup<IFullScreenPlayerPopupView>(PopupRegion.Full);
+            });
+
             this.ShowApplicationSettingsCommand = new DelegateCommand(async () =>
             {
                 await this.Dispatcher.RunAsync(applicationSettingViewsService.Show);
@@ -189,6 +195,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         public DelegateCommand SkipAheadCommand { get; set; }
         
         public DelegateCommand NavigateToQueueView { get; set; }
+
+        public DelegateCommand NavigateToFullScreenView { get; set; }
 
         public DelegateCommand ShuffleCommand { get; set; }
 

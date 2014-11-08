@@ -17,13 +17,14 @@ namespace OutcoldSolutions.GoogleMusic.Views
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Controls.Primitives;
-    using Windows.UI.Xaml.Data;
     using Windows.UI.Xaml.Input;
     using Windows.UI.Xaml.Media.Animation;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Diagnostics;
+    using OutcoldSolutions.GoogleMusic.EventAggregator;
     using OutcoldSolutions.GoogleMusic.InversionOfControl;
+    using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Presenters;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Shell;
@@ -97,11 +98,16 @@ namespace OutcoldSolutions.GoogleMusic.Views
                                     };
 
                                     this.contextButtonsItemsControl.ItemsSource = itemsSource;
+
+                                    this.container.Resolve<IEventAggregator>().Publish(new SizeChangeEvent()
+                                    {
+                                        IsLarge = this.applicationSize.IsLarge,
+                                        IsMedium = this.applicationSize.IsMedium,
+                                        IsSmall = this.applicationSize.IsSmall
+                                    });
                                 }
 
                             }).AsTask());
-
-                        
                     }
 
                     this.latestSize = args.NewSize;

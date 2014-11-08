@@ -185,6 +185,9 @@
     <Compile Include="Views\Popups\DonatePopupView.xaml.cs">
       <DependentUpon>DonatePopupView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Popups\FullScreenPlayerPopupView.xaml.cs">
+      <DependentUpon>FullScreenPlayerPopupView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Popups\ReadMorePopup.xaml.cs">
       <DependentUpon>ReadMorePopup.xaml</DependentUpon>
     </Compile>
@@ -330,6 +333,7 @@
     <Content Include="Assets\WideLogo.scale-180.png" />
     <Content Include="Assets\WideLogo.scale-80.png" />
     <Content Include="BugSense\BugSense - SDK License Agreement.txt" />
+    <Content Include="Resources\logo.fullscreen.png" />
     <Content Include="Resources\outcoldplayer.splashscreen.png" />
     <Content Include="Resources\in-app-purchase.xml">
       <SubType>Designer</SubType>
@@ -390,6 +394,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Popups\DonatePopupView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Popups\FullScreenPlayerPopupView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

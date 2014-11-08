@@ -44,7 +44,7 @@
                                     Grid.Column="0"
                                     Grid.RowSpan="2"
                                     Canvas.ZIndex="1"
-                                    Command="{Binding Path=NavigateToQueueView, Mode=OneTime}"
+                                    Command="{Binding Path=NavigateToFullScreenView, Mode=OneTime}"
                                     Visibility="{Binding Path=BindingModel.CurrentSong, Mode=OneWay, Converter={StaticResource NullToInvisibilityConverter}}">
                                 <Button.Template>
                                     <ControlTemplate>

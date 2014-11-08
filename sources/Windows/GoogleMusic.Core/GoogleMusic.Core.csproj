@@ -202,6 +202,7 @@
     <Compile Include="Models\ReloadSongsEvent.cs" />
     <Compile Include="Models\SearchResult.cs" />
     <Compile Include="Models\SelectedItems.cs" />
+    <Compile Include="Models\SizeChangeEvent.cs" />
     <Compile Include="Models\SongExtensions.cs" />
     <Compile Include="Models\SongsUpdatedEvent.cs" />
     <Compile Include="CommandIcon.cs" />
@@ -256,6 +257,7 @@
     <Compile Include="Presenters\Popups\AuthentificationPopupViewPresenter.cs" />
     <Compile Include="Presenters\Popups\CacheMovePopupViewPresenter.cs" />
     <Compile Include="Presenters\Popups\DonatePopupViewPresenter.cs" />
+    <Compile Include="Presenters\Popups\FullScreenPlayerPopupViewPresenter.cs" />
     <Compile Include="Presenters\Popups\LastfmAuthentificationPresenter.cs" />
     <Compile Include="Presenters\Popups\PlaylistEditPopupViewPresenter.cs" />
     <Compile Include="Presenters\Popups\ProgressLoadingCloseEventArgs.cs" />

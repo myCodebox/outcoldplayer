@@ -186,6 +186,11 @@ namespace OutcoldSolutions.GoogleMusic
                        .InjectionRule<BindingModelBase, CacheMovePopupViewPresenter>()
                        .As<CacheMovePopupView>();
             registration.Register<CacheMovePopupViewPresenter>();
+
+            registration.Register<IFullScreenPlayerPopupView>()
+                       .InjectionRule<BindingModelBase, FullScreenPlayerPopupViewPresenter>()
+                       .As<FullScreenPlayerPopupView>();
+            registration.Register<FullScreenPlayerPopupViewPresenter>();
         }
 
         public static void RegisterViews(IRegistrationContext registration)

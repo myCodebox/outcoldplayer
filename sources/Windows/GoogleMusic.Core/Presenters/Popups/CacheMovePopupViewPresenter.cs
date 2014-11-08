@@ -6,7 +6,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
 {
     using System;
     using System.Collections.Generic;
-    using System.Threading.Tasks;
     using Windows.Storage;
     using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Services;

@@ -25,6 +25,13 @@ namespace OutcoldSolutions.GoogleMusic.Converters
         private readonly Lazy<ILogger> logger = new Lazy<ILogger>(() => ApplicationBase.Container.Resolve<ILogManager>().CreateLogger("AlbumArtUrlToImageConverter"));
         private readonly Lazy<IAlbumArtCacheService> cacheService = new Lazy<IAlbumArtCacheService>(() => ApplicationBase.Container.Resolve<IAlbumArtCacheService>());
 
+        public AlbumArtUrlToImageConverter()
+        {
+            this.PlaceHolderOnEmpty = true;
+        }
+
+        public bool PlaceHolderOnEmpty { get; set; }
+
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             try
@@ -56,8 +63,8 @@ namespace OutcoldSolutions.GoogleMusic.Converters
                         size = uint.Parse(parameter.ToString());
                     }
                 }
-                
-                if (uri == null)
+
+                if (uri == null && this.PlaceHolderOnEmpty)
                 {
                     if (parameter != null)
                     {
@@ -89,29 +96,32 @@ namespace OutcoldSolutions.GoogleMusic.Converters
         {
             try
             {
-                string path = await this.cacheService.Value.GetCachedImageAsync(uri, size);
-
                 StorageFile file = null;
-
-                if (!string.IsNullOrEmpty(path))
+                
+                if (uri != null)
                 {
-                    try
-                    {
-                        file = await ApplicationData.Current.LocalFolder.GetFileAsync(path);
-                    }
-                    catch (FileNotFoundException e)
-                    {
-                        this.logger.Value.Debug(e, "File was removed.");
-                        this.logger.Value.LogTask(this.cacheService.Value.DeleteBrokenLinkAsync(uri, size));
-                    }
-                }
+                    string path = await this.cacheService.Value.GetCachedImageAsync(uri, size);
 
-                if (file == null)
-                {
-                    file =
-                        await
-                            StorageFile.GetFileFromApplicationUriAsync(
-                                new Uri(string.Format(CultureInfo.InvariantCulture, UnknownAlbumArtFormat, size)));
+                    if (!string.IsNullOrEmpty(path))
+                    {
+                        try
+                        {
+                            file = await ApplicationData.Current.LocalFolder.GetFileAsync(path);
+                        }
+                        catch (FileNotFoundException e)
+                        {
+                            this.logger.Value.Debug(e, "File was removed.");
+                            this.logger.Value.LogTask(this.cacheService.Value.DeleteBrokenLinkAsync(uri, size));
+                        }
+                    }
+
+                    if (file == null && this.PlaceHolderOnEmpty)
+                    {
+                        file =
+                            await
+                                StorageFile.GetFileFromApplicationUriAsync(
+                                    new Uri(string.Format(CultureInfo.InvariantCulture, UnknownAlbumArtFormat, size)));
+                    }
                 }
 
                 if (file != null)

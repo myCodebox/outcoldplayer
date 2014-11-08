@@ -20,6 +20,7 @@
     <converters:DoubleToTimeConverter x:Key="DoubleToTimeConverter"/>
     <converters:TimeSpanToTimeConverter x:Key="TimeSpanToTimeConverter" />
     <converters:AlbumArtUrlToImageConverter x:Key="AlbumArtUrlToImageConverter" />
+    <converters:AlbumArtUrlToImageConverter PlaceHolderOnEmpty="False" x:Key="AlbumArtUrlToImageNoPlaceHolderConverter" />
     <converters:SizeToStringConverter x:Key="SizeToStringConverter" />
     <converters:SongToArtistConverter x:Key="SongToArtistConverter" />
     <converters:PlaylistDurationConverter x:Key="PlaylistDurationConverter" />

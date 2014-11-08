@@ -51,4 +51,8 @@ namespace OutcoldSolutions.GoogleMusic.Views.Popups
     public interface ICacheMovePopupView : IPopupView
     {
     }
+
+    public interface IFullScreenPlayerPopupView : IPopupView
+    {
+    }
 }
