@@ -293,7 +293,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 return results;
             }, cancellationToken);
 
-            var taskLoadSituation = this.stateService.IsOnline() ? this.allAccessService.GetSituationsAsync(cancellationToken) : Task.Run(() => (SituationsGroup)null, cancellationToken);
+            var taskLoadSituation = this.stateService.IsOnline() && this.settingsService.GetIsAllAccessAvailable() ? this.allAccessService.GetSituationsAsync(cancellationToken) : Task.Run(() => (SituationsGroup)null, cancellationToken);
 
             await Task.WhenAll(taskLoadLocal, taskLoadSituation);
 

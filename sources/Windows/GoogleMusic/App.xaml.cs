@@ -78,11 +78,14 @@ namespace OutcoldSolutions.GoogleMusic
                         (PlaylistType) Enum.Parse(typeof (PlaylistType), args.Arguments.Substring(0, indexOf));
                     string playlistId = args.Arguments.Substring(indexOf + 1);
                     IPlaylist playlist = await ApplicationBase.Container.Resolve<IPlaylistsService>().GetAsync(playlistType, playlistId);
-                    await ApplicationBase.Container.Resolve<IDispatcher>().RunAsync(() =>
+                    if (playlist != null)
                     {
-                        ApplicationBase.Container.Resolve<INavigationService>()
-                            .NavigateToPlaylist(new PlaylistNavigationRequest(playlist) {ForceToPlay = true});
-                    });
+                        await ApplicationBase.Container.Resolve<IDispatcher>().RunAsync(() =>
+                        {
+                            ApplicationBase.Container.Resolve<INavigationService>()
+                                .NavigateToPlaylist(new PlaylistNavigationRequest(playlist) {ForceToPlay = true});
+                        });
+                    }
                 });
             }
         }

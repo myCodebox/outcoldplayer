@@ -105,7 +105,7 @@ namespace OutcoldSolutions.GoogleMusic
                 throw new ArgumentNullException("this");
             }
 
-            return @this.GetValue<bool>(IsThumbsRatingKey, defaultValue: false);
+            return @this.GetRoamingValue<bool>(IsThumbsRatingKey, defaultValue: false);
         }
 
         public static void SetIsThumbsRating(this ISettingsService @this, bool value)
@@ -115,7 +115,7 @@ namespace OutcoldSolutions.GoogleMusic
                 throw new ArgumentNullException("this");
             }
 
-            @this.SetValue(IsThumbsRatingKey, value);
+            @this.SetRoamingValue(IsThumbsRatingKey, value);
         }
     }
 }
