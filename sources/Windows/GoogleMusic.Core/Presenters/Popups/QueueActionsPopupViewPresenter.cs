@@ -32,6 +32,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
             this.ShuffleAllCommand = new DelegateCommand(this.ShuffleAll);
             this.PlayCommand = new DelegateCommand(this.Play);
             this.AddCommand = new DelegateCommand(this.Add);
+            this.PlayNextCommand = new DelegateCommand(this.PlayNext);
         }
 
         public DelegateCommand PlayCommand { get; private set; }
@@ -39,6 +40,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
         public DelegateCommand ShuffleAllCommand { get; private set; }
 
         public DelegateCommand AddCommand { get; private set; }
+
+        public DelegateCommand PlayNextCommand { get; private set; }
 
         private async void Play()
         {
@@ -65,6 +68,15 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
 
             var songs = await this.GetAllSongsAsync();
             await this.playQueueService.AddRangeAsync(songs);
+        }
+
+        private async void PlayNext()
+        {
+            this.analyticsService.SendEvent("QueuePopup", "Execute", "PlayNext");
+            this.View.Close(new QueueActionsCompletedEventArgs());
+
+            var songs = await this.GetAllSongsAsync();
+            await this.playQueueService.AddRangeAsync(songs, true);
         }
 
         private async Task PlaySelectedItemsAsync()

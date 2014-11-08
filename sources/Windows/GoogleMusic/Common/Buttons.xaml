@@ -1138,6 +1138,12 @@
         <Setter Property="Content" Value="&#xE109;"/>
     </Style>
 
+    <Style x:Key="PlayNextPopupMenuButton" TargetType="ButtonBase" BasedOn="{StaticResource PopupMenuButtonStyle}">
+        <Setter Property="AutomationProperties.AutomationId" Value="AddAppBarButton"/>
+        <Setter Property="AutomationProperties.Name" Value="Play Next"/>
+        <Setter Property="Content" Value="&#xE1ED;"/>
+    </Style>
+
     <Style x:Key="VolumeAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource NoBorderAppBarButtonStyle}">
         <Setter Property="AutomationProperties.AutomationId" Value="VolumeAppBarButton"/>
         <Setter Property="AutomationProperties.Name" Value="Volume"/>

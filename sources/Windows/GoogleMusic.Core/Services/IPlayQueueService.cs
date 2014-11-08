@@ -58,9 +58,9 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         bool CanSwitchToPrevious();
 
-        Task AddRangeAsync(IEnumerable<Song> songs);
+        Task AddRangeAsync(IEnumerable<Song> songs, bool playNext = false);
 
-        Task AddRangeAsync(IPlaylist playlist, IEnumerable<Song> songs);
+        Task AddRangeAsync(IPlaylist playlist, IEnumerable<Song> songs, bool playNext = false);
 
         Task RemoveAsync(IEnumerable<int> index);
 

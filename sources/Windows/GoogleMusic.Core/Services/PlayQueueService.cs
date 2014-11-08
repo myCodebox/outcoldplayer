@@ -355,13 +355,12 @@ namespace OutcoldSolutions.GoogleMusic.Services
             }
         }
 
-        public Task AddRangeAsync(IEnumerable<Song> songs)
+        public Task AddRangeAsync(IEnumerable<Song> songs, bool playNext)
         {
-            
-            return this.AddRangeAsync(null, songs);
+            return this.AddRangeAsync(null, songs, playNext);
         }
 
-        public async Task AddRangeAsync(IPlaylist playlist, IEnumerable<Song> songs)
+        public async Task AddRangeAsync(IPlaylist playlist, IEnumerable<Song> songs, bool playNext)
         {
             if (songs == null)
             {
@@ -377,7 +376,15 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 var addedSongs = songs.ToList();
 
                 var range = Enumerable.Range(this.songsQueue.Count, addedSongs.Count);
-                this.songsQueue.AddRange(addedSongs);
+
+                if (playNext && this.queueOrder.Count > 0)
+                {
+                    this.songsQueue.InsertRange(this.queueOrder[this.currentQueueIndex + 1], addedSongs);
+                }
+                else
+                {
+                    this.songsQueue.AddRange(addedSongs);
+                }
 
                 if (this.IsShuffled)
                 {
@@ -677,7 +684,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                                             this.radioStationsService.GetRadioSongsAsync(
                                                 this.CurrentPlaylist.Id,
                                                 this.songsQueue);
-                                    await this.AddRangeAsync(this.CurrentPlaylist, newRadioSongs);
+                                    await this.AddRangeAsync(this.CurrentPlaylist, newRadioSongs, false);
                                     this.eventAggregator.Publish(
                                         PlaylistsChangeEvent.New(PlaylistType.Radio)
                                             .AddUpdatedPlaylists(this.CurrentPlaylist));
