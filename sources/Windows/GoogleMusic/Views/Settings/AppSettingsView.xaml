@@ -34,6 +34,16 @@
                 This setting allows to prevent this when outcoldplayer application is in foreground (on screen).
             </TextBlock>
 
+            <ToggleSwitch Margin="0, 20, 0, 0" 
+                          IsOn="{Binding Path=IsMusicLibraryForCache, Mode=TwoWay}" >Use Music Library folder for Cache.</ToggleSwitch>
+
+            <TextBlock Style="{StaticResource SmallTextStyle}"  Margin="0, 5, 0, 0">
+                By default outcoldplayer stores cache files in hidden application folder on the same drive where Windows is located.
+                If your Music Library folde is located on separate drive (remote device for example) you may consider moving outcoldplayer 
+                cache to the Music Library folder. New hidden folder will be created with name .outcoldplayer.cache for that. 
+                Don't manually change anything for this folder, it can break player.
+            </TextBlock>
+            
             <!--<TextBlock Style="{StaticResource SubtitleTextStyle}" Margin="0, 20, 0, 0">Bitrate (kbps): </TextBlock>
             <ComboBox ItemsSource="{Binding Path=Bitrates, Mode=OneTime}" SelectedValue="{Binding Path=SelectedBitrate, Mode=TwoWay}" Margin="0, 10, 0, 0" />
 

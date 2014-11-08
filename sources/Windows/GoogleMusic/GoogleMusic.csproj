@@ -179,6 +179,9 @@
     <Compile Include="Views\PlaylistsListViewContainerControl.xaml.cs">
       <DependentUpon>PlaylistsListViewContainerControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Popups\CacheMovePopupView.xaml.cs">
+      <DependentUpon>CacheMovePopupView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Popups\DonatePopupView.xaml.cs">
       <DependentUpon>DonatePopupView.xaml</DependentUpon>
     </Compile>
@@ -379,6 +382,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\PlaylistsListViewContainerControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Popups\CacheMovePopupView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

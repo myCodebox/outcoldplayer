@@ -254,6 +254,7 @@
     <Compile Include="Presenters\PlaylistsPageViewPresenterBase.cs" />
     <Compile Include="Presenters\Popups\AddToPlaylistPopupViewPresenter.cs" />
     <Compile Include="Presenters\Popups\AuthentificationPopupViewPresenter.cs" />
+    <Compile Include="Presenters\Popups\CacheMovePopupViewPresenter.cs" />
     <Compile Include="Presenters\Popups\DonatePopupViewPresenter.cs" />
     <Compile Include="Presenters\Popups\LastfmAuthentificationPresenter.cs" />
     <Compile Include="Presenters\Popups\PlaylistEditPopupViewPresenter.cs" />

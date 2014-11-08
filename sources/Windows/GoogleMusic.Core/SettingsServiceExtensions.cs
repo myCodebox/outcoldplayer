@@ -9,8 +9,9 @@ namespace OutcoldSolutions.GoogleMusic
 
     public static class SettingsServiceExtensions
     {
-        private const string LibraryFreshnessDateKey = "LibraryFreshnessDate";
-        private const string StreamBitrateKey = "StreamBitrate";
+        public const string LibraryFreshnessDateKey = "LibraryFreshnessDate";
+        public const string StreamBitrateKey = "StreamBitrate";
+        public const string IsMusicLibraryForCacheKey = "IsMusicLibraryForCache";
 
         private const uint DefaultStreamBitrate = 320U;
 
@@ -74,6 +75,26 @@ namespace OutcoldSolutions.GoogleMusic
             }
 
             @this.SetValue(StreamBitrateKey, value);
+        }
+
+        public static bool GetIsMusicLibraryForCache(this ISettingsService @this)
+        {
+            if (@this == null)
+            {
+                throw new ArgumentNullException("this");
+            }
+
+            return @this.GetValue<bool>(IsMusicLibraryForCacheKey, defaultValue: false);
+        }
+
+        public static void SetIsMusicLibraryForCache(this ISettingsService @this, bool value)
+        {
+            if (@this == null)
+            {
+                throw new ArgumentNullException("this");
+            }
+
+            @this.SetValue(IsMusicLibraryForCacheKey, value);
         }
     }
 }

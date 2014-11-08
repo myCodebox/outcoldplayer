@@ -47,4 +47,8 @@ namespace OutcoldSolutions.GoogleMusic.Views.Popups
     public interface ITutorialPopupView : IPopupView
     {
     }
+
+    public interface ICacheMovePopupView : IPopupView
+    {
+    }
 }
