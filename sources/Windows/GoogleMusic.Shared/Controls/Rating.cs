@@ -115,8 +115,10 @@ namespace OutcoldSolutions.GoogleMusic.Controls
             for (int i = 0; i < this.stars.Length; i++)
             {
                 int value = i + 1;
-                this.stars[i] = (Button)this.GetTemplateChild("Star" + value);
-                this.stars[i].Click += (sender, args) =>
+                this.stars[i] = this.GetTemplateChild("Star" + value) as Button;
+                if (this.stars[i] != null)
+                {
+                    this.stars[i].Click += (sender, args) =>
                     {
                         if (StateService.Value.IsOnline())
                         {
@@ -136,13 +138,15 @@ namespace OutcoldSolutions.GoogleMusic.Controls
                         }
                     };
 
-                this.stars[i].PointerEntered += (sender, args) =>
-                {
-                    if (StateService.Value.IsOnline())
+                    this.stars[i].PointerEntered += (sender, args) =>
                     {
-                        VisualStateManager.GoToState(this, string.Format(CultureInfo.InvariantCulture, "Start{0}Hover", value), false);
-                    }
-                };
+                        if (StateService.Value.IsOnline())
+                        {
+                            VisualStateManager.GoToState(this,
+                                string.Format(CultureInfo.InvariantCulture, "Start{0}Hover", value), false);
+                        }
+                    };
+                }
                 this.PointerExited += (sender, args) => VisualStateManager.GoToState(this, "NoHover", false);
             }
 
@@ -160,11 +164,32 @@ namespace OutcoldSolutions.GoogleMusic.Controls
 
         private void UpdateStars(int newValue)
         {
-            for (int i = 0; i < this.stars.Length; i++)
+            if (this.stars[1] == null && this.stars[0] != null && this.stars[4] != null)
             {
-                if (this.stars[i] != null)
+                if (newValue >= 4)
                 {
-                    this.stars[i].Foreground = i < newValue ? this.FillBrush : this.EmptyBrush;
+                    this.stars[0].Foreground = this.EmptyBrush;
+                    this.stars[4].Foreground = this.FillBrush;
+                }
+                else if (newValue == 1)
+                {
+                    this.stars[0].Foreground = this.FillBrush;
+                    this.stars[4].Foreground = this.EmptyBrush;
+                }
+                else
+                {
+                    this.stars[0].Foreground = this.EmptyBrush;
+                    this.stars[4].Foreground = this.EmptyBrush;
+                }
+            }
+            else
+            {
+                for (int i = 0; i < this.stars.Length; i++)
+                {
+                    if (this.stars[i] != null)
+                    {
+                        this.stars[i].Foreground = i < newValue ? this.FillBrush : this.EmptyBrush;
+                    }
                 }
             }
         }

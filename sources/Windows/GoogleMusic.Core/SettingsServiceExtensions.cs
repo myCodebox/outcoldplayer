@@ -12,6 +12,7 @@ namespace OutcoldSolutions.GoogleMusic
         public const string LibraryFreshnessDateKey = "LibraryFreshnessDate";
         public const string StreamBitrateKey = "StreamBitrate";
         public const string IsMusicLibraryForCacheKey = "IsMusicLibraryForCache";
+        public const string IsThumbsRatingKey = "ThumbsRating";
 
         private const uint DefaultStreamBitrate = 320U;
 
@@ -95,6 +96,26 @@ namespace OutcoldSolutions.GoogleMusic
             }
 
             @this.SetValue(IsMusicLibraryForCacheKey, value);
+        }
+
+        public static bool GetIsThumbsRating(this ISettingsService @this)
+        {
+            if (@this == null)
+            {
+                throw new ArgumentNullException("this");
+            }
+
+            return @this.GetValue<bool>(IsThumbsRatingKey, defaultValue: false);
+        }
+
+        public static void SetIsThumbsRating(this ISettingsService @this, bool value)
+        {
+            if (@this == null)
+            {
+                throw new ArgumentNullException("this");
+            }
+
+            @this.SetValue(IsThumbsRatingKey, value);
         }
     }
 }

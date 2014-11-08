@@ -96,5 +96,19 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
                 }
             }
         }
+
+        public bool IsThumbsRating
+        {
+            get
+            {
+                return this.settingsService.GetIsThumbsRating();
+            }
+
+            set
+            {
+                this.analyticsService.SendEvent("Settings", "ChangeIsThumbsRating", value.ToString());
+                this.settingsService.SetIsThumbsRating(value);
+            }
+        }
     }
 }

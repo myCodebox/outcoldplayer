@@ -7,6 +7,7 @@ namespace OutcoldSolutions.GoogleMusic
     using System;
     using System.Diagnostics;
     using System.Globalization;
+    using System.Reactive.Linq;
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
 
@@ -349,6 +350,25 @@ namespace OutcoldSolutions.GoogleMusic
                         Container.Resolve<ISongsCachingService>().StartDownloadTask();
                         Container.Resolve<AskForReviewService>();
                     });
+
+                this.UpdateRatingControlStyle();
+
+                Container.Resolve<IEventAggregator>().GetEvent<SettingsChangeEvent>()
+                    .Where(x => string.Equals(x.Key, SettingsServiceExtensions.IsThumbsRatingKey))
+                    .Subscribe(async (x) => await Container.Resolve<IDispatcher>().RunAsync(this.UpdateRatingControlStyle));
+            }
+        }
+
+        private void UpdateRatingControlStyle()
+        {
+            this.Resources.Remove(typeof (Rating));
+            if (Container.Resolve<ISettingsService>().GetIsThumbsRating())
+            {
+                this.Resources.Add(typeof(Rating), this.Resources["ThumbsRatingStyle"]);
+            }
+            else
+            {
+                this.Resources.Add(typeof(Rating), this.Resources["5StarRatingStyle"]);
             }
         }
 
