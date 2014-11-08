@@ -21,8 +21,9 @@ namespace OutcoldSolutions.GoogleMusic
             // Start page view
             registration.Register<IHomePageView>()
                         .InjectionRule<BindingModelBase, HomePageViewPresenter>()
-                        .AsSingleton<PlaylistsPageView>();
+                        .AsSingleton<HomePageView>();
             registration.Register<HomePageViewPresenter>().AsSingleton();
+            registration.Register<HomePageViewBindingModel>();
 
             // Playlists view (albums, genres, artists)
             registration.Register<IPlaylistsPageView>()
@@ -87,6 +88,20 @@ namespace OutcoldSolutions.GoogleMusic
                         .InjectionRule<BindingModelBase, ExplorePageViewPresenter>()
                         .AsSingleton<ExplorePageView>();
             registration.Register<ExplorePageViewPresenter>().AsSingleton();
+
+            // Situations view
+            registration.Register<ISituationsPageView>()
+                       .InjectionRule<BindingModelBase, SituationsPageViewPresenter>()
+                       .AsSingleton<SituationsPageView>();
+            registration.Register<SituationsPageViewPresenter>().AsSingleton();
+            registration.Register<SituationsPageViewBindingModel>();
+
+            // Situations stations view
+            registration.Register<ISituationStationsPageView>()
+                       .InjectionRule<BindingModelBase, SituationStationsPageViewPresenter>()
+                       .AsSingleton<SituationStationsPageView>();
+            registration.Register<SituationStationsPageViewPresenter>().AsSingleton();
+            registration.Register<SituationStationsPageViewBindingModel>();
         }
 
         public static void RegisterSettingViews(IRegistrationContext registration)
@@ -166,6 +181,16 @@ namespace OutcoldSolutions.GoogleMusic
                        .InjectionRule<BindingModelBase, TutorialPopupViewPresenter>()
                        .As<TutorialPopupView>();
             registration.Register<TutorialPopupViewPresenter>();
+
+            registration.Register<ICacheMovePopupView>()
+                       .InjectionRule<BindingModelBase, CacheMovePopupViewPresenter>()
+                       .As<CacheMovePopupView>();
+            registration.Register<CacheMovePopupViewPresenter>();
+
+            registration.Register<IFullScreenPlayerPopupView>()
+                       .InjectionRule<BindingModelBase, FullScreenPlayerPopupViewPresenter>()
+                       .As<FullScreenPlayerPopupView>();
+            registration.Register<FullScreenPlayerPopupViewPresenter>();
         }
 
         public static void RegisterViews(IRegistrationContext registration)

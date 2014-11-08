@@ -25,6 +25,8 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
         Task<Radio> FindByGoogleSongId(string googleSongId);
 
         Task<Radio> FindByGoogleGenreId(string googleGenreId);
+
+        Task<Radio> FindByGoogleRadioId(string googleRadioId);
     }
 
     public class RadioStationsRepository : RepositoryBase, IRadioStationsRepository
@@ -132,6 +134,11 @@ order by x.[TitleNorm]
         public Task<Radio> FindByGoogleGenreId(string googleGenreId)
         {
             return this.Connection.Table<Radio>().Where(x => x.GoogleGenreId == googleGenreId).FirstOrDefaultAsync();
+        }
+
+        public Task<Radio> FindByGoogleRadioId(string googleRadioId)
+        {
+            return this.Connection.Table<Radio>().Where(x => x.RadioId == googleRadioId).FirstOrDefaultAsync();
         }
     }
 }

@@ -24,27 +24,44 @@
             <TextBlock Style="{StaticResource SubheaderTextStyle}" HorizontalAlignment="Center" Margin="0,-5,0,0" Text="{StaticResource ApplicationName}" />
 
             <TextBlock Grid.Row="1" Style="{StaticResource BodyTextStyle}"  Margin="0, 20, 0, 0" x:Uid="ReleaseHistory_Subtitle" >
-                Congratulations! You just installed new version of outcoldplayer (former gMusicW). You can find the list of new feature [+] and fixed bugs [b] below:
+                Congratulations! You just installed new version of outcoldplayer. You can find the list of new feature [+] and fixed bugs [b] below:
             </TextBlock>
 
             <ScrollViewer Grid.Row="2" Margin="0, 20, 0, 0">
                 <StackPanel>
                     <TextBlock Style="{StaticResource TitleTextStyle}" Margin="0, 10, 0, 0" >
-                    <Run>10/12/2014 - Version 3.0.14</Run>
+                    <Run>11/08/2014 - Version 4.0</Run>
+                    </TextBlock>
+                    <RichTextBlock Style="{StaticResource BodyRichTextStyle}">
+                        <Paragraph>[+] All Access: add support for smart playlists (Songza's playlists).</Paragraph>
+                        <Paragraph>[+] Offline: allow to store cache in Music Library Folder (in application settings).</Paragraph>
+                        <Paragraph>[+] Allow to Pin albums/artists/radio/playlists to start page for faster access to them.</Paragraph>
+                        <Paragraph>[+] Full Screen Player Mode (click on album art to activate).</Paragraph>
+                        <Paragraph>[+] Player: Add "Repeat One" mode for repeating one song.</Paragraph>
+                        <Paragraph>[+] Thumbs-up/thumbs-down rating as an option (change in application settings).</Paragraph>
+                        <Paragraph>[+] Allow to add songs as "Play Next" in queue.</Paragraph>
+                        <Paragraph>[+] Skip back button now goes to the beginning of current song if played more than 3 seconds of current song.</Paragraph>
+                        <Paragraph>[b] Allow to use back button for navigation.</Paragraph>
+                        <Paragraph>[b] Authentication: Handles CAPTCHA requests from Google.</Paragraph>
+                        <Paragraph>[b] When returning back to "I'm feeling lucky" playlist it can regenerate radio list.</Paragraph>
+                    </RichTextBlock>
+                    
+                    <TextBlock Style="{StaticResource TitleTextStyle}" Margin="0, 10, 0, 0" >
+                    <Run>10/12/2014 - Version 3.1.12</Run>
                     </TextBlock>
                     <RichTextBlock Style="{StaticResource BodyRichTextStyle}">
                         <Paragraph>[b] Player does not show some of User Playlists in Add to playlist popup.</Paragraph>
                     </RichTextBlock>
                     
                     <TextBlock Style="{StaticResource TitleTextStyle}" Margin="0, 10, 0, 0" >
-                    <Run>10/07/2014 - Version 3.0.13</Run>
+                    <Run>10/07/2014 - Version 3.1.11</Run>
                     </TextBlock>
                     <RichTextBlock Style="{StaticResource BodyRichTextStyle}">
                         <Paragraph>[b] Application could navigate to current playing playlist instead of featured playlists.</Paragraph>
                     </RichTextBlock>
                     
                     <TextBlock Style="{StaticResource TitleTextStyle}" Margin="0, 10, 0, 0" >
-                    <Run>09/07/2014 - Version 3.0.12</Run>
+                    <Run>09/07/2014 - Version 3.1.10</Run>
                     </TextBlock>
                     <RichTextBlock Style="{StaticResource BodyRichTextStyle}">
                         <Paragraph>[b] Some users could have issues with library syncronization.</Paragraph>
@@ -52,49 +69,50 @@
                     </RichTextBlock>
                     
                     <TextBlock Style="{StaticResource TitleTextStyle}" Margin="0, 10, 0, 0" >
-                    <Run>08/14/2014 - Version 3.0.11</Run>
+                    <Run>08/16/2014 - Version 3.1.9</Run>
                     </TextBlock>
                     <RichTextBlock Style="{StaticResource BodyRichTextStyle}">
                         <Paragraph>[b] Fix more issues with loading Google Music library with song duplicates.</Paragraph>
                     </RichTextBlock>
                     
                     <TextBlock Style="{StaticResource TitleTextStyle}" Margin="0, 10, 0, 0" >
-                    <Run>08/14/2014 - Version 3.0.10</Run>
+                    <Run>08/14/2014 - Version 3.1.8</Run>
                     </TextBlock>
                     <RichTextBlock Style="{StaticResource BodyRichTextStyle}">
                         <Paragraph>[b] Fix issue with loading Google Music library with song duplicates.</Paragraph>
                     </RichTextBlock>
                     
                     <TextBlock Style="{StaticResource TitleTextStyle}" Margin="0, 10, 0, 0" >
-                    <Run>06/22/2014 - Version 3.0.9</Run>
+                    <Run>06/22/2014 - Version 3.1.7</Run>
                     </TextBlock>
                     <RichTextBlock Style="{StaticResource BodyRichTextStyle}">
                         <Paragraph>[b] After switching between local and offline modes user can lose ability to search AA library.</Paragraph>
                     </RichTextBlock>
                     
                     <TextBlock Style="{StaticResource TitleTextStyle}" Margin="0, 10, 0, 0" >
-                    <Run>05/17/2014 - Version 3.0.8</Run>
+                    <Run>05/17/2014 - Version 3.1.6</Run>
                     </TextBlock>
                     <RichTextBlock Style="{StaticResource BodyRichTextStyle}">
-                        <Paragraph>[b] User cannot navigate to Related Artist.</Paragraph>
+                        <Paragraph>[b] User cannot navigate to Related Artists.</Paragraph>
                     </RichTextBlock>
                     
                     <TextBlock Style="{StaticResource TitleTextStyle}" Margin="0, 10, 0, 0" >
-                    <Run>05/01/2014 - Version 3.0.7</Run>
+                    <Run>05/01/2014 - Version 3.1.5</Run>
                     </TextBlock>
                     <RichTextBlock Style="{StaticResource BodyRichTextStyle}">
                         <Paragraph>[b] User cannot remove songs from Queue.</Paragraph>
                     </RichTextBlock>
                     
                     <TextBlock Style="{StaticResource TitleTextStyle}" Margin="0, 10, 0, 0" >
-                    <Run>04/23/2014 - Version 3.0.6</Run>
+                    <Run>04/23/2014 - Version 3.1.4</Run>
                     </TextBlock>
                     <RichTextBlock Style="{StaticResource BodyRichTextStyle}">
+                        <Paragraph>[+] Add support for big tiles (square 310x310).</Paragraph>
                         <Paragraph>[b] Player plays only first second for some All Access songs.</Paragraph>
                     </RichTextBlock>
                     
                     <TextBlock Style="{StaticResource TitleTextStyle}" Margin="0, 10, 0, 0" >
-                    <Run>04/14/2014 - Version 3.0.5</Run>
+                    <Run>04/14/2014 - Version 3.1.3</Run>
                     </TextBlock>
                     <RichTextBlock Style="{StaticResource BodyRichTextStyle}">
                         <Paragraph>[b] Improve DLNA playback for streamed songs (Play to XBox).</Paragraph>
@@ -102,25 +120,26 @@
                     </RichTextBlock>
                     
                     <TextBlock Style="{StaticResource TitleTextStyle}" Margin="0, 10, 0, 0" >
-                    <Run>04/04/2014 - Version 3.0.4</Run>
+                    <Run>04/04/2014 - Version 3.1.2</Run>
                     </TextBlock>
                     <RichTextBlock Style="{StaticResource BodyRichTextStyle}">
                         <Paragraph>[b] Application cannot add playlists and albums on Explore and Search pages to Library or UserPlaylists.</Paragraph>
                         <Paragraph>[b] Application could download some album art images more than once.</Paragraph>
                     </RichTextBlock>
-                    
+
                     <TextBlock Style="{StaticResource TitleTextStyle}" Margin="0, 10, 0, 0" >
-                    <Run>04/02/2014 - Version 3.0.3</Run>
+                    <Run>04/02/2014 - Version 3.1.1</Run>
                     </TextBlock>
                     <RichTextBlock Style="{StaticResource BodyRichTextStyle}">
                         <Paragraph>[b] Application does not show songs for featured playlists.</Paragraph>
                     </RichTextBlock>
                     
                     <TextBlock Style="{StaticResource TitleTextStyle}" Margin="0, 10, 0, 0" >
-                    <Run>04/01/2014 - Version 3.0.2</Run>
+                    <Run>04/01/2014 - Version 3.1</Run>
                     </TextBlock>
                     <RichTextBlock Style="{StaticResource BodyRichTextStyle}">
                         <Paragraph>[+] New logo.</Paragraph>
+                        <Paragraph>[+] Special build for Windows 8.1 (snapped view with various sizes).</Paragraph>
                         <Paragraph>[b] Search page does not put focus on search bar when user navigates to this page.</Paragraph>
                         <Paragraph>[b] For some albums player showed wrong title.</Paragraph>
                     </RichTextBlock>

@@ -4,16 +4,19 @@
 namespace OutcoldSolutions.GoogleMusic
 {
     using System;
-
+    using System.Collections.Generic;
     using OutcoldSolutions.GoogleMusic.Services;
 
     public static class SettingsServiceExtensions
     {
-        private const string LibraryFreshnessDateKey = "LibraryFreshnessDate";
-        private const string AutomaticCacheKey = "AutomaticCache";
-        private const string MaximumCacheSizeKey = "MaximumCacheSize";
+        public const string LibraryFreshnessDateKey = "LibraryFreshnessDate";
+        public const string StreamBitrateKey = "StreamBitrate";
+        public const string IsMusicLibraryForCacheKey = "IsMusicLibraryForCache";
+        public const string IsThumbsRatingKey = "ThumbsRating";
 
-        private const int MaximumOfflineSongsCount = 30;
+        private const uint DefaultStreamBitrate = 320U;
+
+        private static readonly IList<uint> Bitrates = new[] { 128U, 192U, 256U, DefaultStreamBitrate }; 
 
         public static DateTime? GetLibraryFreshnessDate(this ISettingsService @this)
         {
@@ -45,49 +48,74 @@ namespace OutcoldSolutions.GoogleMusic
             @this.RemoveValue(LibraryFreshnessDateKey);
         }
 
-        public static bool GetAutomaticCache(this ISettingsService @this)
+        public static IList<uint> GetStreamBitrates(this ISettingsService @this)
         {
-            if (@this == null)
-            {
-                throw new ArgumentNullException("this");
-            }
-
-            return @this.GetValue<bool>(AutomaticCacheKey, defaultValue: false);
+            return Bitrates;
         }
 
-        public static void SetAutomaticCache(this ISettingsService @this, bool value)
+        public static uint GetStreamBitrate(this ISettingsService @this)
         {
             if (@this == null)
             {
                 throw new ArgumentNullException("this");
             }
 
-            @this.SetValue(AutomaticCacheKey, value);
+            uint val = @this.GetValue<uint>(StreamBitrateKey, defaultValue: DefaultStreamBitrate);
+            if (!Bitrates.Contains(val))
+            {
+                return DefaultStreamBitrate;
+            }
+            return val;
         }
 
-        public static uint GetMaximumCacheSize(this ISettingsService @this)
+        public static void SetStreamBitrate(this ISettingsService @this, uint value)
         {
             if (@this == null)
             {
                 throw new ArgumentNullException("this");
             }
 
-            if (InAppPurchases.HasFeature(GoogleMusicFeatures.Offline))
-            {
-                return @this.GetValue<uint>(MaximumCacheSizeKey, defaultValue: MaximumOfflineSongsCount);
-            }
-
-            return MaximumOfflineSongsCount;
+            @this.SetValue(StreamBitrateKey, value);
         }
 
-        public static void SetMaximumCacheSize(this ISettingsService @this, uint value)
+        public static bool GetIsMusicLibraryForCache(this ISettingsService @this)
         {
             if (@this == null)
             {
                 throw new ArgumentNullException("this");
             }
 
-            @this.SetValue(MaximumCacheSizeKey, value);
+            return @this.GetValue<bool>(IsMusicLibraryForCacheKey, defaultValue: false);
+        }
+
+        public static void SetIsMusicLibraryForCache(this ISettingsService @this, bool value)
+        {
+            if (@this == null)
+            {
+                throw new ArgumentNullException("this");
+            }
+
+            @this.SetValue(IsMusicLibraryForCacheKey, value);
+        }
+
+        public static bool GetIsThumbsRating(this ISettingsService @this)
+        {
+            if (@this == null)
+            {
+                throw new ArgumentNullException("this");
+            }
+
+            return @this.GetRoamingValue<bool>(IsThumbsRatingKey, defaultValue: false);
+        }
+
+        public static void SetIsThumbsRating(this ISettingsService @this, bool value)
+        {
+            if (@this == null)
+            {
+                throw new ArgumentNullException("this");
+            }
+
+            @this.SetRoamingValue(IsThumbsRatingKey, value);
         }
     }
 }

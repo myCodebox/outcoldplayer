@@ -395,6 +395,136 @@
         </StackPanel>
     </DataTemplate>
 
+    <DataTemplate x:Key="SituationDataTemplate">
+        <StackPanel Width="160" Background="{StaticResource ListViewItemPlaceholderBackgroundThemeBrush}">
+            <Canvas Width="160" Height="160">
+                <Border Width="160" Height="160" Background="Gray">
+                    <Image Width="160" Height="160" Source="{Binding Path=Playlist.ArtUrl, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=160, Mode=OneWay}" Stretch="None"  />
+                </Border>
+            </Canvas>
+
+            <StackPanel Margin="10,5,5,5">
+                <TextBlock Text="{Binding Path=Playlist.Title, Mode=OneWay}" 
+                            Style="{StaticResource BodyTextStyle}" 
+                            TextWrapping="Wrap" 
+                            TextTrimming="WordEllipsis"
+                            Height="40"
+                            Margin="0, 0, 0, 10"/>
+            </StackPanel>
+        </StackPanel>
+    </DataTemplate>
+
+
+    <DataTemplate x:Key="SmallSituationDataTemplate">
+        <StackPanel Width="220" Height="80" Orientation="Horizontal" Background="{StaticResource ListViewItemPlaceholderBackgroundThemeBrush}">
+            <Canvas Width="80" Height="80">
+                <Border Width="80" Height="80" Background="Gray">
+                    <Image Width="80" Height="80" Source="{Binding Path=Playlist.ArtUrl, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=160, Mode=OneWay}" Stretch="Uniform"  />
+                </Border>
+            </Canvas>
+
+            <StackPanel Margin="10,5,5,5" Width="125">
+                <TextBlock Text="{Binding Path=Playlist.Title, Mode=OneWay}" 
+                            Style="{StaticResource PlaylistSmallBodyTextStyle}" 
+                            TextWrapping="Wrap" 
+                            TextTrimming="WordEllipsis"
+                            Height="40"
+                            Margin="0, 0, 0, 10"/>
+            </StackPanel>
+        </StackPanel>
+    </DataTemplate>
+
+    <DataTemplate x:Key="SituationStationsDataTemplate">
+        <StackPanel Width="160" Background="{StaticResource ListViewItemPlaceholderBackgroundThemeBrush}">
+            <Canvas Width="160" Height="160">
+                <Border Width="160" Height="160" Background="Gray">
+                    <Image Width="160" Height="160" Source="{Binding Path=Playlist.ArtUrl, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=160, Mode=OneWay}" Stretch="None"  />
+                </Border>
+            </Canvas>
+
+            <StackPanel Margin="10,5,5,5">
+                <TextBlock Text="{Binding Path=Playlist.Title, Mode=OneWay}" 
+                            Style="{StaticResource BodyTextStyle}" 
+                            TextWrapping="Wrap" 
+                            TextTrimming="WordEllipsis"
+                            Height="40"
+                            Margin="0, 0, 0, 10"/>
+            </StackPanel>
+        </StackPanel>
+    </DataTemplate>
+
+
+    <DataTemplate x:Key="SmallSituationStationsDataTemplate">
+        <StackPanel Width="220" Height="60" Orientation="Horizontal" Background="{StaticResource ListViewItemPlaceholderBackgroundThemeBrush}">
+            <Canvas Width="60" Height="60">
+                <Border Width="60" Height="60" Background="Gray">
+                    <Image Width="60" Height="60" Source="{Binding Path=Playlist.ArtUrl, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=160, Mode=OneWay}" Stretch="Uniform"  />
+                </Border>
+            </Canvas>
+
+            <StackPanel Margin="10,5,5,5" Width="125">
+                <TextBlock Text="{Binding Path=Playlist.Title, Mode=OneWay}" 
+                            Style="{StaticResource PlaylistSmallBodyTextStyle}" 
+                            TextWrapping="Wrap" 
+                            TextTrimming="WordEllipsis"
+                            Height="40"
+                            Margin="0, 0, 0, 10"/>
+            </StackPanel>
+        </StackPanel>
+    </DataTemplate>
+
+    <DataTemplate x:Key="SituationRadioDataTemplate">
+        <StackPanel Width="160" Background="{StaticResource ListViewItemPlaceholderBackgroundThemeBrush}">
+            <Canvas Width="160" Height="160" Background="Gray">
+                <Image Width="79" Height="79" Source="{Binding Path=ArtUris, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=0, Mode=OneWay}" Stretch="None"/>
+                <Image Canvas.Left="81" Width="79" Height="79" Source="{Binding Path=ArtUris, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=1, Mode=OneWay}" Stretch="None"/>
+                <Image Canvas.Top="81" Width="79" Height="79" Source="{Binding Path=ArtUris, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=2, Mode=OneWay}" Stretch="None"/>
+                <Image Canvas.Left="81" Canvas.Top="81" Width="79" Height="79" Source="{Binding Path=ArtUris, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=3, Mode=OneWay}" Stretch="None"/>
+            </Canvas>
+
+            <StackPanel Margin="10,5,5,5" Height="240">
+                <TextBlock Text="{Binding Path=Playlist.Title, Mode=OneTime}" 
+                            Style="{StaticResource BodyTextStyle}" 
+                            TextWrapping="Wrap" 
+                            TextTrimming="WordEllipsis"
+                            Height="40"
+                            Margin="0, 0, 0, 10"/>
+                <TextBlock Text="{Binding Path=Playlist.Description, Mode=OneTime}" 
+                            Margin="0, 0, 0, 0" 
+                            Style="{StaticResource SmallTextStyle}"  />
+            </StackPanel>
+        </StackPanel>
+    </DataTemplate>
+
+    <DataTemplate x:Key="SmallSituationRadioDataTemplate">
+        <StackPanel Width="220" MinHeight="80" Orientation="Vertical" Background="{StaticResource ListViewItemPlaceholderBackgroundThemeBrush}">
+            <StackPanel Orientation="Horizontal">
+                <Canvas Width="80" Height="80" Background="Gray" VerticalAlignment="Top">
+                    <Image Width="39" Height="39" Source="{Binding Path=ArtUris, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=0, Mode=OneWay}" Stretch="Uniform"/>
+                    <Image Canvas.Left="41" Width="39" Height="39" Source="{Binding Path=ArtUris, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=1, Mode=OneWay}" Stretch="Uniform"/>
+                    <Image Canvas.Top="41" Width="39" Height="39" Source="{Binding Path=ArtUris, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=2, Mode=OneWay}" Stretch="Uniform"/>
+                    <Image Canvas.Left="41" Canvas.Top="41" Width="39" Height="39" Source="{Binding Path=ArtUris, Converter={StaticResource AlbumArtUrlToImageConverter}, ConverterParameter=3, Mode=OneWay}" Stretch="Uniform"/>
+                </Canvas>
+
+                <TextBlock Text="{Binding Path=Playlist.Title, Mode=OneTime}" 
+                            Style="{StaticResource PlaylistSmallBodyTextStyle}" 
+                            TextWrapping="Wrap" 
+                            TextTrimming="WordEllipsis"
+                            Height="80"
+                            Width="140"
+                            Padding="10, 5, 5, 10"/>
+            </StackPanel>
+
+
+            <TextBlock Text="{Binding Path=Playlist.Description, Mode=OneTime}" 
+                       Padding="10, 10, 10, 10" 
+                       Style="{StaticResource SmallTextStyle}" 
+                       Height="160"
+                       Width="220" />
+            
+        </StackPanel>
+    </DataTemplate>
+
     <Style TargetType="ListView" x:Key="PlaylistsListView">
         <Setter Property="ScrollViewer.HorizontalScrollMode" Value="Disabled" />
         <Setter Property="ScrollViewer.VerticalScrollMode" Value="Enabled" />
@@ -411,7 +541,10 @@
                         UserPlaylistDataTemplate="{StaticResource UserPlaylistDataTemplate}"
                         RadioDataTemplate="{StaticResource RadioDataTemplate}"
                         MixedRadioDataTemplate="{StaticResource MixedRadioDataTemplate}"
-                        ArtistRadioDataTemplate="{StaticResource ArtistRadioDataTemplate}"/>
+                        ArtistRadioDataTemplate="{StaticResource ArtistRadioDataTemplate}"
+                        SituationDataTemplate="{StaticResource SituationDataTemplate}"
+                        SituationStationsDataTemplate="{StaticResource SituationStationsDataTemplate}"
+                        SituationRadioDataTemplate="{StaticResource SituationRadioDataTemplate}"/>
             </Setter.Value>
         </Setter>
         <Setter Property="ItemContainerStyle">
@@ -448,7 +581,10 @@
                         UserPlaylistDataTemplate="{StaticResource SmallUserPlaylistDataTemplate}"
                         RadioDataTemplate="{StaticResource SmallRadioDataTemplate}"
                         MixedRadioDataTemplate="{StaticResource SmallMixedRadioDataTemplate}"
-                        ArtistRadioDataTemplate="{StaticResource SmallArtistRadioDataTemplate}"/>
+                        ArtistRadioDataTemplate="{StaticResource SmallArtistRadioDataTemplate}"
+                        SituationDataTemplate="{StaticResource SmallSituationDataTemplate}"
+                        SituationStationsDataTemplate="{StaticResource SmallSituationStationsDataTemplate}"
+                        SituationRadioDataTemplate="{StaticResource SmallSituationRadioDataTemplate}" />
             </Setter.Value>
         </Setter>
         <Setter Property="ItemContainerStyle">

@@ -358,7 +358,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
                     if (userInfo != null)
                     {
                         var googleAccountWebService = this.container.Resolve<IGoogleAccountWebService>();
-                        var result = await googleAccountWebService.AuthenticateAsync(new Uri(this.GetServiceUrl()), userInfo.Email, userInfo.Password);
+                        var result = await googleAccountWebService.AuthenticateAsync(new Uri(this.GetServiceUrl()), userInfo.Email, userInfo.Password, null, null);
                         if (result.Success)
                         {
                             await BugSense.BugSenseHandler.Instance.LogEventAsync("GoogleMusicWebService:Found:re-authentification:success");

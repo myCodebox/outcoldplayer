@@ -8,24 +8,6 @@ namespace OutcoldSolutions.GoogleMusic.Diagnostics
 
     using Windows.UI.Core;
 
-    public interface IAnalyticsService
-    {
-        void SendEvent(string category, string action, string label, int? value = null);
-
-        void SendTiming(TimeSpan timeSpan, string category, string action, string label);
-    }
-
-    public class FakeAnalyticsService : IAnalyticsService
-    {
-        public void SendEvent(string category, string action, string label, int? value = null)
-        {   
-        }
-
-        public void SendTiming(TimeSpan timeSpan, string category, string action, string label)
-        {
-        }
-    }
-
     public class AnalyticsService : IAnalyticsService, ILogWriter
     {
         private readonly IDispatcher dispatcher;

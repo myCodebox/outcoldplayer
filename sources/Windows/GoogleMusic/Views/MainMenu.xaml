@@ -274,24 +274,29 @@
             <ListView ItemsSource="{Binding Path=ViewCommands}"
                       Margin="0"
                       Padding="0">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Button Style="{StaticResource MenuButtonStyle}"
+                                            Command="{Binding Path=Command, Mode=OneTime}"
+                                            ToolTipService.ToolTip="{Binding Path=Title, Mode=OneTime}">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding Path=IconName, Mode=OneTime}"
+                                                       Style="{StaticResource MenuSubitemIconStyle}"/>
+                                <TextBlock Text="{Binding Path=Title, Mode=OneTime}"
+                                                       Style="{StaticResource MenuSubitemTextStyle}"
+                                                       Visibility="{Binding Path=IsLarge, Source={StaticResource ApplicationSize}, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                            </StackPanel>
+                        </Button>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
                         <Setter Property="Margin" Value="0"/>
                         <Setter Property="Padding" Value="0"/>
                         <Setter Property="Template">
                             <Setter.Value>
-                                <ControlTemplate>
-                                    <Button Style="{StaticResource MenuButtonStyle}"
-                                            Command="{Binding Path=Command, Mode=OneTime}"
-                                            ToolTipService.ToolTip="{Binding Path=Title, Mode=OneTime}">
-                                        <StackPanel Orientation="Horizontal">
-                                            <TextBlock Text="{Binding Path=IconName, Mode=OneTime}"
-                                                       Style="{StaticResource MenuSubitemIconStyle}"/>
-                                            <TextBlock Text="{Binding Path=Title, Mode=OneTime}"
-                                                       Style="{StaticResource MenuSubitemTextStyle}"
-                                                       Visibility="{Binding Path=IsLarge, Source={StaticResource ApplicationSize}, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-                                        </StackPanel>
-                                    </Button>
+                                <ControlTemplate TargetType="ListViewItem">
+                                    <ContentPresenter />
                                 </ControlTemplate>
                             </Setter.Value>
                         </Setter>

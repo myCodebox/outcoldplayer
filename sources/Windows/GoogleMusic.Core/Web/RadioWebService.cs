@@ -32,6 +32,8 @@ namespace OutcoldSolutions.GoogleMusic.Web
         Task<GoogleMusicMutateResponse> CreateStationAsync(Album album);
 
         Task<GoogleMusicMutateResponse> CreateStationAsync(AllAccessGenre genre);
+
+        Task<GoogleMusicMutateResponse> CreateStationAsync(SituationRadio radio);
     }
 
     public class RadioWebService : IRadioWebService
@@ -272,6 +274,43 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 recentTimestamp = ((long)DateTime.UtcNow.ToUnixFileTime() * 1000L).ToString("G", CultureInfo.InvariantCulture),
                 seed = new { seedType = 5, genreId = genre.Id },
                 tracks = new object[0]
+            };
+
+            var mutation = new RequestCreateMutation()
+            {
+                Create = createMutation,
+                IncludeFeed = true,
+                NumEntries = 25,
+                Params =
+                    new
+                    {
+                        contentFilter = this.settingsService.GetBlockExplicitSongsInRadio() ? 2 : 1
+                    }
+            };
+
+            return await this.googleMusicApisService.PostAsync<GoogleMusicMutateResponse>(
+                EditStation,
+                new { mutations = new[] { mutation } });
+        }
+
+        public async Task<GoogleMusicMutateResponse> CreateStationAsync(SituationRadio radio)
+        {
+            dynamic createMutation = new
+            {
+                clientId = Guid.NewGuid().ToString().ToLowerInvariant(),
+                deleted = false,
+                imageType = 1, // TODO: ?
+                lastModifiedTimestamp = -1,
+                name = radio.Title,
+                recentTimestamp = ((long)DateTime.UtcNow.ToUnixFileTime() * 1000L).ToString("G", CultureInfo.InvariantCulture),
+                seed = new { seedType = 9, curatedStationId = radio.CuratedStationId },
+                tracks = new object[0],
+                imageUrls = radio.ArtUrls.Select(x => new
+                {
+                    url = x.ToString(),
+                    height = 0,
+                    width = 0
+                }).ToArray()
             };
 
             var mutation = new RequestCreateMutation()

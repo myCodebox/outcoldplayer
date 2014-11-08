@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -13,8 +13,12 @@
     <AssemblyName>OutcoldSolutions.GoogleMusic.Core</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <FileAlignment>512</FileAlignment>
-    <ProjectTypeGuids>{BC8A1FFA-BEE3-4634-8014-F334798102B3};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <AllowedReferenceRelatedFileExtensions>.pdb;.pri</AllowedReferenceRelatedFileExtensions>
+    <MinimumVisualStudioVersion>12.0</MinimumVisualStudioVersion>
+    <TargetFrameworkProfile>Profile32</TargetFrameworkProfile>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <NuGetPackageImportStamp>0bb62ab1</NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -102,11 +106,58 @@
   <ItemGroup>
     <Compile Include="ApplicationBase.cs" />
     <Compile Include="ApplicationException.cs" />
+    <Compile Include="ApplicationLogManager.cs" />
+    <Compile Include="ApplicationStateChangeHandler.cs" />
+    <Compile Include="BindingModels\ArtistPageViewBindingModel.cs" />
+    <Compile Include="BindingModels\AuthentificationPageViewBindingModel.cs" />
     <Compile Include="BindingModels\BindingModelBase.cs" />
     <Compile Include="BindingModels\DisposableBindingModelBase.cs" />
+    <Compile Include="BindingModels\HomePageViewBindingModel.cs" />
+    <Compile Include="BindingModels\PlayerBindingModel.cs" />
+    <Compile Include="BindingModels\PlaylistBindingModel.cs" />
+    <Compile Include="BindingModels\PlaylistPageViewBindingModel.cs" />
+    <Compile Include="BindingModels\PlaylistsPageViewBindingModel.cs" />
+    <Compile Include="BindingModels\Popups\LastfmAuthentificationBindingModel.cs" />
+    <Compile Include="BindingModels\ProgressLoadingPageViewBindingModel.cs" />
+    <Compile Include="BindingModels\SearchPageViewBindingModel.cs" />
+    <Compile Include="BindingModels\Settings\AccountViewBindingModel.cs" />
+    <Compile Include="BindingModels\Settings\CachedSongBindingModel.cs" />
+    <Compile Include="BindingModels\Settings\OfflineCacheViewBindingModel.cs" />
+    <Compile Include="BindingModels\SituationsPageViewBindingModel.cs" />
+    <Compile Include="BindingModels\SituationStationsPageViewBindingModel.cs" />
+    <Compile Include="CommandMetadata.cs" />
+    <Compile Include="Controls\ItemsControlExtensions.cs" />
+    <Compile Include="Controls\RatingEventArgs.cs" />
+    <Compile Include="Controls\VisualTreeHelperEx.cs" />
+    <Compile Include="Controls\WrapPanel.cs" />
+    <Compile Include="Converters\AlbumArtUrlToImageConverter.cs" />
+    <Compile Include="Converters\AlbumDetailsConverter.cs" />
+    <Compile Include="Converters\ArtistAlbumsCountConverter.cs" />
+    <Compile Include="Converters\BooleanToColumnWidthConverter.cs" />
+    <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
+    <Compile Include="Converters\DoubleToTimeConverter.cs" />
+    <Compile Include="Converters\InvertBooleanConverter.cs" />
+    <Compile Include="Converters\NotEmptyToVisibilityConverter.cs" />
+    <Compile Include="Converters\PlaylistDurationConverter.cs" />
+    <Compile Include="Converters\PlaylistSongsCountConverter.cs" />
+    <Compile Include="Converters\RepeatToStyleConverter.cs" />
+    <Compile Include="Converters\SizeToStringConverter.cs" />
+    <Compile Include="Converters\SongToArtistConverter.cs" />
+    <Compile Include="Converters\StringFormatConverter.cs" />
+    <Compile Include="Converters\StringToResourceConverter.cs" />
+    <Compile Include="Converters\StyleSelectorConverter.cs" />
+    <Compile Include="Converters\TimeSpanToTimeConverter.cs" />
+    <Compile Include="Converters\ValueToBooleanConverter.cs" />
+    <Compile Include="Converters\ValueToVisibilityConverter.cs" />
+    <Compile Include="Converters\VisibilityConverterBase.cs" />
     <Compile Include="DateTimeExtensions.cs" />
+    <Compile Include="DelegateCommand.cs" />
+    <Compile Include="Diagnostics\BugSenseLogWriter.cs" />
+    <Compile Include="Diagnostics\DebugConsole.cs" />
     <Compile Include="Diagnostics\DebugLogWriter.cs" />
+    <Compile Include="Diagnostics\FakeAnalyticsService.cs" />
     <Compile Include="Diagnostics\FileLogWriter.cs" />
+    <Compile Include="Diagnostics\IAnalyticsService.cs" />
     <Compile Include="Diagnostics\IDebugConsole.cs" />
     <Compile Include="Diagnostics\ILogger.cs" />
     <Compile Include="Diagnostics\ILogManager.cs" />
@@ -123,6 +174,7 @@
     <Compile Include="GoogleMusicSettingsServiceExtensions.cs" />
     <Compile Include="IApplicationResources.cs" />
     <Compile Include="IDispatcher.cs" />
+    <Compile Include="INavigationService.cs" />
     <Compile Include="INotificationService.cs" />
     <Compile Include="InversionOfControlResources.Designer.cs">
       <DependentUpon>InversionOfControlResources.resx</DependentUpon>
@@ -139,13 +191,19 @@
     <Compile Include="InversionOfControl\RegistrationContext.cs" />
     <Compile Include="Models\AlbumArtUrlExtensions.cs" />
     <Compile Include="Models\AllAccessGenre.cs" />
+    <Compile Include="Models\ApplicationInitializedEvent.cs" />
     <Compile Include="Models\ArtistInfo.cs" />
     <Compile Include="Models\CachedAlbumArt.cs" />
     <Compile Include="Models\CachedSong.cs" />
     <Compile Include="Models\IMixedPlaylist.cs" />
     <Compile Include="Models\PlaylistsChangeEvent.cs" />
+    <Compile Include="Models\PlaylistTypeEx.cs" />
+    <Compile Include="Models\QueueChangeEvent.cs" />
     <Compile Include="Models\Radio.cs" />
+    <Compile Include="Models\ReloadSongsEvent.cs" />
     <Compile Include="Models\SearchResult.cs" />
+    <Compile Include="Models\SelectedItems.cs" />
+    <Compile Include="Models\SizeChangeEvent.cs" />
     <Compile Include="Models\SongExtensions.cs" />
     <Compile Include="Models\SongsUpdatedEvent.cs" />
     <Compile Include="CommandIcon.cs" />
@@ -159,6 +217,7 @@
     <Compile Include="Models\Genre.cs" />
     <Compile Include="Models\IPlaylist.cs" />
     <Compile Include="Models\SystemPlaylistTypeExtensions.cs" />
+    <Compile Include="Models\TimeSpanEx.cs" />
     <Compile Include="Models\UserPlaylist.cs" />
     <Compile Include="Models\UserPlaylistEntry.cs" />
     <Compile Include="Models\Search.cs" />
@@ -168,7 +227,58 @@
     <Compile Include="Models\StreamType.cs" />
     <Compile Include="Models\UserInfo.cs" />
     <Compile Include="Models\UserSession.cs" />
+    <Compile Include="NavigatedToEventArgs.cs" />
+    <Compile Include="NavigatingFromEventArgs.cs" />
+    <Compile Include="NavigationService.cs" />
+    <Compile Include="NavigationServiceEx.cs" />
     <Compile Include="PackageVersionExtensions.cs" />
+    <Compile Include="PlaylistNavigationRequest.cs" />
+    <Compile Include="Presenters\AlbumPageViewPresenter.cs" />
+    <Compile Include="Presenters\ApplicationSettingFramePresenter.cs" />
+    <Compile Include="Presenters\ArtistPageViewPresenter.cs" />
+    <Compile Include="Presenters\CurrentPlaylistPageViewPresenter.cs" />
+    <Compile Include="Presenters\DisposablePagePresenterBase.cs" />
+    <Compile Include="Presenters\DisposableViewPresenterBase.cs" />
+    <Compile Include="Presenters\DonatePresenterBase.cs" />
+    <Compile Include="Presenters\ExplorePageViewPresenter.cs" />
+    <Compile Include="Presenters\GenrePageViewPresenter.cs" />
+    <Compile Include="Presenters\HomePageViewPresenter.cs" />
+    <Compile Include="Presenters\IPagePresenterBase.cs" />
+    <Compile Include="Presenters\LinksRegionViewPresenter.cs" />
+    <Compile Include="Presenters\MainFramePresenter.cs" />
+    <Compile Include="Presenters\MainMenuPresenter.cs" />
+    <Compile Include="Presenters\PagePresenterBase.cs" />
+    <Compile Include="Presenters\PlayerViewPresenter.cs" />
+    <Compile Include="Presenters\PlaylistPageViewPresenter.cs" />
+    <Compile Include="Presenters\PlaylistPageViewPresenterBase.cs" />
+    <Compile Include="Presenters\PlaylistsListViewPresenter.cs" />
+    <Compile Include="Presenters\PlaylistsPageViewPresenter.cs" />
+    <Compile Include="Presenters\PlaylistsPageViewPresenterBase.cs" />
+    <Compile Include="Presenters\Popups\AddToPlaylistPopupViewPresenter.cs" />
+    <Compile Include="Presenters\Popups\AuthentificationPopupViewPresenter.cs" />
+    <Compile Include="Presenters\Popups\CacheMovePopupViewPresenter.cs" />
+    <Compile Include="Presenters\Popups\DonatePopupViewPresenter.cs" />
+    <Compile Include="Presenters\Popups\FullScreenPlayerPopupViewPresenter.cs" />
+    <Compile Include="Presenters\Popups\LastfmAuthentificationPresenter.cs" />
+    <Compile Include="Presenters\Popups\PlaylistEditPopupViewPresenter.cs" />
+    <Compile Include="Presenters\Popups\ProgressLoadingCloseEventArgs.cs" />
+    <Compile Include="Presenters\Popups\ProgressLoadingPopupViewPresenter.cs" />
+    <Compile Include="Presenters\Popups\QueueActionsPopupViewPresenter.cs" />
+    <Compile Include="Presenters\Popups\RadioEditPopupViewPresenter.cs" />
+    <Compile Include="Presenters\Popups\ReadMorePopupPresenter.cs" />
+    <Compile Include="Presenters\Popups\ReleasesHistoryPopupViewPresenter.cs" />
+    <Compile Include="Presenters\Popups\TutorialPopupViewPresenter.cs" />
+    <Compile Include="Presenters\RadioPageViewPresenter.cs" />
+    <Compile Include="Presenters\SearchPageViewPresenter.cs" />
+    <Compile Include="Presenters\Settings\AccountsViewPresenter.cs" />
+    <Compile Include="Presenters\Settings\AppSettingsViewPresenter.cs" />
+    <Compile Include="Presenters\Settings\OfflineCacheViewPresenter.cs" />
+    <Compile Include="Presenters\Settings\SupportViewPresenter.cs" />
+    <Compile Include="Presenters\SituationsPageViewPresenter.cs" />
+    <Compile Include="Presenters\SituationStationsPageViewPresenter.cs" />
+    <Compile Include="Presenters\SongsListViewPresenter.cs" />
+    <Compile Include="Presenters\UserPlaylistsPageViewPresenter.cs" />
+    <Compile Include="Presenters\ViewPresenterBase.cs" />
     <Compile Include="ProgressExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PropertyNameExtractor.cs" />
@@ -182,17 +292,68 @@
     <Compile Include="Repositories\RadioStationsRepository.cs" />
     <Compile Include="Repositories\RepositoryBase.cs" />
     <Compile Include="Repositories\SystemPlaylistsRepository.cs" />
+    <Compile Include="Services\Actions\ActionGroup.cs" />
+    <Compile Include="Services\Actions\AddToLibraryAction.cs" />
+    <Compile Include="Services\Actions\AddToPlaylistAction.cs" />
+    <Compile Include="Services\Actions\DeletePlaylistAction.cs" />
+    <Compile Include="Services\Actions\DeleteRadioStationsAction.cs" />
+    <Compile Include="Services\Actions\DownloadAction.cs" />
+    <Compile Include="Services\Actions\EditPlaylistAction.cs" />
+    <Compile Include="Services\Actions\PinToStartAction.cs" />
+    <Compile Include="Services\Actions\QueueAction.cs" />
+    <Compile Include="Services\Actions\RemoveFromLibraryAction.cs" />
+    <Compile Include="Services\Actions\RemoveFromPlaylistAction.cs" />
+    <Compile Include="Services\Actions\RemoveLocalAction.cs" />
+    <Compile Include="Services\Actions\RemoveSelectedSongAction.cs" />
+    <Compile Include="Services\Actions\StartRadioAction.cs" />
     <Compile Include="Services\AlbumArtCacheService.cs" />
     <Compile Include="Services\AllAccessService.cs" />
     <Compile Include="Services\AllAccessServiceBase.cs" />
     <Compile Include="Services\ApplicationStateService.cs" />
+    <Compile Include="Services\GoogleAccountService.cs" />
     <Compile Include="Services\IAlbumArtCacheService.cs" />
     <Compile Include="Services\InAppPurchases.cs" />
+    <Compile Include="Services\IPlayQueueService.cs" />
     <Compile Include="Services\IRatingCacheService.cs" />
+    <Compile Include="Shell\NotificationService.cs" />
     <Compile Include="Services\PlaylistsService.cs" />
+    <Compile Include="Services\PlayQueueService.cs" />
+    <Compile Include="Services\QueueState.cs" />
     <Compile Include="Services\RadioStationsService.cs" />
+    <Compile Include="Services\SelectedObjectsService.cs" />
+    <Compile Include="Services\SelectSongEvent.cs" />
+    <Compile Include="Services\SettingsService.cs" />
     <Compile Include="Services\SongsCachingService.cs" />
+    <Compile Include="Services\StateChangedEventArgs.cs" />
+    <Compile Include="Shell\ApplicationSettingLayoutType.cs" />
+    <Compile Include="Shell\ApplicationSize.cs" />
+    <Compile Include="Shell\AskForReviewService.cs" />
+    <Compile Include="Shell\IApplicationSettingViewsService.cs" />
+    <Compile Include="Shell\IMediaElementContainer.cs" />
+    <Compile Include="Shell\MediaControlIntegration.cs" />
+    <Compile Include="Shell\MediaElementContainer.cs" />
+    <Compile Include="Shell\MediaEndedEventArgs.cs" />
+    <Compile Include="Shell\MediaEndedReason.cs" />
+    <Compile Include="Shell\PlayProgressEventArgs.cs" />
     <Compile Include="TaskExtensions.cs" />
+    <Compile Include="Views\DisposablePageViewBase.cs" />
+    <Compile Include="Views\DisposablePopupViewBase.cs" />
+    <Compile Include="Views\IApplicationSettingsContent.cs" />
+    <Compile Include="Views\IMainFrame.cs" />
+    <Compile Include="Views\IMainFrameRegionProvider.cs" />
+    <Compile Include="Views\IPageView.cs" />
+    <Compile Include="Views\IPopupView.cs" />
+    <Compile Include="Views\IView.cs" />
+    <Compile Include="Views\IViewInterfaces.cs" />
+    <Compile Include="Views\MainFrameRegion.cs" />
+    <Compile Include="Views\PageViewBase.cs" />
+    <Compile Include="Views\PopupRegion.cs" />
+    <Compile Include="Views\Popups\AddToPlaylistCompletedEventArgs.cs" />
+    <Compile Include="Views\Popups\DonateCloseEventArgs.cs" />
+    <Compile Include="Views\Popups\IPopupViewInterfaces.cs" />
+    <Compile Include="Views\Popups\QueueActionsCompletedEventArgs.cs" />
+    <Compile Include="Views\PopupViewBase.cs" />
+    <Compile Include="Views\ViewBase.cs" />
     <Compile Include="Web\AllAccessWebService.cs" />
     <Compile Include="Web\ConfigWebService.cs" />
     <Compile Include="Web\GoogleMusicApisService.cs" />
@@ -207,6 +368,7 @@
     <Compile Include="Web\Models\GoogleMusicPlaylistBatchResponse.cs" />
     <Compile Include="Web\Models\GoogleMusicPlaylistEntriesBatchResponse.cs" />
     <Compile Include="Web\Models\GoogleMusicSharedPlaylistEntriesResponse.cs" />
+    <Compile Include="Web\Models\GoogleMusicSituation.cs" />
     <Compile Include="Web\Models\GoogleMusicSongMutateResponse.cs" />
     <Compile Include="Web\Models\GoogleMusicStationFeed.cs" />
     <Compile Include="Web\Models\GoogleMusicTabs.cs" />
@@ -279,9 +441,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\BugSense.W8.3.6.6.0\lib\netcore45\BugSense-W8.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Newtonsoft.Json.6.0.5\lib\netcore45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\packages\Newtonsoft.Json.6.0.6\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="OutcoldSolutions.SQLite, Version=1.2.40415.32922, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -312,12 +473,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <SDKReference Include="Microsoft.VCLibs, version=11.0">
-      <Name>Microsoft Visual C++ Runtime Package</Name>
-    </SDKReference>
-    <SDKReference Include="SQLite.WinRT, Version=3.8.6">
-      <Name>SQLite for Windows Runtime %28SQLite.WinRT, Version=3.8.6%29</Name>
-    </SDKReference>
+    <Content Include="BugSense\BugSense - SDK License Agreement.txt" />
   </ItemGroup>
   <ItemGroup>
     <PRIResource Include="InversionOfControlResources.resx">
@@ -326,10 +482,11 @@
     </PRIResource>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="BugSense\BugSense - SDK License Agreement.txt" />
+    <TargetPlatform Include="Windows, Version=8.1" />
+    <TargetPlatform Include="WindowsPhoneApp, Version=8.1" />
   </ItemGroup>
-  <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '11.0' ">
-    <VisualStudioVersion>11.0</VisualStudioVersion>
+  <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '12.0' ">
+    <VisualStudioVersion>12.0</VisualStudioVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug %28x86%29|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
@@ -431,11 +588,63 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
-  <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
-  <Import Project="..\..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets" Condition="Exists('..\..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" />
-  <Target Name="EnsureBclBuildImported" BeforeTargets="BeforeBuild" Condition="'$(BclBuildImported)' == ''">
-    <Error Condition="!Exists('..\..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" Text="This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=317567." HelpKeyword="BCLBUILD2001" />
-    <Error Condition="Exists('..\..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" Text="The build restored NuGet packages. Build the project again to include these packages in the build. For more information, see http://go.microsoft.com/fwlink/?LinkID=317568." HelpKeyword="BCLBUILD2002" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug %28ARM%29|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug %28ARM%29\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;NETFX_CORE</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug %28ARM%29|ARM'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\ARM\Debug %28ARM%29\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;NETFX_CORE</DefineConstants>
+    <NoWarn>;2008</NoWarn>
+    <NoStdLib>true</NoStdLib>
+    <DebugType>full</DebugType>
+    <PlatformTarget>ARM</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug %28ARM%29|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug %28ARM%29\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;NETFX_CORE</DefineConstants>
+    <NoWarn>;2008</NoWarn>
+    <NoStdLib>true</NoStdLib>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug %28ARM%29|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug %28ARM%29\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;NETFX_CORE</DefineConstants>
+    <NoWarn>;2008</NoWarn>
+    <NoStdLib>true</NoStdLib>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
+  <Import Project="..\..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets'))" />
   </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

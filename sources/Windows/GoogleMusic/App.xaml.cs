@@ -7,6 +7,7 @@ namespace OutcoldSolutions.GoogleMusic
     using System;
     using System.Diagnostics;
     using System.Globalization;
+    using System.Reactive.Linq;
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
 
@@ -61,11 +62,32 @@ namespace OutcoldSolutions.GoogleMusic
         /// <param name="args">
         /// The args.
         /// </param>
-        protected override void OnLaunched(LaunchActivatedEventArgs args)
+        protected override async void OnLaunched(LaunchActivatedEventArgs args)
         {
             this.InitializeInternal();
 
             base.OnLaunched(args);
+
+            // Navigate and play from tiles
+            if (!string.IsNullOrEmpty(args.Arguments))
+            {
+                await Task.Run(async () =>
+                {
+                    int indexOf = args.Arguments.IndexOf('_');
+                    PlaylistType playlistType =
+                        (PlaylistType) Enum.Parse(typeof (PlaylistType), args.Arguments.Substring(0, indexOf));
+                    string playlistId = args.Arguments.Substring(indexOf + 1);
+                    IPlaylist playlist = await ApplicationBase.Container.Resolve<IPlaylistsService>().GetAsync(playlistType, playlistId);
+                    if (playlist != null)
+                    {
+                        await ApplicationBase.Container.Resolve<IDispatcher>().RunAsync(() =>
+                        {
+                            ApplicationBase.Container.Resolve<INavigationService>()
+                                .NavigateToPlaylist(new PlaylistNavigationRequest(playlist) {ForceToPlay = true});
+                        });
+        }
+                });
+            }
         }
 
         private void InitializeInternal()
@@ -214,7 +236,8 @@ namespace OutcoldSolutions.GoogleMusic
                 registration.Register<INotificationService>()
                             .AsSingleton<NotificationService>();
 
-                registration.Register<MediaControlIntegration>();
+                registration.Register<IMediaControlIntegration>()
+                            .AsSingleton<MediaControlIntegration>();
 
                 registration.Register<IGoogleMusicSynchronizationService>()
                             .AsSingleton<GoogleMusicSynchronizationService>();
@@ -238,6 +261,7 @@ namespace OutcoldSolutions.GoogleMusic
                 registration.Register<DeleteRadioStationsAction>().AsSingleton();
                 registration.Register<AddToLibraryAction>().AsSingleton();
                 registration.Register<RemoveFromLibraryAction>().AsSingleton();
+                registration.Register<PinToStartAction>().AsSingleton();
 
                 registration.Register<ApplicationSize>().AsSingleton(this.Resources["ApplicationSize"]);
 
@@ -276,7 +300,8 @@ namespace OutcoldSolutions.GoogleMusic
                                                   Container.Resolve<RemoveFromLibraryAction>(),
                                                   Container.Resolve<RemoveSelectedSongAction>(),
                                                   Container.Resolve<DeletePlaylistAction>(),
-                                                  Container.Resolve<DeleteRadioStationsAction>()
+                                                  Container.Resolve<DeleteRadioStationsAction>(),
+                                                  Container.Resolve<PinToStartAction>()
                                               });
 
             if (Container.Resolve<ILastfmWebService>().RestoreSession())
@@ -312,12 +337,41 @@ namespace OutcoldSolutions.GoogleMusic
 
                 ApplicationSettingViews.Initialize(Container.Resolve<IApplicationSettingViewsService>(), Container.Resolve<IApplicationResources>());
 
-                Container.Resolve<MediaControlIntegration>();
+                Container.Resolve<IMediaControlIntegration>();
                 Container.Resolve<ScreenLocker>();
 
                 Container.Resolve<INavigationService>().NavigateTo<IHomePageView>();
 
                 this.ReportOsVersionAsync();
+
+                Container.Resolve<IEventAggregator>().GetEvent<ApplicationInitializedEvent>().Subscribe(
+                    async (e) =>
+                    {
+                        var dispatcher = Container.Resolve<IDispatcher>();
+                        await dispatcher.RunAsync(() => Container.Resolve<IMainFrameRegionProvider>().SetContent(MainFrameRegion.Links, ApplicationBase.Container.Resolve<LinksRegionView>()));
+
+                        Container.Resolve<ISongsCachingService>().StartDownloadTask();
+                        Container.Resolve<AskForReviewService>();
+                    });
+
+                this.UpdateRatingControlStyle();
+
+                Container.Resolve<IEventAggregator>().GetEvent<SettingsChangeEvent>()
+                    .Where(x => string.Equals(x.Key, SettingsServiceExtensions.IsThumbsRatingKey))
+                    .Subscribe(async (x) => await Container.Resolve<IDispatcher>().RunAsync(this.UpdateRatingControlStyle));
+            }
+        }
+
+        private void UpdateRatingControlStyle()
+        {
+            this.Resources.Remove(typeof(Rating));
+            if (Container.Resolve<ISettingsService>().GetIsThumbsRating())
+            {
+                this.Resources.Add(typeof(Rating), this.Resources["ThumbsRatingStyle"]);
+            }
+            else
+            {
+                this.Resources.Add(typeof(Rating), this.Resources["5StarRatingStyle"]);
             }
         }
 
@@ -325,11 +379,11 @@ namespace OutcoldSolutions.GoogleMusic
         {
             try
             {
-                Container.Resolve<IAnalyticsService>().SendEvent("Application", "Build", "Windows 8");
+                Container.Resolve<IAnalyticsService>().SendEvent("Application", "Build", "Windows 8.1");
             }
             catch (Exception e)
             {
-                this.Logger.Debug(e,"Cannot report os version");
+                this.Logger.Debug(e, "Cannot report os version");
             }
         }
 
@@ -360,15 +414,5 @@ namespace OutcoldSolutions.GoogleMusic
                 deferral.Complete();
             });        
         }
-
-#if DEBUG
-        private class DebugConsole : IDebugConsole
-        {
-            public void WriteLine(string message)
-            {
-                Debug.WriteLine(message);
-            }
-        }
-#endif
     }
 }

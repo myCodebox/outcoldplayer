@@ -29,6 +29,10 @@ namespace OutcoldSolutions.GoogleMusic.Web.Models
 
         public string Auth { get; private set; }
 
+        public string CaptchaToken { get; set; }
+
+        public string CaptchaUrl { get; set; }
+
         public static GoogleAuthResponse SuccessResponse(CookieCollection cookieCollection, string auth)
         {
             if (cookieCollection == null)

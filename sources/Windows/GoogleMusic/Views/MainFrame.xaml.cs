@@ -13,76 +13,23 @@ namespace OutcoldSolutions.GoogleMusic.Views
     using System.Threading.Tasks;
 
     using Windows.Foundation;
+    using Windows.System;
     using Windows.UI.Core;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Controls.Primitives;
-    using Windows.UI.Xaml.Data;
     using Windows.UI.Xaml.Input;
     using Windows.UI.Xaml.Media.Animation;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Diagnostics;
+    using OutcoldSolutions.GoogleMusic.EventAggregator;
     using OutcoldSolutions.GoogleMusic.InversionOfControl;
+    using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Presenters;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Shell;
-
-    /// <summary>
-    /// The MainFrame interface.
-    /// </summary>
-    public interface IMainFrame : IView
-    {
-        string Title { get; set; }
-        string Subtitle { get; set; }
-
-        bool IsCurretView(IPageView view);
-
-        /// <summary>
-        /// Set view commands.
-        /// </summary>
-        /// <param name="commands">
-        /// The commands.
-        /// </param>
-        void SetViewCommands(IEnumerable<CommandMetadata> commands);
-
-        /// <summary>
-        /// The clear view commands.
-        /// </summary>
-        void ClearViewCommands();
-
-        /// <summary>
-        /// Set context commands.
-        /// </summary>
-        /// <param name="commands">
-        /// The commands.
-        /// </param>
-        void SetContextCommands(IEnumerable<CommandMetadata> commands);
-
-        /// <summary>
-        /// Clear context commands.
-        /// </summary>
-        void ClearContextCommands();
-
-        /// <summary>
-        /// Show popup.
-        /// </summary>
-        /// <param name="popupRegion">
-        /// The popup region.
-        /// </param>
-        /// <param name="injections">
-        /// The injections arguments.
-        /// </param>
-        /// <typeparam name="TPopup">
-        /// The type of popup view.
-        /// </typeparam>
-        /// <returns>
-        /// The <see cref="TPopup"/>.
-        /// </returns>
-        TPopup ShowPopup<TPopup>(PopupRegion popupRegion, params object[] injections) where TPopup : IPopupView;
-
-        void ShowMessage(string text);
-    }
+    using OutcoldSolutions.GoogleMusic.Views.Popups;
 
     /// <summary>
     /// The main frame.
@@ -153,17 +100,44 @@ namespace OutcoldSolutions.GoogleMusic.Views
                                     };
 
                                     this.contextButtonsItemsControl.ItemsSource = itemsSource;
+
+                                    this.container.Resolve<IEventAggregator>().Publish(new SizeChangeEvent()
+                                    {
+                                        IsLarge = this.applicationSize.IsLarge,
+                                        IsMedium = this.applicationSize.IsMedium,
+                                        IsSmall = this.applicationSize.IsSmall
+                                    });
                                 }
 
                             }).AsTask());
-
-                        
                     }
 
                     this.latestSize = args.NewSize;
                 };
 
             this.Loaded += this.OnLoaded;
+
+            this.KeyDown += (sender, args) =>
+            {
+                if (!args.Handled)
+                {
+                    if (args.Key == VirtualKey.GoBack || args.Key == VirtualKey.Back || args.Key == VirtualKey.Escape)
+                    {
+                        if (this.fullScreenPopup != null && this.fullScreenPopup.Child is FullScreenPlayerPopupView)
+                        {
+                            ((FullScreenPlayerPopupView)this.fullScreenPopup.Child).Close();
+                        }
+                        else
+                        {
+                            var navigationService = this.container.Resolve<INavigationService>();
+                            if (navigationService.CanGoBack())
+                            {
+                                this.container.Resolve<INavigationService>().GoBack();
+                            } 
+                        }
+                    }
+                }
+            };
         }
 
         private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
@@ -285,6 +259,11 @@ namespace OutcoldSolutions.GoogleMusic.Views
                     await Task.Delay(2000);
                     await this.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => this.MessagePopupHide.Begin());
                 });
+        }
+
+        public Rect GetRectForSecondaryTileRequest()
+        {
+            return new Rect(0, this.applicationSize.Height - this.BottomAppBar.ActualHeight, this.applicationSize.Width, this.BottomAppBar.ActualHeight);
         }
 
         /// <inheritdoc />

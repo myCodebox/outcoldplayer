@@ -255,7 +255,7 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             this.RaisePropertyChanged(propertyName);
         }
 
-        private void RaisePropertyChanged(string propertyName)
+        protected void RaisePropertyChanged(string propertyName)
         {
             if (this.notifications != null)
             {
