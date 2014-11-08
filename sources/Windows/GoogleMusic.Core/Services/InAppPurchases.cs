@@ -52,7 +52,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 #if DEBUG
                 receipt = await CurrentAppSimulator.RequestProductPurchaseAsync(inAppPurchaseName).AsTask();
 #else
-                receipt = await CurrentApp.RequestProductPurchaseAsync(inAppPurchaseName, true).AsTask();
+                receipt = await CurrentApp.RequestProductPurchaseAsync(inAppPurchaseName).AsTask();
 #endif
                 if (receipt.Status == ProductPurchaseStatus.Succeeded || receipt.Status == ProductPurchaseStatus.AlreadyPurchased)
                 {

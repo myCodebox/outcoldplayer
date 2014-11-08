@@ -152,6 +152,7 @@
     <Compile Include="Converters\VisibilityConverterBase.cs" />
     <Compile Include="DateTimeExtensions.cs" />
     <Compile Include="DelegateCommand.cs" />
+    <Compile Include="Diagnostics\BugSenseLogWriter.cs" />
     <Compile Include="Diagnostics\DebugConsole.cs" />
     <Compile Include="Diagnostics\DebugLogWriter.cs" />
     <Compile Include="Diagnostics\FakeAnalyticsService.cs" />
