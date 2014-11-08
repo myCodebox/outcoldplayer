@@ -117,7 +117,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     playlist = currentPlaylist;
                     songs = this.playQueueService.GetQueue().ToList();
                 }
-                else if (isRadio)
+                else if (isRadio || request.ForceToPlay)
                 {
                     await this.playQueueService.StopAsync();
                     startPlaying = true;

@@ -61,11 +61,29 @@ namespace OutcoldSolutions.GoogleMusic
         /// <param name="args">
         /// The args.
         /// </param>
-        protected override void OnLaunched(LaunchActivatedEventArgs args)
+        protected override async void OnLaunched(LaunchActivatedEventArgs args)
         {
             this.InitializeInternal();
 
             base.OnLaunched(args);
+
+            // Navigate and play from tiles
+            if (!string.IsNullOrEmpty(args.Arguments))
+            {
+                await Task.Run(async () =>
+                {
+                    int indexOf = args.Arguments.IndexOf('_');
+                    PlaylistType playlistType =
+                        (PlaylistType) Enum.Parse(typeof (PlaylistType), args.Arguments.Substring(0, indexOf));
+                    string playlistId = args.Arguments.Substring(indexOf + 1);
+                    IPlaylist playlist = await ApplicationBase.Container.Resolve<IPlaylistsService>().GetAsync(playlistType, playlistId);
+                    await ApplicationBase.Container.Resolve<IDispatcher>().RunAsync(() =>
+                    {
+                        ApplicationBase.Container.Resolve<INavigationService>()
+                            .NavigateToPlaylist(new PlaylistNavigationRequest(playlist) {ForceToPlay = true});
+                    });
+                });
+            }
         }
 
         private void InitializeInternal()
@@ -239,6 +257,7 @@ namespace OutcoldSolutions.GoogleMusic
                 registration.Register<DeleteRadioStationsAction>().AsSingleton();
                 registration.Register<AddToLibraryAction>().AsSingleton();
                 registration.Register<RemoveFromLibraryAction>().AsSingleton();
+                registration.Register<PinToStartAction>().AsSingleton();
 
                 registration.Register<ApplicationSize>().AsSingleton(this.Resources["ApplicationSize"]);
 
@@ -277,7 +296,8 @@ namespace OutcoldSolutions.GoogleMusic
                                                   Container.Resolve<RemoveFromLibraryAction>(),
                                                   Container.Resolve<RemoveSelectedSongAction>(),
                                                   Container.Resolve<DeletePlaylistAction>(),
-                                                  Container.Resolve<DeleteRadioStationsAction>()
+                                                  Container.Resolve<DeleteRadioStationsAction>(),
+                                                  Container.Resolve<PinToStartAction>()
                                               });
 
             if (Container.Resolve<ILastfmWebService>().RestoreSession())

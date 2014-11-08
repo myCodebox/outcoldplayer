@@ -87,6 +87,8 @@ namespace OutcoldSolutions.GoogleMusic
 
         public bool ForceToShowAllAccess { get; set; }
 
+        public bool ForceToPlay { get; set; }
+
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj))

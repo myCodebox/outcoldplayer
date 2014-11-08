@@ -237,6 +237,11 @@ namespace OutcoldSolutions.GoogleMusic.Views
                 });
         }
 
+        public Rect GetRectForSecondaryTileRequest()
+        {
+            return new Rect(0, this.applicationSize.Height - this.BottomAppBar.ActualHeight, this.applicationSize.Width, this.BottomAppBar.ActualHeight);
+        }
+
         /// <inheritdoc />
         public TPresenter GetPresenter<TPresenter>()
         {

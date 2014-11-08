@@ -298,6 +298,7 @@
     <Compile Include="Services\Actions\DeleteRadioStationsAction.cs" />
     <Compile Include="Services\Actions\DownloadAction.cs" />
     <Compile Include="Services\Actions\EditPlaylistAction.cs" />
+    <Compile Include="Services\Actions\PinToStartAction.cs" />
     <Compile Include="Services\Actions\QueueAction.cs" />
     <Compile Include="Services\Actions\RemoveFromLibraryAction.cs" />
     <Compile Include="Services\Actions\RemoveFromPlaylistAction.cs" />

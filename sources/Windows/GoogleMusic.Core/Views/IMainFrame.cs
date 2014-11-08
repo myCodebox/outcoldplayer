@@ -5,6 +5,7 @@
 namespace OutcoldSolutions.GoogleMusic.Views
 {
     using System.Collections.Generic;
+    using Windows.Foundation;
 
     /// <summary>
     /// The MainFrame interface.
@@ -60,5 +61,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
         TPopup ShowPopup<TPopup>(PopupRegion popupRegion, params object[] injections) where TPopup : IPopupView;
 
         void ShowMessage(string text);
+
+        Rect GetRectForSecondaryTileRequest();
     }
 }

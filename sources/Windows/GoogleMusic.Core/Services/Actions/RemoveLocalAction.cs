@@ -27,7 +27,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Actions
         {
             get
             {
-                return CommandIcon.Pin;
+                return CommandIcon.UnPin;
             }
         }
 
