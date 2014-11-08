@@ -43,6 +43,87 @@ namespace OutcoldSolutions.GoogleMusic.Services
         }
     }
 
+    public class SituationsGroup
+    {
+        public string Header { get; set; }
+
+        public IList<SituationGroup> Situations { get; set; }
+    }
+
+    public class SituationGroup : IPlaylist
+    {
+        public string Id { get; set; }
+
+        public PlaylistType PlaylistType
+        {
+            get { return PlaylistType.Situation; }
+        }
+
+        public string Title { get; set; }
+
+        public string TitleNorm { get; set; }
+
+        public string Description { get; set; }
+
+        public Uri ArtUrl { get; set; }
+
+        public Uri WideImageUrl { get; set; }
+
+        public IList<SituationStations> Situations { get; set; }
+
+        public int SongsCount { get; set; }
+
+        public int OfflineSongsCount { get; set; }
+
+        public TimeSpan Duration { get; set; }
+
+        public TimeSpan OfflineDuration { get; set; }
+
+        public DateTime Recent { get; set; }
+    }
+
+    public class SituationStations : IPlaylist
+    {
+        public string Id { get; set; }
+
+        public PlaylistType PlaylistType
+        {
+            get { return PlaylistType.SituationStations; }
+        }
+
+        public string Title { get; set; }
+
+        public string TitleNorm { get; set; }
+
+        public string Description { get; set; }
+
+        public Uri ArtUrl { get; set; }
+
+        public Uri WideImageUrl { get; set; }
+
+        public IList<SituationRadio> Stations { get; set; }
+
+        public int SongsCount { get; set; }
+
+        public int OfflineSongsCount { get; set; }
+
+        public TimeSpan Duration { get; set; }
+
+        public TimeSpan OfflineDuration { get; set; }
+
+        public DateTime Recent { get; set; }
+    }
+
+    public class SituationRadio : Radio
+    {
+        public override PlaylistType PlaylistType
+        {
+            get { return PlaylistType.SituationRadio; }
+        }
+
+        public string Description { get; set; }
+    }
+
     public interface IAllAccessService
     {
         Task<ArtistInfo> GetArtistInfoAsync(Artist artist, CancellationToken cancellationToken);
@@ -54,6 +135,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
         Task<IList<AllAccessGenre>> GetGenresAsync(AllAccessGenre parent, CancellationToken cancellationToken);
 
         Task<ExploreTab> GetExploreTabAsync(AllAccessGenre parent, CancellationToken cancellationToken);
+
+        Task<SituationsGroup> GetSituationsAsync(CancellationToken cancellationToken);
     }
 
     public class AllAccessService : AllAccessServiceBase, IAllAccessService
@@ -342,6 +425,74 @@ namespace OutcoldSolutions.GoogleMusic.Services
             }
 
             return exploreTab;
+        }
+
+        public async Task<SituationsGroup> GetSituationsAsync(CancellationToken cancellationToken)
+        {
+            GoogleMusicSituations googleMusicSituations = await this.allAccessWebService.FetchSituationsAsync(cancellationToken);
+
+            if (googleMusicSituations != null)
+            {
+                var situationsGroup = new SituationsGroup()
+                {
+                    Header = googleMusicSituations.PrimaryHeader
+                };
+
+                if (googleMusicSituations.Situations != null)
+                {
+                    situationsGroup.Situations = new List<SituationGroup>(googleMusicSituations.Situations.Length);
+                    foreach (var googleMusicSituation in googleMusicSituations.Situations)
+                    {
+                        var situationGroup = new SituationGroup()
+                        {
+                            Id = googleMusicSituation.Id,
+                            Description = googleMusicSituation.Description,
+                            Title = googleMusicSituation.Title,
+                            TitleNorm = googleMusicSituation.Title.Normalize(),
+                            ArtUrl = string.IsNullOrEmpty(googleMusicSituation.ImageUrl) ? null : new Uri(googleMusicSituation.ImageUrl),
+                            WideImageUrl = string.IsNullOrEmpty(googleMusicSituation.WideImageUrl) ? null : new Uri(googleMusicSituation.WideImageUrl)
+                        };
+
+                        if (googleMusicSituation.Situations != null)
+                        {
+                            situationGroup.Situations = new List<SituationStations>(googleMusicSituation.Situations.Length);
+                            foreach (var googleMusicSubsituation in googleMusicSituation.Situations)
+                            {
+                                var subsituation = new SituationStations()
+                                {
+                                    Id = googleMusicSubsituation.Id,
+                                    Description = googleMusicSubsituation.Description,
+                                    Title = googleMusicSubsituation.Title,
+                                    TitleNorm = googleMusicSubsituation.Title.Normalize(),
+                                    ArtUrl = string.IsNullOrEmpty(googleMusicSubsituation.ImageUrl) ? null : new Uri(googleMusicSubsituation.ImageUrl),
+                                    WideImageUrl = string.IsNullOrEmpty(googleMusicSubsituation.WideImageUrl) ? null : new Uri(googleMusicSubsituation.WideImageUrl)
+                                };
+
+                                if (googleMusicSubsituation.Stations != null)
+                                {
+                                    subsituation.Stations = new List<SituationRadio>(googleMusicSubsituation.Stations.Length);
+
+                                    foreach (var googleMusicRadio in googleMusicSubsituation.Stations)
+                                    {
+                                        var radio = new SituationRadio();
+                                        GoogleMusicRadioEx.Mapper(googleMusicRadio, radio);
+                                        radio.Description = googleMusicRadio.Description;
+                                        subsituation.Stations.Add(radio);
+                                    }
+                                }
+
+                                situationGroup.Situations.Add(subsituation);
+                            }
+                        }
+
+                        situationsGroup.Situations.Add(situationGroup);
+                    }
+                }
+
+                return situationsGroup;
+            }
+
+            return null;
         }
 
         private async Task<IList<ExploreTabGroup>> FetchTabAsync(

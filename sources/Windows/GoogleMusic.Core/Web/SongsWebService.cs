@@ -48,8 +48,8 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
         private const string SettingsGoogleKeyName = "GoogleAAKey";
 
-        private const string SongUrlFormat = "play?songid={0}&pt=e&dt=pe&targetkbps=320&start=0";
-        private const string SongUrlFromStoreFormat = "play?mjck={0}&slt={1}&sig={2}&pt=e&dt=pe&targetkbps=320&start=0";
+        private const string SongUrlFormat = "play?songid={0}&pt=e&dt=pe&targetkbps={1}&start=0";
+        private const string SongUrlFromStoreFormat = "play?mjck={0}&slt={1}&sig={2}&pt=e&dt=pe&targetkbps={3}&start=0";
 
         private const string TrackStats = "trackstats";
         private const string TrackBatch = "trackbatch";
@@ -307,11 +307,11 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
                 string hashString = new string(hash);
 
-                url = string.Format(SongUrlFromStoreFormat, song.StoreId, salt, hashString);
+                url = string.Format(SongUrlFromStoreFormat, song.StoreId, salt, hashString, this.settingsService.GetStreamBitrate());
             }
             else
             {
-                url = string.Format(SongUrlFormat, song.SongId);
+                url = string.Format(SongUrlFormat, song.SongId, this.settingsService.GetStreamBitrate());
             }
 
             return await this.googleMusicWebService.GetAsync<GoogleMusicSongUrl>(url, signUrl: false, token: token);

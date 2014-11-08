@@ -4,6 +4,7 @@
 
 namespace OutcoldSolutions.GoogleMusic.Web
 {
+    using System;
     using System.Globalization;
     using System.Net;
     using System.Threading;
@@ -25,6 +26,8 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
         // 0 = recommended, 1 = featured, 2 = new releases 
         Task<GoogleMusicTabs> FetchTabAsync(AllAccessGenre parent, int tab, CancellationToken cancellationToken);
+
+        Task<GoogleMusicSituations> FetchSituationsAsync(CancellationToken cancellationToken);
     }
 
     public class AllAccessWebService : IAllAccessWebService
@@ -34,6 +37,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
         private const string Search = "query?q={0}&max-results=20";
         private const string ExploreGenres = "explore/genres";
         private const string ExploreTabs = "explore/tabs?num-items=25&tabs=";
+        private const string Situations = "listennow/situations";
 
         private readonly IGoogleMusicApisService googleMusicApisService;
 
@@ -70,6 +74,21 @@ namespace OutcoldSolutions.GoogleMusic.Web
         public Task<GoogleMusicTabs> FetchTabAsync(AllAccessGenre parent, int tab, CancellationToken cancellationToken)
         {
             return this.googleMusicApisService.GetAsync<GoogleMusicTabs>(ExploreTabs + tab + (parent == null ? string.Empty : ("&genre=" + parent.Id)), cancellationToken, useCache: true);
+        }
+
+        public Task<GoogleMusicSituations> FetchSituationsAsync(CancellationToken cancellationToken)
+        {
+            return this.googleMusicApisService.PostAsync<GoogleMusicSituations>(
+                Situations, 
+                json: new
+                {
+                    requestSignals = new
+                    {
+                        timeZoneOffsetSecs = TimeZoneInfo.Local.BaseUtcOffset.TotalSeconds
+                    }
+                },
+                cancellationToken: cancellationToken,
+                useCache: true);
         }
     }
 }

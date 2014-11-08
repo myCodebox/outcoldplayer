@@ -325,6 +325,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
             return new Radio()
             {
+                ClientId = luckyTitle.Normalize(),
                 SongId = string.Empty,
                 Title = luckyTitle,
                 TitleNorm = luckyTitle.Normalize()

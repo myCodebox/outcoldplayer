@@ -26,8 +26,6 @@ namespace OutcoldSolutions.GoogleMusic.Web
         public GoogleAccountWebService(ILogManager logManager)
         {
             this.logger = logManager.CreateLogger("GoogleAccountWebService");
-
-            
         }
 
         protected override ILogger Logger
@@ -40,23 +38,31 @@ namespace OutcoldSolutions.GoogleMusic.Web
             get { return this.httpClient; }
         }
 
-        public async Task<GoogleAuthResponse> AuthenticateAsync(Uri serviceUri, string email, string password)
+        public async Task<GoogleAuthResponse> AuthenticateAsync(Uri serviceUri, string email, string password, string captchaToken, string captcha)
         {
             this.InitializeHttpClient();
 
             try
             {
                 // Check for details: https://developers.google.com/accounts/docs/AuthForInstalledApps
+                var requestContent = new Dictionary<string, string>
+                {
+                    {"accountType", "HOSTED_OR_GOOGLE"},
+                    {"Email", email},
+                    {"Passwd", password},
+                    {"service", "sj"}
+                };
+
+                if (!string.IsNullOrEmpty(captchaToken))
+                {
+                    requestContent["logintoken"] = captchaToken;
+                    requestContent["logincaptcha"] = captcha;
+                }
+
                 var responseMessage = await this.SendAsync(
                                                 new HttpRequestMessage(HttpMethod.Post, ClientLoginPath)
                                                 {
-                                                    Content = new FormUrlEncodedContent(new Dictionary<string, string>
-                                                                                        {
-                                                                                            { "accountType", "HOSTED_OR_GOOGLE" },
-                                                                                            { "Email", email },
-                                                                                            { "Passwd", password },
-                                                                                            { "service", "sj" }
-                                                                                        })
+                                                    Content = new FormUrlEncodedContent(requestContent)
                                                 },
                                                 HttpCompletionOption.ResponseContentRead);
                 if (!responseMessage.Content.IsPlainText())
@@ -77,7 +83,15 @@ namespace OutcoldSolutions.GoogleMusic.Web
                         Enum.TryParse(dictionary["Error"], out error);
                     }
 
-                    return GoogleAuthResponse.ErrorResponse(error);
+                    var response = GoogleAuthResponse.ErrorResponse(error);
+
+                    if (response.Error == GoogleAuthResponse.ErrorResponseCode.CaptchaRequired)
+                    {
+                        response.CaptchaToken = dictionary["CaptchaToken"];
+                        response.CaptchaUrl = "https://google.com/accounts/" + dictionary["CaptchaUrl"];
+                    }
+
+                    return response;
                 }
 
                 responseMessage = await this.SendAsync(

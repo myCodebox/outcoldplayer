@@ -14,47 +14,10 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
     using OutcoldSolutions.GoogleMusic.Diagnostics;
 
-    [Flags]
-    public enum GoogleMusicFeatures
-    {
-        None = 0,
-        AdFree = 1,
-        Offline = 2,
-        All = 0xFFFFFFF
-    }
-
     public static class InAppPurchases
     {
-        public const string UltimateInAppPurchase = "Ultimate";
-        public const string AdFreeUnlimitedInAppPurchase = "AdFreeUnlimited";
-
         private static readonly Lazy<ILogger> Logger = new Lazy<ILogger>(() => ApplicationBase.Container.Resolve<ILogManager>().CreateLogger(typeof(InAppPurchases).Name)); 
         private static readonly List<string> Purchases = new List<string>();
-
-        private static event LicenseChangedEventHandler LicenseChangedPrivate;
-
-        public static event LicenseChangedEventHandler LicenseChanged
-        {
-            add
-            {
-                LicenseChangedPrivate += value;
-#if DEBUG
-                CurrentAppSimulator.LicenseInformation.LicenseChanged += value;
-#else
-                CurrentApp.LicenseInformation.LicenseChanged += value;
-#endif
-            }
-
-            remove
-            {
-                LicenseChangedPrivate -= value;
-#if DEBUG
-                CurrentAppSimulator.LicenseInformation.LicenseChanged -= value;
-#else
-                CurrentApp.LicenseInformation.LicenseChanged -= value;
-#endif
-            }
-        }
 
 #if DEBUG
         public static async void SimulatorInAppPurchasesInitialization()
@@ -65,30 +28,6 @@ namespace OutcoldSolutions.GoogleMusic.Services
             await CurrentAppSimulator.ReloadSimulatorAsync(proxyFile);
         }
 #endif
-
-        public static GoogleMusicFeatures GetFeatures()
-        {
-            GoogleMusicFeatures features = GoogleMusicFeatures.None;
-            
-            if (IsActive(UltimateInAppPurchase))
-            {
-                features |= GoogleMusicFeatures.All;
-            }
-            else
-            {
-                if (IsActive(AdFreeUnlimitedInAppPurchase))
-                {
-                    features |= GoogleMusicFeatures.AdFree;
-                }
-            }
-
-            return features;
-        }
-
-        public static bool HasFeature(GoogleMusicFeatures features)
-        {
-            return (GetFeatures() & features) == features;
-        }
 
         public static bool IsActive(string inAppPurchaseName)
         {
@@ -105,20 +44,19 @@ namespace OutcoldSolutions.GoogleMusic.Services
 #endif
         }
 
-        public static async Task<string> RequestPurchase(string inAppPurchaseName)
+        public static async Task<PurchaseResults> RequestPurchase(string inAppPurchaseName)
         {
-            string receipt = null;
+            PurchaseResults receipt = null;
             try
             {
 #if DEBUG
-                receipt = await CurrentAppSimulator.RequestProductPurchaseAsync(inAppPurchaseName, true).AsTask();
+                receipt = await CurrentAppSimulator.RequestProductPurchaseAsync(inAppPurchaseName).AsTask();
 #else
-                receipt = await CurrentApp.RequestProductPurchaseAsync(inAppPurchaseName, true).AsTask();
+                receipt = await CurrentApp.RequestProductPurchaseAsync(inAppPurchaseName).AsTask();
 #endif
-                if (!string.IsNullOrWhiteSpace(receipt))
+                if (receipt.Status == ProductPurchaseStatus.Succeeded || receipt.Status == ProductPurchaseStatus.AlreadyPurchased)
                 {
                     Purchases.Add(inAppPurchaseName);
-                    RaiseLicenseChanged();
                 }
             }
             catch (Exception exception)
@@ -127,15 +65,6 @@ namespace OutcoldSolutions.GoogleMusic.Services
             }
 
             return receipt;
-        }
-
-        private static void RaiseLicenseChanged()
-        {
-            var handler = LicenseChangedPrivate;
-            if (handler != null)
-            {
-                handler();
-            }
         }
     }
 }

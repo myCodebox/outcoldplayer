@@ -9,6 +9,6 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
     public interface IAuthentificationService
     {
-        Task<AuthentificationService.AuthentificationResult> CheckAuthentificationAsync(UserInfo userInfo = null);
+        Task<AuthentificationService.AuthentificationResult> CheckAuthentificationAsync(UserInfo userInfo = null, string captchaToken = null, string captcha = null, bool forceCaptcha = false);
     }
 }

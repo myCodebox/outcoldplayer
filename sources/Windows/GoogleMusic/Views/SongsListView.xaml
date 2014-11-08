@@ -5,7 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:OutcoldSolutions.GoogleMusic.Controls" 
-    xmlns:interactivity="using:Windows.UI.Interactivity"
+    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:views="using:OutcoldSolutions.GoogleMusic.Views"
     xmlns:converters="using:OutcoldSolutions.GoogleMusic.Converters"
     x:Name="This"
@@ -41,7 +41,7 @@
                 <Setter.Value>
                     <DataTemplate>
 
-                        <Grid Height="33">
+                        <Grid Height="33" Background="Transparent">
                             <Grid.ColumnDefinitions >
                                 <ColumnDefinition Width="35" />
                                 <ColumnDefinition Width="{Binding Path=IsNumColumnVisible, ElementName=This, Converter={StaticResource BooleanToColumnWidthConverter}, ConverterParameter=30}" />
@@ -167,7 +167,7 @@
                 <Setter.Value>
                     <DataTemplate>
 
-                        <Grid Height="50">
+                        <Grid Height="50" Background="Transparent" Margin="0, 0, 10, 0">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="26" />
                                 <RowDefinition Height="24" />

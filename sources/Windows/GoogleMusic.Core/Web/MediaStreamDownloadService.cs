@@ -170,9 +170,9 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 var data = new byte[contentLength];
                 using (var streamResponse = await this.client.GetAsync(lastUri, token))
                 {
-                    int read;
-                    using (var audioStreamEnd = await streamResponse.Content.ReadAsStreamAsync())
-                    {
+                int read;
+                using (var audioStreamEnd = await streamResponse.Content.ReadAsStreamAsync())
+                {
                         read =
                             await
                                 audioStreamEnd.ReadAsync(
@@ -180,16 +180,16 @@ namespace OutcoldSolutions.GoogleMusic.Web
                                     (int)chunkStart,
                                     (int)(contentLength - chunkStart),
                                     token);
-                    }
+                }
 
-                    return new MemoryRandomAccessStreamMultiStreams(
-                        this.client,
-                        this.logger,
-                        urls,
-                        data,
-                        streamResponse.Content.Headers.ContentType.MediaType,
-                        read,
-                        token);
+                return new MemoryRandomAccessStreamMultiStreams(
+                    this.client,
+                    this.logger,
+                    urls,
+                    data,
+                    streamResponse.Content.Headers.ContentType.MediaType,
+                    (int)chunkStart,
+                    token);
                 }
 
             }

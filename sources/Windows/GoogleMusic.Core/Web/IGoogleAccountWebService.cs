@@ -10,6 +10,6 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
     public interface IGoogleAccountWebService
     {
-        Task<GoogleAuthResponse> AuthenticateAsync(Uri serviceUri, string email, string password);
+        Task<GoogleAuthResponse> AuthenticateAsync(Uri serviceUri, string email, string password, string captchaToken, string captcha);
     }
 }

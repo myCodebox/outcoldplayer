@@ -6,7 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:views="using:OutcoldSolutions.GoogleMusic.Views"
     mc:Ignorable="d"
-    Height="240"
+    Height="320"
     Width="Auto">
 
     <Border Background="{StaticResource AppBarBackgroundThemeBrush}">
@@ -26,7 +26,11 @@
                     Command="{Binding Path=AddCommand, Mode=OneTime}"
                     x:Uid="QueueActions_AddToQueue"
                     AutomationProperties.Name="Add to queue" />
-            
+
+            <Button Style="{StaticResource PlayNextPopupMenuButton}" 
+                    Command="{Binding Path=PlayNextCommand, Mode=OneTime}"
+                    AutomationProperties.Name="Play Next" />
+
         </StackPanel>
     </Border>
     

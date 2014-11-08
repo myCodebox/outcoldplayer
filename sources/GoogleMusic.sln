@@ -1,11 +1,14 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30110.0
+VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Windows", "Windows", "{5D40FD42-8B69-4106-BE2C-6DE0F8350594}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GoogleMusic", "Windows\GoogleMusic\GoogleMusic.csproj", "{5B564360-AB9C-4F79-A7FA-B5324F57AE3E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5E3DD0FF-8829-433B-BD53-3CEBD7D0946A} = {5E3DD0FF-8829-433B-BD53-3CEBD7D0946A}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A72150F6-1ED9-491A-B002-68F1E7A0871A}"
 	ProjectSection(SolutionItems) = preProject
@@ -17,8 +20,22 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GoogleMusic.Core", "Windows\GoogleMusic.Core\GoogleMusic.Core.csproj", "{5E3DD0FF-8829-433B-BD53-3CEBD7D0946A}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GoogleMusic", "GoogleMusic", "{DBF02180-2C49-452D-8E0A-5C25175476D0}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "GoogleMusic.Shared", "Windows\GoogleMusic.Shared\GoogleMusic.Shared.shproj", "{D1EF9521-9042-4161-9C7A-8CE286CCECBF}"
+EndProject
 Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		Windows\GoogleMusic.Shared\GoogleMusic.Shared.projitems*{d1ef9521-9042-4161-9c7a-8ce286ccecbf}*SharedItemsImports = 13
+		Windows\GoogleMusic.Shared\GoogleMusic.Shared.projitems*{5b564360-ab9c-4f79-a7fa-b5324f57ae3e}*SharedItemsImports = 4
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug (ARM)|Any CPU = Debug (ARM)|Any CPU
+		Debug (ARM)|ARM = Debug (ARM)|ARM
+		Debug (ARM)|Mixed Platforms = Debug (ARM)|Mixed Platforms
+		Debug (ARM)|Win32 = Debug (ARM)|Win32
+		Debug (ARM)|x64 = Debug (ARM)|x64
+		Debug (ARM)|x86 = Debug (ARM)|x86
 		Debug (x86)|Any CPU = Debug (x86)|Any CPU
 		Debug (x86)|ARM = Debug (x86)|ARM
 		Debug (x86)|Mixed Platforms = Debug (x86)|Mixed Platforms
@@ -45,6 +62,24 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5B564360-AB9C-4F79-A7FA-B5324F57AE3E}.Debug (ARM)|Any CPU.ActiveCfg = Debug (ARM)|Any CPU
+		{5B564360-AB9C-4F79-A7FA-B5324F57AE3E}.Debug (ARM)|Any CPU.Build.0 = Debug (ARM)|Any CPU
+		{5B564360-AB9C-4F79-A7FA-B5324F57AE3E}.Debug (ARM)|Any CPU.Deploy.0 = Debug (ARM)|Any CPU
+		{5B564360-AB9C-4F79-A7FA-B5324F57AE3E}.Debug (ARM)|ARM.ActiveCfg = Debug (ARM)|ARM
+		{5B564360-AB9C-4F79-A7FA-B5324F57AE3E}.Debug (ARM)|ARM.Build.0 = Debug (ARM)|ARM
+		{5B564360-AB9C-4F79-A7FA-B5324F57AE3E}.Debug (ARM)|ARM.Deploy.0 = Debug (ARM)|ARM
+		{5B564360-AB9C-4F79-A7FA-B5324F57AE3E}.Debug (ARM)|Mixed Platforms.ActiveCfg = Debug (ARM)|x86
+		{5B564360-AB9C-4F79-A7FA-B5324F57AE3E}.Debug (ARM)|Mixed Platforms.Build.0 = Debug (ARM)|x86
+		{5B564360-AB9C-4F79-A7FA-B5324F57AE3E}.Debug (ARM)|Mixed Platforms.Deploy.0 = Debug (ARM)|x86
+		{5B564360-AB9C-4F79-A7FA-B5324F57AE3E}.Debug (ARM)|Win32.ActiveCfg = Debug (ARM)|x86
+		{5B564360-AB9C-4F79-A7FA-B5324F57AE3E}.Debug (ARM)|Win32.Build.0 = Debug (ARM)|x86
+		{5B564360-AB9C-4F79-A7FA-B5324F57AE3E}.Debug (ARM)|Win32.Deploy.0 = Debug (ARM)|x86
+		{5B564360-AB9C-4F79-A7FA-B5324F57AE3E}.Debug (ARM)|x64.ActiveCfg = Debug (ARM)|x64
+		{5B564360-AB9C-4F79-A7FA-B5324F57AE3E}.Debug (ARM)|x64.Build.0 = Debug (ARM)|x64
+		{5B564360-AB9C-4F79-A7FA-B5324F57AE3E}.Debug (ARM)|x64.Deploy.0 = Debug (ARM)|x64
+		{5B564360-AB9C-4F79-A7FA-B5324F57AE3E}.Debug (ARM)|x86.ActiveCfg = Debug (ARM)|x86
+		{5B564360-AB9C-4F79-A7FA-B5324F57AE3E}.Debug (ARM)|x86.Build.0 = Debug (ARM)|x86
+		{5B564360-AB9C-4F79-A7FA-B5324F57AE3E}.Debug (ARM)|x86.Deploy.0 = Debug (ARM)|x86
 		{5B564360-AB9C-4F79-A7FA-B5324F57AE3E}.Debug (x86)|Any CPU.ActiveCfg = Debug (x86)|Any CPU
 		{5B564360-AB9C-4F79-A7FA-B5324F57AE3E}.Debug (x86)|Any CPU.Build.0 = Debug (x86)|Any CPU
 		{5B564360-AB9C-4F79-A7FA-B5324F57AE3E}.Debug (x86)|Any CPU.Deploy.0 = Debug (x86)|Any CPU
@@ -117,6 +152,18 @@ Global
 		{5B564360-AB9C-4F79-A7FA-B5324F57AE3E}.Release|x86.ActiveCfg = Release|x86
 		{5B564360-AB9C-4F79-A7FA-B5324F57AE3E}.Release|x86.Build.0 = Release|x86
 		{5B564360-AB9C-4F79-A7FA-B5324F57AE3E}.Release|x86.Deploy.0 = Release|x86
+		{5E3DD0FF-8829-433B-BD53-3CEBD7D0946A}.Debug (ARM)|Any CPU.ActiveCfg = Debug (ARM)|Any CPU
+		{5E3DD0FF-8829-433B-BD53-3CEBD7D0946A}.Debug (ARM)|Any CPU.Build.0 = Debug (ARM)|Any CPU
+		{5E3DD0FF-8829-433B-BD53-3CEBD7D0946A}.Debug (ARM)|ARM.ActiveCfg = Debug (ARM)|ARM
+		{5E3DD0FF-8829-433B-BD53-3CEBD7D0946A}.Debug (ARM)|ARM.Build.0 = Debug (ARM)|ARM
+		{5E3DD0FF-8829-433B-BD53-3CEBD7D0946A}.Debug (ARM)|Mixed Platforms.ActiveCfg = Debug (ARM)|x86
+		{5E3DD0FF-8829-433B-BD53-3CEBD7D0946A}.Debug (ARM)|Mixed Platforms.Build.0 = Debug (ARM)|x86
+		{5E3DD0FF-8829-433B-BD53-3CEBD7D0946A}.Debug (ARM)|Win32.ActiveCfg = Debug (ARM)|x86
+		{5E3DD0FF-8829-433B-BD53-3CEBD7D0946A}.Debug (ARM)|Win32.Build.0 = Debug (ARM)|x86
+		{5E3DD0FF-8829-433B-BD53-3CEBD7D0946A}.Debug (ARM)|x64.ActiveCfg = Debug (ARM)|x64
+		{5E3DD0FF-8829-433B-BD53-3CEBD7D0946A}.Debug (ARM)|x64.Build.0 = Debug (ARM)|x64
+		{5E3DD0FF-8829-433B-BD53-3CEBD7D0946A}.Debug (ARM)|x86.ActiveCfg = Debug (ARM)|x86
+		{5E3DD0FF-8829-433B-BD53-3CEBD7D0946A}.Debug (ARM)|x86.Build.0 = Debug (ARM)|x86
 		{5E3DD0FF-8829-433B-BD53-3CEBD7D0946A}.Debug (x86)|Any CPU.ActiveCfg = Debug (x86)|Any CPU
 		{5E3DD0FF-8829-433B-BD53-3CEBD7D0946A}.Debug (x86)|Any CPU.Build.0 = Debug (x86)|Any CPU
 		{5E3DD0FF-8829-433B-BD53-3CEBD7D0946A}.Debug (x86)|ARM.ActiveCfg = Debug (x86)|ARM
@@ -170,7 +217,9 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{5B564360-AB9C-4F79-A7FA-B5324F57AE3E} = {5D40FD42-8B69-4106-BE2C-6DE0F8350594}
+		{5B564360-AB9C-4F79-A7FA-B5324F57AE3E} = {DBF02180-2C49-452D-8E0A-5C25175476D0}
 		{5E3DD0FF-8829-433B-BD53-3CEBD7D0946A} = {5D40FD42-8B69-4106-BE2C-6DE0F8350594}
+		{DBF02180-2C49-452D-8E0A-5C25175476D0} = {5D40FD42-8B69-4106-BE2C-6DE0F8350594}
+		{D1EF9521-9042-4161-9C7A-8CE286CCECBF} = {DBF02180-2C49-452D-8E0A-5C25175476D0}
 	EndGlobalSection
 EndGlobal

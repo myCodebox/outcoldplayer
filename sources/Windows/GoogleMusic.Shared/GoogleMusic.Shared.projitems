@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>d1ef9521-9042-4161-9c7a-8ce286ccecbf</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>OutcoldSolutions.GoogleMusic</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="$(MSBuildThisFileDirectory)Assets\StoreLogo.scale-100.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\StoreLogo.scale-140.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\WideLogo.scale-100.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\WideLogo.scale-140.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Resources\in-app-purchase.xml" />
+    <Content Include="$(MSBuildThisFileDirectory)Resources\lastfm_Logo.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Resources\logo460.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Resources\outcoldsolutions.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Resources\twitter-logo.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Resources\UnknownArt-160.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Resources\UnknownArt-352.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Resources\UnknownArt-79.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Resources\uservoice-logo.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Resources\uservoice.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="$(MSBuildThisFileDirectory)Common\Converters.xaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\en\Resources.resw">
+      <SubType>Designer</SubType>
+    </PRIResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Controls\AlbumArtControl.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Controls\AppBarToggleButton.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Controls\ButtonWithHover.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Controls\ExploreTabGroupTemplateSelector.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Controls\FakeEqualizerControl.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Controls\ListViewBaseSelectedItemsBehavior.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Controls\MenuItemDataTemplateSelector.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Controls\PlaylistDataTemplateSelector.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Controls\Rating.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Controls\SortableHeaderControl.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Controls\TextChangedBindingBehavior.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Controls\ValueChangedEventArgs.cs" />
+  </ItemGroup>
+</Project>

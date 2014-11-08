@@ -33,7 +33,7 @@ namespace OutcoldSolutions.GoogleMusic.Shell
             this.settingsService = settingsService;
 
             eventAggregator.GetEvent<SettingsChangeEvent>()
-                           .Where(e => e.Key == GoogleMusicSettingsServiceExtensions.LockScreenEnabledKey)
+                           .Where(e => e.Key == GoogleMusicCoreSettingsServiceExtensions.LockScreenEnabledKey)
                            .Subscribe(e => this.UpdateDisplayRequest());
 
             this.UpdateDisplayRequest();
