@@ -37,15 +37,18 @@ namespace OutcoldSolutions.GoogleMusic.Views.Popups
 
         private void TextBoxPlaylistNameOnKeyDown(object sender, KeyRoutedEventArgs e)
         {
-            if (e.Key == VirtualKey.Enter)
+            if (!e.Handled)
             {
-                this.presenter.SaveCommand.Execute();
-                e.Handled = true;
-            }
-            else if (e.Key == VirtualKey.Escape)
-            {
-                this.presenter.CancelCommand.Execute();
-                e.Handled = true;
+                if (e.Key == VirtualKey.Enter)
+                {
+                    this.presenter.SaveCommand.Execute();
+                    e.Handled = true;
+                }
+                else if (e.Key == VirtualKey.Escape)
+                {
+                    this.presenter.CancelCommand.Execute();
+                    e.Handled = true;
+                }
             }
         }
     }

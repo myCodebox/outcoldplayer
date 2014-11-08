@@ -13,6 +13,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
     using System.Threading.Tasks;
 
     using Windows.Foundation;
+    using Windows.System;
     using Windows.UI.Core;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
@@ -28,6 +29,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
     using OutcoldSolutions.GoogleMusic.Presenters;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Shell;
+    using OutcoldSolutions.GoogleMusic.Views.Popups;
 
     /// <summary>
     /// The main frame.
@@ -114,6 +116,28 @@ namespace OutcoldSolutions.GoogleMusic.Views
                 };
 
             this.Loaded += this.OnLoaded;
+
+            this.KeyDown += (sender, args) =>
+            {
+                if (!args.Handled)
+                {
+                    if (args.Key == VirtualKey.GoBack || args.Key == VirtualKey.Back || args.Key == VirtualKey.Escape)
+                    {
+                        if (this.fullScreenPopup != null && this.fullScreenPopup.Child is FullScreenPlayerPopupView)
+                        {
+                            ((FullScreenPlayerPopupView)this.fullScreenPopup.Child).Close();
+                        }
+                        else
+                        {
+                            var navigationService = this.container.Resolve<INavigationService>();
+                            if (navigationService.CanGoBack())
+                            {
+                                this.container.Resolve<INavigationService>().GoBack();
+                            } 
+                        }
+                    }
+                }
+            };
         }
 
         private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
