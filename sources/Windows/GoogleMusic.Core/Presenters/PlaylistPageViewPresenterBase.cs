@@ -95,6 +95,13 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                             isCurrentPlaylist = true;
                         }
                     }
+                    else if (isRadio && request.Playlist != null && currentPlaylist.PlaylistType == PlaylistType.Radio)
+                    {
+                        if (string.Equals(((Radio)currentPlaylist).ClientId, ((Radio)request.Playlist).ClientId, StringComparison.OrdinalIgnoreCase))
+                        {
+                            isCurrentPlaylist = true;
+                        }
+                    }
                     else if (currentPlaylist is UserPlaylist && request.Playlist is UserPlaylist && !string.IsNullOrEmpty(((UserPlaylist)currentPlaylist).ShareToken))
                     {
                         // Shared User Playlist
