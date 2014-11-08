@@ -30,12 +30,20 @@
             <ScrollViewer Grid.Row="2" Margin="0, 20, 0, 0">
                 <StackPanel>
                     <TextBlock Style="{StaticResource TitleTextStyle}" Margin="0, 10, 0, 0" >
-                    <Run>vNext</Run>
+                    <Run>11/08/2014 - Version 4.0</Run>
                     </TextBlock>
                     <RichTextBlock Style="{StaticResource BodyRichTextStyle}">
                         <Paragraph>[+] All Access: add support for smart playlists (Songza's playlists).</Paragraph>
+                        <Paragraph>[+] Offline: allow to store cache in Music Library Folder (in application settings).</Paragraph>
+                        <Paragraph>[+] Allow to Pin albums/artists/radio/playlists to start page for faster access to them.</Paragraph>
+                        <Paragraph>[+] Full Screen Player Mode (click on album art to activate).</Paragraph>
                         <Paragraph>[+] Player: Add "Repeat One" mode for repeating one song.</Paragraph>
+                        <Paragraph>[+] Thumbs-up/thumbs-down rating as an option (change in application settings).</Paragraph>
+                        <Paragraph>[+] Allow to add songs as "Play Next" in queue.</Paragraph>
+                        <Paragraph>[+] Skip back button now goes to the beginning of current song if played more than 3 seconds of current song.</Paragraph>
+                        <Paragraph>[b] Allow to use back button for navigation.</Paragraph>
                         <Paragraph>[b] Authentication: Handles CAPTCHA requests from Google.</Paragraph>
+                        <Paragraph>[b] When returning back to "I'm feeling lucky" playlist it can regenerate radio list.</Paragraph>
                     </RichTextBlock>
                     
                     <TextBlock Style="{StaticResource TitleTextStyle}" Margin="0, 10, 0, 0" >
