@@ -63,3 +63,6 @@ WinAppPackages/
 packages/
 !packages/repositories.config
 !packages/build/
+
+#Xamarin
+GoogleMusic.userprefs
