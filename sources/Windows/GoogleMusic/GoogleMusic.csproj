@@ -543,9 +543,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Newtonsoft.Json.6.0.6\lib\netcore45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="OutcoldSolutions.SQLite, Version=1.2.40415.32922, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="OutcoldSolutions.SQLite, Version=1.2.41109.40111, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\OutcoldSolutions.SQLite.1.2.40415.2\lib\netcore45\OutcoldSolutions.SQLite.dll</HintPath>
+      <HintPath>..\..\packages\OutcoldSolutions.SQLite.1.2.41109.1\lib\netcore45\OutcoldSolutions.SQLite.dll</HintPath>
     </Reference>
     <Reference Include="System.Net.Http.Extensions, Version=2.2.28.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -569,9 +569,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\GoogleMusic.Core\GoogleMusic.Core.csproj">
+    <ProjectReference Include="..\..\GoogleMusic.Core\GoogleMusic.Core.csproj">
       <Project>{5E3DD0FF-8829-433B-BD53-3CEBD7D0946A}</Project>
       <Name>GoogleMusic.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GoogleMusic.Windows.Core\GoogleMusic.Windows.Core.csproj">
+      <Project>{a0a0eecc-e5a8-47eb-b611-74cf6ea47bca}</Project>
+      <Name>GoogleMusic.Windows.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

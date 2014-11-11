@@ -72,7 +72,7 @@ namespace OutcoldSolutions.GoogleMusic.Controls
             typeof(Rating), 
             new PropertyMetadata(null));
 
-        private static readonly Lazy<IApplicationStateService> StateService = new Lazy<IApplicationStateService>(() => ApplicationBase.Container.Resolve<IApplicationStateService>());
+        private static readonly Lazy<IApplicationStateService> StateService = new Lazy<IApplicationStateService>(() => ApplicationContext.Container.Resolve<IApplicationStateService>());
 
         private readonly Button[] stars = new Button[5];
 

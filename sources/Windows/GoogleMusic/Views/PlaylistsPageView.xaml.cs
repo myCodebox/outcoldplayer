@@ -5,6 +5,7 @@
 namespace OutcoldSolutions.GoogleMusic.Views
 {
     using Windows.UI.Xaml;
+    using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Data;
 
     using OutcoldSolutions.GoogleMusic.BindingModels;
@@ -41,7 +42,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
                         Path = new PropertyPath("BindingModel.Playlists")
                     });
 
-                this.TrackScrollViewer(listView.GetListView());
+                this.TrackScrollViewer((ListView)listView.GetListView());
             }
         }
     }

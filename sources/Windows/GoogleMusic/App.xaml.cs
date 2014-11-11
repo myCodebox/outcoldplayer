@@ -77,12 +77,12 @@ namespace OutcoldSolutions.GoogleMusic
                     PlaylistType playlistType =
                         (PlaylistType) Enum.Parse(typeof (PlaylistType), args.Arguments.Substring(0, indexOf));
                     string playlistId = args.Arguments.Substring(indexOf + 1);
-                    IPlaylist playlist = await ApplicationBase.Container.Resolve<IPlaylistsService>().GetAsync(playlistType, playlistId);
+                    IPlaylist playlist = await ApplicationContext.Container.Resolve<IPlaylistsService>().GetAsync(playlistType, playlistId);
                     if (playlist != null)
                     {
-                        await ApplicationBase.Container.Resolve<IDispatcher>().RunAsync(() =>
+                        await ApplicationContext.Container.Resolve<IDispatcher>().RunAsync(() =>
                         {
-                            ApplicationBase.Container.Resolve<INavigationService>()
+                            ApplicationContext.Container.Resolve<INavigationService>()
                                 .NavigateToPlaylist(new PlaylistNavigationRequest(playlist) {ForceToPlay = true});
                         });
         }
@@ -99,11 +99,11 @@ namespace OutcoldSolutions.GoogleMusic
             {
                 isFirstTimeActivate = true;
 
-                if (ApplicationBase.Container == null)
+                if (ApplicationContext.Container == null)
                 {
-                    ApplicationBase.Container = new DependencyResolverContainer();
+                    ApplicationContext.Container = new DependencyResolverContainer();
 
-                    using (var registration = ApplicationBase.Container.Registration())
+                    using (var registration = ApplicationContext.Container.Registration())
                     {
                         registration.Register<IEventAggregator>().AsSingleton<EventAggregator.EventAggregator>();
                         registration.Register<ILogManager>().AsSingleton<LogManager>();
@@ -123,16 +123,19 @@ namespace OutcoldSolutions.GoogleMusic
 
                         registration.Register<IApplicationSettingViewsService>()
                                     .AsSingleton<ApplicationSettingViewsService>();
+
+                        registration.Register<IDbFile>()
+                                    .AsSingleton(new ApplicationDbFile());
                     }
 
-                    this.Logger = ApplicationBase.Container.Resolve<ILogManager>().CreateLogger(this.GetType().Name);
+                    this.Logger = ApplicationContext.Container.Resolve<ILogManager>().CreateLogger(this.GetType().Name);
 
                     this.InitializeApplication();
                 }
 
-                mainFrame = (MainFrame)ApplicationBase.Container.Resolve<IMainFrame>();
-                ((IViewPresenterBase)ApplicationBase.Container.Resolve<MainFramePresenter>()).Initialize(mainFrame);
-                Container.Resolve<INavigationService>().RegisterRegionProvider(mainFrame);
+                mainFrame = (MainFrame)ApplicationContext.Container.Resolve<IMainFrame>();
+                ((IViewPresenterBase)ApplicationContext.Container.Resolve<MainFramePresenter>()).Initialize(mainFrame);
+                ApplicationContext.Container.Resolve<INavigationService>().RegisterRegionProvider(mainFrame);
                 Window.Current.Content = mainFrame;
             }
 
@@ -146,7 +149,7 @@ namespace OutcoldSolutions.GoogleMusic
             this.Resources["ApplicationName"] = string.Format(CultureInfo.CurrentCulture, "outcoldplayer {0}", Package.Current.Id.Version.ToVersionString());
             this.Resources["ApplicationVersion"] = Package.Current.Id.Version.ToVersionString();
 
-            using (var registration = Container.Registration())
+            using (var registration = ApplicationContext.Container.Registration())
             {
 #if DEBUG
                 registration.Register<IDebugConsole>().AsSingleton<DebugConsole>();
@@ -276,35 +279,35 @@ namespace OutcoldSolutions.GoogleMusic
 #endif
             }
 
-            Container.Resolve<ApplicationLogManager>();
-            
-            Container.Resolve<IGoogleMusicSessionService>().LoadSession();
+            ApplicationContext.Container.Resolve<ApplicationLogManager>();
+
+            ApplicationContext.Container.Resolve<IGoogleMusicSessionService>().LoadSession();
 
             // Publishers
-            var currentSongPublisherService = Container.Resolve<ICurrentSongPublisherService>();
+            var currentSongPublisherService = ApplicationContext.Container.Resolve<ICurrentSongPublisherService>();
             currentSongPublisherService.AddPublisher<GoogleMusicCurrentSongPublisher>();
             currentSongPublisherService.AddPublisher<MediaControlCurrentSongPublisher>();
             currentSongPublisherService.AddPublisher<TileCurrentSongPublisher>();
 
-            var selectedObjectsService = Container.Resolve<ISelectedObjectsService>();
+            var selectedObjectsService = ApplicationContext.Container.Resolve<ISelectedObjectsService>();
             selectedObjectsService.AddActions(new ISelectedObjectAction []
                                               {
-                                                  Container.Resolve<QueueAction>(),
-                                                  Container.Resolve<StartRadioAction>(),
-                                                  Container.Resolve<AddToPlaylistAction>(),
-                                                  Container.Resolve<EditPlaylistAction>(),
-                                                  Container.Resolve<AddToLibraryAction>(),
-                                                  Container.Resolve<DownloadAction>(),
-                                                  Container.Resolve<RemoveLocalAction>(),
-                                                  Container.Resolve<RemoveFromPlaylistAction>(),
-                                                  Container.Resolve<RemoveFromLibraryAction>(),
-                                                  Container.Resolve<RemoveSelectedSongAction>(),
-                                                  Container.Resolve<DeletePlaylistAction>(),
-                                                  Container.Resolve<DeleteRadioStationsAction>(),
-                                                  Container.Resolve<PinToStartAction>()
+                                                  ApplicationContext.Container.Resolve<QueueAction>(),
+                                                  ApplicationContext.Container.Resolve<StartRadioAction>(),
+                                                  ApplicationContext.Container.Resolve<AddToPlaylistAction>(),
+                                                  ApplicationContext.Container.Resolve<EditPlaylistAction>(),
+                                                  ApplicationContext.Container.Resolve<AddToLibraryAction>(),
+                                                  ApplicationContext.Container.Resolve<DownloadAction>(),
+                                                  ApplicationContext.Container.Resolve<RemoveLocalAction>(),
+                                                  ApplicationContext.Container.Resolve<RemoveFromPlaylistAction>(),
+                                                  ApplicationContext.Container.Resolve<RemoveFromLibraryAction>(),
+                                                  ApplicationContext.Container.Resolve<RemoveSelectedSongAction>(),
+                                                  ApplicationContext.Container.Resolve<DeletePlaylistAction>(),
+                                                  ApplicationContext.Container.Resolve<DeleteRadioStationsAction>(),
+                                                  ApplicationContext.Container.Resolve<PinToStartAction>()
                                               });
 
-            if (Container.Resolve<ILastfmWebService>().RestoreSession())
+            if (ApplicationContext.Container.Resolve<ILastfmWebService>().RestoreSession())
             {
                 currentSongPublisherService.AddPublisher<LastFmCurrentSongPublisher>();
             }
@@ -314,9 +317,9 @@ namespace OutcoldSolutions.GoogleMusic
         {
             if (isFirstTimeActivated)
             {
-                Container.Resolve<ApplicationStateChangeHandler>();
+                ApplicationContext.Container.Resolve<ApplicationStateChangeHandler>();
 
-                var mainFrameRegionProvider = Container.Resolve<IMainFrameRegionProvider>();
+                var mainFrameRegionProvider = ApplicationContext.Container.Resolve<IMainFrameRegionProvider>();
                 mainFrameRegionProvider.SetContent(
                     MainFrameRegion.Background,
                     new Image()
@@ -330,42 +333,42 @@ namespace OutcoldSolutions.GoogleMusic
                         Opacity = 0.02
                     });
 
-                mainFrameRegionProvider.SetContent(MainFrameRegion.BottomAppBarRightZone, Container.Resolve<IPlayerView>());
+                mainFrameRegionProvider.SetContent(MainFrameRegion.BottomAppBarRightZone, ApplicationContext.Container.Resolve<IPlayerView>());
 
                 var page = (Page)Window.Current.Content;
-                VisualTreeHelperEx.GetVisualChild<Panel>(page).Children.Add(Container.Resolve<MediaElement>());
+                VisualTreeHelperEx.GetVisualChild<Panel>(page).Children.Add(ApplicationContext.Container.Resolve<MediaElement>());
 
-                ApplicationSettingViews.Initialize(Container.Resolve<IApplicationSettingViewsService>(), Container.Resolve<IApplicationResources>());
+                ApplicationSettingViews.Initialize(ApplicationContext.Container.Resolve<IApplicationSettingViewsService>(), ApplicationContext.Container.Resolve<IApplicationResources>());
 
-                Container.Resolve<IMediaControlIntegration>();
-                Container.Resolve<ScreenLocker>();
+                ApplicationContext.Container.Resolve<IMediaControlIntegration>();
+                ApplicationContext.Container.Resolve<ScreenLocker>();
 
-                Container.Resolve<INavigationService>().NavigateTo<IHomePageView>();
+                ApplicationContext.Container.Resolve<INavigationService>().NavigateTo<IHomePageView>();
 
                 this.ReportOsVersionAsync();
 
-                Container.Resolve<IEventAggregator>().GetEvent<ApplicationInitializedEvent>().Subscribe(
+                ApplicationContext.Container.Resolve<IEventAggregator>().GetEvent<ApplicationInitializedEvent>().Subscribe(
                     async (e) =>
                     {
-                        var dispatcher = Container.Resolve<IDispatcher>();
-                        await dispatcher.RunAsync(() => Container.Resolve<IMainFrameRegionProvider>().SetContent(MainFrameRegion.Links, ApplicationBase.Container.Resolve<LinksRegionView>()));
+                        var dispatcher = ApplicationContext.Container.Resolve<IDispatcher>();
+                        await dispatcher.RunAsync(() => ApplicationContext.Container.Resolve<IMainFrameRegionProvider>().SetContent(MainFrameRegion.Links, ApplicationContext.Container.Resolve<LinksRegionView>()));
 
-                        Container.Resolve<ISongsCachingService>().StartDownloadTask();
-                        Container.Resolve<AskForReviewService>();
+                        ApplicationContext.Container.Resolve<ISongsCachingService>().StartDownloadTask();
+                        ApplicationContext.Container.Resolve<AskForReviewService>();
                     });
 
                 this.UpdateRatingControlStyle();
 
-                Container.Resolve<IEventAggregator>().GetEvent<SettingsChangeEvent>()
+                ApplicationContext.Container.Resolve<IEventAggregator>().GetEvent<SettingsChangeEvent>()
                     .Where(x => string.Equals(x.Key, SettingsServiceExtensions.IsThumbsRatingKey))
-                    .Subscribe(async (x) => await Container.Resolve<IDispatcher>().RunAsync(this.UpdateRatingControlStyle));
+                    .Subscribe(async (x) => await ApplicationContext.Container.Resolve<IDispatcher>().RunAsync(this.UpdateRatingControlStyle));
             }
         }
 
         private void UpdateRatingControlStyle()
         {
             this.Resources.Remove(typeof(Rating));
-            if (Container.Resolve<ISettingsService>().GetIsThumbsRating())
+            if (ApplicationContext.Container.Resolve<ISettingsService>().GetIsThumbsRating())
             {
                 this.Resources.Add(typeof(Rating), this.Resources["ThumbsRatingStyle"]);
             }
@@ -379,7 +382,7 @@ namespace OutcoldSolutions.GoogleMusic
         {
             try
             {
-                Container.Resolve<IAnalyticsService>().SendEvent("Application", "Build", "Windows 8.1");
+                ApplicationContext.Container.Resolve<IAnalyticsService>().SendEvent("Application", "Build", "Windows 8.1");
             }
             catch (Exception e)
             {
@@ -389,9 +392,9 @@ namespace OutcoldSolutions.GoogleMusic
 
         private async Task OnSuspendingAsync()
         {
-            await Container.Resolve<IGoogleMusicSessionService>().SaveCurrentSessionAsync();
+            await ApplicationContext.Container.Resolve<IGoogleMusicSessionService>().SaveCurrentSessionAsync();
 
-            Container.Resolve<ILastfmWebService>().SaveCurrentSession();
+            ApplicationContext.Container.Resolve<ILastfmWebService>().SaveCurrentSession();
 
             await GoogleAnalytics.EasyTracker.Current.Dispatch().AsTask();
 

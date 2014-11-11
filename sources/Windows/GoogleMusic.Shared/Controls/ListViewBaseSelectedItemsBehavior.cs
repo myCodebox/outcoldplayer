@@ -34,7 +34,7 @@ namespace OutcoldSolutions.GoogleMusic.Controls
         public static readonly DependencyProperty ForceToShowProperty = DependencyProperty.Register(
             "ForceToShow", typeof(bool), typeof(ListViewBaseSelectedItemsBehavior), new PropertyMetadata(false));
 
-        private static readonly Lazy<ILogger> Logger = new Lazy<ILogger>(() => ApplicationBase.Container.Resolve<ILogManager>().CreateLogger(typeof(ListViewBaseSelectedItemsBehavior).Name));
+        private static readonly Lazy<ILogger> Logger = new Lazy<ILogger>(() => ApplicationContext.Container.Resolve<ILogManager>().CreateLogger(typeof(ListViewBaseSelectedItemsBehavior).Name));
 
         private bool freezed = false;
 

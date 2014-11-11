@@ -4,6 +4,7 @@
 namespace OutcoldSolutions.GoogleMusic.Views
 {
     using Windows.UI.Xaml;
+    using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Data;
 
     using OutcoldSolutions.GoogleMusic.Presenters;
@@ -51,7 +52,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
                             PropertyNameExtractor.GetPropertyName(() => this.presenter.BindingModel.Playlist))
                     });
 
-                this.TrackScrollViewer(frameworkElement.GetListView());
+                this.TrackScrollViewer((ListView)frameworkElement.GetListView());
             }
         }
 

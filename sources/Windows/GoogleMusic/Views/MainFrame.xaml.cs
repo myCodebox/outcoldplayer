@@ -88,7 +88,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
                             CoreDispatcherPriority.Normal,
                             () =>
                             {
-                                if (!this.applicationSize.OnSizeChanged(args.NewSize))
+                                if (!this.applicationSize.OnSizeChanged(args.NewSize.Width, args.NewSize.Height))
                                 {
                                     this.analyticsService.SendEvent("Window", "ChangeSize", this.applicationSize.IsLarge ? "Large" : this.applicationSize.IsMedium ? "Medium" : "Small");
 
@@ -261,7 +261,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
                 });
         }
 
-        public Rect GetRectForSecondaryTileRequest()
+        public object GetRectForSecondaryTileRequest()
         {
             return new Rect(0, this.applicationSize.Height - this.BottomAppBar.ActualHeight, this.applicationSize.Width, this.BottomAppBar.ActualHeight);
         }
@@ -365,7 +365,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
             {
                 this.logger.LogTask(this.Dispatcher.RunAsync(
                     CoreDispatcherPriority.Normal,
-                    () => this.applicationSize.OnSizeChanged(this.latestSize.Value)).AsTask());
+                    () => this.applicationSize.OnSizeChanged(this.latestSize.Value.Width, this.latestSize.Value.Height)).AsTask());
             }
         }
 

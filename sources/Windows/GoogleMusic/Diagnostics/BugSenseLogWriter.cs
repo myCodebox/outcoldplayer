@@ -47,7 +47,7 @@ namespace OutcoldSolutions.GoogleMusic.Diagnostics
                 }
 
                 this.dispatcher.RunAsync(
-                    CoreDispatcherPriority.Low, 
+                    DispatcherPriority.Low, 
                     () =>
                     {
                         try

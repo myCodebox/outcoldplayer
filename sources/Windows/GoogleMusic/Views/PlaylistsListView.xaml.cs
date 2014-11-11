@@ -57,7 +57,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
             }
         }
 
-        public ListView GetListView()
+        public object GetListView()
         {
             return this.ListView;
         }

@@ -57,7 +57,7 @@ namespace OutcoldSolutions.GoogleMusic.Diagnostics
                 }
 
                 this.dispatcher.RunAsync(
-                    CoreDispatcherPriority.Low,
+                    DispatcherPriority.Low,
                     () =>
                         GoogleAnalytics.EasyTracker.GetTracker()
                             .SendException(message + " - " + exception.Message, level == LogLevel.Error));
@@ -70,7 +70,7 @@ namespace OutcoldSolutions.GoogleMusic.Diagnostics
             try
             {
                 this.dispatcher.RunAsync(
-                    CoreDispatcherPriority.Low,
+                    DispatcherPriority.Low,
                     () =>GoogleAnalytics.EasyTracker.GetTracker().SendEvent(category, action, label, value.HasValue ? value.Value : 0));
             }
             catch (Exception e)
@@ -84,7 +84,7 @@ namespace OutcoldSolutions.GoogleMusic.Diagnostics
             try
             {
                 this.dispatcher.RunAsync(
-                    CoreDispatcherPriority.Low,
+                    DispatcherPriority.Low,
                     () => GoogleAnalytics.EasyTracker.GetTracker().SendTiming(timeSpan, category, action, label));
             }
             catch (Exception e)
@@ -105,7 +105,7 @@ namespace OutcoldSolutions.GoogleMusic.Diagnostics
                 }
 
                 this.dispatcher.RunAsync(
-                    CoreDispatcherPriority.Low,
+                    DispatcherPriority.Low,
                     () => GoogleAnalytics.EasyTracker.GetTracker().SendView(viewName));
             }
             catch (Exception e)

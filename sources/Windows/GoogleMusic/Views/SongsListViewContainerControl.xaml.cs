@@ -14,7 +14,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
         {
             this.InitializeComponent();
 
-            var songsListView = App.Container.Resolve<ISongsListView>();
+            var songsListView = ApplicationContext.Container.Resolve<ISongsListView>();
 
             this.Content = (UIElement)songsListView;
 

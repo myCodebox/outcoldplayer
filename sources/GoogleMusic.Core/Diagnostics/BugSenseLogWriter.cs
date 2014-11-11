@@ -1,0 +1,87 @@
+﻿//--------------------------------------------------------------------------------------------------------------------
+// Outcold Solutions (http://outcoldman.com)
+//--------------------------------------------------------------------------------------------------------------------
+
+namespace OutcoldSolutions.GoogleMusic.Diagnostics
+{
+    using System;
+    using System.Globalization;
+
+    using BugSense.Core.Model;
+
+    public class BugSenseLogWriter : ILogWriter
+    {
+        private readonly IDispatcher dispatcher;
+
+        public BugSenseLogWriter(IDispatcher dispatcher)
+        {
+            this.dispatcher = dispatcher;
+        }
+
+        public bool IsEnabled
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        public void Log(DateTime dateTime, LogLevel level, string context, string message, params object[] parameters)
+        {
+        }
+
+        public void Log(DateTime dateTime, LogLevel level, string context, Exception exception, string messageFormat, params object[] parameters)
+        {
+            if (level == LogLevel.Warning || level == LogLevel.Error)
+            {
+                string message;
+                if (parameters.Length > 0)
+                {
+                    message = string.Format(messageFormat, parameters);
+                }
+                else
+                {
+                    message = messageFormat;
+                }
+
+                this.dispatcher.RunAsync(
+                    DispatcherPriority.Low,
+                    () =>
+                    {
+                        try
+                        {
+                            var aggregateException = exception as AggregateException;
+                            if (aggregateException != null)
+                            {
+                                exception = aggregateException.Flatten();
+                            }
+
+                            var logExtra = new LimitedCrashExtraDataList()
+                                               {
+                                                   { "level", level.ToString() },
+                                                   { "context", context },
+                                                   { "message", message },
+                                                   { "hresult", exception.HResult.ToString("X", CultureInfo.InvariantCulture) },
+                                                   { "exceptionType", exception.GetType().FullName }
+                                               };
+
+                            if (exception.InnerException != null)
+                            {
+                                logExtra.Add("innerExceptionType", exception.InnerException.GetType().FullName);
+                                logExtra.Add("innerException", exception.InnerException.Message);
+                                logExtra.Add("innerExceptionStackTrace", exception.InnerException.StackTrace);
+                            }
+
+                            BugSense.BugSenseHandler.Instance.LogException(
+                                exception,
+                                logExtra);
+                        }
+                        catch
+                        {
+                        }
+                    });
+
+            }
+        }
+    }
+}

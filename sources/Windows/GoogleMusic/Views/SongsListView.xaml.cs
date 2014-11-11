@@ -94,7 +94,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
             set { this.GetPresenter<SongsListViewPresenter>().AllowSorting = value; }
         }
 
-        public ListView GetListView()
+        public object GetListView()
         {
             return this.ListView;
         }
