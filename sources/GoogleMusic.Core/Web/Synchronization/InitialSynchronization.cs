@@ -33,7 +33,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
             ISongsCachingService songsCachingService,
             IAlbumArtCacheService albumArtCacheService)
         {
-            this.dbContext = new DbContext(ApplicationContext.Container.Resolve<IDbFile>());
+            this.dbContext = new DbContext();
             this.logger = logManager.CreateLogger("InitialSynchronization");
             this.synchronizationService = synchronizationService;
             this.songsCachingService = songsCachingService;

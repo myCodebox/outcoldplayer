@@ -4,15 +4,16 @@
 
 namespace OutcoldSolutions.GoogleMusic
 {
-    using Windows.Storage;
+    using System;
 
-    public class WindowsStoreFile : IFile
+    public interface ITimer
     {
-        public WindowsStoreFile(StorageFile file)
-        {
-            this.File = file;
-        }
+        event EventHandler<object> Tick;
 
-        public StorageFile File { get; private set; }
+        TimeSpan Interval { get; set; }
+
+        void Start();
+
+        void Stop();
     }
 }

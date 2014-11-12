@@ -8,5 +8,6 @@ namespace OutcoldSolutions.GoogleMusic
 
     public interface IStream : IDisposable
     {
+        ulong Size { get; }
     }
 }

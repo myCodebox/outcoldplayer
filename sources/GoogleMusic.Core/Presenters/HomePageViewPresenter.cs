@@ -13,14 +13,13 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using OutcoldSolutions.GoogleMusic.Presenters.Popups;
     using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Services;
+    using OutcoldSolutions.GoogleMusic.Shell;
     using OutcoldSolutions.GoogleMusic.Views;
     using OutcoldSolutions.GoogleMusic.Views.Popups;
 
-    using Windows.ApplicationModel;
-    using Windows.Networking.Connectivity;
-
     public class HomePageViewPresenter : PlaylistsPageViewPresenterBase<IHomePageView, HomePageViewBindingModel>
     {
+        private readonly IShellService shellService;
         private readonly ISettingsService settingsService;
         private readonly IAuthentificationService authentificationService;
         private readonly INavigationService navigationService;
@@ -34,7 +33,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private bool initialized = false;
 
         public HomePageViewPresenter(
-            IApplicationResources resources,
+            IShellService shellService,
             ISettingsService settingsService,
             IAuthentificationService authentificationService,
             INavigationService navigationService,
@@ -46,6 +45,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             IAllAccessService allAccessService)
             : base(playlistsService)
         {
+            this.shellService = shellService;
             this.settingsService = settingsService;
             this.authentificationService = authentificationService;
             this.navigationService = navigationService;
@@ -108,8 +108,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             if (result != null && result.Succeed)
             {
                 var currentVersion = this.settingsService.GetValue<string>("Version", null);
-                var dbContext = new DbContext(new ApplicationDbFile());
-                bool fCurrentVersion = string.Equals(currentVersion, Package.Current.Id.Version.ToVersionString(), StringComparison.OrdinalIgnoreCase);
+                var dbContext = new DbContext();
+                bool fCurrentVersion = string.Equals(currentVersion, ApplicationContext.ApplicationVersion.ToVersionString(), StringComparison.OrdinalIgnoreCase);
 
                 if (fCurrentVersion && await dbContext.CheckVersionAsync())
                 {
@@ -162,12 +162,12 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             }
 
             var currentVersion = this.settingsService.GetValue<string>("Version", null);
-            bool fCurrentVersion = string.Equals(currentVersion, Package.Current.Id.Version.ToVersionString(), StringComparison.OrdinalIgnoreCase);
+            bool fCurrentVersion = string.Equals(currentVersion, ApplicationContext.ApplicationVersion.ToVersionString(), StringComparison.OrdinalIgnoreCase);
             bool fUpdate = !fCurrentVersion && currentVersion != null;
             
             await this.OnViewInitializedAsync();
 
-            this.settingsService.SetValue("Version", Package.Current.Id.Version.ToVersionString());
+            this.settingsService.SetValue("Version", ApplicationContext.ApplicationVersion.ToVersionString());
 
             if (fUpdate)
             {
@@ -212,16 +212,10 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             {
                 if (this.stateService.CurrentState == ApplicationState.Online)
                 {
-                    var profile = NetworkInformation.GetInternetConnectionProfile();
-                    if (profile != null)
+                    if (!(await this.shellService.HasNetworkConnectionAsync()))
                     {
-                        var networkConnectivityLevel = profile.GetNetworkConnectivityLevel();
-                        if (networkConnectivityLevel != NetworkConnectivityLevel.ConstrainedInternetAccess
-                            && networkConnectivityLevel != NetworkConnectivityLevel.InternetAccess)
-                        {
-                            this.stateService.CurrentState = ApplicationState.Offline;
-                            this.MainFrame.ShowMessage("Switched to offline mode...");
-                        }
+                        this.stateService.CurrentState = ApplicationState.Offline;
+                        this.MainFrame.ShowMessage("Switched to offline mode...");
                     }
                 }
 

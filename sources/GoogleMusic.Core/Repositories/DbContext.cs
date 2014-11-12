@@ -4,47 +4,27 @@
 
 namespace OutcoldSolutions.GoogleMusic.Repositories
 {
-    using System;
     using System.Globalization;
+    using System.IO;
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.Models;
 
     using SQLite;
 
-    public interface IDbFile
-    {
-        string Location { get; }
-        string FileName { get; }
-        string FullPath { get; }
-
-        Task<bool> Exists();
-        Task Delete();
-    }
-
     public class DbContext
     {
-        private readonly IDbFile dbFile;
+        private const string DbFileName = "db.sqlite";
         private const int CurrentDatabaseVersion = 8;
-
-        public DbContext(IDbFile dbFile)
-        {
-            if (dbFile == null)
-            {
-                throw new ArgumentNullException("dbFile");
-            }
-
-            this.dbFile = dbFile;
-        }
 
         public SQLiteAsyncConnection CreateConnection()
         {
-            return new SQLiteAsyncConnection(this.dbFile.FullPath, openFlags: SQLiteOpenFlags.Create | SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.SharedCache | SQLiteOpenFlags.NoMutex, storeDateTimeAsTicks: true);
+            return new SQLiteAsyncConnection(Path.Combine(ApplicationContext.ApplicationLocalFolder.Path, DbFileName), openFlags: SQLiteOpenFlags.Create | SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.SharedCache | SQLiteOpenFlags.NoMutex, storeDateTimeAsTicks: true);
         }
 
         public async Task<bool> CheckVersionAsync()
         {
-            bool fDbExists = await this.dbFile.Exists();
+            bool fDbExists = await ApplicationContext.ApplicationLocalFolder.ExistsAsync(DbFileName);
             SQLite3.Config(SQLite3.ConfigOption.MultiThread);
 
             if (fDbExists)
@@ -63,7 +43,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
 
         public async Task InitializeAsync()
         {
-            bool fDbExists = await this.dbFile.Exists();
+            bool fDbExists = await ApplicationContext.ApplicationLocalFolder.ExistsAsync(DbFileName);
             SQLiteAsyncConnection connection = null;
             if (fDbExists)
             {
@@ -92,7 +72,11 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
                 connection.Close();
             }
 
-            await this.dbFile.Delete();
+            var file = await ApplicationContext.ApplicationLocalFolder.GetFileAsync(DbFileName);
+            if (file != null)
+            {
+                await file.DeleteAsync();
+            }
         }
 
         private async Task CreateBasicObjectsAsync(SQLiteAsyncConnection connection)

@@ -4,10 +4,9 @@
 namespace OutcoldSolutions.GoogleMusic.Diagnostics
 {
     using System;
+    using System.Globalization;
     using System.IO;
     using System.Threading.Tasks;
-
-    using Windows.Storage;
 
     using TaskExtensions = OutcoldSolutions.GoogleMusic.TaskExtensions;
 
@@ -102,11 +101,13 @@ namespace OutcoldSolutions.GoogleMusic.Diagnostics
         private async Task<StreamWriter> EnableLoggingAsync()
         {
             var storageFile =
-                await ApplicationData.Current.LocalFolder.CreateFileAsync(string.Format("{0:yyyy-MM-dd-HH-mm-ss-ffff}.log", DateTime.Now), CreationCollisionOption.OpenIfExists).AsTask();
+                await ApplicationContext.ApplicationLocalFolder.CreateFileAsync(
+                        string.Format(CultureInfo.InvariantCulture, "{0:yyyy-MM-dd-HH-mm-ss-ffff}.log", DateTime.Now),
+                        CreationCollisionOption.OpenIfExists);
 
-            var stream = await storageFile.OpenAsync(FileAccessMode.ReadWrite).AsTask();
+            var stream = await storageFile.OpenReadWriteAsync();
 
-            return new StreamWriter(stream.AsStream());
+            return new StreamWriter(stream);
         }
     }
 }

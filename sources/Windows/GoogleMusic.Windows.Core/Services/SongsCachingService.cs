@@ -115,7 +115,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 {
                     // TODO: Catch exception if file does not exist
                     var storageFile = await this.GetFileAsync(cache.FileName);
-                    return await this.mediaStreamDownloadService.GetCachedStreamAsync(new WindowsStoreFile(storageFile), token);
+                    return await this.mediaStreamDownloadService.GetCachedStreamAsync(new WindowsStorageFile(storageFile), token);
                 }
 
                 if (this.preDownloadedSong != null && this.preDownloadedStream != null)
@@ -309,7 +309,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
         public async Task<IFolder> GetCacheFolderAsync()
         {
             await this.InitializeCacheFolderAsync();
-            return new WindowsStoreFolder(this.cacheFolder);
+            return new WindowsStorageFolder(this.cacheFolder);
         }
 
         public async Task ClearCacheAsync()
@@ -496,7 +496,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         public async Task RestoreCacheAsync()
         {
-            StorageFolder storageFolder = ((WindowsStoreFolder)(await this.GetCacheFolderAsync())).Folder;
+            StorageFolder storageFolder = ((WindowsStorageFolder)(await this.GetCacheFolderAsync())).Folder;
             var folders = await storageFolder.GetFoldersAsync();
             foreach (var folder in folders)
             {
@@ -526,12 +526,12 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         public async Task<IFolder> GetAppDataStorageFolderAsync()
         {
-            return new WindowsStoreFolder(await ApplicationData.Current.LocalFolder.CreateFolderAsync(SongsCacheFolder, CreationCollisionOption.OpenIfExists));
+            return new WindowsStorageFolder(await ApplicationData.Current.LocalFolder.CreateFolderAsync(SongsCacheFolder, CreationCollisionOption.OpenIfExists));
         }
 
         public async Task<IFolder> GetMusicLibraryStorageFolderAsync()
         {
-            return new WindowsStoreFolder(await KnownFolders.MusicLibrary.CreateFolderAsync(SongsMusicLibraryCacheFolder, CreationCollisionOption.OpenIfExists));
+            return new WindowsStorageFolder(await KnownFolders.MusicLibrary.CreateFolderAsync(SongsMusicLibraryCacheFolder, CreationCollisionOption.OpenIfExists));
         }
 
         private async Task SetCurrentStreamAsync(Song song, INetworkRandomAccessStream networkRandomAccessStream)
@@ -762,7 +762,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                             {
                                 var songFolder = await this.cacheFolder.CreateFolderAsync(nextTask.Song.SongId.Substring(0, 1), CreationCollisionOption.OpenIfExists);
                                 var file = await songFolder.CreateFileAsync(nextTask.Song.SongId, CreationCollisionOption.ReplaceExisting);
-                                await stream.SaveToFileAsync(new WindowsStoreFile(file));
+                                await stream.SaveToFileAsync(new WindowsStorageFile(file));
 
                                 if (cache == null)
                                 {

@@ -2,21 +2,14 @@
 // Outcold Solutions (http://outcoldman.com)
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace OutcoldSolutions.GoogleMusic
+namespace OutcoldSolutions.GoogleMusic.Services
 {
-    using System.IO;
     using System.Threading.Tasks;
 
-    public interface IFile
+    public interface IInAppPurchasesService
     {
-        string Name { get; }
+        bool IsActive(string inAppPurchaseName);
 
-        string Path { get; }
-
-        Task<ulong> GetSizeAsync();
-        Task DeleteAsync();
-        Task MoveAsync(IFolder destination);
-
-        Task<Stream> OpenReadWriteAsync();
+        Task RequestPurchase(string inAppPurchaseName);
     }
 }

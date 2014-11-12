@@ -14,10 +14,15 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
     using OutcoldSolutions.GoogleMusic.Diagnostics;
 
-    public static class InAppPurchases
+    public class InAppPurchasesService
     {
-        private static readonly Lazy<ILogger> Logger = new Lazy<ILogger>(() => ApplicationContext.Container.Resolve<ILogManager>().CreateLogger(typeof(InAppPurchases).Name)); 
-        private static readonly List<string> Purchases = new List<string>();
+        private readonly ILogger logger; 
+        private readonly List<string> purchases = new List<string>();
+
+        public InAppPurchasesService(ILogManager logManager)
+        {
+            this.logger = logManager.CreateLogger("InAppPurchasesService");
+        }
 
 #if DEBUG
         public static async void SimulatorInAppPurchasesInitialization()
@@ -29,9 +34,9 @@ namespace OutcoldSolutions.GoogleMusic.Services
         }
 #endif
 
-        public static bool IsActive(string inAppPurchaseName)
+        public bool IsActive(string inAppPurchaseName)
         {
-            if (Purchases.Any((p) => string.Equals(inAppPurchaseName, p, StringComparison.OrdinalIgnoreCase)))
+            if (this.purchases.Any((p) => string.Equals(inAppPurchaseName, p, StringComparison.OrdinalIgnoreCase)))
             {
                 return true;
             }
@@ -44,7 +49,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 #endif
         }
 
-        public static async Task<PurchaseResults> RequestPurchase(string inAppPurchaseName)
+        public async Task RequestPurchase(string inAppPurchaseName)
         {
             PurchaseResults receipt = null;
             try
@@ -56,15 +61,14 @@ namespace OutcoldSolutions.GoogleMusic.Services
 #endif
                 if (receipt.Status == ProductPurchaseStatus.Succeeded || receipt.Status == ProductPurchaseStatus.AlreadyPurchased)
                 {
-                    Purchases.Add(inAppPurchaseName);
+                    this.purchases.Add(inAppPurchaseName);
+                    this.logger.Debug("Purchased, {0}.", receipt.ReceiptXml);
                 }
             }
             catch (Exception exception)
             {
-                Logger.Value.Debug(exception, "Could not purchase");
+                this.logger.Debug(exception, "Could not purchase");
             }
-
-            return receipt;
         }
     }
 }

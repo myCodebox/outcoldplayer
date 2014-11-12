@@ -18,8 +18,9 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
         public SupportViewPresenter(
             ISettingsService settingsService,
             IApplicationSettingViewsService settingViewsService,
-            IAnalyticsService analyticsService)
-            : base(analyticsService)
+            IAnalyticsService analyticsService,
+            IInAppPurchasesService inAppPurchasesService)
+            : base(analyticsService, inAppPurchasesService)
         {
             this.settingsService = settingsService;
             this.analyticsService = analyticsService;

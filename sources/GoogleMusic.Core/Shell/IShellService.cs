@@ -2,17 +2,15 @@
 // Outcold Solutions (http://outcoldman.com)
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace OutcoldSolutions.GoogleMusic
+namespace OutcoldSolutions.GoogleMusic.Shell
 {
-    using Windows.Storage;
+    using System;
+    using System.Threading.Tasks;
 
-    public class WindowsStoreFolder : IFolder
+    public interface IShellService
     {
-        public WindowsStoreFolder(StorageFolder folder)
-        {
-            this.Folder = folder;
-        }
+        Task LaunchUriAsync(Uri uri);
 
-        public StorageFolder Folder { get; set; }
+        Task<bool> HasNetworkConnectionAsync();
     }
 }

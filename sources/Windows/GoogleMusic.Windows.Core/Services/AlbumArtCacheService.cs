@@ -105,7 +105,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
         public async Task<IFolder> GetCacheFolderAsync()
         {
             await this.InitializeCacheFolderAsync();
-            return new WindowsStoreFolder(this.cacheFolder);
+            return new WindowsStorageFolder(this.cacheFolder);
         }
 
         public async Task ClearCacheAsync()
@@ -121,7 +121,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             }
 
             await this.cachedAlbumArtsRepository.ClearCacheAsync();
-            var folder = ((WindowsStoreFolder)await this.GetCacheFolderAsync()).Folder;
+            var folder = ((WindowsStorageFolder)await this.GetCacheFolderAsync()).Folder;
             foreach (var storageItem in await folder.GetItemsAsync())
             {
                 await storageItem.DeleteAsync(StorageDeleteOption.PermanentDelete);

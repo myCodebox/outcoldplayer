@@ -35,6 +35,11 @@ namespace OutcoldSolutions.GoogleMusic.Web
             this.Dispose(disposing: false);
         }
 
+        public ulong Size
+        {
+            get { return this.Stream.Size; }
+        }
+
         public IRandomAccessStream Stream { get; private set; }
 
         public void Dispose()
@@ -263,7 +268,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
         public async Task<IStream> GetCachedStreamAsync(IFile file, CancellationToken token)
         {
-            StorageFile storageFile = ((WindowsStoreFile)file).File;
+            StorageFile storageFile = ((WindowsStorageFile)file).File;
             InMemoryRandomAccessStream memoryRandomAccessStream = new InMemoryRandomAccessStream();
 
             using (DataWriter writer = new DataWriter(memoryRandomAccessStream))
@@ -521,7 +526,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
                     throw new NotSupportedException("File is still in downloading state.");
                 }
 
-                await WriteSongToCache(((WindowsStoreFile)file).File, this.data);
+                await WriteSongToCache(((WindowsStorageFile)file).File, this.data);
             }
 
             public void Dispose()
@@ -1073,7 +1078,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
                     this.semaphore.Release(1);
                 }
 
-                await WriteSongToCache(((WindowsStoreFile)file).File, this.data);
+                await WriteSongToCache(((WindowsStorageFile)file).File, this.data);
             }
 
             private void Dispose(bool disposing)

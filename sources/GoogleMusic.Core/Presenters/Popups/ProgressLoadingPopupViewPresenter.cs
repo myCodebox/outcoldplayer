@@ -12,13 +12,11 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
     using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Services;
+    using OutcoldSolutions.GoogleMusic.Shell;
     using OutcoldSolutions.GoogleMusic.Views.Popups;
     using OutcoldSolutions.GoogleMusic.Web;
     using OutcoldSolutions.GoogleMusic.Web.Synchronization;
 
-    using Windows.System;
-    using Windows.UI.Core;
-    using Windows.UI.Popups;
 
     internal class ProgressLoadingPopupViewRequest
     {
@@ -37,17 +35,23 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
         private readonly IInitialSynchronization initialSynchronization;
 
         private readonly IAnalyticsService analyticsService;
+        private readonly INotificationService notificationService;
+        private readonly IShellService shellService;
 
         internal ProgressLoadingPopupViewPresenter(
             IApplicationResources resources,
             ISettingsService settingsService, 
             IInitialSynchronization initialSynchronization,
-            IAnalyticsService analyticsService)
+            IAnalyticsService analyticsService,
+            INotificationService notificationService,
+            IShellService shellService)
         {
             this.resources = resources;
             this.settingsService = settingsService;
             this.initialSynchronization = initialSynchronization;
             this.analyticsService = analyticsService;
+            this.notificationService = notificationService;
+            this.shellService = shellService;
             this.BindingModel = new ProgressLoadingPageViewBindingModel();
 
             this.ReloadSongsCommand = new DelegateCommand(this.LoadSongs, () => this.BindingModel.IsFailed);
@@ -119,7 +123,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
 
         private async Task InitializeRepositoriesAsync()
         {
-            DbContext dbContext = new DbContext(new ApplicationDbFile());
+            DbContext dbContext = new DbContext();
             await dbContext.InitializeAsync();
 
             await this.Dispatcher.RunAsync(
@@ -152,15 +156,10 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
 
         private Task ShowErrorInfoAsync()
         {
-            var dialog = new MessageDialog(this.resources.GetString("Loading_MessageBox_Failed.Message"));
-            dialog.Commands.Add(
-                new UICommand(
-                    this.resources.GetString("Loading_MessageBox_Failed.OkButton"),
-                    (cmd) => this.Logger.LogTask(Launcher.LaunchUriAsync(new Uri("https://play.google.com/music/listen")).AsTask())));
-
-            dialog.Commands.Add(new UICommand(this.resources.GetString("Loading_MessageBox_Failed.CancelButton")));
-            
-            return dialog.ShowAsync().AsTask();
+            return this.notificationService.ShowQuestionAsync(this.resources.GetString("Loading_MessageBox_Failed.Message"),
+                () => this.Logger.LogTask(this.shellService.LaunchUriAsync(new Uri("https://play.google.com/music/listen"))),
+                yesButton:  this.resources.GetString("Loading_MessageBox_Failed.OkButton"),
+                noButton: this.resources.GetString("Loading_MessageBox_Failed.CancelButton"));
         }
     }
 }

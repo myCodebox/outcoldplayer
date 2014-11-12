@@ -3,17 +3,16 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic
 {
+    using System;
     using System.Globalization;
-
-    using Windows.ApplicationModel;
 
     /// <summary>
     /// The package version extension methods.
     /// </summary>
-    public static class PackageVersionExtensions
+    public static class VersionExtensions
     {
         /// <summary>
-        /// Convert <see cref="PackageVersion"/> into version string.
+        /// Convert <see cref="Version"/> into version string.
         /// </summary>
         /// <param name="packageVersion">
         /// The package version.
@@ -21,7 +20,7 @@ namespace OutcoldSolutions.GoogleMusic
         /// <returns>
         /// The version <see cref="string"/>.
         /// </returns>
-        public static string ToVersionString(this PackageVersion packageVersion)
+        public static string ToVersionString(this Version packageVersion)
         {
             return string.Format(
                 CultureInfo.CurrentCulture,

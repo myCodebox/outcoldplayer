@@ -12,6 +12,7 @@ namespace OutcoldSolutions.GoogleMusic
     using System.Threading.Tasks;
 
     using Windows.ApplicationModel.Activation;
+    using Windows.Storage;
     using Windows.UI.Core;
 
     using BugSense;
@@ -99,8 +100,19 @@ namespace OutcoldSolutions.GoogleMusic
             {
                 isFirstTimeActivate = true;
 
+                if (ApplicationContext.ApplicationLocalFolder == null)
+                {
+                    ApplicationContext.ApplicationLocalFolder = new WindowsStorageFolder(ApplicationData.Current.LocalFolder);
+                }
+
                 if (ApplicationContext.Container == null)
                 {
+                    ApplicationContext.ApplicationVersion = new Version(
+                        Package.Current.Id.Version.Major,
+                        Package.Current.Id.Version.Minor, 
+                        Package.Current.Id.Version.Build,
+                        Package.Current.Id.Version.Revision);
+
                     ApplicationContext.Container = new DependencyResolverContainer();
 
                     using (var registration = ApplicationContext.Container.Registration())
@@ -109,6 +121,8 @@ namespace OutcoldSolutions.GoogleMusic
                         registration.Register<ILogManager>().AsSingleton<LogManager>();
                         registration.Register<INavigationService>().AsSingleton<NavigationService>();
                         registration.Register<IDispatcher>().AsSingleton(new DispatcherContainer(CoreWindow.GetForCurrentThread().Dispatcher));
+                        registration.Register<ITimer>().As<DispatcherTimerWrapper>();
+                        registration.Register<IShellService>().As<ShellService>();
 
                         registration.Register<IMainFrame>()
                                     .And<IMainFrameRegionProvider>()
@@ -124,8 +138,8 @@ namespace OutcoldSolutions.GoogleMusic
                         registration.Register<IApplicationSettingViewsService>()
                                     .AsSingleton<ApplicationSettingViewsService>();
 
-                        registration.Register<IDbFile>()
-                                    .AsSingleton(new ApplicationDbFile());
+                        registration.Register<IInAppPurchasesService>()
+                                    .AsSingleton<InAppPurchasesService>();
                     }
 
                     this.Logger = ApplicationContext.Container.Resolve<ILogManager>().CreateLogger(this.GetType().Name);
@@ -146,8 +160,8 @@ namespace OutcoldSolutions.GoogleMusic
 
         private void InitializeApplication()
         {
-            this.Resources["ApplicationName"] = string.Format(CultureInfo.CurrentCulture, "outcoldplayer {0}", Package.Current.Id.Version.ToVersionString());
-            this.Resources["ApplicationVersion"] = Package.Current.Id.Version.ToVersionString();
+            this.Resources["ApplicationName"] = string.Format(CultureInfo.CurrentCulture, "outcoldplayer {0}", ApplicationContext.ApplicationVersion.ToVersionString());
+            this.Resources["ApplicationVersion"] = ApplicationContext.ApplicationVersion.ToVersionString();
 
             using (var registration = ApplicationContext.Container.Registration())
             {

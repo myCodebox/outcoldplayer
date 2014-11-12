@@ -5,14 +5,12 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
 {
     using OutcoldSolutions.GoogleMusic.Views.Popups;
 
-    using Windows.ApplicationModel;
-
     public class ReleasesHistoryPopupViewPresenter : ViewPresenterBase<IReleasesHistoryPopupView>
     {
         public ReleasesHistoryPopupViewPresenter()
         {
             this.LeavePageCommand = new DelegateCommand(this.LeavePage);
-            this.Version = Package.Current.Id.Version.ToVersionString();
+            this.Version = ApplicationContext.ApplicationVersion.ToVersionString();
         }
 
         public DelegateCommand LeavePageCommand { get; private set; }

@@ -4,9 +4,7 @@
 
 namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
 {
-    using System;
     using System.Collections.Generic;
-    using Windows.Storage;
     using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Views.Popups;
@@ -74,13 +72,13 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
             await this.playQueueService.StopAsync();
             await this.songsCachingService.CancelDownloadTaskAsync();
 
-            StorageFolder appData = ((WindowsStoreFolder)(await this.songsCachingService.GetAppDataStorageFolderAsync())).Folder;
-            StorageFolder musicLibrary = ((WindowsStoreFolder)(await this.songsCachingService.GetMusicLibraryStorageFolderAsync())).Folder;
+            IFolder appData = await this.songsCachingService.GetAppDataStorageFolderAsync();
+            IFolder musicLibrary = await this.songsCachingService.GetMusicLibraryStorageFolderAsync();
 
-            StorageFolder to = this.isMovingToMusicLibrary ? musicLibrary : appData;
-            StorageFolder from = this.isMovingToMusicLibrary ? appData : musicLibrary;
+            IFolder to = this.isMovingToMusicLibrary ? musicLibrary : appData;
+            IFolder from = this.isMovingToMusicLibrary ? appData : musicLibrary;
 
-            IList<StorageFile> allFiles = new List<StorageFile>();
+            IList<IFile> allFiles = new List<IFile>();
 
             foreach (var subfolder in await from.GetFoldersAsync())
             {
@@ -104,7 +102,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
                 {
                     var toFile =
                         await
-                            to.CreateFolderAsync(storageFile.Name.Substring(0, 1), CreationCollisionOption.OpenIfExists);
+                            to.CreateOrOpenFolderAsync(storageFile.Name.Substring(0, 1));
                     await storageFile.MoveAsync(toFile);
 
                     await this.Dispatcher.RunAsync(() =>
@@ -114,7 +112,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
                 }
             }
 
-            await from.DeleteAsync(StorageDeleteOption.PermanentDelete);
+            await from.DeleteAsync();
 
             this.settingsService.SetIsMusicLibraryForCache(this.isMovingToMusicLibrary);
 

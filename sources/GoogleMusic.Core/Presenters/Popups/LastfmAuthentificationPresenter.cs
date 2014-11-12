@@ -8,27 +8,29 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
 
     using OutcoldSolutions.GoogleMusic.BindingModels.Popups;
     using OutcoldSolutions.GoogleMusic.Services.Publishers;
+    using OutcoldSolutions.GoogleMusic.Shell;
     using OutcoldSolutions.GoogleMusic.Views.Popups;
     using OutcoldSolutions.GoogleMusic.Web.Lastfm;
-
-    using Windows.System;
 
     public class LastfmAuthentificationPresenter : ViewPresenterBase<ILastfmAuthentificationView>
     {
         private readonly IApplicationResources resources;
         private readonly ILastfmAccountWebService accountWebService;
         private readonly ICurrentSongPublisherService publisherService;
+        private readonly IShellService shellService;
 
         private string token;
 
         public LastfmAuthentificationPresenter(
             IApplicationResources resources,
             ILastfmAccountWebService accountWebService,
-            ICurrentSongPublisherService publisherService)
+            ICurrentSongPublisherService publisherService,
+            IShellService shellService)
         {
             this.resources = resources;
             this.accountWebService = accountWebService;
             this.publisherService = publisherService;
+            this.shellService = shellService;
             this.BindingModel = new LastfmAuthentificationBindingModel
                                     {
                                         IsLoading = true,
@@ -42,7 +44,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
                             && !string.IsNullOrEmpty(t.Result.Token))
                         {
                             this.BindingModel.IsLoading = false;
-                            var launchTask = Launcher.LaunchUriAsync(new Uri(this.BindingModel.LinkUrl = this.accountWebService.GetAuthUrl(this.token = t.Result.Token)));
+                            var launchTask = this.shellService.LaunchUriAsync(new Uri(this.BindingModel.LinkUrl = this.accountWebService.GetAuthUrl(this.token = t.Result.Token)));
                         }
                     },
                 TaskScheduler.FromCurrentSynchronizationContext());

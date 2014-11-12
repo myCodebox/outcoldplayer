@@ -11,12 +11,14 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     public abstract class DonatePresenterBase : ViewPresenterBase<IView>
     {
         private readonly IAnalyticsService analyticsService;
+        private readonly IInAppPurchasesService inAppPurchasesService;
 
         private bool buying = false;
 
-        protected DonatePresenterBase(IAnalyticsService analyticsService)
+        protected DonatePresenterBase(IAnalyticsService analyticsService, IInAppPurchasesService inAppPurchasesService)
         {
             this.analyticsService = analyticsService;
+            this.inAppPurchasesService = inAppPurchasesService;
             this.BuyPackageCommand = new DelegateCommand(this.BuyPackage, this.CanBuyPackage);
         }
 
@@ -33,7 +35,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
             this.buying = true;
 
-            await InAppPurchases.RequestPurchase(packageName);
+            await this.inAppPurchasesService.RequestPurchase(packageName);
 
             this.analyticsService.SendEvent("Donate", "purchase", packageName);
 
@@ -43,7 +45,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private bool CanBuyPackage(object arg)
         {
             var packageName = arg.ToString();
-            return !InAppPurchases.IsActive(packageName);
+            return !this.inAppPurchasesService.IsActive(packageName);
         }
     }
 }

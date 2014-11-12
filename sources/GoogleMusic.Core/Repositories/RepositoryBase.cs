@@ -11,7 +11,7 @@ namespace OutcoldSolutions.GoogleMusic.Repositories
 
         public RepositoryBase()
         {
-            this.dbContext = new DbContext(ApplicationContext.Container.Resolve<IDbFile>());
+            this.dbContext = new DbContext();
         }
 
         protected SQLiteAsyncConnection Connection

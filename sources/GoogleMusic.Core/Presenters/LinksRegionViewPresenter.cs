@@ -12,9 +12,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using OutcoldSolutions.GoogleMusic.Views;
     using OutcoldSolutions.GoogleMusic.Web.Synchronization;
 
-    using Windows.UI.Popups;
-    using Windows.UI.Xaml;
-
     public class LinksRegionViewPresenter : ViewPresenterBase<IView>
     {
         private readonly IApplicationStateService stateService;
@@ -25,8 +22,9 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private readonly INavigationService navigationService;
 
         private readonly IAnalyticsService analyticsService;
+        private readonly INotificationService notificationService;
 
-        private readonly DispatcherTimer synchronizationTimer;
+        private readonly ITimer synchronizationTimer;
 
         private bool isDownloading = false;
         private bool disableClickToCache = false;
@@ -42,7 +40,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             IApplicationSettingViewsService applicationSettingViewsService,
             IGoogleMusicSessionService sessionService,
             INavigationService navigationService,
-            IAnalyticsService analyticsService)
+            IAnalyticsService analyticsService,
+            INotificationService notificationService)
         {
             this.stateService = stateService;
             this.resources = resources;
@@ -51,6 +50,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.sessionService = sessionService;
             this.navigationService = navigationService;
             this.analyticsService = analyticsService;
+            this.notificationService = notificationService;
             this.NavigateToDownloadQueue = new DelegateCommand(async () =>
             {
                 if (!this.IsOnline)
@@ -86,7 +86,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                     applicationSettingViewsService.Show("support");
                 });
 
-            this.synchronizationTimer = new DispatcherTimer { Interval = TimeSpan.FromMinutes(5) };
+            this.synchronizationTimer = ApplicationContext.Container.Resolve<ITimer>();
+            this.synchronizationTimer.Interval = TimeSpan.FromMinutes(5);
             this.synchronizationTimer.Stop();
 
             this.synchronizationTimer.Tick += this.SynchronizationTimerOnTick;
@@ -300,21 +301,17 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         {
             if (updateStatus != null && updateStatus.IsBreakingChange)
             {
-                var dialog = new MessageDialog(this.resources.GetString("Update_MessageBox_Updates_Message"));
-                dialog.Commands.Add(
-                    new UICommand(
-                        this.resources.GetString("Update_MessageBox_Updates_OkButton"),
-                        (cmd) =>
-                            {
-                                this.navigationService.ClearHistory();
-                                this.navigationService.RefreshCurrentView();
-                            }));
-
-                dialog.Commands.Add(new UICommand(this.resources.GetString("Update_MessageBox_Updates_CancelButton")));
-
                 try
                 {
-                    await dialog.ShowAsync().AsTask();
+                    await this.notificationService.ShowQuestionAsync(
+                    this.resources.GetString("Update_MessageBox_Updates_Message"),
+                    () =>
+                    {
+                        this.navigationService.ClearHistory();
+                        this.navigationService.RefreshCurrentView();
+                    },
+                    yesButton: this.resources.GetString("Update_MessageBox_Updates_Message"),
+                    noButton: this.resources.GetString("Update_MessageBox_Updates_CancelButton"));
                 }
                 catch (Exception e)
                 {

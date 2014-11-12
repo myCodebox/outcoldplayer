@@ -17,8 +17,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
     using OutcoldSolutions.GoogleMusic.Views;
     using OutcoldSolutions.GoogleMusic.Web;
 
-    using Windows.Storage;
-
     public class OfflineCacheViewPresenter : DisposableViewPresenterBase<IView>
     {
         private readonly IApplicationStateService stateService;
@@ -78,7 +76,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
             {
                 if (this.sessionService.GetSession().IsAuthenticated)
                 {
-                    DbContext context = new DbContext(new ApplicationDbFile());
+                    DbContext context = new DbContext();
                     if (await context.CheckVersionAsync())
                     {
                         await this.LoadFolderSizesAsync();
@@ -173,13 +171,13 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
         {
             this.BindingModel.SongsCacheSize = 0;
 
-            StorageFolder songsCacheFolder = ((WindowsStoreFolder)await this.songsCachingService.GetCacheFolderAsync()).Folder;
+            IFolder songsCacheFolder = await this.songsCachingService.GetCacheFolderAsync();
             foreach (var subfolder in await songsCacheFolder.GetFoldersAsync())
             {
                 var basicProperties =
                     await
-                    Task.WhenAll((await subfolder.GetFilesAsync()).Select(f => f.GetBasicPropertiesAsync().AsTask()).ToArray());
-                long folderSize = basicProperties.Sum(p => (long)p.Size);
+                    Task.WhenAll((await subfolder.GetFilesAsync()).Select(f => f.GetSizeAsync()).ToArray());
+                long folderSize = basicProperties.Sum(p => (long)p);
                 await this.Dispatcher.RunAsync(() => this.BindingModel.SongsCacheSize += folderSize);
             }
         }
@@ -188,13 +186,13 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
         {
             this.BindingModel.AlbumArtCacheSize = 0;
 
-            StorageFolder albumArtCacheFolder = ((WindowsStoreFolder)await this.albumArtCacheService.GetCacheFolderAsync()).Folder;
+            IFolder albumArtCacheFolder = await this.albumArtCacheService.GetCacheFolderAsync();
             foreach (var subfolder in await albumArtCacheFolder.GetFoldersAsync())
             {
                 var basicProperties =
                     await
-                    Task.WhenAll((await subfolder.GetFilesAsync()).Select(f => f.GetBasicPropertiesAsync().AsTask()).ToArray());
-                long folderSize = basicProperties.Sum(p => (long)p.Size);
+                    Task.WhenAll((await subfolder.GetFilesAsync()).Select(f => f.GetSizeAsync()).ToArray());
+                long folderSize = basicProperties.Sum(p => (long)p);
                 await this.Dispatcher.RunAsync(() => this.BindingModel.AlbumArtCacheSize += folderSize);
             }
         }
@@ -247,7 +245,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
                 await this.Dispatcher.RunAsync(
                     () =>
                     {
-                        this.BindingModel.SongsCacheSize += (long)((IWindowsStoreStream)e.Stream).Stream.Size;
+                        this.BindingModel.SongsCacheSize += (long)e.Stream.Size;
                     });
             }
             else if (e.EventType == SongCachingChangeEventType.FailedToDownload

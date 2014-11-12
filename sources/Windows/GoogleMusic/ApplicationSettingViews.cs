@@ -19,7 +19,7 @@ namespace OutcoldSolutions.GoogleMusic
              service.RegisterSettings<LegalView>("legal", resources.GetString("SettingsLegalTitle"));
 
 #if DEBUG
-             InAppPurchases.SimulatorInAppPurchasesInitialization();
+             InAppPurchasesService.SimulatorInAppPurchasesInitialization();
 #endif
          }
     }

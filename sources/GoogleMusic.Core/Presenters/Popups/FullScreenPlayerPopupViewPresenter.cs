@@ -8,10 +8,8 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
     using System.Collections.Generic;
     using System.Linq;
     using System.Reactive.Linq;
-    using Windows.UI.Xaml;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services;
-    using OutcoldSolutions.GoogleMusic.Views;
     using OutcoldSolutions.GoogleMusic.Views.Popups;
 
     public class FullScreenPlayerPopupViewPresenter : DisposableViewPresenterBase<IFullScreenPlayerPopupView>
@@ -19,7 +17,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
         private readonly Random random = new Random((int) DateTime.Now.Ticks);
         private readonly IPlayQueueService playQueueService;
         private readonly PlayerViewPresenter playerViewPresenter;
-        private DispatcherTimer timer;
+        private ITimer timer;
         private Uri currentSongAlbumArt;
         private Uri currentSongArtistArt;
         private IList<Uri> queueAlbumArts;
@@ -28,12 +26,10 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
 
         public FullScreenPlayerPopupViewPresenter(
             IPlayQueueService playQueueService,
-            PlayerViewPresenter playerViewPresenter,
-            IMainFrame mainFrame)
+            PlayerViewPresenter playerViewPresenter)
         {
             this.playQueueService = playQueueService;
             this.playerViewPresenter = playerViewPresenter;
-           // mainFrame.Si
         }
 
         public PlayerViewPresenter PlayerViewPresenter
@@ -119,7 +115,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
 
             this.playQueueService.StateChanged += this.PlayQueueServiceOnStateChanged;
             this.UpdateCurrentSongAlbumArt(playQueueService.GetCurrentSong());
-            this.timer = new DispatcherTimer();
+            this.timer = ApplicationContext.Container.Resolve<ITimer>();
             this.timer.Tick += TimerOnTick;
             this.timer.Interval = new TimeSpan(0, 0, 3);
             this.timer.Start();
