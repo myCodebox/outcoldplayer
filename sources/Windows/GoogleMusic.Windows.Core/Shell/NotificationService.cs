@@ -41,33 +41,63 @@ namespace OutcoldSolutions.GoogleMusic.Shell
                     });
         }
 
-        public Task ShowQuestionAsync(string question, Action okAction, Action cancelAction = null, string yesButton = null, string noButton = null)
+        public async Task<bool?> ShowQuestionAsync(
+            string question, 
+            Action yesAction = null, 
+            Action noAction = null, 
+            Action cancelAction = null, 
+            string yesButton = null, 
+            string noButton = null, 
+            string cancelButton = null)
         {
             var dialog = new MessageDialog(question);
 
-            dialog.Commands.Add(
-                new UICommand(
-                    string.IsNullOrEmpty(yesButton) ? "Yes" : yesButton,
-                    (cmd) =>
+            var yesCommand = new UICommand(
+                string.IsNullOrEmpty(yesButton) ? "Yes" : yesButton,
+                (cmd) =>
+                {
+                    if (yesAction != null)
                     {
-                        if (okAction != null)
-                        {
-                            okAction();
-                        }
-                    }));
+                        yesAction();
+                    }
+                });
 
-            dialog.Commands.Add(new UICommand(
+            var noCommand = new UICommand(
                 string.IsNullOrEmpty(yesButton) ? "No" : yesButton,
+                (cmd) =>
+                {
+                    if (noAction != null)
+                    {
+                        noAction();
+                    }
+                });
+
+            dialog.Commands.Add(yesCommand);
+            dialog.Commands.Add(noCommand);
+
+            UICommand cancelCommand = null;
+
+            if (string.IsNullOrEmpty(cancelButton))
+            {
+                cancelCommand = new UICommand(
+                string.IsNullOrEmpty(cancelButton) ? "Cancel" : cancelButton,
                 (cmd) =>
                 {
                     if (cancelAction != null)
                     {
                         cancelAction();
                     }
-                }));
-        
+                });
 
-            return dialog.ShowAsync().AsTask();
+                dialog.Commands.Add(cancelCommand);
+            }
+
+            dialog.DefaultCommandIndex = 0;
+            dialog.CancelCommandIndex = (uint) (dialog.Commands.Count - 1);
+
+            var resultCommand = await dialog.ShowAsync().AsTask();
+
+            return resultCommand == cancelCommand ? null : (bool?)(resultCommand == yesCommand);
         }
     }
 }

@@ -10,6 +10,13 @@ namespace OutcoldSolutions.GoogleMusic
     {
         Task ShowMessageAsync(string message);
 
-        Task ShowQuestionAsync(string question, Action okAction, Action cancelAction = null, string yesButton = null, string noButton = null);
+        Task<bool?> ShowQuestionAsync(
+            string question, 
+            Action yesAction = null, 
+            Action noAction = null,
+            Action cancelAction = null, 
+            string yesButton = null, 
+            string noButton = null,
+            string cancelButton = null);
     }
 }

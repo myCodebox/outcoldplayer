@@ -4,11 +4,8 @@
 
 namespace OutcoldSolutions.GoogleMusic.Services.Actions
 {
-    using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-
-    using Windows.UI.Popups;
 
     using OutcoldSolutions.GoogleMusic.Models;
 
@@ -18,17 +15,20 @@ namespace OutcoldSolutions.GoogleMusic.Services.Actions
         private readonly IPlaylistsService playlistsService;
         private readonly ISongsCachingService songsCachingService;
         private readonly ISongsService songsService;
+        private readonly INotificationService notificationService;
 
         public DownloadAction(
             IApplicationStateService stateService,
             IPlaylistsService playlistsService,
             ISongsCachingService songsCachingService,
-            ISongsService songsService)
+            ISongsService songsService,
+            INotificationService notificationService)
         {
             this.stateService = stateService;
             this.playlistsService = playlistsService;
             this.songsCachingService = songsCachingService;
             this.songsService = songsService;
+            this.notificationService = notificationService;
         }
 
         public string Icon
@@ -149,28 +149,20 @@ namespace OutcoldSolutions.GoogleMusic.Services.Actions
 
             if (unknownSongs.Count > 0)
             {
-                var yesUiCommand = new UICommand("Yes");
-                var ignoreUiCommand = new UICommand("Ignore");
-                var cancelUiCommand = new UICommand("Cancel");
+                bool? result = await this.notificationService.ShowQuestionAsync(
+                    "Some of the selected songs are not in your library or playlists. "
+                    + "To download them to your cache you need first add them to your library or one of your playlists. "
+                    + "Do you want to add them to your library now?",
+                    yesButton: "Yes",
+                    noButton: "Ignore",
+                    cancelButton: "Cancel");
 
-                MessageDialog dialog = new MessageDialog("Some of the selected songs are not in your library or playlists. "
-                                                         + "To download them to your cache you need first add them to your library or one of your playlists. "
-                                                         + "Do you want to add them to your library now?");
-                dialog.Commands.Add(yesUiCommand);
-                dialog.Commands.Add(ignoreUiCommand);
-                dialog.Commands.Add(cancelUiCommand);
-
-                dialog.DefaultCommandIndex = 0;
-                dialog.CancelCommandIndex = 2;
-
-                var command = await dialog.ShowAsync();
-
-                if (command == cancelUiCommand)
+                if (!result.HasValue)
                 {
                     return null;
                 }
-
-                if (command == yesUiCommand)
+                
+                if (result.Value)
                 {
                     IList<Song> addedSongs = await this.songsService.AddToLibraryAsync(unknownSongs);
                     if (addedSongs == null)

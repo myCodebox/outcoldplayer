@@ -4,29 +4,35 @@
 
 namespace OutcoldSolutions.GoogleMusic.Services.Actions
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
 
-    using Windows.UI.Popups;
-
     using OutcoldSolutions.GoogleMusic.Models;
 
-    public class DeletePlaylistAction : ISelectedObjectAction
+    public class DeleteRadioStationsAction : ISelectedObjectAction
     {
         private readonly IApplicationResources applicationResources;
-        private readonly IApplicationStateService stateService;
-        private readonly IUserPlaylistsService userPlaylistsService;
 
-        public DeletePlaylistAction(
+        private readonly IApplicationStateService stateService;
+
+        private readonly IRadioStationsService radioStationsService;
+
+        private readonly ISettingsService settingsService;
+        private readonly INotificationService notificationService;
+
+        public DeleteRadioStationsAction(
             IApplicationResources applicationResources,
             IApplicationStateService stateService,
-            IUserPlaylistsService userPlaylistsService)
+            IRadioStationsService radioStationsService,
+            ISettingsService settingsService,
+            INotificationService notificationService)
         {
             this.applicationResources = applicationResources;
             this.stateService = stateService;
-            this.userPlaylistsService = userPlaylistsService;
+            this.radioStationsService = radioStationsService;
+            this.settingsService = settingsService;
+            this.notificationService = notificationService;
         }
 
         public string Icon
@@ -41,7 +47,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Actions
         {
             get
             {
-                return "Delete playlist(s)";
+                return this.settingsService.GetIsAllAccessAvailable() ? "Delete radio station(s)" : "Delete instant mixes";
             }
         }
 
@@ -49,7 +55,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Actions
         {
             get
             {
-                return ActionGroup.Playlists;
+                return ActionGroup.RadioStations;
             }
         }
 
@@ -68,7 +74,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Actions
                 return false;
             }
 
-            return selectedObjects.All(x => x is UserPlaylist);
+            return selectedObjects.All(x => x is Radio && ((Radio)x).PlaylistType == PlaylistType.Radio && !string.IsNullOrEmpty(((Radio)x).Id));
         }
 
         public async Task<bool?> Execute(IList<object> selectedObjects)
@@ -78,19 +84,16 @@ namespace OutcoldSolutions.GoogleMusic.Services.Actions
                 return null;
             }
 
-            var yesUiCommand = new UICommand(this.applicationResources.GetString("MessageBox_DeletePlaylistYes"));
-            var noUiCommand = new UICommand(this.applicationResources.GetString("MessageBox_DeletePlaylistNo"));
+            bool? result = await this.notificationService.ShowQuestionAsync(
+                this.settingsService.GetIsAllAccessAvailable()
+                    ? "Are you sure want to delete selected radio stations?"
+                    : "Are you sure want to delete selected instant mixes?",
+                yesButton: this.applicationResources.GetString("MessageBox_DeletePlaylistYes"),
+                noButton: this.applicationResources.GetString("MessageBox_DeletePlaylistNo"));
 
-            MessageDialog dialog = new MessageDialog(this.applicationResources.GetString("MessageBox_DeletePlaylistMessage"));
-            dialog.Commands.Add(yesUiCommand);
-            dialog.Commands.Add(noUiCommand);
-            dialog.DefaultCommandIndex = 0;
-            dialog.CancelCommandIndex = 1;
-            var command = await dialog.ShowAsync();
-
-            if (command == yesUiCommand)
+            if (result.HasValue && result.Value)
             {
-                return await this.userPlaylistsService.DeleteAsync(selectedObjects.Cast<UserPlaylist>().ToList());
+                return await this.radioStationsService.DeleteAsync(selectedObjects.Cast<Radio>().ToList());
             }
 
             return null;

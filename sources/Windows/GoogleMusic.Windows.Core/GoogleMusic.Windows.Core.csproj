@@ -140,11 +140,7 @@
     <Compile Include="DispatcherContainer.cs" />
     <Compile Include="DispatcherTimerWrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\Actions\DeletePlaylistAction.cs" />
-    <Compile Include="Services\Actions\DeleteRadioStationsAction.cs" />
-    <Compile Include="Services\Actions\DownloadAction.cs" />
     <Compile Include="Services\Actions\PinToStartAction.cs" />
-    <Compile Include="Services\Actions\RemoveFromLibraryAction.cs" />
     <Compile Include="Services\AlbumArtCacheService.cs" />
     <Compile Include="Services\DataProtectService.cs" />
     <Compile Include="Services\GoogleAccountService.cs" />

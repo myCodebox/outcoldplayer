@@ -4,13 +4,9 @@
 
 namespace OutcoldSolutions.GoogleMusic.Services.Actions
 {
-    using System;
     using System.Collections.Generic;
     using System.Globalization;
-    using System.Linq;
     using System.Threading.Tasks;
-
-    using Windows.UI.Popups;
 
     using OutcoldSolutions.GoogleMusic.Models;
 
@@ -21,8 +17,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Actions
         private readonly IApplicationStateService stateService;
 
         private readonly IPlaylistsService playlistsService;
-
-        private readonly ISongsCachingService songsCachingService;
+        private readonly INotificationService notificationService;
 
         private readonly ISongsService songsService;
 
@@ -30,13 +25,13 @@ namespace OutcoldSolutions.GoogleMusic.Services.Actions
             IApplicationResources applicationResources,
             IApplicationStateService stateService,
             IPlaylistsService playlistsService,
-            ISongsCachingService songsCachingService,
+            INotificationService notificationService,
             ISongsService songsService)
         {
             this.applicationResources = applicationResources;
             this.stateService = stateService;
             this.playlistsService = playlistsService;
-            this.songsCachingService = songsCachingService;
+            this.notificationService = notificationService;
             this.songsService = songsService;
         }
 
@@ -148,24 +143,14 @@ namespace OutcoldSolutions.GoogleMusic.Services.Actions
 
             if (songs.Count > 0)
             {
-                var yesUiCommand = new UICommand(this.applicationResources.GetString("MessageBox_DeletePlaylistYes"));
-                var noUiCommand = new UICommand(this.applicationResources.GetString("MessageBox_DeletePlaylistNo"));
+                bool? result = await this.notificationService.ShowQuestionAsync(string.Format(
+                    CultureInfo.CurrentCulture,
+                    "Are you sure that you want to remove {0} song(s) from your library?",
+                    songs.Count),
+                    yesButton: this.applicationResources.GetString("MessageBox_DeletePlaylistYes"),
+                    noButton: this.applicationResources.GetString("MessageBox_DeletePlaylistNo"));
 
-                MessageDialog dialog =
-                    new MessageDialog(
-                        string.Format(
-                            CultureInfo.CurrentCulture,
-                            "Are you sure that you want to remove {0} song(s) from your library?",
-                            songs.Count));
-
-                dialog.Commands.Add(yesUiCommand);
-                dialog.Commands.Add(noUiCommand);
-                dialog.DefaultCommandIndex = 0;
-                dialog.CancelCommandIndex = 1;
-
-                var command = await dialog.ShowAsync();
-
-                if (command == yesUiCommand)
+                if (result.HasValue && result.Value)
                 {
                     IList<Song> removedSongs = await this.songsService.RemoveFromLibraryAsync(songs);
                     return removedSongs != null;
