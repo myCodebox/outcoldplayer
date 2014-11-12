@@ -6,7 +6,6 @@ namespace OutcoldSolutions.GoogleMusic.Services
 {
     using System;
     using System.Collections.Generic;
-    using System.IO;
     using System.Net;
     using System.Reactive.Linq;
     using System.Threading;
@@ -18,9 +17,6 @@ namespace OutcoldSolutions.GoogleMusic.Services
     using OutcoldSolutions.GoogleMusic.Repositories;
     using OutcoldSolutions.GoogleMusic.Web;
     using OutcoldSolutions.GoogleMusic.Web.Models;
-
-    using Windows.Storage;
-    using Windows.Storage.Streams;
 
     public class SongsCachingService : ISongsCachingService
     {
@@ -41,7 +37,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         private readonly SemaphoreSlim mutex = new SemaphoreSlim(1);
 
-        private StorageFolder cacheFolder;
+        private IFolder cacheFolder;
 
         private INetworkRandomAccessStream currentDownloadStream;
         private INetworkRandomAccessStream preDownloadedStream;
@@ -115,7 +111,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 {
                     // TODO: Catch exception if file does not exist
                     var storageFile = await this.GetFileAsync(cache.FileName);
-                    return await this.mediaStreamDownloadService.GetCachedStreamAsync(new WindowsStorageFile(storageFile), token);
+                    return await this.mediaStreamDownloadService.GetCachedStreamAsync(storageFile, token);
                 }
 
                 if (this.preDownloadedSong != null && this.preDownloadedStream != null)
@@ -309,7 +305,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
         public async Task<IFolder> GetCacheFolderAsync()
         {
             await this.InitializeCacheFolderAsync();
-            return new WindowsStorageFolder(this.cacheFolder);
+            return this.cacheFolder;
         }
 
         public async Task ClearCacheAsync()
@@ -358,9 +354,9 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
             await this.InitializeCacheFolderAsync();
             await this.songsCacheRepository.ClearCacheAsync();
-            foreach (var storageItem in await this.cacheFolder.GetItemsAsync())
+            foreach (var storageItem in await this.cacheFolder.GetFoldersAsync())
             {
-                await storageItem.DeleteAsync(StorageDeleteOption.PermanentDelete);
+                await storageItem.DeleteAsync();
             }
 
             this.eventAggregator.Publish(new CachingChangeEvent(SongCachingChangeEventType.ClearCache));
@@ -378,7 +374,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 {
                     await this.songsCacheRepository.RemoveAsync(cache);
                     var file = await this.GetFileAsync(cache.FileName);
-                    await file.DeleteAsync(StorageDeleteOption.PermanentDelete);
+                    await file.DeleteAsync();
 
                     this.eventAggregator.Publish(new SongCachingChangeEvent(SongCachingChangeEventType.RemoveLocalCopy, null, song));
                 }
@@ -431,7 +427,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     if (!string.IsNullOrEmpty(refreshedCache.FileName))
                     {
                         var storageFile = await this.GetFileAsync(refreshedCache.FileName);
-                        await storageFile.DeleteAsync(StorageDeleteOption.PermanentDelete);
+                        await storageFile.DeleteAsync();
                     }
 
                     await this.songsCacheRepository.RemoveAsync(refreshedCache);
@@ -496,11 +492,11 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         public async Task RestoreCacheAsync()
         {
-            StorageFolder storageFolder = ((WindowsStorageFolder)(await this.GetCacheFolderAsync())).Folder;
+            IFolder storageFolder = await this.GetCacheFolderAsync();
             var folders = await storageFolder.GetFoldersAsync();
             foreach (var folder in folders)
             {
-                IReadOnlyList<StorageFile> files = await folder.GetFilesAsync();
+                IList<IFile> files = await folder.GetFilesAsync();
                 foreach (var file in files)
                 {
                     var song = await this.songsRepository.FindSongAsync(file.Name);
@@ -518,7 +514,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     }
                     else
                     {
-                        await file.DeleteAsync(StorageDeleteOption.PermanentDelete);
+                        await file.DeleteAsync();
                     }
                 }
             }
@@ -526,12 +522,12 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         public async Task<IFolder> GetAppDataStorageFolderAsync()
         {
-            return new WindowsStorageFolder(await ApplicationData.Current.LocalFolder.CreateFolderAsync(SongsCacheFolder, CreationCollisionOption.OpenIfExists));
+            return await ApplicationContext.ApplicationLocalFolder.CreateOrOpenFolderAsync(SongsCacheFolder);
         }
 
         public async Task<IFolder> GetMusicLibraryStorageFolderAsync()
         {
-            return new WindowsStorageFolder(await KnownFolders.MusicLibrary.CreateFolderAsync(SongsMusicLibraryCacheFolder, CreationCollisionOption.OpenIfExists));
+            return await ApplicationContext.MusicLibraryFolder.CreateOrOpenFolderAsync(SongsMusicLibraryCacheFolder);
         }
 
         private async Task SetCurrentStreamAsync(Song song, INetworkRandomAccessStream networkRandomAccessStream)
@@ -760,9 +756,9 @@ namespace OutcoldSolutions.GoogleMusic.Services
                             var cache = await this.songsCacheRepository.FindAsync(nextTask.Song);
                             if (cache == null || string.IsNullOrEmpty(cache.FileName))
                             {
-                                var songFolder = await this.cacheFolder.CreateFolderAsync(nextTask.Song.SongId.Substring(0, 1), CreationCollisionOption.OpenIfExists);
+                                var songFolder = await this.cacheFolder.CreateOrOpenFolderAsync(nextTask.Song.SongId.Substring(0, 1));
                                 var file = await songFolder.CreateFileAsync(nextTask.Song.SongId, CreationCollisionOption.ReplaceExisting);
-                                await stream.SaveToFileAsync(new WindowsStorageFile(file));
+                                await stream.SaveToFileAsync(file);
 
                                 if (cache == null)
                                 {
@@ -824,15 +820,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
             {
                 if (this.cacheFolder == null)
                 {
-                    if (this.settingsService.GetIsMusicLibraryForCache())
-                    {
-                        this.cacheFolder = await KnownFolders.MusicLibrary.CreateFolderAsync(SongsMusicLibraryCacheFolder, CreationCollisionOption.OpenIfExists);
-                    }
-                    else
-                    {
-                        var localFolder = ApplicationData.Current.LocalFolder;
-                        this.cacheFolder = await localFolder.CreateFolderAsync(SongsCacheFolder, CreationCollisionOption.OpenIfExists);
-                    }
+                    var localFolder = this.settingsService.GetIsMusicLibraryForCache() ? ApplicationContext.MusicLibraryFolder : ApplicationContext.ApplicationLocalFolder;
+                    this.cacheFolder = await localFolder.CreateOrOpenFolderAsync(this.settingsService.GetIsMusicLibraryForCache() ? SongsMusicLibraryCacheFolder : SongsCacheFolder);
                 }
             }
             finally
@@ -841,9 +830,9 @@ namespace OutcoldSolutions.GoogleMusic.Services
             }
         }
 
-        private async Task<StorageFile> GetFileAsync(string fileName)
+        private async Task<IFile> GetFileAsync(string fileName)
         {
-            StorageFolder folder = await this.cacheFolder.GetFolderAsync(fileName.Substring(0, 1));
+            IFolder folder = await this.cacheFolder.CreateOrOpenFolderAsync(fileName.Substring(0, 1));
             return await folder.GetFileAsync(fileName);
         }
 

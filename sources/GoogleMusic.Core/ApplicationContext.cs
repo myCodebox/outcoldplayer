@@ -19,6 +19,11 @@ namespace OutcoldSolutions.GoogleMusic
         public static IFolder ApplicationLocalFolder { get; set; }
 
         /// <summary>
+        /// Gets music library folder.
+        /// </summary>
+        public static IFolder MusicLibraryFolder { get; set; }
+
+        /// <summary>
         /// Get application version.
         /// </summary>
         public static Version ApplicationVersion { get; set; }

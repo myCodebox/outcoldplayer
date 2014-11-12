@@ -15,8 +15,6 @@ namespace OutcoldSolutions.GoogleMusic.Services
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Repositories;
 
-    using Windows.Storage;
-
     public class AlbumArtCacheService : IAlbumArtCacheService
     {
         private const string AlbumArtCacheFolder = "AlbumArtCache";
@@ -29,7 +27,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
         private readonly SemaphoreSlim dataSemaphore = new SemaphoreSlim(1);
         private readonly Dictionary<CachedKey, Task<CachedAlbumArt>> downloadTasks = new Dictionary<CachedKey, Task<CachedAlbumArt>>();
         private readonly HttpClient httpClient = new HttpClient();
-        private StorageFolder cacheFolder;
+        private IFolder cacheFolder;
 
         public AlbumArtCacheService(
             ILogManager logManager, 
@@ -105,7 +103,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
         public async Task<IFolder> GetCacheFolderAsync()
         {
             await this.InitializeCacheFolderAsync();
-            return new WindowsStorageFolder(this.cacheFolder);
+            return this.cacheFolder;
         }
 
         public async Task ClearCacheAsync()
@@ -121,10 +119,10 @@ namespace OutcoldSolutions.GoogleMusic.Services
             }
 
             await this.cachedAlbumArtsRepository.ClearCacheAsync();
-            var folder = ((WindowsStorageFolder)await this.GetCacheFolderAsync()).Folder;
-            foreach (var storageItem in await folder.GetItemsAsync())
+            var folder = await this.GetCacheFolderAsync();
+            foreach (var storageItem in await folder.GetFoldersAsync())
             {
-                await storageItem.DeleteAsync(StorageDeleteOption.PermanentDelete);
+                await storageItem.DeleteAsync();
             }
         }
 
@@ -136,18 +134,15 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 string fileName = Guid.NewGuid().ToString();
                 string subFolderName = fileName.Substring(0, 1);
 
-                var folder = await this.cacheFolder.CreateFolderAsync(subFolderName, CreationCollisionOption.OpenIfExists);
+                var folder = await this.cacheFolder.CreateOrOpenFolderAsync(subFolderName);
                 var file = await folder.CreateFileAsync(fileName);
 
                 using (var imageStream = await this.httpClient.GetStreamAsync(cachedKey.AlbumArtUrl.ChangeSize(cachedKey.Size)))
                 {
-                    using (var targetStream = await file.OpenAsync(FileAccessMode.ReadWrite))
+                    using (var fileStream = await file.OpenReadWriteAsync())
                     {
-                        using (Stream fileStream = targetStream.AsStreamForWrite())
-                        {
-                            await imageStream.CopyToAsync(fileStream);
-                            await fileStream.FlushAsync();
-                        }
+                        await imageStream.CopyToAsync(fileStream);
+                        await fileStream.FlushAsync();
                     }
                 }
 
@@ -174,9 +169,9 @@ namespace OutcoldSolutions.GoogleMusic.Services
             {
                 if (this.cacheFolder == null)
                 {
-                    var localFolder = ApplicationData.Current.LocalFolder;
+                    var localFolder = ApplicationContext.ApplicationLocalFolder;
                     this.cacheFolder =
-                        await localFolder.CreateFolderAsync(AlbumArtCacheFolder, CreationCollisionOption.OpenIfExists);
+                        await localFolder.CreateOrOpenFolderAsync(AlbumArtCacheFolder);
                     this.DeleteRemovedItems();
                 }
             }
@@ -205,12 +200,12 @@ namespace OutcoldSolutions.GoogleMusic.Services
                             this.dataSemaphore.Release(1);
                         }
 
-                        var file = await ApplicationData.Current.LocalFolder.GetFileAsync(Path.Combine(AlbumArtCacheFolder, cache.FileName.Substring(0, 1), cache.FileName));
+                        var file = await (await (await this.GetCacheFolderAsync()).CreateOrOpenFolderAsync(cache.FileName.Substring(0, 1))).GetFileAsync(cache.FileName);
                         if (file != null)
                         {
                             try
                             {
-                                await file.DeleteAsync(StorageDeleteOption.PermanentDelete);
+                                await file.DeleteAsync();
                             }
                             catch (FileNotFoundException e)
                             {

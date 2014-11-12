@@ -105,6 +105,11 @@ namespace OutcoldSolutions.GoogleMusic
                     ApplicationContext.ApplicationLocalFolder = new WindowsStorageFolder(ApplicationData.Current.LocalFolder);
                 }
 
+                if (ApplicationContext.MusicLibraryFolder == null)
+                {
+                    ApplicationContext.MusicLibraryFolder = new WindowsStorageFolder(KnownFolders.MusicLibrary);
+                }
+
                 if (ApplicationContext.Container == null)
                 {
                     ApplicationContext.ApplicationVersion = new Version(

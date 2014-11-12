@@ -285,6 +285,7 @@
     <Compile Include="Services\Actions\RemoveLocalAction.cs" />
     <Compile Include="Services\Actions\RemoveSelectedSongAction.cs" />
     <Compile Include="Services\Actions\StartRadioAction.cs" />
+    <Compile Include="Services\AlbumArtCacheService.cs" />
     <Compile Include="Services\AllAccessService.cs" />
     <Compile Include="Services\AllAccessServiceBase.cs" />
     <Compile Include="Services\ApplicationStateService.cs" />
@@ -299,6 +300,7 @@
     <Compile Include="Services\RadioStationsService.cs" />
     <Compile Include="Services\SelectedObjectsService.cs" />
     <Compile Include="Services\SelectSongEvent.cs" />
+    <Compile Include="Services\SongsCachingService.cs" />
     <Compile Include="Services\StateChangedEventArgs.cs" />
     <Compile Include="Shell\ApplicationSettingLayoutType.cs" />
     <Compile Include="Shell\ApplicationSize.cs" />
