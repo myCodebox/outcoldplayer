@@ -121,7 +121,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
             {
                 if (!args.Handled)
                 {
-                    if (args.Key == VirtualKey.GoBack || args.Key == VirtualKey.Back || args.Key == VirtualKey.Escape)
+                    if (args.Key == VirtualKey.GoBack || args.Key == VirtualKey.Escape)
                     {
                         if (this.fullScreenPopup != null && this.fullScreenPopup.Child is FullScreenPlayerPopupView)
                         {
