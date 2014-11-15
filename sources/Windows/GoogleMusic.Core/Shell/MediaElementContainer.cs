@@ -63,14 +63,19 @@ namespace OutcoldSolutions.GoogleMusic.Shell
             }
         }
 
-        public bool IsBeginning
+        public async Task<bool> IsBeginning()
         {
-            get
+            bool result = false;
+            await this.dispatcher.RunAsync(() =>
             {
                 TimeSpan position = this.mediaElement.Position;
-                TimeSpan duration = this.mediaElement.NaturalDuration.HasTimeSpan ? this.mediaElement.NaturalDuration.TimeSpan : position;
-                return position < duration && position.TotalSeconds < 3;
-            }
+                TimeSpan duration = this.mediaElement.NaturalDuration.HasTimeSpan
+                    ? this.mediaElement.NaturalDuration.TimeSpan
+                    : position;
+                result = position < duration && position.TotalSeconds < 3;
+            });
+
+            return result;
         }
 
         public Task PlayAsync(IRandomAccessStream stream, string mimeType)

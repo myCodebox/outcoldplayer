@@ -319,7 +319,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
             if (this.CanSwitchToPrevious())
             {
-                if (this.Repeat == RepeatType.One || !this.mediaElement.IsBeginning)
+                if (this.Repeat == RepeatType.One || !(await this.mediaElement.IsBeginning()))
                 {
                     // Just keep the same song
                 }
