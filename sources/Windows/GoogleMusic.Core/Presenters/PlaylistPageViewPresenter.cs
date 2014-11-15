@@ -6,7 +6,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
     using OutcoldSolutions.GoogleMusic.InversionOfControl;
     using OutcoldSolutions.GoogleMusic.Views;
 
-    public class PlaylistPageViewPresenter : PlaylistPageViewPresenterBase<IPlaylistPageView>
+    public class PlaylistPageViewPresenter : PlaylistPageViewPresenterBase<IPlaylistPageViewBase>
     {
         public PlaylistPageViewPresenter(
             IDependencyResolverContainer container)

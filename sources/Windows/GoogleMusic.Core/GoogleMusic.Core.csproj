@@ -269,6 +269,7 @@
     <Compile Include="Presenters\Popups\ReleasesHistoryPopupViewPresenter.cs" />
     <Compile Include="Presenters\Popups\TutorialPopupViewPresenter.cs" />
     <Compile Include="Presenters\RadioPageViewPresenter.cs" />
+    <Compile Include="Presenters\RadioStationPageViewPresenter.cs" />
     <Compile Include="Presenters\SearchPageViewPresenter.cs" />
     <Compile Include="Presenters\Settings\AccountsViewPresenter.cs" />
     <Compile Include="Presenters\Settings\AppSettingsViewPresenter.cs" />
