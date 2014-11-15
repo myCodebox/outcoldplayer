@@ -377,7 +377,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
                 var range = Enumerable.Range(this.songsQueue.Count, addedSongs.Count);
 
-                if (playNext && this.queueOrder.Count > 0)
+                if (playNext && this.queueOrder.Count > 0 && this.queueOrder.Count > (this.currentQueueIndex + 1))
                 {
                     this.songsQueue.InsertRange(this.queueOrder[this.currentQueueIndex + 1], addedSongs);
                 }
