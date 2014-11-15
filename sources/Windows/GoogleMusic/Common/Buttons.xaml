@@ -1162,5 +1162,11 @@
         <Setter Property="Content" Value="&#xE117;"/>
     </Style>
 
+    <Style x:Key="ListAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource NoBorderAppBarButtonStyle}">
+        <Setter Property="AutomationProperties.AutomationId" Value="QueueAppBarButton"/>
+        <Setter Property="AutomationProperties.Name" Value="Queue"/>
+        <Setter Property="Content" Value="&#xE179;"/>
+    </Style>
+
 
 </ResourceDictionary>
