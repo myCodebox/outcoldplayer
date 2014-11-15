@@ -69,10 +69,10 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
 
         public static bool IsVisualMatch(GoogleMusicSong googleMusicSong, Song song)
         {
-            return string.Equals(song.AlbumArtistTitleNorm, googleMusicSong.AlbumArtist.Trim().Normalize(), StringComparison.CurrentCulture)
-            && string.Equals(song.ArtistTitleNorm, googleMusicSong.Artist.Trim().Normalize(), StringComparison.CurrentCulture)
-            && string.Equals(song.AlbumTitleNorm, googleMusicSong.Album.Trim().Normalize(), StringComparison.CurrentCulture)
-            && string.Equals(song.GenreTitleNorm, googleMusicSong.Genre.Trim().Normalize(), StringComparison.CurrentCulture)
+            return string.Equals(song.AlbumArtistTitleNorm, (googleMusicSong.AlbumArtist ?? string.Empty).Trim().Normalize(), StringComparison.CurrentCulture)
+            && string.Equals(song.ArtistTitleNorm, (googleMusicSong.Artist ?? string.Empty).Trim().Normalize(), StringComparison.CurrentCulture)
+            && string.Equals(song.AlbumTitleNorm, (googleMusicSong.Album ?? string.Empty).Trim().Normalize(), StringComparison.CurrentCulture)
+            && string.Equals(song.GenreTitleNorm, (googleMusicSong.Genre ?? string.Empty).Trim().Normalize(), StringComparison.CurrentCulture)
             && (song.Rating == googleMusicSong.Rating);
         }
     }
