@@ -4,6 +4,7 @@
 
 namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
 {
+    using System;
     using System.Collections.Generic;
     using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Services;
@@ -86,6 +87,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
             {
                 this.Logger.Debug(e, "Cannot get access to the music library");
             }
+
             if (musicLibrary == null)
             {
                 await this.notificationService.ShowMessageAsync("Application could not get access to the Music Library folder. Please verify that you have permissions to this folder.");
