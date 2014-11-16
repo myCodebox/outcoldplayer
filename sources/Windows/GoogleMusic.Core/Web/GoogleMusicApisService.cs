@@ -121,63 +121,72 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
             HttpResponseMessage responseMessage = null;
             HttpRequestException exception = null;
+
             try
             {
-                responseMessage = await this.GetAsync(url, cancellationToken);
-
-                // This means that google asked us to relogin. Let's try again this request.
-                if (responseMessage.StatusCode == HttpStatusCode.Found
-                    || responseMessage.StatusCode == HttpStatusCode.Forbidden)
+                try
                 {
                     responseMessage = await this.GetAsync(url, cancellationToken);
+
+                    // This means that google asked us to relogin. Let's try again this request.
+                    if (responseMessage.StatusCode == HttpStatusCode.Found
+                        || responseMessage.StatusCode == HttpStatusCode.Forbidden)
+                    {
+                        responseMessage.DisposeIfDisposable();
+                        responseMessage = await this.GetAsync(url, cancellationToken);
+                    }
+
+                    responseMessage.EnsureSuccessStatusCode();
                 }
-
-                responseMessage.EnsureSuccessStatusCode();
-            }
-            catch (HttpRequestException e)
-            {
-                exception = e;
-            }
-
-            if (exception != null)
-            {
-                StringBuilder errorMessage = new StringBuilder();
-                HttpStatusCode statusCode = 0;
-                if (responseMessage != null)
+                catch (HttpRequestException e)
                 {
-                    statusCode = responseMessage.StatusCode;
-
-                    var response = await responseMessage.Content.ReadAsJsonObject<GoogleMusicErrorResponse>();
-                    if (response.Error != null)
-                    {
-                        errorMessage.AppendFormat("Code: {0}, Message: {1}", response.Error.Code, response.Error.Message);
-                    }
-                    else
-                    {
-                        errorMessage.AppendFormat(
-                            CultureInfo.CurrentCulture,
-                            "Exception while we tried to get resposne for url (GET) '{0}'. {1}",
-                            url,
-                            exception.Message);
-                    }
+                    exception = e;
                 }
 
-                throw new GoogleApiWebRequestException(errorMessage.ToString(), exception, statusCode);
-            }
+                if (exception != null)
+                {
+                    StringBuilder errorMessage = new StringBuilder();
+                    HttpStatusCode statusCode = 0;
+                    if (responseMessage != null)
+                    {
+                        statusCode = responseMessage.StatusCode;
 
-            if (cancellationToken.HasValue)
+                        var response = await responseMessage.Content.ReadAsJsonObject<GoogleMusicErrorResponse>();
+                        if (response.Error != null)
+                        {
+                            errorMessage.AppendFormat("Code: {0}, Message: {1}", response.Error.Code, response.Error.Message);
+                        }
+                        else
+                        {
+                            errorMessage.AppendFormat(
+                                CultureInfo.CurrentCulture,
+                                "Exception while we tried to get resposne for url (GET) '{0}'. {1}",
+                                url,
+                                exception.Message);
+                        }
+                    }
+
+                    throw new GoogleApiWebRequestException(errorMessage.ToString(), exception, statusCode);
+                }
+
+                if (cancellationToken.HasValue)
+                {
+                    cancellationToken.Value.ThrowIfCancellationRequested();
+                }
+
+                var result = await responseMessage.Content.ReadAsJsonObject<TResult>();
+
+                if (useCache)
+                {
+                    this.cache.TryAdd(new CacheKey(url), result);
+                }
+
+                return result;
+            }
+            finally
             {
-                cancellationToken.Value.ThrowIfCancellationRequested();
+                responseMessage.DisposeIfDisposable();
             }
-
-            var result = await responseMessage.Content.ReadAsJsonObject<TResult>();
-
-            if (useCache)
-            {
-                this.cache.TryAdd(new CacheKey(url), result);
-            }
-
-            return result;
         }
 
         public async Task<TResult> PostAsync<TResult>(string url, dynamic json = null, bool signUrl = false, CancellationToken? cancellationToken = null, bool useCache = false)
@@ -203,67 +212,75 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
             try
             {
-                responseMessage = await this.PostAsync(url, jsonContent, signUrl, cancellationToken);
-
-                // This means that google asked us to relogin. Let's try again this request.
-                if (responseMessage.StatusCode == HttpStatusCode.Found
-                    || responseMessage.StatusCode == HttpStatusCode.Forbidden)
+                try
                 {
                     responseMessage = await this.PostAsync(url, jsonContent, signUrl, cancellationToken);
+
+                    // This means that google asked us to relogin. Let's try again this request.
+                    if (responseMessage.StatusCode == HttpStatusCode.Found
+                        || responseMessage.StatusCode == HttpStatusCode.Forbidden)
+                    {
+                        responseMessage.DisposeIfDisposable();
+                        responseMessage = await this.PostAsync(url, jsonContent, signUrl, cancellationToken);
+                    }
+
+                    responseMessage.EnsureSuccessStatusCode();
+                }
+                catch (HttpRequestException e)
+                {
+                    exception = e;
                 }
 
-                responseMessage.EnsureSuccessStatusCode();
-            }
-            catch (HttpRequestException e)
-            {
-                exception = e;
-            }
-
-            if (exception != null)
-            {
-                StringBuilder errorMessage = new StringBuilder();
-                HttpStatusCode statusCode = 0;
-                if (responseMessage != null)
+                if (exception != null)
                 {
-                    statusCode = responseMessage.StatusCode;
-
-                    var response = await responseMessage.Content.ReadAsJsonObject<GoogleMusicErrorResponse>();
-                    if (response.Error != null)
+                    StringBuilder errorMessage = new StringBuilder();
+                    HttpStatusCode statusCode = 0;
+                    if (responseMessage != null)
                     {
-                        errorMessage.AppendFormat("Code: {0}, Message: {1}", response.Error.Code, response.Error.Message);
-                    }
-                    else
-                    {
-                        errorMessage.AppendFormat(
-                            CultureInfo.CurrentCulture,
-                            "Exception while we tried to get resposne for url (POST) '{0}'. {1}",
-                            url,
-                            exception.Message);
+                        statusCode = responseMessage.StatusCode;
 
-                        if (responseMessage.StatusCode == HttpStatusCode.Found)
+                        var response = await responseMessage.Content.ReadAsJsonObject<GoogleMusicErrorResponse>();
+                        if (response.Error != null)
+                        {
+                            errorMessage.AppendFormat("Code: {0}, Message: {1}", response.Error.Code, response.Error.Message);
+                        }
+                        else
                         {
                             errorMessage.AppendFormat(
-                                CultureInfo.CurrentCulture, ". 302: Moved to '{0}'", responseMessage.Headers.Location.LocalPath);
+                                CultureInfo.CurrentCulture,
+                                "Exception while we tried to get resposne for url (POST) '{0}'. {1}",
+                                url,
+                                exception.Message);
+
+                            if (responseMessage.StatusCode == HttpStatusCode.Found)
+                            {
+                                errorMessage.AppendFormat(
+                                    CultureInfo.CurrentCulture, ". 302: Moved to '{0}'", responseMessage.Headers.Location.LocalPath);
+                            }
                         }
                     }
+
+                    throw new GoogleApiWebRequestException(errorMessage.ToString(), exception, statusCode);
                 }
-                
-                throw new GoogleApiWebRequestException(errorMessage.ToString(), exception, statusCode);
-            }
 
-            if (cancellationToken.HasValue)
+                if (cancellationToken.HasValue)
+                {
+                    cancellationToken.Value.ThrowIfCancellationRequested();
+                }
+
+                var result = await responseMessage.Content.ReadAsJsonObject<TResult>();
+
+                if (useCache)
+                {
+                    this.cache.TryAdd(new CacheKey(url, jsonContent), result);
+                }
+
+                return result;
+            }
+            finally 
             {
-                cancellationToken.Value.ThrowIfCancellationRequested();
+                responseMessage.DisposeIfDisposable();
             }
-
-            var result = await responseMessage.Content.ReadAsJsonObject<TResult>();
-
-            if (useCache)
-            {
-                this.cache.TryAdd(new CacheKey(url, jsonContent), result);
-            }
-
-            return result;
         }
 
         public async Task<IList<TData>> DownloadList<TData>(
