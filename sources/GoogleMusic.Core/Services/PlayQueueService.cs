@@ -317,7 +317,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
             if (this.CanSwitchToPrevious())
             {
-                if (this.Repeat == RepeatType.One || !this.mediaElement.IsBeginning)
+                if (this.Repeat == RepeatType.One || !(await this.mediaElement.IsBeginning()))
                 {
                     // Just keep the same song
                 }
@@ -375,7 +375,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
                 var range = Enumerable.Range(this.songsQueue.Count, addedSongs.Count);
 
-                if (playNext && this.queueOrder.Count > 0)
+                if (playNext && this.queueOrder.Count > 0 && this.queueOrder.Count > (this.currentQueueIndex + 1))
                 {
                     this.songsQueue.InsertRange(this.queueOrder[this.currentQueueIndex + 1], addedSongs);
                 }
@@ -672,6 +672,11 @@ namespace OutcoldSolutions.GoogleMusic.Services
                             this.State = QueueState.Play;
 
                             this.logger.LogTask(this.publisherService.PublishAsync(song, this.CurrentPlaylist));
+
+                            if (!(stream is INetworkRandomAccessStream))
+                            {
+                                this.RaiseDownloadProgress(1);
+                            }
 
                             if (this.IsRadio && !this.CanSwitchToNext())
                             {

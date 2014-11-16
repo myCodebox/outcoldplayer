@@ -245,23 +245,24 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
         private async Task LoadPlaylists(CancellationToken cancellationToken)
         {
+            var systemPlaylists = new List<IPlaylist>();
+            var localPlaylists = new List<IPlaylist>();
+
             var taskLoadLocal = Task.Run(async () =>
             {
                 const int MaxItems = 18;
 
-                List<IPlaylist> results = new List<IPlaylist>();
                 List<IPlaylist> allPlaylists = new List<IPlaylist>();
 
                 if (this.stateService.IsOnline())
                 {
-                    allPlaylists.AddRange(
-                        await this.playlistsService.GetAllAsync(PlaylistType.Radio, Order.LastPlayed, MaxItems));
+                    IList<IPlaylist> radioPlaylists = (await this.playlistsService.GetAllAsync(PlaylistType.Radio, Order.LastPlayed, MaxItems)).ToList();
 
-                    results.Add(allPlaylists[0]);
-                    allPlaylists.RemoveAt(0);
+                    systemPlaylists.Add(radioPlaylists.First());
+                    allPlaylists.AddRange(radioPlaylists.Skip(1));
                 }
 
-                results.AddRange(
+                systemPlaylists.AddRange(
                     await this.playlistsService.GetAllAsync(PlaylistType.SystemPlaylist, Order.LastPlayed, MaxItems));
 
                 foreach (var playlistType in new[] {PlaylistType.UserPlaylist, PlaylistType.Album, PlaylistType.Genre})
@@ -270,7 +271,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                         await this.playlistsService.GetAllAsync(playlistType, Order.LastPlayed, MaxItems));
                 }
 
-                results.AddRange(allPlaylists.OrderByDescending(
+                localPlaylists.AddRange(allPlaylists.OrderByDescending(
                     x =>
                     {
                         var userPlaylist = x as UserPlaylist;
@@ -283,8 +284,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
                         return x.Recent;
                     }).Take(MaxItems));
-
-                return results;
             }, cancellationToken);
 
             var taskLoadSituation = this.stateService.IsOnline() && this.settingsService.GetIsAllAccessAvailable() ? this.allAccessService.GetSituationsAsync(cancellationToken) : Task.Run(() => (SituationsGroup)null, cancellationToken);
@@ -292,13 +291,13 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             await Task.WhenAll(taskLoadLocal, taskLoadSituation);
 
             SituationsGroup situationsGroup = await taskLoadSituation;
-            List<IPlaylist> localResults = await taskLoadLocal;
+            await taskLoadLocal;
 
             await this.Dispatcher.RunAsync(
                 () =>
                 {
-                    this.BindingModel.Playlists = localResults.GetRange(4, localResults.Count - 4);
-                    this.BindingModel.SystemPlaylists = localResults.GetRange(0, 4);
+                    this.BindingModel.Playlists = localPlaylists;
+                    this.BindingModel.SystemPlaylists = systemPlaylists;
                     this.BindingModel.SituationHeader = situationsGroup == null ? null : situationsGroup.Header;
                     this.BindingModel.Situations = situationsGroup == null ? null : situationsGroup.Situations;
                 });

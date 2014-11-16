@@ -211,6 +211,11 @@
                                                           FontSize="16"
                                                           AutomationProperties.Name=""
                                                           Canvas.ZIndex="100"/>
+                                <controls:ButtonWithHover Style="{StaticResource ListAppBarButtonStyle}"  
+                                                          Command="{Binding Path=NavigateToQueueView, Mode=OneTime}"
+                                                          FontSize="16"
+                                                          AutomationProperties.Name=""
+                                                          Canvas.ZIndex="100"/>
                                 <controls:ButtonWithHover Style="{StaticResource SettingsPopupMenuButtonStyle}"  
                                                           Command="{Binding Path=ShowApplicationSettingsCommand, Mode=OneTime}"
                                                           FontSize="16"

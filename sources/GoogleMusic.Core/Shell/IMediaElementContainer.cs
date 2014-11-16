@@ -15,7 +15,7 @@ namespace OutcoldSolutions.GoogleMusic.Shell
 
         double Volume { get; set; }
 
-        bool IsBeginning { get; }
+        Task<bool> IsBeginning();
 
         Task PlayAsync(IStream stream, string mimeType);
 

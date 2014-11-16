@@ -127,7 +127,10 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 }
                 else
                 {
-                    result = await this.allAccessService.GetAlbumAsync((Album)request.Playlist, cancellationToken);
+                    if (this.applicationStateService.IsOnline())
+                    {
+                        result = await this.allAccessService.GetAlbumAsync((Album) request.Playlist, cancellationToken);
+                    }
                 }
 
                 if (result != null)
@@ -147,7 +150,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 await base.LoadDataAsync(navigatedToEventArgs, cancellationToken);
 
                 Album album = this.BindingModel.Playlist as Album;
-                if (album != null && string.IsNullOrEmpty(album.Description) && !string.IsNullOrEmpty(album.GoogleAlbumId))
+                if (album != null && string.IsNullOrEmpty(album.Description) && !string.IsNullOrEmpty(album.GoogleAlbumId) && this.applicationStateService.IsOnline())
                 {
                     var result = await this.allAccessService.GetAlbumAsync(album, cancellationToken);
                     if (result != null)

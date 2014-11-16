@@ -42,6 +42,10 @@ namespace OutcoldSolutions.GoogleMusic.Views
     {
     }
 
+    public interface IRadioStationPageView : IPlaylistPageViewBase
+    {
+    }
+
     public interface IPlaylistsListView : IView
     {
         object GetListView();

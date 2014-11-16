@@ -9,9 +9,9 @@ namespace OutcoldSolutions.GoogleMusic.Views
 
     using OutcoldSolutions.GoogleMusic.Presenters;
 
-    public sealed partial class PlaylistPageView : PageViewBase, IPlaylistPageView
+    public sealed partial class PlaylistPageView : PageViewBase, IPlaylistPageView, IRadioStationPageView
     {
-        private PlaylistPageViewPresenter presenter;
+        private PlaylistPageViewPresenterBase<IPlaylistPageViewBase> presenter;
 
         private ISongsListView songsListView;
 
@@ -24,7 +24,7 @@ namespace OutcoldSolutions.GoogleMusic.Views
         {
             base.OnInitialized();
 
-            this.presenter = this.GetPresenter<PlaylistPageViewPresenter>();
+            this.presenter = this.GetPresenter<PlaylistPageViewPresenterBase<IPlaylistPageViewBase>>();
 
             this.ContentPresenter.Content = this.songsListView = this.Container.Resolve<ISongsListView>();
 
