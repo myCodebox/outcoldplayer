@@ -23,7 +23,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private readonly IPlaylistsService playlistsService;
         private readonly INavigationService navigationService;
         private readonly IAllAccessService allAccessService;
-        private readonly ISettingsService settingsService;
 
         private readonly IAnalyticsService analyticsService;
 
@@ -47,7 +46,6 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
             this.playlistsService = playlistsService;
             this.navigationService = navigationService;
             this.allAccessService = allAccessService;
-            this.settingsService = settingsService;
             this.analyticsService = analyticsService;
 
             this.NavigateToSongs = new DelegateCommand(
