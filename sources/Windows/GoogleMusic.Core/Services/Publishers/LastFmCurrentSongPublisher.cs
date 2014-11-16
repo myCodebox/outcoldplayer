@@ -5,6 +5,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
 {
     using System;
     using System.Collections.Generic;
+    using System.Net.Http;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -52,7 +53,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
                     parameters.Add("albumArtist", song.AlbumArtistTitle);
                 }
 
-                Task nowPlayingTask = this.webService.CallAsync("track.updateNowPlaying", new Dictionary<string, string>(parameters), cancellationToken);
+                Task<HttpResponseMessage> nowPlayingTask = this.webService.CallAsync("track.updateNowPlaying", new Dictionary<string, string>(parameters), cancellationToken);
                 Task scrobbleTask = Task.Run(
                     async () =>
                     {
@@ -66,11 +67,13 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
                                                          { "timestamp", ((int)(startPlaying.ToUnixFileTime() / 1000)).ToString("D") }
                                                      };
 
-                            await this.webService.CallAsync("track.scrobble", scrobbleParameters, cancellationToken);
+                            (await this.webService.CallAsync("track.scrobble", scrobbleParameters, cancellationToken)).DisposeIfDisposable();
                         }
                     }, cancellationToken);
 
                 await Task.WhenAll(nowPlayingTask, scrobbleTask);
+
+                (await nowPlayingTask).DisposeIfDisposable();
             }
         }
     }

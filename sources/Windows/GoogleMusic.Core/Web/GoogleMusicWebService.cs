@@ -162,6 +162,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 if (responseMessage.StatusCode == HttpStatusCode.Found
                     || responseMessage.StatusCode == HttpStatusCode.Forbidden)
                 {
+                    responseMessage.DisposeIfDisposable();
                     responseMessage = await this.GetAsync(url, signUrl);
                 }
 
@@ -170,6 +171,8 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
                 if (result.ReloadXsrf.HasValue && result.ReloadXsrf.Value)
                 {
+                    responseMessage.DisposeIfDisposable();
+
                     await this.RefreshXtAsync();
 
                     responseMessage = await this.GetAsync(url, signUrl);
@@ -198,6 +201,10 @@ namespace OutcoldSolutions.GoogleMusic.Web
                     exception,
                     statusCode);
             }
+            finally
+            {
+                responseMessage.DisposeIfDisposable();
+            }
         }
 
         public async Task<TResult> PostAsync<TResult>(
@@ -224,7 +231,8 @@ namespace OutcoldSolutions.GoogleMusic.Web
                         }
                     }
 
-                    jsonBody.AppendFormat("\"sessionId\":{0}", JsonConvert.ToString(this.sessionService.GetSession().SessionId));
+                    jsonBody.AppendFormat("\"sessionId\":{0}",
+                        JsonConvert.ToString(this.sessionService.GetSession().SessionId));
                     jsonBody.Append("}");
 
                     if (formData == null)
@@ -241,6 +249,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 if (responseMessage.StatusCode == HttpStatusCode.Found
                     || responseMessage.StatusCode == HttpStatusCode.Forbidden)
                 {
+                    responseMessage.DisposeIfDisposable();
                     responseMessage = await this.PostAsync(url, formData, signUrl);
                 }
 
@@ -249,6 +258,8 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
                 if (result.ReloadXsrf.HasValue && result.ReloadXsrf.Value)
                 {
+                    responseMessage.DisposeIfDisposable();
+
                     await this.RefreshXtAsync();
 
                     responseMessage = await this.PostAsync(url, formData, signUrl);
@@ -283,12 +294,17 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
                 throw new WebRequestException(errorMessage.ToString(), exception, statusCode);
             }
+            finally
+            {
+                responseMessage.DisposeIfDisposable();
+            }
         }
 
         public async Task RefreshXtAsync()
         {
             this.Logger.Debug("PostAsync :: Reload Xsrf requested. Reloading.");
-            await this.PostAsync(RefreshXtPath);
+            HttpResponseMessage message = await this.PostAsync(RefreshXtPath);
+            message.DisposeIfDisposable();
         }
 
         private string SignUrl(string url)
