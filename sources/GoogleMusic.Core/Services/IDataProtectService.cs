@@ -10,5 +10,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
         Task<string> ProtectStringAsync(string unprotectedString);
 
         Task<string> UnprotectStringAsync(string protectedString);
+
+        string HashString(string content);
     }
 }

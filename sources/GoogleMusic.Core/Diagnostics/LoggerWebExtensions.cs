@@ -5,6 +5,7 @@ namespace OutcoldSolutions.GoogleMusic.Diagnostics
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Net;
     using System.Net.Http;
@@ -13,7 +14,7 @@ namespace OutcoldSolutions.GoogleMusic.Diagnostics
     using System.Threading.Tasks;
 
     using Newtonsoft.Json;
-
+    using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Web;
 
     /// <summary>
@@ -183,12 +184,12 @@ namespace OutcoldSolutions.GoogleMusic.Diagnostics
                     || httpContent.IsFormUrlEncoded())
                 {
                     var content = await httpContent.ReadAsStringAsync();
-                    /*
-                    StorageFolder folder = null;
+                    
+                    IFolder folder = null;
 
                     try
                     {
-                        folder = (await ApplicationData.Current.LocalFolder.GetFoldersAsync())
+                        folder = (await ApplicationContext.ApplicationLocalFolder.GetFoldersAsync())
                             .FirstOrDefault(x => string.Equals(x.Name, WebResponseLogs, StringComparison.OrdinalIgnoreCase));
                     }
                     catch (InvalidOperationException)
@@ -200,10 +201,16 @@ namespace OutcoldSolutions.GoogleMusic.Diagnostics
                     {
                         var fileName = string.Format("{0}.log", Guid.NewGuid());
                         var file = await folder.CreateFileAsync(fileName);
-                        await FileIO.WriteTextAsync(file, content);
+                        using (var stream = await file.OpenReadWriteAsync())
+                        {
+                            using (var writer = new StreamWriter(stream))
+                            {
+                                await writer.WriteAsync(content);
+                            }
+                        }
                         log.AppendFormat("    CONTENT FILE: {0}", file.Path);
                     }
-                    else*/
+                    else
                     {
                         log.AppendFormat("    CONTENT:{0}{1}", Environment.NewLine, content);
                         log.AppendLine();
@@ -238,14 +245,14 @@ namespace OutcoldSolutions.GoogleMusic.Diagnostics
 
                 StringBuilder readlCookiesOutput = null;
                 IDebugConsole debugConsole = null;
-                /*if (ApplicationBase.Container != null && ApplicationBase.Container.IsRegistered<IDebugConsole>())
+                if (ApplicationContext.Container != null && ApplicationContext.Container.IsRegistered<IDebugConsole>())
                 {
-                    debugConsole = ApplicationBase.Container.Resolve<IDebugConsole>();
+                    debugConsole = ApplicationContext.Container.Resolve<IDebugConsole>();
 
                     readlCookiesOutput = new StringBuilder();
                     readlCookiesOutput.AppendFormat("    REAL COOKIES({0}):", cookies.Count);
                     readlCookiesOutput.AppendLine();
-                }*/
+                }
                 
                 log.AppendFormat("    COOKIES({0}):", cookies.Count);
                 log.AppendLine();
@@ -253,6 +260,14 @@ namespace OutcoldSolutions.GoogleMusic.Diagnostics
                 if (readlCookiesOutput != null)
                 {
                     readlCookiesOutput.Append(log);
+                }
+
+                IDataProtectService dataProtectService = null;
+
+                if (ApplicationContext.Container != null &&
+                        ApplicationContext.Container.IsRegistered<IDataProtectService>())
+                {
+                    dataProtectService = ApplicationContext.Container.Resolve<IDataProtectService>();
                 }
 
                 foreach (Cookie cookieLog in cookies)
@@ -263,14 +278,12 @@ namespace OutcoldSolutions.GoogleMusic.Diagnostics
                         readlCookiesOutput.AppendLine();
                     }
 
-                    /*HashAlgorithmProvider hashProvider = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Md5);
-                    IBuffer hash =
-                        hashProvider.HashData(
-                            CryptographicBuffer.ConvertStringToBinary(cookieLog.Value, BinaryStringEncoding.Utf8));
-                    string hashValue = CryptographicBuffer.EncodeToBase64String(hash);
-
-                    log.AppendFormat("        {0}={{MD5_VALUE_HASH}}{1}, Expires={2}", cookieLog.Name, hashValue, cookieLog.Expires);
-                    log.AppendLine();*/
+                    if (dataProtectService != null)
+                    {
+                        log.AppendFormat("        {0}={{MD5_VALUE_HASH}}{1}, Expires={2}", cookieLog.Name, dataProtectService.HashString(cookieLog.Value),
+                            cookieLog.Expires);
+                        log.AppendLine();
+                    }
                 }
 
                 if (debugConsole != null)

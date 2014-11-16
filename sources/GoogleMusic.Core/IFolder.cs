@@ -18,6 +18,8 @@ namespace OutcoldSolutions.GoogleMusic
     {
         string Path { get; }
 
+        string Name { get; }
+
         Task<IFile> GetFileAsync(string fileName);
 
         Task<IList<IFolder>> GetFoldersAsync();

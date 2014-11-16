@@ -30,6 +30,11 @@ namespace OutcoldSolutions.GoogleMusic
             
         }
 
+        public string Name
+        {
+            get { return this.Folder.Name; }
+        }
+
         public async Task<IFile> GetFileAsync(string fileName)
         {
             return new WindowsStorageFile(await this.Folder.GetFileAsync(fileName));

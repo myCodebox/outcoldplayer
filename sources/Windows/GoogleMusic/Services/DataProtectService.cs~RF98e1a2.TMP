@@ -85,13 +85,16 @@ namespace OutcoldSolutions.GoogleMusic.Services
             return CryptographicBuffer.ConvertBinaryToString(Encoding, buffUnprotectedData);
         }
 
-        public string HashString(string content)
+        public Task<string> HashString(string content)
         {
-            HashAlgorithmProvider hashProvider = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha1);
-            IBuffer hash =
-                hashProvider.HashData(
-                    CryptographicBuffer.ConvertStringToBinary(content, BinaryStringEncoding.Utf8));
-            return CryptographicBuffer.EncodeToBase64String(hash);
+            return Task.Run(() =>
+            {
+                HashAlgorithmProvider hashProvider = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha1);
+                IBuffer hash =
+                    hashProvider.HashData(
+                        CryptographicBuffer.ConvertStringToBinary(content, BinaryStringEncoding.Utf8));
+                return CryptographicBuffer.EncodeToBase64String(hash);
+            });
         }
 
         private DataProtectionProvider GetDataProtectionProvider()
