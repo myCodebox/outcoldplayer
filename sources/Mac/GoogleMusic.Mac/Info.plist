@@ -1,11 +1,9 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>CFBundleDisplayName</key>
-	<string>GoogleMusic.Mac</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.your-company.GoogleMusic.Mac</string>
+	<string>com.OutcoldSolutions.outcoldplayer</string>
 	<key>CFBundleName</key>
 	<string>GoogleMusic.Mac</string>
 	<key>CFBundleVersion</key>
@@ -16,5 +14,7 @@
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>CFBundleDisplayName</key>
+	<string>outcoldplayer</string>
 </dict>
 </plist>

@@ -1,5 +1,5 @@
 ﻿
-namespace GoogleMusic.Mac
+namespace OutcoldSolutions.GoogleMusic
 {
 	
 	// Should subclass MonoMac.AppKit.NSWindow

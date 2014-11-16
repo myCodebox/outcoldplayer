@@ -1,11 +1,14 @@
-﻿
+﻿// --------------------------------------------------------------------------------------------------------------------
+// Outcold Solutions (http://outcoldman.com)
+// --------------------------------------------------------------------------------------------------------------------
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using MonoMac.Foundation;
 using MonoMac.AppKit;
 
-namespace GoogleMusic.Mac
+namespace OutcoldSolutions.GoogleMusic
 {
 	public partial class MainWindowController : MonoMac.AppKit.NSWindowController
 	{

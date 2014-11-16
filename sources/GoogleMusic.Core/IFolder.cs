@@ -10,7 +10,6 @@ namespace OutcoldSolutions.GoogleMusic
     public enum CreationCollisionOption
     {
         ReplaceExisting = 1,
-        FailIfExists = 2,
         OpenIfExists = 3
     }
 
