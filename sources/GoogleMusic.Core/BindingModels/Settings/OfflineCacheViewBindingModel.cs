@@ -10,18 +10,11 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels.Settings
 
     public class OfflineCacheViewBindingModel : BindingModelBase
     {
-        private readonly ISettingsService settingsService;
-
         private ObservableCollection<CachedSongBindingModel> queuedTasks;
 
         private bool isLoading;
         private long albumArtCacheSize;
         private long songsCacheSize;
-
-        public OfflineCacheViewBindingModel(ISettingsService settingsService)
-        {
-            this.settingsService = settingsService;
-        }
 
         public bool IsLoading
         {

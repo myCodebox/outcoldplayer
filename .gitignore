@@ -65,4 +65,4 @@ packages/
 !packages/build/
 
 #Xamarin
-GoogleMusic.userprefs
+*.userprefs

@@ -7,6 +7,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
     using System.Threading.Tasks;
 
     using OutcoldSolutions.GoogleMusic.BindingModels.Popups;
+	using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Services.Publishers;
     using OutcoldSolutions.GoogleMusic.Shell;
     using OutcoldSolutions.GoogleMusic.Views.Popups;
@@ -44,7 +45,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Popups
                             && !string.IsNullOrEmpty(t.Result.Token))
                         {
                             this.BindingModel.IsLoading = false;
-                            var launchTask = this.shellService.LaunchUriAsync(new Uri(this.BindingModel.LinkUrl = this.accountWebService.GetAuthUrl(this.token = t.Result.Token)));
+							this.Logger.LogTask(this.shellService.LaunchUriAsync(new Uri(this.BindingModel.LinkUrl = this.accountWebService.GetAuthUrl(this.token = t.Result.Token))));
                         }
                     },
                 TaskScheduler.FromCurrentSynchronizationContext());

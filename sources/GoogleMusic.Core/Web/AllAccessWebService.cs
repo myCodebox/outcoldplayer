@@ -41,14 +41,10 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
         private readonly IGoogleMusicApisService googleMusicApisService;
 
-        private readonly ILogger logger;
-
         public AllAccessWebService(
-            IGoogleMusicApisService googleMusicApisService,
-            ILogManager logManager)
+            IGoogleMusicApisService googleMusicApisService)
         {
             this.googleMusicApisService = googleMusicApisService;
-            this.logger = logManager.CreateLogger("SongsWebService");
         }
 
         public Task<GoogleMusicArtist> FetchArtistAsync(string googleArtistId, CancellationToken cancellationToken)
