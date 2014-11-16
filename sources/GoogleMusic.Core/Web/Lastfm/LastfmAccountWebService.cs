@@ -3,6 +3,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace OutcoldSolutions.GoogleMusic.Web.Lastfm
 {
+    using System;
     using System.Collections.Generic;
     using System.Globalization;
     using System.Net;
@@ -22,15 +23,24 @@ namespace OutcoldSolutions.GoogleMusic.Web.Lastfm
         {
             this.webService.SetToken(null);
 
-            HttpResponseMessage response = await this.webService.CallAsync("auth.gettoken");
-            TokenResp tokenResp = await response.Content.ReadAsJsonObject<TokenResp>();
+            HttpResponseMessage response = null;
 
-            if (!string.IsNullOrEmpty(tokenResp.Token))
+            try
             {
-                this.webService.SetToken(tokenResp.Token);
-            }
+                response = await this.webService.CallAsync("auth.gettoken");
+                TokenResp tokenResp = await response.Content.ReadAsJsonObject<TokenResp>();
 
-            return tokenResp;
+                if (!string.IsNullOrEmpty(tokenResp.Token))
+                {
+                    this.webService.SetToken(tokenResp.Token);
+                }
+
+                return tokenResp;
+            }
+            finally
+            {
+                response.DisposeIfDisposable();
+            }
         }
 
         public async Task<GetSessionResp> GetSessionAsync(string token)
@@ -39,16 +49,24 @@ namespace OutcoldSolutions.GoogleMusic.Web.Lastfm
                                                         {
                                                             { "token", token }
                                                         };
+            HttpResponseMessage response = null;
 
-            HttpResponseMessage response = await this.webService.CallAsync("auth.getSession", parameters);
-            GetSessionResp getSessionResp = await response.Content.ReadAsJsonObject<GetSessionResp>();
-
-            if (getSessionResp.Session != null)
+            try
             {
-                this.webService.SetSession(getSessionResp.Session);
-            }
+                response = await this.webService.CallAsync("auth.getSession", parameters);
+                GetSessionResp getSessionResp = await response.Content.ReadAsJsonObject<GetSessionResp>();
 
-            return getSessionResp;
+                if (getSessionResp.Session != null)
+                {
+                    this.webService.SetSession(getSessionResp.Session);
+                }
+
+                return getSessionResp;
+            }
+            finally
+            {
+                response.DisposeIfDisposable();
+            }
         }
 
         public string GetAuthUrl(string token)

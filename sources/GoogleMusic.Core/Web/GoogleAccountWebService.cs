@@ -42,6 +42,8 @@ namespace OutcoldSolutions.GoogleMusic.Web
         {
             this.InitializeHttpClient();
 
+            HttpResponseMessage responseMessage = null;
+
             try
             {
                 // Check for details: https://developers.google.com/accounts/docs/AuthForInstalledApps
@@ -59,7 +61,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
                     requestContent["logincaptcha"] = captcha;
                 }
 
-                var responseMessage = await this.SendAsync(
+                responseMessage = await this.SendAsync(
                                                 new HttpRequestMessage(HttpMethod.Post, ClientLoginPath)
                                                 {
                                                     Content = new FormUrlEncodedContent(requestContent)
@@ -94,6 +96,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
                     return response;
                 }
 
+                responseMessage.DisposeIfDisposable();
                 responseMessage = await this.SendAsync(
                                                     new HttpRequestMessage(HttpMethod.Post, IssueAuthTokenPath)
                                                     {
@@ -119,6 +122,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
                 url.AppendFormat("&continue={0}", WebUtility.UrlEncode(serviceUri.ToString()));
                 var requestUri = url.ToString();
 
+                responseMessage.DisposeIfDisposable();
                 responseMessage = await this.httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Get, requestUri));
                 if (!responseMessage.IsSuccessStatusCode)
                 {
@@ -129,6 +133,9 @@ namespace OutcoldSolutions.GoogleMusic.Web
             }
             finally
             {
+                responseMessage.DisposeIfDisposable();
+                this.httpClientHandler.DisposeIfDisposable();
+                this.httpClient.DisposeIfDisposable();
                 this.httpClientHandler = null;
                 this.httpClient = null;
             }
