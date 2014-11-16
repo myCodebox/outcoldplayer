@@ -675,6 +675,11 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
                             this.logger.LogTask(this.publisherService.PublishAsync(song, this.CurrentPlaylist));
 
+                            if (!(stream is INetworkRandomAccessStream))
+                            {
+                                this.RaiseDownloadProgress(1);
+                            }
+
                             if (this.IsRadio && !this.CanSwitchToNext())
                             {
                                 try

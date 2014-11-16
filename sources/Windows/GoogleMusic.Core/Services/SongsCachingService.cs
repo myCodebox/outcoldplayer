@@ -177,6 +177,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 throw new ArgumentNullException("song");
             }
 
+            await this.InitializeCacheFolderAsync();
+
             await this.mutex.WaitAsync(token).ConfigureAwait(continueOnCapturedContext: false);
 
             try
@@ -467,6 +469,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
             Song currentSong = null;
             INetworkRandomAccessStream currentStream = null;
+
+            await this.InitializeCacheFolderAsync();
 
             await this.mutex.WaitAsync().ConfigureAwait(continueOnCapturedContext: false);
 
