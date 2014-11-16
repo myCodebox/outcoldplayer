@@ -7,6 +7,7 @@ namespace OutcoldSolutions.GoogleMusic
     using System;
     using System.IO;
     using System.Linq;
+    using System.Text;
     using System.Threading.Tasks;
     using Windows.Storage;
 
@@ -54,6 +55,34 @@ namespace OutcoldSolutions.GoogleMusic
         {
             var stream = await this.File.OpenAsync(FileAccessMode.ReadWrite).AsTask();
             return stream.AsStream();
+        }
+
+        public async Task<Stream> OpenReadAsync()
+        {
+            var stream = await this.File.OpenAsync(FileAccessMode.Read).AsTask();
+            return stream.AsStream();
+        }
+
+        public async Task WriteTextToFileAsync(string content)
+        {
+             using (var stream = await this.OpenReadWriteAsync())
+            {
+                using (var streamWriter = new StreamWriter(stream, Encoding.UTF8))
+                {
+                    await streamWriter.WriteAsync(content);
+                }
+            }
+        }
+
+        public async Task<string> ReadFileTextContentAsync()
+        {
+            using (var stream = await this.OpenReadAsync())
+            {
+                using (var streamReader = new StreamReader(stream, Encoding.UTF8))
+                {
+                    return await streamReader.ReadToEndAsync();
+                }
+            }
         }
     }
 }

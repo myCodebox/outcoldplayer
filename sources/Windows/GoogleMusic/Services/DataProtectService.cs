@@ -85,13 +85,31 @@ namespace OutcoldSolutions.GoogleMusic.Services
             return CryptographicBuffer.ConvertBinaryToString(Encoding, buffUnprotectedData);
         }
 
-        public string HashString(string content)
+        public string GetMd5HashStringAsBase64(string content)
         {
-            HashAlgorithmProvider hashProvider = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha1);
+            HashAlgorithmProvider hashProvider = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Md5);
             IBuffer hash =
                 hashProvider.HashData(
                     CryptographicBuffer.ConvertStringToBinary(content, BinaryStringEncoding.Utf8));
             return CryptographicBuffer.EncodeToBase64String(hash);
+        }
+
+        public byte[] GetMd5Hash(string content)
+        {
+            HashAlgorithmProvider hashProvider = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Md5);
+            IBuffer hash =
+                hashProvider.HashData(
+                    CryptographicBuffer.ConvertStringToBinary(content, BinaryStringEncoding.Utf8));
+            return hash.ToArray();
+        }
+
+        public string GetHMacStringAsBase64(string key, string value)
+        {
+            var provider = MacAlgorithmProvider.OpenAlgorithm(MacAlgorithmNames.HmacSha1);
+            var hmacKey = provider.CreateKey(CryptographicBuffer.ConvertStringToBinary(key, BinaryStringEncoding.Utf8));
+            var signedData = CryptographicEngine.Sign(hmacKey, CryptographicBuffer.ConvertStringToBinary(value, BinaryStringEncoding.Utf8));
+
+            return Convert.ToBase64String(signedData.ToArray());
         }
 
         private DataProtectionProvider GetDataProtectionProvider()

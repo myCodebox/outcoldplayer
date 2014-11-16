@@ -25,7 +25,7 @@ namespace OutcoldSolutions.GoogleMusic
                 throw new ArgumentNullException("this");
             }
 
-            return @this.GetValue<DateTime?>(LibraryFreshnessDateKey);
+            return @this.GetApplicationValue<DateTime?>(LibraryFreshnessDateKey);
         }
 
         public static void SetLibraryFreshnessDate(this ISettingsService @this, DateTime dateTime)
@@ -35,7 +35,7 @@ namespace OutcoldSolutions.GoogleMusic
                 throw new ArgumentNullException("this");
             }
 
-            @this.SetValue(LibraryFreshnessDateKey, dateTime);
+            @this.SetApplicationValue(LibraryFreshnessDateKey, dateTime);
         }
 
         public static void ResetLibraryFreshness(this ISettingsService @this)
@@ -45,7 +45,7 @@ namespace OutcoldSolutions.GoogleMusic
                 throw new ArgumentNullException("this");
             }
 
-            @this.RemoveValue(LibraryFreshnessDateKey);
+            @this.RemoveApplicationValue(LibraryFreshnessDateKey);
         }
 
         public static IList<uint> GetStreamBitrates(this ISettingsService @this)
@@ -60,7 +60,7 @@ namespace OutcoldSolutions.GoogleMusic
                 throw new ArgumentNullException("this");
             }
 
-            uint val = @this.GetValue<uint>(StreamBitrateKey, defaultValue: DefaultStreamBitrate);
+            uint val = @this.GetApplicationValue<uint>(StreamBitrateKey, defaultValue: DefaultStreamBitrate);
             if (!Bitrates.Contains(val))
             {
                 return DefaultStreamBitrate;
@@ -75,7 +75,7 @@ namespace OutcoldSolutions.GoogleMusic
                 throw new ArgumentNullException("this");
             }
 
-            @this.SetValue(StreamBitrateKey, value);
+            @this.SetApplicationValue(StreamBitrateKey, value);
         }
 
         public static bool GetIsMusicLibraryForCache(this ISettingsService @this)
@@ -85,7 +85,7 @@ namespace OutcoldSolutions.GoogleMusic
                 throw new ArgumentNullException("this");
             }
 
-            return @this.GetValue<bool>(IsMusicLibraryForCacheKey, defaultValue: false);
+            return @this.GetApplicationValue<bool>(IsMusicLibraryForCacheKey, defaultValue: false);
         }
 
         public static void SetIsMusicLibraryForCache(this ISettingsService @this, bool value)
@@ -95,7 +95,7 @@ namespace OutcoldSolutions.GoogleMusic
                 throw new ArgumentNullException("this");
             }
 
-            @this.SetValue(IsMusicLibraryForCacheKey, value);
+            @this.SetApplicationValue(IsMusicLibraryForCacheKey, value);
         }
 
         public static bool GetIsThumbsRating(this ISettingsService @this)

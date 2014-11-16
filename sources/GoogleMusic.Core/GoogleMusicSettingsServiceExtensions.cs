@@ -40,12 +40,12 @@ namespace OutcoldSolutions.GoogleMusic
                 throw new ArgumentNullException("this");
             }
 
-            return @this.GetValue<bool>(BlockExplicitSongsInRadioKey, defaultValue: false);
+            return @this.GetApplicationValue<bool>(BlockExplicitSongsInRadioKey, defaultValue: false);
         }
 
         public static void SetBlockExplicitSongsInRadio(this ISettingsService @this, bool value)
         {
-            @this.SetValue(BlockExplicitSongsInRadioKey, value);
+            @this.SetApplicationValue(BlockExplicitSongsInRadioKey, value);
         }
 
         public static bool GetIsAllAccessAvailable(this ISettingsService @this)
@@ -55,12 +55,12 @@ namespace OutcoldSolutions.GoogleMusic
                 throw new ArgumentNullException("this");
             }
 
-            return @this.GetValue<bool>(IsAllAccessAvailableKey, defaultValue: false);
+            return @this.GetApplicationValue<bool>(IsAllAccessAvailableKey, defaultValue: false);
         }
 
         public static void SetIsAllAccessAvailable(this ISettingsService @this, bool value)
         {
-            @this.SetValue(IsAllAccessAvailableKey, value);
+            @this.SetApplicationValue(IsAllAccessAvailableKey, value);
         }
 
 
@@ -71,12 +71,12 @@ namespace OutcoldSolutions.GoogleMusic
                 throw new ArgumentNullException("this");
             }
 
-            return @this.GetValue<bool>(IsSearchLocalOnlyKey, defaultValue: false);
+            return @this.GetApplicationValue<bool>(IsSearchLocalOnlyKey, defaultValue: false);
         }
 
         public static void SetIsSearchLocalOnly(this ISettingsService @this, bool value)
         {
-            @this.SetValue(IsSearchLocalOnlyKey, value);
+            @this.SetApplicationValue(IsSearchLocalOnlyKey, value);
         }
     }
 }

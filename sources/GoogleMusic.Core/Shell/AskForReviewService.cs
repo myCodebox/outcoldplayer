@@ -43,14 +43,14 @@ namespace OutcoldSolutions.GoogleMusic.Shell
 
         private void NavigationServiceOnNavigatedTo(object sender, NavigatedToEventArgs navigatedToEventArgs)
         {
-            bool dontAsk = this.settingsService.GetValue<bool>(DoNotAskToReviewKey);
+            bool dontAsk = this.settingsService.GetApplicationValue<bool>(DoNotAskToReviewKey);
             if (dontAsk)
             {
                 this.navigationService.NavigatedTo -= this.NavigationServiceOnNavigatedTo;
             }
             else
             {
-                int startsCount = this.settingsService.GetValue<int>(CountOfStartsBeforeReview);
+                int startsCount = this.settingsService.GetApplicationValue<int>(CountOfStartsBeforeReview);
                 if (startsCount >= AskForReviewStarts)
                 {
                     try
@@ -64,7 +64,7 @@ namespace OutcoldSolutions.GoogleMusic.Shell
                 }
                 else
                 {
-                    this.settingsService.SetValue<int>(CountOfStartsBeforeReview, startsCount + 1);
+                    this.settingsService.SetApplicationValue<int>(CountOfStartsBeforeReview, startsCount + 1);
                 }
             }
         }
@@ -92,11 +92,11 @@ namespace OutcoldSolutions.GoogleMusic.Shell
             {
                 if (donateCloseEventArgs.Later)
                 {
-                    this.settingsService.SetValue<int>(CountOfStartsBeforeReview, 0);
+                    this.settingsService.SetApplicationValue<int>(CountOfStartsBeforeReview, 0);
                 }
                 else
                 {
-                    this.settingsService.SetValue<bool>(DoNotAskToReviewKey, true);
+                    this.settingsService.SetApplicationValue<bool>(DoNotAskToReviewKey, true);
                 }
             }
         }

@@ -201,13 +201,7 @@ namespace OutcoldSolutions.GoogleMusic.Diagnostics
                     {
                         var fileName = string.Format("{0}.log", Guid.NewGuid());
                         var file = await folder.CreateFileAsync(fileName);
-                        using (var stream = await file.OpenReadWriteAsync())
-                        {
-                            using (var writer = new StreamWriter(stream))
-                            {
-                                await writer.WriteAsync(content);
-                            }
-                        }
+                        await file.WriteTextToFileAsync(content);
                         log.AppendFormat("    CONTENT FILE: {0}", file.Path);
                     }
                     else
@@ -280,7 +274,7 @@ namespace OutcoldSolutions.GoogleMusic.Diagnostics
 
                     if (dataProtectService != null)
                     {
-                        log.AppendFormat("        {0}={{MD5_VALUE_HASH}}{1}, Expires={2}", cookieLog.Name, dataProtectService.HashString(cookieLog.Value),
+                        log.AppendFormat("        {0}={{MD5_VALUE_HASH}}{1}, Expires={2}", cookieLog.Name, dataProtectService.GetMd5HashStringAsBase64(cookieLog.Value),
                             cookieLog.Expires);
                         log.AppendLine();
                     }

@@ -145,6 +145,9 @@ namespace OutcoldSolutions.GoogleMusic
 
                         registration.Register<IInAppPurchasesService>()
                                     .AsSingleton<InAppPurchasesService>();
+
+                        registration.Register<ISecureStorageService>()
+                                   .AsSingleton<SecureStorageService>();
                     }
 
                     this.Logger = ApplicationContext.Container.Resolve<ILogManager>().CreateLogger(this.GetType().Name);

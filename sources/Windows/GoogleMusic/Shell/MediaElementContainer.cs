@@ -40,7 +40,7 @@ namespace OutcoldSolutions.GoogleMusic.Shell
             this.mediaElement.MediaEnded += this.MediaElementOnMediaEnded;
             this.mediaElement.MediaOpened += this.MediaElementOnMediaOpened;
 
-            this.mediaElement.Volume = this.settingsService.GetValue(MediaElementVolumeKey, 1d);
+            this.mediaElement.Volume = this.settingsService.GetApplicationValue(MediaElementVolumeKey, 1d);
 
             this.timer.Interval = TimeSpan.FromMilliseconds(200);
             this.timer.Tick += this.TimerOnTick;
@@ -60,7 +60,7 @@ namespace OutcoldSolutions.GoogleMusic.Shell
             set
             {
                 this.mediaElement.Volume = value;
-                this.settingsService.SetValue(MediaElementVolumeKey, value);
+                this.settingsService.SetApplicationValue(MediaElementVolumeKey, value);
             }
         }
 

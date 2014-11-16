@@ -43,7 +43,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Publishers
             this.albumArtCacheService = albumArtCacheService;
             this.logger = logManager.CreateLogger("CurrentSongPublisherService");
 
-            this.delayPublishersHoldUp = this.settingsService.GetValue(DelayPublishersSettingsKey, defaultValue: 15000);
+            this.delayPublishersHoldUp = this.settingsService.GetApplicationValue(DelayPublishersSettingsKey, defaultValue: 15000);
         }
 
         public void AddPublisher<TPublisherType>() where TPublisherType : ICurrentSongPublisher

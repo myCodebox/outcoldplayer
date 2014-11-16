@@ -8,7 +8,6 @@ namespace OutcoldSolutions.GoogleMusic.Web
     using System.Linq;
     using System.Net;
     using System.Net.Http;
-    using System.Runtime.InteropServices.WindowsRuntime;
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
@@ -17,9 +16,6 @@ namespace OutcoldSolutions.GoogleMusic.Web
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Web.Models;
-
-    using Windows.Security.Cryptography;
-    using Windows.Security.Cryptography.Core;
 
     public class SongsWebService : ISongsWebService
     {
@@ -43,17 +39,20 @@ namespace OutcoldSolutions.GoogleMusic.Web
         private readonly IGoogleMusicApisService googleMusicApisService;
 
         private readonly ISettingsService settingsService;
+        private readonly IDataProtectService dataProtectService;
         private readonly ILogger logger;
 
         public SongsWebService(
             IGoogleMusicWebService googleMusicWebService,
             IGoogleMusicApisService googleMusicApisService,
             ISettingsService settingsService,
+            IDataProtectService dataProtectService,
             ILogManager logManager)
         {
             this.googleMusicWebService = googleMusicWebService;
             this.googleMusicApisService = googleMusicApisService;
             this.settingsService = settingsService;
+            this.dataProtectService = dataProtectService;
             this.logger = logManager.CreateLogger("SongsWebService");
         }
 
@@ -267,7 +266,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
                     salt.Append(AlpanumLowercase[r.Next(AlpanumLowercase.Length)]);
                 }
 
-                var hash = this.Hash(song.StoreId + salt, this.GetKey()).ToCharArray();
+                var hash = this.dataProtectService.GetHMacStringAsBase64(this.GetKey(), song.StoreId + salt).ToCharArray();
 
                 for (int i = 0; i < hash.Length; i++)
                 {
@@ -297,26 +296,17 @@ namespace OutcoldSolutions.GoogleMusic.Web
             return await this.googleMusicWebService.GetAsync<GoogleMusicSongUrl>(url, signUrl: false, token: token);
         }
 
-        private string Hash(string value, string key)
-        {
-            var provider = MacAlgorithmProvider.OpenAlgorithm(MacAlgorithmNames.HmacSha1);
-            var hmacKey = provider.CreateKey(CryptographicBuffer.ConvertStringToBinary(key, BinaryStringEncoding.Utf8));
-            var signedData = CryptographicEngine.Sign(hmacKey, CryptographicBuffer.ConvertStringToBinary(value, BinaryStringEncoding.Utf8));
-
-            return Convert.ToBase64String(signedData.ToArray());
-        }
-
         private async Task UpdateGoogleKeyAsync()
         {
             HttpClient client = new HttpClient();
             var result = await client.GetStringAsync("https://dl.dropboxusercontent.com/u/114202641/gMusicW/aakey.txt");
 
-            this.settingsService.SetValue(SettingsGoogleKeyName, result);
+            this.settingsService.SetApplicationValue(SettingsGoogleKeyName, result);
         }
 
         private string GetKey()
         {
-            return this.settingsService.GetValue(SettingsGoogleKeyName, DefaultGoogleKey);
+            return this.settingsService.GetApplicationValue(SettingsGoogleKeyName, DefaultGoogleKey);
         }
     }
 }

@@ -8,20 +8,18 @@ namespace OutcoldSolutions.GoogleMusic.Web.Lastfm
     using System.Linq;
     using System.Net;
     using System.Net.Http;
-    using System.Runtime.InteropServices.WindowsRuntime;
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
 
-    using Windows.Security.Credentials;
-    using Windows.Security.Cryptography;
-    using Windows.Security.Cryptography.Core;
-    using Windows.Storage.Streams;
-
     using OutcoldSolutions.GoogleMusic.Diagnostics;
+    using OutcoldSolutions.GoogleMusic.Services;
+    using OutcoldSolutions.GoogleMusic.Shell;
 
     public class LastfmWebService : WebServiceBase, ILastfmWebService
     {
+        private readonly ISecureStorageService secureStorageService;
+        private readonly IDataProtectService dataProtectService;
         public const string ApiKey = "92fa0e285e2204582fbb359321567658";
         private const string LastFmSessionResource = "OutcoldSolutions.LastFm";
 
@@ -35,8 +33,10 @@ namespace OutcoldSolutions.GoogleMusic.Web.Lastfm
         private string sessionToken;
         private Session currentSession;
 
-        public LastfmWebService(ILogManager logManager)
+        public LastfmWebService(ILogManager logManager, ISecureStorageService secureStorageService, IDataProtectService dataProtectService)
         {
+            this.secureStorageService = secureStorageService;
+            this.dataProtectService = dataProtectService;
             this.logger = logManager.CreateLogger("LastfmWebService");
         }
 
@@ -97,39 +97,25 @@ namespace OutcoldSolutions.GoogleMusic.Web.Lastfm
         {
             if (this.currentSession != null)
             {
-                PasswordVault vault = new PasswordVault();
-
-                this.ClearAllPasswordCredentials(vault);
-
+                this.ClearAllPasswordCredentials();
                 this.logger.Debug("SaveCurrentSessionAsync: Adding new passwrod credentials.");
-
-                var session = new PasswordCredential(
-                    LastFmSessionResource,
-                    this.currentSession.Name,
-                    string.Format("{0}:::{1}", this.sessionToken, this.currentSession.Key));
-
-                vault.Add(session);
+                this.secureStorageService.Save(LastFmSessionResource, this.sessionToken, string.Format("{0}:::{1}", this.sessionToken, this.currentSession.Key));
             }
         }
 
         public bool RestoreSession()
         {
-            PasswordVault vault = new PasswordVault();
-
             // Remove old
             try
             {
-                var all = vault.FindAllByResource(LastFmSessionResource);
-                PasswordCredential session = all.FirstOrDefault();
-                if (session != null)
+                string username, password;
+                if (this.secureStorageService.Get(LastFmSessionResource, out username, out password))
                 {
-                    session.RetrievePassword();
-
-                    var keys = session.Password.Split(new[] { ":::" }, StringSplitOptions.RemoveEmptyEntries);
+                    var keys = password.Split(new[] { ":::" }, StringSplitOptions.RemoveEmptyEntries);
                     if (keys.Length == 2)
                     {
                         this.sessionToken = keys[0];
-                        this.currentSession = new Session() { Key = keys[1], Name = session.UserName };
+                        this.currentSession = new Session() { Key = keys[1], Name = username };
                         return true;
                     }
                 }
@@ -151,8 +137,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Lastfm
 
         public void ForgetAccount()
         {
-            PasswordVault vault = new PasswordVault();
-            this.ClearAllPasswordCredentials(vault);
+            this.ClearAllPasswordCredentials();
             this.currentSession = null;
             this.sessionToken = null;
         }
@@ -162,28 +147,9 @@ namespace OutcoldSolutions.GoogleMusic.Web.Lastfm
             return this.currentSession;
         }
 
-        private void ClearAllPasswordCredentials(PasswordVault vault)
+        private void ClearAllPasswordCredentials()
         {
-            try
-            {
-                var all = vault.FindAllByResource(LastFmSessionResource);
-                foreach (var credential in all)
-                {
-                    this.logger.Debug("SaveCurrentSessionAsync: Remove old sessions.");
-                    vault.Remove(credential);
-                }
-            }
-            catch (Exception exception)
-            {
-                if (((uint)exception.HResult) != 0x80070490)
-                {
-                    this.logger.Error(exception, "Exception while tried to ClearAllPasswordCredentials.");
-                }
-                else
-                {
-                    this.logger.Debug("ClearAllPasswordCredentials: Not found.");
-                }
-            }
+            this.secureStorageService.Delete(LastFmSessionResource);
         }
 
         private bool IsSignatureRequired()
@@ -202,9 +168,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Lastfm
 
             signature.Append("e2887c9308f77280e24f8a75fdeb375f");
 
-            HashAlgorithmProvider hashProvider = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Md5);
-            IBuffer hash = hashProvider.HashData(CryptographicBuffer.ConvertStringToBinary(signature.ToString(), BinaryStringEncoding.Utf8));
-            return BitConverter.ToString(hash.ToArray()).Replace("-", string.Empty);
+            return BitConverter.ToString(this.dataProtectService.GetMd5Hash(signature.ToString())).Replace("-", string.Empty);
         }
     }
 }

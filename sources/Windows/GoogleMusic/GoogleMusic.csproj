@@ -195,8 +195,6 @@
     <Compile Include="DispatcherTimerWrapper.cs" />
     <Compile Include="Services\Actions\PinToStartAction.cs" />
     <Compile Include="Services\DataProtectService.cs" />
-    <Compile Include="Services\GoogleAccountService.cs" />
-    <Compile Include="Services\GoogleMusicSessionService.cs" />
     <Compile Include="Services\InAppPurchasesService.cs" />
     <Compile Include="Services\Publishers\MediaControlCurrentSongPublisher.cs" />
     <Compile Include="Services\SettingsService.cs" />
@@ -205,6 +203,7 @@
     <Compile Include="Shell\MediaControlIntegration.cs" />
     <Compile Include="Shell\MediaElementContainer.cs" />
     <Compile Include="Shell\NotificationService.cs" />
+    <Compile Include="Shell\SecureStorageService.cs" />
     <Compile Include="Views\DisposablePageViewBase.cs" />
     <Compile Include="Views\DisposablePopupViewBase.cs" />
     <Compile Include="Views\ExplorePageView.xaml.cs">
@@ -330,10 +329,7 @@
       <DependentUpon>SongsListViewContainerControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ViewBase.cs" />
-    <Compile Include="Web\Lastfm\LastfmAccountWebService.cs" />
-    <Compile Include="Web\Lastfm\LastfmWebService.cs" />
     <Compile Include="Web\MediaStreamDownloadService.cs" />
-    <Compile Include="Web\SongsWebService.cs" />
     <Compile Include="WindowsStorageFile.cs" />
     <Compile Include="WindowsStorageFolder.cs" />
   </ItemGroup>

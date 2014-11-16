@@ -54,7 +54,7 @@ namespace OutcoldSolutions.GoogleMusic
 
         private void UpdateLogLevel()
         {
-            var isLoggingOn = this.settingsService.GetValue("IsLoggingOn", defaultValue: false);
+            var isLoggingOn = this.settingsService.GetApplicationValue("IsLoggingOn", defaultValue: false);
             if (isLoggingOn)
             {
                 this.logManager.Writers.AddOrUpdate(typeof(FileLogWriter), type => new FileLogWriter(), (type, writer) => writer);

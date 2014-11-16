@@ -40,12 +40,12 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
         {
             get
             {
-                return this.settingsService.GetValue("IsLoggingOn", false);
+                return this.settingsService.GetApplicationValue("IsLoggingOn", false);
             }
 
             set
             {
-                this.settingsService.SetValue("IsLoggingOn", value);
+                this.settingsService.SetApplicationValue("IsLoggingOn", value);
                 this.RaiseCurrentPropertyChanged();
             }
         }

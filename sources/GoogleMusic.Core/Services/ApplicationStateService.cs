@@ -75,13 +75,13 @@ namespace OutcoldSolutions.GoogleMusic.Services
         {
             get
             {
-                return this.applicationState.HasValue ? this.applicationState.Value : (ApplicationState)(this.applicationState = this.settingsService.GetValue(LastApplicationStateKey, ApplicationState.Online));
+                return this.applicationState.HasValue ? this.applicationState.Value : (ApplicationState)(this.applicationState = this.settingsService.GetApplicationValue(LastApplicationStateKey, ApplicationState.Online));
             }
 
             set
             {
                 this.applicationState = value;
-                this.settingsService.SetValue(LastApplicationStateKey, value);
+                this.settingsService.SetApplicationValue(LastApplicationStateKey, value);
                 this.eventAggregator.Publish(new ApplicationStateChangeEvent(value));
             }
         }

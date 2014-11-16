@@ -5,7 +5,6 @@ namespace OutcoldSolutions.GoogleMusic.Services
 {
     using System;
     using System.Reflection;
-
     using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.EventAggregator;
     using OutcoldSolutions.GoogleMusic.Models;
@@ -57,7 +56,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             }
         }
 
-        public void SetValue<T>(string key, T value)
+        public void SetApplicationValue<T>(string key, T value)
         {
             this.logger.Debug("Setting value of key '{0}' to '{1}.'", key, value);
             object oldValue = this.settingsContainer.Values[key];
@@ -65,7 +64,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             this.RaiseValueChanged(key, oldValue, value);
         }
 
-        public void RemoveValue(string key)
+        public void RemoveApplicationValue(string key)
         {
             this.logger.Debug("Remove value of key '{0}'", key);
             if (this.settingsContainer.Values.ContainsKey(key))
@@ -76,7 +75,52 @@ namespace OutcoldSolutions.GoogleMusic.Services
             }
         }
 
-        public T GetValue<T>(string key, T defaultValue = default(T))
+        public void SetValue<T>(string containerName, string key, T value)
+        {
+            this.GetContainer(containerName).Values[key] = this.ToObject(value);
+        }
+
+        public T GetValue<T>(string containerName, string key, T defaultValue = default(T))
+        {
+            T value;
+            if (this.TryGetValue(containerName, key, out value))
+            {
+                return value;
+            }
+
+            return defaultValue;
+        }
+
+        public bool TryGetValue<T>(string containerName, string key, out T value)
+        {
+            value = default(T);
+            ApplicationDataContainer container = this.GetContainer(containerName);
+            if (container.Values.ContainsKey(key))
+            {
+                try
+                {
+                    value = this.ParseValue<T>(container.Values[key]);
+                    return true;
+                }
+                catch (Exception e)
+                {
+                    this.logger.Debug(e, "Could not deserialize {0} from {1}", key, containerName);
+                }
+            }
+
+            return false;
+        }
+
+        public void RemoveValue(string containerName, string key)
+        {
+            ApplicationDataContainer container = this.GetContainer(containerName);
+            if (container.Values.ContainsKey(key))
+            {
+                container.Values.Remove(key);
+            }
+        }
+
+        public T GetApplicationValue<T>(string key, T defaultValue = default(T))
         {
             this.logger.Debug("Getting value of key '{0}'", key);
             if (this.settingsContainer.Values.ContainsKey(key))
@@ -135,6 +179,19 @@ namespace OutcoldSolutions.GoogleMusic.Services
         protected virtual void RaiseValueChanged(string key, object newValue, object oldValue)
         {
             this.eventAggregator.Publish(new SettingsChangeEvent(key, newValue, oldValue));
+        }
+
+        private ApplicationDataContainer GetContainer(string containerName)
+        {
+            var localSettings = ApplicationData.Current.LocalSettings;
+            ApplicationDataContainer container;
+            if (!localSettings.Containers.TryGetValue(containerName, out container))
+            {
+                this.logger.Debug("Local settings does not have {0} container. Creating the new one.", containerName);
+                container = localSettings.CreateContainer(containerName, ApplicationDataCreateDisposition.Always);
+            }
+
+            return container;
         }
 
         private T ParseValue<T>(object value)

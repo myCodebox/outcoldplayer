@@ -18,5 +18,9 @@ namespace OutcoldSolutions.GoogleMusic
         Task MoveAsync(IFolder destination);
 
         Task<Stream> OpenReadWriteAsync();
+        Task<Stream> OpenReadAsync();
+
+        Task WriteTextToFileAsync(string content);
+        Task<string> ReadFileTextContentAsync();
     }
 }

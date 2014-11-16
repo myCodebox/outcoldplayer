@@ -290,6 +290,8 @@
     <Compile Include="Services\AllAccessService.cs" />
     <Compile Include="Services\AllAccessServiceBase.cs" />
     <Compile Include="Services\ApplicationStateService.cs" />
+    <Compile Include="Services\GoogleAccountService.cs" />
+    <Compile Include="Services\GoogleMusicSessionService.cs" />
     <Compile Include="Services\IAlbumArtCacheService.cs" />
     <Compile Include="Services\IInAppPurchasesService.cs" />
     <Compile Include="Services\IPlayQueueService.cs" />
@@ -308,6 +310,7 @@
     <Compile Include="Shell\AskForReviewService.cs" />
     <Compile Include="Shell\IApplicationSettingViewsService.cs" />
     <Compile Include="Shell\IMediaElementContainer.cs" />
+    <Compile Include="Shell\ISecureStorageService.cs" />
     <Compile Include="Shell\IShellService.cs" />
     <Compile Include="Shell\MediaEndedEventArgs.cs" />
     <Compile Include="Shell\MediaEndedReason.cs" />
@@ -333,6 +336,8 @@
     <Compile Include="Web\HttpContentExtensions.cs" />
     <Compile Include="Web\IGoogleMusicApisService.cs" />
     <Compile Include="Web\ISongsWebService.cs" />
+    <Compile Include="Web\Lastfm\LastfmAccountWebService.cs" />
+    <Compile Include="Web\Lastfm\LastfmWebService.cs" />
     <Compile Include="Web\Models\GoogleConfigResponse.cs" />
     <Compile Include="Web\Models\GoogleMusicAlbum.cs" />
     <Compile Include="Web\Models\GoogleMusicArtist.cs" />
@@ -374,6 +379,7 @@
     <Compile Include="SettingsServiceExtensions.cs" />
     <Compile Include="Web\CookieContainerWrapper.cs" />
     <Compile Include="Web\GoogleAccountWebService.cs" />
+    <Compile Include="Web\SongsWebService.cs" />
     <Compile Include="Web\Synchronization\GoogleMusicPlaylistEntryEx.cs" />
     <Compile Include="Web\Synchronization\GoogleMusicPlaylistEx.cs" />
     <Compile Include="Web\Synchronization\GoogleMusicRadioEx.cs" />

@@ -107,7 +107,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
             if (result != null && result.Succeed)
             {
-                var currentVersion = this.settingsService.GetValue<string>("Version", null);
+                var currentVersion = this.settingsService.GetApplicationValue<string>("Version", null);
                 var dbContext = new DbContext();
                 bool fCurrentVersion = string.Equals(currentVersion, ApplicationContext.ApplicationVersion.ToVersionString(), StringComparison.OrdinalIgnoreCase);
 
@@ -161,13 +161,13 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                 return;
             }
 
-            var currentVersion = this.settingsService.GetValue<string>("Version", null);
+            var currentVersion = this.settingsService.GetApplicationValue<string>("Version", null);
             bool fCurrentVersion = string.Equals(currentVersion, ApplicationContext.ApplicationVersion.ToVersionString(), StringComparison.OrdinalIgnoreCase);
             bool fUpdate = !fCurrentVersion && currentVersion != null;
             
             await this.OnViewInitializedAsync();
 
-            this.settingsService.SetValue("Version", ApplicationContext.ApplicationVersion.ToVersionString());
+            this.settingsService.SetApplicationValue("Version", ApplicationContext.ApplicationVersion.ToVersionString());
 
             if (fUpdate)
             {

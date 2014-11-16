@@ -74,8 +74,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
             this.analyticsService = analyticsService;
             this.currentQueueIndex = -1;
 
-            this.Repeat = this.settingsService.GetValue("RepeatValue", defaultValue: RepeatType.None);
-            this.IsShuffled = this.settingsService.GetValue("IsShuffleEnabled", defaultValue: false);
+            this.Repeat = this.settingsService.GetApplicationValue("RepeatValue", defaultValue: RepeatType.None);
+            this.IsShuffled = this.settingsService.GetApplicationValue("IsShuffleEnabled", defaultValue: false);
 
             this.State = QueueState.Unknown;
 
@@ -115,7 +115,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     this.analyticsService.SendEvent("Media", "IsShuffled", value.ToString());
 
                     this.isShuffled = value;
-                    this.settingsService.SetValue("IsShuffleEnabled", this.isShuffled);
+                    this.settingsService.SetApplicationValue("IsShuffleEnabled", this.isShuffled);
 
                     lock (this.queueOrder)
                     {
@@ -141,7 +141,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     this.analyticsService.SendEvent("Media", "Repeat", value.ToString());
 
                     this.repeat = value;
-                    this.settingsService.SetValue("RepeatValue", this.repeat);
+                    this.settingsService.SetApplicationValue("RepeatValue", this.repeat);
                     this.RaiseQueueChanged();
                 }
             }

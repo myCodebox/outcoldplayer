@@ -11,6 +11,10 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         Task<string> UnprotectStringAsync(string protectedString);
 
-        string HashString(string content);
+        byte[] GetMd5Hash(string content);
+
+        string GetMd5HashStringAsBase64(string content);
+
+        string GetHMacStringAsBase64(string key, string value);
     }
 }
