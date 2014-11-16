@@ -30,6 +30,21 @@
             <ScrollViewer Grid.Row="2" Margin="0, 20, 0, 0">
                 <StackPanel>
                     <TextBlock Style="{StaticResource TitleTextStyle}" Margin="0, 10, 0, 0" >
+                    <Run>11/15/2014 - Version 4.1</Run>
+                    </TextBlock>
+                    <RichTextBlock Style="{StaticResource BodyRichTextStyle}">
+                        <Paragraph>[+] Add "refresh radio" button on radio view to start radio with fresh list of songs.</Paragraph>
+                        <Paragraph>[+] Add "current queue" toolbar button.</Paragraph>
+                        <Paragraph>[b] Backspace button can navigate back when user is typing in search box.</Paragraph>
+                        <Paragraph>[b] Fix application crash when adding songs to queue.</Paragraph>
+                        <Paragraph>[b] Fix application crash with songs navigation.</Paragraph>
+                        <Paragraph>[b] Fix application crash when Music Library is unreachable.</Paragraph>
+                        <Paragraph>[b] Offline: cannot change song position in offline mode.</Paragraph>
+                        <Paragraph>[b] Offline: cannot show album view in offline mode.</Paragraph>
+                        <Paragraph>[b] Offline: cannot play songs in offline mode after restart.</Paragraph>
+                    </RichTextBlock>
+                    
+                    <TextBlock Style="{StaticResource TitleTextStyle}" Margin="0, 10, 0, 0" >
                     <Run>11/08/2014 - Version 4.0</Run>
                     </TextBlock>
                     <RichTextBlock Style="{StaticResource BodyRichTextStyle}">
