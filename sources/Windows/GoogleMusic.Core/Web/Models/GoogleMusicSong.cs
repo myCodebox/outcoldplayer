@@ -75,5 +75,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Models
         public bool TrackAvailableForPurchase { get; set; }
 
         public bool AlbumAvailableForPurchase { get; set; }
+
+        public double LastRatingChangeTimestamp { get; set; }
     }
 }

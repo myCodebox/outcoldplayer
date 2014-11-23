@@ -34,7 +34,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
         Task<GoogleMusicTrackStatResponse> SendStatsAsync(IList<Song> songs);
 
-        Task<GoogleMusicSongMutateResponse> UpdateRatingsAsync(IDictionary<Song, int> ratings);
+        Task<GoogleMusicSongMutateResponse> UpdateRatingsAsync(IDictionary<Song, int> ratings, DateTime modificationDateTime);
 
         Task<GoogleMusicSongMutateResponse> AddSongsAsync(IList<Song> songs);
 
@@ -149,7 +149,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
             return await this.googleMusicApisService.PostAsync<GoogleMusicTrackStatResponse>(TrackStats, json);
         }
 
-        public async Task<GoogleMusicSongMutateResponse> UpdateRatingsAsync(IDictionary<Song, int> ratings)
+        public async Task<GoogleMusicSongMutateResponse> UpdateRatingsAsync(IDictionary<Song, int> ratings, DateTime modificationDateTime)
         {
             var json =
                 new
@@ -165,7 +165,8 @@ namespace OutcoldSolutions.GoogleMusic.Web
                                             rating = update.Value.ToString(),
                                             trackType = (int)update.Key.TrackType,
                                             deleted = false,
-                                            lastModifiedTimestamp = ((long)DateTime.UtcNow.ToUnixFileTime() * 1000L).ToString("G")
+                                            lastModifiedTimestamp = ((long)modificationDateTime.ToUnixFileTime() * 1000L).ToString("G"),
+                                            lastRatingChangeTimestamp = "0"
                                         }
                                 })
                 };

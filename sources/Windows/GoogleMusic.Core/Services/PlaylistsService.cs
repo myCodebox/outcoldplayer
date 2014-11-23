@@ -48,6 +48,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
         private readonly ISettingsService settingsService;
 
         private readonly IAllAccessService allAccessService;
+        private readonly IApplicationStateService applicationStateService;
 
         private readonly Dictionary<string, Task<Uri[]>> cachedUris = new Dictionary<string, Task<Uri[]>>();
 
@@ -61,7 +62,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
             IApplicationResources applicationResources,
             ISettingsService settingsService,
             IEventAggregator eventAggregator,
-            IAllAccessService allAccessService)
+            IAllAccessService allAccessService,
+            IApplicationStateService applicationStateService)
         {
             this.container = container;
             this.radioStationsService = radioStationsService;
@@ -69,6 +71,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
             this.applicationResources = applicationResources;
             this.settingsService = settingsService;
             this.allAccessService = allAccessService;
+            this.applicationStateService = applicationStateService;
 
             eventAggregator.GetEvent<PlaylistsChangeEvent>()
                 .Where(e => e.HasRemovedPlaylists() || e.HasUpdatedPlaylists())
@@ -175,7 +178,27 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     }
                     return await playlistRepository.GetSongsAsync(id);
                 case PlaylistType.SystemPlaylist:
-                    return await this.GetRepository<SystemPlaylist>().GetSongsAsync(id);
+                    if (string.Equals(SystemPlaylistType.HighlyRated.ToString(), id, StringComparison.Ordinal) && this.applicationStateService.IsOnline())
+                    {
+                        var t1 = this.userPlaylistsService.GetHighlyRatedSongsAsync();
+                        var t2 = this.GetRepository<SystemPlaylist>().GetSongsAsync(id);
+
+                        await Task.WhenAll(t1, t2);
+
+                        var webHighlyRated = await t1;
+                        var localHighlyRated = await t2;
+
+                        var result = webHighlyRated.Union(localHighlyRated).Distinct(new SongByIdComparer()).OrderByDescending(x => x.LastRatingChange).ToList();
+
+                        playlist.Duration = result.Aggregate(new TimeSpan(), (current, song) => current + song.Duration);
+                        playlist.SongsCount = result.Count;
+
+                        return result;
+                    }
+                    else
+                    {
+                        return await this.GetRepository<SystemPlaylist>().GetSongsAsync(id);
+                    }
                 case PlaylistType.Radio:
                     return await this.radioStationsService.GetRadioSongsAsync(id);
                 default:

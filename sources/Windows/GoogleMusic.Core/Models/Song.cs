@@ -4,7 +4,7 @@
 namespace OutcoldSolutions.GoogleMusic.Models
 {
     using System;
-
+    using System.Collections.Generic;
     using SQLite;
 
     [Table("Song")]
@@ -117,9 +117,23 @@ namespace OutcoldSolutions.GoogleMusic.Models
 
         public uint ServerPlayCount { get; set; }
 
-        // 
+        [Indexed]
+        public DateTime LastRatingChange { get; set; }
 
         [Ignore]
         public bool UnknownSong { get; set; }
+    }
+
+    public class SongByIdComparer : IEqualityComparer<Song>
+    {
+        public bool Equals(Song x, Song y)
+        {
+            return x.SongId.Equals(y.SongId);
+        }
+
+        public int GetHashCode(Song obj)
+        {
+            return obj.SongId.GetHashCode();
+        }
     }
 }

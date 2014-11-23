@@ -153,14 +153,6 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             }
         }
 
-        public bool IsDeleted
-        {
-            get
-            {
-                return this.Metadata.IsDeleted();
-            }
-        }
-
         public bool IsAllAccess
         {
             get
@@ -178,7 +170,6 @@ namespace OutcoldSolutions.GoogleMusic.BindingModels
             this.RaisePropertyChanged(() => this.PlayCount);
             this.RaisePropertyChanged(() => this.Rating);
             this.RaisePropertyChanged(() => this.IsExplicit);
-            this.RaisePropertyChanged(() => this.IsDeleted);
             this.RaisePropertyChanged(() => this.IsAllAccess);
         }
     }

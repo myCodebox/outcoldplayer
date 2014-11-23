@@ -30,6 +30,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
         Task<bool> AddSongsAsync(UserPlaylist playlist, IEnumerable<Song> song);
 
         Task<IList<Song>> GetSharedPlaylistSongsAsync(UserPlaylist userPlaylist);
+
+        Task<IList<Song>> GetHighlyRatedSongsAsync();
     }
 
     public class UserPlaylistsService : AllAccessServiceBase, IUserPlaylistsService
@@ -335,6 +337,19 @@ namespace OutcoldSolutions.GoogleMusic.Services
             {
                 userPlaylist.ArtUrl = songs[0].AlbumArtUrl;
                 await this.repository.UpdateAsync(new[] { userPlaylist });
+            }
+
+            return songs;
+        }
+
+        public async Task<IList<Song>> GetHighlyRatedSongsAsync()
+        {
+            List<Song> songs = new List<Song>();
+
+            IList<GoogleMusicSong> googleMusicSongs = await this.webService.GetHighlyRatedSongsAsync();
+            foreach (var googleMusicSong in googleMusicSongs)
+            {
+                songs.Add(await this.GetSong(googleMusicSong));
             }
 
             return songs;
