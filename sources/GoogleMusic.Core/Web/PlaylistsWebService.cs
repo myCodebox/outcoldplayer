@@ -33,6 +33,8 @@ namespace OutcoldSolutions.GoogleMusic.Web
         Task<GoogleMusicSharedPlaylistEntriesResponse> GetAllPlaylistEntriesSharedAsync(
             IList<UserPlaylist> sharedPlaylists,
             DateTime? lastUpdate = null);
+
+        Task<IList<GoogleMusicSong>> GetHighlyRatedSongsAsync();
     }
 
     public class PlaylistsWebService : IPlaylistsWebService
@@ -42,6 +44,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
         private const string PlaylistBatch = "playlistbatch";
         private const string PlEntriesBatch = "plentriesbatch";
         private const string PlEntriesShared = "plentries/shared";
+        private const string EphemeralTop = "ephemeral/top";
 
         private readonly IGoogleMusicApisService googleMusicApisService;
 
@@ -76,6 +79,11 @@ namespace OutcoldSolutions.GoogleMusic.Web
                        };
 
             return this.googleMusicApisService.PostAsync<GoogleMusicSharedPlaylistEntriesResponse>(PlEntriesShared, json, useCache: true);
+        }
+
+        public Task<IList<GoogleMusicSong>> GetHighlyRatedSongsAsync()
+        {
+            return this.googleMusicApisService.DownloadList<GoogleMusicSong>(EphemeralTop);
         }
 
         public async Task<GoogleMusicPlaylistBatchResponse> CreateAsync(string name)

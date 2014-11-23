@@ -71,7 +71,14 @@ namespace OutcoldSolutions.GoogleMusic.Services.Actions
 
             if (currentView is IPlaylistPageView)
             {
-                PlaylistPageViewBindingModel bindingModel = currentView.GetPresenter<PlaylistPageViewPresenter>().BindingModel;
+                var presenter = currentView.GetPresenter<BindingModelBase>();
+                var playlistPageViewPresenter = presenter as PlaylistPageViewPresenter;
+                if (playlistPageViewPresenter == null)
+                {
+                    return false;
+                }
+
+                PlaylistPageViewBindingModel bindingModel = playlistPageViewPresenter.BindingModel;
                 IPlaylist currentPlaylist = this.playQueueService.CurrentPlaylist;
                 if (currentPlaylist != null && 
                     currentPlaylist.PlaylistType != PlaylistType.Radio && 

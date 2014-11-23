@@ -5,6 +5,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
     using System.Reactive.Linq;
     using System.Threading;
@@ -24,12 +25,14 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
         private readonly IPlaylistsService playlistsService;
         private readonly IPlayQueueService playQueueService;
         private readonly INavigationService navigationService;
+        private readonly IApplicationStateService applicationStateService;
 
         public PlaylistPageViewPresenterBase(IDependencyResolverContainer container)
         {
             this.playlistsService = container.Resolve<IPlaylistsService>();
             this.playQueueService = container.Resolve<IPlayQueueService>();
             this.navigationService = container.Resolve<INavigationService>();
+            this.applicationStateService = container.Resolve<IApplicationStateService>();
         }
 
         protected override void OnInitialized()
@@ -145,7 +148,16 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
                         if (this.BindingModel.Playlist != null)
                         {
                             this.BindingModel.Title = this.BindingModel.Playlist.Title;
-                            this.BindingModel.Subtitle = PlaylistTypeEx.GetTitle(request.PlaylistType);
+                            if (request.PlaylistType == PlaylistType.SystemPlaylist && playlist != null)
+                            {
+                                this.BindingModel.Subtitle = string.Format(CultureInfo.CurrentCulture, "{0} ({1})",
+                                    (this.applicationStateService.IsOnline() ? playlist.Duration : playlist.OfflineDuration).ToPresentString(),
+                                    this.applicationStateService.IsOnline() ? playlist.SongsCount : playlist.OfflineSongsCount);
+                            }
+                            else
+                            {
+                                this.BindingModel.Subtitle = PlaylistTypeEx.GetTitle(request.PlaylistType);
+                            }
                         }
 
                         if (isCurrentPlaylist)

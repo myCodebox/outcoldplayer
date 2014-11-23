@@ -20,7 +20,7 @@ namespace OutcoldSolutions.GoogleMusic.Converters
             var playlist = value as IPlaylist;
             if (playlist != null)
             {
-                if (stateService.Value.IsOnline())
+                if (this.stateService.Value.IsOnline())
                 {
                     return playlist.Duration.ToPresentString();
                 }

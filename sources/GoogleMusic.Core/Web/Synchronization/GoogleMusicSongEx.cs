@@ -41,6 +41,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Synchronization
             song.ServerRecent = DateTimeExtensions.FromUnixFileTime(googleMusicSong.RecentTimestamp / 1000);
             song.CreationDate = DateTimeExtensions.FromUnixFileTime(googleMusicSong.CreationTimestamp / 1000);
             song.LastModified = DateTimeExtensions.FromUnixFileTime(googleMusicSong.LastModifiedTimestamp / 1000);
+            song.LastRatingChange = DateTimeExtensions.FromUnixFileTime(googleMusicSong.LastRatingChangeTimestamp / 1000);
             song.BeatsPerMinute = googleMusicSong.BeatsPerMinute;
             song.EstimatedSize = googleMusicSong.EstimatedSize;
             song.ServerPlayCount = googleMusicSong.PlayCount;

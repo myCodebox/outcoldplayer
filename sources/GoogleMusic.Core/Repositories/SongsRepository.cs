@@ -97,7 +97,7 @@ limit 1
 
         public Task UpdateRatingAsync(Song song)
         {
-            return this.Connection.ExecuteAsync("update Song set Rating = ?1 where SongId = ?2", song.Rating, song.SongId);
+            return this.Connection.ExecuteAsync("update Song set Rating = ?1, LastRatingChange = ?2 where SongId = ?3", song.Rating, song.LastRatingChange, song.SongId);
         }
 
         public Task RecordPlayStatAsync(Song song)

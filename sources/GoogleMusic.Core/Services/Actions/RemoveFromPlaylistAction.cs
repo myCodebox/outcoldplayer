@@ -8,7 +8,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Actions
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-
+    using OutcoldSolutions.GoogleMusic.BindingModels;
     using OutcoldSolutions.GoogleMusic.Models;
     using OutcoldSolutions.GoogleMusic.Presenters;
     using OutcoldSolutions.GoogleMusic.Views;
@@ -66,7 +66,14 @@ namespace OutcoldSolutions.GoogleMusic.Services.Actions
                 return false;
             }
 
-            var bindingModel = currentView.GetPresenter<PlaylistPageViewPresenter>().BindingModel;
+            var presenter = currentView.GetPresenter<BindingModelBase>();
+            var playlistPageViewPresenter = presenter as PlaylistPageViewPresenter;
+            if (playlistPageViewPresenter == null)
+            {
+                return false;
+            }
+
+            var bindingModel = playlistPageViewPresenter.BindingModel;
 
             if (bindingModel == null)
             {

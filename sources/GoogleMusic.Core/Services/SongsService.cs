@@ -60,7 +60,8 @@ namespace OutcoldSolutions.GoogleMusic.Services
                 this.logger.Debug("Updating rating for song '{0}' to rating '{1}' from '{2}'.", song.SongId, newRating, song.Rating);
             }
 
-            var resp = await this.songsWebService.UpdateRatingsAsync(new Dictionary<Song, int>() { { song, newRating } });
+            DateTime dateTime = DateTime.UtcNow;
+            var resp = await this.songsWebService.UpdateRatingsAsync(new Dictionary<Song, int>() { { song, newRating } }, dateTime);
             
             foreach (var mutation in resp.MutateResponse)
             {
@@ -68,6 +69,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
                     || string.Equals(mutation.Response_Code, "OK", StringComparison.OrdinalIgnoreCase))
                 {
                     song.Rating = newRating;
+                    song.LastRatingChange = dateTime;
                     
                     try
                     {

@@ -23,7 +23,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
         Task<GoogleMusicTrackStatResponse> SendStatsAsync(IList<Song> songs);
 
-        Task<GoogleMusicSongMutateResponse> UpdateRatingsAsync(IDictionary<Song, int> ratings);
+        Task<GoogleMusicSongMutateResponse> UpdateRatingsAsync(IDictionary<Song, int> ratings, DateTime modificationDateTime);
 
         Task<GoogleMusicSongMutateResponse> AddSongsAsync(IList<Song> songs);
 

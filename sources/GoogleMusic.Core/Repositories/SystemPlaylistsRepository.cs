@@ -94,7 +94,7 @@ order by coalesce(nullif(s.AlbumArtistTitleNorm, ''), s.[ArtistTitleNorm]), s.[A
 select s.* 
 from [Song] as s
 where (?1 = 1 or s.[IsCached] = 1) and s.[Rating] >= ?2 and s.IsLibrary = 1
-order by s.TitleNorm
+order by s.LastRatingChange desc
 ";
 
         private const string SqlLastAddedSongs = @"
