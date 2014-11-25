@@ -34,6 +34,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Lastfm
 
         private string sessionToken;
         private Session currentSession;
+        private bool dirty = false;
 
         public LastfmWebService(ILogManager logManager)
         {
@@ -85,23 +86,27 @@ namespace OutcoldSolutions.GoogleMusic.Web.Lastfm
 
         public void SetToken(string token)
         {
+            this.dirty = true;
             this.sessionToken = token;
         }
 
         public void SetSession(Session session)
         {
+            this.dirty = true;
             this.currentSession = session;
+
+            this.SaveCurrentSession();
         }
 
         public void SaveCurrentSession()
         {
-            if (this.currentSession != null)
+            if (this.currentSession != null && this.dirty)
             {
                 PasswordVault vault = new PasswordVault();
 
                 this.ClearAllPasswordCredentials(vault);
 
-                this.logger.Debug("SaveCurrentSessionAsync: Adding new passwrod credentials.");
+                this.logger.Debug("SaveCurrentSessionAsync: Adding new password credentials.");
 
                 var session = new PasswordCredential(
                     LastFmSessionResource,
@@ -109,6 +114,8 @@ namespace OutcoldSolutions.GoogleMusic.Web.Lastfm
                     string.Format("{0}:::{1}", this.sessionToken, this.currentSession.Key));
 
                 vault.Add(session);
+
+                this.dirty = false;
             }
         }
 
@@ -130,6 +137,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Lastfm
                     {
                         this.sessionToken = keys[0];
                         this.currentSession = new Session() { Key = keys[1], Name = session.UserName };
+                        this.dirty = false;
                         return true;
                     }
                 }
@@ -155,6 +163,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Lastfm
             this.ClearAllPasswordCredentials(vault);
             this.currentSession = null;
             this.sessionToken = null;
+            this.dirty = false;
         }
 
         public Session GetSession()
