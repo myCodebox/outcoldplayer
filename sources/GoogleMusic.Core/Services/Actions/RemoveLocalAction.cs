@@ -97,6 +97,7 @@ namespace OutcoldSolutions.GoogleMusic.Services.Actions
             if (songs.Count > 0)
             {
                 await this.songsCachingService.ClearCachedAsync(songs);
+                return true;
             }
 
             return null;

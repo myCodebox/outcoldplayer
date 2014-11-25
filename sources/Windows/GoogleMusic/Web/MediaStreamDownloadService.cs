@@ -196,40 +196,62 @@ namespace OutcoldSolutions.GoogleMusic.Web
                     return null;
                 }
 
-                long chunkStart;
-                long contentLength;
+                int readFromEnd = 0;
+                long startIndex = 0;
+                string mediaType = "audio/mpeg";
+                int index = urls.Length - 1;
+                byte[] data = null;
 
-                var lastUri = urls[urls.Length - 1];
-                if (!GetChunkPosition(lastUri, out chunkStart, out contentLength))
+                while (readFromEnd < DefaultBufferSize || index < 0)
                 {
-                    this.logger.Warning("Could not parse start and end range from url {0}", lastUri);
-                    return null;
-                }
+                    long contentLength;
 
-                var data = new byte[contentLength];
-                using (var streamResponse = await this.client.GetAsync(lastUri, token))
-                {
-                int read;
-                using (var audioStreamEnd = await streamResponse.Content.ReadAsStreamAsync())
-                {
-                        read =
-                            await
-                                audioStreamEnd.ReadAsync(
+                    var lastUri = urls[index--];
+                    if (!GetChunkPosition(lastUri, out startIndex, out contentLength))
+                    {
+                        this.logger.Warning("Could not parse start and end range from url {0}", lastUri);
+                        return null;
+                    }
+
+                    if (data == null)
+                    {
+                        data = new byte[contentLength];
+                    }
+
+                    using (var streamResponse = await this.client.GetAsync(lastUri, token))
+                    {
+                        if (streamResponse.IsSuccessStatusCode)
+                        {
+                            
+                            using (var audioStreamEnd = await streamResponse.Content.ReadAsStreamAsync())
+                            {
+                                readFromEnd += await audioStreamEnd.ReadAsync(
                                     data,
-                                    (int)chunkStart,
-                                    (int)(contentLength - chunkStart),
+                                    (int) startIndex,
+                                    (int) (contentLength - startIndex),
                                     token);
+                            }
+
+                            mediaType = streamResponse.Content.Headers.ContentType.MediaType;
+                        }
+                        else
+                        {
+                            this.logger.Error("Could not read last chunks: " + await streamResponse.Content.ReadAsStringAsync());
+                            streamResponse.EnsureSuccessStatusCode();
+                        }
+
+                        token.ThrowIfCancellationRequested();
+                    }
                 }
 
                 return new MemoryRandomAccessStreamMultiStreams(
-                    this.client,
-                    this.logger,
-                    urls,
-                    data,
-                    streamResponse.Content.Headers.ContentType.MediaType,
-                    (int)chunkStart,
-                    token);
-                }
+                        this.client,
+                        this.logger,
+                        urls,
+                        data,
+                        mediaType,
+                        (int)startIndex,
+                        token);
 
             }
             catch (HttpRequestException exception)
@@ -1108,12 +1130,17 @@ namespace OutcoldSolutions.GoogleMusic.Web
                     {
                         var uri = this.urls[i];
 
-                        token.ThrowIfCancellationRequested();
+                        this.token.ThrowIfCancellationRequested();
 
                         long start;
                         long end;
                         if (GetChunkPosition(uri, out start, out end))
                         {
+                            if (start >= this.lastChunk)
+                            {
+                                break;
+                            }
+
                             await this.semaphore.WaitAsync(this.token).ConfigureAwait(continueOnCapturedContext: false);
 
                             try
@@ -1141,14 +1168,22 @@ namespace OutcoldSolutions.GoogleMusic.Web
                             this.RaiseDownloadProgressChanged(downloadProgress);
 
                             var response = await client.GetAsync(uri, this.token);
-                            using (var stream = await response.Content.ReadAsStreamAsync())
-                            {
-                                int read = await stream.ReadAsync(this.data, (int)start, (int)end - (int)start, this.token);
-
-                                if (read != (int)end - (int)start)
+                            if (response.IsSuccessStatusCode)
+                            { 
+                                using (var stream = await response.Content.ReadAsStreamAsync())
                                 {
-                                    this.logger.Warning("We read not the same value as we expected from url {0}. We read {1}.", uri, read);
+                                    int read = await stream.ReadAsync(this.data, (int)start, (int)end - (int)start, this.token);
+
+                                    if (read != (int)end - (int)start)
+                                    {
+                                        this.logger.Warning("We read not the same value as we expected from url {0}. We read {1}.", uri, read);
+                                    }
                                 }
+                            }
+                            else
+                            {
+                                this.logger.Error("Could not read chunk: " + await response.Content.ReadAsStringAsync());
+                                response.EnsureSuccessStatusCode();
                             }
                         }
                         else
