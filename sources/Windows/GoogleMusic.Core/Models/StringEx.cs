@@ -34,7 +34,7 @@ namespace OutcoldSolutions.GoogleMusic.Models
                     i++;
                 }
 
-                if (i < The.Length - 1)
+                if (i < val.Length - 1)
                 {
                     startIndex = i;
                 }
