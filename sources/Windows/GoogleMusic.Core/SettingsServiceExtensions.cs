@@ -13,6 +13,7 @@ namespace OutcoldSolutions.GoogleMusic
         public const string StreamBitrateKey = "StreamBitrate";
         public const string IsMusicLibraryForCacheKey = "IsMusicLibraryForCache";
         public const string IsThumbsRatingKey = "ThumbsRating";
+        public const string IsProxySupportKey = "ProxySupport";
 
         private const uint DefaultStreamBitrate = 320U;
 
@@ -116,6 +117,26 @@ namespace OutcoldSolutions.GoogleMusic
             }
 
             @this.SetRoamingValue(IsThumbsRatingKey, value);
+        }
+
+        public static bool GetIsProxySupport(this ISettingsService @this)
+        {
+            if (@this == null)
+            {
+                throw new ArgumentNullException("this");
+            }
+
+            return @this.GetRoamingValue<bool>(IsProxySupportKey, defaultValue: true);
+        }
+
+        public static void SetIsProxySupport(this ISettingsService @this, bool value)
+        {
+            if (@this == null)
+            {
+                throw new ArgumentNullException("this");
+            }
+
+            @this.SetRoamingValue(IsProxySupportKey, value);
         }
     }
 }

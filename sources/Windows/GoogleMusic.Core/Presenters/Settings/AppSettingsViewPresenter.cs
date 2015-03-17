@@ -110,5 +110,19 @@ namespace OutcoldSolutions.GoogleMusic.Presenters.Settings
                 this.settingsService.SetIsThumbsRating(value);
             }
         }
+
+        public bool IsProxySupport
+        {
+            get
+            {
+                return this.settingsService.GetIsProxySupport();
+            }
+
+            set
+            {
+                this.analyticsService.SendEvent("Settings", "IsProxySupport", value.ToString());
+                this.settingsService.SetIsProxySupport(value);
+            }
+        }
     }
 }

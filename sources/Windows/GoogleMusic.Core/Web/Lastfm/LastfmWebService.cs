@@ -19,6 +19,7 @@ namespace OutcoldSolutions.GoogleMusic.Web.Lastfm
     using Windows.Storage.Streams;
 
     using OutcoldSolutions.GoogleMusic.Diagnostics;
+    using OutcoldSolutions.GoogleMusic.Services;
 
     public class LastfmWebService : WebServiceBase, ILastfmWebService
     {
@@ -27,18 +28,20 @@ namespace OutcoldSolutions.GoogleMusic.Web.Lastfm
 
         private readonly ILogger logger;
 
-        private readonly HttpClient httpClient = new HttpClient()
-                                                     {
-                                                         BaseAddress = new Uri("http://ws.audioscrobbler.com/2.0/")
-                                                     };
+        private readonly HttpClient httpClient;
 
         private string sessionToken;
         private Session currentSession;
         private bool dirty = false;
 
-        public LastfmWebService(ILogManager logManager)
+        public LastfmWebService(ILogManager logManager, ISettingsService settingsService)
         {
             this.logger = logManager.CreateLogger("LastfmWebService");
+
+            httpClient = new HttpClient(HttpClientHandlerExtensionsEx.GetWithProxy(this.logger, settingsService))
+            {
+                BaseAddress = new Uri("http://ws.audioscrobbler.com/2.0/")
+            };
         }
 
         protected override ILogger Logger

@@ -172,6 +172,7 @@
     <Compile Include="EventAggregator\EventAggregator.cs" />
     <Compile Include="EventAggregator\IEventAggregator.cs" />
     <Compile Include="GoogleMusicSettingsServiceExtensions.cs" />
+    <Compile Include="HttpClientHandlerExtensions.cs" />
     <Compile Include="IApplicationResources.cs" />
     <Compile Include="IDispatcher.cs" />
     <Compile Include="INavigationService.cs" />

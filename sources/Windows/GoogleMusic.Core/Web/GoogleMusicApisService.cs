@@ -36,14 +36,19 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
         public GoogleMusicApisService(
             ILogManager logManager,
-            IGoogleMusicSessionService sessionService)
+            IGoogleMusicSessionService sessionService,
+            ISettingsService settingsService)
         {
+            this.logger = logManager.CreateLogger("GoogleMusicApisService");
+
             var httpClientHandler = new HttpClientHandler
             {
                 UseCookies = false,
                 AllowAutoRedirect = false,
                 AutomaticDecompression = DecompressionMethods.GZip
             };
+
+            HttpClientHandlerExtensionsEx.SetProxy(httpClientHandler, this.logger, settingsService);
 
             this.httpClient = new HttpClient(httpClientHandler)
             {
@@ -52,8 +57,6 @@ namespace OutcoldSolutions.GoogleMusic.Web
             };
 
             this.sessionService = sessionService;
-
-            this.logger = logManager.CreateLogger("GoogleMusicApisService");
         }
 
         protected override ILogger Logger

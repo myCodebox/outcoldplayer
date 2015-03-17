@@ -28,17 +28,20 @@ namespace OutcoldSolutions.GoogleMusic.Services
         private readonly SemaphoreSlim limitSemaphore = new SemaphoreSlim(4);
         private readonly SemaphoreSlim dataSemaphore = new SemaphoreSlim(1);
         private readonly Dictionary<CachedKey, Task<CachedAlbumArt>> downloadTasks = new Dictionary<CachedKey, Task<CachedAlbumArt>>();
-        private readonly HttpClient httpClient = new HttpClient();
+        private readonly HttpClient httpClient;
         private StorageFolder cacheFolder;
 
         public AlbumArtCacheService(
             ILogManager logManager, 
             IApplicationStateService stateService,
-            ICachedAlbumArtsRepository cachedAlbumArtsRepository)
+            ICachedAlbumArtsRepository cachedAlbumArtsRepository,
+            ISettingsService settingsService)
         {
             this.logger = logManager.CreateLogger("AlbumArtCacheService");
             this.stateService = stateService;
             this.cachedAlbumArtsRepository = cachedAlbumArtsRepository;
+
+            this.httpClient = new HttpClient(HttpClientHandlerExtensionsEx.GetWithProxy(this.logger, settingsService));
         }
 
         public async Task<string> GetCachedImageAsync(Uri url, uint size)

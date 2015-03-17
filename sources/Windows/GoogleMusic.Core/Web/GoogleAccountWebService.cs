@@ -12,6 +12,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
     using OutcoldSolutions.GoogleMusic.Diagnostics;
     using OutcoldSolutions.GoogleMusic.Web.Models;
+    using OutcoldSolutions.GoogleMusic.Services;
 
     public class GoogleAccountWebService : WebServiceBase, IGoogleAccountWebService
     {
@@ -22,10 +23,12 @@ namespace OutcoldSolutions.GoogleMusic.Web
         private readonly ILogger logger;
         private HttpClientHandler httpClientHandler;
         private HttpClient httpClient;
+        private ISettingsService settingsService;
 
-        public GoogleAccountWebService(ILogManager logManager)
+        public GoogleAccountWebService(ILogManager logManager, ISettingsService settingsService)
         {
             this.logger = logManager.CreateLogger("GoogleAccountWebService");
+            this.settingsService = settingsService;
         }
 
         protected override ILogger Logger
@@ -174,6 +177,8 @@ namespace OutcoldSolutions.GoogleMusic.Web
                     this.logger.Warning(e, "Exception while tried to get proxy settings");
                 }
             }
+
+            HttpClientHandlerExtensionsEx.SetProxy(this.httpClientHandler, this.logger, this.settingsService);
 
             this.httpClient = new HttpClient(this.httpClientHandler)
             {

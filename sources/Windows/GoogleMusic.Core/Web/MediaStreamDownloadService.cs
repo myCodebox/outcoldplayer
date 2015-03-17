@@ -17,6 +17,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
     using Windows.Storage.Streams;
 
     using OutcoldSolutions.GoogleMusic.Diagnostics;
+    using OutcoldSolutions.GoogleMusic.Services;
 
     public class MediaStreamDownloadService : IMediaStreamDownloadService
     {
@@ -27,9 +28,10 @@ namespace OutcoldSolutions.GoogleMusic.Web
         private readonly ILogger logger;
         private readonly HttpClient client = new HttpClient() { Timeout = TimeSpan.FromSeconds(60) };
 
-        public MediaStreamDownloadService(ILogManager logManager)
+        public MediaStreamDownloadService(ILogManager logManager, ISettingsService settingsService)
         {
             this.logger = logManager.CreateLogger("MediaStreamDownloadService");
+            this.client = new HttpClient(HttpClientHandlerExtensionsEx.GetWithProxy(this.logger, settingsService)) { Timeout = TimeSpan.FromSeconds(60) };
         }
 
         public async Task<INetworkRandomAccessStream> GetStreamAsync(string url, CancellationToken token)

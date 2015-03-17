@@ -41,11 +41,15 @@ namespace OutcoldSolutions.GoogleMusic.Web
             ILogManager logManager,
             IGoogleMusicSessionService sessionService)
         {
+            this.logger = logManager.CreateLogger("GoogleMusicWebService");
+
             var httpClientHandler = new HttpClientHandler
             {
                 UseCookies = false,
                 AllowAutoRedirect = false
             };
+
+            HttpClientHandlerExtensionsEx.SetProxy(httpClientHandler, this.logger, container.Resolve<ISettingsService>());
 
             this.httpClient = new HttpClient(httpClientHandler)
             {
@@ -59,8 +63,6 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
             this.container = container;
             this.sessionService = sessionService;
-
-            this.logger = logManager.CreateLogger("GoogleMusicWebService");
         }
 
         protected override ILogger Logger
