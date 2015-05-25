@@ -295,7 +295,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
             List<TData> result = new List<TData>();
 
             Task commitTask = Task.FromResult<object>(null);
-            string startToken = "0";
+            string startToken = null;
 
             if (lastUpdate.HasValue)
             {
@@ -315,7 +315,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
             {
                 Task<GoogleListResponse<TData>> loadSongsTask = this.PostAsync<GoogleListResponse<TData>>(
                     url,
-                    string.Format("{{\"max-results\":250,\"start-token\":\"{0}\"}}", startToken));
+                    string.Format("{{\"max-results\":250,\"start-token\":{0}}}", (string.IsNullOrEmpty(startToken) ? "null" : (string.Format("\"{0}\"", startToken)))));
 
                 await Task.WhenAll(commitTask, loadSongsTask);
 

@@ -34,6 +34,7 @@
                     </TextBlock>
                     <RichTextBlock Style="{StaticResource BodyRichTextStyle}">
                         <Paragraph>[b] Fixed a crash on opening some situation radios.</Paragraph>
+                        <Paragraph>[b] Make Highly Rated playlist to be loaded again.</Paragraph>
                     </RichTextBlock>
                     
                     <TextBlock Style="{StaticResource TitleTextStyle}" Margin="0, 10, 0, 0" >
