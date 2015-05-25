@@ -18,6 +18,7 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
     using Windows.ApplicationModel;
     using Windows.Networking.Connectivity;
+    using Windows.UI.Popups;
 
     public class HomePageViewPresenter : PlaylistsPageViewPresenterBase<IHomePageView, HomePageViewBindingModel>
     {
@@ -244,8 +245,30 @@ namespace OutcoldSolutions.GoogleMusic.Presenters
 
             if (loadFailed)
             {
-                await this.DeinitializeAsync();
-                this.ShowAuthentificationPopupView();
+                await this.Dispatcher.RunAsync(async () =>
+                {
+                    var yesUiCommand = new UICommand("Yes");
+                    var noUiCommand = new UICommand("No");
+
+                    MessageDialog dialog = new MessageDialog("Could not connect to the servers. Do you want to switch to offline mode?");
+                    dialog.Commands.Add(yesUiCommand);
+                    dialog.Commands.Add(noUiCommand);
+
+                    dialog.DefaultCommandIndex = 0;
+                    dialog.CancelCommandIndex = 1;
+
+                    var command = await dialog.ShowAsync();
+
+                    if (command == yesUiCommand)
+                    {
+                        this.stateService.CurrentState = ApplicationState.Offline;
+                    }
+                    else
+                    {
+                        await this.DeinitializeAsync();
+                        this.ShowAuthentificationPopupView();
+                    }
+                });
             }
         }
 

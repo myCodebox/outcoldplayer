@@ -19,6 +19,7 @@ namespace OutcoldSolutions.GoogleMusic.Web
     using OutcoldSolutions.GoogleMusic.InversionOfControl;
     using OutcoldSolutions.GoogleMusic.Services;
     using OutcoldSolutions.GoogleMusic.Web.Models;
+    using Windows.UI.Popups;
 
     public class GoogleMusicWebService : WebServiceBase, IGoogleMusicWebService
     {
@@ -393,7 +394,30 @@ namespace OutcoldSolutions.GoogleMusic.Web
 
                 if (clearSession)
                 {
-                    await this.sessionService.ClearSession();
+                    this.logger.LogTask(this.container.Resolve<IDispatcher>().RunAsync(async () =>
+                    {
+                        var yesUiCommand = new UICommand("Yes");
+                        var noUiCommand = new UICommand("No");
+
+                        MessageDialog dialog = new MessageDialog("Could not connect to the servers. Do you want to switch to offline mode?");
+                        dialog.Commands.Add(yesUiCommand);
+                        dialog.Commands.Add(noUiCommand);
+
+                        dialog.DefaultCommandIndex = 0;
+                        dialog.CancelCommandIndex = 1;
+
+                        var command = await dialog.ShowAsync();
+
+                        if (command == yesUiCommand)
+                        {
+                            this.container.Resolve<IApplicationStateService>().CurrentState = ApplicationState.Offline;
+                        }
+                        else
+                        {
+                            await this.sessionService.ClearSession();
+                        }
+                    }));
+
                     responseMessage.EnsureSuccessStatusCode();
                 }
             }
