@@ -111,7 +111,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
 
         public async Task<Tuple<Radio, IList<Song>>> CreateAsync(SituationRadio radio)
         {
-            var storedRadio = await this.radioStationsRepository.GetAsync(radio.RadioId);
+            var storedRadio = await this.radioStationsRepository.FindByCuratedStationId(radio.CuratedStationId);
             if (storedRadio != null)
             {
                 return Tuple.Create(storedRadio, await this.GetRadioSongsAsync(radio.RadioId));
