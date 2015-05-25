@@ -15,7 +15,7 @@
     <PackageCertificateKeyFile>GoogleMusic_StoreKey.pfx</PackageCertificateKeyFile>
     <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
     <AppxPackageDir>..\..\..\WinAppPackages\</AppxPackageDir>
-    <PackageCertificateThumbprint>085D16B4A3BE100653458DA8FD7F7786A7D8245E</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>0BFBE6FDAF36B60943127C9B415C169B727393C0</PackageCertificateThumbprint>
     <AllowedReferenceRelatedFileExtensions>.pdb;.pri</AllowedReferenceRelatedFileExtensions>
     <TargetPlatformVersion>8.1</TargetPlatformVersion>
     <MinimumVisualStudioVersion>12</MinimumVisualStudioVersion>
