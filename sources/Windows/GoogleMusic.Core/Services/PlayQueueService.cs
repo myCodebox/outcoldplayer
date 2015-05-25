@@ -133,7 +133,7 @@ namespace OutcoldSolutions.GoogleMusic.Services
         {
             get
             {
-                return this.repeat;
+                return this.IsRadio ? RepeatType.None : this.repeat;
             }
             
             set
